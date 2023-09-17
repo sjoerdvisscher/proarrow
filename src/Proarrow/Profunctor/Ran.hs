@@ -1,0 +1,40 @@
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+module Proarrow.Profunctor.Ran where
+
+import Proarrow.Core (PRO, Category(..), Profunctor(..), (//), rmap)
+import Proarrow.Functor (Functor(..))
+import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Category.Instance.Nat (Nat(..))
+import Proarrow.Category.Opposite (OP(..), Op(..))
+import Proarrow.Adjunction (Adjunction (..), unitFromStarUnit, counitFromStarCounit)
+import Proarrow.Profunctor.Composition ((:.:)(..))
+import Proarrow.Profunctor.Star (Star(..))
+
+type j |> p = Ran ('OP j) p
+
+type Ran :: OP (PRO k3 k1) -> PRO k3 k2 -> PRO k1 k2
+data Ran j p a b where
+  Ran :: (Ob a, Ob b) => { getRan :: forall x. Ob x => j x a -> p x b } -> Ran ('OP j) p a b
+
+runRan :: Profunctor j => j x a -> Ran ('OP j) p a b -> p x b
+runRan j (Ran k) = k j \\ j
+
+instance (Profunctor p, Profunctor j) => Profunctor (Ran ('OP j) p) where
+  dimap l r (Ran k) = l // r // Ran (rmap r . k . rmap l)
+  r \\ Ran{} = r
+
+instance Profunctor j => Functor (Ran ('OP j)) where
+  map (Prof n) = Prof \(Ran k) -> Ran (n . k)
+
+instance Functor Ran where
+  map (Op (Prof n)) = Nat (Prof \(Ran k) -> Ran (k . n))
+
+newtype Precompose j p a b = Precompose { getPrecompose :: (p :.: j) a b }
+  deriving newtype Profunctor
+instance Profunctor j => Functor (Precompose j) where
+  map f = f // Prof \(Precompose pj) -> Precompose (getProf (getNat (map f)) pj)
+
+instance Profunctor j => Adjunction (Star (Precompose j)) (Star (Ran ('OP j))) where
+  unit = unitFromStarUnit (Prof \p -> p // Ran \j -> Precompose (p :.: j))
+  counit = counitFromStarCounit (Prof \(Precompose (r :.: j)) -> runRan j r)
