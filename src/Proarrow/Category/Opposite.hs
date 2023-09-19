@@ -23,6 +23,7 @@ instance Profunctor p => Profunctor (Op p) where
   r \\ Op f = r \\ f
 
 type instance (~>) = Op (~>)
+-- | The opposite category of category `c`.
 instance Category c => Category (Op c) where
   type Ob a = (a ~ 'OP (UNOP a), Ob (UNOP a))
   id = Op id

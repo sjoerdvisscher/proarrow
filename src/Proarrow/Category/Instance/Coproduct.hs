@@ -18,6 +18,7 @@ instance (Ob a, Category ((~>) :: CAT k)) => IsEither ('Right (a :: k)) where
 
 type instance (~>) = (~>) :++: (~>)
 
+-- | The coproduct category of the categories `c` and `d`.
 instance (Category c, Category d) => Category (c :++: d) where
   type Ob a = IsEither a
   id = eitherId

@@ -10,6 +10,7 @@ data Prof p q where
 
 type instance (~>) = Prof
 
+-- | The category of profunctors and natural transformations between them.
 instance Category Prof where
   type Ob p = Profunctor p
   id = Prof id

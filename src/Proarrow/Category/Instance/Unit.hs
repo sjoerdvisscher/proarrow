@@ -8,6 +8,7 @@ data Unit a b where
 
 type instance (~>) = Unit
 
+-- | The category with one object, the terminal category.
 instance Category Unit where
   type Ob a = a ~ '()
   id = Unit

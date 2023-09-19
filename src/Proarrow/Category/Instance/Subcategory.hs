@@ -16,6 +16,7 @@ instance Profunctor ((~>) :: CAT k) => Profunctor (Sub :: CAT (SUB (ob :: OB k))
   dimap = dimapDefault
   r \\ Sub p = r \\ p
 
+-- | The subcategory with objects with instances of the given constraint `ob`.
 instance Category ((~>) :: CAT k) => Category (Sub :: CAT (SUB (ob :: OB k))) where
   type Ob (a :: SUB ob) = (a ~ 'SUB (UNSUB a), Ob (UNSUB a), ob (UNSUB a))
   id = Sub id

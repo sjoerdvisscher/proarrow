@@ -14,6 +14,7 @@ data (c :**: d) a b where
 
 type instance (~>) = (~>) :**: (~>)
 
+-- | The product category of categories `c` and `d`.
 instance (Category c, Category d) => Category (c :**: d) where
   type Ob a = (a ~ '(Fst a, Snd a), Ob (Fst a), Ob (Snd a))
   id = id :**: id

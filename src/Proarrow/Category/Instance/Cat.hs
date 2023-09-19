@@ -22,6 +22,7 @@ data Cat a b where
 
 type instance (~>) = Cat
 
+-- | The category of categories and profunctors between them.
 instance Category Cat where
   type Ob c = (c ~ 'KIND (UNKIND c), Category ((~>) :: CAT (UNKIND c)))
   id = Cat @_ @_ @Id

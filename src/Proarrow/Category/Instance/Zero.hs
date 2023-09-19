@@ -11,6 +11,7 @@ type instance (~>) = Zero
 class IsVoid (a :: Void) where
   voidId :: Zero a a
 
+-- | The category with no objects, the initial category.
 instance Category Zero where
   type Ob a = IsVoid a
   id = voidId

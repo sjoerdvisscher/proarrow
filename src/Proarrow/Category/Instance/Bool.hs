@@ -22,6 +22,7 @@ class IsBool (b :: Bool) where boolId :: b ~> b
 instance IsBool False where boolId = Fls
 instance IsBool True where boolId = Tru
 
+-- | The category of 2 objects and one arrow between them, a.k.a. the walking arrow.
 instance Category Booleans where
   type Ob b = IsBool b
   id = boolId

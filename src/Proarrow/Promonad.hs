@@ -27,6 +27,7 @@ instance Promonad p => Profunctor (Tag :: CAT (TAG p)) where
   dimap = dimapDefault
   r \\ Tag p = r \\ p
 
+-- | Every promonad makes a category.
 instance Promonad p => Category (Tag :: CAT (TAG p)) where
   type Ob a = (a ~ 'TAG (UNTAG a), Ob (UNTAG a))
   id = Tag (unit @p id)
