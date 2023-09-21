@@ -13,4 +13,4 @@ instance Profunctor (Writer m) where
 
 instance Monoid m => Promonad (Writer m) where
   unit f = Writer \a -> (mempty, f a)
-  mult (Writer f :.: Writer g) = Writer \a -> case g a of (m1, b) -> case f b of (m2, c) -> (m1 <> m2, c)
+  mult (Writer f :.: Writer g) = Writer \a -> case f a of (m1, b) -> case g b of (m2, c) -> (m1 <> m2, c)

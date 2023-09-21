@@ -20,5 +20,5 @@ instance Functor f => Corepresentable (Costar f) where
   cotabulate = Costar
   corepMap = map
 
-composeCostar :: Functor f => Costar f :.: Costar g :~> Costar (Compose f g)
-composeCostar (Costar f :.: Costar g) = Costar (f . map g . getCompose)
+composeCostar :: Functor g => Costar f :.: Costar g :~> Costar (Compose g f)
+composeCostar (Costar f :.: Costar g) = Costar (g . map f . getCompose)

@@ -25,7 +25,7 @@ type instance (~>) = Cat
 instance Category Cat where
   type Ob c = (c ~ 'KIND (UNKIND c), Category ((~>) :: CAT (UNKIND c)))
   id = Cat @_ @_ @Id
-  Cat @_ @_ @p . Cat @_ @_ @q = Cat @_ @_ @(p :.: q)
+  Cat @_ @_ @p . Cat @_ @_ @q = Cat @_ @_ @(q :.: p)
 
 instance Profunctor Cat where
   dimap = dimapDefault

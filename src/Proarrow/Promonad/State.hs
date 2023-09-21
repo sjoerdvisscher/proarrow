@@ -15,4 +15,4 @@ instance Profunctor (State s) where
 
 instance Promonad (State s) where
   unit f = State (second f)
-  mult (State f :.: State g) = State (f . g)
+  mult (State f :.: State g) = State (g . f)

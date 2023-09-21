@@ -30,11 +30,11 @@ instance Promonad p => Profunctor (Tag :: CAT (TAG p)) where
 instance Promonad p => Category (Tag :: CAT (TAG p)) where
   type Ob a = (a ~ 'TAG (UNTAG a), Ob (UNTAG a))
   id = Tag (unit @p id)
-  Tag f . Tag g = Tag (mult @p (f :.: g))
+  Tag f . Tag g = Tag (mult @p (g :.: f))
 
-instance Adjunction p q => Promonad (p :.: q) where
+instance Adjunction p q => Promonad (q :.: p) where
   unit f = f // rmap f Adj.unit
-  mult ((p :.: q) :.: (p' :.: q')) = p :.: rmap (Adj.counit (q :.: p')) q'
+  mult ((q' :.: p') :.: (q :.: p)) = rmap (Adj.counit (p' :.: q)) q' :.: p
 
 instance CategoryOf k => Mon.Monoid (Promonad p) (p :: PRO k k) where
   type Ten (Promonad p) = Comp

@@ -30,11 +30,6 @@ instance Profunctor j => Functor (Ran ('OP j)) where
 instance Functor Ran where
   map (Op (Prof n)) = Nat (Prof \(Ran k) -> Ran (k . n))
 
-newtype Precompose j p a b = Precompose { getPrecompose :: (p :.: j) a b }
-  deriving newtype Profunctor
-instance Profunctor j => Functor (Precompose j) where
-  map f = f // Prof \(Precompose pj) -> Precompose (getProf (getNat (map f)) pj)
-
-instance Profunctor j => Adjunction (Star (Precompose j)) (Star (Ran ('OP j))) where
-  unit = unitFromStarUnit (Prof \p -> p // Ran \j -> Precompose (p :.: j))
-  counit = counitFromStarCounit (Prof \(Precompose (r :.: j)) -> runRan j r)
+instance Profunctor j => Adjunction (Star ((:.:) j)) (Star (Ran ('OP j))) where
+  unit = unitFromStarUnit (Prof \p -> p // Ran (:.: p))
+  counit = counitFromStarCounit (Prof \(j :.: r) -> runRan j r)

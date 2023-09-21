@@ -24,4 +24,4 @@ instance (Rewrite g, Category (Free g), VacuusOb k) => Promonad (Free (g :: k ->
   unit f = f
   mult (FreeId :.: a) = a
   mult (a :.: FreeId) = a
-  mult (a :.: (g :| b)) = rewriteAfterCons (g :| mult (a :.: b))
+  mult ((g :| b) :.: a) = rewriteAfterCons (g :| mult (b :.: a))

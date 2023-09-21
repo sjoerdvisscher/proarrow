@@ -28,6 +28,6 @@ instance Profunctor j => Functor (Rift ('OP j)) where
 instance Functor Rift where
   map (Op (Prof n)) = Nat (Prof \(Rift k) -> Rift (k . n))
 
-instance Profunctor j => Adjunction (Star ((:.:) j)) (Star (Rift ('OP j))) where
-  unit = unitFromStarUnit (Prof \a -> Rift (:.: a) \\ a)
-  counit = counitFromStarCounit (Prof \(j :.: r) -> runRift j r)
+-- instance Profunctor j => Adjunction (Star ((:.:) j)) (Star (Rift ('OP j))) where
+--   unit = unitFromStarUnit (Prof \a -> Rift (a :.:) \\ a)
+--   counit = counitFromStarCounit (Prof \(j :.: r) -> runRift j r)

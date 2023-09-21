@@ -25,10 +25,10 @@ instance Profunctor p => Profunctor (Collage p) where
 instance Profunctor p => Promonad (Collage p) where
   unit (L f) = InL f
   unit (R g) = InR g
-  mult (InL f :.: InL g) = InL (f . g)
-  mult (L2R p :.: InL g) = L2R (lmap g p)
-  mult (InR f :.: L2R p) = L2R (rmap f p)
-  mult (InR f :.: InR g) = InR (f . g)
+  mult (InL g :.: InL f) = InL (f . g)
+  mult (InL g :.: L2R p) = L2R (lmap g p)
+  mult (L2R p :.: InR f) = L2R (rmap f p)
+  mult (InR g :.: InR f) = InR (f . g)
 instance Functor Collage where
   map (Prof n) = Prof \case
     InL l -> InL l

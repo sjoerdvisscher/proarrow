@@ -20,5 +20,5 @@ instance Functor f => Representable (Star f) where
   tabulate = Star
   repMap = map
 
-composeStar :: Functor g => Star f :.: Star g :~> Star (Compose g f)
-composeStar (Star f :.: Star g) = Star (Compose . map f . g)
+composeStar :: Functor f => Star f :.: Star g :~> Star (Compose f g)
+composeStar (Star f :.: Star g) = Star (Compose . map g . f)

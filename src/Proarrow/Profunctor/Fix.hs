@@ -11,20 +11,20 @@ import Proarrow.Profunctor.Composition ((:.:)(..))
 
 type Fix :: PRO k k -> PRO k k
 newtype Fix p a b where
-  In :: { out :: (Fix p :.: p) a b } -> Fix p a b
+  In :: { out :: (p :.: Fix p) a b } -> Fix p a b
 
 instance Profunctor p => Profunctor (Fix p) where
   dimap l r = In . dimap l r . out \\ l \\ r
   r \\ In p = r \\ p
 
 instance Functor Fix where
-  map n@Prof{} = Prof (In . getProf (map n . getNat (map (map n))) . out)
+  map n@Prof{} = Prof (In . getProf (getNat (map n) . map (map n)) . out)
 
-cata :: (Profunctor p, Profunctor r) => (r :.: p :~> r) -> Fix p :~> r
-cata alg = getProf go where go = Prof alg . getNat (map go) . Prof out
+cata :: (Profunctor p, Profunctor r) => (p :.: r :~> r) -> Fix p :~> r
+cata alg = getProf go where go = Prof alg . map go . Prof out
 
-ana :: (Profunctor p, Profunctor r) => (r :~> r :.: p) -> r :~> Fix p
-ana coalg = getProf go where go = Prof In . getNat (map go) . Prof coalg
+ana :: (Profunctor p, Profunctor r) => (r :~> p :.: r) -> r :~> Fix p
+ana coalg = getProf go where go = Prof In . map go . Prof coalg
 
 
 data ListF x l = Nil | Cons x l
@@ -40,11 +40,11 @@ project :: [x] -> ListF x [x]
 project [] = Nil
 project (x:xs) = Cons x xs
 
-embed' :: Star (Const [x]) :.: Star (ListF x) :~> Star (Const [x])
-embed' (Star f :.: Star g) = Star (Const . embed . map (getConst . f) . g)
+embed' :: Star (ListF x) :.: Star (Const [x]) :~> Star (Const [x])
+embed' (Star f :.: Star g) = Star (Const . embed . map (getConst . g) . f)
 
-project' :: Star (Const [x]) :~> Star (Const [x]) :.: Star (ListF x)
-project' (Star f) = Star Const :.: Star (project . getConst . f)
+project' :: Star (Const [x]) :~> Star (ListF x) :.: Star (Const [x])
+project' (Star f) = Star (project . getConst . f) :.: Star Const
 
 toList :: Fix (Star (ListF x)) :~> Star (Const [x])
 toList = cata embed'

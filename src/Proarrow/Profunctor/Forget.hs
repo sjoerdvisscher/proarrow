@@ -38,5 +38,5 @@ instance Representable List where
   repMap f = Sub (map f)
 
 instance Adjunction List (Forget Monoid) where
-  unit = List id :.: Forget (:[])
-  counit (Forget f :.: List g) = Sub (foldMap f . g)
+  unit = Forget (:[]) :.: List id
+  counit (List g :.: Forget f) = Sub (foldMap f . g)

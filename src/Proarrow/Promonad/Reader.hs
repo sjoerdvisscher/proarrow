@@ -13,4 +13,4 @@ instance Profunctor (Reader r) where
 
 instance Promonad (Reader r) where
   unit f = Reader (f . snd)
-  mult (Reader f :.: Reader g) = Reader \(r, a) -> f (r, g (r, a))
+  mult (Reader f :.: Reader g) = Reader \(r, a) -> g (r, f (r, a))

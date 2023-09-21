@@ -11,12 +11,12 @@ import Proarrow.Profunctor.Representable (Representable(..), withRepCod)
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod)
 
 
-type (:.:) :: PRO j k -> PRO i j -> PRO i k
+type (:.:) :: PRO i j -> PRO j k -> PRO i k
 data (p :.: q) a c where
-  (:.:) :: p b c -> q a b -> (p :.: q) a c
+  (:.:) :: p a b -> q b c -> (p :.: q) a c
 
 instance (Profunctor p, Profunctor q) => Profunctor (p :.: q) where
-  dimap l r (p :.: q) = rmap r p :.: lmap l q
+  dimap l r (p :.: q) = lmap l p :.: rmap r q
   r \\ p :.: q = r \\ p \\ q
 
 instance Profunctor p => Functor ((:.:) p) where
@@ -26,17 +26,17 @@ instance Functor (:.:) where
   map (Prof n) = Nat (Prof \(p :.: q) -> n p :.: q)
 
 instance (Representable p, Representable q) => Representable (p :.: q) where
-  type (p :.: q) % a = q % (p % a)
+  type (p :.: q) % a = p % (q % a)
   index (p :.: q) = repMap @q (index p) . index q
   tabulate :: forall a b. Ob b => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
-  tabulate f = withRepCod @p @b (tabulate id :.: tabulate f)
-  repMap f = repMap @q (repMap @p f)
+  tabulate f = withRepCod @q @b (tabulate f :.: tabulate id)
+  repMap f = repMap @p (repMap @q f)
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where
-  type (p :.: q) %% a = p %% (q %% a)
-  coindex (p :.: q) = corepMap @q (coindex p) . coindex q
+  type (p :.: q) %% a = q %% (p %% a)
+  coindex (p :.: q) = corepMap @p (coindex q) . coindex p
   cotabulate :: forall a b. Ob a => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
-  cotabulate f = withCorepCod @q @a (cotabulate f :.: cotabulate id)
+  cotabulate f = withCorepCod @p @a (cotabulate id :.: cotabulate f)
   corepMap f = corepMap @p (corepMap @q f)
 
 
@@ -56,9 +56,9 @@ instance CategoryOf k => Representable (Comp :: TENSOR (PRO k k)) where
 
 instance CategoryOf k => Tensor (Comp :: TENSOR (PRO k k)) where
   type U Comp = Id
-  leftUnitor = Prof \(Id f :.: p) -> rmap f p
+  leftUnitor = Prof \(Id f :.: p) -> lmap f p
   leftUnitorInv = Prof \p -> Id id :.: p \\ p
-  rightUnitor = Prof \(p :.: Id f) -> lmap f p
+  rightUnitor = Prof \(p :.: Id f) -> rmap f p
   rightUnitorInv = Prof \p -> p :.: Id id \\ p
   associator' Prof{} Prof{} Prof{} = Prof \((p :.: q) :.: r) -> p :.: (q :.: r)
   associatorInv' Prof{} Prof{} Prof{} = Prof \(p :.: (q :.: r)) -> (p :.: q) :.: r
