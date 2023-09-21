@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Profunctor.Day where
 
 import Data.Function (($))

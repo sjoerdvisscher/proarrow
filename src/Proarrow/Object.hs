@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Object where
 
 import Proarrow.Category (type (~>), CategoryOf, Category (..))

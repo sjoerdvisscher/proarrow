@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Profunctor.Codiscrete where
 
 import Proarrow.Core (PRO, CategoryOf, Category(..), Profunctor(..))

@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Profunctor.Identity where
 
 import Proarrow.Core (CAT, CategoryOf, Category(..), Profunctor(..), type (~>))

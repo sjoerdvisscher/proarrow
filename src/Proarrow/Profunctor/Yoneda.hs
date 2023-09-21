@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Profunctor.Yoneda where
 
 import Data.Kind (Type)

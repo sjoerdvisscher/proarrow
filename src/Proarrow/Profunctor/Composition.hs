@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Profunctor.Composition where
 
 import Proarrow.Core (PRO, Profunctor(..), Category(..), type (~>), lmap, rmap, CategoryOf)

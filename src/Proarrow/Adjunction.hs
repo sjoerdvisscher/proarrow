@@ -1,6 +1,5 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant map" #-}
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Adjunction where
 
 import Proarrow.Core (CAT, PRO, Profunctor(..), Category (..), CategoryOf, (:~>), type (~>), (//))

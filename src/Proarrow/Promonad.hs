@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Promonad where
 
 import Proarrow.Core (CAT, PRO, Category(..), Profunctor(..), (:~>), type (~>), dimapDefault, rmap, (//), CategoryOf)

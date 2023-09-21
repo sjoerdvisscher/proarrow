@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Category.Instance.Subcategory where
 
 import Proarrow.Core (CAT, OB, Category(..), Profunctor(..), type (~>), dimapDefault)

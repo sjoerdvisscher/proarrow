@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Category.Instance.Coproduct where
 
 import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)

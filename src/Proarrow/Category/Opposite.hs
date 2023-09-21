@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Category.Opposite where
 
 import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>), lmap)

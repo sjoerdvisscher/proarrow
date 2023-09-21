@@ -1,4 +1,3 @@
-{-# LANGUAGE UndecidableInstances #-}
 module Proarrow.Profunctor.Forget where
 
 import Prelude (Monoid(..), map, foldMap)
