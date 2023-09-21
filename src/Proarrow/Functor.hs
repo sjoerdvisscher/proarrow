@@ -1,8 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Functor where
 
-import Data.Kind (Constraint)
+import Data.Functor.Const (Const (..))
+import Data.Kind (Constraint, Type)
 import Prelude (const, fmap)
+
 import Proarrow.Core (Category(..), CategoryOf, type (~>), (\\))
 import Proarrow.Object (Obj, obj)
 
@@ -25,3 +27,6 @@ instance Functor ((,) a) where
 
 instance Functor ((->) a) where
   map = fmap
+
+instance CategoryOf k => Functor (Const x :: k -> Type) where
+  map _ (Const x) = Const x

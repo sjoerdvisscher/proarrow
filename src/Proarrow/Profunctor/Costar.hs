@@ -1,8 +1,10 @@
 module Proarrow.Profunctor.Costar where
 
-import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>))
+import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>), (:~>))
 import Proarrow.Functor (Functor(..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
+import Proarrow.Profunctor.Composition ((:.:)(..))
+import Data.Functor.Compose (Compose(..))
 
 type Costar :: (j -> k) -> PRO j k
 data Costar f a b where
@@ -17,3 +19,6 @@ instance Functor f => Corepresentable (Costar f) where
   coindex = getCostar
   cotabulate = Costar
   corepMap = map
+
+composeCostar :: Functor f => Costar f :.: Costar g :~> Costar (Compose f g)
+composeCostar (Costar f :.: Costar g) = Costar (f . map g . getCompose)
