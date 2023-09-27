@@ -1,15 +1,13 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Colimit where
 
-import Data.Either (Either(..))
 import Data.Function (($))
 import Data.Kind (Type, Constraint)
-import Data.Void (Void)
 
 import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>), (:~>), CategoryOf)
-import Proarrow.Category.Instance.Coproduct ((:++:)(..))
-import Proarrow.Category.Instance.Unit (Unit(..))
-import Proarrow.Category.Instance.Zero ()
+import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
+import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
+import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod)
 import Proarrow.Profunctor.Ran (type (|>), Ran(..))
 import Proarrow.Profunctor.Codiscrete (Codiscrete(..))
@@ -27,36 +25,36 @@ class HasColimits (j :: PRO i a) k where
   colimitInv :: Corepresentable (d :: PRO i k) => j |> d :~> Colimit j d
 
 
-type InitialLimit :: PRO Void k -> PRO () k
+type InitialLimit :: PRO VOID k -> PRO UNIT k
 data InitialLimit d a b where
-  InitialLimit :: forall d a. Ob a => InitialObject ~> a -> InitialLimit d '() a
+  InitialLimit :: forall d a. Ob a => InitialObject ~> a -> InitialLimit d U a
 
-instance HasInitialObject k => HasColimits (Unweighted :: PRO Void ()) k where
+instance HasInitialObject k => HasColimits (Unweighted :: PRO VOID UNIT) k where
   type Colimit Unweighted d = InitialLimit d
   colimit (InitialLimit @d f) = Ran \(Codiscrete o _) -> cotabulate $ f . case o of
   colimitInv Ran{} = InitialLimit initiate
 
 
-type CoproductColimit :: PRO (Either () ()) k -> PRO () k
+type CoproductColimit :: PRO (COPRODUCT UNIT UNIT) k -> PRO UNIT k
 data CoproductColimit d a b where
-  CoproductColimit :: forall d b. Ob b => ((d %% Left '()) || (d %% Right '())) ~> b -> CoproductColimit d '() b
+  CoproductColimit :: forall d b. Ob b => ((d %% L U) || (d %% R U)) ~> b -> CoproductColimit d U b
 
-instance CategoryOf k => Profunctor (CoproductColimit d :: PRO () k) where
+instance CategoryOf k => Profunctor (CoproductColimit d :: PRO UNIT k) where
   dimap Unit r (CoproductColimit f) = CoproductColimit (r . f) \\ r
   r \\ (CoproductColimit f) = r \\ f
 
-instance HasBinaryCoproducts k => HasColimits (Unweighted :: PRO (Either () ()) ()) k where
+instance HasBinaryCoproducts k => HasColimits (Unweighted :: PRO (COPRODUCT UNIT UNIT) UNIT) k where
   type Colimit Unweighted d = CoproductColimit d
   colimit (CoproductColimit @d f) = Ran \(Codiscrete o _) -> cotabulate $ f . cochoose @_ @d o
   colimitInv (Ran k) =
-    let l = k (Codiscrete (L Unit) Unit)
-        r = k (Codiscrete (R Unit) Unit)
+    let l = k (Codiscrete (InjL Unit) Unit)
+        r = k (Codiscrete (InjR Unit) Unit)
     in CoproductColimit $ coindex l ||| coindex r
 
 cochoose
-  :: forall k (d :: PRO (Either () ()) k) b
+  :: forall k (d :: PRO (COPRODUCT UNIT UNIT) k) b
   .  (HasBinaryCoproducts k, Corepresentable d)
-  => Obj b -> (d %% b) ~> ((d %% Left '()) || (d %% Right '()))
-cochoose b = withCorepCod @d @(Left '()) $ withCorepCod @d @(Right '()) $ case b of
-  (L Unit) -> left @(d %% Left '()) @(d %% Right '())
-  (R Unit) -> right @(d %% Left '()) @(d %% Right '())
+  => Obj b -> (d %% b) ~> ((d %% L U) || (d %% R U))
+cochoose b = withCorepCod @d @(L U) $ withCorepCod @d @(R U) $ case b of
+  (InjL Unit) -> left @(d %% L U) @(d %% R U)
+  (InjR Unit) -> right @(d %% L U) @(d %% R U)

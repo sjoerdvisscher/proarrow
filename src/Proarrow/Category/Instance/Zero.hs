@@ -1,14 +1,15 @@
 module Proarrow.Category.Instance.Zero where
 
 import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)
-import Data.Void (Void)
 
-type Zero :: CAT Void
+data VOID
+
+type Zero :: CAT VOID
 data Zero a b
 
 type instance (~>) = Zero
 
-class IsVoid (a :: Void) where
+class IsVoid (a :: VOID) where
   voidId :: Zero a a
 
 -- | The category with no objects, the initial category.

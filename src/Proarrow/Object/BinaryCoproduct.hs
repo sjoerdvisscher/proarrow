@@ -4,7 +4,6 @@ module Proarrow.Object.BinaryCoproduct where
 import Data.Kind (Type)
 import qualified Prelude as P
 
-import Proarrow.Category.Instance.Unit (Unit(..))
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Monoidal (Tensor(..))
 import Proarrow.Core (PRO, CategoryOf, Category (..), Profunctor(..), type (~>))
@@ -32,12 +31,6 @@ instance HasBinaryCoproducts Type where
   left' _ _ = P.Left
   right' _ _ = P.Right
   (|||) = P.either
-
-instance HasBinaryCoproducts () where
-  type '() || '() = '()
-  left' Unit Unit = Unit
-  right' Unit Unit = Unit
-  Unit ||| Unit = Unit
 
 
 type CoproductFunctor :: PRO k (k, k)

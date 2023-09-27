@@ -4,7 +4,6 @@ module Proarrow.Object.BinaryProduct where
 import Data.Kind (Type)
 import qualified Prelude as P
 
-import Proarrow.Category.Instance.Unit (Unit(..))
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Monoidal (Tensor(..))
 import Proarrow.Core (PRO, CategoryOf, Category (..), Profunctor(..), type (~>), (//))
@@ -34,11 +33,11 @@ instance HasBinaryProducts Type where
   snd' _ _ = P.snd
   f &&& g = \a -> (f a, g a)
 
-instance HasBinaryProducts () where
-  type '() && '() = '()
-  fst' Unit Unit = Unit
-  snd' Unit Unit = Unit
-  Unit &&& Unit = Unit
+instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
+  type '(a1, a2) && '(b1, b2) = '(a1 && b1, a2 && b2)
+  fst' (a1 :**: a2) (b1 :**: b2) = fst' a1 b1 :**: fst' a2 b2
+  snd' (a1 :**: a2) (b1 :**: b2) = snd' a1 b1 :**: snd' a2 b2
+  (f1 :**: f2) &&& (g1 :**: g2) = (f1 &&& g1) :**: (f2 &&& g2)
 
 
 type ProductFunctor :: PRO k (k, k)

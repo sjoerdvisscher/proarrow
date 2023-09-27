@@ -4,7 +4,6 @@ module Proarrow.Object.Exponential where
 import Data.Kind (Type)
 import qualified Prelude as P
 
-import Proarrow.Category.Instance.Unit (Unit(..))
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Opposite (OP(..), Op (..))
 import Proarrow.Core (PRO, Category (..), Profunctor(..), type (~>), dimapDefault)
@@ -42,18 +41,16 @@ instance CartesianClosed Type where
   uncurry' _ _ = P.uncurry
   (^^^) = P.flip dimapDefault
 
-instance CartesianClosed () where
-  type '() ~~> '() = '()
-  curry' Unit Unit Unit = Unit
-  uncurry' Unit Unit Unit = Unit
-  Unit ^^^ Unit = Unit
 
 type ExponentialFunctor :: PRO k (OP k, k)
+
 data ExponentialFunctor a b where
   ExponentialFunctor :: (Ob c, Ob d) => a ~> (c ~~> d) -> ExponentialFunctor a '( 'OP c, d )
+
 instance CartesianClosed k => Profunctor (ExponentialFunctor :: PRO k (OP k, k)) where
   dimap l (Op r1 :**: r2) (ExponentialFunctor f) = ExponentialFunctor ((r2 ^^^ r1) . f . l) \\ r1 \\ r2
   r \\ ExponentialFunctor f = r \\ f
+
 instance CartesianClosed k => Representable (ExponentialFunctor :: PRO k (OP k, k)) where
   type ExponentialFunctor % '( 'OP a, b ) = a ~~> b
   index (ExponentialFunctor f) = f

@@ -1,19 +1,20 @@
 module Proarrow.Category.Instance.Coproduct where
 
 import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)
-import Prelude (Either(..))
 
-type (:++:) :: CAT k1 -> CAT k2 -> CAT (Either k1 k2)
+data COPRODUCT j k = L j | R k
+
+type (:++:) :: CAT j -> CAT k -> CAT (COPRODUCT j k)
 data (c :++: d) a b where
-  L :: c a b -> (c :++: d) ('Left a) ('Left b)
-  R :: d a b -> (c :++: d) ('Right a) ('Right b)
+  InjL :: c a b -> (c :++: d) (L a) (L b)
+  InjR :: d a b -> (c :++: d) (R a) (R b)
 
-class IsEither (a :: Either k1 k2) where
+class IsEither (a :: COPRODUCT j k) where
   eitherId :: ((~>) :++: (~>)) a a
-instance (Ob a, Category ((~>) :: CAT k)) => IsEither ('Left (a :: k)) where
-  eitherId = L id
-instance (Ob a, Category ((~>) :: CAT k)) => IsEither ('Right (a :: k)) where
-  eitherId = R id
+instance (Ob a, Category ((~>) :: CAT k)) => IsEither (L (a :: k)) where
+  eitherId = InjL id
+instance (Ob a, Category ((~>) :: CAT k)) => IsEither (R (a :: k)) where
+  eitherId = InjR id
 
 type instance (~>) = (~>) :++: (~>)
 
@@ -21,10 +22,10 @@ type instance (~>) = (~>) :++: (~>)
 instance (Category c, Category d) => Category (c :++: d) where
   type Ob a = IsEither a
   id = eitherId
-  L f . L g = L (f . g)
-  R f . R g = R (f . g)
+  InjL f . InjL g = InjL (f . g)
+  InjR f . InjR g = InjR (f . g)
 
 instance (Category c, Category d) => Profunctor (c :++: d) where
   dimap = dimapDefault
-  r \\ L f = r \\ f
-  r \\ R f = r \\ f
+  r \\ InjL f = r \\ f
+  r \\ InjR f = r \\ f

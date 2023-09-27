@@ -5,7 +5,7 @@ import Data.Void (Void, absurd)
 
 import Proarrow.Core (CategoryOf, Category (..), type (~>))
 import Proarrow.Object (Obj, obj)
-import Proarrow.Category.Instance.Unit (Unit(..))
+import Proarrow.Category.Instance.Product ((:**:)(..))
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
   type InitialObject :: k
@@ -18,6 +18,6 @@ instance HasInitialObject Type where
   type InitialObject = Void
   initiate' _ = absurd
 
-instance HasInitialObject () where
-  type InitialObject = '()
-  initiate' Unit = Unit
+instance (HasInitialObject j, HasInitialObject k) => HasInitialObject (j, k) where
+  type InitialObject = '(InitialObject, InitialObject)
+  initiate' (a1 :**: a2) = initiate' a1 :**: initiate' a2

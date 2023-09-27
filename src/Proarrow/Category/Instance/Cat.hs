@@ -4,7 +4,7 @@ module Proarrow.Category.Instance.Cat where
 import Data.Kind (Type)
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Instance.Unit (Unit(..))
+import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Core (CAT, PRO, Category(..), Profunctor(..), type (~>), dimapDefault, CategoryOf)
 import Proarrow.Profunctor.Identity (Id)
 import Proarrow.Profunctor.Composition ((:.:))
@@ -32,14 +32,14 @@ instance Profunctor Cat where
   r \\ Cat = r
 
 
-type Terminate :: PRO k ()
+type Terminate :: PRO k UNIT
 data Terminate a b where
-  Terminate :: Ob a => Terminate a '()
-instance CategoryOf k => Profunctor (Terminate :: PRO k ()) where
+  Terminate :: Ob a => Terminate a U
+instance CategoryOf k => Profunctor (Terminate :: PRO k UNIT) where
   dimap l Unit Terminate = Terminate \\ l
   r \\ Terminate = r
 instance HasTerminalObject KIND where
-  type TerminalObject = 'KIND ()
+  type TerminalObject = 'KIND UNIT
   terminate' (Cat @a) = Cat @_ @_ @Terminate
 
 
