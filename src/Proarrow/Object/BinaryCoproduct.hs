@@ -10,6 +10,8 @@ import Proarrow.Core (PRO, CategoryOf, Category (..), Profunctor(..), type (~>))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject(..), initiate)
 import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Coproduct ((:+:)(..), coproduct)
+import Proarrow.Category.Instance.Prof (Prof(..))
 
 class CategoryOf k => HasBinaryCoproducts k where
   type (a :: k) || (b :: k) :: k
@@ -31,6 +33,13 @@ instance HasBinaryCoproducts Type where
   left' _ _ = P.Left
   right' _ _ = P.Right
   (|||) = P.either
+
+instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (PRO j k) where
+  type p || q = p :+: q
+  left' Prof{} Prof{} = Prof InjL
+  right' Prof{} Prof{} = Prof InjR
+  Prof l ||| Prof r = Prof (coproduct l r)
+
 
 
 type CoproductFunctor :: PRO k (k, k)

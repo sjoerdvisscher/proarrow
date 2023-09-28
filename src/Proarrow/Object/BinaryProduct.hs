@@ -10,6 +10,8 @@ import Proarrow.Core (PRO, CategoryOf, Category (..), Profunctor(..), type (~>),
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Product ((:*:) (..), product)
+import Proarrow.Category.Instance.Prof (Prof(..))
 
 
 class CategoryOf k => HasBinaryProducts k where
@@ -38,6 +40,12 @@ instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) 
   fst' (a1 :**: a2) (b1 :**: b2) = fst' a1 b1 :**: fst' a2 b2
   snd' (a1 :**: a2) (b1 :**: b2) = snd' a1 b1 :**: snd' a2 b2
   (f1 :**: f2) &&& (g1 :**: g2) = (f1 &&& g1) :**: (f2 &&& g2)
+
+instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
+  type p && q = p :*: q
+  fst' Prof{} Prof{} = Prof fstP
+  snd' Prof{} Prof{} = Prof sndP
+  Prof l &&& Prof r = Prof (product l r)
 
 
 type ProductFunctor :: PRO k (k, k)

@@ -12,5 +12,5 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Yoneda (p :: j -> k -> Type
   dimap l r (Yoneda k) = l // r // Yoneda \ca bd -> k (l . ca) (bd . r)
   r \\ Yoneda{} = r
 
-yoneda :: (CategoryOf j, CategoryOf k, Ob a, Ob b) => Yoneda (p :: j -> k -> Type) a b -> p a b
+yoneda :: (CategoryOf j, CategoryOf k) => Yoneda (p :: j -> k -> Type) a b -> p a b
 yoneda (Yoneda k) = k id id
