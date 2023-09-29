@@ -10,7 +10,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
 newtype OP k = OP k
 type family UNOP (a :: OP k) :: k where UNOP ('OP k) = k
 
-type Op :: PRO k1 k2 -> PRO (OP k2) (OP k1)
+type Op :: PRO j k -> PRO (OP k) (OP j)
 data Op c a b where
   Op :: { getOp :: c b a } -> Op c ('OP a) ('OP b)
 

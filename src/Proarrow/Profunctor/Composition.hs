@@ -40,25 +40,31 @@ instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) whe
   corepMap f = corepMap @p (corepMap @q f)
 
 
-type Comp :: TENSOR (PRO k k)
-data Comp p qr where
-  Comp :: (Profunctor q, Profunctor r) => p ~> q :.: r -> Comp p '(q, r)
+type Compose :: TENSOR (PRO k k)
+data Compose p qr where
+  Compose :: (Profunctor q, Profunctor r) => p ~> q :.: r -> Compose p '(q, r)
 
-instance CategoryOf k => Profunctor (Comp :: TENSOR (PRO k k)) where
-  dimap l r@(:**:){} (Comp f) = Comp (repMap @Comp r . f . l) \\ r
-  r \\ Comp f = r \\ f
+instance CategoryOf k => Profunctor (Compose :: TENSOR (PRO k k)) where
+  dimap l r@(:**:){} (Compose f) = Compose (repMap @Compose r . f . l) \\ r
+  r \\ Compose f = r \\ f
 
-instance CategoryOf k => Representable (Comp :: TENSOR (PRO k k)) where
-  type Comp % '(p, q) = p :.: q
-  index (Comp f) = f
-  tabulate = Comp
+instance CategoryOf k => Representable (Compose :: TENSOR (PRO k k)) where
+  type Compose % '(p, q) = p :.: q
+  index (Compose f) = f
+  tabulate = Compose
   repMap (f :**: g) = getNat (map f) . map g \\ f \\ g
 
-instance CategoryOf k => Tensor (Comp :: TENSOR (PRO k k)) where
-  type U Comp = Id
+instance CategoryOf k => Tensor (Compose :: TENSOR (PRO k k)) where
+  type U Compose = Id
   leftUnitor = Prof \(Id f :.: p) -> lmap f p
   leftUnitorInv = Prof \p -> Id id :.: p \\ p
   rightUnitor = Prof \(p :.: Id f) -> rmap f p
   rightUnitorInv = Prof \p -> p :.: Id id \\ p
   associator' Prof{} Prof{} Prof{} = Prof \((p :.: q) :.: r) -> p :.: (q :.: r)
   associatorInv' Prof{} Prof{} Prof{} = Prof \(p :.: (q :.: r)) -> (p :.: q) :.: r
+
+
+-- | Horizontal composition
+o :: forall {i} {j} {k} (p :: PRO i j) (q :: PRO i j) (r :: PRO j k) (s :: PRO j k)
+  . Prof p q -> Prof r s -> Prof (p :.: r) (q :.: s)
+Prof pq `o` Prof rs = Prof \(p :.: r) -> pq p :.: rs r

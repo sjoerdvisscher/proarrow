@@ -17,7 +17,7 @@ type family UNKIND (a :: KIND) :: Type where UNKIND ('KIND k) = k
 
 type Cat :: CAT KIND
 data Cat a b where
-  Cat :: Profunctor (p :: PRO k1 k2) => Cat ('KIND k1) ('KIND k2)
+  Cat :: Profunctor (p :: PRO j k) => Cat ('KIND j) ('KIND k)
 
 type instance (~>) = Cat
 
@@ -57,7 +57,7 @@ instance (CategoryOf k1, CategoryOf k2) => Profunctor (SndCat :: PRO (k1, k2) k2
   dimap (l1 :**: l2) r (SndCat f) = SndCat (r . f . l2) \\ l1
   r \\ SndCat f = r \\ f
 
-type (:&&&:) :: PRO k1 k2 -> PRO k1 k3 -> PRO k1 (k2, k3)
+type (:&&&:) :: PRO i j -> PRO i k -> PRO i (j, k)
 data (p :&&&: q) a b where
   (:&&&:) :: p a b -> q a c -> (p :&&&: q) a '(b, c)
 instance (Profunctor p, Profunctor q) => Profunctor (p :&&&: q) where

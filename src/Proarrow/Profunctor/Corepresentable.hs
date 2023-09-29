@@ -6,9 +6,9 @@ import Data.Kind (Constraint)
 import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>))
 import Proarrow.Object (obj)
 
-type Corepresentable :: forall {k1} {k2}. PRO k1 k2 -> Constraint
-class Profunctor p => Corepresentable (p :: PRO k1 k2) where
-  type p %% (a :: k1) :: k2
+type Corepresentable :: forall {j} {k}. PRO j k -> Constraint
+class Profunctor p => Corepresentable (p :: PRO j k) where
+  type p %% (a :: j) :: k
   coindex :: p a b -> p %% a ~> b
   cotabulate :: Ob a => (p %% a ~> b) -> p a b
   corepMap :: (a ~> b) -> p %% a ~> p %% b

@@ -2,26 +2,30 @@ module Proarrow.Category.Instance.Free where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CAT, Category(..), Profunctor(..), (:~>), dimapDefault)
-import Proarrow.Object (VacuusOb)
-import Proarrow.Promonad (Promonad(..))
-import Proarrow.Profunctor.Composition ((:.:)(..))
+import Proarrow.Core (CAT, Category(..), Profunctor(..), (:~>), type (~>), dimapDefault)
 
 infixr 4 :|
 
-type Free :: (k -> k -> Type) -> CAT k
-data Free g a b where
-  FreeId :: Free g a a
-  (:|) :: g a b -> Free g b c -> Free g a c
+newtype FREE (g :: k -> k -> Type) = F k
+type family UNF (a :: FREE g) where UNF (F k) = k
 
-instance (Category (Free g), VacuusOb k) => Profunctor (Free (g :: k -> k -> Type)) where
-  dimap = dimapDefault
+type Free :: CAT (FREE g)
+data Free a b where
+  FreeId :: Free (F a) (F a)
+  (:|) :: g a b -> Free (F b :: FREE g) (F c) -> Free (F a :: FREE g) (F c)
 
 class Rewrite g where
-  rewriteAfterCons :: Free g :~> Free g
+  rewriteAfterCons :: (Free :: CAT (FREE g)) :~> (Free :: CAT (FREE g))
 
-instance (Rewrite g, Category (Free g), VacuusOb k) => Promonad (Free (g :: k -> k -> Type)) where
-  unit f = f
-  mult (FreeId :.: a) = a
-  mult (a :.: FreeId) = a
-  mult ((g :| b) :.: a) = rewriteAfterCons (g :| mult (b :.: a))
+type instance (~>) = Free
+instance Rewrite g => Category (Free :: CAT (FREE g)) where
+  type Ob a = a ~ F (UNF a)
+  id = FreeId
+  FreeId . a = a
+  a . FreeId = a
+  a . (g :| b) = rewriteAfterCons (g :| (a . b)) \\ a
+
+instance Rewrite g => Profunctor (Free :: CAT (FREE g)) where
+  dimap = dimapDefault
+  r \\ FreeId = r
+  r \\ _ :| _ = r

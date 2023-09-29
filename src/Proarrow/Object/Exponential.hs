@@ -17,6 +17,8 @@ import Proarrow.Profunctor.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
 
 
+infixr 2 ~~>
+
 class (HasProducts k) => CartesianClosed k where
   type (a :: k) ~~> (b :: k) :: k
   curry' :: Obj (a :: k) -> Obj b -> a && b ~> c -> a ~> b ~~> c

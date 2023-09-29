@@ -13,7 +13,7 @@ import Proarrow.Profunctor.Star (Star(..))
 
 type j |> p = Ran ('OP j) p
 
-type Ran :: OP (PRO k3 k1) -> PRO k3 k2 -> PRO k1 k2
+type Ran :: OP (PRO i j) -> PRO i k -> PRO j k
 data Ran j p a b where
   Ran :: (Ob a, Ob b) => { getRan :: forall x. Ob x => j x a -> p x b } -> Ran ('OP j) p a b
 

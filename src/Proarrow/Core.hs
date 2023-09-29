@@ -27,8 +27,8 @@ type CategoryOf k = Category ((~>) :: CAT k)
 
 type p :~> q = forall a b. p a b ~> q a b
 
-type Profunctor :: forall {k1} {k2}. PRO k1 k2 -> Constraint
-class (CategoryOf k1, CategoryOf k2) => Profunctor (p :: PRO k1 k2) where
+type Profunctor :: forall {j} {k}. PRO j k -> Constraint
+class (CategoryOf j, CategoryOf k) => Profunctor (p :: PRO j k) where
   dimap :: c ~> a -> b ~> d -> p a b -> p c d
   (\\) :: ((Ob a, Ob b) => r) -> p a b -> r
   default (\\) :: (Ob a, Ob b) => ((Ob a, Ob b) => r) -> p a b -> r

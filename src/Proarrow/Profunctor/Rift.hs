@@ -11,7 +11,7 @@ import Proarrow.Profunctor.Star (Star(..))
 
 type p <| j = Rift ('OP j) p
 
-type Rift :: OP (PRO k2 k3) -> PRO k1 k3 -> PRO k1 k2
+type Rift :: OP (PRO k i) -> PRO j i -> PRO j k
 data Rift j p a b where
   Rift :: (Ob a, Ob b) => { getRift :: forall x. Ob x => j b x -> p a x } -> Rift ('OP j) p a b
 
@@ -28,6 +28,13 @@ instance Profunctor j => Functor (Rift ('OP j)) where
 instance Functor Rift where
   map (Op (Prof n)) = Nat (Prof \(Rift k) -> Rift (k . n))
 
--- instance Profunctor j => Adjunction (Star ((:.:) j)) (Star (Rift ('OP j))) where
---   unit = unitFromStarUnit (Prof \a -> Rift (a :.:) \\ a)
---   counit = counitFromStarCounit (Prof \(j :.: r) -> runRift j r)
+newtype Precompose j p a b = Precompose { getPrecompose :: (p :.: j) a b }
+instance (Profunctor j, Profunctor p) => Profunctor (Precompose j p) where
+  dimap l r (Precompose pj) = Precompose (dimap l r pj)
+  r \\ Precompose pj = r \\ pj
+instance Profunctor j => Functor (Precompose j) where
+  map f = f // Prof \(Precompose pj) -> Precompose (getProf (getNat (map f)) pj)
+
+instance Profunctor j => Adjunction (Star (Precompose j)) (Star (Rift ('OP j))) where
+  unit = unitFromStarUnit (Prof \p -> p // Rift \j -> Precompose (p :.: j))
+  counit = counitFromStarCounit (Prof \(Precompose (r :.: j)) -> runRift j r)
