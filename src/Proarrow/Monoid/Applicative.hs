@@ -4,15 +4,17 @@ module Proarrow.Monoid.Applicative where
 import Data.Kind (Constraint)
 import Data.Function (($))
 
-import Proarrow.Core (type (~>), Category(..), (//))
-import Proarrow.Functor (Functor)
-import Proarrow.Object.Terminal (El)
+import Proarrow.Core (type (~>), Category(..), (//), lmap, Profunctor)
+import Proarrow.Functor (Functor(..))
+import Proarrow.Object.Terminal (El, terminate)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), HasCoproducts, CoproductFunctor)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), HasProducts, ProductFunctor)
 import Proarrow.Monoid (Monoid(..))
 import Proarrow.Profunctor.Day (Day(..), DayUnit(..))
 import Proarrow.Profunctor.Star (Star(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Object (obj)
+
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
 class (HasProducts j, HasProducts k, Functor f) => Applicative (f :: j -> k) where
@@ -20,7 +22,7 @@ class (HasProducts j, HasProducts k, Functor f) => Applicative (f :: j -> k) whe
   liftA2 :: (a && b ~> c) -> f a && f b ~> f c
 
 type Alternative :: forall {j} {k}. (j -> k) -> Constraint
-class (HasCoproducts j, HasProducts k, Functor f) => Alternative (f :: j -> k) where
+class (HasCoproducts j, Applicative f) => Alternative (f :: j -> k) where
   empty :: El (f a)
   alt :: (a || b ~> c) -> f a && f b ~> f c
 
@@ -35,3 +37,24 @@ instance (HasCoproducts j, HasProducts k) => Monoid (Alternative f) (Star (f :: 
   mult = Prof $ \(Day (Star @x @b bfx) (Star @y cfy) abc xyz) ->
     xyz // Star $ alt @f @x @y xyz . (bfx *** cfy) . abc
   unit = Prof $ \(DayUnit a x) -> x // Star $ empty . a
+
+
+class Profunctor p => Proapplicative p where
+  pureP :: Ob a => El b -> p a b
+  apP :: p a b -> p a c -> p a (b && c)
+
+instance Applicative f => Proapplicative (Star f) where
+  pureP b = b // Star (lmap terminate (pure b))
+  apP (Star @b f) (Star @c g) =
+    let bc = obj @b *** obj @c
+    in bc // Star (liftA2 @f @b @c bc . (f &&& g))
+
+class Proapplicative p => Proalternative p where
+  emptyP :: (Ob a, Ob b) => p a b
+  altP :: p a b -> p a b -> p a b
+
+instance Alternative f => Proalternative (Star f) where
+  emptyP = Star (empty . terminate)
+  altP (Star @b f) (Star g) =
+    let bb = obj @b ||| obj @b
+    in bb // Star (alt @f @b @b bb . (f &&& g))
