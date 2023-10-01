@@ -8,7 +8,7 @@ import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (PRO, (:~>), Category (..), Profunctor(..), type (~>), (//), CategoryOf)
-import Proarrow.Profunctor.Codiscrete (Codiscrete(..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor(TerminalProfunctor'))
 import Proarrow.Profunctor.Representable (Representable (..), withRepCod)
 import Proarrow.Profunctor.Rift (type (<|), Rift (..))
 import Proarrow.Object (Obj)
@@ -23,7 +23,7 @@ class HasLimits (j :: PRO a i) k where
   limit :: Representable (d :: PRO k i) => Limit j d :~> d <| j
   limitInv :: Representable (d :: PRO k i) => d <| j :~> Limit j d
 
-type Unweighted = Codiscrete
+type Unweighted = TerminalProfunctor
 
 
 type TerminalLimit :: PRO k VOID -> PRO k UNIT
@@ -32,7 +32,7 @@ data TerminalLimit d a b where
 
 instance HasTerminalObject k => HasLimits (Unweighted :: PRO UNIT VOID) k where
   type Limit Unweighted d = TerminalLimit d
-  limit (TerminalLimit @d f) = f // Rift \(Codiscrete _ o) -> tabulate (case o of . f)
+  limit (TerminalLimit @d f) = f // Rift \(TerminalProfunctor' _ o) -> tabulate (case o of . f)
   limitInv Rift{} = TerminalLimit terminate
 
 
@@ -52,10 +52,10 @@ instance (HasBinaryProducts k, Representable d) => Representable (ProductLimit d
 
 instance HasBinaryProducts k => HasLimits (Unweighted :: PRO UNIT (COPRODUCT UNIT UNIT)) k where
   type Limit Unweighted d = ProductLimit d
-  limit (ProductLimit @d f) = f // Rift \(Codiscrete _ o) -> tabulate $ choose @_ @d o . f
+  limit (ProductLimit @d f) = f // Rift \(TerminalProfunctor' _ o) -> tabulate $ choose @_ @d o . f
   limitInv (Rift k) =
-    let l = k (Codiscrete Unit (InjL Unit))
-        r = k (Codiscrete Unit (InjR Unit))
+    let l = k (TerminalProfunctor' Unit (InjL Unit))
+        r = k (TerminalProfunctor' Unit (InjR Unit))
     in ProductLimit $ index l &&& index r
 
 choose

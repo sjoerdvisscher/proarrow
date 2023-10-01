@@ -10,12 +10,12 @@ import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod)
 import Proarrow.Profunctor.Ran (type (|>), Ran(..))
-import Proarrow.Profunctor.Codiscrete (Codiscrete(..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor(TerminalProfunctor'))
 import Proarrow.Object (Obj)
 import Proarrow.Object.Initial (HasInitialObject(..), initiate)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), left, right)
 
-type Unweighted = Codiscrete
+type Unweighted = TerminalProfunctor
 
 type HasColimits :: PRO i a -> Type -> Constraint
 class HasColimits (j :: PRO i a) k where
@@ -31,7 +31,7 @@ data InitialLimit d a b where
 
 instance HasInitialObject k => HasColimits (Unweighted :: PRO VOID UNIT) k where
   type Colimit Unweighted d = InitialLimit d
-  colimit (InitialLimit @d f) = Ran \(Codiscrete o _) -> cotabulate $ f . case o of
+  colimit (InitialLimit @d f) = Ran \(TerminalProfunctor' o _) -> cotabulate $ f . case o of
   colimitInv Ran{} = InitialLimit initiate
 
 
@@ -45,10 +45,10 @@ instance CategoryOf k => Profunctor (CoproductColimit d :: PRO UNIT k) where
 
 instance HasBinaryCoproducts k => HasColimits (Unweighted :: PRO (COPRODUCT UNIT UNIT) UNIT) k where
   type Colimit Unweighted d = CoproductColimit d
-  colimit (CoproductColimit @d f) = Ran \(Codiscrete o _) -> cotabulate $ f . cochoose @_ @d o
+  colimit (CoproductColimit @d f) = Ran \(TerminalProfunctor' o _) -> cotabulate $ f . cochoose @_ @d o
   colimitInv (Ran k) =
-    let l = k (Codiscrete (InjL Unit) Unit)
-        r = k (Codiscrete (InjR Unit) Unit)
+    let l = k (TerminalProfunctor' (InjL Unit) Unit)
+        r = k (TerminalProfunctor' (InjR Unit) Unit)
     in CoproductColimit $ coindex l ||| coindex r
 
 cochoose
