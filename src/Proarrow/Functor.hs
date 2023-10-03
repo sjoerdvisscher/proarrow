@@ -3,7 +3,7 @@ module Proarrow.Functor where
 
 import Data.Functor.Const (Const (..))
 import Data.Kind (Constraint, Type)
-import Prelude (const, fmap)
+import Prelude qualified as P
 
 import Proarrow.Core (Category(..), CategoryOf, type (~>), (\\))
 import Proarrow.Object (Obj, obj)
@@ -19,14 +19,16 @@ withFCod' :: forall f a r. (Functor f, Ob a) => (Ob (f a) => Obj (f a) -> r) -> 
 withFCod' r = let o = map @f (obj @a) in r o \\ o
 
 withFCod :: forall f a r. (Functor f, Ob a) => (Ob (f a) => r) -> r
-withFCod r = withFCod' @f @a (const r)
+withFCod r = withFCod' @f @a (P.const r)
 
 
-instance Functor ((,) a) where
-  map = fmap
+newtype Prelude f a = Prelude { getPrelude :: f a }
+instance P.Functor f => Functor (Prelude f) where
+  map f = Prelude . P.fmap f . getPrelude
 
-instance Functor ((->) a) where
-  map = fmap
+deriving via Prelude ((,) a) instance Functor ((,) a)
+deriving via Prelude ((->) a) instance Functor ((->) a)
+deriving via Prelude [] instance Functor []
 
 instance CategoryOf k => Functor (Const x :: k -> Type) where
   map _ (Const x) = Const x

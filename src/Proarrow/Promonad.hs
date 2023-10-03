@@ -1,5 +1,7 @@
 module Proarrow.Promonad where
 
+import Prelude qualified as P
+
 import Proarrow.Core (CAT, PRO, Category(..), Profunctor(..), type (~>), dimapDefault, lmap, rmap, CategoryOf)
 import Proarrow.Profunctor.Composition ((:.:)(..), Compose)
 import Proarrow.Adjunction (Adjunction)
@@ -7,10 +9,17 @@ import Proarrow.Adjunction qualified as Adj
 import Proarrow.Monoid qualified as Mon
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Profunctor.Identity (Id(..))
+import Proarrow.Profunctor.Star (Star(..))
+import Proarrow.Functor (Prelude(..))
 
 class Profunctor p => Promonad p where
   unit :: Ob a => p a a
   mult :: p a b -> p b c -> p a c
+
+instance P.Monad m => Promonad (Star (Prelude m)) where
+  unit = Star (Prelude . P.pure)
+  mult (Star f) (Star g) = Star \a -> Prelude (getPrelude (f a) P.>>= (getPrelude . g))
+
 
 newtype KLEISLI (p :: CAT k) = KL { unKL :: k }
 -- can't use unKL at the type level
