@@ -55,3 +55,13 @@ instance Category (->) where
 
 instance Profunctor (->) where
   dimap = dimapDefault
+
+
+
+-- | A helper type family to unwrap a wrapped kind.
+-- This is needed because the field selector functions of newtypes have to be
+-- lower case and therefore cannot be used at the type level.
+type family UN (w :: j -> k) (wa :: k) :: j
+
+-- | @Is w a@ checks that the kind @a@ is a kind wrapped by @w@.
+type Is w a = a ~ w (UN w a)

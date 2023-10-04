@@ -2,7 +2,7 @@ module Proarrow.Promonad where
 
 import Prelude qualified as P
 
-import Proarrow.Core (CAT, PRO, Category(..), Profunctor(..), type (~>), dimapDefault, lmap, rmap, CategoryOf)
+import Proarrow.Core (CAT, PRO, UN, Is, Category(..), Profunctor(..), type (~>), dimapDefault, lmap, rmap, CategoryOf)
 import Proarrow.Profunctor.Composition ((:.:)(..), Compose)
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Adjunction qualified as Adj
@@ -11,6 +11,7 @@ import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Profunctor.Identity (Id(..))
 import Proarrow.Profunctor.Star (Star(..))
 import Proarrow.Functor (Prelude(..))
+
 
 class Profunctor p => Promonad p where
   unit :: Ob a => p a a
@@ -21,9 +22,8 @@ instance P.Monad m => Promonad (Star (Prelude m)) where
   mult (Star f) (Star g) = Star \a -> Prelude (getPrelude (f a) P.>>= (getPrelude . g))
 
 
-newtype KLEISLI (p :: CAT k) = KL { unKL :: k }
--- can't use unKL at the type level
-type family UNKL (a :: KLEISLI p) where UNKL (KL k) = k
+newtype KLEISLI (p :: CAT k) = KL k
+type instance UN KL (KL k) = k
 
 type Kleisli :: CAT (KLEISLI p)
 data Kleisli (a :: KLEISLI p) b where
@@ -37,7 +37,7 @@ instance Promonad p => Profunctor (Kleisli :: CAT (KLEISLI p)) where
 
 -- | Every promonad makes a category.
 instance Promonad p => Category (Kleisli :: CAT (KLEISLI p)) where
-  type Ob a = (a ~ KL (UNKL a), Ob (UNKL a))
+  type Ob a = (Is KL a, Ob (UN KL a))
   id = Kleisli (unit @p)
   Kleisli f . Kleisli g = Kleisli (mult @p g f)
 

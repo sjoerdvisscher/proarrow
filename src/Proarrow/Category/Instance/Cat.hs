@@ -5,25 +5,25 @@ import Data.Kind (Type)
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
-import Proarrow.Core (CAT, PRO, Category(..), Profunctor(..), type (~>), dimapDefault, CategoryOf)
+import Proarrow.Core (CAT, PRO, UN, Is, Category(..), Profunctor(..), type (~>), dimapDefault, CategoryOf)
 import Proarrow.Profunctor.Identity (Id)
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
 
 
-newtype KIND = KIND Type
-type family UNKIND (a :: KIND) :: Type where UNKIND ('KIND k) = k
+newtype KIND = K Type
+type instance UN K (K k) = k
 
 type Cat :: CAT KIND
 data Cat a b where
-  Cat :: Profunctor (p :: PRO j k) => Cat ('KIND j) ('KIND k)
+  Cat :: Profunctor (p :: PRO j k) => Cat (K j) (K k)
 
 type instance (~>) = Cat
 
 -- | The category of categories and profunctors between them.
 instance Category Cat where
-  type Ob c = (c ~ 'KIND (UNKIND c), Category ((~>) :: CAT (UNKIND c)))
+  type Ob c = (Is K c, Category ((~>) :: CAT (UN K c)))
   id = Cat @_ @_ @Id
   Cat @_ @_ @p . Cat @_ @_ @q = Cat @_ @_ @(q :.: p)
 
@@ -39,7 +39,7 @@ instance CategoryOf k => Profunctor (Terminate :: PRO k UNIT) where
   dimap l Unit Terminate = Terminate \\ l
   r \\ Terminate = r
 instance HasTerminalObject KIND where
-  type TerminalObject = 'KIND UNIT
+  type TerminalObject = K UNIT
   terminate' (Cat @a) = Cat @_ @_ @Terminate
 
 
@@ -65,7 +65,7 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :&&&: q) where
   r \\ (p :&&&: q) = r \\ p \\ q
 
 instance HasBinaryProducts KIND where
-  type 'KIND l && 'KIND r = 'KIND (l, r)
+  type K l && K r = K (l, r)
   fst' Cat Cat = Cat @_ @_ @FstCat
   snd' Cat Cat = Cat @_ @_ @SndCat
   Cat @_ @_ @p &&& Cat @_ @_ @q = Cat @_ @_ @(p :&&&: q)

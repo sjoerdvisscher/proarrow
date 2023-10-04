@@ -5,7 +5,7 @@ import Data.Kind (Type)
 import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Opposite (OP(..), Op (..))
+import Proarrow.Category.Opposite (OPPOSITE(..), Op (..))
 import Proarrow.Core (PRO, Category (..), Profunctor(..), type (~>), CategoryOf, dimapDefault, (//))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.BinaryProduct (HasProducts, HasBinaryProducts (..), ProductFunctor)
@@ -57,17 +57,17 @@ instance (CategoryOf j, CategoryOf k) => CartesianClosed (PRO j k) where
 
 
 
-type ExponentialFunctor :: PRO k (OP k, k)
+type ExponentialFunctor :: PRO k (OPPOSITE k, k)
 
 data ExponentialFunctor a b where
-  ExponentialFunctor :: (Ob c, Ob d) => a ~> (c ~~> d) -> ExponentialFunctor a '( 'OP c, d )
+  ExponentialFunctor :: (Ob c, Ob d) => a ~> (c ~~> d) -> ExponentialFunctor a '(OP c, d)
 
-instance CartesianClosed k => Profunctor (ExponentialFunctor :: PRO k (OP k, k)) where
+instance CartesianClosed k => Profunctor (ExponentialFunctor :: PRO k (OPPOSITE k, k)) where
   dimap l (Op r1 :**: r2) (ExponentialFunctor f) = ExponentialFunctor ((r2 ^^^ r1) . f . l) \\ r1 \\ r2
   r \\ ExponentialFunctor f = r \\ f
 
-instance CartesianClosed k => Representable (ExponentialFunctor :: PRO k (OP k, k)) where
-  type ExponentialFunctor % '( 'OP a, b ) = a ~~> b
+instance CartesianClosed k => Representable (ExponentialFunctor :: PRO k (OPPOSITE k, k)) where
+  type ExponentialFunctor % '(OP a, b) = a ~~> b
   index (ExponentialFunctor f) = f
   tabulate = ExponentialFunctor
   repMap (Op f :**: g) = g ^^^ f
