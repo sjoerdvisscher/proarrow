@@ -7,15 +7,15 @@ import qualified Prelude as P
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Opposite (OPPOSITE(..), Op (..))
 import Proarrow.Core (PRO, Category (..), Profunctor(..), type (~>), CategoryOf, dimapDefault, (//))
-import Proarrow.Object (Obj, obj)
+import Proarrow.Object (Obj, obj, src)
 import Proarrow.Object.BinaryProduct (HasProducts, HasBinaryProducts (..), ProductFunctor)
 import Proarrow.Profunctor.Representable (Representable(..))
 import Proarrow.Object.Terminal (El)
-import Proarrow.Category.Monoidal (associator, Tensor (..))
+import Proarrow.Category.Monoidal (leftUnitor, associator)
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Profunctor.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
-
+import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 
 infixr 2 ~~>
 
@@ -32,12 +32,12 @@ uncurry :: forall {k} (a :: k) b c. (CartesianClosed k, Ob b, Ob c) => a ~> b ~~
 uncurry = uncurry' (obj @b) (obj @c)
 
 comp :: forall {k} (a :: k) b c. (CartesianClosed k, Ob a, Ob b, Ob c) => (b ~~> c) && (a ~~> b) ~> a ~~> c
-comp = let b2c = obj @c ^^^ obj @b; a2b = obj @b ^^^ obj @a in
-  curry @_ @a @c (eval @b @c . (b2c *** eval @a @b) . associator @ProductFunctor @(b ~~> c) @(a ~~> b) @a)
+comp = let a = obj @a; b2c = obj @c ^^^ obj @b; a2b = obj @b ^^^ a in
+  curry @_ @a @c (eval @b @c . (b2c *** eval @a @b) . associator @ProductFunctor b2c a2b a)
   \\ a2b \\ b2c \\ (b2c *** a2b)
 
 mkExponential :: forall {k} a b. CartesianClosed k => (a :: k) ~> b -> El (a ~~> b)
-mkExponential ab = curry @_ @a (ab . leftUnitor @ProductFunctor @a) \\ ab
+mkExponential ab = curry @_ @a (ab . leftUnitor @ProductFunctor (src ab)) \\ ab
 
 eval :: forall {k} a b. (CartesianClosed k, Ob a, Ob b) => ((a :: k) ~~> b) && a ~> b
 eval = uncurry @_ @a @b (obj @b ^^^ obj @a)
@@ -48,6 +48,12 @@ instance CartesianClosed Type where
   curry' _ _ = P.curry
   uncurry' _ _ = P.uncurry
   (^^^) = P.flip dimapDefault
+
+instance CartesianClosed UNIT where
+  type U ~~> U = U
+  curry' Unit Unit Unit = Unit
+  uncurry' Unit Unit Unit = Unit
+  Unit ^^^ Unit = Unit
 
 instance (CategoryOf j, CategoryOf k) => CartesianClosed (PRO j k) where
   type p ~~> q = p :~>: q

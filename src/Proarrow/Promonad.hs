@@ -1,14 +1,12 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Proarrow.Promonad where
 
 import Prelude qualified as P
 
-import Proarrow.Core (CAT, PRO, UN, Is, Category(..), Profunctor(..), type (~>), dimapDefault, lmap, rmap, CategoryOf)
-import Proarrow.Profunctor.Composition ((:.:)(..), Compose)
+import Proarrow.Core (CAT, PRO, UN, Is, Category(..), Profunctor(..), type (~>), dimapDefault, lmap, rmap)
+import Proarrow.Profunctor.Composition ((:.:)(..))
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Adjunction qualified as Adj
-import Proarrow.Monoid qualified as Mon
-import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Profunctor.Identity (Id(..))
 import Proarrow.Profunctor.Star (Star(..))
 import Proarrow.Functor (Prelude(..))
 
@@ -44,11 +42,6 @@ instance Promonad p => Category (Kleisli :: CAT (KLEISLI p)) where
 instance Adjunction p q => Promonad (q :.: p) where
   unit = Adj.unit
   mult (q' :.: p') (q :.: p) = rmap (Adj.counit (p' :.: q)) q' :.: p
-
-instance CategoryOf k => Mon.Monoid (Promonad p) (p :: PRO k k) where
-  type Ten (Promonad p) = Compose
-  unit = Prof \(Id f) -> rmap f unit \\ f
-  mult = Prof \(p :.: q) -> mult p q
 
 
 type KleisliFree :: forall (p :: PRO k k) -> PRO (KLEISLI p) k

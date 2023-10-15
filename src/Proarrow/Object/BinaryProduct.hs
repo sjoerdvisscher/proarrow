@@ -5,13 +5,14 @@ import Data.Kind (Type)
 import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (Tensor(..))
+import Proarrow.Category.Monoidal (Tensor (..))
 import Proarrow.Core (PRO, CategoryOf, Category (..), Profunctor(..), type (~>), (//))
 import Proarrow.Object (Obj, obj)
-import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Representable (Representable(..))
-import Proarrow.Profunctor.Product ((:*:) (..), product)
+import Proarrow.Profunctor.Product ((:*:) (..), prod)
 import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 
 
 class CategoryOf k => HasBinaryProducts k where
@@ -24,8 +25,17 @@ class CategoryOf k => HasBinaryProducts k where
 
 fst :: forall {k} (a :: k) (b :: k). (HasBinaryProducts k, Ob a, Ob b) => (a && b) ~> a
 fst = fst' (obj @a) (obj @b)
+
 snd :: forall {k} (a :: k) (b :: k). (HasBinaryProducts k, Ob a, Ob b) => (a && b) ~> b
 snd = snd' (obj @a) (obj @b)
+
+
+first :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryProducts k, Ob c) => a ~> b -> (a && c) ~> (b && c)
+first f = f *** obj @c
+
+second :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryProducts k, Ob c) => a ~> b -> (c && a) ~> (c && b)
+second f = obj @c *** f
+
 
 type HasProducts k = (HasTerminalObject k, HasBinaryProducts k)
 
@@ -34,6 +44,12 @@ instance HasBinaryProducts Type where
   fst' _ _ = P.fst
   snd' _ _ = P.snd
   f &&& g = \a -> (f a, g a)
+
+instance HasBinaryProducts UNIT where
+  type 'U && 'U = 'U
+  fst' Unit Unit = Unit
+  snd' Unit Unit = Unit
+  Unit &&& Unit = Unit
 
 instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
   type '(a1, a2) && '(b1, b2) = '(a1 && b1, a2 && b2)
@@ -45,12 +61,12 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
   type p && q = p :*: q
   fst' Prof{} Prof{} = Prof fstP
   snd' Prof{} Prof{} = Prof sndP
-  Prof l &&& Prof r = Prof (product l r)
+  Prof l &&& Prof r = Prof (prod l r)
 
 
 type ProductFunctor :: PRO k (k, k)
 data ProductFunctor a b where
-  ProductFunctor :: (Ob c, Ob d) => a ~> (c && d) -> ProductFunctor a '(c, d)
+  ProductFunctor :: forall a c d. (Ob c, Ob d) => a ~> (c && d) -> ProductFunctor a '(c, d)
 
 instance HasBinaryProducts k => Profunctor (ProductFunctor :: PRO k (k, k)) where
   dimap l (r1 :**: r2) (ProductFunctor f) = r1 // r2 // ProductFunctor ((r1 *** r2) . f . l)
@@ -64,13 +80,9 @@ instance HasBinaryProducts k => Representable (ProductFunctor :: PRO k (k, k)) w
 
 instance HasProducts k => Tensor (ProductFunctor :: PRO k (k, k)) where
   type U (ProductFunctor :: PRO k (k, k)) = TerminalObject :: k
-  leftUnitor :: forall a. Ob (a :: k) => (ProductFunctor % '(TerminalObject, a)) ~> a
-  leftUnitor = snd @(TerminalObject :: k) @(a :: k)
-  leftUnitorInv :: forall a. Ob (a :: k) => a ~> (ProductFunctor % '(TerminalObject, a))
-  leftUnitorInv = terminate @a &&& obj @a
-  rightUnitor :: forall a. Ob (a :: k) => (ProductFunctor % '(a, TerminalObject)) ~> a
-  rightUnitor = fst @(a :: k) @(TerminalObject :: k)
-  rightUnitorInv :: forall a. Ob (a :: k) => a ~> (ProductFunctor % '(a, TerminalObject))
-  rightUnitorInv = obj @a &&& terminate @a
-  associator' a b c = (fst' a b . fst' (a *** b) c) &&& (snd' a b *** c) \\ (a *** b)
-  associatorInv' a b c = (a *** fst' b c) &&& (snd' b c . snd' a (b *** c)) \\ (a *** b)
+  leftUnitor = snd' (obj @(TerminalObject :: k))
+  leftUnitorInv a = terminate' a &&& a
+  rightUnitor a = fst' a (obj @(TerminalObject :: k))
+  rightUnitorInv a = a &&& terminate' a
+  associator a b c = (fst' a b . fst' (a *** b) c) &&& (snd' a b *** c) \\ (a *** b)
+  associatorInv a b c = (a *** fst' b c) &&& (snd' b c . snd' a (b *** c)) \\ (a *** b)

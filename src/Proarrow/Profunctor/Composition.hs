@@ -1,12 +1,9 @@
 module Proarrow.Profunctor.Composition where
 
-import Proarrow.Core (PRO, Profunctor(..), Category(..), type (~>), lmap, rmap, CategoryOf)
+import Proarrow.Core (PRO, Profunctor(..), Category(..), type (~>), lmap, rmap)
 import Proarrow.Functor (Functor(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Nat (Nat(..))
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (Tensor(..), TENSOR)
-import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable(..), withRepCod)
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod)
 
@@ -25,43 +22,22 @@ instance Profunctor p => Functor ((:.:) p) where
 instance Functor (:.:) where
   map (Prof n) = Nat (Prof \(p :.: q) -> n p :.: q)
 
+dimapComp :: (a ~> b) -> (c ~> d) -> a :.: c ~> b :.: d
+dimapComp f g = getNat (map f) . map g \\ f \\ g
+
 instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)
-  index (p :.: q) = repMap @q (index p) . index q
+  index (p :.: q) = repMap @p (index q) . index p
   tabulate :: forall a b. Ob b => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
   tabulate f = withRepCod @q @b (tabulate f :.: tabulate id)
   repMap f = repMap @p (repMap @q f)
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where
   type (p :.: q) %% a = q %% (p %% a)
-  coindex (p :.: q) = corepMap @p (coindex q) . coindex p
+  coindex (p :.: q) = coindex q . corepMap @q (coindex p)
   cotabulate :: forall a b. Ob a => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
   cotabulate f = withCorepCod @p @a (cotabulate id :.: cotabulate f)
-  corepMap f = corepMap @p (corepMap @q f)
-
-
-type Compose :: TENSOR (PRO k k)
-data Compose p qr where
-  Compose :: (Profunctor q, Profunctor r) => p ~> q :.: r -> Compose p '(q, r)
-
-instance CategoryOf k => Profunctor (Compose :: TENSOR (PRO k k)) where
-  dimap l r@(:**:){} (Compose f) = Compose (repMap @Compose r . f . l) \\ r
-  r \\ Compose f = r \\ f
-
-instance CategoryOf k => Representable (Compose :: TENSOR (PRO k k)) where
-  type Compose % '(p, q) = p :.: q
-  index (Compose f) = f
-  tabulate = Compose
-  repMap (f :**: g) = getNat (map f) . map g \\ f \\ g
-
-instance CategoryOf k => Tensor (Compose :: TENSOR (PRO k k)) where
-  type U Compose = Id
-  leftUnitor = Prof \(Id f :.: p) -> lmap f p
-  leftUnitorInv = Prof \p -> Id id :.: p \\ p
-  rightUnitor = Prof \(p :.: Id f) -> rmap f p
-  rightUnitorInv = Prof \p -> p :.: Id id \\ p
-  associator' Prof{} Prof{} Prof{} = Prof \((p :.: q) :.: r) -> p :.: (q :.: r)
-  associatorInv' Prof{} Prof{} Prof{} = Prof \(p :.: (q :.: r)) -> (p :.: q) :.: r
+  corepMap f = corepMap @q (corepMap @p f)
 
 
 -- | Horizontal composition

@@ -13,7 +13,7 @@ import Proarrow.Profunctor.Ran (type (|>), Ran(..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor(TerminalProfunctor'))
 import Proarrow.Object (Obj)
 import Proarrow.Object.Initial (HasInitialObject(..), initiate)
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), left, right)
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), lft, rgt)
 
 type Unweighted = TerminalProfunctor
 
@@ -56,5 +56,5 @@ cochoose
   .  (HasBinaryCoproducts k, Corepresentable d)
   => Obj b -> (d %% b) ~> ((d %% L U) || (d %% R U))
 cochoose b = withCorepCod @d @(L U) $ withCorepCod @d @(R U) $ case b of
-  (InjL Unit) -> left @(d %% L U) @(d %% R U)
-  (InjR Unit) -> right @(d %% L U) @(d %% R U)
+  (InjL Unit) -> lft @(d %% L U) @(d %% R U)
+  (InjR Unit) -> rgt @(d %% L U) @(d %% R U)

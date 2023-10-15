@@ -2,57 +2,68 @@ module Proarrow.Profunctor.Day where
 
 import Data.Function (($))
 
-import Proarrow.Core (BI, PRO, Profunctor(..), Category(..), type (~>), CategoryOf)
+import Proarrow.Core (PRO, Profunctor(..), Category(..), CategoryOf, (//), (:~>))
 import Proarrow.Functor (Functor(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (Tensor(..))
-import Proarrow.Profunctor.Star (Star)
-import Proarrow.Profunctor.Representable (Representable(..))
-import Proarrow.Object (src, tgt)
+import Proarrow.Category.Monoidal (MONOIDAL, Monoidal (..))
+import Proarrow.Category.Instance.List (List (..), type (++), obAppend)
+import Proarrow.Promonad (Promonad(..))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Object (Obj, obj)
+
+type PList :: [PRO j k] -> PRO [j] [k]
+data PList ps as bs where
+  PNil :: PList '[] '[] '[]
+  PCons :: Ob p => p a b -> PList ps as bs -> PList (p ': ps) (a ': as) (b ': bs)
+
+instance (CategoryOf j, CategoryOf k) => Profunctor (PList (ps :: [PRO j k])) where
+  dimap Nil Nil PNil = PNil
+  dimap (Cons l ls) (Cons r rs) (PCons p ps) = PCons (dimap l r p) (dimap ls rs ps)
+  dimap Nil Cons{} p = case p of
+  dimap Cons{} Nil p = case p of
+  r \\ PNil = r
+  r \\ PCons p ps = r \\ p \\ ps
+
+instance (CategoryOf j, CategoryOf k) => Functor (PList :: [PRO j k] -> PRO [j] [k]) where
+  map Nil = Prof \PNil -> PNil
+  map (Cons (Prof n) ns) = ns // Prof \(PCons p ps) -> PCons (n p) (getProf (map ns) ps)
+
+splitP
+  :: forall ps1 ps2 as bs r. Ob ps1
+  => PList (ps1 ++ ps2) as bs
+  -> (forall as1 as2 bs1 bs2. (as ~ as1 ++ as2, bs ~ bs1 ++ bs2) => PList ps1 as1 bs1 -> PList ps2 as2 bs2 -> r)
+  -> r
+splitP = h (obj @ps1)
+  where
+    h :: forall qs as' bs'. Obj qs -> PList (qs ++ ps2) as' bs'
+      -> (forall as1 as2 bs1 bs2. (as' ~ as1 ++ as2, bs' ~ bs1 ++ bs2) => PList qs as1 bs1 -> PList ps2 as2 bs2 -> r) -> r
+    h Nil ps k = k PNil ps
+    h (Cons _ qs) (PCons p ps) k = h qs ps (k . PCons p)
+
+appendP :: PList ps1 as1 bs1 -> PList ps2 as2 bs2 -> PList (ps1 ++ ps2) (as1 ++ as2) (bs1 ++ bs2)
+appendP PNil ps2 = ps2
+appendP (PCons p ps1) ps2 = PCons p (appendP ps1 ps2)
 
 
-type Day :: PRO j (j, j) -> PRO k (k, k) -> BI (PRO j k)
-data Day s t pq a b where
-  Day :: p a b -> q c d -> e ~> s % '(a, c) -> t % '(b, d) ~> f -> Day s t '(p, q) e f
 
-instance (Profunctor p, Profunctor q) => Profunctor (Day s t '(p, q)) where
-  dimap l r (Day p q f g) = Day p q (f . l) (r . g)
-  r \\ Day _ _ f g = r \\ f \\ g
+type Day :: MONOIDAL j -> MONOIDAL k -> MONOIDAL (PRO j k)
+data Day s t ps qs where
+  Day :: (Ob ps, Ob qs) => { getDay :: PList ps :~> (s :.: PList qs :.: t) } -> Day s t ps qs
 
-instance Functor (Day s t) where
-  map (Prof l :**: Prof r) = Prof (\(Day p q f g) -> Day (l p) (r q) f g)
+instance (CategoryOf j, CategoryOf k) => Profunctor (Day s t :: MONOIDAL (PRO j k)) where
+  dimap l r (Day f) = l // r // Day \ps -> case f (getProf (map l) ps) of
+    s :.: qs :.: t -> s :.: getProf (map r) qs :.: t
+  r \\ Day{} = r
+
+instance (CategoryOf j, CategoryOf k, Promonad s, Promonad t) => Promonad (Day s t :: MONOIDAL (PRO j k)) where
+  unit = Day \ps -> unit :.: ps :.: unit \\ ps
+  mult (Day f) (Day g) = Day \ps -> case f ps of
+    s1 :.: qs :.: t1 -> case g qs of
+      s2 :.: rs :.: t2 -> mult s1 s2 :.: rs :.: mult t2 t1
+
+instance (CategoryOf j, CategoryOf k, Monoidal s, Monoidal t) => Monoidal (Day s t :: MONOIDAL (PRO j k)) where
+  par (Day @ps1 @qs1 f) (Day @ps2 @qs2 g) = obAppend @ps1 @ps2 $ obAppend @qs1 @qs2 $
+    Day \ps -> splitP @ps1 @ps2 ps \ps1 ps2 -> case (f ps1, g ps2) of
+      (s1 :.: qs1 :.: t1, s2 :.: qs2 :.: t2) -> par s1 s2 :.: appendP qs1 qs2 :.: par t1 t2
 
 
-type DayUnit :: PRO j (j, j) -> PRO k (k, k) -> PRO j k
-data DayUnit s t a b where
-  DayUnit :: a ~> U s -> U t ~> b -> DayUnit s t a b
-
-instance (CategoryOf j, CategoryOf k) => Profunctor (DayUnit (s :: PRO j (j, j)) (t :: PRO k (k, k))) where
-  dimap l r (DayUnit f g) = DayUnit (f . l) (r . g)
-  r \\ DayUnit f g = r \\ f \\ g
-
-instance (Tensor s, Tensor t) => Tensor (Star (Day s t)) where
-  type U (Star (Day s t)) = DayUnit s t
-  leftUnitor = Prof $ \(Day (DayUnit l r) q f g) ->
-    dimap
-      (leftUnitor @s . repMap @s (l :**: src q) . f)
-      (g . repMap @t (r :**: tgt q) . leftUnitorInv @t)
-      q
-    \\ q
-  leftUnitorInv = Prof $ \q -> Day (DayUnit id id) q (leftUnitorInv @s) (leftUnitor @t) \\ q
-  rightUnitor = Prof $ \(Day p (DayUnit l r) f g) ->
-    dimap
-      (rightUnitor @s . repMap @s (src p :**: l) . f)
-      (g . repMap @t (tgt p :**: r) . rightUnitorInv @t)
-      p
-    \\ p
-  rightUnitorInv = Prof $ \p -> Day p (DayUnit id id) (rightUnitorInv @s) (rightUnitor @t) \\ p
-  associator' Prof{} Prof{} Prof{} = Prof $ \(Day (Day p q f g) r h i) ->
-    Day p (Day q r (repMap @s $ src q :**: src r) (repMap @t $ tgt q :**: tgt r))
-      (associator' @s (src p) (src q) (src r) . repMap @s (f :**: src r) . h)
-      (i . repMap @t (g :**: tgt r) . associatorInv' @t (tgt p) (tgt q) (tgt r))
-  associatorInv' Prof{} Prof{} Prof{} = Prof $ \(Day p (Day q r f g) h i) ->
-    Day (Day p q (repMap @s $ src p :**: src q) (repMap @t $ tgt p :**: tgt q)) r
-      (associatorInv' @s (src p) (src q) (src r) . repMap @s (src p :**: f) . h)
-      (i . repMap @t (tgt p :**: g) . associator' @t (tgt p) (tgt q) (tgt r))

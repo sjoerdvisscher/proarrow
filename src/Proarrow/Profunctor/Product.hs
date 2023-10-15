@@ -10,5 +10,5 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :*: q) where
   dimap l r (p :*: q) = dimap l r p :*: dimap l r q
   r \\ (p :*: _) = r \\ p
 
-product :: (r :~> p) -> (r :~> q) -> r :~> p :*: q
-product l r p = l p :*: r p
+prod :: (r :~> p) -> (r :~> q) -> r :~> p :*: q
+prod l r p = l p :*: r p

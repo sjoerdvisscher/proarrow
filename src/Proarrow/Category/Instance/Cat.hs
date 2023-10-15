@@ -17,7 +17,7 @@ type instance UN K (K k) = k
 
 type Cat :: CAT KIND
 data Cat a b where
-  Cat :: Profunctor (p :: PRO j k) => Cat (K j) (K k)
+  Cat :: Profunctor (p :: PRO j k) => Cat (K k) (K j)
 
 type instance (~>) = Cat
 
@@ -25,43 +25,43 @@ type instance (~>) = Cat
 instance Category Cat where
   type Ob c = (Is K c, Category ((~>) :: CAT (UN K c)))
   id = Cat @_ @_ @Id
-  Cat @_ @_ @p . Cat @_ @_ @q = Cat @_ @_ @(q :.: p)
+  Cat @_ @_ @p . Cat @_ @_ @q = Cat @_ @_ @(p :.: q)
 
 instance Profunctor Cat where
   dimap = dimapDefault
   r \\ Cat = r
 
 
-type Terminate :: PRO k UNIT
+type Terminate :: PRO UNIT k
 data Terminate a b where
-  Terminate :: Ob a => Terminate a U
-instance CategoryOf k => Profunctor (Terminate :: PRO k UNIT) where
-  dimap l Unit Terminate = Terminate \\ l
+  Terminate :: Ob b => Terminate U b
+instance CategoryOf k => Profunctor (Terminate :: PRO UNIT k) where
+  dimap Unit r Terminate = Terminate \\ r
   r \\ Terminate = r
 instance HasTerminalObject KIND where
   type TerminalObject = K UNIT
   terminate' (Cat @a) = Cat @_ @_ @Terminate
 
 
-type FstCat :: PRO (k1, k2) k1
+type FstCat :: PRO j (j, k)
 data FstCat a b where
-  FstCat :: Ob b => a ~> c -> FstCat '(a, b) c
-instance (CategoryOf k1, CategoryOf k2) => Profunctor (FstCat :: PRO (k1, k2) k1) where
-  dimap (l1 :**: l2) r (FstCat f) = FstCat (r . f . l1) \\ l2
+  FstCat :: Ob c => a ~> b -> FstCat a '(b, c)
+instance (CategoryOf j, CategoryOf k) => Profunctor (FstCat :: PRO j (j, k)) where
+  dimap l (r1 :**: r2) (FstCat f) = FstCat (r1 . f . l) \\ r2
   r \\ FstCat f = r \\ f
 
-type SndCat :: PRO (k1, k2) k2
+type SndCat :: PRO k (j, k)
 data SndCat a b where
-  SndCat :: Ob a => b ~> c -> SndCat '(a, b) c
-instance (CategoryOf k1, CategoryOf k2) => Profunctor (SndCat :: PRO (k1, k2) k2) where
-  dimap (l1 :**: l2) r (SndCat f) = SndCat (r . f . l2) \\ l1
+  SndCat :: Ob b => a ~> c -> SndCat a '(b, c)
+instance (CategoryOf j, CategoryOf k) => Profunctor (SndCat :: PRO k (j, k)) where
+  dimap l (r1 :**: r2) (SndCat f) = SndCat (r2 . f . l) \\ r1
   r \\ SndCat f = r \\ f
 
-type (:&&&:) :: PRO i j -> PRO i k -> PRO i (j, k)
+type (:&&&:) :: PRO i k -> PRO j k -> PRO (i, j) k
 data (p :&&&: q) a b where
-  (:&&&:) :: p a b -> q a c -> (p :&&&: q) a '(b, c)
+  (:&&&:) :: p a c -> q b c -> (p :&&&: q) '(a, b) c
 instance (Profunctor p, Profunctor q) => Profunctor (p :&&&: q) where
-  dimap l (r1 :**: r2) (p :&&&: q) = dimap l r1 p :&&&: dimap l r2 q
+  dimap (l1 :**: l2) r (p :&&&: q) = dimap l1 r p :&&&: dimap l2 r q
   r \\ (p :&&&: q) = r \\ p \\ q
 
 instance HasBinaryProducts KIND where

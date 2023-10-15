@@ -1,22 +1,35 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Proarrow.Monoid where
 
-import Data.Kind (Constraint)
+import Data.Kind (Type)
 import Prelude qualified as P
 
-import Proarrow.Core (type (~>))
-import Proarrow.Category.Monoidal (Tensor(..), TENSOR)
-import Proarrow.Profunctor.Representable (Representable(..))
-import Proarrow.Object.BinaryProduct (ProductFunctor)
+import Proarrow.Core (Category(..), CategoryOf, Profunctor (..), PRO, rmap)
+import Proarrow.Category.Monoidal (MONOIDAL, Monoidal(..), Compose, Strictified(..))
+import Proarrow.Object.BinaryProduct (ProductFunctor (..))
+import Proarrow.Category.Instance.List (List(..), All)
+import Proarrow.Promonad (Promonad (..))
+import Proarrow.Object (obj)
+import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Profunctor.Composition ((:.:)(..))
+import Proarrow.Profunctor.Identity (Id(..))
 
--- The types for `unit` and `mult` are so ambiguous that they are not really useable.
--- Instead this is a way for more speciallized classes to show that they express a kind of Monoid.
-class (Tensor (Ten c :: TENSOR k)) => Monoid (c :: Constraint) (m :: k) where
-  type Ten c :: TENSOR k
-  unit :: c => U (Ten c) ~> m
-  mult :: c => Ten c % '(m, m) ~> m
 
-instance Monoid (P.Monoid m) m where
-  type Ten (P.Monoid m) = ProductFunctor
-  unit () = P.mempty
-  mult (m, n) = m P.<> n
+class (Monoidal t, Ob m, CategoryOf k) => Monoid (t :: MONOIDAL k) (m :: k) where
+  mempty :: t '[] '[m]
+  mappend :: t '[m, m] '[m]
+  mconcat :: forall ms. Ob ms => All ((~) m) ms => t ms '[m]
+  mconcat = case obj @ms of
+    Nil -> mempty
+    Cons _ ms' -> (unit @_ @'[m] `par` mconcat) `mult` mappend \\ ms'
+
+instance P.Monoid m => Monoid (Strictified ProductFunctor) (m :: Type) where
+  mempty = Strictified \() -> P.mempty
+  mappend = Strictified (P.uncurry (P.<>))
+
+newtype AsMonoid p a b = AsMonoid { getAsMonoid :: p a b }
+  deriving Profunctor
+instance Promonad p => Monoid (Strictified Compose) (AsMonoid p :: PRO k k) where
+  mempty = Strictified (Prof \(Id f) -> AsMonoid (rmap f unit) \\ f)
+  mappend = Strictified (Prof \(AsMonoid p :.: AsMonoid q) -> AsMonoid (mult p q))

@@ -10,7 +10,6 @@ data Nat f g where
       => { getNat :: f .~> g }
       -> Nat f g
 
-
 type instance (~>) = Nat :: CAT (k1 -> Type)
 
 instance Category (Nat :: CAT (k1 -> Type)) where

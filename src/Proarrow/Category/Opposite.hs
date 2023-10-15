@@ -39,12 +39,12 @@ instance HasTerminalObject k => HasInitialObject (OPPOSITE k) where
 
 instance HasBinaryCoproducts k => HasBinaryProducts (OPPOSITE k) where
   type OP a && OP b = OP (a || b)
-  fst' (Op a) (Op b) = Op (left' a b)
-  snd' (Op a) (Op b) = Op (right' a b)
+  fst' (Op a) (Op b) = Op (lft' a b)
+  snd' (Op a) (Op b) = Op (rgt' a b)
   Op a &&& Op b = Op (a ||| b)
 
 instance HasBinaryProducts k => HasBinaryCoproducts (OPPOSITE k) where
   type OP a || OP b = OP (a && b)
-  left' (Op a) (Op b) = Op (fst' a b)
-  right' (Op a) (Op b) = Op (snd' a b)
+  lft' (Op a) (Op b) = Op (fst' a b)
+  rgt' (Op a) (Op b) = Op (snd' a b)
   Op a ||| Op b = Op (a &&& b)
