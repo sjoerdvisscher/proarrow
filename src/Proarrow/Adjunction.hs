@@ -2,8 +2,8 @@
 {-# HLINT ignore "Redundant map" #-}
 module Proarrow.Adjunction where
 
-import Proarrow.Core (CAT, PRO, Profunctor(..), Category (..), CategoryOf, (:~>), type (~>), (//))
-import Proarrow.Functor (Functor(..), withFCod')
+import Proarrow.Core (CAT, PRO, Profunctor(..), Category (..), CategoryOf, (:~>), type (~>), (//), rmap)
+import Proarrow.Functor (Functor(..))
 import Data.Kind (Constraint)
 import Proarrow.Profunctor.Composition ((:.:)(..))
 import Proarrow.Profunctor.Identity (Id(..))
@@ -27,7 +27,7 @@ rightAdjunct f = counit (Star (map id) :.: Star f) \\ f
 
 unitFromStarUnit
   :: forall l r a. (Functor l, Ob a) => (a ~> r (l a)) -> (Star r :.: Star l) a a
-unitFromStarUnit f = withFCod' @l @a \la -> Star f :.: Star la
+unitFromStarUnit f = Star f :.: Star id
 
 counitFromStarCounit
   :: Functor l => (forall c. Ob c => l (r c) ~> c) -> (Star l :.: Star r) a b -> (a ~> b)
@@ -39,7 +39,7 @@ instance Functor f => Adjunction (Star f) (Costar f) where
 
 instance (Functor f, Functor g, Adjunction (Star f) (Star g)) => Adjunction (Costar f) (Costar g) where
   unit :: forall a. (Ob a) => (Costar g :.: Costar f) a a
-  unit = withFCod' @g @a \ga -> Costar id :.: Costar (counit (Star (map id) :.: Star ga))
+  unit = Costar id :.: Costar (counit (Star (map id) :.: Star id))
   counit :: forall a b. (Costar f :.: Costar g) a b -> a ~> b
   counit (Costar f :.: Costar g) = case unit @(Star f) @(Star g) @a of Star g' :.: Star f' -> g . map (f . f') . g'
 
@@ -48,7 +48,7 @@ instance (Adjunction l1 r1, Adjunction l2 r2) => Adjunction (l1 :.: l2) (r2 :.: 
   unit = case unit @l2 @r2 @a of
     r2 :.: l2 -> l2 // case unit @l1 @r1 of
       r1 :.: l1 -> (r2 :.: r1) :.: (l1 :.: l2)
-  counit ((l1 :.: l2) :.: (r2 :.: r1)) = counit (l1 :.: r1) . counit (l2 :.: r2)
+  counit ((l1 :.: l2) :.: (r2 :.: r1)) = counit (rmap (counit (l2 :.: r2)) l1 :.: r1)
 
 instance Adjunction (Star ((,) a)) (Star ((->) a)) where
   unit = unitFromStarUnit \a b -> (b, a)

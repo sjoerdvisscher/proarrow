@@ -1,5 +1,3 @@
-{-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE ViewPatterns #-}
 module Proarrow.Profunctor.Terminal (TerminalProfunctor(.., TerminalProfunctor')) where
 
 import Proarrow.Core (PRO, Profunctor (..), CategoryOf, Category (..))

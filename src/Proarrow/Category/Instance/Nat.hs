@@ -4,7 +4,7 @@ import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault
 import Proarrow.Functor (Functor(..), type (.~>))
 import Data.Kind (Type)
 
-type Nat :: CAT (k1 -> k2)
+type Nat :: CAT (j -> k)
 data Nat f g where
   Nat :: (Functor f, Functor g)
       => { getNat :: f .~> g }
