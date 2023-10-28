@@ -5,7 +5,7 @@ import Data.Kind (Type)
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
-import Proarrow.Core (CAT, PRO, UN, Is, Category(..), Profunctor(..), type (~>), dimapDefault, CategoryOf)
+import Proarrow.Core (CAT, PRO, UN, Is, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
 import Proarrow.Profunctor.Identity (Id)
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
@@ -19,11 +19,12 @@ type Cat :: CAT KIND
 data Cat a b where
   Cat :: Profunctor (p :: PRO j k) => Cat (K k) (K j)
 
-type instance (~>) = Cat
-
 -- | The category of categories and profunctors between them.
-instance Category Cat where
-  type Ob c = (Is K c, Category ((~>) :: CAT (UN K c)))
+instance CategoryOf KIND where
+  type (~>) = Cat
+  type Ob c = (Is K c, CategoryOf (UN K c))
+
+instance Promonad Cat where
   id = Cat @_ @_ @Id
   Cat @_ @_ @p . Cat @_ @_ @q = Cat @_ @_ @(p :.: q)
 

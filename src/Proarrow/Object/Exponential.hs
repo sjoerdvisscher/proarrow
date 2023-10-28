@@ -6,7 +6,7 @@ import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Opposite (OPPOSITE(..), Op (..))
-import Proarrow.Core (PRO, Category (..), Profunctor(..), type (~>), CategoryOf, dimapDefault, (//))
+import Proarrow.Core (PRO, CategoryOf (..), Profunctor(..), Promonad(..), dimapDefault, (//))
 import Proarrow.Object (Obj, obj, src)
 import Proarrow.Object.BinaryProduct (HasProducts, HasBinaryProducts (..), ProductFunctor)
 import Proarrow.Profunctor.Representable (Representable(..))

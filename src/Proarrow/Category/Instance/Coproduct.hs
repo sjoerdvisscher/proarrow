@@ -2,7 +2,7 @@ module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), type (~>))
 
 data COPRODUCT j k = L j | R k
 
@@ -14,21 +14,25 @@ data (c :++: d) a b where
 type IsCoproduct :: forall {j} {k}. COPRODUCT j k -> Constraint
 class IsCoproduct (a :: COPRODUCT j k) where
   coproductId :: ((~>) :++: (~>)) a a
-instance (Ob a, Category ((~>) :: CAT k)) => IsCoproduct (L (a :: k)) where
+instance (Ob a, Promonad ((~>) :: CAT k)) => IsCoproduct (L (a :: k)) where
   coproductId = InjL id
-instance (Ob a, Category ((~>) :: CAT k)) => IsCoproduct (R (a :: k)) where
+instance (Ob a, Promonad ((~>) :: CAT k)) => IsCoproduct (R (a :: k)) where
   coproductId = InjR id
 
-type instance (~>) = (~>) :++: (~>)
+instance (CategoryOf j, CategoryOf k) => CategoryOf (COPRODUCT j k) where
+  type (~>) = (~>) :++: (~>)
+  type Ob a = IsCoproduct a
 
 -- | The coproduct category of the categories `c` and `d`.
-instance (Category c, Category d) => Category (c :++: d) where
-  type Ob a = IsCoproduct a
+instance (c ~ (~>), d ~ (~>), CategoryOf j, CategoryOf k) => Promonad ((c :++: d) :: CAT (COPRODUCT j k)) where
   id = coproductId
   InjL f . InjL g = InjL (f . g)
   InjR f . InjR g = InjR (f . g)
 
-instance (Category c, Category d) => Profunctor (c :++: d) where
-  dimap = dimapDefault
+instance (Profunctor c, Profunctor d) => Profunctor (c :++: d) where
+  dimap (InjL l) (InjL r) (InjL f) = InjL (dimap l r f)
+  dimap (InjR l) (InjR r) (InjR f) = InjR (dimap l r f)
+  dimap (InjL _) (InjR _) f = case f of
+  dimap (InjR _) (InjL _) f = case f of
   r \\ InjL f = r \\ f
   r \\ InjR f = r \\ f

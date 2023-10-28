@@ -2,12 +2,11 @@ module Proarrow.Profunctor.Day where
 
 import Data.Function (($))
 
-import Proarrow.Core (PRO, Profunctor(..), Category(..), CategoryOf, (//), (:~>))
+import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad(..), (//), (:~>))
 import Proarrow.Functor (Functor(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Monoidal (MONOIDAL, Monoidal (..))
 import Proarrow.Category.Instance.List (List (..), type (++), obAppend)
-import Proarrow.Promonad (Promonad(..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Object (Obj, obj)
 
@@ -56,10 +55,10 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Day s t :: MONOIDAL (PRO j 
   r \\ Day{} = r
 
 instance (CategoryOf j, CategoryOf k, Promonad s, Promonad t) => Promonad (Day s t :: MONOIDAL (PRO j k)) where
-  unit = Day \ps -> unit :.: ps :.: unit \\ ps
-  mult (Day f) (Day g) = Day \ps -> case f ps of
-    s1 :.: qs :.: t1 -> case g qs of
-      s2 :.: rs :.: t2 -> mult s1 s2 :.: rs :.: mult t2 t1
+  id = Day \ps -> id :.: ps :.: id \\ ps
+  Day f . Day g = Day \ps -> case g ps of
+    s1 :.: qs :.: t1 -> case f qs of
+      s2 :.: rs :.: t2 -> (s2 . s1) :.: rs :.: (t1 . t2)
 
 instance (CategoryOf j, CategoryOf k, Monoidal s, Monoidal t) => Monoidal (Day s t :: MONOIDAL (PRO j k)) where
   par (Day @ps1 @qs1 f) (Day @ps2 @qs2 g) = obAppend @ps1 @ps2 $ obAppend @qs1 @qs2 $

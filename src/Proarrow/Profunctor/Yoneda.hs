@@ -2,7 +2,7 @@ module Proarrow.Profunctor.Yoneda where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (PRO, CategoryOf, Category(..), Profunctor(..), type (~>), (//))
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (//))
 
 type Yoneda :: (j -> k -> Type) -> PRO j k
 data Yoneda p a b where

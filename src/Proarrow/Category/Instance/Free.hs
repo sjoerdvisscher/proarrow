@@ -2,7 +2,7 @@ module Proarrow.Category.Instance.Free where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CAT, UN, Is, Category(..), Profunctor(..), (:~>), type (~>), dimapDefault)
+import Proarrow.Core (CAT, UN, Is, CategoryOf(..), Promonad(..), Profunctor(..), (:~>), dimapDefault)
 
 
 infixr 4 :|
@@ -18,9 +18,11 @@ data Free a b where
 class Rewrite g where
   rewriteAfterCons :: (Free :: CAT (FREE g)) :~> (Free :: CAT (FREE g))
 
-type instance (~>) = Free
-instance Rewrite g => Category (Free :: CAT (FREE g)) where
+instance Rewrite g => CategoryOf (FREE g) where
+  type (~>) = Free
   type Ob a = Is F a
+
+instance Rewrite g => Promonad (Free :: CAT (FREE g)) where
   id = FreeId
   FreeId . a = a
   a . FreeId = a

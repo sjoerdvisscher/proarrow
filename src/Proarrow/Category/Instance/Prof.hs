@@ -1,6 +1,7 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Instance.Prof where
 
-import Proarrow.Core (CAT, PRO, Category(..), Profunctor(..), type (~>), dimapDefault, (:~>))
+import Proarrow.Core (CAT, PRO, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault, (:~>))
 
 type Prof :: CAT (PRO j k)
 data Prof p q where
@@ -8,11 +9,12 @@ data Prof p q where
       => { getProf :: p :~> q }
       -> Prof p q
 
-type instance (~>) = Prof
-
 -- | The category of profunctors and natural transformations between them.
-instance Category Prof where
+instance CategoryOf (PRO j k) where
+  type (~>) = Prof
   type Ob p = Profunctor p
+
+instance Promonad Prof where
   id = Prof id
   Prof f . Prof g = Prof (f . g)
 

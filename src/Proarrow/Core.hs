@@ -15,15 +15,10 @@ type CAT k = PRO k k
 type BI k = (k, k) -> k
 type OB k = k -> Constraint
 
-type Category :: CAT k -> Constraint
-class (Profunctor cat, (~>) ~ cat) => Category (cat :: CAT k) where
+class (Promonad ((~>) :: CAT k)) => CategoryOf k where
+  type (~>) :: CAT k
   type Ob (a :: k) :: Constraint
   type Ob a = ()
-  id :: Ob a => cat a a
-  (.) :: cat b c -> cat a b -> cat a c
-
-type family (~>) :: CAT k
-type CategoryOf k = Category ((~>) :: CAT k)
 
 type p :~> q = forall a b. p a b ~> q a b
 
@@ -46,16 +41,21 @@ rmap r p = dimap id r p \\ p
 dimapDefault :: CategoryOf k => (c :: k) ~> a -> (b :: k) ~> d -> a ~> b -> c ~> d
 dimapDefault f g h = g . h . f
 
+class Profunctor p => Promonad p where
+  id :: Ob a => p a a
+  (.) :: p b c -> p a b -> p a c
 
-type instance (~>) = (->)
 
-instance Category (->) where
-  id = \a -> a
-  f . g = \x -> f (g x)
 
 instance Profunctor (->) where
   dimap = dimapDefault
 
+instance Promonad (->) where
+  id = \a -> a
+  f . g = \x -> f (g x)
+
+instance CategoryOf Type where
+  type (~>) = (->)
 
 
 -- | A helper type family to unwrap a wrapped kind.

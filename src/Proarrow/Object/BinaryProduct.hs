@@ -6,7 +6,7 @@ import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Monoidal (Tensor (..))
-import Proarrow.Core (PRO, CategoryOf, Category (..), Profunctor(..), type (~>), (//))
+import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..), (//))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Representable (Representable(..))

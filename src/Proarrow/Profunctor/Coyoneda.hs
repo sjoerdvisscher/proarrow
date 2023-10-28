@@ -2,7 +2,7 @@ module Proarrow.Profunctor.Coyoneda where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (PRO, CategoryOf, Category(..), Profunctor(..), type (~>))
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..))
 
 type Coyoneda :: (j -> k -> Type) -> PRO j k
 data Coyoneda p a b where

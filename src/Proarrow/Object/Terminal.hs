@@ -2,7 +2,7 @@ module Proarrow.Object.Terminal where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CategoryOf, Category (..), Profunctor (..), type (~>), PRO)
+import Proarrow.Core (CategoryOf(..), Profunctor (..), PRO)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Instance.Prof (Prof(..))

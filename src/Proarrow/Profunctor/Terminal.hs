@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Terminal (TerminalProfunctor(.., TerminalProfunctor')) where
 
-import Proarrow.Core (PRO, Profunctor (..), CategoryOf, Category (..))
+import Proarrow.Core (PRO, Profunctor (..), CategoryOf(..))
 import Proarrow.Object (Obj, obj)
 
 type TerminalProfunctor :: PRO j k

@@ -6,7 +6,7 @@ import Data.Function (($))
 import Prelude qualified as P
 import Control.Applicative qualified as P
 
-import Proarrow.Core (type (~>), Category(..), (//), lmap, Profunctor (..))
+import Proarrow.Core (Promonad(..), CategoryOf(..), (//), lmap, Profunctor (..))
 import Proarrow.Functor (Functor(..), Prelude (..))
 import Proarrow.Object.Terminal (El, terminate)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), HasCoproducts, CoproductFunctor)

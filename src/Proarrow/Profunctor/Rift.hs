@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Rift where
 
-import Proarrow.Core (PRO, Category(..), Profunctor(..), (//), lmap)
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (//), lmap)
 import Proarrow.Functor (Functor(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Nat (Nat(..))

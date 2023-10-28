@@ -4,7 +4,7 @@ module Proarrow.Category.Colimit where
 import Data.Function (($))
 import Data.Kind (Type, Constraint)
 
-import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>), (:~>), CategoryOf)
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>), CategoryOf)
 import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Category.Instance.Zero (VOID)

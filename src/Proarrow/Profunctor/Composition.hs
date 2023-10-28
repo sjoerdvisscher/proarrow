@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Composition where
 
-import Proarrow.Core (PRO, Profunctor(..), Category(..), type (~>), lmap, rmap)
+import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad (..), lmap, rmap)
 import Proarrow.Functor (Functor(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Nat (Nat(..))

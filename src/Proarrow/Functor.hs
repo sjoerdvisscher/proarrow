@@ -4,7 +4,7 @@ import Data.Functor.Const (Const (..))
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Core (Category(..), CategoryOf, type (~>))
+import Proarrow.Core (CategoryOf(..), Promonad(..))
 
 infixr 0 .~>
 type f .~> g = forall a. Ob a => f a ~> g a

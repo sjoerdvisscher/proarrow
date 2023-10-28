@@ -1,6 +1,7 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Instance.Nat where
 
-import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
 import Proarrow.Functor (Functor(..), type (.~>))
 import Data.Kind (Type)
 
@@ -10,10 +11,11 @@ data Nat f g where
       => { getNat :: f .~> g }
       -> Nat f g
 
-type instance (~>) = Nat :: CAT (k1 -> Type)
-
-instance Category (Nat :: CAT (k1 -> Type)) where
+instance CategoryOf (k1 -> Type) where
+  type instance (~>) = Nat
   type Ob f = Functor f
+
+instance Promonad (Nat :: CAT (j -> Type)) where
   id = n where
     n :: forall f. Functor f => Nat f f
     n = Nat (map @f id)
@@ -24,10 +26,11 @@ instance Profunctor (Nat :: CAT (k1 -> Type)) where
   r \\ Nat{} = r
 
 
-type instance (~>) = Nat :: CAT (k1 -> k2 -> k3 -> Type)
-
-instance Category (Nat :: CAT (k1 -> k2 -> k3 -> Type)) where
+instance CategoryOf (k1 -> k2 -> k3 -> Type) where
+  type instance (~>) = Nat
   type Ob f = Functor f
+
+instance Promonad (Nat :: CAT (k1 -> k2 -> k3 -> Type)) where
   id = n where
     n :: forall f. Functor f => Nat f f
     n = Nat (map @f id)
@@ -38,10 +41,11 @@ instance Profunctor (Nat :: CAT (k1 -> k2 -> k3 -> Type)) where
   r \\ Nat{} = r
 
 
-type instance (~>) = Nat :: CAT (k1 -> k2 -> k3 -> k4 -> Type)
-
-instance Category (Nat :: CAT (k1 -> k2 -> k3 -> k4 -> Type)) where
+instance CategoryOf (k1 -> k2 -> k3 -> k4 -> Type) where
+  type instance (~>) = Nat
   type Ob f = Functor f
+
+instance Promonad (Nat :: CAT (k1 -> k2 -> k3 -> k4 -> Type)) where
   id = n where
     n :: forall f. Functor f => Nat f f
     n = Nat (map @f id)

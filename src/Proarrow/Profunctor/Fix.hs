@@ -2,7 +2,7 @@ module Proarrow.Profunctor.Fix where
 
 import Data.Functor.Const (Const (..))
 
-import Proarrow.Core (Profunctor(..), PRO, Category (..), (:~>))
+import Proarrow.Core (Profunctor(..), PRO, Promonad (..), (:~>))
 import Proarrow.Functor (Functor(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Profunctor.Star (Star(..))

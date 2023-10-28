@@ -1,30 +1,32 @@
 module Proarrow.Category.Instance.Bool where
 
-import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
 import Proarrow.Object.Exponential (CartesianClosed(..))
 
--- Redefined here so we don't get orphan instances
-data Bool = False | True
 
-type Booleans :: CAT Bool
+data BOOL = FLS | TRU
+
+type Booleans :: CAT BOOL
 data Booleans a b where
-  Fls :: Booleans False False
-  F2T :: Booleans False True
-  Tru :: Booleans True True
+  Fls :: Booleans FLS FLS
+  F2T :: Booleans FLS TRU
+  Tru :: Booleans TRU TRU
 
-type instance (~>) = Booleans
 
-class IsBool (b :: Bool) where boolId :: b ~> b
-instance IsBool False where boolId = Fls
-instance IsBool True where boolId = Tru
+class IsBool (b :: BOOL) where boolId :: b ~> b
+instance IsBool FLS where boolId = Fls
+instance IsBool TRU where boolId = Tru
 
 -- | The category of 2 objects and one arrow between them, a.k.a. the walking arrow.
-instance Category Booleans where
+instance CategoryOf BOOL where
+  type (~>) = Booleans
   type Ob b = IsBool b
+
+instance Promonad Booleans where
   id = boolId
   Fls . Fls = Fls
   F2T . Fls = F2T
@@ -38,16 +40,16 @@ instance Profunctor Booleans where
   r \\ Tru = r
 
 
-instance HasTerminalObject Bool where
-  type TerminalObject = True
+instance HasTerminalObject BOOL where
+  type TerminalObject = TRU
   terminate' Fls = F2T
   terminate' Tru = Tru
 
-instance HasBinaryProducts Bool where
-  type True && True = True
-  type False && True = False
-  type True && False = False
-  type False && False = False
+instance HasBinaryProducts BOOL where
+  type TRU && TRU = TRU
+  type FLS && TRU = FLS
+  type TRU && FLS = FLS
+  type FLS && FLS = FLS
   fst' Fls Fls = Fls
   fst' Fls Tru = Fls
   fst' Tru Fls = F2T
@@ -62,16 +64,16 @@ instance HasBinaryProducts Bool where
   F2T &&& F2T = F2T
   Tru &&& Tru = Tru
 
-instance HasInitialObject Bool where
-  type InitialObject = False
+instance HasInitialObject BOOL where
+  type InitialObject = FLS
   initiate' Fls = Fls
   initiate' Tru = F2T
 
-instance HasBinaryCoproducts Bool where
-  type False || False = False
-  type False || True = True
-  type True || False = True
-  type True || True = True
+instance HasBinaryCoproducts BOOL where
+  type FLS || FLS = FLS
+  type FLS || TRU = TRU
+  type TRU || FLS = TRU
+  type TRU || TRU = TRU
   lft' Fls Fls = Fls
   lft' Fls Tru = F2T
   lft' Tru Fls = Tru
@@ -86,11 +88,11 @@ instance HasBinaryCoproducts Bool where
   Tru ||| F2T = Tru
   Tru ||| Tru = Tru
 
-instance CartesianClosed Bool where
-  type False ~~> False = True
-  type False ~~> True = True
-  type True ~~> False = False
-  type True ~~> True = True
+instance CartesianClosed BOOL where
+  type FLS ~~> FLS = TRU
+  type FLS ~~> TRU = TRU
+  type TRU ~~> FLS = FLS
+  type TRU ~~> TRU = TRU
   curry' Fls Fls Fls = F2T
   curry' Fls Fls F2T = F2T
   curry' Fls Tru Fls = Fls

@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Costar where
 
-import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>), (:~>))
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>))
 import Proarrow.Functor (Functor(..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
 import Proarrow.Profunctor.Composition ((:.:)(..))

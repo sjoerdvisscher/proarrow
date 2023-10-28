@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Exponential where
 
-import Proarrow.Core (Profunctor(..), type (~>), Category(..), (//))
+import Proarrow.Core (Profunctor(..), CategoryOf(..), Promonad(..), (//))
 
 data (p :~>: q) a b where
   Exp :: (Ob a, Ob b) => (forall c d. c ~> a -> b ~> d -> p c d -> q c d) -> (p :~>: q) a b

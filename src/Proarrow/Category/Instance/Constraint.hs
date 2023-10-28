@@ -5,7 +5,7 @@ module Proarrow.Category.Instance.Constraint where
 import Data.Kind (Constraint)
 import GHC.Exts (Any)
 
-import Proarrow.Core (UN, Is, Category(..), Profunctor(..), type (~>), dimapDefault)
+import Proarrow.Core (UN, Is, Category(..), Profunctor(..), dimapDefault)
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))

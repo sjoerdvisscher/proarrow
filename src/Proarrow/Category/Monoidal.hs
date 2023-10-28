@@ -3,11 +3,10 @@ module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (PRO, Category(..), type (~>), Profunctor (..), (:~>), CategoryOf, lmap, rmap)
+import Proarrow.Core (PRO, Promonad(..), CategoryOf(..), Profunctor (..), (:~>), lmap, rmap)
 import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Object (obj, Obj)
-import Proarrow.Promonad (Promonad(..))
 import Proarrow.Category.Instance.List (type (++), List (..), append)
 import Proarrow.Profunctor.Composition ((:.:) (..), dimapComp)
 import Proarrow.Category.Instance.Prof (Prof(..))
@@ -81,9 +80,9 @@ instance Tensor (t :: PRO k (k, k)) => Profunctor (Strictified t :: MONOIDAL k) 
   r \\ Strictified f = r \\ f
 
 instance Tensor (t :: PRO k (k, k)) => Promonad (Strictified t :: MONOIDAL k) where
-  unit :: forall (as :: [k]). Ob as => Strictified t as as
-  unit = Strictified (fold @t (obj @as))
-  mult (Strictified f) (Strictified g) = Strictified (g . f)
+  id :: forall (as :: [k]). Ob as => Strictified t as as
+  id = Strictified (fold @t (obj @as))
+  Strictified f . Strictified g = Strictified (f . g)
 
 instance Tensor (t :: PRO k (k, k)) => Monoidal (Strictified t :: MONOIDAL k) where
   par (Strictified @as @bs f) (Strictified @cs @ds g) =

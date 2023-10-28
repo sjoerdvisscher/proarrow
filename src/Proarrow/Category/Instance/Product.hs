@@ -1,6 +1,7 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Instance.Product where
 
-import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..))
 
 type Fst :: (a, b) -> a
 type family Fst a where Fst '(a, b) = a
@@ -11,14 +12,16 @@ type (:**:) :: CAT k1 -> CAT k2 -> CAT (k1, k2)
 data (c :**: d) a b where
   (:**:) :: c a1 b1 -> d a2 b2 -> (c :**: d) '(a1, a2) '(b1, b2)
 
-type instance (~>) = (~>) :**: (~>)
-
--- | The product category of categories `c` and `d`.
-instance (Category c, Category d) => Category (c :**: d) where
+instance (CategoryOf k1, CategoryOf k2) => CategoryOf (k1, k2) where
+  type (~>) = (~>) :**: (~>)
   type Ob a = (a ~ '(Fst a, Snd a), Ob (Fst a), Ob (Snd a))
+
+
+-- | The product promonad of promonads `p` and `q`.
+instance (Promonad p, Promonad q) => Promonad (p :**: q) where
   id = id :**: id
   (f1 :**: f2) . (g1 :**: g2) = (f1 . g1) :**: (f2 . g2)
 
-instance (Category c, Category d) => Profunctor (c :**: d) where
-  dimap = dimapDefault
+instance (Profunctor p, Profunctor q) => Profunctor (p :**: q) where
+  dimap (l1 :**: l2) (r1 :**: r2) (f1 :**: f2) = dimap l1 r1 f1 :**: dimap l2 r2 f2
   r \\ (f :**: g) = r \\ f \\ g

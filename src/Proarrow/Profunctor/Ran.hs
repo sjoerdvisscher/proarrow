@@ -1,8 +1,7 @@
 {-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Proarrow.Profunctor.Ran where
 
-import Proarrow.Core (PRO, Category(..), Profunctor(..), (//), rmap)
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (//), rmap)
 import Proarrow.Functor (Functor(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Nat (Nat(..))

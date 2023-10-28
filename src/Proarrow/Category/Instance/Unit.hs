@@ -1,6 +1,6 @@
 module Proarrow.Category.Instance.Unit where
 
-import Proarrow.Core (CAT, Category(..), Profunctor(..), type (~>), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault)
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 
@@ -11,11 +11,13 @@ type Unit :: CAT UNIT
 data Unit a b where
   Unit :: Unit U U
 
-type instance (~>) = Unit
 
 -- | The category with one object, the terminal category.
-instance Category Unit where
+instance CategoryOf UNIT where
+  type (~>) = Unit
   type Ob a = a ~ U
+
+instance Promonad Unit where
   id = Unit
   Unit . Unit = Unit
 

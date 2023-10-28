@@ -1,9 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Instance.List where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CAT, type (~>), Category(..), CategoryOf, Profunctor(..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
 import Proarrow.Object (obj)
 
 
@@ -13,14 +14,15 @@ data List as bs where
   Nil :: List '[] '[]
   Cons :: a ~> b -> List as bs -> List (a ': as) (b ': bs)
 
-type instance (~>) = List
-
 class IsList as where listId :: List as as
 instance IsList '[] where listId = Nil
 instance (CategoryOf k, Ob (a :: k), IsList as) => IsList (a ': as) where listId = Cons id id
 
-instance CategoryOf k => Category (List :: CAT [k]) where
+instance CategoryOf k => CategoryOf [k] where
+  type (~>) = List
   type Ob as = IsList as
+
+instance CategoryOf k => Promonad (List :: CAT [k]) where
   id = listId
   Nil . Nil = Nil
   Cons f fs . Cons g gs = Cons (f . g) (fs . gs)

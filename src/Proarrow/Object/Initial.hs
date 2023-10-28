@@ -3,7 +3,7 @@ module Proarrow.Object.Initial where
 import Data.Kind (Type)
 import Data.Void (Void, absurd)
 
-import Proarrow.Core (CategoryOf, Category (..), type (~>), PRO)
+import Proarrow.Core (CategoryOf(..), PRO)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Instance.Prof (Prof(..))

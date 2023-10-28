@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Identity where
 
-import Proarrow.Core (CAT, CategoryOf, Category(..), Profunctor(..), type (~>))
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..))
 import Proarrow.Profunctor.Representable (Representable(..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
 

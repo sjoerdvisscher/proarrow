@@ -4,7 +4,7 @@ import Prelude (Monoid(..), map, foldMap)
 import Data.Kind (Type)
 
 import Proarrow.Category.Instance.Subcategory (SUBCAT(..), Sub (..))
-import Proarrow.Core (OB, PRO, Profunctor(..), Category(..), type (~>), CategoryOf)
+import Proarrow.Core (OB, PRO, Profunctor(..), CategoryOf(..), Promonad(..))
 import Proarrow.Adjunction (Adjunction(..))
 import Proarrow.Profunctor.Composition ((:.:)(..))
 import Proarrow.Profunctor.Representable (Representable(..))

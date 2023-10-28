@@ -1,8 +1,9 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Redundant map" #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Adjunction where
 
-import Proarrow.Core (CAT, PRO, Profunctor(..), Category (..), CategoryOf, (:~>), type (~>), (//), rmap)
+import Proarrow.Core (CAT, PRO, Profunctor(..), Promonad (..), CategoryOf(..), (:~>), (//), rmap)
 import Proarrow.Functor (Functor(..))
 import Data.Kind (Constraint)
 import Proarrow.Profunctor.Composition ((:.:)(..))
@@ -57,3 +58,8 @@ instance Adjunction (Star ((,) a)) (Star ((->) a)) where
 instance CategoryOf k => Adjunction (Id :: CAT k) Id where
   unit = Id id :.: Id id
   counit (Id f :.: Id g) = g . f
+
+instance Adjunction p q => Promonad (q :.: p) where
+  id = unit
+  (q :.: p) . (q' :.: p')= rmap (counit (p' :.: q)) q' :.: p
+

@@ -1,6 +1,6 @@
 module Proarrow.Category.Opposite where
 
-import Proarrow.Core (PRO, UN, Is, Category(..), Profunctor(..), type (~>), lmap)
+import Proarrow.Core (PRO, UN, Is, CategoryOf(..), Profunctor(..), Promonad(..), lmap)
 import Proarrow.Functor (Functor(..))
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
@@ -22,10 +22,12 @@ instance Profunctor p => Profunctor (Op p) where
   dimap (Op l) (Op r) = Op . dimap r l . getOp
   r \\ Op f = r \\ f
 
-type instance (~>) = Op (~>)
 -- | The opposite category of category `c`.
-instance Category c => Category (Op c) where
+instance CategoryOf k => CategoryOf (OPPOSITE k) where
+  type (~>) = Op (~>)
   type Ob a = (Is OP a, Ob (UN OP a))
+
+instance Promonad c => Promonad (Op c) where
   id = Op id
   Op f . Op g = Op (g . f)
 

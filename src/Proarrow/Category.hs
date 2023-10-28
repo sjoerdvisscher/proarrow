@@ -1,8 +1,6 @@
 module Proarrow.Category (
   CAT
-  , Category(..)
-  , type (~>)
-  , CategoryOf
+  , CategoryOf(..)
   , dimapDefault
 )
 where

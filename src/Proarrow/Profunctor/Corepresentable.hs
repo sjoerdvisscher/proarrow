@@ -3,7 +3,7 @@ module Proarrow.Profunctor.Corepresentable where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (PRO, Category(..), Profunctor(..), type (~>))
+import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..))
 import Proarrow.Object (obj)
 
 type Corepresentable :: forall {j} {k}. PRO j k -> Constraint
