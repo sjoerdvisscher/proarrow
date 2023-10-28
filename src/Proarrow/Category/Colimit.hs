@@ -4,7 +4,7 @@ module Proarrow.Category.Colimit where
 import Data.Function (($))
 import Data.Kind (Type, Constraint)
 
-import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>), CategoryOf)
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>), (//), CategoryOf)
 import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Category.Instance.Zero (VOID)
@@ -37,15 +37,21 @@ instance HasInitialObject k => HasColimits (Unweighted :: PRO VOID UNIT) k where
 
 type CoproductColimit :: PRO (COPRODUCT UNIT UNIT) k -> PRO UNIT k
 data CoproductColimit d a b where
-  CoproductColimit :: forall d b. Ob b => ((d %% L U) || (d %% R U)) ~> b -> CoproductColimit d U b
+  CoproductColimit :: forall d b. ((d %% L U) || (d %% R U)) ~> b -> CoproductColimit d U b
 
 instance CategoryOf k => Profunctor (CoproductColimit d :: PRO UNIT k) where
   dimap Unit r (CoproductColimit f) = CoproductColimit (r . f) \\ r
   r \\ (CoproductColimit f) = r \\ f
 
+instance (HasBinaryCoproducts k, Corepresentable d) => Corepresentable (CoproductColimit d :: PRO UNIT k) where
+  type CoproductColimit d %% U = (d %% L U) || (d %% R U)
+  coindex (CoproductColimit f) = f
+  cotabulate = CoproductColimit
+  corepMap Unit = corepMap @d (InjL Unit) +++ corepMap @d (InjR Unit)
+
 instance HasBinaryCoproducts k => HasColimits (Unweighted :: PRO (COPRODUCT UNIT UNIT) UNIT) k where
   type Colimit Unweighted d = CoproductColimit d
-  colimit (CoproductColimit @d f) = Ran \(TerminalProfunctor' o _) -> cotabulate $ f . cochoose @_ @d o
+  colimit (CoproductColimit @d f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . cochoose @_ @d o
   colimitInv (Ran k) =
     let l = k (TerminalProfunctor' (InjL Unit) Unit)
         r = k (TerminalProfunctor' (InjR Unit) Unit)
