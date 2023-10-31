@@ -2,12 +2,12 @@
 module Proarrow.Category.Limit where
 
 import Data.Function (($))
-import Data.Kind (Type, Constraint)
+import Data.Kind (Constraint)
 
 import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Category.Instance.Zero (VOID)
-import Proarrow.Core (PRO, (:~>), CategoryOf (..), Promonad(..), Profunctor(..), (//), CategoryOf)
+import Proarrow.Core (PRO, (:~>), CategoryOf (..), Promonad(..), Profunctor(..), (//), CategoryOf, Kind)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor(TerminalProfunctor'))
 import Proarrow.Profunctor.Representable (Representable (..), withRepCod)
 import Proarrow.Profunctor.Rift (type (<|), Rift (..))
@@ -16,7 +16,7 @@ import Proarrow.Object.Terminal (HasTerminalObject(..), terminate)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..), fst, snd)
 
 -- profunctor-weighted limits
-type HasLimits :: PRO a i -> Type -> Constraint
+type HasLimits :: PRO a i -> Kind -> Constraint
 class HasLimits (j :: PRO a i) k where
   -- Limit has to be Representable too
   type Limit (j :: PRO a i) (d :: PRO k i) :: PRO k a

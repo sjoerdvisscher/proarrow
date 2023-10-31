@@ -1,5 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
-module Proarrow.Promonad where
+module Proarrow.Promonad (
+  Promonad(..)
+  , module Proarrow.Promonad
+) where
 
 import Proarrow.Core (CAT, PRO, UN, Is, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault, lmap, rmap)
 import Proarrow.Profunctor.Composition ((:.:)(..))

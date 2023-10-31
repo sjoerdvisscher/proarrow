@@ -14,11 +14,15 @@ type PRO j k = j -> k -> Type
 type CAT k = PRO k k
 type BI k = (k, k) -> k
 type OB k = k -> Constraint
+type Kind = Type
 
 class (Promonad ((~>) :: CAT k)) => CategoryOf k where
   type (~>) :: CAT k
   type Ob (a :: k) :: Constraint
   type Ob a = ()
+
+type IsCategoryOf k cat = (CategoryOf k, cat ~ (~>) @k, Promonad cat)
+
 
 type p :~> q = forall a b. p a b ~> q a b
 

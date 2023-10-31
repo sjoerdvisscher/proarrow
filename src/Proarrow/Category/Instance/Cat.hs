@@ -1,18 +1,16 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Instance.Cat where
 
-import Data.Kind (Type)
-
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
-import Proarrow.Core (CAT, PRO, UN, Is, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
+import Proarrow.Core (CAT, PRO, UN, Is, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault, Kind)
 import Proarrow.Profunctor.Identity (Id)
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
 
 
-newtype KIND = K Type
+newtype KIND = K Kind
 type instance UN K (K k) = k
 
 type Cat :: CAT KIND

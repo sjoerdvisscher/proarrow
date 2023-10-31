@@ -2,9 +2,9 @@
 module Proarrow.Category.Colimit where
 
 import Data.Function (($))
-import Data.Kind (Type, Constraint)
+import Data.Kind (Constraint)
 
-import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>), (//), CategoryOf)
+import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>), (//), CategoryOf, Kind)
 import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Category.Instance.Zero (VOID)
@@ -17,7 +17,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), lft, rgt)
 
 type Unweighted = TerminalProfunctor
 
-type HasColimits :: PRO i a -> Type -> Constraint
+type HasColimits :: PRO i a -> Kind -> Constraint
 class HasColimits (j :: PRO i a) k where
   -- Colimit has to be Corepresentable too
   type Colimit (j :: PRO i a) (d :: PRO i k) :: PRO a k

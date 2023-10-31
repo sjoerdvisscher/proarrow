@@ -2,7 +2,7 @@ module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), type (~>))
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), IsCategoryOf)
 
 data COPRODUCT j k = L j | R k
 
@@ -24,7 +24,7 @@ instance (CategoryOf j, CategoryOf k) => CategoryOf (COPRODUCT j k) where
   type Ob a = IsCoproduct a
 
 -- | The coproduct category of the categories `c` and `d`.
-instance (c ~ (~>), d ~ (~>), CategoryOf j, CategoryOf k) => Promonad ((c :++: d) :: CAT (COPRODUCT j k)) where
+instance (IsCategoryOf j c, IsCategoryOf k d) => Promonad ((c :++: d) :: CAT (COPRODUCT j k)) where
   id = coproductId
   InjL f . InjL g = InjL (f . g)
   InjR f . InjR g = InjR (f . g)
