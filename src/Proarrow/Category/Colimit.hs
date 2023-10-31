@@ -47,7 +47,7 @@ instance (HasBinaryCoproducts k, Corepresentable d) => Corepresentable (Coproduc
   type CoproductColimit d %% U = (d %% L U) || (d %% R U)
   coindex (CoproductColimit f) = f
   cotabulate = CoproductColimit
-  corepMap Unit = corepMap @d (InjL Unit) +++ corepMap @d (InjR Unit)
+  corepMap Unit = (+++) @_ @(d %% L U) @(d %% R U) (corepMap @d (InjL Unit)) (corepMap @d (InjR Unit))
 
 instance HasBinaryCoproducts k => HasColimits (Unweighted :: PRO (COPRODUCT UNIT UNIT) UNIT) k where
   type Colimit Unweighted d = CoproductColimit d

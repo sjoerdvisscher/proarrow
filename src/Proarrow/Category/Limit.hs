@@ -48,7 +48,7 @@ instance (HasBinaryProducts k, Representable d) => Representable (ProductLimit d
   type ProductLimit d % U = (d % L U) && (d % R U)
   index (ProductLimit f) = f
   tabulate = ProductLimit
-  repMap Unit = repMap @d (InjL Unit) *** repMap @d (InjR Unit)
+  repMap Unit = (***) @_ @(d % L U) @(d % R U) (repMap @d (InjL Unit)) (repMap @d (InjR Unit))
 
 instance HasBinaryProducts k => HasLimits (Unweighted :: PRO UNIT (COPRODUCT UNIT UNIT)) k where
   type Limit Unweighted d = ProductLimit d
