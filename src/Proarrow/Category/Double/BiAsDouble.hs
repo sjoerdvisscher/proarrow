@@ -2,7 +2,7 @@
 module Proarrow.Category.Double.BiAsDouble where
 
 import Proarrow.Category.Double (DOUBLE, Double(..))
-import Proarrow.Category.Bicategory.Bidiscrete (VoidK)
+import Proarrow.Category.Bicategory.Bidiscrete (VoidK, Bidiscrete (..))
 import Proarrow.Category.Bicategory (Bicategory(..))
 import Proarrow.Core (Promonad(..), CategoryOf(..))
 
@@ -15,9 +15,9 @@ data BiSq kk ps qs fs gs where
 instance Bicategory kk => Double kk VoidK where
   type Sq kk VoidK = BiSq kk
   object = BiSq id
-  hId = BiSq id
+  hArr = BiSq
   BiSq l ||| BiSq r = BiSq (r . l) \\\ l
-  vId = BiSq id
+  vArr Bidiscrete = BiSq id
   BiSq l === BiSq r = BiSq (l `o` r)
 
 

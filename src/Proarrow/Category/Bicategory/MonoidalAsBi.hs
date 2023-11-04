@@ -19,11 +19,11 @@ type instance PathToList Nil = '[]
 type instance PathToList (MK k ::: p) = k ': PathToList p
 
 type AppendPathToList :: forall {m} {i} {j}. Path (MonK m) i j -> Constraint
-class AppendPathToList (as :: Path (MonK m) i j) where
+class (IsList (PathToList as), CategoryOf k) => AppendPathToList (as :: Path (MonK (m :: M.MONOIDAL k)) i j) where
   appendPathToList' :: AppendPathToList bs => proxy bs -> ((PathToList as ++ PathToList bs ~ PathToList (as +++ bs), AppendPathToList (as +++ bs)) => r) -> r
-instance AppendPathToList Nil where
+instance CategoryOf k => AppendPathToList (Nil :: Path (MonK (m :: M.MONOIDAL k)) j j) where
   appendPathToList' _ r = r
-instance AppendPathToList as => AppendPathToList (MK k ::: as) where
+instance (AppendPathToList as, Ob k) => AppendPathToList (MK k ::: as) where
   appendPathToList' = appendPathToList' @as
 
 appendPathToList
@@ -51,4 +51,4 @@ data Mon2 as bs where
 instance M.Monoidal m => Bicategory (MonK (m :: M.MONOIDAL k)) where
   type BiOb (MonK (m :: M.MONOIDAL k)) j = ()
   Mon2 @_ @as @bs f `o` Mon2 @_ @cs @ds g = appendPathToList @as @cs $ appendPathToList @bs @ds $ Mon2 (f `M.par` g)
-  r \\\ _ = r
+  r \\\ Mon2{} = r

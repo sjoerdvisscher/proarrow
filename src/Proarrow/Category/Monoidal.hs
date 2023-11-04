@@ -27,7 +27,7 @@ class (Representable t, Ob @k (U t)) => Tensor (t :: PRO k (k, k)) where
 
 type MONOIDAL k = PRO [k] [k]
 
-class Promonad t => Monoidal (t :: MONOIDAL k) where
+class (Promonad t, CategoryOf k) => Monoidal (t :: MONOIDAL k) where
   par :: t as bs -> t cs ds -> t (as ++ cs) (bs ++ ds)
 
 

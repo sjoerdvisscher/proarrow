@@ -17,12 +17,12 @@ class (Bicategory hk, Bicategory vk) => Double hk vk where
   type Sq hk vk :: DOUBLE hk vk
   -- | The empty square for an object.
   object :: DOb hk vk k => Sq hk vk (Nil :: Path hk k k) Nil Nil Nil
-  -- | Horizontal identity
-  hId :: (Ob (ps :: Path hk j k), DOb hk vk j, DOb hk vk k) => Sq hk vk ps ps Nil Nil
+  -- | Make a square from a horizontal arrow
+  hArr :: (BiOb vk j, BiOb vk k) => (ps :: Path hk j k) ~> qs -> Sq hk vk ps qs Nil Nil
   -- | Horizontal composition
   (|||) :: Sq hk vk ps qs fs gs -> Sq hk vk qs rs hs is -> Sq hk vk ps rs (fs +++ hs) (gs +++ is)
-  -- | Vertical identity
-  vId :: (Ob (fs :: Path vk j k), DOb hk vk j, DOb hk vk k) => Sq hk vk Nil Nil fs fs
+  -- | Make a square from a vertical arrow (in the opposite direction to match the quintet construction)
+  vArr :: (BiOb hk j, BiOb hk k) => (gs :: Path vk j k) ~> fs -> Sq hk vk Nil Nil fs gs
   -- | Vertical composition
   (===) :: Sq hk vk ps qs fs gs -> Sq hk vk rs ss gs hs -> Sq hk vk (ps +++ rs) (qs +++ ss) fs hs
 

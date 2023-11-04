@@ -4,7 +4,10 @@ module Proarrow.Category.Bicategory where
 import Data.Kind (Constraint)
 
 import Proarrow.Core (CategoryOf(..), CAT, Kind)
+import Proarrow.Object (Obj, obj)
 
+
+infixr 5 :::
 
 -- | The type of kind constructors.
 type MKKIND = Kind -> Kind -> Kind
@@ -29,4 +32,7 @@ class (forall j k. (BiOb kk j, BiOb kk k) => CategoryOf (Path kk j k), forall j.
   type BiOb kk k :: Constraint
   -- | Horizontal composition
   o :: (as :: Path kk j k) ~> bs -> cs ~> ds -> (as +++ cs) ~> (bs +++ ds)
-  (\\\) :: ((BiOb kk j, BiOb kk k) => r) -> (as :: Path kk j k) ~> bs -> r
+  (\\\) :: ((BiOb kk j, BiOb kk k, Ob as, Ob bs) => r) -> (as :: Path kk j k) ~> bs -> r
+
+obj1 :: forall {kk} {j} {k} (a :: kk j k). (Bicategory kk, BiOb kk j, BiOb kk k, Ob (a ::: Nil)) => Obj (a ::: Nil)
+obj1 = obj @(a ::: Nil)
