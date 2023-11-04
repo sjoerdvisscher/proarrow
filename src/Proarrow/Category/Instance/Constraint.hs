@@ -1,25 +1,25 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT disable #-}
 module Proarrow.Category.Instance.Constraint where
 
 import Data.Kind (Constraint)
 import GHC.Exts (Any)
 
-import Proarrow.Core (UN, Is, Category(..), Profunctor(..), dimapDefault)
+import Proarrow.Core (UN, Is, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault)
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
 
 
 newtype CONSTRAINT = CNSTRNT Constraint
-type instance UN CNSTNT (CNSTRNT a) = a
+type instance UN CNSTRNT (CNSTRNT a) = a
 
 data (:-) a b where
   Entails :: { getEntails :: forall r. a => (b => r) -> r } -> CNSTRNT a :- CNSTRNT b
 
-type instance (~>) = (:-)
-instance Category (:-) where
+instance CategoryOf CONSTRAINT where
+  type (~>) = (:-)
   type Ob a = (Is CNSTRNT a)
+
+instance Promonad (:-) where
   id = Entails \r -> r
   Entails f . Entails g = Entails \r -> g (f r)
 
