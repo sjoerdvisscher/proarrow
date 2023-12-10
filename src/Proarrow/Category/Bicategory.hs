@@ -5,9 +5,10 @@ import Data.Kind (Constraint)
 
 import Proarrow.Core (CategoryOf(..), CAT, Kind)
 import Proarrow.Object (Obj, obj)
-
+import Prelude (undefined)
 
 infixr 5 :::
+infixl 5 +++
 
 -- | The type of kind constructors.
 type MKKIND = Kind -> Kind -> Kind
@@ -36,3 +37,33 @@ class (forall j k. (BiOb kk j, BiOb kk k) => CategoryOf (Path kk j k), forall j.
 
 obj1 :: forall {kk} {j} {k} (a :: kk j k). (Bicategory kk, BiOb kk j, BiOb kk k, Ob (a ::: Nil)) => Obj (a ::: Nil)
 obj1 = obj @(a ::: Nil)
+
+associator
+  :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k)
+   . (Bicategory kk, Ob a, Ob b, Ob c)
+  => (a +++ b) +++ c ~> a +++ (b +++ c)
+associator = undefined
+
+associatorInv
+  :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k)
+   . (Bicategory kk, Ob a, Ob b, Ob c)
+  => a +++ (b +++ c) ~> (a +++ b) +++ c
+associatorInv = undefined
+
+unitor
+  :: forall {kk} {j} {k} (a :: Path kk j k)
+   . (Bicategory kk, Ob a)
+  => a +++ Nil ~> a
+unitor = undefined
+
+unitorInv
+  :: forall {kk} {j} {k} (a :: Path kk j k)
+   . (Bicategory kk, Ob a)
+  => a ~> a +++ Nil
+unitorInv = undefined
+
+appendObj
+  :: forall {kk} {i} {j} {k} (a :: Path kk i j) (b :: Path kk j k) r
+   . (Ob a, Ob b)
+  => (Ob (a +++ b) => r) -> r
+appendObj _ = undefined
