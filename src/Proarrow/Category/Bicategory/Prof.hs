@@ -75,7 +75,8 @@ instance (CategoryOf j, CategoryOf k) => CategoryOf (Path (ProfK cl) j k) where
 
 -- | The bicategory of profunctors.
 instance Bicategory (ProfK cl) where
-  type BiOb (ProfK cl) k = CategoryOf k
+  type Ob0 (ProfK cl) k = CategoryOf k
+  type Ob1 (ProfK cl) p = (Is PK p, ProfConstraint cl (UN PK p))
   Biprof @as @bs n `o` Biprof @cs @ds m = withAppendPSplit @as @cs $ withAppendPSplit @bs @ds $
     Biprof $ psplit (\as cs -> pappend (n as) (m cs))
   r \\\ Biprof{} = r

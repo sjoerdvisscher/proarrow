@@ -15,24 +15,24 @@ import Proarrow.Object (obj)
 
 type RelMonad :: forall {kk :: MKKIND} {i :: Kind} {k :: Kind}. Path kk k i -> Path kk i k -> Type
 data RelMonad j t where
-  RelMonad :: (Bicategory kk, BiOb kk i, BiOb kk k) =>
+  RelMonad :: (Bicategory kk, Ob0 kk i, Ob0 kk k) =>
     { return :: Nil ~> j +++ t
     , join :: (t +++ (j +++ t)) ~> t
     } -> RelMonad (j :: Path kk k i) (t :: Path kk i k)
 
 type Monad = RelMonad Nil
 
-idMonad :: (Bicategory kk, BiOb kk a) => Monad (Nil :: Path kk a a)
+idMonad :: (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a)
 idMonad = RelMonad { return = id, join = id }
 
 type Adjunction :: forall {kk :: MKKIND} {c :: Kind} {d :: Kind}. Path kk c d -> Path kk d c -> Type
 data Adjunction l r where
-  Adjunction :: (Bicategory kk, BiOb kk c, BiOb kk d, Ob l, Ob r) =>
+  Adjunction :: (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) =>
     { unit :: Nil ~> r +++ l
     , counit :: l +++ r ~> Nil
     } -> Adjunction (l :: Path kk c d) (r :: Path kk d c)
 
-idAdjunction :: (Bicategory kk, BiOb kk a) => Adjunction (Nil :: Path kk a a) Nil
+idAdjunction :: (Bicategory kk, Ob0 kk a) => Adjunction (Nil :: Path kk a a) Nil
 idAdjunction = Adjunction { unit = id, counit = id }
 
 compAdjunction :: forall l1 r1 l2 r2. Adjunction l1 r1 -> Adjunction l2 r2 -> Adjunction (l2 +++ l1) (r1 +++ r2)

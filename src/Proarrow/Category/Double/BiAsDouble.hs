@@ -3,13 +3,13 @@ module Proarrow.Category.Double.BiAsDouble where
 
 import Proarrow.Category.Double (DOUBLE, Double(..))
 import Proarrow.Category.Bicategory.Bidiscrete (VoidK, Bidiscrete (..))
-import Proarrow.Category.Bicategory (Bicategory(..))
+import Proarrow.Category.Bicategory (Bicategory(..), Path(..))
 import Proarrow.Core (Promonad(..), CategoryOf(..))
 
 
 type BiSq :: forall kk -> DOUBLE kk VoidK
 data BiSq kk ps qs fs gs where
-  BiSq :: ps ~> qs -> BiSq kk ps qs fs gs
+  BiSq :: ps ~> qs -> BiSq kk ps qs Nil Nil
 
 -- | A bicategory as a double category with only identity arrows vertically.
 instance Bicategory kk => Double kk VoidK where

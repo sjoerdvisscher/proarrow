@@ -39,7 +39,7 @@ instance (M.Monoidal m) => Promonad (Mon2 :: BICAT (MonK (m :: M.MONOIDAL k))) w
   Mon2 f . Mon2 g = Mon2 (f . g)
 instance (M.Monoidal m) => CategoryOf (Path (MonK (m :: M.MONOIDAL k)) i j) where
   type (~>) @(Path (MonK m) i j) = Mon2
-  type Ob ps = (IsList (PathToList ps), AppendPathToList ps)
+  type Ob ps = AppendPathToList ps
 
 type Mon2 :: BICAT (MonK m)
 data Mon2 as bs where
@@ -49,6 +49,7 @@ data Mon2 as bs where
 
 -- | A monoidal category as a one object bicategory.
 instance M.Monoidal m => Bicategory (MonK (m :: M.MONOIDAL k)) where
-  type BiOb (MonK (m :: M.MONOIDAL k)) j = ()
+  type Ob0 (MonK (m :: M.MONOIDAL k)) j = ()
+  type Ob1 (MonK (m :: M.MONOIDAL k)) p = ()
   Mon2 @_ @as @bs f `o` Mon2 @_ @cs @ds g = appendPathToList @as @cs $ appendPathToList @bs @ds $ Mon2 (f `M.par` g)
   r \\\ Mon2{} = r
