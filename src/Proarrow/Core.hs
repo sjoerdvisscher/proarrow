@@ -42,7 +42,7 @@ lmap l p = dimap l id p \\ p
 rmap :: Profunctor p => b ~> d -> p a b -> p a d
 rmap r p = dimap id r p \\ p
 
-dimapDefault :: CategoryOf k => (c :: k) ~> a -> (b :: k) ~> d -> a ~> b -> c ~> d
+dimapDefault :: Promonad p => p c a -> p b d -> p a b -> p c d
 dimapDefault f g h = g . h . f
 
 class Profunctor p => Promonad p where

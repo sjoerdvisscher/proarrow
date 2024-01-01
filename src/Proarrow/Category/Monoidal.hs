@@ -15,7 +15,7 @@ import Proarrow.Profunctor.Identity (Id (..))
 
 type TENSOR k = PRO k (k, k)
 type Tensor :: forall {k}. TENSOR k -> Constraint
-class (Representable t, Ob @k (U t)) => Tensor (t :: PRO k (k, k)) where
+class (Representable t, Ob @k (U t)) => Tensor (t :: TENSOR k) where
   type U t :: k
   leftUnitor :: Obj a -> t % '(U t, a) ~> a
   leftUnitorInv :: Obj a -> a ~> t % '(U t, a)
@@ -29,6 +29,13 @@ type MONOIDAL k = PRO [k] [k]
 
 class (Promonad t, CategoryOf k) => Monoidal (t :: MONOIDAL k) where
   par :: t as bs -> t cs ds -> t (as ++ cs) (bs ++ ds)
+
+lift :: Monoidal t => a ~> b -> t '[a] '[b]
+lift f = rmap (Cons f Nil) id \\ f
+
+
+instance CategoryOf k => Monoidal (List :: MONOIDAL k) where
+  par = append
 
 
 

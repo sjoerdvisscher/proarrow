@@ -3,12 +3,12 @@ module Proarrow.Category.Bicategory.Prof where
 
 import Data.Kind (Constraint, Type)
 import Data.Function (($))
-import Data.Proxy (Proxy(..))
 
-import Proarrow.Category.Bicategory (Path(..), type (+++), BICAT, Bicategory (..))
+import Proarrow.Category.Bicategory (type Path(..), type (+++), BICAT, Bicategory (..), SPath(..), IsPath(..), isPathAppend)
 import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), (:~>), CAT, Promonad (..), dimapDefault, lmap, rmap, UN, Is)
 import Proarrow.Profunctor.Representable (Representable)
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
+import Proarrow.Category.Instance.Prof ()
 
 
 newtype ProfK (cl :: Type) j k = PK (PRO j k)
@@ -38,29 +38,24 @@ pappend :: (CategoryOf i, CategoryOf j, CategoryOf k) => ProfList cl ps (a :: i)
 pappend (ProfNil f) qs = lmap f qs
 pappend (ProfCons p ps) qs = ProfCons p (pappend ps qs)
 
-type PSplit :: forall {i} {j} {cl}. Path (ProfK cl) i j -> Constraint
-class PSplit (ps :: Path (ProfK cl) i j) where
-  psplit
-    :: forall {k} (qs :: Path (ProfK cl) j k) a c r
-    . (CategoryOf i, CategoryOf j, CategoryOf k)
-    => (forall (b :: j). ProfList cl ps (a :: i) b -> ProfList cl qs b (c :: k) -> r)
-    -> ProfList cl (ps +++ qs) a c -> r
-  withAppendPSplit' :: PSplit qs => proxy qs -> (PSplit (ps +++ qs) => r) -> r
-instance PSplit Nil where
-  psplit k qs = k (ProfNil id) qs \\ qs
-  withAppendPSplit' _ r = r
-instance (PSplit ps, Is PK f, p ~ UN PK f) => PSplit (f ::: ps) where
-  psplit k (ProfCons p pqs) = psplit @ps (k . ProfCons p) pqs
-  withAppendPSplit' = withAppendPSplit' @ps
+psplit
+  :: (CategoryOf i, CategoryOf j, CategoryOf k, IsPath ps)
+  => (forall (b :: j). ProfList cl ps (a :: i) b -> ProfList cl qs b (c :: k) -> r)
+  -> ProfList cl (ps +++ qs) a c -> r
+psplit = go singPath
+  where
+    go :: CategoryOf k => SPath ps
+       -> (forall (b :: j). ProfList cl ps (a :: i) b -> ProfList cl qs b (c :: k) -> r)
+       -> ProfList cl (ps +++ qs) a c -> r
+    go SNil k qs = k (ProfNil id) qs \\ qs
+    go (SCons ps) k (ProfCons p pqs) = go ps (k . ProfCons p) pqs
 
-withAppendPSplit :: forall ps qs r. (PSplit ps, PSplit qs) => (PSplit (ps +++ qs) => r) -> r
-withAppendPSplit = withAppendPSplit' @ps (Proxy @qs)
 
 type Biprof :: BICAT (ProfK cl)
 data Biprof ps qs where
   Biprof
     :: forall {j} {k} {cl} (ps :: Path (ProfK cl) j k) qs
-     . (CategoryOf j, CategoryOf k, PSplit ps, PSplit qs)
+     . (CategoryOf j, CategoryOf k, Ob ps, Ob qs)
     => ProfList cl ps :~> ProfList cl qs
     -> Biprof ps qs
 instance (CategoryOf j, CategoryOf k) => Profunctor (Biprof :: CAT (Path (ProfK cl) j k)) where
@@ -71,12 +66,29 @@ instance (CategoryOf j, CategoryOf k) => Promonad (Biprof :: CAT (Path (ProfK cl
   Biprof n . Biprof m = Biprof (n . m)
 instance (CategoryOf j, CategoryOf k) => CategoryOf (Path (ProfK cl) j k) where
   type (~>) = Biprof
-  type Ob (ps :: Path (ProfK cl) j k) = (PSplit ps, CategoryOf j, CategoryOf k)
+  type Ob ps = IsPath ps
 
 -- | The bicategory of profunctors.
 instance Bicategory (ProfK cl) where
   type Ob0 (ProfK cl) k = CategoryOf k
   type Ob1 (ProfK cl) p = (Is PK p, ProfConstraint cl (UN PK p))
-  Biprof @as @bs n `o` Biprof @cs @ds m = withAppendPSplit @as @cs $ withAppendPSplit @bs @ds $
+  Biprof @as @bs n `o` Biprof @cs @ds m = isPathAppend @as @cs $ isPathAppend @bs @ds $
     Biprof $ psplit (\as cs -> pappend (n as) (m cs))
   r \\\ Biprof{} = r
+  -- fromList Nil = Biprof \(ProfNil f) -> ProfNil f
+  -- fromList (Cons (Prof n) ns) = case fromList ns of Biprof f -> Biprof \(ProfCons p ps) -> ProfCons (n p) (f ps)
+
+
+-- type Prof :: CAT (ProfK cl j k)
+-- data Prof p q where
+--   Prof :: (ProfConstraint cl p, Profunctor p, ProfConstraint cl q, Profunctor q) => p :~> q -> Prof (PK p :: ProfK cl j k) (PK q)
+
+-- instance Profunctor Prof where
+--   dimap = dimapDefault
+--   r \\ Prof n = r \\ n
+-- instance Promonad Prof where
+--   id = Prof id
+--   Prof m . Prof n = Prof (m . n)
+-- instance CategoryOf (ProfK cl j k) where
+--   type (~>) = Prof
+--   type Ob @(ProfK cl j k) p = (Is PK p, Profunctor (UN PK p), ProfConstraint cl (UN PK p))

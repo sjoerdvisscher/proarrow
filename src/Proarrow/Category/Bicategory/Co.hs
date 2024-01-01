@@ -1,10 +1,9 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Bicategory.Co where
 
 import Data.Function (($))
-import Data.Kind (Type)
-import Fcf.Core (Eval)
 
-import Proarrow.Category.Bicategory (Bicategory(..), MKKIND, BICAT, Path(..), IsPath, withAppendIsPath, MapPath, Eval', MapFunc)
+import Proarrow.Category.Bicategory (Bicategory(..), MKKIND, BICAT, Path(..), IsPath(..), SPath(..), type (+++), isPathAppend)
 import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault, UN, Is)
 
 
@@ -13,11 +12,21 @@ newtype COK kk j k = CO (kk j k)
 type instance UN CO (CO k) = k
 
 
-data UnCO :: MapFunc (COK kk) kk -> Type
-type instance Eval' UnCO (CO p) = p
+type family UnCoPath (ps :: Path (COK kk) a b) :: Path kk a b
+type instance UnCoPath Nil = Nil
+type instance UnCoPath (CO p ::: ps) = p ::: UnCoPath ps
 
-type UnCoPath :: Path (COK kk) a b -> Path kk a b
-type UnCoPath ps = Eval (MapPath UnCO ps)
+unCoPathAppend'
+  :: forall {i} {j} {kk} (as :: Path (COK kk) i j) bs r. (Ob bs)
+  => SPath as -> ((UnCoPath as +++ UnCoPath bs ~ UnCoPath (as +++ bs)) => r) -> r
+unCoPathAppend' SNil r = r
+unCoPathAppend' (SCons @(CO p) @ps' ps) r = unCoPathAppend' @ps' @bs ps r
+
+unCoPathAppend
+  :: forall {i} {j} {kk} (as :: Path (COK kk) i j) bs r. (Ob as, Ob bs)
+  => ((UnCoPath as +++ UnCoPath bs ~ UnCoPath (as +++ bs)) => r) -> r
+unCoPathAppend = unCoPathAppend' @as @bs (singPath @as)
+
 
 type Co :: BICAT (COK kk)
 data Co as bs where
@@ -31,10 +40,13 @@ instance (CategoryOf (Path kk j k)) => Promonad (Co :: CAT (Path (COK kk) j k)) 
   Co f . Co g = Co (g . f)
 instance (CategoryOf (Path kk j k)) => CategoryOf (Path (COK kk) j k) where
   type (~>) = Co
-  type Ob (fs :: Path (COK kk) j k) = IsPath fs UnCO
+  type Ob (ps :: Path (COK kk) j k) = (IsPath ps, Ob (UnCoPath ps))
 
 instance Bicategory kk => Bicategory (COK kk) where
   type Ob0 (COK kk) k = Ob0 kk k
   type Ob1 (COK kk) p = (Is CO p, Ob1 kk (UN CO p))
-  Co @as @bs f `o` Co @cs @ds g = withAppendIsPath @as @cs @UnCO $ withAppendIsPath @bs @ds @UnCO $ Co (f `o` g)
+  Co @as @bs f `o` Co @cs @ds g =
+    unCoPathAppend @as @cs $ unCoPathAppend @bs @ds $
+    isPathAppend @as @cs $ isPathAppend @bs @ds $
+    let fg = f `o` g in Co fg \\\ fg
   r \\\ Co f = r \\\ f
