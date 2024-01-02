@@ -3,7 +3,6 @@
 module Proarrow.Category.Bicategory where
 
 import Data.Kind (Constraint, Type)
-import Prelude (undefined)
 
 import Proarrow.Core (CategoryOf(..), CAT, Kind, id)
 import Proarrow.Object (Obj, obj)
@@ -47,35 +46,55 @@ e = id
 obj1 :: forall {kk} {j} {k} (a :: kk j k). (Bicategory kk, Ob0 kk j, Ob0 kk k, Ob (a ::: Nil)) => Obj (a ::: Nil)
 obj1 = obj @(a ::: Nil)
 
+withAssociative
+  :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k) r
+   . (Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c)
+  => ((a +++ b) +++ c ~ a +++ (b +++ c) => r) -> r
+withAssociative = go (singPath @a)
+  where
+    go :: forall a'. SPath a' -> ((a' +++ b) +++ c ~ a' +++ (b +++ c) => r) -> r
+    go SNil r = r
+    go (SCons a) r = go a r
+
+withUnital
+  :: forall {kk} {j} {k} (a :: Path kk j k) r
+   . (Bicategory kk, Ob0 kk j, Ob0 kk k, Ob a)
+  => (a +++ Nil ~ a => r) -> r
+withUnital = go (singPath @a)
+  where
+    go :: forall a'. SPath a' -> (a' +++ Nil ~ a' => r) -> r
+    go SNil r = r
+    go (SCons a) r = go a r
+
 associator
   :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k)
-   . (Bicategory kk, Ob a, Ob b, Ob c)
+   . (Bicategory kk, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b, Ob c)
   => (a +++ b) +++ c ~> a +++ (b +++ c)
-associator = undefined
+associator = withAssociative @a @b @c (obj @a `o` obj @b `o` obj @c)
 
 associatorInv
   :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k)
-   . (Bicategory kk, Ob a, Ob b, Ob c)
+   . (Bicategory kk, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b, Ob c)
   => a +++ (b +++ c) ~> (a +++ b) +++ c
-associatorInv = undefined
+associatorInv = withAssociative @a @b @c (obj @a `o` obj @b `o` obj @c)
 
 unitor
   :: forall {kk} {j} {k} (a :: Path kk j k)
-   . (Bicategory kk, Ob a)
+   . (Bicategory kk, Ob0 kk j, Ob0 kk k, Ob a)
   => a +++ Nil ~> a
-unitor = undefined
+unitor = withUnital @a (obj @a)
 
 unitorInv
   :: forall {kk} {j} {k} (a :: Path kk j k)
-   . (Bicategory kk, Ob a)
+   . (Bicategory kk, Ob0 kk j, Ob0 kk k, Ob a)
   => a ~> a +++ Nil
-unitorInv = undefined
+unitorInv = withUnital @a (obj @a)
 
 appendObj
   :: forall {kk} {i} {j} {k} (a :: Path kk i j) (b :: Path kk j k) r
-   . (Ob a, Ob b)
+   . (Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b)
   => (Ob (a +++ b) => r) -> r
-appendObj _ = undefined
+appendObj r = r \\\ (obj @a `o` obj @b)
 
 
 
