@@ -5,9 +5,9 @@ module Proarrow.Monad where
 import Data.Kind (Type)
 import Data.Function (($))
 
-import Proarrow.Category.Bicategory (Bicategory(..), Path(..), type (+++), MKKIND, obj1, unitorInv, unitor, associator, associatorInv, appendObj)
+import Proarrow.Category.Bicategory (Bicategory(..), Path(..), type (+++), MKKIND, obj1, withAssoc, withUnital, appendObj)
 import Proarrow.Category.Bicategory.Prof (ProfK(..), Biprof(..), ProfList(..), ProfConstraint)
-import Proarrow.Core (CategoryOf(..), Profunctor (..), Kind)
+import Proarrow.Core (CategoryOf(..), Profunctor (..), Kind, (//))
 import Proarrow.Promonad (Promonad(..))
 import Proarrow.Adjunction qualified as Pro
 import Proarrow.Profunctor.Composition ((:.:)(..))
@@ -37,14 +37,17 @@ idAdjunction = Adjunction { unit = id, counit = id }
 
 compAdjunction :: forall l1 r1 l2 r2. Adjunction l1 r1 -> Adjunction l2 r2 -> Adjunction (l2 +++ l1) (r1 +++ r2)
 compAdjunction adj1@Adjunction{} adj2@Adjunction{} = appendObj @l2 @l1 $ appendObj @r1 @r2 $ Adjunction
-  { unit = associator @(r1 +++ r2) @l2 @l1 . ((associatorInv @r1 @r2 @l2 . (obj @r1 `o` unit adj2) . unitorInv @r1) `o` obj @l1) . unit adj1
-  , counit = counit adj2 . ((unitor @l2 . (obj @l2 `o` counit adj1) . associator @l2 @l1 @r1) `o` obj @r2) . associatorInv @(l2 +++ l1) @r1 @r2
+  { unit = withAssoc @(r1 +++ r2) @l2 @l1 $ withAssoc @r1 @r2 @l2 $ withUnital @r1 $
+      (obj @r1 `o` unit adj2 `o` obj @l1) . unit adj1
+  , counit = withAssoc @(l2 +++ l1) @r1 @r2 $ withAssoc @l2 @l1 @r1 $ withUnital @l2 $
+      counit adj2 . (obj @l2 `o` counit adj1 `o` obj @r2)
   }
 
 adjMonad :: forall l r. Adjunction l r -> Monad (r +++ l)
 adjMonad Adjunction{..} = RelMonad
   { return = unit
-  , join = ((unitor @r . (obj @r `o` counit) . associator @r @l @r) `o` obj @l) . associatorInv @(r +++ l) @r @l \\ unit
+  , join = unit // withUnital @r $ withAssoc @r @l @r $ withAssoc @(r +++ l) @r @l $
+      (obj @r `o` counit `o` obj @l)
   }
 
 adjWrapMonad :: forall r l t. Adjunction (l ::: Nil) (r ::: Nil) -> Monad (t ::: Nil) -> Monad (r ::: t ::: l ::: Nil)

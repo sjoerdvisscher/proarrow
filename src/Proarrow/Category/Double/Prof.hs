@@ -5,10 +5,9 @@ module Proarrow.Category.Double.Prof where
 import Data.Function (($))
 
 import Proarrow.Category.Bicategory (Path(..), isPathAppend)
-import Proarrow.Core (CategoryOf(..), Profunctor(..), Promonad (..), UN, Is)
-import Proarrow.Category.Bicategory.Prof (ProfK(..), ProfList(..), Biprof(..), pappend, psplit, ProfC, ProfCorepC)
+import Proarrow.Core (CategoryOf(..), Profunctor(..), Promonad (..))
+import Proarrow.Category.Bicategory.Prof (ProfK(..), ProfList(..), Biprof(..), pappend, psplit, ProfC)
 import Proarrow.Category.Double (DOUBLE, Double (..), Equipment(..), Companion, Conjoint)
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
 import Proarrow.Category.Bicategory.Cat (ApplyAll, Cat (..), withAppendFList)
 import Proarrow.Profunctor.Costar (Costar(..))
 import Proarrow.Profunctor.Star (Star(..))

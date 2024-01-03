@@ -4,7 +4,7 @@ module Proarrow.Category.Monoidal.Endo where
 import Data.Function (($))
 
 import Proarrow.Core (Promonad(..), CategoryOf(..), Profunctor(..), Kind)
-import Proarrow.Category.Bicategory (Path(..), Bicategory(..), MKKIND, type (+++), withAssociative)
+import Proarrow.Category.Bicategory (Path(..), Bicategory(..), MKKIND, type (+++), withAssoc)
 import Proarrow.Category.Monoidal (MONOIDAL, Monoidal(..))
 import Proarrow.Category.Instance.List (IsList (..), List (..), type (++))
 import Proarrow.Object (obj)
@@ -22,7 +22,7 @@ appendListToPath'
   :: forall {kk} {k} (as :: [Path kk k k]) bs r. (Bicategory kk, Ob0 kk k, Ob bs, Ob (ListToPath bs))
   => List as as -> ((ListToPath as +++ ListToPath bs ~ ListToPath (as ++ bs), Ob (as ++ bs)) => r) -> r
 appendListToPath' Nil r = r
-appendListToPath' (Cons @_ @a @as' f fs) r = withAssociative @a @(ListToPath as') @(ListToPath bs) (appendListToPath' @as' @bs fs r)
+appendListToPath' (Cons @_ @a @as' f fs) r = withAssoc @a @(ListToPath as') @(ListToPath bs) (appendListToPath' @as' @bs fs r)
   \\ f \\ listToPath fs
 
 appendListToPath

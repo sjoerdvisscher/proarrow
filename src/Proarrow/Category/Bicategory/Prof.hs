@@ -68,7 +68,7 @@ instance (CategoryOf j, CategoryOf k) => CategoryOf (Path (ProfK cl) j k) where
   type (~>) = Biprof
   type Ob ps = IsPath ps
 
--- | The bicategory of profunctors.
+-- | The bicategory of categories, profunctors and natural transformations.
 instance Bicategory (ProfK cl) where
   type Ob0 (ProfK cl) k = CategoryOf k
   type Ob1 (ProfK cl) p = (Is PK p, ProfConstraint cl (UN PK p))

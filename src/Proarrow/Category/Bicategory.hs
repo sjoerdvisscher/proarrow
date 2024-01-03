@@ -1,6 +1,28 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE TypeData #-}
-module Proarrow.Category.Bicategory where
+module Proarrow.Category.Bicategory (
+  -- * Bicategories
+  Bicategory(..)
+  , BICAT
+  , OkCategory
+  , PathNilIsOb
+  , id1
+  , obj1
+  , withAssoc
+  , withUnital
+  , appendObj
+
+  -- * Paths
+  , Path(..)
+  , MKKIND
+  , SPath(..)
+  , IsPath(..)
+  , withIsPath
+  , type (+++)
+  , append
+  , isPathAppend
+)
+where
 
 import Data.Kind (Constraint, Type)
 
@@ -14,7 +36,7 @@ infixl 5 +++
 type MKKIND = Kind -> Kind -> Kind
 type Path :: MKKIND -> MKKIND
 -- | A type-level kind-threaded list. Used to strictify the bicategory and double category definitions.
--- @kk@ is a kind constructor, which creates a kind given two other kinds. (Each kind representing a category.)
+-- @kk@ is a kind constructor, which creates a kind given two other kinds. (Each kind representing a 0-cell.)
 type data Path kk j k where
   Nil :: Path kk k k
   (:::) :: kk i j -> Path kk j k -> Path kk i k
@@ -30,27 +52,32 @@ instance (CategoryOf (Path kk j k), forall (ps :: Path kk j k). Ob ps => IsPath 
 
 type BICAT kk = forall {j} {k}. CAT (Path kk j k)
 -- | Bicategories. This is a strictified definition.
+--
+-- * 0-cells are kinds @i@, @j@, @k@... satisfying the @Ob0 kk@ constraint.
+-- * 1-cells are types of kind @kk j k@ for any 0-cells @j@ and @k@, satisfying the @Ob1 kk@ constraint.
+-- * 2-cells are values of type @ps ~> qs@, where @ps@ and @qs@ are of kind @Path kk j k@, representing lists of 1-cells.
 class (forall j k. (Ob0 kk j, Ob0 kk k) => OkCategory kk j k, forall j. Ob0 kk j => PathNilIsOb kk j) => Bicategory kk where
   type Ob0 kk k :: Constraint
   type Ob1 kk (p :: kk a b) :: Constraint
-  -- | Horizontal composition
-  o :: (as :: Path kk j k) ~> bs -> cs ~> ds -> (as +++ cs) ~> (bs +++ ds)
+  -- | Horizontal composition of 2-cells.
+  o :: (ps :: Path kk j k) ~> qs -> rs ~> ss -> (ps +++ rs) ~> (qs +++ ss)
+  -- | Observe constraints from a 2-cell value.
   (\\\) :: ((Ob0 kk j, Ob0 kk k, Ob ps, Ob qs) => r) -> (ps :: Path kk j k) ~> qs -> r
   -- fromList :: List (ps :: Path kk j k) qs -> ps ~> qs
 
--- | The unit of horizontal composition
-e :: (Bicategory kk, Ob0 kk k) => (Nil :: Path kk k k) ~> (Nil :: Path kk k k)
-e = id
+-- | The identity 1-cell, the unit of horizontal composition
+id1 :: (Bicategory kk, Ob0 kk k) => (Nil :: Path kk k k) ~> (Nil :: Path kk k k)
+id1 = id
 
--- | `obj1 @a` is short for `obj @(a ::: Nil)`
+-- | @obj1 \@a@ is short for @obj \@(a ::: Nil)@
 obj1 :: forall {kk} {j} {k} (a :: kk j k). (Bicategory kk, Ob0 kk j, Ob0 kk k, Ob (a ::: Nil)) => Obj (a ::: Nil)
 obj1 = obj @(a ::: Nil)
 
-withAssociative
+withAssoc
   :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k) r
    . (Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c)
   => ((a +++ b) +++ c ~ a +++ (b +++ c) => r) -> r
-withAssociative = go (singPath @a)
+withAssoc = go (singPath @a)
   where
     go :: forall a'. SPath a' -> ((a' +++ b) +++ c ~ a' +++ (b +++ c) => r) -> r
     go SNil r = r
@@ -65,30 +92,6 @@ withUnital = go (singPath @a)
     go :: forall a'. SPath a' -> (a' +++ Nil ~ a' => r) -> r
     go SNil r = r
     go (SCons a) r = go a r
-
-associator
-  :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k)
-   . (Bicategory kk, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b, Ob c)
-  => (a +++ b) +++ c ~> a +++ (b +++ c)
-associator = withAssociative @a @b @c (obj @a `o` obj @b `o` obj @c)
-
-associatorInv
-  :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k)
-   . (Bicategory kk, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b, Ob c)
-  => a +++ (b +++ c) ~> (a +++ b) +++ c
-associatorInv = withAssociative @a @b @c (obj @a `o` obj @b `o` obj @c)
-
-unitor
-  :: forall {kk} {j} {k} (a :: Path kk j k)
-   . (Bicategory kk, Ob0 kk j, Ob0 kk k, Ob a)
-  => a +++ Nil ~> a
-unitor = withUnital @a (obj @a)
-
-unitorInv
-  :: forall {kk} {j} {k} (a :: Path kk j k)
-   . (Bicategory kk, Ob0 kk j, Ob0 kk k, Ob a)
-  => a ~> a +++ Nil
-unitorInv = withUnital @a (obj @a)
 
 appendObj
   :: forall {kk} {i} {j} {k} (a :: Path kk i j) (b :: Path kk j k) r

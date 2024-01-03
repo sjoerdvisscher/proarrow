@@ -42,6 +42,7 @@ instance (CategoryOf (Path kk j k)) => CategoryOf (Path (COK kk) j k) where
   type (~>) = Co
   type Ob (ps :: Path (COK kk) j k) = (IsPath ps, Ob (UnCoPath ps))
 
+-- | Create a dual of a bicategory by reversing the 2-cells.
 instance Bicategory kk => Bicategory (COK kk) where
   type Ob0 (COK kk) k = Ob0 kk k
   type Ob1 (COK kk) p = (Is CO p, Ob1 kk (UN CO p))

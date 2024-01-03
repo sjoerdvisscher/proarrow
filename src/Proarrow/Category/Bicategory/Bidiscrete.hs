@@ -27,7 +27,7 @@ instance CategoryOf (Path VoidK j k) where
   type (~>) = Bidiscrete
   type Ob @(Path VoidK j k) as = (IsPath as, as ~~ (Nil :: Path VoidK j j))
 
--- | The bicategory with only identity arrows.
+-- | The bicategory with only identity 1-cells.
 instance Bicategory VoidK where
   type Ob0 VoidK k = ()
   type Ob1 VoidK p = ()
