@@ -33,8 +33,8 @@ infixr 5 :::
 infixl 5 +++
 
 -- | The type of 2-parameter kind constructors.
-type MKKIND = Kind -> Kind -> Kind
-type Path :: MKKIND -> MKKIND
+type MKKIND = CAT Kind
+type Path :: CAT k -> CAT k
 -- | A type-level kind-threaded list. Used to strictify the bicategory and double category definitions.
 -- @kk@ is a kind constructor, which creates a kind given two other kinds. (Each kind representing a 0-cell.)
 type data Path kk j k where
@@ -47,8 +47,22 @@ type instance (p ::: ps) +++ qs = p ::: (ps +++ qs)
 
 class Ob @(Path kk j j) Nil => PathNilIsOb kk j
 instance Ob @(Path kk j j) Nil => PathNilIsOb kk j
+-- class (forall (p :: kk i j) (ps :: Path kk j k). (Ob1 kk p, Ob ps) => Ob' (p ::: ps)) => PathConsIsOb kk i j k
+-- instance (forall (p :: kk i j) (ps :: Path kk j k). (Ob1 kk p, Ob ps) => Ob' (p ::: ps)) => PathConsIsOb kk i j k
 class (CategoryOf (Path kk j k), forall (ps :: Path kk j k). Ob ps => IsPath ps) => OkCategory kk j k
 instance (CategoryOf (Path kk j k), forall (ps :: Path kk j k). Ob ps => IsPath ps) => OkCategory kk j k
+
+type BicategoryRequirements :: CAT k -> Constraint
+class
+  ( forall k. Ob0 kk k => PathNilIsOb kk k
+  , forall j k. (Ob0 kk j, Ob0 kk k) => OkCategory kk j k
+  -- , forall i j k. (Ob0 kk i, Ob0 kk j, Ob0 kk k) => PathConsIsOb kk i j k
+  ) => BicategoryRequirements kk
+instance
+  ( forall k. Ob0 kk k => PathNilIsOb kk k
+  , forall j k. (Ob0 kk j, Ob0 kk k) => OkCategory kk j k
+  -- , forall i j k. (Ob0 kk i, Ob0 kk j, Ob0 kk k) => PathConsIsOb kk i j k
+  ) => BicategoryRequirements kk
 
 type BICAT kk = forall {j} {k}. CAT (Path kk j k)
 -- | Bicategories. This is a strictified definition.
@@ -56,13 +70,14 @@ type BICAT kk = forall {j} {k}. CAT (Path kk j k)
 -- * 0-cells are kinds @i@, @j@, @k@... satisfying the @Ob0 kk@ constraint.
 -- * 1-cells are types of kind @kk j k@ for any 0-cells @j@ and @k@, satisfying the @Ob1 kk@ constraint.
 -- * 2-cells are values of type @ps ~> qs@, where @ps@ and @qs@ are of kind @Path kk j k@, representing lists of 1-cells.
-class (forall j k. (Ob0 kk j, Ob0 kk k) => OkCategory kk j k, forall j. Ob0 kk j => PathNilIsOb kk j) => Bicategory kk where
-  type Ob0 kk k :: Constraint
+type Bicategory :: CAT k -> Constraint
+class BicategoryRequirements kk => Bicategory (kk :: CAT k) where
+  type Ob0 kk (j :: k) :: Constraint
   type Ob1 kk (p :: kk a b) :: Constraint
   -- | Horizontal composition of 2-cells.
-  o :: (ps :: Path kk j k) ~> qs -> rs ~> ss -> (ps +++ rs) ~> (qs +++ ss)
+  o :: (ps :: Path kk i j) ~> qs -> rs ~> ss -> (ps +++ rs) ~> (qs +++ ss)
   -- | Observe constraints from a 2-cell value.
-  (\\\) :: ((Ob0 kk j, Ob0 kk k, Ob ps, Ob qs) => r) -> (ps :: Path kk j k) ~> qs -> r
+  (\\\) :: ((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) => r) -> (ps :: Path kk i j) ~> qs -> r
   -- fromList :: List (ps :: Path kk j k) qs -> ps ~> qs
 
 -- | The identity 1-cell, the unit of horizontal composition

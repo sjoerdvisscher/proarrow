@@ -2,9 +2,10 @@ module Proarrow.Category.Bicategory.Bidiscrete where
 
 import Data.Type.Equality (type (~~))
 
-import Proarrow.Category.Bicategory (BICAT, Bicategory(..), Path(..), IsPath(..))
+import Proarrow.Category.Bicategory (BICAT, Bicategory(..), Path(..), IsPath(..), MKKIND)
 import Proarrow.Core (Profunctor (..), Promonad (..), CategoryOf(..), dimapDefault)
 
+type VoidK :: MKKIND
 data VoidK j k
 type Bidiscrete :: BICAT VoidK
 data Bidiscrete as bs where
@@ -13,16 +14,9 @@ data Bidiscrete as bs where
 instance Profunctor Bidiscrete where
   dimap = dimapDefault
   r \\ Bidiscrete = r
-
 instance Promonad Bidiscrete where
   id = Bidiscrete
   Bidiscrete . Bidiscrete = Bidiscrete
-
-class IsVoidPath (as :: Path VoidK j k) where
-  bidiscId :: Bidiscrete as as
-instance IsVoidPath Nil where
-  bidiscId = Bidiscrete
-
 instance CategoryOf (Path VoidK j k) where
   type (~>) = Bidiscrete
   type Ob @(Path VoidK j k) as = (IsPath as, as ~~ (Nil :: Path VoidK j j))
