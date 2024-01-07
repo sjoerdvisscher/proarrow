@@ -23,7 +23,5 @@ instance CategoryOf (Path VoidK j k) where
 
 -- | The bicategory with only identity 1-cells.
 instance Bicategory VoidK where
-  type Ob0 VoidK k = ()
-  type Ob1 VoidK p = ()
   Bidiscrete `o` Bidiscrete = Bidiscrete
   r \\\ Bidiscrete = r

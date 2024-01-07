@@ -16,15 +16,18 @@ type BI k = (k, k) -> k
 type OB k = k -> Constraint
 type Kind = Type
 
+class Any (a :: k)
+instance Any a
+
 class (Promonad ((~>) :: CAT k)) => CategoryOf k where
   type (~>) :: CAT k
   type Ob (a :: k) :: Constraint
-  type Ob a = ()
+  type Ob a = Any a
 
 type IsCategoryOf k cat = (CategoryOf k, cat ~ (~>) @k, Promonad cat)
 
 
-type p :~> q = forall a b. p a b ~> q a b
+type p :~> q = forall a b. p a b -> q a b
 
 type Profunctor :: forall {j} {k}. PRO j k -> Constraint
 class (CategoryOf j, CategoryOf k) => Profunctor (p :: PRO j k) where

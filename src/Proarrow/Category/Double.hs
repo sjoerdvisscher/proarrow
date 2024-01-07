@@ -14,7 +14,7 @@ import Proarrow.Monad (RelMonad (..))
 -- > |  v  |
 -- > p--@--q
 -- > |  v  |
--- > j--f--k
+-- > j--g--k
 type DOUBLE (hk :: MKKIND) (vk :: MKKIND) = forall {h} {i} {j} {k}. Path hk h j -> Path hk i k -> Path vk h i -> Path vk j k -> Type
 
 -- | Double categories, strictified in both directions.

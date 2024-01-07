@@ -23,10 +23,10 @@ type instance ProfConstraint ProfC p = Profunctor p
 type instance ProfConstraint ProfRepC p = Representable p
 type instance ProfConstraint ProfCorepC p = Corepresentable p
 
-type ProfList :: Type -> Path (ProfK cl) j k -> PRO j k
+type ProfList :: forall cl -> Path (ProfK cl) j k -> PRO j k
 data ProfList cl ps a b where
   ProfNil :: forall {k} (a :: k) b cl. CategoryOf k => a ~> b -> ProfList cl Nil a b
-  ProfCons :: (Profunctor p, ProfConstraint cl p, Is PK f, p ~ UN PK f) => p a b -> ProfList cl ps b c -> ProfList cl (f ::: ps) a c
+  ProfCons :: forall p cl ps f a b c. (Profunctor p, ProfConstraint cl p, Is PK f, p ~ UN PK f) => p a b -> ProfList cl ps b c -> ProfList cl (f ::: ps) a c
 
 instance (CategoryOf j, CategoryOf k) => Profunctor (ProfList cl ps :: PRO j k) where
   dimap l r (ProfNil f) = ProfNil (dimap l r f)

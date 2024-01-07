@@ -26,7 +26,7 @@ where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Core (CategoryOf(..), CAT, Kind, id)
+import Proarrow.Core (CategoryOf(..), CAT, Kind, id, Any)
 import Proarrow.Object (Obj, obj)
 
 infixr 5 :::
@@ -73,7 +73,9 @@ type BICAT kk = forall {j} {k}. CAT (Path kk j k)
 type Bicategory :: CAT k -> Constraint
 class BicategoryRequirements kk => Bicategory (kk :: CAT k) where
   type Ob0 kk (j :: k) :: Constraint
+  type Ob0 kk j = Any j
   type Ob1 kk (p :: kk a b) :: Constraint
+  type Ob1 kk p = Any p
   -- | Horizontal composition of 2-cells.
   o :: (ps :: Path kk i j) ~> qs -> rs ~> ss -> (ps +++ rs) ~> (qs +++ ss)
   -- | Observe constraints from a 2-cell value.
