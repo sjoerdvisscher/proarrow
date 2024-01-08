@@ -1,0 +1,543 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Category.Instance.Nat</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Kind</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Type</span></span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Functor.Identity</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Identity</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Functor.Compose</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Compose</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier">CAT</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Is"><span class="hs-identifier">Is</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#UN"><span class="hs-identifier">UN</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#dimapDefault"><span class="hs-identifier">dimapDefault</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Functor.html"><span class="hs-identifier">Proarrow.Functor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier">Functor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#.~%3E"><span class="hs-operator">(.~&gt;)</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier">Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span>
+</span><span id="line-12"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679162016"><span id="local-6989586621679162017"><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679162016"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679162017"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">data</span><span> </span><span id="Nat"><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span></span><span> </span><span id="local-6989586621679162018"><span class="annot"><a href="#local-6989586621679162018"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span id="local-6989586621679162019"><span class="annot"><a href="#local-6989586621679162019"><span class="hs-identifier hs-type">g</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-14"></span><span>  </span><span id="local-6989586621679161762"><span id="local-6989586621679161763"><span id="Nat"><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161762"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161763"><span class="hs-identifier hs-type">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span>      </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">{</span><span> </span><span id="getNat"><span class="annot"><span class="annottext">forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1). Nat f g -&gt; f .~&gt; g
+</span><a href="Proarrow.Category.Instance.Nat.html#getNat"><span class="hs-identifier hs-var hs-var">getNat</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679161762"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="Proarrow.Functor.html#.~%3E"><span class="hs-operator hs-type">.~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161763"><span class="hs-identifier hs-type">g</span></a></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-16"></span><span>      </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161762"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161763"><span class="hs-identifier hs-type">g</span></a></span></span></span><span>
+</span><span id="line-17"></span><span>
+</span><span id="line-18"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161779"><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679161779"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-19"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="~%3E"><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-var">(~&gt;)</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Ob"><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-var">Ob</span></a></span></span><span> </span><span id="local-6989586621679162032"><span class="annot"><a href="#local-6989586621679162032"><span class="hs-identifier hs-type hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162032"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-21"></span><span>
+</span><span id="line-22"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161778"><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679161778"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-23"></span><span>  </span><span id="local-6989586621679162042"><span class="annot"><span class="annottext">id :: forall (a :: j -&gt; Type). Ob a =&gt; Nat a a
+</span><a href="#local-6989586621679162042"><span class="hs-identifier hs-var hs-var hs-var hs-var">id</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat a a
+forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat f f
+</span><a href="#local-6989586621679162044"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-24"></span><span>    </span><span class="annot"><a href="#local-6989586621679162044"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679161792"><span class="annot"><a href="#local-6989586621679161792"><span class="hs-identifier hs-type">f</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161792"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161792"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161792"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-25"></span><span>    </span><span id="local-6989586621679162044"><span class="annot"><span class="annottext">n :: forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat f f
+</span><a href="#local-6989586621679162044"><span class="hs-identifier hs-var hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(f .~&gt; f) -&gt; Nat f f
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (f :: j -&gt; k) (a :: j) (b :: j).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679161792"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; a
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162063"><span class="annot"><span class="annottext">b .~&gt; c
+</span><a href="#local-6989586621679162063"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679162064"><span class="annot"><span class="annottext">. :: forall (b :: j -&gt; Type) (c :: j -&gt; Type) (a :: j -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="#local-6989586621679162064"><span class="hs-operator hs-var hs-var hs-var hs-var">.</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162070"><span class="annot"><span class="annottext">a .~&gt; b
+</span><a href="#local-6989586621679162070"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a .~&gt; c) -&gt; Nat a c
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b a ~&gt; c a
+b a -&gt; c a
+b .~&gt; c
+</span><a href="#local-6989586621679162063"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(b a -&gt; c a) -&gt; (a a -&gt; b a) -&gt; a a -&gt; c a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a a ~&gt; b a
+a a -&gt; b a
+a .~&gt; b
+</span><a href="#local-6989586621679162070"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span>
+</span><span id="line-28"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679162075"><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679162075"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-29"></span><span>  </span><span id="local-6989586621679162084"><span class="annot"><span class="annottext">dimap :: forall (c :: k1 -&gt; Type) (a :: k1 -&gt; Type) (b :: k1 -&gt; Type)
+       (d :: k1 -&gt; Type).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Nat a b -&gt; Nat c d
+</span><a href="#local-6989586621679162084"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Nat a b -&gt; Nat c d
+Nat c a -&gt; Nat b d -&gt; Nat a b -&gt; Nat c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span><a href="Proarrow.Core.html#dimapDefault"><span class="hs-identifier hs-var">dimapDefault</span></a></span><span>
+</span><span id="line-30"></span><span>  </span><span id="local-6989586621679162086"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162086"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679162087"><span class="annot"><span class="annottext">\\ :: forall (a :: k1 -&gt; Type) (b :: k1 -&gt; Type) r.
+((Ob a, Ob b) =&gt; r) -&gt; Nat a b -&gt; r
+</span><a href="#local-6989586621679162087"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162086"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-31"></span><span>
+</span><span id="line-32"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-33"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Unit"><span class="annot"><a href="Proarrow.Category.Monoidal.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Identity</span></span><span>
+</span><span id="line-34"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679162108"><span id="local-6989586621679162109"><span class="annot"><a href="#local-6989586621679162108"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span id="%2A%2A"><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-var">**</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679162109"><span class="hs-identifier hs-type">g</span></a></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Compose</span></span><span> </span><span class="annot"><a href="#local-6989586621679162108"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162109"><span class="hs-identifier hs-type">g</span></a></span><span>
+</span><span id="line-35"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162112"><span class="annot"><span class="annottext">a .~&gt; b
+</span><a href="#local-6989586621679162112"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679162113"><span class="annot"><span class="annottext">par :: forall (a :: Type -&gt; Type) (b :: Type -&gt; Type) (c :: Type -&gt; Type)
+       (d :: Type -&gt; Type).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="#local-6989586621679162113"><span class="hs-operator hs-var hs-var hs-var hs-var">`par`</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162125"><span class="annot"><span class="annottext">c .~&gt; d
+</span><a href="#local-6989586621679162125"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Compose a c .~&gt; Compose b d) -&gt; Nat (Compose a c) (Compose b d)
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Compose</span></span><span> </span><span id="local-6989586621679162133"><span class="annot"><span class="annottext">a (c a)
+</span><a href="#local-6989586621679162133"><span class="hs-identifier hs-var">fg</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">b (d a) -&gt; Compose b d a
+forall {k} {k1} (f :: k -&gt; Type) (g :: k1 -&gt; k) (a :: k1).
+f (g a) -&gt; Compose f g a
+</span><span class="hs-identifier hs-var">Compose</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a (d a) ~&gt; b (d a)
+a (d a) -&gt; b (d a)
+a .~&gt; b
+</span><a href="#local-6989586621679162112"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(c a ~&gt; d a) -&gt; a (c a) ~&gt; a (d a)
+forall a b. (a ~&gt; b) -&gt; a a ~&gt; a b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">c a ~&gt; d a
+c .~&gt; d
+</span><a href="#local-6989586621679162125"><span class="hs-identifier hs-var">m</span></a></span><span> </span><span class="annot"><span class="annottext">a (c a)
+</span><a href="#local-6989586621679162133"><span class="hs-identifier hs-var">fg</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-36"></span><span>  </span><span id="local-6989586621679162134"><span class="annot"><span class="annottext">leftUnitor :: forall (a :: Type -&gt; Type). Obj a -&gt; (Unit ** a) ~&gt; a
+</span><a href="#local-6989586621679162134"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitor</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Compose Identity a .~&gt; a) -&gt; Nat (Compose Identity a) a
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Identity (a a) -&gt; a a
+forall a. Identity a -&gt; a
+</span><span class="hs-identifier hs-var">runIdentity</span></span><span> </span><span class="annot"><span class="annottext">(Identity (a a) -&gt; a a)
+-&gt; (Compose Identity a a -&gt; Identity (a a))
+-&gt; Compose Identity a a
+-&gt; a a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Compose Identity a a -&gt; Identity (a a)
+forall {k1} {k2} (f :: k1 -&gt; Type) (g :: k2 -&gt; k1) (a :: k2).
+Compose f g a -&gt; f (g a)
+</span><span class="hs-identifier hs-var">getCompose</span></span><span class="hs-special">)</span><span>
+</span><span id="line-37"></span><span>  </span><span id="local-6989586621679162148"><span class="annot"><span class="annottext">leftUnitorInv :: forall (a :: Type -&gt; Type). Obj a -&gt; a ~&gt; (Unit ** a)
+</span><a href="#local-6989586621679162148"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitorInv</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a .~&gt; Compose Identity a) -&gt; Nat a (Compose Identity a)
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Identity (a a) -&gt; Compose Identity a a
+forall {k} {k1} (f :: k -&gt; Type) (g :: k1 -&gt; k) (a :: k1).
+f (g a) -&gt; Compose f g a
+</span><span class="hs-identifier hs-var">Compose</span></span><span> </span><span class="annot"><span class="annottext">(Identity (a a) -&gt; Compose Identity a a)
+-&gt; (a a -&gt; Identity (a a)) -&gt; a a -&gt; Compose Identity a a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a a -&gt; Identity (a a)
+forall a. a -&gt; Identity a
+</span><span class="hs-identifier hs-var">Identity</span></span><span class="hs-special">)</span><span>
+</span><span id="line-38"></span><span>  </span><span id="local-6989586621679162161"><span class="annot"><span class="annottext">rightUnitor :: forall (a :: Type -&gt; Type). Obj a -&gt; (a ** Unit) ~&gt; a
+</span><a href="#local-6989586621679162161"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitor</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Compose a Identity .~&gt; a) -&gt; Nat (Compose a Identity) a
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Identity a ~&gt; a) -&gt; a (Identity a) ~&gt; a a
+forall a b. (a ~&gt; b) -&gt; a a ~&gt; a b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">Identity a ~&gt; a
+Identity a -&gt; a
+forall a. Identity a -&gt; a
+</span><span class="hs-identifier hs-var">runIdentity</span></span><span> </span><span class="annot"><span class="annottext">(a (Identity a) -&gt; a a)
+-&gt; (Compose a Identity a -&gt; a (Identity a))
+-&gt; Compose a Identity a
+-&gt; a a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Compose a Identity a -&gt; a (Identity a)
+forall {k1} {k2} (f :: k1 -&gt; Type) (g :: k2 -&gt; k1) (a :: k2).
+Compose f g a -&gt; f (g a)
+</span><span class="hs-identifier hs-var">getCompose</span></span><span class="hs-special">)</span><span>
+</span><span id="line-39"></span><span>  </span><span id="local-6989586621679162174"><span class="annot"><span class="annottext">rightUnitorInv :: forall (a :: Type -&gt; Type). Obj a -&gt; a ~&gt; (a ** Unit)
+</span><a href="#local-6989586621679162174"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitorInv</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a .~&gt; Compose a Identity) -&gt; Nat a (Compose a Identity)
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a (Identity a) -&gt; Compose a Identity a
+forall {k} {k1} (f :: k -&gt; Type) (g :: k1 -&gt; k) (a :: k1).
+f (g a) -&gt; Compose f g a
+</span><span class="hs-identifier hs-var">Compose</span></span><span> </span><span class="annot"><span class="annottext">(a (Identity a) -&gt; Compose a Identity a)
+-&gt; (a a -&gt; a (Identity a)) -&gt; a a -&gt; Compose a Identity a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; Identity a) -&gt; a a ~&gt; a (Identity a)
+forall a b. (a ~&gt; b) -&gt; a a ~&gt; a b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; Identity a
+a -&gt; Identity a
+forall a. a -&gt; Identity a
+</span><span class="hs-identifier hs-var">Identity</span></span><span class="hs-special">)</span><span>
+</span><span id="line-40"></span><span>  </span><span id="local-6989586621679162187"><span class="annot"><span class="annottext">associator :: forall (a :: Type -&gt; Type) (b :: Type -&gt; Type) (c :: Type -&gt; Type).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span><a href="#local-6989586621679162187"><span class="hs-identifier hs-var hs-var hs-var hs-var">associator</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Compose (Compose a b) c .~&gt; Compose a (Compose b c))
+-&gt; Nat (Compose (Compose a b) c) (Compose a (Compose b c))
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a (Compose b c a) -&gt; Compose a (Compose b c) a
+forall {k} {k1} (f :: k -&gt; Type) (g :: k1 -&gt; k) (a :: k1).
+f (g a) -&gt; Compose f g a
+</span><span class="hs-identifier hs-var">Compose</span></span><span> </span><span class="annot"><span class="annottext">(a (Compose b c a) -&gt; Compose a (Compose b c) a)
+-&gt; (Compose (Compose a b) c a -&gt; a (Compose b c a))
+-&gt; Compose (Compose a b) c a
+-&gt; Compose a (Compose b c) a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(b (c a) ~&gt; Compose b c a) -&gt; a (b (c a)) ~&gt; a (Compose b c a)
+forall a b. (a ~&gt; b) -&gt; a a ~&gt; a b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">b (c a) ~&gt; Compose b c a
+b (c a) -&gt; Compose b c a
+forall {k} {k1} (f :: k -&gt; Type) (g :: k1 -&gt; k) (a :: k1).
+f (g a) -&gt; Compose f g a
+</span><span class="hs-identifier hs-var">Compose</span></span><span> </span><span class="annot"><span class="annottext">(a (b (c a)) -&gt; a (Compose b c a))
+-&gt; (Compose (Compose a b) c a -&gt; a (b (c a)))
+-&gt; Compose (Compose a b) c a
+-&gt; a (Compose b c a)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Compose a b (c a) -&gt; a (b (c a))
+forall {k1} {k2} (f :: k1 -&gt; Type) (g :: k2 -&gt; k1) (a :: k2).
+Compose f g a -&gt; f (g a)
+</span><span class="hs-identifier hs-var">getCompose</span></span><span> </span><span class="annot"><span class="annottext">(Compose a b (c a) -&gt; a (b (c a)))
+-&gt; (Compose (Compose a b) c a -&gt; Compose a b (c a))
+-&gt; Compose (Compose a b) c a
+-&gt; a (b (c a))
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Compose (Compose a b) c a -&gt; Compose a b (c a)
+forall {k1} {k2} (f :: k1 -&gt; Type) (g :: k2 -&gt; k1) (a :: k2).
+Compose f g a -&gt; f (g a)
+</span><span class="hs-identifier hs-var">getCompose</span></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span>  </span><span id="local-6989586621679162207"><span class="annot"><span class="annottext">associatorInv :: forall (a :: Type -&gt; Type) (b :: Type -&gt; Type) (c :: Type -&gt; Type).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span><a href="#local-6989586621679162207"><span class="hs-identifier hs-var hs-var hs-var hs-var">associatorInv</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Compose a (Compose b c) .~&gt; Compose (Compose a b) c)
+-&gt; Nat (Compose a (Compose b c)) (Compose (Compose a b) c)
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Compose a b (c a) -&gt; Compose (Compose a b) c a
+forall {k} {k1} (f :: k -&gt; Type) (g :: k1 -&gt; k) (a :: k1).
+f (g a) -&gt; Compose f g a
+</span><span class="hs-identifier hs-var">Compose</span></span><span> </span><span class="annot"><span class="annottext">(Compose a b (c a) -&gt; Compose (Compose a b) c a)
+-&gt; (Compose a (Compose b c) a -&gt; Compose a b (c a))
+-&gt; Compose a (Compose b c) a
+-&gt; Compose (Compose a b) c a
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a (b (c a)) -&gt; Compose a b (c a)
+forall {k} {k1} (f :: k -&gt; Type) (g :: k1 -&gt; k) (a :: k1).
+f (g a) -&gt; Compose f g a
+</span><span class="hs-identifier hs-var">Compose</span></span><span> </span><span class="annot"><span class="annottext">(a (b (c a)) -&gt; Compose a b (c a))
+-&gt; (Compose a (Compose b c) a -&gt; a (b (c a)))
+-&gt; Compose a (Compose b c) a
+-&gt; Compose a b (c a)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(Compose b c a ~&gt; b (c a)) -&gt; a (Compose b c a) ~&gt; a (b (c a))
+forall a b. (a ~&gt; b) -&gt; a a ~&gt; a b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">Compose b c a ~&gt; b (c a)
+Compose b c a -&gt; b (c a)
+forall {k1} {k2} (f :: k1 -&gt; Type) (g :: k2 -&gt; k1) (a :: k2).
+Compose f g a -&gt; f (g a)
+</span><span class="hs-identifier hs-var">getCompose</span></span><span> </span><span class="annot"><span class="annottext">(a (Compose b c a) -&gt; a (b (c a)))
+-&gt; (Compose a (Compose b c) a -&gt; a (Compose b c a))
+-&gt; Compose a (Compose b c) a
+-&gt; a (b (c a))
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Compose a (Compose b c) a -&gt; a (Compose b c a)
+forall {k1} {k2} (f :: k1 -&gt; Type) (g :: k2 -&gt; k1) (a :: k2).
+Compose f g a -&gt; f (g a)
+</span><span class="hs-identifier hs-var">getCompose</span></span><span class="hs-special">)</span><span>
+</span><span id="line-42"></span><span>
+</span><span id="line-43"></span><span>
+</span><span id="line-44"></span><span>
+</span><span id="line-45"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161899"><span id="local-6989586621679161900"><span id="local-6989586621679161901"><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679161899"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161900"><span class="hs-identifier hs-type">k2</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161901"><span class="hs-identifier hs-type">k3</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-46"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="~%3E"><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-var">(~&gt;)</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span>
+</span><span id="line-47"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Ob"><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-var">Ob</span></a></span></span><span> </span><span id="local-6989586621679162232"><span class="annot"><a href="#local-6989586621679162232"><span class="hs-identifier hs-type hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162232"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-48"></span><span>
+</span><span id="line-49"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161896"><span id="local-6989586621679161897"><span id="local-6989586621679161898"><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679161896"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161897"><span class="hs-identifier hs-type">k2</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161898"><span class="hs-identifier hs-type">k3</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-50"></span><span>  </span><span id="local-6989586621679162241"><span class="annot"><span class="annottext">id :: forall (a :: k1 -&gt; k2 -&gt; k3 -&gt; Type). Ob a =&gt; Nat a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var hs-var hs-var hs-var">id</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat a a
+forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat f f
+</span><a href="#local-6989586621679162242"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-51"></span><span>    </span><span class="annot"><a href="#local-6989586621679162242"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679162243"><span class="annot"><a href="#local-6989586621679162243"><span class="hs-identifier hs-type">f</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162243"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162243"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162243"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-52"></span><span>    </span><span id="local-6989586621679162242"><span class="annot"><span class="annottext">n :: forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat f f
+</span><a href="#local-6989586621679162242"><span class="hs-identifier hs-var hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(f .~&gt; f) -&gt; Nat f f
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (f :: j -&gt; k) (a :: j) (b :: j).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679162243"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; a
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-53"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162257"><span class="annot"><span class="annottext">b .~&gt; c
+</span><a href="#local-6989586621679162257"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679162258"><span class="annot"><span class="annottext">. :: forall (b :: k1 -&gt; k2 -&gt; k3 -&gt; Type) (c :: k1 -&gt; k2 -&gt; k3 -&gt; Type)
+       (a :: k1 -&gt; k2 -&gt; k3 -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var hs-var hs-var hs-var">.</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162263"><span class="annot"><span class="annottext">a .~&gt; b
+</span><a href="#local-6989586621679162263"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a .~&gt; c) -&gt; Nat a c
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b a ~&gt; c a
+b .~&gt; c
+</span><a href="#local-6989586621679162257"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(b a ~&gt; c a) -&gt; (a a ~&gt; b a) -&gt; a a ~&gt; c a
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: k2 -&gt; k3 -&gt; Type) (c :: k2 -&gt; k3 -&gt; Type)
+       (a :: k2 -&gt; k3 -&gt; Type).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a a ~&gt; b a
+a .~&gt; b
+</span><a href="#local-6989586621679162263"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-54"></span><span>
+</span><span id="line-55"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679162268"><span id="local-6989586621679162269"><span id="local-6989586621679162270"><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679162268"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679162269"><span class="hs-identifier hs-type">k2</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679162270"><span class="hs-identifier hs-type">k3</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-56"></span><span>  </span><span id="local-6989586621679162279"><span class="annot"><span class="annottext">dimap :: forall (c :: k1 -&gt; k2 -&gt; k3 -&gt; Type) (a :: k1 -&gt; k2 -&gt; k3 -&gt; Type)
+       (b :: k1 -&gt; k2 -&gt; k3 -&gt; Type) (d :: k1 -&gt; k2 -&gt; k3 -&gt; Type).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Nat a b -&gt; Nat c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679162280"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679162280"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679162281"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679162281"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span id="local-6989586621679162282"><span class="annot"><span class="annottext">Nat a b
+</span><a href="#local-6989586621679162282"><span class="hs-identifier hs-var">h</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+Nat b d
+</span><a href="#local-6989586621679162281"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">Nat b d -&gt; Nat c b -&gt; Nat c d
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: k1 -&gt; k2 -&gt; k3 -&gt; Type) (c :: k1 -&gt; k2 -&gt; k3 -&gt; Type)
+       (a :: k1 -&gt; k2 -&gt; k3 -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Nat a b
+</span><a href="#local-6989586621679162282"><span class="hs-identifier hs-var">h</span></a></span><span> </span><span class="annot"><span class="annottext">Nat a b -&gt; Nat c a -&gt; Nat c b
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: k1 -&gt; k2 -&gt; k3 -&gt; Type) (c :: k1 -&gt; k2 -&gt; k3 -&gt; Type)
+       (a :: k1 -&gt; k2 -&gt; k3 -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+Nat c a
+</span><a href="#local-6989586621679162280"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-57"></span><span>  </span><span id="local-6989586621679162283"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162283"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679162284"><span class="annot"><span class="annottext">\\ :: forall (a :: k1 -&gt; k2 -&gt; k3 -&gt; Type) (b :: k1 -&gt; k2 -&gt; k3 -&gt; Type)
+       r.
+((Ob a, Ob b) =&gt; r) -&gt; Nat a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162283"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-58"></span><span>
+</span><span id="line-59"></span><span>
+</span><span id="line-60"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161932"><span id="local-6989586621679161933"><span id="local-6989586621679161934"><span id="local-6989586621679161935"><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679161932"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161933"><span class="hs-identifier hs-type">k2</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161934"><span class="hs-identifier hs-type">k3</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161935"><span class="hs-identifier hs-type">k4</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-61"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="~%3E"><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-var">(~&gt;)</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span>
+</span><span id="line-62"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Ob"><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-var">Ob</span></a></span></span><span> </span><span id="local-6989586621679162294"><span class="annot"><a href="#local-6989586621679162294"><span class="hs-identifier hs-type hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162294"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-63"></span><span>
+</span><span id="line-64"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161928"><span id="local-6989586621679161929"><span id="local-6989586621679161930"><span id="local-6989586621679161931"><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679161928"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161929"><span class="hs-identifier hs-type">k2</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161930"><span class="hs-identifier hs-type">k3</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679161931"><span class="hs-identifier hs-type">k4</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-65"></span><span>  </span><span id="local-6989586621679162303"><span class="annot"><span class="annottext">id :: forall (a :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type). Ob a =&gt; Nat a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var hs-var hs-var hs-var">id</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat a a
+forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat f f
+</span><a href="#local-6989586621679162304"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-66"></span><span>    </span><span class="annot"><a href="#local-6989586621679162304"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679162305"><span class="annot"><a href="#local-6989586621679162305"><span class="hs-identifier hs-type">f</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162305"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162305"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162305"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-67"></span><span>    </span><span id="local-6989586621679162304"><span class="annot"><span class="annottext">n :: forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat f f
+</span><a href="#local-6989586621679162304"><span class="hs-identifier hs-var hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(f .~&gt; f) -&gt; Nat f f
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (f :: j -&gt; k) (a :: j) (b :: j).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679162305"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; a
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-68"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162320"><span class="annot"><span class="annottext">b .~&gt; c
+</span><a href="#local-6989586621679162320"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679162321"><span class="annot"><span class="annottext">. :: forall (b :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (c :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (a :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var hs-var hs-var hs-var">.</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span id="local-6989586621679162326"><span class="annot"><span class="annottext">a .~&gt; b
+</span><a href="#local-6989586621679162326"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a .~&gt; c) -&gt; Nat a c
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat f g
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-var">Nat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b a ~&gt; c a
+Nat (b a) (c a)
+b .~&gt; c
+</span><a href="#local-6989586621679162320"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">Nat (b a) (c a) -&gt; Nat (a a) (b a) -&gt; Nat (a a) (c a)
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: k2 -&gt; k3 -&gt; k4 -&gt; Type) (c :: k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (a :: k2 -&gt; k3 -&gt; k4 -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a a ~&gt; b a
+Nat (a a) (b a)
+a .~&gt; b
+</span><a href="#local-6989586621679162326"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-69"></span><span>
+</span><span id="line-70"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679162331"><span id="local-6989586621679162332"><span id="local-6989586621679162333"><span id="local-6989586621679162334"><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679162331"><span class="hs-identifier hs-type">k1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679162332"><span class="hs-identifier hs-type">k2</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679162333"><span class="hs-identifier hs-type">k3</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679162334"><span class="hs-identifier hs-type">k4</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-71"></span><span>  </span><span id="local-6989586621679162343"><span class="annot"><span class="annottext">dimap :: forall (c :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (a :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (b :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (d :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Nat a b -&gt; Nat c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679162344"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679162344"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679162345"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679162345"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span id="local-6989586621679162346"><span class="annot"><span class="annottext">Nat a b
+</span><a href="#local-6989586621679162346"><span class="hs-identifier hs-var">h</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+Nat b d
+</span><a href="#local-6989586621679162345"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">Nat b d -&gt; Nat c b -&gt; Nat c d
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (c :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (a :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Nat a b
+</span><a href="#local-6989586621679162346"><span class="hs-identifier hs-var">h</span></a></span><span> </span><span class="annot"><span class="annottext">Nat a b -&gt; Nat c a -&gt; Nat c b
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (c :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (a :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type).
+Nat b c -&gt; Nat a b -&gt; Nat a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+Nat c a
+</span><a href="#local-6989586621679162344"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-72"></span><span>  </span><span id="local-6989586621679162347"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162347"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679162348"><span class="annot"><span class="annottext">\\ :: forall (a :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type)
+       (b :: k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; Type) r.
+((Ob a, Ob b) =&gt; r) -&gt; Nat a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat"><span class="hs-identifier hs-type">Nat</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162347"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-73"></span><span>
+</span><span id="line-74"></span><span>
+</span><span id="line-75"></span><span>
+</span><span id="line-76"></span><span class="hs-keyword">newtype</span><span> </span><span id="NatK"><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NatK"><span class="hs-identifier hs-var">NatK</span></a></span></span><span> </span><span id="local-6989586621679162353"><span class="annot"><a href="#local-6989586621679162353"><span class="hs-identifier hs-type">j</span></a></span></span><span> </span><span id="local-6989586621679162354"><span class="annot"><a href="#local-6989586621679162354"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="NT"><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-var">NT</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679162353"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679162354"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-77"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="UN"><span class="annot"><a href="Proarrow.Core.html#UN"><span class="hs-identifier hs-var">UN</span></a></span></span><span> </span><span id="local-6989586621679162355"><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162355"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679162355"><span class="hs-identifier hs-type">f</span></a></span><span>
+</span><span id="line-78"></span><span>
+</span><span id="line-79"></span><span class="hs-keyword">data</span><span> </span><span id="Nat%27"><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-var">Nat'</span></a></span></span><span> </span><span id="local-6989586621679162356"><span class="annot"><a href="#local-6989586621679162356"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span id="local-6989586621679162357"><span class="annot"><a href="#local-6989586621679162357"><span class="hs-identifier hs-type">g</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-80"></span><span>  </span><span id="local-6989586621679162358"><span id="local-6989586621679162359"><span id="Nat%27"><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-var">Nat'</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162358"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162359"><span class="hs-identifier hs-type">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-81"></span><span>       </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">{</span><span> </span><span id="getNat%27"><span class="annot"><span class="annottext">forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+Nat' ('NT f) ('NT g) -&gt; f .~&gt; g
+</span><a href="Proarrow.Category.Instance.Nat.html#getNat%27"><span class="hs-identifier hs-var hs-var">getNat'</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679162358"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="Proarrow.Functor.html#.~%3E"><span class="hs-operator hs-type">.~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162359"><span class="hs-identifier hs-type">g</span></a></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-82"></span><span>       </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162358"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162359"><span class="hs-identifier hs-type">g</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-83"></span><span>
+</span><span id="line-84"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161978"><span id="local-6989586621679161979"><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NatK"><span class="hs-identifier hs-type">NatK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161978"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161979"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-85"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">instance</span><span> </span><span id="~%3E"><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-var">(~&gt;)</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span>
+</span><span id="line-86"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Ob"><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-var">Ob</span></a></span></span><span> </span><span id="local-6989586621679162377"><span class="annot"><a href="#local-6989586621679162377"><span class="hs-identifier hs-type hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Is"><span class="hs-identifier hs-type">Is</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162377"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#UN"><span class="hs-identifier hs-type">UN</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162377"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-87"></span><span>
+</span><span id="line-88"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679161976"><span id="local-6989586621679161977"><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NatK"><span class="hs-identifier hs-type">NatK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161976"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161977"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-89"></span><span>  </span><span id="local-6989586621679162390"><span class="annot"><span class="annottext">id :: forall (a :: NatK j k). Ob a =&gt; Nat' a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var hs-var hs-var hs-var">id</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nat' a a
+Nat' ('NT (UN 'NT a)) ('NT (UN 'NT a))
+forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat' ('NT f) ('NT f)
+</span><a href="#local-6989586621679162391"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-90"></span><span>    </span><span class="annot"><a href="#local-6989586621679162391"><span class="hs-identifier hs-type">n</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679161989"><span class="annot"><a href="#local-6989586621679161989"><span class="hs-identifier hs-type">f</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161989"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161989"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NT"><span class="hs-identifier hs-type">NT</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679161989"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-91"></span><span>    </span><span id="local-6989586621679162391"><span class="annot"><span class="annottext">n :: forall {j} {k} (f :: j -&gt; k). Functor f =&gt; Nat' ('NT f) ('NT f)
+</span><a href="#local-6989586621679162391"><span class="hs-identifier hs-var hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(f .~&gt; f) -&gt; Nat' ('NT f) ('NT f)
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat' ('NT f) ('NT g)
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-var">Nat'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (f :: j -&gt; k) (a :: j) (b :: j).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679161989"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; a
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-92"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span> </span><span id="local-6989586621679162407"><span class="annot"><span class="annottext">f .~&gt; g
+</span><a href="#local-6989586621679162407"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679162408"><span class="annot"><span class="annottext">. :: forall (b :: NatK j k) (c :: NatK j k) (a :: NatK j k).
+Nat' b c -&gt; Nat' a b -&gt; Nat' a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var hs-var hs-var hs-var">.</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span> </span><span id="local-6989586621679162418"><span class="annot"><span class="annottext">f .~&gt; g
+</span><a href="#local-6989586621679162418"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(f .~&gt; g) -&gt; Nat' ('NT f) ('NT g)
+forall {k} {k1} (f :: k -&gt; k1) (g :: k -&gt; k1).
+(Functor f, Functor g) =&gt;
+(f .~&gt; g) -&gt; Nat' ('NT f) ('NT g)
+</span><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-var">Nat'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">f a ~&gt; g a
+f .~&gt; g
+</span><a href="#local-6989586621679162407"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(f a ~&gt; g a) -&gt; (f a ~&gt; f a) -&gt; f a ~&gt; g a
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">f a ~&gt; f a
+f a ~&gt; g a
+f .~&gt; g
+</span><a href="#local-6989586621679162418"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-93"></span><span>
+</span><span id="line-94"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679162423"><span id="local-6989586621679162424"><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CAT"><span class="hs-identifier hs-type">CAT</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#NatK"><span class="hs-identifier hs-type">NatK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162423"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679162424"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-95"></span><span>  </span><span id="local-6989586621679162432"><span class="annot"><span class="annottext">dimap :: forall (c :: NatK j k) (a :: NatK j k) (b :: NatK j k)
+       (d :: NatK j k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Nat' a b -&gt; Nat' c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Nat' a b -&gt; Nat' c d
+Nat' c a -&gt; Nat' b d -&gt; Nat' a b -&gt; Nat' c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span><a href="Proarrow.Core.html#dimapDefault"><span class="hs-identifier hs-var">dimapDefault</span></a></span><span>
+</span><span id="line-96"></span><span>  </span><span id="local-6989586621679162433"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162433"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679162434"><span class="annot"><span class="annottext">\\ :: forall (a :: NatK j k) (b :: NatK j k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Nat' a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Nat.html#Nat%27"><span class="hs-identifier hs-type">Nat'</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679162433"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-97"></span></pre></body></html>

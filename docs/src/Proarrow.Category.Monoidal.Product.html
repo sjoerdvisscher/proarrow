@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Category.Monoidal.Product</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier">Monoidal</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier">SymMonoidal</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html"><span class="hs-identifier">Proarrow.Category.Instance.Product</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator">(:**:)</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679164762"><span id="local-6989586621679164763"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679164762"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679164763"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679164762"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679164763"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-8"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Unit"><span class="annot"><a href="Proarrow.Category.Monoidal.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Unit"><span class="hs-identifier hs-type">Unit</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Unit"><span class="hs-identifier hs-type">Unit</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679164880"><span id="local-6989586621679164881"><span id="local-6989586621679164882"><span id="local-6989586621679164883"><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679164880"><span class="hs-identifier hs-type">a1</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679164881"><span class="hs-identifier hs-type">a2</span></a></span><span class="hs-special">)</span><span> </span><span id="%2A%2A"><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-var">**</span></a></span></span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679164882"><span class="hs-identifier hs-type">b1</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679164883"><span class="hs-identifier hs-type">b2</span></a></span><span class="hs-special">)</span></span></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679164880"><span class="hs-identifier hs-type">a1</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-type">**</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679164882"><span class="hs-identifier hs-type">b1</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679164881"><span class="hs-identifier hs-type">a2</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-type">**</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679164883"><span class="hs-identifier hs-type">b2</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span>  </span><span class="hs-special">(</span><span id="local-6989586621679164886"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164886"><span class="hs-identifier hs-var">f1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164888"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164888"><span class="hs-identifier hs-var">f2</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679164889"><span class="annot"><span class="annottext">par :: forall (a :: (j, k)) (b :: (j, k)) (c :: (j, k)) (d :: (j, k)).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="#local-6989586621679164889"><span class="hs-operator hs-var hs-var hs-var hs-var">`par`</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164895"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164895"><span class="hs-identifier hs-var">g1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164896"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164896"><span class="hs-identifier hs-var">g2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164886"><span class="hs-identifier hs-var">f1</span></a></span><span> </span><span class="annot"><span class="annottext">(a1 ~&gt; b1) -&gt; (a1 ~&gt; b1) -&gt; (a1 ** a1) ~&gt; (b1 ** b1)
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164895"><span class="hs-identifier hs-var">g1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((a1 ** a1) ~&gt; (b1 ** b1))
+-&gt; ((a2 ** a2) ~&gt; (b2 ** b2))
+-&gt; (:**:) (~&gt;) (~&gt;) '(a1 ** a1, a2 ** a2) '(b1 ** b1, b2 ** b2)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164888"><span class="hs-identifier hs-var">f2</span></a></span><span> </span><span class="annot"><span class="annottext">(a2 ~&gt; b2) -&gt; (a2 ~&gt; b2) -&gt; (a2 ** a2) ~&gt; (b2 ** b2)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164896"><span class="hs-identifier hs-var">g2</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span>  </span><span id="local-6989586621679164897"><span class="annot"><span class="annottext">leftUnitor :: forall (a :: (j, k)). Obj a -&gt; (Unit ** a) ~&gt; a
+</span><a href="#local-6989586621679164897"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitor</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164906"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164906"><span class="hs-identifier hs-var">a1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164907"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164907"><span class="hs-identifier hs-var">a2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj b1 -&gt; (Unit ** b1) ~&gt; b1
+forall (a :: j). Obj a -&gt; (Unit ** a) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (Unit ** a) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitor"><span class="hs-identifier hs-var">leftUnitor</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164906"><span class="hs-identifier hs-var">a1</span></a></span><span> </span><span class="annot"><span class="annottext">((Unit ** b1) ~&gt; b1)
+-&gt; ((Unit ** b2) ~&gt; b2)
+-&gt; (:**:) (~&gt;) (~&gt;) '(Unit ** b1, Unit ** b2) '(b1, b2)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b2 -&gt; (Unit ** b2) ~&gt; b2
+forall (a :: k). Obj a -&gt; (Unit ** a) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (Unit ** a) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitor"><span class="hs-identifier hs-var">leftUnitor</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164907"><span class="hs-identifier hs-var">a2</span></a></span><span>
+</span><span id="line-12"></span><span>  </span><span id="local-6989586621679164908"><span class="annot"><span class="annottext">leftUnitorInv :: forall (a :: (j, k)). Obj a -&gt; a ~&gt; (Unit ** a)
+</span><a href="#local-6989586621679164908"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitorInv</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164917"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164917"><span class="hs-identifier hs-var">a1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164918"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164918"><span class="hs-identifier hs-var">a2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj b1 -&gt; b1 ~&gt; (Unit ** b1)
+forall (a :: j). Obj a -&gt; a ~&gt; (Unit ** a)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (Unit ** a)
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"><span class="hs-identifier hs-var">leftUnitorInv</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164917"><span class="hs-identifier hs-var">a1</span></a></span><span> </span><span class="annot"><span class="annottext">(b1 ~&gt; (Unit ** b1))
+-&gt; (b2 ~&gt; (Unit ** b2))
+-&gt; (:**:) (~&gt;) (~&gt;) '(b1, b2) '(Unit ** b1, Unit ** b2)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b2 -&gt; b2 ~&gt; (Unit ** b2)
+forall (a :: k). Obj a -&gt; a ~&gt; (Unit ** a)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (Unit ** a)
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"><span class="hs-identifier hs-var">leftUnitorInv</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164918"><span class="hs-identifier hs-var">a2</span></a></span><span>
+</span><span id="line-13"></span><span>  </span><span id="local-6989586621679164919"><span class="annot"><span class="annottext">rightUnitor :: forall (a :: (j, k)). Obj a -&gt; (a ** Unit) ~&gt; a
+</span><a href="#local-6989586621679164919"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitor</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164928"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164928"><span class="hs-identifier hs-var">a1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164929"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164929"><span class="hs-identifier hs-var">a2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj b1 -&gt; (b1 ** Unit) ~&gt; b1
+forall (a :: j). Obj a -&gt; (a ** Unit) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (a ** Unit) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitor"><span class="hs-identifier hs-var">rightUnitor</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164928"><span class="hs-identifier hs-var">a1</span></a></span><span> </span><span class="annot"><span class="annottext">((b1 ** Unit) ~&gt; b1)
+-&gt; ((b2 ** Unit) ~&gt; b2)
+-&gt; (:**:) (~&gt;) (~&gt;) '(b1 ** Unit, b2 ** Unit) '(b1, b2)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b2 -&gt; (b2 ** Unit) ~&gt; b2
+forall (a :: k). Obj a -&gt; (a ** Unit) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (a ** Unit) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitor"><span class="hs-identifier hs-var">rightUnitor</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164929"><span class="hs-identifier hs-var">a2</span></a></span><span>
+</span><span id="line-14"></span><span>  </span><span id="local-6989586621679164930"><span class="annot"><span class="annottext">rightUnitorInv :: forall (a :: (j, k)). Obj a -&gt; a ~&gt; (a ** Unit)
+</span><a href="#local-6989586621679164930"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitorInv</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164939"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164939"><span class="hs-identifier hs-var">a1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164940"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164940"><span class="hs-identifier hs-var">a2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj b1 -&gt; b1 ~&gt; (b1 ** Unit)
+forall (a :: j). Obj a -&gt; a ~&gt; (a ** Unit)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (a ** Unit)
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"><span class="hs-identifier hs-var">rightUnitorInv</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164939"><span class="hs-identifier hs-var">a1</span></a></span><span> </span><span class="annot"><span class="annottext">(b1 ~&gt; (b1 ** Unit))
+-&gt; (b2 ~&gt; (b2 ** Unit))
+-&gt; (:**:) (~&gt;) (~&gt;) '(b1, b2) '(b1 ** Unit, b2 ** Unit)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b2 -&gt; b2 ~&gt; (b2 ** Unit)
+forall (a :: k). Obj a -&gt; a ~&gt; (a ** Unit)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (a ** Unit)
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"><span class="hs-identifier hs-var">rightUnitorInv</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164940"><span class="hs-identifier hs-var">a2</span></a></span><span>
+</span><span id="line-15"></span><span>  </span><span id="local-6989586621679164941"><span class="annot"><span class="annottext">associator :: forall (a :: (j, k)) (b :: (j, k)) (c :: (j, k)).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span><a href="#local-6989586621679164941"><span class="hs-identifier hs-var hs-var hs-var hs-var">associator</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164948"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164948"><span class="hs-identifier hs-var">a1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164949"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164949"><span class="hs-identifier hs-var">a2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164955"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164955"><span class="hs-identifier hs-var">b1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164956"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164956"><span class="hs-identifier hs-var">b2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164964"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164964"><span class="hs-identifier hs-var">c1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164965"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164965"><span class="hs-identifier hs-var">c2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj b1
+-&gt; Obj b1 -&gt; Obj b1 -&gt; ((b1 ** b1) ** b1) ~&gt; (b1 ** (b1 ** b1))
+forall (a :: j) (b :: j) (c :: j).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span><a href="Proarrow.Category.Monoidal.html#associator"><span class="hs-identifier hs-var">associator</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164948"><span class="hs-identifier hs-var">a1</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164955"><span class="hs-identifier hs-var">b1</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164964"><span class="hs-identifier hs-var">c1</span></a></span><span> </span><span class="annot"><span class="annottext">(((b1 ** b1) ** b1) ~&gt; (b1 ** (b1 ** b1)))
+-&gt; (((b2 ** b2) ** b2) ~&gt; (b2 ** (b2 ** b2)))
+-&gt; (:**:)
+     (~&gt;)
+     (~&gt;)
+     '((b1 ** b1) ** b1, (b2 ** b2) ** b2)
+     '(b1 ** (b1 ** b1), b2 ** (b2 ** b2))
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b2
+-&gt; Obj b2 -&gt; Obj b2 -&gt; ((b2 ** b2) ** b2) ~&gt; (b2 ** (b2 ** b2))
+forall (a :: k) (b :: k) (c :: k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span><a href="Proarrow.Category.Monoidal.html#associator"><span class="hs-identifier hs-var">associator</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164949"><span class="hs-identifier hs-var">a2</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164956"><span class="hs-identifier hs-var">b2</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164965"><span class="hs-identifier hs-var">c2</span></a></span><span>
+</span><span id="line-16"></span><span>  </span><span id="local-6989586621679164966"><span class="annot"><span class="annottext">associatorInv :: forall (a :: (j, k)) (b :: (j, k)) (c :: (j, k)).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span><a href="#local-6989586621679164966"><span class="hs-identifier hs-var hs-var hs-var hs-var">associatorInv</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164973"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164973"><span class="hs-identifier hs-var">a1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164974"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164974"><span class="hs-identifier hs-var">a2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164980"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164980"><span class="hs-identifier hs-var">b1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164981"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164981"><span class="hs-identifier hs-var">b2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679164989"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679164989"><span class="hs-identifier hs-var">c1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679164990"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679164990"><span class="hs-identifier hs-var">c2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj b1
+-&gt; Obj b1 -&gt; Obj b1 -&gt; (b1 ** (b1 ** b1)) ~&gt; ((b1 ** b1) ** b1)
+forall (a :: j) (b :: j) (c :: j).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span><a href="Proarrow.Category.Monoidal.html#associatorInv"><span class="hs-identifier hs-var">associatorInv</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164973"><span class="hs-identifier hs-var">a1</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164980"><span class="hs-identifier hs-var">b1</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679164989"><span class="hs-identifier hs-var">c1</span></a></span><span> </span><span class="annot"><span class="annottext">((b1 ** (b1 ** b1)) ~&gt; ((b1 ** b1) ** b1))
+-&gt; ((b2 ** (b2 ** b2)) ~&gt; ((b2 ** b2) ** b2))
+-&gt; (:**:)
+     (~&gt;)
+     (~&gt;)
+     '(b1 ** (b1 ** b1), b2 ** (b2 ** b2))
+     '((b1 ** b1) ** b1, (b2 ** b2) ** b2)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b2
+-&gt; Obj b2 -&gt; Obj b2 -&gt; (b2 ** (b2 ** b2)) ~&gt; ((b2 ** b2) ** b2)
+forall (a :: k) (b :: k) (c :: k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span><a href="Proarrow.Category.Monoidal.html#associatorInv"><span class="hs-identifier hs-var">associatorInv</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164974"><span class="hs-identifier hs-var">a2</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164981"><span class="hs-identifier hs-var">b2</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679164990"><span class="hs-identifier hs-var">c2</span></a></span><span>
+</span><span id="line-17"></span><span>
+</span><span id="line-18"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679164842"><span id="local-6989586621679164843"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier hs-type">SymMonoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679164842"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier hs-type">SymMonoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679164843"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier hs-type">SymMonoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679164842"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679164843"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-19"></span><span>  </span><span id="local-6989586621679165001"><span class="annot"><span class="annottext">swap' :: forall (a :: (j, k)) (b :: (j, k)).
+Obj a -&gt; Obj b -&gt; (a ** b) ~&gt; (b ** a)
+</span><a href="#local-6989586621679165001"><span class="hs-identifier hs-var hs-var hs-var hs-var">swap'</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679165008"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679165008"><span class="hs-identifier hs-var">a1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679165009"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679165009"><span class="hs-identifier hs-var">a2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679165017"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679165017"><span class="hs-identifier hs-var">b1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679165018"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679165018"><span class="hs-identifier hs-var">b2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj b1 -&gt; Obj b1 -&gt; (b1 ** b1) ~&gt; (b1 ** b1)
+forall (a :: j) (b :: j). Obj a -&gt; Obj b -&gt; (a ** b) ~&gt; (b ** a)
+forall k (a :: k) (b :: k).
+SymMonoidal k =&gt;
+Obj a -&gt; Obj b -&gt; (a ** b) ~&gt; (b ** a)
+</span><a href="Proarrow.Category.Monoidal.html#swap%27"><span class="hs-identifier hs-var">swap'</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679165008"><span class="hs-identifier hs-var">a1</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+Obj b1
+</span><a href="#local-6989586621679165017"><span class="hs-identifier hs-var">b1</span></a></span><span> </span><span class="annot"><span class="annottext">((b1 ** b1) ~&gt; (b1 ** b1))
+-&gt; ((b2 ** b2) ~&gt; (b2 ** b2))
+-&gt; (:**:) (~&gt;) (~&gt;) '(b1 ** b1, b2 ** b2) '(b1 ** b1, b2 ** b2)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b2 -&gt; Obj b2 -&gt; (b2 ** b2) ~&gt; (b2 ** b2)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; (a ** b) ~&gt; (b ** a)
+forall k (a :: k) (b :: k).
+SymMonoidal k =&gt;
+Obj a -&gt; Obj b -&gt; (a ** b) ~&gt; (b ** a)
+</span><a href="Proarrow.Category.Monoidal.html#swap%27"><span class="hs-identifier hs-var">swap'</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679165009"><span class="hs-identifier hs-var">a2</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+Obj b2
+</span><a href="#local-6989586621679165018"><span class="hs-identifier hs-var">b2</span></a></span></pre></body></html>

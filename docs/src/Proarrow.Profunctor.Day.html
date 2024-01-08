@@ -1,0 +1,1013 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Profunctor.Day</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier">PRO</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#lmap"><span class="hs-identifier">lmap</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#rmap"><span class="hs-identifier">rmap</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator">(//)</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html"><span class="hs-identifier">Proarrow.Category.Instance.Prof</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier">Prof</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier">Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"><span class="hs-identifier">MonoidalProfunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier">SymMonoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#swap"><span class="hs-identifier">swap</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.html"><span class="hs-identifier">Proarrow.Object</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#src"><span class="hs-identifier">src</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#tgt"><span class="hs-identifier">tgt</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Monoid.html"><span class="hs-identifier">Proarrow.Monoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier">Monoid</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.Exponential.html"><span class="hs-identifier">Proarrow.Object.Exponential</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.Exponential.html#Closed"><span class="hs-identifier">Closed</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span>
+</span><span id="line-11"></span><span>
+</span><span id="line-12"></span><span class="hs-keyword">data</span><span> </span><span id="DayUnit"><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-var">DayUnit</span></a></span></span><span> </span><span id="local-6989586621679179219"><span class="annot"><a href="#local-6989586621679179219"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679179220"><span class="annot"><a href="#local-6989586621679179220"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-13"></span><span>  </span><span id="local-6989586621679178937"><span id="local-6989586621679178938"><span id="DayUnit"><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-var">DayUnit</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679178937"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Unit"><span class="hs-identifier hs-type">Unit</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Unit"><span class="hs-identifier hs-type">Unit</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178938"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178937"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178938"><span class="hs-identifier hs-type">b</span></a></span></span></span><span>
+</span><span id="line-14"></span><span>
+</span><span id="line-15"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679178928"><span id="local-6989586621679178929"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178928"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178929"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178928"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178929"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-16"></span><span>  </span><span id="local-6989586621679179240"><span class="annot"><span class="annottext">dimap :: forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; DayUnit a b -&gt; DayUnit c d
+</span><a href="#local-6989586621679179240"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679179242"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679179242"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679179243"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679179243"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span> </span><span id="local-6989586621679179244"><span class="annot"><span class="annottext">a ~&gt; Unit
+</span><a href="#local-6989586621679179244"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179245"><span class="annot"><span class="annottext">Unit ~&gt; b
+</span><a href="#local-6989586621679179245"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(c ~&gt; Unit) -&gt; (Unit ~&gt; d) -&gt; DayUnit c d
+forall {k} {k} (a :: k) (b :: k).
+(a ~&gt; Unit) -&gt; (Unit ~&gt; b) -&gt; DayUnit a b
+</span><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-var">DayUnit</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a ~&gt; Unit
+</span><a href="#local-6989586621679179244"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; Unit) -&gt; (c ~&gt; a) -&gt; c ~&gt; Unit
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679179242"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679179243"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(b ~&gt; d) -&gt; (Unit ~&gt; b) -&gt; Unit ~&gt; d
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; b
+</span><a href="#local-6989586621679179245"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-17"></span><span>  </span><span id="local-6989586621679179248"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679179248"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679179249"><span class="annot"><span class="annottext">\\ :: forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; DayUnit a b -&gt; r
+</span><a href="#local-6989586621679179249"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span> </span><span id="local-6989586621679179251"><span class="annot"><span class="annottext">a ~&gt; Unit
+</span><a href="#local-6989586621679179251"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179252"><span class="annot"><span class="annottext">Unit ~&gt; b
+</span><a href="#local-6989586621679179252"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob Unit) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679179248"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob Unit) =&gt; r) -&gt; (a ~&gt; Unit) -&gt; r
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; Unit
+</span><a href="#local-6989586621679179251"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob Unit, Ob b) =&gt; r) -&gt; (Unit ~&gt; b) -&gt; r
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; b
+</span><a href="#local-6989586621679179252"><span class="hs-identifier hs-var">g</span></a></span><span>
+</span><span id="line-18"></span><span>
+</span><span id="line-19"></span><span class="hs-keyword">data</span><span> </span><span id="Day"><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span></span><span> </span><span id="local-6989586621679179260"><span class="annot"><a href="#local-6989586621679179260"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span id="local-6989586621679179261"><span class="annot"><a href="#local-6989586621679179261"><span class="hs-identifier hs-type">q</span></a></span></span><span> </span><span id="local-6989586621679179262"><span class="annot"><a href="#local-6989586621679179262"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679179263"><span class="annot"><a href="#local-6989586621679179263"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-20"></span><span>  </span><span id="Day"><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679178968"><span class="annot"><a href="#local-6989586621679178968"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span id="local-6989586621679178970"><span class="annot"><a href="#local-6989586621679178970"><span class="hs-identifier hs-type">q</span></a></span></span><span> </span><span id="local-6989586621679178965"><span class="annot"><a href="#local-6989586621679178965"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679178972"><span class="annot"><a href="#local-6989586621679178972"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span id="local-6989586621679179265"><span class="annot"><a href="#local-6989586621679179265"><span class="hs-identifier hs-type">c</span></a></span></span><span> </span><span id="local-6989586621679179266"><span class="annot"><a href="#local-6989586621679179266"><span class="hs-identifier hs-type">d</span></a></span></span><span> </span><span id="local-6989586621679179267"><span class="annot"><a href="#local-6989586621679179267"><span class="hs-identifier hs-type">e</span></a></span></span><span> </span><span id="local-6989586621679179268"><span class="annot"><a href="#local-6989586621679179268"><span class="hs-identifier hs-type">f</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="#local-6989586621679178965"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179265"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-type">**</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179267"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679178968"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179265"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179266"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679178970"><span class="hs-identifier hs-type">q</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179267"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179268"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679179266"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-type">**</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179268"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178972"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178968"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178970"><span class="hs-identifier hs-type">q</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178965"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178972"><span class="hs-identifier hs-type">b</span></a></span><span>
+</span><span id="line-21"></span><span>
+</span><span id="line-22"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679178952"><span id="local-6989586621679178953"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178952"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178953"><span class="hs-identifier hs-type">q</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178952"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679178953"><span class="hs-identifier hs-type">q</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-23"></span><span>  </span><span id="local-6989586621679179286"><span class="annot"><span class="annottext">dimap :: forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Day p q a b -&gt; Day p q c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679179287"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679179287"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679179288"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679179288"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179291"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179291"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179292"><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179292"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679179293"><span class="annot"><span class="annottext">q e f
+</span><a href="#local-6989586621679179293"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span id="local-6989586621679179294"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179294"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(c ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; d) -&gt; Day p q c d
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(c ~&gt; a) -&gt; (a ~&gt; (c ** e)) -&gt; c ~&gt; (c ** e)
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span><a href="Proarrow.Core.html#lmap"><span class="hs-identifier hs-var">lmap</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679179287"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179291"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179292"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">q e f
+</span><a href="#local-6989586621679179293"><span class="hs-identifier hs-var">q</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(b ~&gt; d) -&gt; ((d ** f) ~&gt; b) -&gt; (d ** f) ~&gt; d
+forall {j} {k} (p :: PRO j k) (b :: k) (d :: k) (a :: j).
+Profunctor p =&gt;
+(b ~&gt; d) -&gt; p a b -&gt; p a d
+</span><a href="Proarrow.Core.html#rmap"><span class="hs-identifier hs-var">rmap</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679179288"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179294"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-24"></span><span>  </span><span id="local-6989586621679179295"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679179295"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679179296"><span class="annot"><span class="annottext">\\ :: forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; Day p q a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179298"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179298"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="annot"><span class="annottext">p c d
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">q e f
+</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679179299"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179299"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob (c ** e)) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679179295"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob (c ** e)) =&gt; r) -&gt; (a ~&gt; (c ** e)) -&gt; r
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179298"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (d ** f), Ob b) =&gt; r) -&gt; ((d ** f) ~&gt; b) -&gt; r
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179299"><span class="hs-identifier hs-var">g</span></a></span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679179013"><span id="local-6989586621679179014"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179013"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179014"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179013"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179014"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-27"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Unit"><span class="annot"><a href="Proarrow.Category.Monoidal.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span>
+</span><span id="line-28"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679179332"><span id="local-6989586621679179333"><span class="annot"><a href="#local-6989586621679179332"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span id="%2A%2A"><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-var">**</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679179333"><span class="hs-identifier hs-type">q</span></a></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179332"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179333"><span class="hs-identifier hs-type">q</span></a></span><span>
+</span><span id="line-29"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679179337"><span class="annot"><span class="annottext">a :~&gt; b
+</span><a href="#local-6989586621679179337"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span id="local-6989586621679179338"><span class="annot"><span class="annottext">par :: forall (a :: PRO j k) (b :: PRO j k) (c :: PRO j k) (d :: PRO j k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="#local-6989586621679179338"><span class="hs-operator hs-var hs-var hs-var hs-var">`par`</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679179344"><span class="annot"><span class="annottext">c :~&gt; d
+</span><a href="#local-6989586621679179344"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day a c :~&gt; Day b d) -&gt; Prof (Day a c) (Day b d)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179345"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179345"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179346"><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179346"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679179347"><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179347"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span id="local-6989586621679179348"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179348"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (c ** e)) -&gt; b c d -&gt; d e f -&gt; ((d ** f) ~&gt; b) -&gt; Day b d a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179345"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; b c d
+a :~&gt; b
+</span><a href="#local-6989586621679179337"><span class="hs-identifier hs-var">m</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179346"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">c e f -&gt; d e f
+c :~&gt; d
+</span><a href="#local-6989586621679179344"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179347"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179348"><span class="hs-identifier hs-var">g</span></a></span><span>
+</span><span id="line-30"></span><span>  </span><span id="local-6989586621679179349"><span class="annot"><span class="annottext">leftUnitor :: forall (a :: PRO j k). Obj a -&gt; (Unit ** a) ~&gt; a
+</span><a href="#local-6989586621679179349"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitor</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day DayUnit a :~&gt; a) -&gt; Prof (Day DayUnit a) a
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179369"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179369"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span> </span><span id="local-6989586621679179370"><span class="annot"><span class="annottext">c ~&gt; Unit
+</span><a href="#local-6989586621679179370"><span class="hs-identifier hs-var">h</span></a></span></span><span> </span><span id="local-6989586621679179371"><span class="annot"><span class="annottext">Unit ~&gt; d
+</span><a href="#local-6989586621679179371"><span class="hs-identifier hs-var">i</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679179372"><span class="annot"><span class="annottext">a e f
+</span><a href="#local-6989586621679179372"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span id="local-6989586621679179373"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179373"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; e) -&gt; (f ~&gt; b) -&gt; a e f -&gt; a a b
+forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; a a b -&gt; a c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var">dimap</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj e -&gt; (Unit ** e) ~&gt; e
+forall (a :: j). Obj a -&gt; (Unit ** a) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (Unit ** a) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitor"><span class="hs-identifier hs-var">leftUnitor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a e f
+</span><a href="#local-6989586621679179372"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Unit ** e) ~&gt; e) -&gt; (a ~&gt; (Unit ** e)) -&gt; a ~&gt; e
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">c ~&gt; Unit
+</span><a href="#local-6989586621679179370"><span class="hs-identifier hs-var">h</span></a></span><span> </span><span class="annot"><span class="annottext">(c ~&gt; Unit) -&gt; Obj e -&gt; (c ** e) ~&gt; (Unit ** e)
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">a e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a e f
+</span><a href="#local-6989586621679179372"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((c ** e) ~&gt; (Unit ** e)) -&gt; (a ~&gt; (c ** e)) -&gt; a ~&gt; (Unit ** e)
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179369"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179373"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** f) ~&gt; b) -&gt; (f ~&gt; (d ** f)) -&gt; f ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Unit ~&gt; d
+</span><a href="#local-6989586621679179371"><span class="hs-identifier hs-var">i</span></a></span><span> </span><span class="annot"><span class="annottext">(Unit ~&gt; d) -&gt; (f ~&gt; f) -&gt; (Unit ** f) ~&gt; (d ** f)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">a e f -&gt; f ~&gt; f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a e f
+</span><a href="#local-6989586621679179372"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Unit ** f) ~&gt; (d ** f)) -&gt; (f ~&gt; (Unit ** f)) -&gt; f ~&gt; (d ** f)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(f ~&gt; f) -&gt; f ~&gt; (Unit ** f)
+forall (a :: k). Obj a -&gt; a ~&gt; (Unit ** a)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (Unit ** a)
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"><span class="hs-identifier hs-var">leftUnitorInv</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a e f -&gt; f ~&gt; f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a e f
+</span><a href="#local-6989586621679179372"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">a e f
+</span><a href="#local-6989586621679179372"><span class="hs-identifier hs-var">q</span></a></span><span>
+</span><span id="line-31"></span><span>  </span><span id="local-6989586621679179375"><span class="annot"><span class="annottext">leftUnitorInv :: forall (a :: PRO j k). Obj a -&gt; a ~&gt; (Unit ** a)
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitorInv</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a :~&gt; Day DayUnit a) -&gt; Prof a (Day DayUnit a)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679179389"><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179389"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (Unit ** a))
+-&gt; DayUnit Unit Unit
+-&gt; a a b
+-&gt; ((Unit ** b) ~&gt; b)
+-&gt; Day DayUnit a a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a -&gt; a ~&gt; (Unit ** a)
+forall (a :: j). Obj a -&gt; a ~&gt; (Unit ** a)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (Unit ** a)
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"><span class="hs-identifier hs-var">leftUnitorInv</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a a b -&gt; Obj a
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179389"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Unit ~&gt; Unit) -&gt; (Unit ~&gt; Unit) -&gt; DayUnit Unit Unit
+forall {k} {k} (a :: k) (b :: k).
+(a ~&gt; Unit) -&gt; (Unit ~&gt; b) -&gt; DayUnit a b
+</span><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-var">DayUnit</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; Unit
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; Unit
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179389"><span class="hs-identifier hs-var">q</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj b -&gt; (Unit ** b) ~&gt; b
+forall (a :: k). Obj a -&gt; (Unit ** a) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (Unit ** a) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitor"><span class="hs-identifier hs-var">leftUnitor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a a b -&gt; Obj b
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179389"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-32"></span><span>  </span><span id="local-6989586621679179391"><span class="annot"><span class="annottext">rightUnitor :: forall (a :: PRO j k). Obj a -&gt; (a ** Unit) ~&gt; a
+</span><a href="#local-6989586621679179391"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitor</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day a DayUnit :~&gt; a) -&gt; Prof (Day a DayUnit) a
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179411"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179411"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179412"><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179412"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span> </span><span id="local-6989586621679179413"><span class="annot"><span class="annottext">e ~&gt; Unit
+</span><a href="#local-6989586621679179413"><span class="hs-identifier hs-var">h</span></a></span></span><span> </span><span id="local-6989586621679179414"><span class="annot"><span class="annottext">Unit ~&gt; f
+</span><a href="#local-6989586621679179414"><span class="hs-identifier hs-var">i</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679179415"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179415"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; c) -&gt; (d ~&gt; b) -&gt; a c d -&gt; a a b
+forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; a a b -&gt; a c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var">dimap</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj c -&gt; (c ** Unit) ~&gt; c
+forall (a :: j). Obj a -&gt; (a ** Unit) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (a ** Unit) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitor"><span class="hs-identifier hs-var">rightUnitor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179412"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((c ** Unit) ~&gt; c) -&gt; (a ~&gt; (c ** Unit)) -&gt; a ~&gt; c
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179412"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c -&gt; (e ~&gt; Unit) -&gt; (c ** e) ~&gt; (c ** Unit)
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">e ~&gt; Unit
+</span><a href="#local-6989586621679179413"><span class="hs-identifier hs-var">h</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((c ** e) ~&gt; (c ** Unit)) -&gt; (a ~&gt; (c ** e)) -&gt; a ~&gt; (c ** Unit)
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179411"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179415"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** f) ~&gt; b) -&gt; (d ~&gt; (d ** f)) -&gt; d ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; d ~&gt; d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179412"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">(d ~&gt; d) -&gt; (Unit ~&gt; f) -&gt; (d ** Unit) ~&gt; (d ** f)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; f
+</span><a href="#local-6989586621679179414"><span class="hs-identifier hs-var">i</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((d ** Unit) ~&gt; (d ** f)) -&gt; (d ~&gt; (d ** Unit)) -&gt; d ~&gt; (d ** f)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(d ~&gt; d) -&gt; d ~&gt; (d ** Unit)
+forall (a :: k). Obj a -&gt; a ~&gt; (a ** Unit)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (a ** Unit)
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"><span class="hs-identifier hs-var">rightUnitorInv</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; d ~&gt; d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179412"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179412"><span class="hs-identifier hs-var">p</span></a></span><span>
+</span><span id="line-33"></span><span>  </span><span id="local-6989586621679179417"><span class="annot"><span class="annottext">rightUnitorInv :: forall (a :: PRO j k). Obj a -&gt; a ~&gt; (a ** Unit)
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitorInv</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a :~&gt; Day a DayUnit) -&gt; Prof a (Day a DayUnit)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679179431"><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179431"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (a ** Unit))
+-&gt; a a b
+-&gt; DayUnit Unit Unit
+-&gt; ((b ** Unit) ~&gt; b)
+-&gt; Day a DayUnit a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a -&gt; a ~&gt; (a ** Unit)
+forall (a :: j). Obj a -&gt; a ~&gt; (a ** Unit)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (a ** Unit)
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"><span class="hs-identifier hs-var">rightUnitorInv</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a a b -&gt; Obj a
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179431"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179431"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Unit ~&gt; Unit) -&gt; (Unit ~&gt; Unit) -&gt; DayUnit Unit Unit
+forall {k} {k} (a :: k) (b :: k).
+(a ~&gt; Unit) -&gt; (Unit ~&gt; b) -&gt; DayUnit a b
+</span><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-var">DayUnit</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; Unit
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; Unit
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj b -&gt; (b ** Unit) ~&gt; b
+forall (a :: k). Obj a -&gt; (a ** Unit) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (a ** Unit) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitor"><span class="hs-identifier hs-var">rightUnitor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a a b -&gt; Obj b
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179431"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-34"></span><span>  </span><span id="local-6989586621679179432"><span class="annot"><span class="annottext">associator :: forall (a :: PRO j k) (b :: PRO j k) (c :: PRO j k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span><a href="#local-6989586621679179432"><span class="hs-identifier hs-var hs-var hs-var hs-var">associator</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day (Day a b) c :~&gt; Day a (Day b c))
+-&gt; Prof (Day (Day a b) c) (Day a (Day b c))
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179444"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179444"><span class="hs-identifier hs-var">f1</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179467"><span class="annot"><span class="annottext">c ~&gt; (c ** e)
+</span><a href="#local-6989586621679179467"><span class="hs-identifier hs-var">f2</span></a></span></span><span> </span><span id="local-6989586621679179468"><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179468"><span class="hs-identifier hs-var">p2</span></a></span></span><span> </span><span id="local-6989586621679179469"><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179469"><span class="hs-identifier hs-var">q2</span></a></span></span><span> </span><span id="local-6989586621679179470"><span class="annot"><span class="annottext">(d ** f) ~&gt; d
+</span><a href="#local-6989586621679179470"><span class="hs-identifier hs-var">g2</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679179471"><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span></span><span> </span><span id="local-6989586621679179472"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179472"><span class="hs-identifier hs-var">g1</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-35"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679179473"><span class="annot"><span class="annottext">f :: a ~&gt; (c ** (e ** e))
+</span><a href="#local-6989586621679179473"><span class="hs-identifier hs-var hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj c -&gt; Obj e -&gt; Obj e -&gt; ((c ** e) ** e) ~&gt; (c ** (e ** e))
+forall (a :: j) (b :: j) (c :: j).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span><a href="Proarrow.Category.Monoidal.html#associator"><span class="hs-identifier hs-var">associator</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179468"><span class="hs-identifier hs-var">p2</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179469"><span class="hs-identifier hs-var">q2</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">c e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((c ** e) ** e) ~&gt; (c ** (e ** e)))
+-&gt; (a ~&gt; ((c ** e) ** e)) -&gt; a ~&gt; (c ** (e ** e))
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">c ~&gt; (c ** e)
+</span><a href="#local-6989586621679179467"><span class="hs-identifier hs-var">f2</span></a></span><span> </span><span class="annot"><span class="annottext">(c ~&gt; (c ** e)) -&gt; Obj e -&gt; (c ** e) ~&gt; ((c ** e) ** e)
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">c e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((c ** e) ~&gt; ((c ** e) ** e))
+-&gt; (a ~&gt; (c ** e)) -&gt; a ~&gt; ((c ** e) ** e)
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179444"><span class="hs-identifier hs-var">f1</span></a></span><span>
+</span><span id="line-36"></span><span>        </span><span id="local-6989586621679179474"><span class="annot"><span class="annottext">g :: (d ** (f ** f)) ~&gt; b
+</span><a href="#local-6989586621679179474"><span class="hs-identifier hs-var hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179472"><span class="hs-identifier hs-var">g1</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** f) ~&gt; b)
+-&gt; ((d ** (f ** f)) ~&gt; (d ** f)) -&gt; (d ** (f ** f)) ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(d ** f) ~&gt; d
+</span><a href="#local-6989586621679179470"><span class="hs-identifier hs-var">g2</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** f) ~&gt; d) -&gt; (f ~&gt; f) -&gt; ((d ** f) ** f) ~&gt; (d ** f)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">c e f -&gt; f ~&gt; f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((d ** f) ** f) ~&gt; (d ** f))
+-&gt; ((d ** (f ** f)) ~&gt; ((d ** f) ** f))
+-&gt; (d ** (f ** f)) ~&gt; (d ** f)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Obj d -&gt; Obj f -&gt; (f ~&gt; f) -&gt; (d ** (f ** f)) ~&gt; ((d ** f) ** f)
+forall (a :: k) (b :: k) (c :: k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span><a href="Proarrow.Category.Monoidal.html#associatorInv"><span class="hs-identifier hs-var">associatorInv</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; Obj d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179468"><span class="hs-identifier hs-var">p2</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b e f -&gt; Obj f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179469"><span class="hs-identifier hs-var">q2</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">c e f -&gt; f ~&gt; f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-37"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (c ** (e ** e)))
+-&gt; a c d
+-&gt; Day b c (e ** e) (f ** f)
+-&gt; ((d ** (f ** f)) ~&gt; b)
+-&gt; Day a (Day b c) a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** (e ** e))
+</span><a href="#local-6989586621679179473"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179468"><span class="hs-identifier hs-var">p2</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((e ** e) ~&gt; (e ** e))
+-&gt; b e f
+-&gt; c e f
+-&gt; ((f ** f) ~&gt; (f ** f))
+-&gt; Day b c (e ** e) (f ** f)
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179469"><span class="hs-identifier hs-var">q2</span></a></span><span> </span><span class="annot"><span class="annottext">Obj e -&gt; Obj e -&gt; (e ** e) ~&gt; (e ** e)
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">c e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179469"><span class="hs-identifier hs-var">q2</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b e f -&gt; Obj f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179469"><span class="hs-identifier hs-var">q2</span></a></span><span> </span><span class="annot"><span class="annottext">Obj f -&gt; (f ~&gt; f) -&gt; (f ** f) ~&gt; (f ** f)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">c e f -&gt; f ~&gt; f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179471"><span class="hs-identifier hs-var">q1</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(d ** (f ** f)) ~&gt; b
+</span><a href="#local-6989586621679179474"><span class="hs-identifier hs-var">g</span></a></span><span>
+</span><span id="line-38"></span><span>  </span><span id="local-6989586621679179476"><span class="annot"><span class="annottext">associatorInv :: forall (a :: PRO j k) (b :: PRO j k) (c :: PRO j k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span><a href="Proarrow.Category.Monoidal.html#associatorInv"><span class="hs-identifier hs-var hs-var hs-var hs-var">associatorInv</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day a (Day b c) :~&gt; Day (Day a b) c)
+-&gt; Prof (Day a (Day b c)) (Day (Day a b) c)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179487"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179487"><span class="hs-identifier hs-var">f1</span></a></span></span><span> </span><span id="local-6989586621679179488"><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179511"><span class="annot"><span class="annottext">e ~&gt; (c ** e)
+</span><a href="#local-6989586621679179511"><span class="hs-identifier hs-var">f2</span></a></span></span><span> </span><span id="local-6989586621679179512"><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179512"><span class="hs-identifier hs-var">p2</span></a></span></span><span> </span><span id="local-6989586621679179513"><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179513"><span class="hs-identifier hs-var">q2</span></a></span></span><span> </span><span id="local-6989586621679179514"><span class="annot"><span class="annottext">(d ** f) ~&gt; f
+</span><a href="#local-6989586621679179514"><span class="hs-identifier hs-var">g2</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679179515"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179515"><span class="hs-identifier hs-var">g1</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-39"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679179516"><span class="annot"><span class="annottext">f :: a ~&gt; ((c ** c) ** e)
+</span><a href="#local-6989586621679179516"><span class="hs-identifier hs-var hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj c -&gt; Obj c -&gt; Obj e -&gt; (c ** (c ** e)) ~&gt; ((c ** c) ** e)
+forall (a :: j) (b :: j) (c :: j).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span><a href="Proarrow.Category.Monoidal.html#associatorInv"><span class="hs-identifier hs-var">associatorInv</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179512"><span class="hs-identifier hs-var">p2</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">c e f -&gt; Obj e
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179513"><span class="hs-identifier hs-var">q2</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((c ** (c ** e)) ~&gt; ((c ** c) ** e))
+-&gt; (a ~&gt; (c ** (c ** e))) -&gt; a ~&gt; ((c ** c) ** e)
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c -&gt; (e ~&gt; (c ** e)) -&gt; (c ** e) ~&gt; (c ** (c ** e))
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">e ~&gt; (c ** e)
+</span><a href="#local-6989586621679179511"><span class="hs-identifier hs-var">f2</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((c ** e) ~&gt; (c ** (c ** e)))
+-&gt; (a ~&gt; (c ** e)) -&gt; a ~&gt; (c ** (c ** e))
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179487"><span class="hs-identifier hs-var">f1</span></a></span><span>
+</span><span id="line-40"></span><span>        </span><span id="local-6989586621679179517"><span class="annot"><span class="annottext">g :: ((d ** d) ** f) ~&gt; b
+</span><a href="#local-6989586621679179517"><span class="hs-identifier hs-var hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179515"><span class="hs-identifier hs-var">g1</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** f) ~&gt; b)
+-&gt; (((d ** d) ** f) ~&gt; (d ** f)) -&gt; ((d ** d) ** f) ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; d ~&gt; d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span><span> </span><span class="annot"><span class="annottext">(d ~&gt; d) -&gt; ((d ** f) ~&gt; f) -&gt; (d ** (d ** f)) ~&gt; (d ** f)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; f
+</span><a href="#local-6989586621679179514"><span class="hs-identifier hs-var">g2</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((d ** (d ** f)) ~&gt; (d ** f))
+-&gt; (((d ** d) ** f) ~&gt; (d ** (d ** f)))
+-&gt; ((d ** d) ** f) ~&gt; (d ** f)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(d ~&gt; d) -&gt; Obj d -&gt; Obj f -&gt; ((d ** d) ** f) ~&gt; (d ** (d ** f))
+forall (a :: k) (b :: k) (c :: k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span><a href="Proarrow.Category.Monoidal.html#associator"><span class="hs-identifier hs-var">associator</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; d ~&gt; d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b c d -&gt; Obj d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179512"><span class="hs-identifier hs-var">p2</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">c e f -&gt; Obj f
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179513"><span class="hs-identifier hs-var">q2</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; ((c ** c) ** e))
+-&gt; Day a b (c ** c) (d ** d)
+-&gt; c e f
+-&gt; (((d ** d) ** f) ~&gt; b)
+-&gt; Day (Day a b) c a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; ((c ** c) ** e)
+</span><a href="#local-6989586621679179516"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((c ** c) ~&gt; (c ** c))
+-&gt; a c d
+-&gt; b c d
+-&gt; ((d ** d) ~&gt; (d ** d))
+-&gt; Day a b (c ** c) (d ** d)
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c -&gt; Obj c -&gt; (c ** c) ~&gt; (c ** c)
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">b c d -&gt; Obj c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179512"><span class="hs-identifier hs-var">p2</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span><span> </span><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179512"><span class="hs-identifier hs-var">p2</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a c d -&gt; d ~&gt; d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179488"><span class="hs-identifier hs-var">p1</span></a></span><span> </span><span class="annot"><span class="annottext">(d ~&gt; d) -&gt; Obj d -&gt; (d ** d) ~&gt; (d ** d)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">b c d -&gt; Obj d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179512"><span class="hs-identifier hs-var">p2</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">c e f
+</span><a href="#local-6989586621679179513"><span class="hs-identifier hs-var">q2</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** d) ** f) ~&gt; b
+</span><a href="#local-6989586621679179517"><span class="hs-identifier hs-var">g</span></a></span><span>
+</span><span id="line-42"></span><span>
+</span><span id="line-43"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679179094"><span id="local-6989586621679179095"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier hs-type">SymMonoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179094"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier hs-type">SymMonoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179095"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#SymMonoidal"><span class="hs-identifier hs-type">SymMonoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179094"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179095"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-44"></span><span>  </span><span id="local-6989586621679179532"><span class="annot"><span class="annottext">swap' :: forall (a :: PRO j k) (b :: PRO j k).
+Obj a -&gt; Obj b -&gt; (a ** b) ~&gt; (b ** a)
+</span><a href="#local-6989586621679179532"><span class="hs-identifier hs-var hs-var hs-var hs-var">swap'</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day a b :~&gt; Day b a) -&gt; Prof (Day a b) (Day b a)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179541"><span class="annot"><a href="#local-6989586621679179541"><span class="hs-identifier hs-type hs-type">p</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179542"><span class="annot"><a href="#local-6989586621679179542"><span class="hs-identifier hs-type hs-type">q</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179543"><span class="annot"><a href="#local-6989586621679179543"><span class="hs-identifier hs-type hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179544"><span class="annot"><a href="#local-6989586621679179544"><span class="hs-identifier hs-type hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179545"><span class="annot"><a href="#local-6989586621679179545"><span class="hs-identifier hs-type hs-type">c</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179546"><span class="annot"><a href="#local-6989586621679179546"><span class="hs-identifier hs-type hs-type">d</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179547"><span class="annot"><a href="#local-6989586621679179547"><span class="hs-identifier hs-type hs-type">e</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679179548"><span class="annot"><a href="#local-6989586621679179548"><span class="hs-identifier hs-type hs-type">f</span></a></span></span><span> </span><span id="local-6989586621679179549"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179549"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179550"><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179550"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679179551"><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179551"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span id="local-6989586621679179552"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179552"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (e ** c)) -&gt; b e f -&gt; a c d -&gt; ((f ** d) ~&gt; b) -&gt; Day b a a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: j) (b :: j).
+(SymMonoidal j, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+forall {k} (a :: k) (b :: k).
+(SymMonoidal k, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+</span><a href="Proarrow.Category.Monoidal.html#swap"><span class="hs-identifier hs-var">swap</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679179545"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679179547"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="annot"><span class="annottext">((c ** e) ~&gt; (e ** c)) -&gt; (a ~&gt; (c ** e)) -&gt; a ~&gt; (e ** c)
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179549"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179551"><span class="hs-identifier hs-var">q</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179550"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179552"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** f) ~&gt; b) -&gt; ((f ** d) ~&gt; (d ** f)) -&gt; (f ** d) ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: k) (b :: k).
+(SymMonoidal k, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+forall {k} (a :: k) (b :: k).
+(SymMonoidal k, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+</span><a href="Proarrow.Category.Monoidal.html#swap"><span class="hs-identifier hs-var">swap</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679179548"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679179546"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob c, Ob d) =&gt; Day b a a b) -&gt; a c d -&gt; Day b a a b
+forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; a a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179550"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob e, Ob f) =&gt; Day b a a b) -&gt; b e f -&gt; Day b a a b
+forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; b a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179551"><span class="hs-identifier hs-var">q</span></a></span><span>
+</span><span id="line-45"></span><span>
+</span><span id="line-46"></span><span>
+</span><span id="line-47"></span><span class="hs-keyword">data</span><span> </span><span id="DayExp"><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-var">DayExp</span></a></span></span><span> </span><span id="local-6989586621679179566"><span class="annot"><a href="#local-6989586621679179566"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span id="local-6989586621679179567"><span class="annot"><a href="#local-6989586621679179567"><span class="hs-identifier hs-type">q</span></a></span></span><span> </span><span id="local-6989586621679179568"><span class="annot"><a href="#local-6989586621679179568"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679179569"><span class="annot"><a href="#local-6989586621679179569"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-48"></span><span>  </span><span id="DayExp"><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-var">DayExp</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679179134"><span class="annot"><a href="#local-6989586621679179134"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span id="local-6989586621679179135"><span class="annot"><a href="#local-6989586621679179135"><span class="hs-identifier hs-type">q</span></a></span></span><span> </span><span id="local-6989586621679179132"><span class="annot"><a href="#local-6989586621679179132"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679179133"><span class="annot"><a href="#local-6989586621679179133"><span class="hs-identifier hs-type">b</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179132"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179133"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">(</span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679179121"><span class="annot"><a href="#local-6989586621679179121"><span class="hs-identifier hs-type">c</span></a></span></span><span> </span><span id="local-6989586621679179122"><span class="annot"><a href="#local-6989586621679179122"><span class="hs-identifier hs-type">d</span></a></span></span><span> </span><span id="local-6989586621679179120"><span class="annot"><a href="#local-6989586621679179120"><span class="hs-identifier hs-type">e</span></a></span></span><span> </span><span id="local-6989586621679179123"><span class="annot"><a href="#local-6989586621679179123"><span class="hs-identifier hs-type">f</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="#local-6989586621679179120"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179132"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-type">**</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179121"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679179133"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#%2A%2A"><span class="hs-operator hs-type">**</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179122"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179123"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679179134"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179121"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179122"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679179135"><span class="hs-identifier hs-type">q</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179120"><span class="hs-identifier hs-type">e</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179123"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-type">DayExp</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179134"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179135"><span class="hs-identifier hs-type">q</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179132"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179133"><span class="hs-identifier hs-type">b</span></a></span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679179112"><span id="local-6989586621679179113"><span id="local-6989586621679179114"><span id="local-6989586621679179115"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179112"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179113"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179114"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179115"><span class="hs-identifier hs-type">q</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-type">DayExp</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679179114"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179112"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179113"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679179115"><span class="hs-identifier hs-type">q</span></a></span><span class="hs-special">)</span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-51"></span><span>  </span><span id="local-6989586621679179588"><span class="annot"><span class="annottext">dimap :: forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; DayExp p q a b -&gt; DayExp p q c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679179589"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679179589"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679179590"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679179590"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-type">DayExp</span></a></span><span> </span><span id="local-6989586621679179594"><span class="annot"><span class="annottext">forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f
+</span><a href="#local-6989586621679179594"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679179589"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">(c ~&gt; a) -&gt; ((Ob c, Ob a) =&gt; DayExp p q c d) -&gt; DayExp p q c d
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679179590"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(b ~&gt; d) -&gt; ((Ob b, Ob d) =&gt; DayExp p q c d) -&gt; DayExp p q c d
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">(forall (c :: j) (d :: k) (e :: j) (f :: k).
+ (e ~&gt; (c ** c)) -&gt; ((d ** d) ~&gt; f) -&gt; p c d -&gt; q e f)
+-&gt; DayExp p q c d
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k).
+(Ob a, Ob b) =&gt;
+(forall (c :: k) (d :: k) (e :: k) (f :: k).
+ (e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f)
+-&gt; DayExp p q a b
+</span><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-var">DayExp</span></a></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679179608"><span class="annot"><span class="annottext">e ~&gt; (c ** c)
+</span><a href="#local-6989586621679179608"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179609"><span class="annot"><span class="annottext">(d ** d) ~&gt; f
+</span><a href="#local-6989586621679179609"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span id="local-6989586621679179610"><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179610"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f
+forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f
+</span><a href="#local-6989586621679179594"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679179589"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">(c ~&gt; a) -&gt; (c ~&gt; c) -&gt; (c ** c) ~&gt; (a ** c)
+forall (a :: j) (b :: j) (c :: j) (d :: j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">p c d -&gt; c ~&gt; c
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span><a href="Proarrow.Core.html#src"><span class="hs-identifier hs-var">src</span></a></span><span> </span><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179610"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((c ** c) ~&gt; (a ** c)) -&gt; (e ~&gt; (c ** c)) -&gt; e ~&gt; (a ** c)
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">e ~&gt; (c ** c)
+</span><a href="#local-6989586621679179608"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(d ** d) ~&gt; f
+</span><a href="#local-6989586621679179609"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">((d ** d) ~&gt; f) -&gt; ((b ** d) ~&gt; (d ** d)) -&gt; (b ** d) ~&gt; f
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679179590"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(b ~&gt; d) -&gt; (d ~&gt; d) -&gt; (b ** d) ~&gt; (d ** d)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">p c d -&gt; d ~&gt; d
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span><a href="Proarrow.Core.html#tgt"><span class="hs-identifier hs-var">tgt</span></a></span><span> </span><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179610"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179610"><span class="hs-identifier hs-var">p</span></a></span><span>
+</span><span id="line-52"></span><span>  </span><span id="local-6989586621679179611"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679179611"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679179612"><span class="annot"><span class="annottext">\\ :: forall (a :: j) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; DayExp p q a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-type">DayExp</span></a></span><span> </span><span id="local-6989586621679179617"><span class="annot"><span class="annottext">forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f
+</span><a href="#local-6989586621679179617"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+(Ob (Any ~&gt; (a ** Any)),
+ Ob (((b ** Any) ~&gt; Any) -&gt; p Any Any -&gt; q Any Any)) =&gt;
+r
+</span><a href="#local-6989586621679179611"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (Any ~&gt; (a ** Any)),
+  Ob (((b ** Any) ~&gt; Any) -&gt; p Any Any -&gt; q Any Any)) =&gt;
+ r)
+-&gt; ((Any ~&gt; (a ** Any))
+    -&gt; ((b ** Any) ~&gt; Any) -&gt; p Any Any -&gt; q Any Any)
+-&gt; r
+forall a b r. ((Ob a, Ob b) =&gt; r) -&gt; (a -&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">(Any ~&gt; (a ** Any))
+-&gt; ((b ** Any) ~&gt; Any) -&gt; p Any Any -&gt; q Any Any
+forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f
+</span><a href="#local-6989586621679179617"><span class="hs-identifier hs-var">n</span></a></span><span>
+</span><span id="line-53"></span><span>
+</span><span id="line-54"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679179158"><span id="local-6989586621679179159"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179158"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179159"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Object.Exponential.html#Closed"><span class="hs-identifier hs-type">Closed</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179158"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179159"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-55"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679179631"><span id="local-6989586621679179632"><span class="annot"><a href="#local-6989586621679179631"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span id="~~%3E"><span class="annot"><a href="Proarrow.Object.Exponential.html#~~%3E"><span class="hs-operator hs-var">~~&gt;</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679179632"><span class="hs-identifier hs-type">q</span></a></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-type">DayExp</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179631"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179632"><span class="hs-identifier hs-type">q</span></a></span><span>
+</span><span id="line-56"></span><span>  </span><span id="local-6989586621679179633"><span class="annot"><span class="annottext">curry' :: forall (a :: PRO j k) (b :: PRO j k) (c :: PRO j k).
+Obj a -&gt; Obj b -&gt; ((a ** b) ~&gt; c) -&gt; a ~&gt; (b ~~&gt; c)
+</span><a href="#local-6989586621679179633"><span class="hs-identifier hs-var hs-var hs-var hs-var">curry'</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679179643"><span class="annot"><span class="annottext">Day a b :~&gt; c
+</span><a href="#local-6989586621679179643"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a :~&gt; DayExp b c) -&gt; Prof a (DayExp b c)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679179645"><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179645"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179645"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">a a b -&gt; ((Ob a, Ob b) =&gt; DayExp b c a b) -&gt; DayExp b c a b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">(forall (c :: j) (d :: k) (e :: j) (f :: k).
+ (e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; b c d -&gt; c e f)
+-&gt; DayExp b c a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k).
+(Ob a, Ob b) =&gt;
+(forall (c :: k) (d :: k) (e :: k) (f :: k).
+ (e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f)
+-&gt; DayExp p q a b
+</span><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-var">DayExp</span></a></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679179650"><span class="annot"><span class="annottext">e ~&gt; (a ** c)
+</span><a href="#local-6989586621679179650"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179651"><span class="annot"><span class="annottext">(b ** d) ~&gt; f
+</span><a href="#local-6989586621679179651"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span id="local-6989586621679179652"><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179652"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Day a b e f -&gt; c e f
+Day a b :~&gt; c
+</span><a href="#local-6989586621679179643"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(e ~&gt; (a ** c)) -&gt; a a b -&gt; b c d -&gt; ((b ** d) ~&gt; f) -&gt; Day a b e f
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k) (c :: k) (d :: k) (e :: k) (f :: k).
+(a ~&gt; (c ** e)) -&gt; p c d -&gt; q e f -&gt; ((d ** f) ~&gt; b) -&gt; Day p q a b
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="annot"><span class="annottext">e ~&gt; (a ** c)
+</span><a href="#local-6989586621679179650"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">a a b
+</span><a href="#local-6989586621679179645"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">b c d
+</span><a href="#local-6989586621679179652"><span class="hs-identifier hs-var">q</span></a></span><span> </span><span class="annot"><span class="annottext">(b ** d) ~&gt; f
+</span><a href="#local-6989586621679179651"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-57"></span><span>  </span><span id="local-6989586621679179653"><span class="annot"><span class="annottext">uncurry' :: forall (b :: PRO j k) (c :: PRO j k) (a :: PRO j k).
+Obj b -&gt; Obj c -&gt; (a ~&gt; (b ~~&gt; c)) -&gt; (a ** b) ~&gt; c
+</span><a href="#local-6989586621679179653"><span class="hs-identifier hs-var hs-var hs-var hs-var">uncurry'</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679179663"><span class="annot"><span class="annottext">a :~&gt; DayExp b c
+</span><a href="#local-6989586621679179663"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day a b :~&gt; c) -&gt; Prof (Day a b) c
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179664"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179664"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179665"><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179665"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679179666"><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179666"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span id="local-6989586621679179667"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179667"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">a c d -&gt; DayExp b c c d
+a :~&gt; DayExp b c
+</span><a href="#local-6989586621679179663"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">a c d
+</span><a href="#local-6989586621679179665"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="hs-keyword">of</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-type">DayExp</span></a></span><span> </span><span id="local-6989586621679179670"><span class="annot"><span class="annottext">forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (c ** c)) -&gt; ((d ** d) ~&gt; f) -&gt; b c d -&gt; c e f
+</span><a href="#local-6989586621679179670"><span class="hs-identifier hs-var">h</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (c ** e)) -&gt; ((d ** f) ~&gt; b) -&gt; b e f -&gt; c a b
+forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (c ** c)) -&gt; ((d ** d) ~&gt; f) -&gt; b c d -&gt; c e f
+</span><a href="#local-6989586621679179670"><span class="hs-identifier hs-var">h</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179664"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179667"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">b e f
+</span><a href="#local-6989586621679179666"><span class="hs-identifier hs-var">q</span></a></span><span>
+</span><span id="line-58"></span><span>  </span><span id="local-6989586621679179671"><span class="annot"><span class="annottext">^^^ :: forall (b :: PRO j k) (y :: PRO j k) (x :: PRO j k) (a :: PRO j k).
+(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; (a ~~&gt; b) ~&gt; (x ~~&gt; y)
+</span><a href="#local-6989586621679179671"><span class="hs-operator hs-var hs-var hs-var hs-var">(^^^)</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679179675"><span class="annot"><span class="annottext">b :~&gt; y
+</span><a href="#local-6989586621679179675"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679179680"><span class="annot"><span class="annottext">x :~&gt; a
+</span><a href="#local-6989586621679179680"><span class="hs-identifier hs-var">m</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(DayExp a b :~&gt; DayExp x y) -&gt; Prof (DayExp a b) (DayExp x y)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-type">DayExp</span></a></span><span> </span><span id="local-6989586621679179685"><span class="annot"><span class="annottext">forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; a c d -&gt; b e f
+</span><a href="#local-6989586621679179685"><span class="hs-identifier hs-var">k</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(forall (c :: j) (d :: k) (e :: j) (f :: k).
+ (e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; x c d -&gt; y e f)
+-&gt; DayExp x y a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (q :: k -&gt; k -&gt; Type) (a :: k)
+       (b :: k).
+(Ob a, Ob b) =&gt;
+(forall (c :: k) (d :: k) (e :: k) (f :: k).
+ (e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; p c d -&gt; q e f)
+-&gt; DayExp p q a b
+</span><a href="Proarrow.Profunctor.Day.html#DayExp"><span class="hs-identifier hs-var">DayExp</span></a></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679179686"><span class="annot"><span class="annottext">e ~&gt; (a ** c)
+</span><a href="#local-6989586621679179686"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179687"><span class="annot"><span class="annottext">(b ** d) ~&gt; f
+</span><a href="#local-6989586621679179687"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span id="local-6989586621679179688"><span class="annot"><span class="annottext">x c d
+</span><a href="#local-6989586621679179688"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">b e f -&gt; y e f
+b :~&gt; y
+</span><a href="#local-6989586621679179675"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; a c d -&gt; b e f
+forall (c :: j) (d :: k) (e :: j) (f :: k).
+(e ~&gt; (a ** c)) -&gt; ((b ** d) ~&gt; f) -&gt; a c d -&gt; b e f
+</span><a href="#local-6989586621679179685"><span class="hs-identifier hs-var">k</span></a></span><span> </span><span class="annot"><span class="annottext">e ~&gt; (a ** c)
+</span><a href="#local-6989586621679179686"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(b ** d) ~&gt; f
+</span><a href="#local-6989586621679179687"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">x c d -&gt; a c d
+x :~&gt; a
+</span><a href="#local-6989586621679179680"><span class="hs-identifier hs-var">m</span></a></span><span> </span><span class="annot"><span class="annottext">x c d
+</span><a href="#local-6989586621679179688"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-59"></span><span>
+</span><span id="line-60"></span><span>
+</span><span id="line-61"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679179200"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179200"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"><span class="hs-identifier hs-type">MonoidalProfunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179200"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier hs-type">Monoid</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679179200"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-62"></span><span>  </span><span id="local-6989586621679179707"><span class="annot"><span class="annottext">mempty :: Unit ~&gt; p
+</span><a href="#local-6989586621679179707"><span class="hs-identifier hs-var hs-var hs-var hs-var">mempty</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(DayUnit :~&gt; p) -&gt; Prof DayUnit p
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#DayUnit"><span class="hs-identifier hs-type">DayUnit</span></a></span><span> </span><span id="local-6989586621679179711"><span class="annot"><span class="annottext">a ~&gt; Unit
+</span><a href="#local-6989586621679179711"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179712"><span class="annot"><span class="annottext">Unit ~&gt; b
+</span><a href="#local-6989586621679179712"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; Unit) -&gt; (Unit ~&gt; b) -&gt; p Unit Unit -&gt; p a b
+forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var">dimap</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; Unit
+</span><a href="#local-6989586621679179711"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">Unit ~&gt; b
+</span><a href="#local-6989586621679179712"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">p Unit Unit
+forall j k (p :: PRO j k). MonoidalProfunctor p =&gt; p Unit Unit
+</span><a href="Proarrow.Category.Monoidal.html#lift0"><span class="hs-identifier hs-var">lift0</span></a></span><span>
+</span><span id="line-63"></span><span>  </span><span id="local-6989586621679179716"><span class="annot"><span class="annottext">mappend :: (p ** p) ~&gt; p
+</span><a href="#local-6989586621679179716"><span class="hs-identifier hs-var hs-var hs-var hs-var">mappend</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Day p p :~&gt; p) -&gt; Prof (Day p p) p
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span id="local-6989586621679179720"><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179720"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679179721"><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179721"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span id="local-6989586621679179722"><span class="annot"><span class="annottext">p e f
+</span><a href="#local-6989586621679179722"><span class="hs-identifier hs-var">q</span></a></span></span><span> </span><span id="local-6989586621679179723"><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179723"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (c ** e)) -&gt; ((d ** f) ~&gt; b) -&gt; p (c ** e) (d ** f) -&gt; p a b
+forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var">dimap</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c ** e)
+</span><a href="#local-6989586621679179720"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(d ** f) ~&gt; b
+</span><a href="#local-6989586621679179723"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p c d -&gt; p e f -&gt; p (c ** e) (d ** f)
+forall (x1 :: j) (x2 :: k) (y1 :: j) (y2 :: k).
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall j k (p :: PRO j k) (x1 :: j) (x2 :: k) (y1 :: j) (y2 :: k).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span><a href="Proarrow.Category.Monoidal.html#lift2"><span class="hs-identifier hs-var">lift2</span></a></span><span> </span><span class="annot"><span class="annottext">p c d
+</span><a href="#local-6989586621679179721"><span class="hs-identifier hs-var">p</span></a></span><span> </span><span class="annot"><span class="annottext">p e f
+</span><a href="#local-6989586621679179722"><span class="hs-identifier hs-var">q</span></a></span><span class="hs-special">)</span></pre></body></html>
