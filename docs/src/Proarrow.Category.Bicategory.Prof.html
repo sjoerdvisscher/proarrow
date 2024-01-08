@@ -1,0 +1,6589 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Prelude</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>($)</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Monad"
+	><span class="hs-identifier"
+	  >Monad</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bimodule"
+	><span class="hs-identifier"
+	  >Bimodule</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Adjunction"
+	><span class="hs-identifier"
+	  >Adjunction</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Kan</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanExtension"
+	><span class="hs-identifier"
+	  >RightKanExtension</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanLift"
+	><span class="hs-identifier"
+	  >RightKanLift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#PRO"
+	><span class="hs-identifier"
+	  >PRO</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%3A~%3E"
+	><span class="hs-operator"
+	  >(:~&gt;)</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier"
+	  >lmap</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#rmap"
+	><span class="hs-identifier"
+	  >rmap</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier"
+	  >Is</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#arr"
+	><span class="hs-identifier"
+	  >arr</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#IsCategoryOf"
+	><span class="hs-identifier"
+	  >IsCategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator"
+	  >(//)</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Representable</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#Representable"
+	><span class="hs-identifier"
+	  >Representable</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Corepresentable.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Corepresentable</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Corepresentable.html#Corepresentable"
+	><span class="hs-identifier"
+	  >Corepresentable</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Prof.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Composition</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator"
+	  >(:.:)</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#src"
+	><span class="hs-identifier"
+	  >src</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#tgt"
+	><span class="hs-identifier"
+	  >tgt</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html"
+	><span class="hs-identifier"
+	  >Proarrow.Adjunction</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>A</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Ran.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Ran</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>R</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Rift.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Rift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>R</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Opposite.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Opposite</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Opposite.html#OPPOSITE"
+	><span class="hs-identifier"
+	  >OPPOSITE</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="ProfCl"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfCl"
+	  ><span class="hs-identifier hs-var"
+	    >ProfCl</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="ProfC"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfC"
+	  ><span class="hs-identifier hs-var"
+	    >ProfC</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >|</span
+      ><span
+      > </span
+      ><span id="ProfRepC"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfRepC"
+	  ><span class="hs-identifier hs-var"
+	    >ProfRepC</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >|</span
+      ><span
+      > </span
+      ><span id="ProfCorepC"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfCorepC"
+	  ><span class="hs-identifier hs-var"
+	    >ProfCorepC</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >family</span
+      ><span
+      > </span
+      ><span id="ProfConstraint"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	  ><span class="hs-identifier hs-var"
+	    >ProfConstraint</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679206702"
+      ><span class="annot"
+	><a href="#local-6989586621679206702"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfCl"
+	><span class="hs-identifier hs-type"
+	  >ProfCl</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-identifier"
+      >PRO</span
+      ><span
+      > </span
+      ><span class="hs-identifier"
+      >j</span
+      ><span
+      > </span
+      ><span class="hs-identifier"
+      >k</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="ProfConstraint"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	  ><span class="hs-identifier hs-var"
+	    >ProfConstraint</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfC"
+	><span class="hs-identifier hs-type"
+	  >ProfC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="ProfConstraint"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	  ><span class="hs-identifier hs-var"
+	    >ProfConstraint</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfRepC"
+	><span class="hs-identifier hs-type"
+	  >ProfRepC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#Representable"
+	><span class="hs-identifier hs-type"
+	  >Representable</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="ProfConstraint"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	  ><span class="hs-identifier hs-var"
+	    >ProfConstraint</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfCorepC"
+	><span class="hs-identifier hs-type"
+	  >ProfCorepC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Corepresentable.html#Corepresentable"
+	><span class="hs-identifier hs-type"
+	  >Corepresentable</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="ProfK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"
+	  ><span class="hs-identifier hs-var"
+	    >ProfK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679206703"
+      ><span class="annot"
+	><a href="#local-6989586621679206703"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfCl"
+	><span class="hs-identifier hs-type"
+	  >ProfCl</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206704"
+      ><span class="annot"
+	><a href="#local-6989586621679206704"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206705"
+      ><span class="annot"
+	><a href="#local-6989586621679206705"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="PK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	  ><span class="hs-identifier hs-var"
+	    >PK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#PRO"
+	><span class="hs-identifier hs-type"
+	  >PRO</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206704"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206705"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206706"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	  ><span class="hs-identifier hs-type"
+	    >PK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	  ><span class="hs-identifier hs-type"
+	    >PK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206706"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206706"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="PROFK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+	  ><span class="hs-identifier hs-var"
+	    >PROFK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"
+	><span class="hs-identifier hs-type"
+	  >ProfK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfC"
+	><span class="hs-identifier hs-type"
+	  >ProfC</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206708"
+      ><span id="local-6989586621679206709"
+	><span id="local-6989586621679206710"
+	  ><span class="annot"
+	    ><a href="Proarrow.Core.html#CAT"
+	      ><span class="hs-identifier hs-type"
+		>CAT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"
+	      ><span class="hs-identifier hs-type"
+		>ProfK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679206708"
+	      ><span class="hs-identifier hs-type"
+		>cl</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679206709"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679206710"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Prof"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	  ><span class="hs-identifier hs-var"
+	    >Prof</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206711"
+      ><span class="annot"
+	><a href="#local-6989586621679206711"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206712"
+      ><span class="annot"
+	><a href="#local-6989586621679206712"
+	  ><span class="hs-identifier hs-type"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206321"
+      ><span id="local-6989586621679206322"
+	><span id="Prof"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	      ><span class="hs-identifier hs-var"
+		>Prof</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206321"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206322"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#UN"
+	    ><span class="hs-identifier hs-type"
+	      >UN</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	    ><span class="hs-identifier hs-type"
+	      >PK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206321"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#%3A~%3E"
+	    ><span class="hs-operator hs-type"
+	      >:~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#UN"
+	    ><span class="hs-identifier hs-type"
+	      >UN</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	    ><span class="hs-identifier hs-type"
+	      >PK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206322"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	    ><span class="hs-identifier hs-type"
+	      >Prof</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206321"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206322"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206725"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: ProfK cl j k) (a :: ProfK cl j k) (b :: ProfK cl j k)
+       (d :: ProfK cl j k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Prof a b -&gt; Prof c d
+</span
+	  ><a href="#local-6989586621679206725"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Prof a b -&gt; Prof c d
+Prof c a -&gt; Prof b d -&gt; Prof a b -&gt; Prof c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206727"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679206727"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206728"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: ProfK cl j k) (b :: ProfK cl j k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Prof a b -&gt; r
+</span
+	  ><a href="#local-6989586621679206728"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206742"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a :~&gt; UN PK b
+</span
+	  ><a href="#local-6989586621679206742"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob (UN PK a Any Any), Ob (UN PK b Any Any)) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679206727"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (UN PK a Any Any), Ob (UN PK b Any Any)) =&gt; r)
+-&gt; (UN PK a Any Any -&gt; UN PK b Any Any) -&gt; r
+forall a b r. ((Ob a, Ob b) =&gt; r) -&gt; (a -&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a Any Any -&gt; UN PK b Any Any
+UN PK a :~&gt; UN PK b
+</span
+	><a href="#local-6989586621679206742"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206759"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: ProfK cl j k). Ob a =&gt; Prof a a
+</span
+	  ><a href="#local-6989586621679206759"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK a :~&gt; UN PK a) -&gt; Prof a a
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b -&gt; UN PK a a b
+UN PK a :~&gt; UN PK a
+forall a. Ob a =&gt; a -&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206775"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK b :~&gt; UN PK c
+</span
+	  ><a href="#local-6989586621679206775"
+	  ><span class="hs-identifier hs-var"
+	    >m</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206776"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: ProfK cl j k) (c :: ProfK cl j k) (a :: ProfK cl j k).
+Prof b c -&gt; Prof a b -&gt; Prof a c
+</span
+	  ><a href="#local-6989586621679206776"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206786"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a :~&gt; UN PK b
+</span
+	  ><a href="#local-6989586621679206786"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK a :~&gt; UN PK c) -&gt; Prof a c
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK b a b -&gt; UN PK c a b
+UN PK b :~&gt; UN PK c
+</span
+	><a href="#local-6989586621679206775"
+	><span class="hs-identifier hs-var"
+	  >m</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK b a b -&gt; UN PK c a b)
+-&gt; (UN PK a a b -&gt; UN PK b a b) -&gt; UN PK a a b -&gt; UN PK c a b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b -&gt; UN PK b a b
+UN PK a :~&gt; UN PK b
+</span
+	><a href="#local-6989586621679206786"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206788"
+      ><span id="local-6989586621679206789"
+	><span id="local-6989586621679206790"
+	  ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"
+	      ><span class="hs-identifier hs-type"
+		>ProfK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679206788"
+	      ><span class="hs-identifier hs-type"
+		>cl</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679206789"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679206790"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206795"
+      ><span class="hs-glyph"
+	>@</span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"
+	  ><span class="hs-identifier hs-type"
+	    >ProfK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206788"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206789"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206790"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206795"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier hs-type"
+	  >Is</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206795"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206795"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	><span class="hs-identifier hs-type"
+	  >ProfConstraint</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206788"
+	><span class="hs-identifier hs-type"
+	  >cl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206795"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	><span class="hs-identifier hs-type"
+	  >ProfConstraint</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206788"
+	><span class="hs-identifier hs-type"
+	  >cl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >(~&gt;)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679206789"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	><span class="hs-identifier hs-type"
+	  >ProfConstraint</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206788"
+	><span class="hs-identifier hs-type"
+	  >cl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >(~&gt;)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679206790"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	><span class="hs-identifier hs-type"
+	  >ProfConstraint</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206340"
+	><span class="hs-identifier hs-type"
+	  >cl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679206341"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206342"
+	><span class="hs-identifier hs-type"
+	  >q</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="ComposeConstraint"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ComposeConstraint"
+	  ><span class="hs-identifier hs-var"
+	    >ComposeConstraint</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206340"
+      ><span class="annot"
+	><a href="#local-6989586621679206340"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206337"
+      ><span class="annot"
+	><a href="#local-6989586621679206337"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206338"
+      ><span class="annot"
+	><a href="#local-6989586621679206338"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206339"
+      ><span class="annot"
+	><a href="#local-6989586621679206339"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679206341"
+      ><span class="annot"
+	><a href="#local-6989586621679206341"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#PRO"
+	><span class="hs-identifier hs-type"
+	  >PRO</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206337"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206338"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679206342"
+      ><span class="annot"
+	><a href="#local-6989586621679206342"
+	  ><span class="hs-identifier hs-type"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#PRO"
+	><span class="hs-identifier hs-type"
+	  >PRO</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206338"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206339"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206351"
+      ><span id="local-6989586621679206352"
+	><span id="local-6989586621679206353"
+	  ><span id="local-6989586621679206354"
+	    ><span id="local-6989586621679206355"
+	      ><span id="local-6989586621679206356"
+		><span class="annot"
+		  ><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+		    ><span class="hs-identifier hs-type"
+		      >ProfConstraint</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206354"
+		    ><span class="hs-identifier hs-type"
+		      >cl</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206355"
+		    ><span class="hs-identifier hs-type"
+		      >p</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+		    ><span class="hs-operator hs-type"
+		      >:.:</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206356"
+		    ><span class="hs-identifier hs-type"
+		      >q</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-glyph"
+		  >=&gt;</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Category.Bicategory.Prof.html#ComposeConstraint"
+		    ><span class="hs-identifier hs-type"
+		      >ComposeConstraint</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206354"
+		    ><span class="hs-identifier hs-type"
+		      >cl</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206351"
+		    ><span class="hs-identifier hs-type"
+		      >i</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206352"
+		    ><span class="hs-identifier hs-type"
+		      >j</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206353"
+		    ><span class="hs-identifier hs-type"
+		      >k</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206355"
+		    ><span class="hs-identifier hs-type"
+		      >p</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-glyph"
+		  >::</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Core.html#PRO"
+		    ><span class="hs-identifier hs-type"
+		      >PRO</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206351"
+		    ><span class="hs-identifier hs-type"
+		      >i</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206352"
+		    ><span class="hs-identifier hs-type"
+		      >j</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206356"
+		    ><span class="hs-identifier hs-type"
+		      >q</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-glyph"
+		  >::</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Core.html#PRO"
+		    ><span class="hs-identifier hs-type"
+		      >PRO</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206352"
+		    ><span class="hs-identifier hs-type"
+		      >j</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679206353"
+		    ><span class="hs-identifier hs-type"
+		      >k</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ></span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206416"
+      ><span class="hs-special"
+	>(</span
+	><span class="hs-keyword"
+	>forall</span
+	><span
+	> </span
+	><span id="local-6989586621679206405"
+	><span class="annot"
+	  ><a href="#local-6989586621679206405"
+	    ><span class="hs-identifier hs-type"
+	      >i</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span id="local-6989586621679206406"
+	><span class="annot"
+	  ><a href="#local-6989586621679206406"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span id="local-6989586621679206407"
+	><span class="annot"
+	  ><a href="#local-6989586621679206407"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span id="local-6989586621679206408"
+	><span class="annot"
+	  ><a href="#local-6989586621679206408"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#PRO"
+	  ><span class="hs-identifier hs-type"
+	    >PRO</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206405"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206406"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span id="local-6989586621679206409"
+	><span class="annot"
+	  ><a href="#local-6989586621679206409"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#PRO"
+	  ><span class="hs-identifier hs-type"
+	    >PRO</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206406"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206407"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-operator"
+	>.</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	  ><span class="hs-identifier hs-type"
+	    >ProfConstraint</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206416"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206408"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>,</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	  ><span class="hs-identifier hs-type"
+	    >ProfConstraint</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206416"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206409"
+	  ><span class="hs-identifier hs-type"
+	    >q</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ComposeConstraint"
+	  ><span class="hs-identifier hs-type"
+	    >ComposeConstraint</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206416"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206405"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206406"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206407"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206408"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206409"
+	  ><span class="hs-identifier hs-type"
+	    >q</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"
+	  ><span class="hs-identifier hs-type"
+	    >ProfK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206416"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Ob0"
+	  ><span class="hs-identifier hs-var"
+	    >Ob0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206821"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"
+	  ><span class="hs-identifier hs-type"
+	    >ProfK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206416"
+	  ><span class="hs-identifier hs-type"
+	    >cl</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679206821"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier hs-type"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206821"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"
+	><span class="hs-identifier hs-type"
+	  >ProfConstraint</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206416"
+	><span class="hs-identifier hs-type"
+	  >cl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >(~&gt;)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206821"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="I"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#I"
+	  ><span class="hs-identifier hs-var"
+	    >I</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >(~&gt;)</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206822"
+      ><span id="local-6989586621679206823"
+	><span class="annot"
+	  ><a href="#local-6989586621679206822"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="O"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.html#O"
+	      ><span class="hs-operator hs-var"
+		>`O`</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206823"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206822"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206823"
+	><span class="hs-identifier hs-type"
+	  >q</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206841"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a :~&gt; UN PK b
+</span
+	  ><a href="#local-6989586621679206841"
+	  ><span class="hs-identifier hs-var"
+	    >m</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206842"
+      ><span class="annot"
+	><span class="annottext"
+	  >o :: forall {k1} i j (a :: ProfK cl i j) (b :: ProfK cl i j)
+       (c :: ProfK cl j k1) (d :: ProfK cl j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	  ><a href="#local-6989586621679206842"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`o`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206880"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK c :~&gt; UN PK d
+</span
+	  ><a href="#local-6989586621679206880"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (UN PK a :.: UN PK c))
+ :~&gt; UN PK (PK (UN PK b :.: UN PK d)))
+-&gt; Prof (PK (UN PK a :.: UN PK c)) (PK (UN PK b :.: UN PK d))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN PK (PK (UN PK a :.: UN PK c))
+  :~&gt; UN PK (PK (UN PK b :.: UN PK d)))
+ -&gt; Prof (PK (UN PK a :.: UN PK c)) (PK (UN PK b :.: UN PK d)))
+-&gt; (UN PK (PK (UN PK a :.: UN PK c))
+    :~&gt; UN PK (PK (UN PK b :.: UN PK d)))
+-&gt; Prof (PK (UN PK a :.: UN PK c)) (PK (UN PK b :.: UN PK d))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679206881"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a a b
+</span
+	  ><a href="#local-6989586621679206881"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206883"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK c b b
+</span
+	  ><a href="#local-6989586621679206883"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b -&gt; UN PK b a b
+UN PK a :~&gt; UN PK b
+</span
+	><a href="#local-6989586621679206841"
+	><span class="hs-identifier hs-var"
+	  >m</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+</span
+	><a href="#local-6989586621679206881"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK b a b -&gt; UN PK d b b -&gt; (:.:) (UN PK b) (UN PK d) a b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK c b b -&gt; UN PK d b b
+UN PK c :~&gt; UN PK d
+</span
+	><a href="#local-6989586621679206880"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK c b b
+</span
+	><a href="#local-6989586621679206883"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206884"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob0 (ProfK cl) i, Ob0 (ProfK cl) j, Ob ps, Ob qs) =&gt; r
+</span
+	  ><a href="#local-6989586621679206884"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206885"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\\ :: forall i j (ps :: ProfK cl i j) (qs :: ProfK cl i j) r.
+((Ob0 (ProfK cl) i, Ob0 (ProfK cl) j, Ob ps, Ob qs) =&gt; r)
+-&gt; (ps ~&gt; qs) -&gt; r
+</span
+	  ><a href="#local-6989586621679206885"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob0 (ProfK cl) i, Ob0 (ProfK cl) j, Ob ps, Ob qs) =&gt; r
+</span
+	><a href="#local-6989586621679206884"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206912"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall i j (a :: ProfK cl i j). Obj a -&gt; O I a ~&gt; a
+</span
+	  ><a href="#local-6989586621679206912"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK ((~&gt;) :.: UN PK a)) :~&gt; UN PK (PK (UN PK a)))
+-&gt; Prof (PK ((~&gt;) :.: UN PK a)) (PK (UN PK a))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN PK (PK ((~&gt;) :.: UN PK a)) :~&gt; UN PK (PK (UN PK a)))
+ -&gt; Prof (PK ((~&gt;) :.: UN PK a)) (PK (UN PK a)))
+-&gt; (UN PK (PK ((~&gt;) :.: UN PK a)) :~&gt; UN PK (PK (UN PK a)))
+-&gt; Prof (PK ((~&gt;) :.: UN PK a)) (PK (UN PK a))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679206942"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679206942"
+	  ><span class="hs-identifier hs-var"
+	    >h</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679206943"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a b b
+</span
+	  ><a href="#local-6989586621679206943"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; UN PK a b b -&gt; UN PK a a b
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679206942"
+	><span class="hs-identifier hs-var"
+	  >h</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a b b
+</span
+	><a href="#local-6989586621679206943"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206944"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall i j (a :: ProfK cl i j). Obj a -&gt; a ~&gt; O I a
+</span
+	  ><a href="#local-6989586621679206944"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (UN PK a)) :~&gt; UN PK (PK ((~&gt;) :.: UN PK a)))
+-&gt; Prof (PK (UN PK a)) (PK ((~&gt;) :.: UN PK a))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN PK (PK (UN PK a)) :~&gt; UN PK (PK ((~&gt;) :.: UN PK a)))
+ -&gt; Prof (PK (UN PK a)) (PK ((~&gt;) :.: UN PK a)))
+-&gt; (UN PK (PK (UN PK a)) :~&gt; UN PK (PK ((~&gt;) :.: UN PK a)))
+-&gt; Prof (PK (UN PK a)) (PK ((~&gt;) :.: UN PK a))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679206972"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK (PK (UN PK a)) a b
+</span
+	  ><a href="#local-6989586621679206972"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b -&gt; a ~&gt; a
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#src"
+	><span class="hs-identifier hs-var"
+	  >src</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+UN PK (PK (UN PK a)) a b
+</span
+	><a href="#local-6989586621679206972"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; UN PK a a b -&gt; (:.:) (~&gt;) (UN PK a) a b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+UN PK (PK (UN PK a)) a b
+</span
+	><a href="#local-6989586621679206972"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679206973"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall i j (a :: ProfK cl i j). Obj a -&gt; O a I ~&gt; a
+</span
+	  ><a href="#local-6989586621679206973"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (UN PK a :.: (~&gt;))) :~&gt; UN PK (PK (UN PK a)))
+-&gt; Prof (PK (UN PK a :.: (~&gt;))) (PK (UN PK a))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN PK (PK (UN PK a :.: (~&gt;))) :~&gt; UN PK (PK (UN PK a)))
+ -&gt; Prof (PK (UN PK a :.: (~&gt;))) (PK (UN PK a)))
+-&gt; (UN PK (PK (UN PK a :.: (~&gt;))) :~&gt; UN PK (PK (UN PK a)))
+-&gt; Prof (PK (UN PK a :.: (~&gt;))) (PK (UN PK a))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207001"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a a b
+</span
+	  ><a href="#local-6989586621679207001"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207002"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; b
+</span
+	  ><a href="#local-6989586621679207002"
+	  ><span class="hs-identifier hs-var"
+	    >h</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; b) -&gt; UN PK a a b -&gt; UN PK a a b
+forall {j} {k} (p :: PRO j k) (b :: k) (d :: k) (a :: j).
+Profunctor p =&gt;
+(b ~&gt; d) -&gt; p a b -&gt; p a d
+</span
+	><a href="Proarrow.Core.html#rmap"
+	><span class="hs-identifier hs-var"
+	  >rmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b
+</span
+	><a href="#local-6989586621679207002"
+	><span class="hs-identifier hs-var"
+	  >h</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+</span
+	><a href="#local-6989586621679207001"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207003"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall i j (a :: ProfK cl i j). Obj a -&gt; a ~&gt; O a I
+</span
+	  ><a href="#local-6989586621679207003"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (UN PK a)) :~&gt; UN PK (PK (UN PK a :.: (~&gt;))))
+-&gt; Prof (PK (UN PK a)) (PK (UN PK a :.: (~&gt;)))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN PK (PK (UN PK a)) :~&gt; UN PK (PK (UN PK a :.: (~&gt;))))
+ -&gt; Prof (PK (UN PK a)) (PK (UN PK a :.: (~&gt;))))
+-&gt; (UN PK (PK (UN PK a)) :~&gt; UN PK (PK (UN PK a :.: (~&gt;))))
+-&gt; Prof (PK (UN PK a)) (PK (UN PK a :.: (~&gt;)))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679207031"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK (PK (UN PK a)) a b
+</span
+	  ><a href="#local-6989586621679207031"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+UN PK (PK (UN PK a)) a b
+</span
+	><a href="#local-6989586621679207031"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b -&gt; (b ~&gt; b) -&gt; (:.:) (UN PK a) (~&gt;) a b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b -&gt; b ~&gt; b
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: PRO k2 k1).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span
+	><a href="Proarrow.Core.html#tgt"
+	><span class="hs-identifier hs-var"
+	  >tgt</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+UN PK (PK (UN PK a)) a b
+</span
+	><a href="#local-6989586621679207031"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207032"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall {j1} {k1} i j2 (a :: ProfK cl i j2) (b :: ProfK cl j2 j1)
+       (c :: ProfK cl j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	  ><a href="#local-6989586621679207032"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+ :~&gt; UN PK (PK (UN PK a :.: (UN PK b :.: UN PK c))))
+-&gt; Prof
+     (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+     (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN PK (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+  :~&gt; UN PK (PK (UN PK a :.: (UN PK b :.: UN PK c))))
+ -&gt; Prof
+      (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+      (PK (UN PK a :.: (UN PK b :.: UN PK c))))
+-&gt; (UN PK (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+    :~&gt; UN PK (PK (UN PK a :.: (UN PK b :.: UN PK c))))
+-&gt; Prof
+     (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+     (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207087"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a a b
+</span
+	  ><a href="#local-6989586621679207087"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207088"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK b b b
+</span
+	  ><a href="#local-6989586621679207088"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207089"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK c b b
+</span
+	  ><a href="#local-6989586621679207089"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+</span
+	><a href="#local-6989586621679207087"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+-&gt; (:.:) (UN PK b) (UN PK c) b b
+-&gt; (:.:) (UN PK a) (UN PK b :.: UN PK c) a b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK b b b
+</span
+	><a href="#local-6989586621679207088"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK b b b -&gt; UN PK c b b -&gt; (:.:) (UN PK b) (UN PK c) b b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK c b b
+</span
+	><a href="#local-6989586621679207089"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207090"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall {j1} {k1} i j2 (a :: ProfK cl i j2) (b :: ProfK cl j2 j1)
+       (c :: ProfK cl j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	  ><a href="#local-6989586621679207090"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+ :~&gt; UN PK (PK ((UN PK a :.: UN PK b) :.: UN PK c)))
+-&gt; Prof
+     (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+     (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN PK (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+  :~&gt; UN PK (PK ((UN PK a :.: UN PK b) :.: UN PK c)))
+ -&gt; Prof
+      (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+      (PK ((UN PK a :.: UN PK b) :.: UN PK c)))
+-&gt; (UN PK (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+    :~&gt; UN PK (PK ((UN PK a :.: UN PK b) :.: UN PK c)))
+-&gt; Prof
+     (PK (UN PK a :.: (UN PK b :.: UN PK c)))
+     (PK ((UN PK a :.: UN PK b) :.: UN PK c))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207145"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK a a b
+</span
+	  ><a href="#local-6989586621679207145"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207146"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK b b b
+</span
+	  ><a href="#local-6989586621679207146"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207147"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK c b b
+</span
+	  ><a href="#local-6989586621679207147"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b
+</span
+	><a href="#local-6989586621679207145"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK a a b -&gt; UN PK b b b -&gt; (:.:) (UN PK a) (UN PK b) a b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK b b b
+</span
+	><a href="#local-6989586621679207146"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) (UN PK a) (UN PK b) a b
+-&gt; UN PK c b b -&gt; (:.:) (UN PK a :.: UN PK b) (UN PK c) a b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK c b b
+</span
+	><a href="#local-6989586621679207147"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206523"
+      ><span id="local-6989586621679206524"
+	><span class="annot"
+	  ><a href="Proarrow.Core.html#Promonad"
+	    ><span class="hs-identifier hs-type"
+	      >Promonad</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206524"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Monad"
+	    ><span class="hs-identifier hs-type"
+	      >Monad</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	    ><span class="hs-identifier hs-type"
+	      >PK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206524"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+	    ><span class="hs-identifier hs-type"
+	      >PROFK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206523"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679206523"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207199"
+      ><span class="annot"
+	><span class="annottext"
+	  >eta :: I ~&gt; PK p
+</span
+	  ><a href="#local-6989586621679207199"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >eta</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (~&gt;)) :~&gt; UN PK (PK p)) -&gt; Prof (PK (~&gt;)) (PK p)
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK (PK (~&gt;)) a b -&gt; UN PK (PK p) a b
+(a ~&gt; b) -&gt; p a b
+UN PK (PK (~&gt;)) :~&gt; UN PK (PK p)
+forall {k} (p :: PRO k k) (a :: k) (b :: k).
+Promonad p =&gt;
+(a ~&gt; b) -&gt; p a b
+</span
+	><a href="Proarrow.Core.html#arr"
+	><span class="hs-identifier hs-var"
+	  >arr</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207218"
+      ><span class="annot"
+	><span class="annottext"
+	  >mu :: O (PK p) (PK p) ~&gt; PK p
+</span
+	  ><a href="#local-6989586621679207218"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mu</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (p :.: p)) :~&gt; UN PK (PK p))
+-&gt; Prof (PK (p :.: p)) (PK p)
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207221"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679207221"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207222"
+      ><span class="annot"
+	><span class="annottext"
+	  >p b b
+</span
+	  ><a href="#local-6989586621679207222"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b
+</span
+	><a href="#local-6989586621679207222"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b -&gt; p a b -&gt; p a b
+forall (b :: k) (c :: k) (a :: k). p b c -&gt; p a b -&gt; p a c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679207221"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206548"
+      ><span id="local-6989586621679206549"
+	><span id="local-6989586621679206550"
+	  ><span id="local-6989586621679206551"
+	    ><span id="local-6989586621679206552"
+	      ><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Core.html#IsCategoryOf"
+		  ><span class="hs-identifier hs-type"
+		    >IsCategoryOf</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206548"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206550"
+		  ><span class="hs-identifier hs-type"
+		    >cj</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#IsCategoryOf"
+		  ><span class="hs-identifier hs-type"
+		    >IsCategoryOf</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206549"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206551"
+		  ><span class="hs-identifier hs-type"
+		    >ck</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#Profunctor"
+		  ><span class="hs-identifier hs-type"
+		    >Profunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206552"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		>
+</span
+		><span id="line-67"
+		></span
+		><span
+		>    </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.html#Bimodule"
+		  ><span class="hs-identifier hs-type"
+		    >Bimodule</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		  ><span class="hs-identifier hs-type"
+		    >PK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206550"
+		  ><span class="hs-identifier hs-type"
+		    >cj</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		  ><span class="hs-identifier hs-type"
+		    >PK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206551"
+		  ><span class="hs-identifier hs-type"
+		    >ck</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		  ><span class="hs-identifier hs-type"
+		    >PK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206552"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+		  ><span class="hs-identifier hs-type"
+		    >PROFK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206548"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206549"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207252"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftAction :: O (PK cj) (PK p) ~&gt; PK p
+</span
+	  ><a href="#local-6989586621679207252"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftAction</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (cj :.: p)) :~&gt; UN PK (PK p))
+-&gt; Prof (PK (cj :.: p)) (PK p)
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207255"
+      ><span class="annot"
+	><span class="annottext"
+	  >cj a b
+</span
+	  ><a href="#local-6989586621679207255"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207256"
+      ><span class="annot"
+	><span class="annottext"
+	  >p b b
+</span
+	  ><a href="#local-6989586621679207256"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; p b b -&gt; p a b
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>cj a b
+a ~&gt; b
+</span
+	><a href="#local-6989586621679207255"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b
+</span
+	><a href="#local-6989586621679207256"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207265"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightAction :: O (PK p) (PK ck) ~&gt; PK p
+</span
+	  ><a href="#local-6989586621679207265"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightAction</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (p :.: ck)) :~&gt; UN PK (PK p))
+-&gt; Prof (PK (p :.: ck)) (PK p)
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207268"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679207268"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207269"
+      ><span class="annot"
+	><span class="annottext"
+	  >ck b b
+</span
+	  ><a href="#local-6989586621679207269"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; b) -&gt; p a b -&gt; p a b
+forall {j} {k} (p :: PRO j k) (b :: k) (d :: k) (a :: j).
+Profunctor p =&gt;
+(b ~&gt; d) -&gt; p a b -&gt; p a d
+</span
+	><a href="Proarrow.Core.html#rmap"
+	><span class="hs-identifier hs-var"
+	  >rmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>ck b b
+b ~&gt; b
+</span
+	><a href="#local-6989586621679207269"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679207268"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206575"
+      ><span id="local-6989586621679206576"
+	><span id="local-6989586621679206577"
+	  ><span id="local-6989586621679206578"
+	    ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Adjunction.html#Adjunction"
+		><span class="hs-identifier hs-type"
+		  >A.Adjunction</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679206577"
+		><span class="hs-identifier hs-type"
+		  >l</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679206578"
+		><span class="hs-identifier hs-type"
+		  >r</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >=&gt;</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Bicategory.html#Adjunction"
+		><span class="hs-identifier hs-type"
+		  >Adjunction</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		><span class="hs-identifier hs-type"
+		  >PK</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679206577"
+		><span class="hs-identifier hs-type"
+		  >l</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >::</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+		><span class="hs-identifier hs-type"
+		  >PROFK</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679206575"
+		><span class="hs-identifier hs-type"
+		  >c</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679206576"
+		><span class="hs-identifier hs-type"
+		  >d</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		><span class="hs-identifier hs-type"
+		  >PK</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679206578"
+		><span class="hs-identifier hs-type"
+		  >r</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207311"
+      ><span class="annot"
+	><span class="annottext"
+	  >unit :: I ~&gt; O (PK r) (PK l)
+</span
+	  ><a href="#local-6989586621679207311"
+	  ><span class="hs-keyword hs-var hs-var hs-var"
+	    >unit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (~&gt;)) :~&gt; UN PK (PK (r :.: l)))
+-&gt; Prof (PK (~&gt;)) (PK (r :.: l))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679207314"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK (PK (~&gt;)) a b
+</span
+	  ><a href="#local-6989586621679207314"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (:.:) r l b b -&gt; (:.:) r l a b
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK (PK (~&gt;)) a b
+a ~&gt; b
+</span
+	><a href="#local-6989586621679207314"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) r l b b
+forall (a :: d). Ob a =&gt; (:.:) r l a a
+forall {j} {k} (p :: PRO k j) (q :: PRO j k) (a :: j).
+(Adjunction p q, Ob a) =&gt;
+(:.:) q p a a
+</span
+	><a href="Proarrow.Adjunction.html#unit"
+	><span class="hs-identifier hs-var"
+	  >A.unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; (:.:) r l a b) -&gt; (a ~&gt; b) -&gt; (:.:) r l a b
+forall (a :: d) (b :: d) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK (PK (~&gt;)) a b
+a ~&gt; b
+</span
+	><a href="#local-6989586621679207314"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207329"
+      ><span class="annot"
+	><span class="annottext"
+	  >counit :: O (PK l) (PK r) ~&gt; I
+</span
+	  ><a href="#local-6989586621679207329"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >counit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (l :.: r)) :~&gt; UN PK (PK (~&gt;)))
+-&gt; Prof (PK (l :.: r)) (PK (~&gt;))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK (PK (l :.: r)) a b -&gt; UN PK (PK (~&gt;)) a b
+(:.:) l r a b -&gt; a ~&gt; b
+UN PK (PK (l :.: r)) :~&gt; UN PK (PK (~&gt;))
+(l :.: r) :~&gt; (~&gt;)
+forall {j} {k} (p :: PRO k j) (q :: PRO j k).
+Adjunction p q =&gt;
+(p :.: q) :~&gt; (~&gt;)
+</span
+	><a href="Proarrow.Adjunction.html#counit"
+	><span class="hs-identifier hs-var"
+	  >A.counit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206606"
+      ><span id="local-6989586621679206607"
+	><span id="local-6989586621679206608"
+	  ><span id="local-6989586621679206609"
+	    ><span id="local-6989586621679206610"
+	      ><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Core.html#Profunctor"
+		  ><span class="hs-identifier hs-type"
+		    >Profunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206609"
+		  ><span class="hs-identifier hs-type"
+		    >f</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#Profunctor"
+		  ><span class="hs-identifier hs-type"
+		    >Profunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206610"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Kan.html#RightKanExtension"
+		  ><span class="hs-identifier hs-type"
+		    >RightKanExtension</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		  ><span class="hs-identifier hs-type"
+		    >PK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206610"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+		  ><span class="hs-identifier hs-type"
+		    >PROFK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206606"
+		  ><span class="hs-identifier hs-type"
+		    >c</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206608"
+		  ><span class="hs-identifier hs-type"
+		    >d</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		  ><span class="hs-identifier hs-type"
+		    >PK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206609"
+		  ><span class="hs-identifier hs-type"
+		    >f</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+		  ><span class="hs-identifier hs-type"
+		    >PROFK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206606"
+		  ><span class="hs-identifier hs-type"
+		    >c</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206607"
+		  ><span class="hs-identifier hs-type"
+		    >e</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ran"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Kan.html#Ran"
+	  ><span class="hs-identifier hs-var"
+	    >Ran</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206610"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206609"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Ran.html#Ran"
+	><span class="hs-identifier hs-type"
+	  >R.Ran</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Opposite.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206610"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206609"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-77"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207385"
+      ><span class="annot"
+	><span class="annottext"
+	  >ran :: O (PK j) (Ran (PK j) (PK f)) ~&gt; PK f
+</span
+	  ><a href="#local-6989586621679207385"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >ran</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (j :.: Ran ('OP j) f)) :~&gt; UN PK (PK f))
+-&gt; Prof (PK (j :.: Ran ('OP j) f)) (PK f)
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207388"
+      ><span class="annot"
+	><span class="annottext"
+	  >j a b
+</span
+	  ><a href="#local-6989586621679207388"
+	  ><span class="hs-identifier hs-var"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207389"
+      ><span class="annot"
+	><span class="annottext"
+	  >Ran ('OP j) f b b
+</span
+	  ><a href="#local-6989586621679207389"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>j a b -&gt; Ran ('OP j) f b b -&gt; f a b
+forall {i} {j1} {k} (j2 :: PRO i j1) (x :: i) (a :: j1)
+       (p :: PRO i k) (b :: k).
+Profunctor j2 =&gt;
+j2 x a -&gt; Ran ('OP j2) p a b -&gt; p x b
+</span
+	><a href="Proarrow.Profunctor.Ran.html#runRan"
+	><span class="hs-identifier hs-var"
+	  >R.runRan</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>j a b
+</span
+	><a href="#local-6989586621679207388"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Ran ('OP j) f b b
+</span
+	><a href="#local-6989586621679207389"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-78"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207398"
+      ><span class="annot"
+	><span class="annottext"
+	  >ranUniv :: forall (g :: ProfK ProfC d e).
+Ob g =&gt;
+(O (PK j) g ~&gt; PK f) -&gt; g ~&gt; Ran (PK j) (PK f)
+</span
+	  ><a href="#local-6989586621679207398"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >ranUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207408"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK (PK (j :.: UN PK g)) :~&gt; UN PK (PK f)
+</span
+	  ><a href="#local-6989586621679207408"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (UN PK g)) :~&gt; UN PK (PK (Ran ('OP j) f)))
+-&gt; Prof (PK (UN PK g)) (PK (Ran ('OP j) f))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679207410"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK (PK (UN PK g)) a b
+</span
+	  ><a href="#local-6989586621679207410"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK g a b
+UN PK (PK (UN PK g)) a b
+</span
+	><a href="#local-6989586621679207410"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK g a b
+-&gt; ((Ob a, Ob b) =&gt; Ran ('OP j) f a b) -&gt; Ran ('OP j) f a b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(forall (x :: c). Ob x =&gt; j x a -&gt; f x b) -&gt; Ran ('OP j) f a b
+forall {j} {k} {i} (a :: j) (b :: k) (j2 :: PRO i j)
+       (p :: PRO i k).
+(Ob a, Ob b) =&gt;
+(forall (x :: i). Ob x =&gt; j2 x a -&gt; p x b) -&gt; Ran ('OP j2) p a b
+</span
+	><a href="Proarrow.Profunctor.Ran.html#Ran"
+	><span class="hs-identifier hs-var"
+	  >R.Ran</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679207417"
+      ><span class="annot"
+	><span class="annottext"
+	  >j x a
+</span
+	  ><a href="#local-6989586621679207417"
+	  ><span class="hs-identifier hs-var"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK (PK (j :.: UN PK g)) x b -&gt; UN PK (PK f) x b
+UN PK (PK (j :.: UN PK g)) :~&gt; UN PK (PK f)
+</span
+	><a href="#local-6989586621679207408"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>j x a
+</span
+	><a href="#local-6989586621679207417"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>j x a -&gt; UN PK g a b -&gt; (:.:) j (UN PK g) x b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK g a b
+UN PK (PK (UN PK g)) a b
+</span
+	><a href="#local-6989586621679207410"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-79"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-80"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679206661"
+      ><span id="local-6989586621679206662"
+	><span id="local-6989586621679206663"
+	  ><span id="local-6989586621679206664"
+	    ><span id="local-6989586621679206665"
+	      ><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Core.html#Profunctor"
+		  ><span class="hs-identifier hs-type"
+		    >Profunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206664"
+		  ><span class="hs-identifier hs-type"
+		    >f</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#Profunctor"
+		  ><span class="hs-identifier hs-type"
+		    >Profunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206665"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Kan.html#RightKanLift"
+		  ><span class="hs-identifier hs-type"
+		    >RightKanLift</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		  ><span class="hs-identifier hs-type"
+		    >PK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206665"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+		  ><span class="hs-identifier hs-type"
+		    >PROFK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206663"
+		  ><span class="hs-identifier hs-type"
+		    >d</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206662"
+		  ><span class="hs-identifier hs-type"
+		    >c</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+		  ><span class="hs-identifier hs-type"
+		    >PK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206664"
+		  ><span class="hs-identifier hs-type"
+		    >f</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Bicategory.Prof.html#PROFK"
+		  ><span class="hs-identifier hs-type"
+		    >PROFK</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206661"
+		  ><span class="hs-identifier hs-type"
+		    >e</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679206662"
+		  ><span class="hs-identifier hs-type"
+		    >c</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-81"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Rift"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Kan.html#Rift"
+	  ><span class="hs-identifier hs-var"
+	    >Rift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206665"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206664"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#PK"
+	><span class="hs-identifier hs-type"
+	  >PK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Rift.html#Rift"
+	><span class="hs-identifier hs-type"
+	  >R.Rift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Opposite.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206665"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679206664"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-82"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207470"
+      ><span class="annot"
+	><span class="annottext"
+	  >rift :: O (Rift (PK j) (PK f)) (PK j) ~&gt; PK f
+</span
+	  ><a href="#local-6989586621679207470"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (Rift ('OP j) f :.: j)) :~&gt; UN PK (PK f))
+-&gt; Prof (PK (Rift ('OP j) f :.: j)) (PK f)
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679207473"
+      ><span class="annot"
+	><span class="annottext"
+	  >Rift ('OP j) f a b
+</span
+	  ><a href="#local-6989586621679207473"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207474"
+      ><span class="annot"
+	><span class="annottext"
+	  >j b b
+</span
+	  ><a href="#local-6989586621679207474"
+	  ><span class="hs-identifier hs-var"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>j b b -&gt; Rift ('OP j) f a b -&gt; f a b
+forall {k} {i} {j1} (j2 :: PRO k i) (b :: k) (x :: i)
+       (p :: PRO j1 i) (a :: j1).
+Profunctor j2 =&gt;
+j2 b x -&gt; Rift ('OP j2) p a b -&gt; p a x
+</span
+	><a href="Proarrow.Profunctor.Rift.html#runRift"
+	><span class="hs-identifier hs-var"
+	  >R.runRift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>j b b
+</span
+	><a href="#local-6989586621679207474"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Rift ('OP j) f a b
+</span
+	><a href="#local-6989586621679207473"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-83"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679207483"
+      ><span class="annot"
+	><span class="annottext"
+	  >riftUniv :: forall (g :: ProfK ProfC e d).
+Ob g =&gt;
+(O g (PK j) ~&gt; PK f) -&gt; g ~&gt; Rift (PK j) (PK f)
+</span
+	  ><a href="#local-6989586621679207483"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >riftUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679207493"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK (PK (UN PK g :.: j)) :~&gt; UN PK (PK f)
+</span
+	  ><a href="#local-6989586621679207493"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN PK (PK (UN PK g)) :~&gt; UN PK (PK (Rift ('OP j) f)))
+-&gt; Prof (PK (UN PK g)) (PK (Rift ('OP j) f))
+forall {cl :: ProfCl} {j} {k} (p :: ProfK cl j k)
+       (q :: ProfK cl j k).
+(Ob p, Ob q) =&gt;
+(UN PK p :~&gt; UN PK q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Bicategory.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679207495"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN PK (PK (UN PK g)) a b
+</span
+	  ><a href="#local-6989586621679207495"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK g a b
+UN PK (PK (UN PK g)) a b
+</span
+	><a href="#local-6989586621679207495"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK g a b
+-&gt; ((Ob a, Ob b) =&gt; Rift ('OP j) f a b) -&gt; Rift ('OP j) f a b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(forall (x :: c). Ob x =&gt; j b x -&gt; f a x) -&gt; Rift ('OP j) f a b
+forall {j} {k} {i} (a :: j) (b :: k) (j2 :: PRO k i)
+       (p :: PRO j i).
+(Ob a, Ob b) =&gt;
+(forall (x :: i). Ob x =&gt; j2 b x -&gt; p a x) -&gt; Rift ('OP j2) p a b
+</span
+	><a href="Proarrow.Profunctor.Rift.html#Rift"
+	><span class="hs-identifier hs-var"
+	  >R.Rift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679207502"
+      ><span class="annot"
+	><span class="annottext"
+	  >j b x
+</span
+	  ><a href="#local-6989586621679207502"
+	  ><span class="hs-identifier hs-var"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK (PK (UN PK g :.: j)) a x -&gt; UN PK (PK f) a x
+UN PK (PK (UN PK g :.: j)) :~&gt; UN PK (PK f)
+</span
+	><a href="#local-6989586621679207493"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK g a b
+UN PK (PK (UN PK g)) a b
+</span
+	><a href="#local-6989586621679207495"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN PK g a b -&gt; j b x -&gt; (:.:) (UN PK g) j a x
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>j b x
+</span
+	><a href="#local-6989586621679207502"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>

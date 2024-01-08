@@ -1,1 +1,1697 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Proarrow.Profunctor.Representable</title><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial" /><link rel="stylesheet" type="text/css" href="quick-jump.css" /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700" /><script src="haddock-bundle.min.js" async="async" type="text/javascript"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script></head><body><div id="package-header"><span class="caption">proarrow-0: Category theory with a central role for profunctors</span><ul class="links" id="page-menu"><li id="quick-jump-button"><a href="#">Quick Jump</a></li><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul></div><div id="content"><div id="module-header"><table class="info"><tr><th>Safe Haskell</th><td>Safe-Inferred</td></tr><tr><th>Language</th><td>Haskell2010</td></tr></table><p class="caption">Proarrow.Profunctor.Representable</p></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src"><span class="keyword">class</span> <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> p =&gt; <a id="t:Representable" class="def">Representable</a> (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> j k) <span class="keyword">where</span> <a href="#t:Representable" class="selflink">#</a></p><div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> p <a id="t:-37-" class="def">%</a> (a :: k) :: j <a href="#t:-37-" class="selflink">#</a></p></div><div class="subs methods"><p class="caption">Methods</p><p class="src"><a id="v:index" class="def">index</a> :: p a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a id="v:tabulate" class="def">tabulate</a> :: <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; p a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a id="v:repMap" class="def">repMap</a> :: (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div><div class="subs instances"><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Representable">Instances</h4><details id="i:Representable" open="open"><summary class="hide-when-js-enabled">Instances details</summary><table><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:1"></span> <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core">CategoryOf</a> k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:1"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Identity.html">Proarrow.Profunctor.Identity</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity">Id</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:2"></span> (<a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct">HasBinaryProducts</a> k, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> d) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit">UNIT</a> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:2"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Limit.html">Proarrow.Category.Limit</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit">ProductLimit</a> d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:3"></span> <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor">Functor</a> f =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:3"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Star.html">Proarrow.Profunctor.Star</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j0) (b :: k0). <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j0). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:4"></span> (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> p, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> q) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q :: j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:4"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Composition.html">Proarrow.Profunctor.Composition</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q) a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:5"></span> <a href="Proarrow-Object-Exponential.html#t:CartesianClosed" title="Proarrow.Object.Exponential">CartesianClosed</a> k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> :: k -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite">OPPOSITE</a> k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:5"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Object-Exponential.html">Proarrow.Object.Exponential</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential">ExponentialFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:6"></span> <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct">HasBinaryCoproducts</a> k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> :: k -&gt; (k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:6"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Object-BinaryCoproduct.html">Proarrow.Object.BinaryCoproduct</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-BinaryCoproduct.html#t:CoproductFunctor" title="Proarrow.Object.BinaryCoproduct">CoproductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:7"></span> <a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct">HasBinaryProducts</a> k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> :: k -&gt; (k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:7"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Object-BinaryProduct.html">Proarrow.Object.BinaryProduct</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Object-BinaryProduct.html#t:ProductFunctor" title="Proarrow.Object.BinaryProduct">ProductFunctor</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:8"></span> <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> t =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t :: j -&gt; (j, j) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:8"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Monoidal-Rev.html">Proarrow.Category.Monoidal.Rev</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> (<a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j0) (b :: k). <a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k) (a :: j0). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev">Rev</a> t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:9"></span> <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core">CategoryOf</a> k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob :: k -&gt; <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:9"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:10"></span> <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a></span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:10"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k). <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:11"></span> <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core">CategoryOf</a> k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> k k -&gt; (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> k k, <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> k k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Representable" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:Representable:Representable:11"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Monoidal.html">Proarrow.Category.Monoidal</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Category-Monoidal.html#t:Compose" title="Proarrow.Category.Monoidal">Compose</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr></table></details></div></div><div class="top"><p class="src"><a id="v:withRepCod" class="def">withRepCod</a> :: <span class="keyword">forall</span> p a r. (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) =&gt; r) -&gt; r <a href="#v:withRepCod" class="selflink">#</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.29.1</p></div></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Profunctor.Representable</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Profunctor.Representable.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Profunctor.Representable</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p =&gt; <a id="t:Representable" class="def"
+	    >Representable</a
+	    > (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Representable.html#Representable" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L12" class="link"
+	    >Comments</a
+	    > <a href="#t:Representable" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	      >PRO</a
+	      > j k) <a id="t:-37-" class="def"
+	      >%</a
+	      > (a :: k) :: j <span class="fixity"
+	      >infixl 8</span
+	      ><span class="rightedge"
+	      ></span
+	      > <a href="src/Proarrow.Profunctor.Representable.html#%25" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:-37-" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:index" class="def"
+	      >index</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j) (b :: k). p a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L12" class="link"
+	      >Comments</a
+	      > <a href="#v:index" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:tabulate" class="def"
+	      >tabulate</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (b :: k) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > b)) -&gt; p a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L12" class="link"
+	      >Comments</a
+	      > <a href="#v:tabulate" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:repMap" class="def"
+	      >repMap</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L12" class="link"
+	      >Comments</a
+	      > <a href="#v:repMap" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Representable"
+	    >Instances</h4
+	    ><details id="i:Representable" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:1"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > <a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+		      >Forget</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Simplex.html#line-88" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L88" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Simplex.html"
+			>Proarrow.Category.Instance.Simplex</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-37-NatTYPEForgetn:-37-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+				>Forget</a
+				> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				>%</a
+				> (n :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+				>Nat</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-37-NatTYPEForgetn:-37-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Simplex.html"
+				  >Proarrow.Category.Instance.Simplex</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+				  >Forget</a
+				  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				  >%</a
+				  > (n :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+				  >Nat</a
+				  >) = <a href="Proarrow-Category-Instance-Simplex.html#t:Fin" title="Proarrow.Category.Instance.Simplex"
+				  >Fin</a
+				  > n</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > a (b :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >). <a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+			  >Forget</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+			  >Forget</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >) a. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+			  >Forget</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+			  >Forget</a
+			  > a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+			  >Forget</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Instance-Simplex.html#t:Forget" title="Proarrow.Category.Instance.Simplex"
+			  >Forget</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+		      >Id</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Identity.html#line-23" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L23" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Identity.html"
+			>Proarrow.Profunctor.Identity</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). <a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: k) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; ((<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:3"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > d =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+		      >EndLimit</a
+		      > d :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+		      >UNIT</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-92" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L92" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Limit.html"
+			>Proarrow.Category.Limit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > a (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >). <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			  >EndLimit</a
+			  > d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			  >EndLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >) a. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			  >EndLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			  >EndLimit</a
+			  > d a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			  >EndLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			  >EndLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:4"
+		      ></span
+		      > <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+		      >Monoid</a
+		      > m =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Category-Instance-Simplex.html#t:Replicate" title="Proarrow.Category.Instance.Simplex"
+		      >Replicate</a
+		      > m :: j -&gt; <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+		      >Nat</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Simplex.html#line-144" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L144" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Simplex.html"
+			>Proarrow.Category.Instance.Simplex</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >). <a href="Proarrow-Category-Instance-Simplex.html#t:Replicate" title="Proarrow.Category.Instance.Simplex"
+			  >Replicate</a
+			  > m a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Instance-Simplex.html#t:Replicate" title="Proarrow.Category.Instance.Simplex"
+			  >Replicate</a
+			  > m <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Instance-Simplex.html#t:Replicate" title="Proarrow.Category.Instance.Simplex"
+			  >Replicate</a
+			  > m <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Category-Instance-Simplex.html#t:Replicate" title="Proarrow.Category.Instance.Simplex"
+			  >Replicate</a
+			  > m a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+			  >Nat</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Category-Instance-Simplex.html#t:Replicate" title="Proarrow.Category.Instance.Simplex"
+			  >Replicate</a
+			  > m <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Instance-Simplex.html#t:Replicate" title="Proarrow.Category.Instance.Simplex"
+			  >Replicate</a
+			  > m <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:5"
+		      ></span
+		      > (<a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
+		      >HasBinaryProducts</a
+		      > k, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > d) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+		      >ProductLimit</a
+		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+		      >UNIT</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-59" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L59" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Limit.html"
+			>Proarrow.Category.Limit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >). <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+			  >ProductLimit</a
+			  > d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+			  >ProductLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+			  >ProductLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+			  >ProductLimit</a
+			  > d a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+			  >ProductLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+			  >ProductLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:6"
+		      ></span
+		      > <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+		      >TerminalLimit</a
+		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+		      >UNIT</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-40" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L40" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Limit.html"
+			>Proarrow.Category.Limit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >). <a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+			  >TerminalLimit</a
+			  > d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+			  >TerminalLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+			  >TerminalLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+			  >TerminalLimit</a
+			  > d a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+			  >UNIT</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+			  >TerminalLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+			  >TerminalLimit</a
+			  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:7"
+		      ></span
+		      > <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > f =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+		      >Star</a
+		      > f :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Star.html#line-18" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Star.html"
+			>Proarrow.Profunctor.Star</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: k). <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: k) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:8"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > p, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > q) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		      >:.:</a
+		      > q :: j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Composition.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Composition.html"
+			>Proarrow.Profunctor.Composition</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j1) (b :: k). (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > q) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: k) (a :: j1). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > q) a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:9"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+		      >Closed</a
+		      > k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential"
+		      >ExponentialFunctor</a
+		      > :: k -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Object.Exponential.html#line-78" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L78" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:9"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Exponential.html"
+			>Proarrow.Object.Exponential</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k)). <a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential"
+			  >ExponentialFunctor</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential"
+			  >ExponentialFunctor</a
+			  > :: k -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k)) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential"
+			  >ExponentialFunctor</a
+			  > :: k -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential"
+			  >ExponentialFunctor</a
+			  > a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k)) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; ((<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential"
+			  >ExponentialFunctor</a
+			  > :: k -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Object-Exponential.html#t:ExponentialFunctor" title="Proarrow.Object.Exponential"
+			  >ExponentialFunctor</a
+			  > :: k -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:10"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		      >Forget</a
+		      > ob :: k -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:10"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob). <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:11"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+		      >List</a
+		      ></span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-34" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L34" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:11"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-37-TYPESUBCATLista:-37-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+				>List</a
+				> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				>%</a
+				> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-37-TYPESUBCATLista:-37-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Forget.html"
+				  >Proarrow.Profunctor.Forget</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+				  >List</a
+				  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				  >%</a
+				  > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) = '<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+				  >SUB</a
+				  > [a] :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+				  >SUBCAT</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+				  >Monoid</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >) b. <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > b (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Representable:Representable:12"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > p, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > q) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+		      >:**:</a
+		      > q :: (k1, k2) -&gt; (k1, k2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:Representable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Representable:Representable:12"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
+			>Proarrow.Category.Instance.Product</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (k1, k2)). (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: (k1, k2)) (a :: (k1, k2)). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (k1, k2)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; ((p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:withRepCod" class="def"
+	    >withRepCod</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {k2} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > k1 k2) (a :: k2) r. (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > (p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > a) =&gt; r) -&gt; r <a href="src/Proarrow.Profunctor.Representable.html#withRepCod" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L19" class="link"
+	    >Comments</a
+	    > <a href="#v:withRepCod" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dimapRep" class="def"
+	    >dimapRep</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {j} {k} p (a :: j) (b :: k) (c :: j) (d :: k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > p =&gt; (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > d) -&gt; p a b -&gt; p c d <a href="src/Proarrow.Profunctor.Representable.html#dimapRep" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L22" class="link"
+	    >Comments</a
+	    > <a href="#v:dimapRep" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,4557 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal.Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier"
+	  >Is</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Monad"
+	><span class="hs-identifier"
+	  >Monad</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Comonad"
+	><span class="hs-identifier"
+	  >Comonad</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>B</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html"
+	><span class="hs-identifier"
+	  >Proarrow.Monoid</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html#Monoid"
+	><span class="hs-identifier"
+	  >Monoid</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html#Comonoid"
+	><span class="hs-identifier"
+	  >Comonoid</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Exponential</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#Closed"
+	><span class="hs-identifier"
+	  >Closed</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Kan</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanLift"
+	><span class="hs-identifier"
+	  >RightKanLift</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#dimapRift"
+	><span class="hs-identifier"
+	  >dimapRift</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="ENDO"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	  ><span class="hs-identifier hs-var"
+	    >ENDO</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679193289"
+      ><span class="annot"
+	><a href="#local-6989586621679193289"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193290"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679193291"
+      ><span class="annot"
+	><a href="#local-6989586621679193291"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193290"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="E"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	  ><span class="hs-identifier hs-var"
+	    >E</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193289"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193291"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193291"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193292"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	  ><span class="hs-identifier hs-type"
+	    >E</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	  ><span class="hs-identifier hs-type"
+	    >E</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679193292"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193292"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679193293"
+      ><span class="annot"
+	><a href="#local-6989586621679193293"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679193294"
+      ><span class="annot"
+	><a href="#local-6989586621679193294"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	><span class="hs-identifier hs-type"
+	  >ENDO</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193293"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193294"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Endo"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	  ><span class="hs-identifier hs-var"
+	    >Endo</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193295"
+      ><span class="annot"
+	><a href="#local-6989586621679193295"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193296"
+      ><span class="annot"
+	><a href="#local-6989586621679193296"
+	  ><span class="hs-identifier hs-type"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193297"
+      ><span id="local-6989586621679193298"
+	><span id="Endo"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	      ><span class="hs-identifier hs-var"
+		>Endo</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193297"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193298"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	    ><span class="hs-identifier hs-type"
+	      >Endo</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	    ><span class="hs-identifier hs-type"
+	      >E</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193297"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	    ><span class="hs-identifier hs-type"
+	      >E</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193298"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span id="local-6989586621679192993"
+      ><span id="local-6989586621679192994"
+	><span id="local-6989586621679192996"
+	  ><span id="local-6989586621679192997"
+	    ><span class="annot"
+	      ><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+		><span class="hs-identifier hs-type"
+		  >mkEndo</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >::</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Core.html#CategoryOf"
+		><span class="hs-identifier hs-type"
+		  >CategoryOf</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192993"
+		><span class="hs-identifier hs-type"
+		  >kk</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192994"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192994"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >=&gt;</span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192996"
+		><span class="hs-identifier hs-type"
+		  >p</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >::</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192993"
+		><span class="hs-identifier hs-type"
+		  >kk</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192994"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192994"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Core.html#~%3E"
+		><span class="hs-operator hs-type"
+		  >~&gt;</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192997"
+		><span class="hs-identifier hs-type"
+		  >q</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >-&gt;</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+		><span class="hs-identifier hs-type"
+		  >Endo</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+		><span class="hs-identifier hs-type"
+		  >E</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192996"
+		><span class="hs-identifier hs-type"
+		  >p</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+		><span class="hs-identifier hs-type"
+		  >E</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679192997"
+		><span class="hs-identifier hs-type"
+		  >q</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span id="mkEndo"
+      ><span class="annot"
+	><span class="annottext"
+	  >mkEndo :: forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >mkEndo</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193307"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193307"
+	  ><span class="hs-identifier hs-var"
+	    >pq</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p ~&gt; q) -&gt; Endo (E p) (E q)
+forall {j} {kk :: CAT j} {k :: j} (p :: kk k k) (q :: kk k k).
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-var"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193307"
+	><span class="hs-identifier hs-var"
+	  >pq</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob p, Ob q) =&gt; Endo (E p) (E q)) -&gt; (p ~&gt; q) -&gt; Endo (E p) (E q)
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193307"
+	><span class="hs-identifier hs-var"
+	  >pq</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193043"
+      ><span id="local-6989586621679193044"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	    ><span class="hs-identifier hs-type"
+	      >Bicategory</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193043"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	    ><span class="hs-identifier hs-type"
+	      >Ob0</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193043"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193044"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Profunctor"
+	    ><span class="hs-identifier hs-type"
+	      >Profunctor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	    ><span class="hs-identifier hs-type"
+	      >Endo</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CAT"
+	    ><span class="hs-identifier hs-type"
+	      >CAT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	    ><span class="hs-identifier hs-type"
+	      >ENDO</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193043"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193044"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193333"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: ENDO kk k) (a :: ENDO kk k) (b :: ENDO kk k)
+       (d :: ENDO kk k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Endo a b -&gt; Endo c d
+</span
+	  ><a href="#local-6989586621679193333"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Endo a b -&gt; Endo c d
+Endo c a -&gt; Endo b d -&gt; Endo a b -&gt; Endo c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193335"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679193335"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193336"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: ENDO kk k) (b :: ENDO kk k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Endo a b -&gt; r
+</span
+	  ><a href="Proarrow.Core.html#%5C%5C"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193342"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193342"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob p, Ob q) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679193335"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob p, Ob q) =&gt; r) -&gt; (p ~&gt; q) -&gt; r
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193342"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193046"
+      ><span id="local-6989586621679193047"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	    ><span class="hs-identifier hs-type"
+	      >Bicategory</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193046"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	    ><span class="hs-identifier hs-type"
+	      >Ob0</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193046"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193047"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Promonad"
+	    ><span class="hs-identifier hs-type"
+	      >Promonad</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	    ><span class="hs-identifier hs-type"
+	      >Endo</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CAT"
+	    ><span class="hs-identifier hs-type"
+	      >CAT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	    ><span class="hs-identifier hs-type"
+	      >ENDO</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193046"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193047"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193374"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: ENDO kk k). Ob a =&gt; Endo a a
+</span
+	  ><a href="#local-6989586621679193374"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN E a ~&gt; UN E a) -&gt; Endo (E (UN E a)) (E (UN E a))
+forall {j} {kk :: CAT j} {k :: j} (p :: kk k k) (q :: kk k k).
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-var"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN E a ~&gt; UN E a
+forall (a :: kk k k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193378"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193378"
+	  ><span class="hs-identifier hs-var"
+	    >m</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193379"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: ENDO kk k) (c :: ENDO kk k) (a :: ENDO kk k).
+Endo b c -&gt; Endo a b -&gt; Endo a c
+</span
+	  ><a href="#local-6989586621679193379"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193389"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193389"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p ~&gt; q) -&gt; Endo (E p) (E q)
+forall {j} {kk :: CAT j} {k :: j} (p :: kk k k) (q :: kk k k).
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-var"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193378"
+	><span class="hs-identifier hs-var"
+	  >m</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p ~&gt; q) -&gt; (p ~&gt; p) -&gt; p ~&gt; q
+forall (b :: kk k k) (c :: kk k k) (a :: kk k k).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; p
+p ~&gt; q
+</span
+	><a href="#local-6989586621679193389"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193390"
+      ><span id="local-6989586621679193391"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	    ><span class="hs-identifier hs-type"
+	      >Bicategory</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193390"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	    ><span class="hs-identifier hs-type"
+	      >Ob0</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193390"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193391"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	    ><span class="hs-identifier hs-type"
+	      >ENDO</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193390"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193391"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193399"
+      ><span class="annot"
+	><a href="#local-6989586621679193399"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier hs-type"
+	  >Is</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	><span class="hs-identifier hs-type"
+	  >E</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193399"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	><span class="hs-identifier hs-type"
+	  >E</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193399"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | The monoidal subcategory of a bicategory for a single object.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193114"
+      ><span id="local-6989586621679193115"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	    ><span class="hs-identifier hs-type"
+	      >Bicategory</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193114"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	    ><span class="hs-identifier hs-type"
+	      >Ob0</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193114"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193115"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	    ><span class="hs-identifier hs-type"
+	      >Monoidal</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	    ><span class="hs-identifier hs-type"
+	      >ENDO</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193114"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193115"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Unit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Unit"
+	  ><span class="hs-identifier hs-var"
+	    >Unit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	><span class="hs-identifier hs-type"
+	  >E</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#I"
+	><span class="hs-identifier hs-type"
+	  >I</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193426"
+      ><span id="local-6989586621679193427"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	    ><span class="hs-identifier hs-type"
+	      >E</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193426"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%2A%2A"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-var"
+		>**</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	    ><span class="hs-identifier hs-type"
+	      >E</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193427"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	><span class="hs-identifier hs-type"
+	  >E</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193426"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#O"
+	><span class="hs-operator hs-type"
+	  >`O`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193427"
+	><span class="hs-identifier hs-type"
+	  >q</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193430"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193430"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193431"
+      ><span class="annot"
+	><span class="annottext"
+	  >par :: forall (a :: ENDO kk k) (b :: ENDO kk k) (c :: ENDO kk k)
+       (d :: ENDO kk k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span
+	  ><a href="#local-6989586621679193431"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`par`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193439"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193439"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O p p ~&gt; O q q) -&gt; Endo (E (O p p)) (E (O q q))
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193430"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p ~&gt; q) -&gt; (p ~&gt; q) -&gt; O p p ~&gt; O q q
+forall {k1 :: j} (i :: j) (j :: j) (a :: kk i j) (b :: kk i j)
+       (c :: kk j k1) (d :: kk j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall k (kk :: CAT k) {k1 :: k} (i :: k) (j :: k) (a :: kk i j)
+       (b :: kk i j) (c :: kk j k1) (d :: kk j k1).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193439"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193441"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (a :: ENDO kk k). Obj a -&gt; (Unit ** a) ~&gt; a
+</span
+	  ><a href="#local-6989586621679193441"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193451"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193451"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O I q ~&gt; q) -&gt; Endo (E (O I q)) (E q)
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj q -&gt; O I q ~&gt; q
+forall (i :: j) (j :: j) (a :: kk i j). Obj a -&gt; O I a ~&gt; a
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; O I a ~&gt; a
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >B.leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193451"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193453"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (a :: ENDO kk k). Obj a -&gt; a ~&gt; (Unit ** a)
+</span
+	  ><a href="#local-6989586621679193453"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193463"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193463"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(q ~&gt; O I q) -&gt; Endo (E q) (E (O I q))
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj q -&gt; q ~&gt; O I q
+forall (i :: j) (j :: j) (a :: kk i j). Obj a -&gt; a ~&gt; O I a
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; a ~&gt; O I a
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >B.leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193463"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193465"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (a :: ENDO kk k). Obj a -&gt; (a ** Unit) ~&gt; a
+</span
+	  ><a href="#local-6989586621679193465"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193475"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193475"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O q I ~&gt; q) -&gt; Endo (E (O q I)) (E q)
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj q -&gt; O q I ~&gt; q
+forall (i :: j) (j :: j) (a :: kk i j). Obj a -&gt; O a I ~&gt; a
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; O a I ~&gt; a
+</span
+	><a href="Proarrow.Category.Bicategory.html#rightUnitor"
+	><span class="hs-identifier hs-var"
+	  >B.rightUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193475"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193477"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (a :: ENDO kk k). Obj a -&gt; a ~&gt; (a ** Unit)
+</span
+	  ><a href="#local-6989586621679193477"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193487"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193487"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(q ~&gt; O q I) -&gt; Endo (E q) (E (O q I))
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj q -&gt; q ~&gt; O q I
+forall (i :: j) (j :: j) (a :: kk i j). Obj a -&gt; a ~&gt; O a I
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; a ~&gt; O a I
+</span
+	><a href="Proarrow.Category.Bicategory.html#rightUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >B.rightUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193487"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193489"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall (a :: ENDO kk k) (b :: ENDO kk k) (c :: ENDO kk k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span
+	  ><a href="#local-6989586621679193489"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193495"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193495"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193500"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193500"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193509"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193509"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O (O q q) q ~&gt; O q (O q q))
+-&gt; Endo (E (O (O q q) q)) (E (O q (O q q)))
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj q -&gt; Obj q -&gt; Obj q -&gt; O (O q q) q ~&gt; O q (O q q)
+forall {j1 :: j} {k1 :: j} (i :: j) (j2 :: j) (a :: kk i j2)
+       (b :: kk j2 j1) (c :: kk j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+forall k (kk :: CAT k) {j1 :: k} {k1 :: k} (i :: k) (j2 :: k)
+       (a :: kk i j2) (b :: kk j2 j1) (c :: kk j1 k1).
+Bicategory kk =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	><a href="Proarrow.Category.Bicategory.html#associator"
+	><span class="hs-identifier hs-var"
+	  >B.associator</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193495"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193500"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193509"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193511"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall (a :: ENDO kk k) (b :: ENDO kk k) (c :: ENDO kk k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span
+	  ><a href="#local-6989586621679193511"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193517"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193517"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193522"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193522"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193531"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193531"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O q (O q q) ~&gt; O (O q q) q)
+-&gt; Endo (E (O q (O q q))) (E (O (O q q) q))
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj q -&gt; Obj q -&gt; Obj q -&gt; O q (O q q) ~&gt; O (O q q) q
+forall {j1 :: j} {k1 :: j} (i :: j) (j2 :: j) (a :: kk i j2)
+       (b :: kk j2 j1) (c :: kk j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+forall k (kk :: CAT k) {j1 :: k} {k1 :: k} (i :: k) (j2 :: k)
+       (a :: kk i j2) (b :: kk j2 j1) (c :: kk j1 k1).
+Bicategory kk =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	><a href="Proarrow.Category.Bicategory.html#associatorInv"
+	><span class="hs-identifier hs-var"
+	  >B.associatorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193517"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193522"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+Obj q
+</span
+	><a href="#local-6989586621679193531"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193208"
+      ><span id="local-6989586621679193209"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	    ><span class="hs-identifier hs-type"
+	      >Bicategory</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193208"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	    ><span class="hs-identifier hs-type"
+	      >Ob0</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193208"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193209"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="hs-keyword"
+	  >forall</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span id="local-6989586621679193204"
+	  ><span class="annot"
+	    ><a href="#local-6989586621679193204"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193208"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193209"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193209"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span id="local-6989586621679193205"
+	  ><span class="annot"
+	    ><a href="#local-6989586621679193205"
+	      ><span class="hs-identifier hs-type"
+		>g</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193208"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193209"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193209"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-operator"
+	  >.</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193204"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193205"
+	    ><span class="hs-identifier hs-type"
+	      >g</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanLift"
+	    ><span class="hs-identifier hs-type"
+	      >RightKanLift</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193204"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193205"
+	    ><span class="hs-identifier hs-type"
+	      >g</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Exponential.html#Closed"
+	    ><span class="hs-identifier hs-type"
+	      >Closed</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	    ><span class="hs-identifier hs-type"
+	      >ENDO</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193208"
+	    ><span class="hs-identifier hs-type"
+	      >kk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193209"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193548"
+      ><span id="local-6989586621679193549"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	    ><span class="hs-identifier hs-type"
+	      >E</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193548"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="~~%3E"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.Exponential.html#~~%3E"
+	      ><span class="hs-operator hs-var"
+		>~~&gt;</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	    ><span class="hs-identifier hs-type"
+	      >E</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193549"
+	    ><span class="hs-identifier hs-type"
+	      >g</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	><span class="hs-identifier hs-type"
+	  >E</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#Rift"
+	><span class="hs-identifier hs-type"
+	  >Rift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193548"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193549"
+	><span class="hs-identifier hs-type"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193550"
+      ><span class="annot"
+	><span class="annottext"
+	  >curry' :: forall (a :: ENDO kk k) (b :: ENDO kk k) (c :: ENDO kk k).
+Obj a -&gt; Obj b -&gt; ((a ** b) ~&gt; c) -&gt; a ~&gt; (b ~~&gt; c)
+</span
+	  ><a href="#local-6989586621679193550"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >curry'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679193556"
+      ><span class="annot"
+	><a href="#local-6989586621679193556"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193557"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193557"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679193562"
+      ><span class="annot"
+	><a href="#local-6989586621679193562"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193563"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193563"
+	  ><span class="hs-identifier hs-var"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193570"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193570"
+	  ><span class="hs-identifier hs-var"
+	    >h</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(q ~&gt; Rift q q) -&gt; Endo (E q) (E (Rift q q))
+forall {j} {kk :: CAT j} {k :: j} (p :: kk k k) (q :: kk k k).
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-var"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk k k) (f :: kk k k) (g :: kk k k).
+(RightKanLift j f, Ob g) =&gt;
+(O g j ~&gt; f) -&gt; g ~&gt; Rift j f
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk d c)
+       (f :: kk e c) (g :: kk e d).
+(RightKanLift j f, Ob g) =&gt;
+(O g j ~&gt; f) -&gt; g ~&gt; Rift j f
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#riftUniv"
+	><span class="hs-identifier hs-var"
+	  >riftUniv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193562"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193556"
+	><span class="hs-identifier hs-type"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+O p p ~&gt; q
+</span
+	><a href="#local-6989586621679193570"
+	><span class="hs-identifier hs-var"
+	  >h</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob q, Ob q) =&gt; Endo (E q) (E (Rift q q)))
+-&gt; (q ~&gt; q) -&gt; Endo (E q) (E (Rift q q))
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+q ~&gt; q
+</span
+	><a href="#local-6989586621679193557"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob q, Ob q) =&gt; Endo (E q) (E (Rift q q)))
+-&gt; (q ~&gt; q) -&gt; Endo (E q) (E (Rift q q))
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+q ~&gt; q
+</span
+	><a href="#local-6989586621679193563"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob p, Ob q) =&gt; Endo (E q) (E (Rift q q)))
+-&gt; (p ~&gt; q) -&gt; Endo (E q) (E (Rift q q))
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193570"
+	><span class="hs-identifier hs-var"
+	  >h</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193590"
+      ><span class="annot"
+	><span class="annottext"
+	  >uncurry' :: forall (b :: ENDO kk k) (c :: ENDO kk k) (a :: ENDO kk k).
+Obj b -&gt; Obj c -&gt; (a ~&gt; (b ~~&gt; c)) -&gt; (a ** b) ~&gt; c
+</span
+	  ><a href="#local-6989586621679193590"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >uncurry'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679193596"
+      ><span class="annot"
+	><a href="#local-6989586621679193596"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193597"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193597"
+	  ><span class="hs-identifier hs-var"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679193602"
+      ><span class="annot"
+	><a href="#local-6989586621679193602"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193603"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193603"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193610"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193610"
+	  ><span class="hs-identifier hs-var"
+	    >h</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O p q ~&gt; q) -&gt; Endo (E (O p q)) (E q)
+forall {j} {kk :: CAT j} {k :: j} (p :: kk k k) (q :: kk k k).
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-var"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk k k) (f :: kk k k).
+RightKanLift j f =&gt;
+O (Rift j f) j ~&gt; f
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk d c)
+       (f :: kk e c).
+RightKanLift j f =&gt;
+O (Rift j f) j ~&gt; f
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#rift"
+	><span class="hs-identifier hs-var"
+	  >rift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193596"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193602"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O q q ~&gt; q) -&gt; (O p q ~&gt; O q q) -&gt; O p q ~&gt; q
+forall (b :: kk k k) (c :: kk k k) (a :: kk k k).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193610"
+	><span class="hs-identifier hs-var"
+	  >h</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p ~&gt; q) -&gt; (q ~&gt; q) -&gt; O p q ~&gt; O q q
+forall {k1 :: j} (i :: j) (j :: j) (a :: kk i j) (b :: kk i j)
+       (c :: kk j k1) (d :: kk j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall k (kk :: CAT k) {k1 :: k} (i :: k) (j :: k) (a :: kk i j)
+       (b :: kk i j) (c :: kk j k1) (d :: kk j k1).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+q ~&gt; q
+</span
+	><a href="#local-6989586621679193597"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob q, Ob q) =&gt; Endo (E (O p q)) (E q))
+-&gt; (q ~&gt; q) -&gt; Endo (E (O p q)) (E q)
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+q ~&gt; q
+</span
+	><a href="#local-6989586621679193597"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob q, Ob q) =&gt; Endo (E (O p q)) (E q))
+-&gt; (q ~&gt; q) -&gt; Endo (E (O p q)) (E q)
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+q ~&gt; q
+</span
+	><a href="#local-6989586621679193603"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193627"
+      ><span class="annot"
+	><span class="annottext"
+	  >^^^ :: forall (b :: ENDO kk k) (y :: ENDO kk k) (x :: ENDO kk k)
+       (a :: ENDO kk k).
+(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; (a ~~&gt; b) ~&gt; (x ~~&gt; y)
+</span
+	  ><a href="#local-6989586621679193627"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >(^^^)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193631"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193631"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-type"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679193637"
+      ><span class="annot"
+	><span class="annottext"
+	  >p ~&gt; q
+</span
+	  ><a href="#local-6989586621679193637"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Rift q p ~&gt; Rift p q) -&gt; Endo (E (Rift q p)) (E (Rift p q))
+forall {j} {kk :: CAT j} {k :: j} (p :: kk k k) (q :: kk k k).
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#Endo"
+	><span class="hs-identifier hs-var"
+	  >Endo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p ~&gt; q) -&gt; (p ~&gt; q) -&gt; Rift q p ~&gt; Rift p q
+forall {k} {kk :: CAT k} {d :: k} {c :: k} {e :: k} (i :: kk d c)
+       (j :: kk d c) (f :: kk e c) (g :: kk e c).
+(RightKanLift j f, RightKanLift i g) =&gt;
+(i ~&gt; j) -&gt; (f ~&gt; g) -&gt; Rift j f ~&gt; Rift i g
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#dimapRift"
+	><span class="hs-identifier hs-var"
+	  >dimapRift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193637"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193631"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob p, Ob q) =&gt; Endo (E (Rift q p)) (E (Rift p q)))
+-&gt; (p ~&gt; q) -&gt; Endo (E (Rift q p)) (E (Rift p q))
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193631"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob p, Ob q) =&gt; Endo (E (Rift q p)) (E (Rift p q)))
+-&gt; (p ~&gt; q) -&gt; Endo (E (Rift q p)) (E (Rift p q))
+forall (a :: kk k k) (b :: kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p ~&gt; q
+</span
+	><a href="#local-6989586621679193637"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Monads are monoids in the category of endo-1-cells.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193267"
+      ><span id="local-6989586621679193268"
+	><span id="local-6989586621679193269"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	      ><span class="hs-identifier hs-type"
+		>Bicategory</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193267"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.html#Monad"
+	      ><span class="hs-identifier hs-type"
+		>Monad</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193269"
+	      ><span class="hs-identifier hs-type"
+		>m</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Monoid.html#Monoid"
+	      ><span class="hs-identifier hs-type"
+		>Monoid</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	      ><span class="hs-identifier hs-type"
+		>E</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193269"
+	      ><span class="hs-identifier hs-type"
+		>m</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	      ><span class="hs-identifier hs-type"
+		>ENDO</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193267"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193268"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193675"
+      ><span class="annot"
+	><span class="annottext"
+	  >mempty :: Unit ~&gt; E m
+</span
+	  ><a href="#local-6989586621679193675"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mempty</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; m) -&gt; Endo (E I) (E m)
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; m
+forall {k} {kk :: k -&gt; k -&gt; Type} {a :: k} (t :: kk a a).
+Monad t =&gt;
+I ~&gt; t
+</span
+	><a href="Proarrow.Category.Bicategory.html#eta"
+	><span class="hs-identifier hs-var"
+	  >eta</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193682"
+      ><span class="annot"
+	><span class="annottext"
+	  >mappend :: (E m ** E m) ~&gt; E m
+</span
+	  ><a href="#local-6989586621679193682"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mappend</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O m m ~&gt; m) -&gt; Endo (E (O m m)) (E m)
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O m m ~&gt; m
+forall {k} {kk :: k -&gt; k -&gt; Type} {a :: k} (t :: kk a a).
+Monad t =&gt;
+O t t ~&gt; t
+</span
+	><a href="Proarrow.Category.Bicategory.html#mu"
+	><span class="hs-identifier hs-var"
+	  >mu</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Comonads are comonoids in the category of endo-1-cells.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193283"
+      ><span id="local-6989586621679193284"
+	><span id="local-6989586621679193285"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	      ><span class="hs-identifier hs-type"
+		>Bicategory</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193283"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.html#Comonad"
+	      ><span class="hs-identifier hs-type"
+		>Comonad</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193285"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Monoid.html#Comonoid"
+	      ><span class="hs-identifier hs-type"
+		>Comonoid</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.Endo.html#E"
+	      ><span class="hs-identifier hs-type"
+		>E</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193285"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.Endo.html#ENDO"
+	      ><span class="hs-identifier hs-type"
+		>ENDO</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193283"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193284"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193709"
+      ><span class="annot"
+	><span class="annottext"
+	  >counit :: E c ~&gt; Unit
+</span
+	  ><a href="#local-6989586621679193709"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >counit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; I) -&gt; Endo (E c) (E I)
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; I
+forall {k} (kk :: k -&gt; k -&gt; Type) (a :: k) (t :: kk a a).
+Comonad t =&gt;
+t ~&gt; I
+</span
+	><a href="Proarrow.Category.Bicategory.html#epsilon"
+	><span class="hs-identifier hs-var"
+	  >epsilon</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679193716"
+      ><span class="annot"
+	><span class="annottext"
+	  >comult :: E c ~&gt; (E c ** E c)
+</span
+	  ><a href="#local-6989586621679193716"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >comult</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; O c c) -&gt; Endo (E c) (E (O c c))
+forall {j} (kk :: j -&gt; j -&gt; Type) (k :: j) (p :: kk k k)
+       (q :: kk k k).
+CategoryOf (kk k k) =&gt;
+(p ~&gt; q) -&gt; Endo (E p) (E q)
+</span
+	><a href="Proarrow.Category.Monoidal.Endo.html#mkEndo"
+	><span class="hs-identifier hs-var"
+	  >mkEndo</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; O c c
+forall {k} (kk :: k -&gt; k -&gt; Type) (a :: k) (t :: kk a a).
+Comonad t =&gt;
+t ~&gt; O t t
+</span
+	><a href="Proarrow.Category.Bicategory.html#delta"
+	><span class="hs-identifier hs-var"
+	  >delta</span
+	  ></a
+	></span
+      ></pre
+    ></body
+  ></html
+>

@@ -1,1 +1,345 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Proarrow.Profunctor.Product</title><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial" /><link rel="stylesheet" type="text/css" href="quick-jump.css" /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700" /><script src="haddock-bundle.min.js" async="async" type="text/javascript"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script></head><body><div id="package-header"><span class="caption">proarrow-0: Category theory with a central role for profunctors</span><ul class="links" id="page-menu"><li id="quick-jump-button"><a href="#">Quick Jump</a></li><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul></div><div id="content"><div id="module-header"><table class="info"><tr><th>Safe Haskell</th><td>Safe-Inferred</td></tr><tr><th>Language</th><td>Haskell2010</td></tr></table><p class="caption">Proarrow.Profunctor.Product</p></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src"><span class="keyword">data</span> (p <a id="t::-42-:" class="def">:*:</a> q) a b <span class="keyword">where</span> <a href="#t::-42-:" class="selflink">#</a></p><div class="subs constructors"><p class="caption">Constructors</p><table><tr><td class="src"><a id="v::-42-:" class="def">(:*:)</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><div class="subs fields"><p class="caption">Fields</p><ul><li><dfn class="src">:: { <a id="v:fstP" class="def">fstP</a> :: p a b</dfn><div class="doc empty">&nbsp;</div></li><li><dfn class="src">&nbsp;&nbsp;&nbsp;, <a id="v:sndP" class="def">sndP</a> :: q a b</dfn><div class="doc empty">&nbsp;</div></li><li><dfn class="src">&nbsp;&nbsp;&nbsp;} -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product">:*:</a> q) a b</dfn><div class="doc empty">&nbsp;</div></li></ul></div></td></tr></table></div><div class="subs instances"><h4 class="instances details-toggle-control details-toggle" data-details-id="i::-42-:">Instances</h4><details id="i::-42-:" open="open"><summary class="hide-when-js-enabled">Instances details</summary><table><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42-::Profunctor:1"></span> (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> p, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> q) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product">:*:</a> q :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t::-42-:" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id::-42-::Profunctor:1"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Product.html">Proarrow.Profunctor.Product</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:dimap">dimap</a> :: <span class="keyword">forall</span> (c :: j0) (a :: j0) (b :: k0) (d :: k0). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> d) -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product">:*:</a> q) a b -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product">:*:</a> q) c d <a href="#v:dimap" class="selflink">#</a></p><p class="src"><a href="#v:-92--92-">(\\)</a> :: <span class="keyword">forall</span> (a :: j0) (b :: k0) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b) =&gt; r) -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product">:*:</a> q) a b -&gt; r <a href="#v:-92--92-" class="selflink">#</a></p></div></details></td></tr></table></details></div></div><div class="top"><p class="src"><a id="v:prod" class="def">prod</a> :: (r <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core">:~&gt;</a> p) -&gt; (r <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core">:~&gt;</a> q) -&gt; r <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core">:~&gt;</a> (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product">:*:</a> q) <a href="#v:prod" class="selflink">#</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.29.1</p></div></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Profunctor.Product</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Profunctor.Product.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Product.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Profunctor.Product</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > ((p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j k) <a id="t::-42-:" class="def"
+	    >:*:</a
+	    > (q :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j k)) (a :: j) (b :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Product.html#%3A%2A%3A" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Product.hs#L7" class="link"
+	    >Comments</a
+	    > <a href="#t::-42-:" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v::-42-:" class="def"
+		  >(:*:)</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			>:: <span class="keyword"
+			  >forall</span
+			  > {j} {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k) (a :: j) (b :: k) (q :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k). { <a id="v:fstP" class="def"
+			  >fstP</a
+			  > :: p a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;, <a id="v:sndP" class="def"
+			  >sndP</a
+			  > :: q a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;} -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i::-42-:"
+	    >Instances</h4
+	    ><details id="i::-42-:" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42-::MonoidalProfunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > q) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+		      >:*:</a
+		      > q :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Product.html#line-14" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Product.hs#L14" class="link"
+		    >Comments</a
+		    > <a href="#t::-42-:" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::-42-::MonoidalProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Product.html"
+			>Proarrow.Profunctor.Product</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift0"
+			  >lift0</a
+			  > :: (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: j) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: k) <a href="src/Proarrow.Category.Monoidal.html#lift0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L158" class="link"
+			  >Comments</a
+			  > <a href="#v:lift0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lift2"
+			  >lift2</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x1 :: j) (x2 :: k) (y1 :: j) (y2 :: k). (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) x1 x2 -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) y1 y2 -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) (x1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y1) (x2 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y2) <a href="src/Proarrow.Category.Monoidal.html#lift2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L159" class="link"
+			  >Comments</a
+			  > <a href="#v:lift2" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42-::Profunctor:2"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > q) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+		      >:*:</a
+		      > q :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Product.html#line-10" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Product.hs#L10" class="link"
+		    >Comments</a
+		    > <a href="#t::-42-:" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::-42-::Profunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Product.html"
+			>Proarrow.Profunctor.Product</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: j) (a :: j) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) a b -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:prod" class="def"
+	    >prod</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {j} {k} (r :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) (p :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) (q :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >). (r <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    >:~&gt;</a
+	    > p) -&gt; (r <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    >:~&gt;</a
+	    > q) -&gt; r <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    >:~&gt;</a
+	    > (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+	    >:*:</a
+	    > q) <a href="src/Proarrow.Profunctor.Product.html#prod" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Product.hs#L19" class="link"
+	    >Comments</a
+	    > <a href="#v:prod" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

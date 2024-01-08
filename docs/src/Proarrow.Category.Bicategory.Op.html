@@ -1,0 +1,4287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Kan</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanExtension"
+	><span class="hs-identifier"
+	  >RightKanExtension</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#LeftKanExtension"
+	><span class="hs-identifier"
+	  >LeftKanExtension</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanLift"
+	><span class="hs-identifier"
+	  >RightKanLift</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#LeftKanLift"
+	><span class="hs-identifier"
+	  >LeftKanLift</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier"
+	  >Is</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	><span class="hs-identifier hs-type"
+	  >OPK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679194037"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#CAT"
+	  ><span class="hs-identifier hs-type"
+	    >CAT</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679194037"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>-&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#CAT"
+	  ><span class="hs-identifier hs-type"
+	    >CAT</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679194037"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >newtype</span
+      ><span
+      > </span
+      ><span id="OPK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	  ><span class="hs-identifier hs-var"
+	    >OPK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194038"
+      ><span class="annot"
+	><a href="#local-6989586621679194038"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194039"
+      ><span class="annot"
+	><a href="#local-6989586621679194039"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194040"
+      ><span class="annot"
+	><a href="#local-6989586621679194040"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="OP"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	  ><span class="hs-identifier hs-var"
+	    >OP</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194038"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194040"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194039"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194041"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	  ><span class="hs-identifier hs-type"
+	    >OP</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	  ><span class="hs-identifier hs-type"
+	    >OP</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679194041"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194041"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679194042"
+      ><span id="local-6989586621679194043"
+	><span id="local-6989586621679194044"
+	  ><span class="annot"
+	    ><a href="Proarrow.Core.html#CAT"
+	      ><span class="hs-identifier hs-type"
+		>CAT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	      ><span class="hs-identifier hs-type"
+		>OPK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194042"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194043"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194044"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Op"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	  ><span class="hs-identifier hs-var"
+	    >Op</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194045"
+      ><span class="annot"
+	><a href="#local-6989586621679194045"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194046"
+      ><span class="annot"
+	><a href="#local-6989586621679194046"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194047"
+      ><span id="local-6989586621679194048"
+	><span id="Op"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	      ><span class="hs-identifier hs-var"
+		>Op</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194047"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194048"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	    ><span class="hs-identifier hs-type"
+	      >Op</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194047"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194048"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193745"
+      ><span id="local-6989586621679193746"
+	><span id="local-6989586621679193747"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193745"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193746"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193747"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Profunctor"
+	      ><span class="hs-identifier hs-type"
+		>Profunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	      ><span class="hs-identifier hs-type"
+		>Op</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CAT"
+	      ><span class="hs-identifier hs-type"
+		>CAT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	      ><span class="hs-identifier hs-type"
+		>OPK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193745"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193747"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193746"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194066"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: OPK kk j k) (a :: OPK kk j k) (b :: OPK kk j k)
+       (d :: OPK kk j k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Op a b -&gt; Op c d
+</span
+	  ><a href="#local-6989586621679194066"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Op a b -&gt; Op c d
+Op c a -&gt; Op b d -&gt; Op a b -&gt; Op c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194068"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679194068"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194069"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: OPK kk j k) (b :: OPK kk j k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Op a b -&gt; r
+</span
+	  ><a href="#local-6989586621679194069"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194074"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194074"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679194068"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall (a :: kk k j) (b :: kk k j) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679194074"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193749"
+      ><span id="local-6989586621679193750"
+	><span id="local-6989586621679193751"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193749"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193750"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193751"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Promonad"
+	      ><span class="hs-identifier hs-type"
+		>Promonad</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	      ><span class="hs-identifier hs-type"
+		>Op</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CAT"
+	      ><span class="hs-identifier hs-type"
+		>CAT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	      ><span class="hs-identifier hs-type"
+		>OPK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193749"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193751"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679193750"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194100"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: OPK kk j k). Ob a =&gt; Op a a
+</span
+	  ><a href="#local-6989586621679194100"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'OP a ~&gt; UN 'OP a) -&gt; Op ('OP (UN 'OP a)) ('OP (UN 'OP a))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'OP a ~&gt; UN 'OP a
+forall (a :: kk k j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194104"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194104"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194105"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: OPK kk j k) (c :: OPK kk j k) (a :: OPK kk j k).
+Op b c -&gt; Op a b -&gt; Op a c
+</span
+	  ><a href="#local-6989586621679194105"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194113"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194113"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679194104"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; a) -&gt; a ~&gt; b
+forall (b :: kk k j) (c :: kk k j) (a :: kk k j).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a
+a ~&gt; b
+</span
+	><a href="#local-6989586621679194113"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679194114"
+      ><span id="local-6989586621679194115"
+	><span id="local-6989586621679194116"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194114"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194115"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194116"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	      ><span class="hs-identifier hs-type"
+		>OPK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194114"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194116"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679194115"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194122"
+      ><span class="annot"
+	><a href="#local-6989586621679194122"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier hs-type"
+	  >Is</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194122"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194122"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Create a dual of a bicategory by reversing the 1-cells.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193862"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679193862"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	  ><span class="hs-identifier hs-type"
+	    >OPK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679193862"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Ob0"
+	  ><span class="hs-identifier hs-var"
+	    >Ob0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194149"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Op.html#OPK"
+	  ><span class="hs-identifier hs-type"
+	    >OPK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679193862"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679194149"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	><span class="hs-identifier hs-type"
+	  >Ob0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193862"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194149"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="I"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#I"
+	  ><span class="hs-identifier hs-var"
+	    >I</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#I"
+	><span class="hs-identifier hs-type"
+	  >I</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="O"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#O"
+	  ><span class="hs-identifier hs-var"
+	    >O</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194150"
+      ><span id="local-6989586621679194151"
+	><span class="annot"
+	  ><a href="#local-6989586621679194150"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194151"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194151"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#O"
+	><span class="hs-operator hs-type"
+	  >`O`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194150"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194152"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob0 (OPK kk) i, Ob0 (OPK kk) j, Ob ps, Ob qs) =&gt; r
+</span
+	  ><a href="#local-6989586621679194152"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194153"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\\ :: forall (i :: k) (j :: k) (ps :: OPK kk i j) (qs :: OPK kk i j) r.
+((Ob0 (OPK kk) i, Ob0 (OPK kk) j, Ob ps, Ob qs) =&gt; r)
+-&gt; (ps ~&gt; qs) -&gt; r
+</span
+	  ><a href="#local-6989586621679194153"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194158"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194158"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob0 kk j, Ob0 kk i, Ob a, Ob b) =&gt; r
+(Ob0 (OPK kk) i, Ob0 (OPK kk) j, Ob ps, Ob qs) =&gt; r
+</span
+	><a href="#local-6989586621679194152"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob0 kk j, Ob0 kk i, Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall (i :: k) (j :: k) (ps :: kk i j) (qs :: kk i j) r.
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+forall k (kk :: CAT k) (i :: k) (j :: k) (ps :: kk i j)
+       (qs :: kk i j) r.
+Bicategory kk =&gt;
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+</span
+	><a href="Proarrow.Category.Bicategory.html#%5C%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679194158"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194177"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194177"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194178"
+      ><span class="annot"
+	><span class="annottext"
+	  >o :: forall {k1 :: k} (i :: k) (j :: k) (a :: OPK kk i j)
+       (b :: OPK kk i j) (c :: OPK kk j k1) (d :: OPK kk j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	  ><a href="#local-6989586621679194178"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`o`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194183"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194183"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O a a ~&gt; O b b) -&gt; Op ('OP (O a a)) ('OP (O b b))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679194183"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; O a a ~&gt; O b b
+forall {k1 :: k} (i :: k) (j :: k) (a :: kk i j) (b :: kk i j)
+       (c :: kk j k1) (d :: kk j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall k (kk :: CAT k) {k1 :: k} (i :: k) (j :: k) (a :: kk i j)
+       (b :: kk i j) (c :: kk j k1) (d :: kk j k1).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679194177"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194184"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (i :: k) (j :: k) (a :: OPK kk i j). Obj a -&gt; O I a ~&gt; a
+</span
+	  ><a href="#local-6989586621679194184"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194191"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194191"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O b I ~&gt; b) -&gt; Op ('OP (O b I)) ('OP b)
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; O b I ~&gt; b
+forall (i :: k) (j :: k) (a :: kk i j). Obj a -&gt; O a I ~&gt; a
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; O a I ~&gt; a
+</span
+	><a href="Proarrow.Category.Bicategory.html#rightUnitor"
+	><span class="hs-identifier hs-var"
+	  >rightUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194191"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194193"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (i :: k) (j :: k) (a :: OPK kk i j). Obj a -&gt; a ~&gt; O I a
+</span
+	  ><a href="#local-6989586621679194193"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194200"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194200"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; O b I) -&gt; Op ('OP b) ('OP (O b I))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; b ~&gt; O b I
+forall (i :: k) (j :: k) (a :: kk i j). Obj a -&gt; a ~&gt; O a I
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; a ~&gt; O a I
+</span
+	><a href="Proarrow.Category.Bicategory.html#rightUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >rightUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194200"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194202"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (i :: k) (j :: k) (a :: OPK kk i j). Obj a -&gt; O a I ~&gt; a
+</span
+	  ><a href="Proarrow.Category.Bicategory.html#rightUnitor"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194208"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194208"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O I b ~&gt; b) -&gt; Op ('OP (O I b)) ('OP b)
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; O I b ~&gt; b
+forall (i :: k) (j :: k) (a :: kk i j). Obj a -&gt; O I a ~&gt; a
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; O I a ~&gt; a
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194208"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194209"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (i :: k) (j :: k) (a :: OPK kk i j). Obj a -&gt; a ~&gt; O a I
+</span
+	  ><a href="Proarrow.Category.Bicategory.html#rightUnitorInv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194215"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194215"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; O I b) -&gt; Op ('OP b) ('OP (O I b))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; b ~&gt; O I b
+forall (i :: k) (j :: k) (a :: kk i j). Obj a -&gt; a ~&gt; O I a
+forall k (kk :: CAT k) (i :: k) (j :: k) (a :: kk i j).
+Bicategory kk =&gt;
+Obj a -&gt; a ~&gt; O I a
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194215"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194216"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall {j1 :: k} {k1 :: k} (i :: k) (j2 :: k) (a :: OPK kk i j2)
+       (b :: OPK kk j2 j1) (c :: OPK kk j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	  ><a href="#local-6989586621679194216"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194222"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194222"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194227"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194227"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194233"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194233"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O b (O b b) ~&gt; O (O b b) b)
+-&gt; Op ('OP (O b (O b b))) ('OP (O (O b b) b))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; Obj b -&gt; Obj b -&gt; O b (O b b) ~&gt; O (O b b) b
+forall {j1 :: k} {k1 :: k} (i :: k) (j2 :: k) (a :: kk i j2)
+       (b :: kk j2 j1) (c :: kk j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+forall k (kk :: CAT k) {j1 :: k} {k1 :: k} (i :: k) (j2 :: k)
+       (a :: kk i j2) (b :: kk j2 j1) (c :: kk j1 k1).
+Bicategory kk =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	><a href="Proarrow.Category.Bicategory.html#associatorInv"
+	><span class="hs-identifier hs-var"
+	  >associatorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194233"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194227"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194222"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194235"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall {j1 :: k} {k1 :: k} (i :: k) (j2 :: k) (a :: OPK kk i j2)
+       (b :: OPK kk j2 j1) (c :: OPK kk j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	  ><a href="Proarrow.Category.Bicategory.html#associatorInv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194240"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194240"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194245"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194245"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194251"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194251"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O (O b b) b ~&gt; O b (O b b))
+-&gt; Op ('OP (O (O b b) b)) ('OP (O b (O b b)))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; Obj b -&gt; Obj b -&gt; O (O b b) b ~&gt; O b (O b b)
+forall {j1 :: k} {k1 :: k} (i :: k) (j2 :: k) (a :: kk i j2)
+       (b :: kk j2 j1) (c :: kk j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+forall k (kk :: CAT k) {j1 :: k} {k1 :: k} (i :: k) (j2 :: k)
+       (a :: kk i j2) (b :: kk j2 j1) (c :: kk j1 k1).
+Bicategory kk =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	><a href="Proarrow.Category.Bicategory.html#associator"
+	><span class="hs-identifier hs-var"
+	  >associator</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194251"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194245"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679194240"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193958"
+      ><span id="local-6989586621679193959"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanExtension"
+	    ><span class="hs-identifier hs-type"
+	      >RightKanExtension</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193958"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193959"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanLift"
+	    ><span class="hs-identifier hs-type"
+	      >RightKanLift</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193958"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193959"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Rift"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Kan.html#Rift"
+	  ><span class="hs-identifier hs-var"
+	    >Rift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193958"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193959"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#Ran"
+	><span class="hs-identifier hs-type"
+	  >Ran</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193958"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193959"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194298"
+      ><span class="annot"
+	><span class="annottext"
+	  >rift :: O (Rift ('OP j) ('OP f)) ('OP j) ~&gt; 'OP f
+</span
+	  ><a href="#local-6989586621679194298"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O j (Ran j f) ~&gt; f) -&gt; Op ('OP (O j (Ran j f))) ('OP f)
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk k d) (f :: kk k e).
+RightKanExtension j f =&gt;
+O j (Ran j f) ~&gt; f
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk c d)
+       (f :: kk c e).
+RightKanExtension j f =&gt;
+O j (Ran j f) ~&gt; f
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#ran"
+	><span class="hs-identifier hs-var"
+	  >ran</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193958"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193959"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194307"
+      ><span class="annot"
+	><span class="annottext"
+	  >riftUniv :: forall (g :: OPK kk e d).
+Ob g =&gt;
+(O g ('OP j) ~&gt; 'OP f) -&gt; g ~&gt; Rift ('OP j) ('OP f)
+</span
+	  ><a href="#local-6989586621679194307"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >riftUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194316"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194316"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'OP g ~&gt; Ran j f) -&gt; Op ('OP (UN 'OP g)) ('OP (Ran j f))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk k d) (f :: kk k e) (g :: kk d e).
+(RightKanExtension j f, Ob g) =&gt;
+(O j g ~&gt; f) -&gt; g ~&gt; Ran j f
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk c d)
+       (f :: kk c e) (g :: kk d e).
+(RightKanExtension j f, Ob g) =&gt;
+(O j g ~&gt; f) -&gt; g ~&gt; Ran j f
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#ranUniv"
+	><span class="hs-identifier hs-var"
+	  >ranUniv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193958"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193959"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+O j (UN 'OP g) ~&gt; f
+</span
+	><a href="#local-6989586621679194316"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679193995"
+      ><span id="local-6989586621679193996"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#LeftKanExtension"
+	    ><span class="hs-identifier hs-type"
+	      >LeftKanExtension</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193995"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193996"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#LeftKanLift"
+	    ><span class="hs-identifier hs-type"
+	      >LeftKanLift</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193995"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679193996"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Lift"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Kan.html#Lift"
+	  ><span class="hs-identifier hs-var"
+	    >Lift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193995"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193996"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#Lan"
+	><span class="hs-identifier hs-type"
+	  >Lan</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193995"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679193996"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194364"
+      ><span class="annot"
+	><span class="annottext"
+	  >lift :: 'OP f ~&gt; O (Lift ('OP j) ('OP f)) ('OP j)
+</span
+	  ><a href="#local-6989586621679194364"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(f ~&gt; O j (Lan j f)) -&gt; Op ('OP f) ('OP (O j (Lan j f)))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk k d) (f :: kk k e).
+LeftKanExtension j f =&gt;
+f ~&gt; O j (Lan j f)
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk c d)
+       (f :: kk c e).
+LeftKanExtension j f =&gt;
+f ~&gt; O j (Lan j f)
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#lan"
+	><span class="hs-identifier hs-var"
+	  >lan</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193995"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193996"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194373"
+      ><span class="annot"
+	><span class="annottext"
+	  >liftUniv :: forall (g :: OPK kk e d).
+Ob g =&gt;
+('OP f ~&gt; O g ('OP j)) -&gt; Lift ('OP j) ('OP f) ~&gt; g
+</span
+	  ><a href="#local-6989586621679194373"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >liftUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194382"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194382"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Lan j f ~&gt; UN 'OP g) -&gt; Op ('OP (Lan j f)) ('OP (UN 'OP g))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk k d) (f :: kk k e) (g :: kk d e).
+(LeftKanExtension j f, Ob g) =&gt;
+(f ~&gt; O j g) -&gt; Lan j f ~&gt; g
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk c d)
+       (f :: kk c e) (g :: kk d e).
+(LeftKanExtension j f, Ob g) =&gt;
+(f ~&gt; O j g) -&gt; Lan j f ~&gt; g
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#lanUniv"
+	><span class="hs-identifier hs-var"
+	  >lanUniv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193995"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679193996"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f ~&gt; O j (UN 'OP g)
+a ~&gt; b
+</span
+	><a href="#local-6989586621679194382"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679194013"
+      ><span id="local-6989586621679194014"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanLift"
+	    ><span class="hs-identifier hs-type"
+	      >RightKanLift</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194013"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194014"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#RightKanExtension"
+	    ><span class="hs-identifier hs-type"
+	      >RightKanExtension</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194013"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194014"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ran"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Kan.html#Ran"
+	  ><span class="hs-identifier hs-var"
+	    >Ran</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194013"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194014"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#Rift"
+	><span class="hs-identifier hs-type"
+	  >Rift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194013"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194014"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194430"
+      ><span class="annot"
+	><span class="annottext"
+	  >ran :: O ('OP j) (Ran ('OP j) ('OP f)) ~&gt; 'OP f
+</span
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#ran"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >ran</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O (Rift j f) j ~&gt; f) -&gt; Op ('OP (O (Rift j f) j)) ('OP f)
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk d j) (f :: kk e j).
+RightKanLift j f =&gt;
+O (Rift j f) j ~&gt; f
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk d c)
+       (f :: kk e c).
+RightKanLift j f =&gt;
+O (Rift j f) j ~&gt; f
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#rift"
+	><span class="hs-identifier hs-var"
+	  >rift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194013"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194014"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194437"
+      ><span class="annot"
+	><span class="annottext"
+	  >ranUniv :: forall (g :: OPK kk d e).
+Ob g =&gt;
+(O ('OP j) g ~&gt; 'OP f) -&gt; g ~&gt; Ran ('OP j) ('OP f)
+</span
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#ranUniv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >ranUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194445"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194445"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'OP g ~&gt; Rift j f) -&gt; Op ('OP (UN 'OP g)) ('OP (Rift j f))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk d j) (f :: kk e j) (g :: kk e d).
+(RightKanLift j f, Ob g) =&gt;
+(O g j ~&gt; f) -&gt; g ~&gt; Rift j f
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk d c)
+       (f :: kk e c) (g :: kk e d).
+(RightKanLift j f, Ob g) =&gt;
+(O g j ~&gt; f) -&gt; g ~&gt; Rift j f
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#riftUniv"
+	><span class="hs-identifier hs-var"
+	  >riftUniv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194013"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194014"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+O (UN 'OP g) j ~&gt; f
+</span
+	><a href="#local-6989586621679194445"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679194030"
+      ><span id="local-6989586621679194031"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#LeftKanLift"
+	    ><span class="hs-identifier hs-type"
+	      >LeftKanLift</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194030"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194031"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#LeftKanExtension"
+	    ><span class="hs-identifier hs-type"
+	      >LeftKanExtension</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194030"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	    ><span class="hs-identifier hs-type"
+	      >OP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679194031"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Lan"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Kan.html#Lan"
+	  ><span class="hs-identifier hs-var"
+	    >Lan</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194030"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194031"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#OP"
+	><span class="hs-identifier hs-type"
+	  >OP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Kan.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194030"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679194031"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194492"
+      ><span class="annot"
+	><span class="annottext"
+	  >lan :: 'OP f ~&gt; O ('OP j) (Lan ('OP j) ('OP f))
+</span
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#lan"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lan</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(f ~&gt; O (Lift j f) j) -&gt; Op ('OP f) ('OP (O (Lift j f) j))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk d j) (f :: kk e j).
+LeftKanLift j f =&gt;
+f ~&gt; O (Lift j f) j
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk d c)
+       (f :: kk e c).
+LeftKanLift j f =&gt;
+f ~&gt; O (Lift j f) j
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#lift"
+	><span class="hs-identifier hs-var"
+	  >lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194030"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194031"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679194499"
+      ><span class="annot"
+	><span class="annottext"
+	  >lanUniv :: forall (g :: OPK kk d e).
+Ob g =&gt;
+('OP f ~&gt; O ('OP j) g) -&gt; Lan ('OP j) ('OP f) ~&gt; g
+</span
+	  ><a href="Proarrow.Category.Bicategory.Kan.html#lanUniv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lanUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-type"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679194507"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679194507"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Lift j f ~&gt; UN 'OP g) -&gt; Op ('OP (Lift j f)) ('OP (UN 'OP g))
+forall {k} {kk :: CAT k} {j :: k} {k :: k} (a :: kk j k)
+       (b :: kk j k).
+(a ~&gt; b) -&gt; Op ('OP a) ('OP b)
+</span
+	><a href="Proarrow.Category.Bicategory.Op.html#Op"
+	><span class="hs-identifier hs-var"
+	  >Op</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (j :: kk d j) (f :: kk e j) (g :: kk e d).
+(LeftKanLift j f, Ob g) =&gt;
+(f ~&gt; O g j) -&gt; Lift j f ~&gt; g
+forall {k} {kk :: CAT k} {c :: k} {d :: k} {e :: k} (j :: kk d c)
+       (f :: kk e c) (g :: kk e d).
+(LeftKanLift j f, Ob g) =&gt;
+(f ~&gt; O g j) -&gt; Lift j f ~&gt; g
+</span
+	><a href="Proarrow.Category.Bicategory.Kan.html#liftUniv"
+	><span class="hs-identifier hs-var"
+	  >liftUniv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194030"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679194031"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f ~&gt; O (UN 'OP g) j
+a ~&gt; b
+</span
+	><a href="#local-6989586621679194507"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>

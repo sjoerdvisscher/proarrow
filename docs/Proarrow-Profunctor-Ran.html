@@ -1,1 +1,673 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Proarrow.Profunctor.Ran</title><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial" /><link rel="stylesheet" type="text/css" href="quick-jump.css" /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700" /><script src="haddock-bundle.min.js" async="async" type="text/javascript"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script></head><body><div id="package-header"><span class="caption">proarrow-0: Category theory with a central role for profunctors</span><ul class="links" id="page-menu"><li id="quick-jump-button"><a href="#">Quick Jump</a></li><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul></div><div id="content"><div id="module-header"><table class="info"><tr><th>Safe Haskell</th><td>Safe-Inferred</td></tr><tr><th>Language</th><td>Haskell2010</td></tr></table><p class="caption">Proarrow.Profunctor.Ran</p></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src"><span class="keyword">type</span> <a id="t:-124--62-" class="def">(|&gt;)</a> j p = <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> (<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j) p <a href="#t:-124--62-" class="selflink">#</a></p></div><div class="top"><p class="src"><span class="keyword">data</span> <a id="t:Ran" class="def">Ran</a> j p a b <span class="keyword">where</span> <a href="#t:Ran" class="selflink">#</a></p><div class="subs constructors"><p class="caption">Constructors</p><table><tr><td class="src"><a id="v:Ran" class="def">Ran</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><div class="subs fields"><p class="caption">Fields</p><ul><li><dfn class="src">:: (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b)</dfn><div class="doc empty">&nbsp;</div></li><li><dfn class="src">=&gt; { <a id="v:getRan" class="def">getRan</a> :: <span class="keyword">forall</span> x. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> x =&gt; j x a -&gt; p x b</dfn><div class="doc empty">&nbsp;</div></li><li><dfn class="src">&nbsp;&nbsp;&nbsp;} -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> (<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j) p a b</dfn><div class="doc empty">&nbsp;</div></li></ul></div></td></tr></table></div><div class="subs instances"><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Ran">Instances</h4><details id="i:Ran" open="open"><summary class="hide-when-js-enabled">Instances details</summary><table><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Profunctor:1"></span> (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> p, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> j2) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) p :: j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Ran" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Ran:Profunctor:1"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Ran.html">Proarrow.Profunctor.Ran</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:dimap">dimap</a> :: <span class="keyword">forall</span> (c :: j) (a :: j) (b :: k0) (d :: k0). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> d) -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) p a b -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) p c d <a href="#v:dimap" class="selflink">#</a></p><p class="src"><a href="#v:-92--92-">(\\)</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) p a b -&gt; r <a href="#v:-92--92-" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Functor:2"></span> <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor">Functor</a> (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite">OPPOSITE</a> (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> i j) -&gt; <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> i k -&gt; j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Ran" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Ran:Functor:2"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Ran.html">Proarrow.Profunctor.Ran</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:map">map</a> :: <span class="keyword">forall</span> (a :: k1) (b :: k1). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> b <a href="#v:map" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Adjunction:3"></span> <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> j2 =&gt; <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction">Adjunction</a> (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> (<a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">(:.:)</a> j2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> j1 k -&gt; i -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) :: (i -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) -&gt; <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> j1 k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> i k -&gt; j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) :: (j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) -&gt; <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> i k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Ran" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Ran:Adjunction:3"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Ran.html">Proarrow.Profunctor.Ran</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:unit">unit</a> :: <span class="keyword">forall</span> (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a =&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2)) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> (<a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">(:.:)</a> j2)) a a <a href="#v:unit" class="selflink">#</a></p><p class="src"><a href="#v:counit">counit</a> :: (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> (<a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">(:.:)</a> j2) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star">Star</a> (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2))) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core">:~&gt;</a> <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">(~&gt;)</a> <a href="#v:counit" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Functor:4"></span> <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> j2 =&gt; <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor">Functor</a> (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> i k -&gt; j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Ran" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Ran:Functor:4"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Ran.html">Proarrow.Profunctor.Ran</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:map">map</a> :: <span class="keyword">forall</span> (a :: k1) (b :: k1). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j2) b <a href="#v:map" class="selflink">#</a></p></div></details></td></tr></table></details></div></div><div class="top"><p class="src"><a id="v:runRan" class="def">runRan</a> :: <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> j =&gt; j x a -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran">Ran</a> (<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite">OP</a> j) p a b -&gt; p x b <a href="#v:runRan" class="selflink">#</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.29.1</p></div></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Profunctor.Ran</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Profunctor.Ran.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Profunctor.Ran</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:-124--62-" class="def"
+	    >(|&gt;)</a
+	    > (j1 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i j) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i k) = <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > j1) p <a href="src/Proarrow.Profunctor.Ran.html#%7C%3E" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L13" class="link"
+	    >Comments</a
+	    > <a href="#t:-124--62-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Ran" class="def"
+	    >Ran</a
+	    > (j1 :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+	    >OPPOSITE</a
+	    > (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i j)) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i k) (a :: j) (b :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Ran.html#Ran" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L16" class="link"
+	    >Comments</a
+	    > <a href="#t:Ran" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Ran" class="def"
+		  >Ran</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			>:: <span class="keyword"
+			  >forall</span
+			  > {j} {k} {i} (a :: j) (b :: k) (j2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i j) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b)</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>=&gt; { <a id="v:getRan" class="def"
+			  >getRan</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x :: i). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > x =&gt; j2 x a -&gt; p x b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;} -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) p a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Ran"
+	    >Instances</h4
+	    ><details id="i:Ran" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Profunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > j2) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+		      >Ran</a
+		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		      >OP</a
+		      > j2) p :: j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Ran.html#line-22" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L22" class="link"
+		    >Comments</a
+		    > <a href="#t:Ran" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Ran:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Ran.html"
+			>Proarrow.Profunctor.Ran</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: j1) (a :: j1) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) p a b -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j1) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Functor:2"
+		      ></span
+		      > <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+		      >Ran</a
+		      > :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > i j) -&gt; <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > i k -&gt; j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Ran.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:Ran" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Ran:Functor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Ran.html"
+			>Proarrow.Profunctor.Ran</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:map"
+			  >map</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i j)) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i j)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i k -&gt; j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i k -&gt; j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="src/Proarrow.Functor.html#map" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Functor.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:map" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Adjunction:3"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > j2 =&gt; <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+		      >Star</a
+		      > (<a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		      >(:.:)</a
+		      > j2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > j1 k -&gt; i -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) :: (i -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) -&gt; <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > j1 k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+		      >Star</a
+		      > (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+		      >Ran</a
+		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		      >OP</a
+		      > j2) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > i k -&gt; j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) :: (j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) -&gt; <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > i k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Ran.html#line-32" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L32" class="link"
+		    >Comments</a
+		    > <a href="#t:Ran" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Ran:Adjunction:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Ran.html"
+			>Proarrow.Profunctor.Ran</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:unit"
+			  >unit</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j1 k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i k -&gt; j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > (<a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >(:.:)</a
+			  > j2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j1 k -&gt; i -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) a a <a href="src/Proarrow.Adjunction.html#unit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:counit"
+			  >counit</a
+			  > :: (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > (<a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >(:.:)</a
+			  > j2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j1 k -&gt; i -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i k -&gt; j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >(~&gt;)</a
+			  > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+			  >CAT</a
+			  > (i -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="src/Proarrow.Adjunction.html#counit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:counit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Ran:Functor:4"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > j2 =&gt; <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+		      >Ran</a
+		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		      >OP</a
+		      > j2) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > i k -&gt; j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Ran.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:Ran" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Ran:Functor:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Ran.html"
+			>Proarrow.Profunctor.Ran</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:map"
+			  >map</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i k) (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > i k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+			  >Ran</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > j2) b <a href="src/Proarrow.Functor.html#map" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Functor.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:map" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:runRan" class="def"
+	    >runRan</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {i} {j1} {k} j2 (x :: i) (a :: j1) p (b :: k). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > j2 =&gt; j2 x a -&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > j2) p a b -&gt; p x b <a href="src/Proarrow.Profunctor.Ran.html#runRan" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L20" class="link"
+	    >Comments</a
+	    > <a href="#v:runRan" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:ranCompose" class="def"
+	    >ranCompose</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {j1} {j2} {i1} {k} (i2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j1 j2) (j3 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i1 j1) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i1 k). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > i2, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > j3, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p) =&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > i2) (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > j3) p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > (j3 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > i2)) p <a href="src/Proarrow.Profunctor.Ran.html#ranCompose" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L37" class="link"
+	    >Comments</a
+	    > <a href="#v:ranCompose" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:ranComposeInv" class="def"
+	    >ranComposeInv</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {j1} {j2} {i1} {k} (i2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j1 j2) (j3 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i1 j1) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > i1 k). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > i2, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > j3, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p) =&gt; <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > (j3 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > i2)) p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > i2) (<a href="Proarrow-Profunctor-Ran.html#t:Ran" title="Proarrow.Profunctor.Ran"
+	    >Ran</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > j3) p) <a href="src/Proarrow.Profunctor.Ran.html#ranComposeInv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Ran.hs#L40" class="link"
+	    >Comments</a
+	    > <a href="#v:ranComposeInv" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

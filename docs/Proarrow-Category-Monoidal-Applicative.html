@@ -1,0 +1,1363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Category.Monoidal.Applicative</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Category.Monoidal.Applicative.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Category.Monoidal.Applicative</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Object-BinaryProduct.html#t:HasProducts" title="Proarrow.Object.BinaryProduct"
+	    >HasProducts</a
+	    > j, <a href="Proarrow-Object-BinaryProduct.html#t:HasProducts" title="Proarrow.Object.BinaryProduct"
+	    >HasProducts</a
+	    > k, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > f) =&gt; <a id="t:Applicative" class="def"
+	    >Applicative</a
+	    > (f :: j -&gt; k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#Applicative" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L19" class="link"
+	    >Comments</a
+	    > <a href="#t:Applicative" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:pure" class="def"
+	      >pure</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j). <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+	      >El</a
+	      > a -&gt; <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+	      >El</a
+	      > (f a) <a href="src/Proarrow.Category.Monoidal.Applicative.html#pure" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L19" class="link"
+	      >Comments</a
+	      > <a href="#v:pure" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:liftA2" class="def"
+	      >liftA2</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j) (b :: j) (c :: j). ((a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > c) -&gt; (f a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > f b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > f c <a href="src/Proarrow.Category.Monoidal.Applicative.html#liftA2" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L19" class="link"
+	      >Comments</a
+	      > <a href="#v:liftA2" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Applicative"
+	    >Instances</h4
+	    ><details id="i:Applicative" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Applicative:Applicative:1"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal-Applicative.html#t:Applicative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Applicative</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-List.html#t:List" title="Data.List"
+		      >[]</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:Applicative" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Applicative:Applicative:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:pure"
+			  >pure</a
+			  > :: <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > a -&gt; <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > [a] <a href="src/Proarrow.Category.Monoidal.Applicative.html#pure" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:pure" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:liftA2"
+			  >liftA2</a
+			  > :: ((a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c) -&gt; ([a] <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > [b]) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > [c] <a href="src/Proarrow.Category.Monoidal.Applicative.html#liftA2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:liftA2" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Applicative:Applicative:2"
+		      ></span
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+		      >Monoid</a
+		      > a =&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Applicative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Applicative</a
+		      > (<a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/ghc-prim-0.11.0-2e13/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+		      >(,)</a
+		      > a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-27" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L27" class="link"
+		    >Comments</a
+		    > <a href="#t:Applicative" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Applicative:Applicative:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:pure"
+			  >pure</a
+			  > :: <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > a0 -&gt; <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > (a, a0) <a href="src/Proarrow.Category.Monoidal.Applicative.html#pure" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:pure" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:liftA2"
+			  >liftA2</a
+			  > :: ((a0 <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c) -&gt; ((a, a0) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > (a, b)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a, c) <a href="src/Proarrow.Category.Monoidal.Applicative.html#liftA2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:liftA2" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Applicative:Applicative:3"
+		      ></span
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Control-Applicative.html#t:Applicative" title="Control.Applicative"
+		      >Applicative</a
+		      > f =&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Applicative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Applicative</a
+		      > (<a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+		      >Prelude</a
+		      > f :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-23" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L23" class="link"
+		    >Comments</a
+		    > <a href="#t:Applicative" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Applicative:Applicative:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:pure"
+			  >pure</a
+			  > :: <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > a -&gt; <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > (<a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f a) <a href="src/Proarrow.Category.Monoidal.Applicative.html#pure" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:pure" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:liftA2"
+			  >liftA2</a
+			  > :: ((a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c) -&gt; (<a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > <a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f c <a href="src/Proarrow.Category.Monoidal.Applicative.html#liftA2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:liftA2" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Applicative:Applicative:4"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal-Applicative.html#t:Applicative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Applicative</a
+		      > ((-&gt;) a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-28" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L28" class="link"
+		    >Comments</a
+		    > <a href="#t:Applicative" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Applicative:Applicative:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:pure"
+			  >pure</a
+			  > :: <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > a0 -&gt; <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > (a -&gt; a0) <a href="src/Proarrow.Category.Monoidal.Applicative.html#pure" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:pure" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:liftA2"
+			  >liftA2</a
+			  > :: ((a0 <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c) -&gt; ((a -&gt; a0) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > (a -&gt; b)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a -&gt; c) <a href="src/Proarrow.Category.Monoidal.Applicative.html#liftA2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:liftA2" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p =&gt; <a id="t:Proapplicative" class="def"
+	    >Proapplicative</a
+	    > (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#Proapplicative" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L32" class="link"
+	    >Comments</a
+	    > <a href="#t:Proapplicative" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:pureP" class="def"
+	      >pureP</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j) (b :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a =&gt; <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+	      >El</a
+	      > b -&gt; p a b <a href="src/Proarrow.Category.Monoidal.Applicative.html#pureP" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L32" class="link"
+	      >Comments</a
+	      > <a href="#v:pureP" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:apP" class="def"
+	      >apP</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j) (b :: k) (c :: k). p a b -&gt; p a c -&gt; p a (b <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > c) <a href="src/Proarrow.Category.Monoidal.Applicative.html#apP" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L32" class="link"
+	      >Comments</a
+	      > <a href="#v:apP" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Proapplicative"
+	    >Instances</h4
+	    ><details id="i:Proapplicative" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Proapplicative:Proapplicative:1"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal-Applicative.html#t:Applicative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Applicative</a
+		      > f =&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Proapplicative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Proapplicative</a
+		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+		      >Star</a
+		      > f :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-36" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L36" class="link"
+		    >Comments</a
+		    > <a href="#t:Proapplicative" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Proapplicative:Proapplicative:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:pureP"
+			  >pureP</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > b -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b <a href="src/Proarrow.Category.Monoidal.Applicative.html#pureP" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L33" class="link"
+			  >Comments</a
+			  > <a href="#v:pureP" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:apP"
+			  >apP</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: k) (c :: k). <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a c -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a (b <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > c) <a href="src/Proarrow.Category.Monoidal.Applicative.html#apP" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L34" class="link"
+			  >Comments</a
+			  > <a href="#v:apP" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:App" class="def"
+	    >App</a
+	    > (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j k) (a :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+	    >PROD</a
+	    > j) (b :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+	    >PROD</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#App" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L43" class="link"
+	    >Comments</a
+	    > <a href="#t:App" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:App" class="def"
+		  >App</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {j} {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		  >PRO</a
+		  > j k) (a1 :: j) (b1 :: k). p a1 b1 -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+		  >App</a
+		  > p ('<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+		  >PR</a
+		  > a1) ('<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+		  >PR</a
+		  > b1)</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:App"
+	    >Instances</h4
+	    ><details id="i:App" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:App:MonoidalProfunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Object-BinaryProduct.html#t:HasProducts" title="Proarrow.Object.BinaryProduct"
+		      >HasProducts</a
+		      > j, <a href="Proarrow-Object-BinaryProduct.html#t:HasProducts" title="Proarrow.Object.BinaryProduct"
+		      >HasProducts</a
+		      > k, <a href="Proarrow-Category-Monoidal-Applicative.html#t:Proapplicative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Proapplicative</a
+		      > p) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+		      >App</a
+		      > p :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > j -&gt; <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-48" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L48" class="link"
+		    >Comments</a
+		    > <a href="#t:App" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:App:MonoidalProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift0"
+			  >lift0</a
+			  > :: <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+			  >App</a
+			  > p (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > k) <a href="src/Proarrow.Category.Monoidal.html#lift0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L158" class="link"
+			  >Comments</a
+			  > <a href="#v:lift0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lift2"
+			  >lift2</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x1 :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (x2 :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > k) (y1 :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (y2 :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > k). <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+			  >App</a
+			  > p x1 x2 -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+			  >App</a
+			  > p y1 y2 -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+			  >App</a
+			  > p (x1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y1) (x2 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y2) <a href="src/Proarrow.Category.Monoidal.html#lift2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L159" class="link"
+			  >Comments</a
+			  > <a href="#v:lift2" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:App:Profunctor:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+		      >App</a
+		      > p :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > j -&gt; <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-45" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L45" class="link"
+		    >Comments</a
+		    > <a href="#t:App" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:App:Profunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (a :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (b :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > k) (d :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+			  >App</a
+			  > p a b -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+			  >App</a
+			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (b :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:App" title="Proarrow.Category.Monoidal.Applicative"
+			  >App</a
+			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	    >HasCoproducts</a
+	    > j, <a href="Proarrow-Category-Monoidal-Applicative.html#t:Applicative" title="Proarrow.Category.Monoidal.Applicative"
+	    >Applicative</a
+	    > f) =&gt; <a id="t:Alternative" class="def"
+	    >Alternative</a
+	    > (f :: j -&gt; k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#Alternative" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L55" class="link"
+	    >Comments</a
+	    > <a href="#t:Alternative" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:empty" class="def"
+	      >empty</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j). <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+	      >El</a
+	      > (f a) <a href="src/Proarrow.Category.Monoidal.Applicative.html#empty" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L55" class="link"
+	      >Comments</a
+	      > <a href="#v:empty" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:alt" class="def"
+	      >alt</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j) (b :: j) (c :: j). ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > c) -&gt; (f a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > f b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > f c <a href="src/Proarrow.Category.Monoidal.Applicative.html#alt" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L55" class="link"
+	      >Comments</a
+	      > <a href="#v:alt" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Alternative"
+	    >Instances</h4
+	    ><details id="i:Alternative" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Alternative:Alternative:1"
+		      ></span
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Control-Applicative.html#t:Alternative" title="Control.Applicative"
+		      >Alternative</a
+		      > f =&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alternative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Alternative</a
+		      > (<a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+		      >Prelude</a
+		      > f :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-59" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L59" class="link"
+		    >Comments</a
+		    > <a href="#t:Alternative" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Alternative:Alternative:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:empty"
+			  >empty</a
+			  > :: <a href="Proarrow-Object-Terminal.html#t:El" title="Proarrow.Object.Terminal"
+			  >El</a
+			  > (<a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f a) <a href="src/Proarrow.Category.Monoidal.Applicative.html#empty" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L56" class="link"
+			  >Comments</a
+			  > <a href="#v:empty" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:alt"
+			  >alt</a
+			  > :: ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c) -&gt; (<a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > <a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Functor.html#t:Prelude" title="Proarrow.Functor"
+			  >Prelude</a
+			  > f c <a href="src/Proarrow.Category.Monoidal.Applicative.html#alt" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L57" class="link"
+			  >Comments</a
+			  > <a href="#v:alt" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Category-Monoidal-Applicative.html#t:Proapplicative" title="Proarrow.Category.Monoidal.Applicative"
+	    >Proapplicative</a
+	    > p =&gt; <a id="t:Proalternative" class="def"
+	    >Proalternative</a
+	    > (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#Proalternative" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L64" class="link"
+	    >Comments</a
+	    > <a href="#t:Proalternative" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:emptyP" class="def"
+	      >emptyP</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j) (b :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; p a b <a href="src/Proarrow.Category.Monoidal.Applicative.html#emptyP" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L64" class="link"
+	      >Comments</a
+	      > <a href="#v:emptyP" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:altP" class="def"
+	      >altP</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: j) (b :: k). p a b -&gt; p a b -&gt; p a b <a href="src/Proarrow.Category.Monoidal.Applicative.html#altP" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L64" class="link"
+	      >Comments</a
+	      > <a href="#v:altP" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Proalternative"
+	    >Instances</h4
+	    ><details id="i:Proalternative" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Proalternative:Proalternative:1"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alternative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Alternative</a
+		      > f =&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Proalternative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Proalternative</a
+		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+		      >Star</a
+		      > f :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-68" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L68" class="link"
+		    >Comments</a
+		    > <a href="#t:Proalternative" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Proalternative:Proalternative:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:emptyP"
+			  >emptyP</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b <a href="src/Proarrow.Category.Monoidal.Applicative.html#emptyP" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L65" class="link"
+			  >Comments</a
+			  > <a href="#v:emptyP" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:altP"
+			  >altP</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: k). <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b <a href="src/Proarrow.Category.Monoidal.Applicative.html#altP" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L66" class="link"
+			  >Comments</a
+			  > <a href="#v:altP" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Alt" class="def"
+	    >Alt</a
+	    > (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > j k) (a :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+	    >PROD</a
+	    > j) (b :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+	    >COPROD</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#Alt" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L75" class="link"
+	    >Comments</a
+	    > <a href="#t:Alt" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Alt" class="def"
+		  >Alt</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {j} {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		  >PRO</a
+		  > j k) (a1 :: j) (b1 :: k). p a1 b1 -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+		  >Alt</a
+		  > p ('<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+		  >PR</a
+		  > a1) ('<a href="Proarrow-Object-BinaryCoproduct.html#v:COPR" title="Proarrow.Object.BinaryCoproduct"
+		  >COPR</a
+		  > b1)</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Alt"
+	    >Instances</h4
+	    ><details id="i:Alt" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Alt:MonoidalProfunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Object-BinaryProduct.html#t:HasProducts" title="Proarrow.Object.BinaryProduct"
+		      >HasProducts</a
+		      > j, <a href="Proarrow-Object-BinaryCoproduct.html#t:HasCoproducts" title="Proarrow.Object.BinaryCoproduct"
+		      >HasCoproducts</a
+		      > k, <a href="Proarrow-Category-Monoidal-Applicative.html#t:Proalternative" title="Proarrow.Category.Monoidal.Applicative"
+		      >Proalternative</a
+		      > p) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+		      >Alt</a
+		      > p :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > j -&gt; <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+		      >COPROD</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-80" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L80" class="link"
+		    >Comments</a
+		    > <a href="#t:Alt" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Alt:MonoidalProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift0"
+			  >lift0</a
+			  > :: <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+			  >Alt</a
+			  > p (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k) <a href="src/Proarrow.Category.Monoidal.html#lift0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L158" class="link"
+			  >Comments</a
+			  > <a href="#v:lift0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lift2"
+			  >lift2</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x1 :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (x2 :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k) (y1 :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (y2 :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k). <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+			  >Alt</a
+			  > p x1 x2 -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+			  >Alt</a
+			  > p y1 y2 -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+			  >Alt</a
+			  > p (x1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y1) (x2 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y2) <a href="src/Proarrow.Category.Monoidal.html#lift2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L159" class="link"
+			  >Comments</a
+			  > <a href="#v:lift2" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Alt:Profunctor:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+		      >Alt</a
+		      > p :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > j -&gt; <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+		      >COPROD</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Applicative.html#line-77" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Applicative.hs#L77" class="link"
+		    >Comments</a
+		    > <a href="#t:Alt" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Alt:Profunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Applicative.html"
+			>Proarrow.Category.Monoidal.Applicative</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (a :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (b :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k) (d :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+			  >Alt</a
+			  > p a b -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+			  >Alt</a
+			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > j) (b :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Monoidal-Applicative.html#t:Alt" title="Proarrow.Category.Monoidal.Applicative"
+			  >Alt</a
+			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

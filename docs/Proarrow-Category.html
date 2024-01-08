@@ -1,1 +1,3433 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Proarrow.Category</title><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial" /><link rel="stylesheet" type="text/css" href="quick-jump.css" /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700" /><script src="haddock-bundle.min.js" async="async" type="text/javascript"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script></head><body><div id="package-header"><span class="caption">proarrow-0: Category theory with a central role for profunctors</span><ul class="links" id="page-menu"><li id="quick-jump-button"><a href="#">Quick Jump</a></li><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul></div><div id="content"><div id="module-header"><table class="info"><tr><th>Safe Haskell</th><td>Safe-Inferred</td></tr><tr><th>Language</th><td>Haskell2010</td></tr></table><p class="caption">Proarrow.Category</p></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src"><span class="keyword">type</span> <a id="t:CAT" class="def">CAT</a> k = <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> k k <a href="#t:CAT" class="selflink">#</a></p></div><div class="top"><p class="src"><span class="keyword">class</span> <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core">Promonad</a> (<a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k) =&gt; <a id="t:CategoryOf" class="def">CategoryOf</a> k <a href="#t:CategoryOf" class="selflink">#</a></p><div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a id="t:-126--62-" class="def">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <span class="fixity">infixr 0</span><span class="rightedge"></span> <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a id="t:Ob" class="def">Ob</a> (a :: k) :: <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Kind.html#t:Constraint" title="Data.Kind">Constraint</a> <a href="#t:Ob" class="selflink">#</a></p> <div class="subs default"><p class="caption"></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a = ()</p></div></div><div class="subs instances"><h4 class="instances details-toggle-control details-toggle" data-details-id="i:CategoryOf">Instances</h4><details id="i:CategoryOf" open="open"><summary class="hide-when-js-enabled">Instances details</summary><table><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:1"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool">BOOL</a></span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>The category of 2 objects and one arrow between them, a.k.a. the walking arrow.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:1"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Bool.html">Proarrow.Category.Instance.Bool</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:2"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat">KIND</a></span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>The category of categories and profunctors between them.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:2"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Cat.html">Proarrow.Category.Instance.Cat</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:3"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint">CONSTRAINT</a></span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:3"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Constraint.html">Proarrow.Category.Instance.Constraint</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:4"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit">UNIT</a></span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>The category with one object, the terminal category.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:4"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Unit.html">Proarrow.Category.Instance.Unit</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:5"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero">VOID</a></span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>The category with no objects, the initial category.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:5"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Zero.html">Proarrow.Category.Instance.Zero</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:6"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a></span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:6"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Core.html">Proarrow.Core</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:7"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite">OPPOSITE</a> k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>The opposite category of category <code>c</code>.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:7"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Opposite.html">Proarrow.Category.Opposite</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:8"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> [k]</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:8"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-List.html">Proarrow.Category.Instance.List</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:9"></span> (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> j, <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct">COPRODUCT</a> j k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:9"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Coproduct.html">Proarrow.Category.Instance.Coproduct</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:10"></span> <a href="Proarrow-Category-Instance-Free.html#t:Rewrite" title="Proarrow.Category.Instance.Free">Rewrite</a> g =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free">FREE</a> g)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:10"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Free.html">Proarrow.Category.Instance.Free</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:11"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Instance-Nat.html#t:NatK" title="Proarrow.Category.Instance.Nat">NatK</a> j k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:11"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Nat.html">Proarrow.Category.Instance.Nat</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:12"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>The subcategory with objects with instances of the given constraint <code>ob</code>.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:12"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Subcategory.html">Proarrow.Category.Instance.Subcategory</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:13"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core">PRO</a> j k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>The category of profunctors and natural transformations between them.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:13"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Prof.html">Proarrow.Category.Instance.Prof</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:14"></span> <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core">Promonad</a> p =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Promonad.html#t:KLEISLI" title="Proarrow.Promonad">KLEISLI</a> p)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc"><p>Every promonad makes a category.</p></td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:14"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Promonad.html">Proarrow.Promonad</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:15"></span> (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k1, <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k2) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (k1, k2)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:15"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Product.html">Proarrow.Category.Instance.Product</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:16"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:16"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Nat.html">Proarrow.Category.Instance.Nat</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:17"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (k1 -&gt; k2 -&gt; k3 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:17"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Nat.html">Proarrow.Category.Instance.Nat</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:18"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:18"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Instance-Nat.html">Proarrow.Category.Instance.Nat</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:19"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory">Path</a> (<a href="Proarrow-Category-Bicategory-Bidiscrete.html#t:VoidK" title="Proarrow.Category.Bicategory.Bidiscrete">VoidK</a> :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core">Kind</a> -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core">Kind</a> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) j k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:19"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Bicategory-Bidiscrete.html">Proarrow.Category.Bicategory.Bidiscrete</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:20"></span> <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory">Path</a> kk j k) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory">Path</a> (<a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co">COK</a> kk) j k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:20"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Bicategory-Co.html">Proarrow.Category.Bicategory.Co</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:21"></span> <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal">Monoidal</a> m =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory">Path</a> (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi">MonK</a> m) i j)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:21"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html">Proarrow.Category.Bicategory.MonoidalAsBi</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:22"></span> (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> j, <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory">Path</a> (<a href="Proarrow-Category-Bicategory-Prof.html#t:ProfK" title="Proarrow.Category.Bicategory.Prof">ProfK</a> cl) j k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:22"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Bicategory-Prof.html">Proarrow.Category.Bicategory.Prof</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:23"></span> (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> j, <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> k) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category">CategoryOf</a> (<a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory">Path</a> (-&gt;) j k)</span> <a href="#t:CategoryOf" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:ic:CategoryOf:CategoryOf:23"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Category-Bicategory-Cat.html">Proarrow.Category.Bicategory.Cat</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category">(~&gt;)</a> :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category">CAT</a> k <a href="#t:-126--62-" class="selflink">#</a></p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category">Ob</a> a <a href="#t:Ob" class="selflink">#</a></p></div></details></td></tr></table></details></div></div><div class="top"><p class="src"><a id="v:dimapDefault" class="def">dimapDefault</a> :: <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core">Promonad</a> p =&gt; p c a -&gt; p b d -&gt; p a b -&gt; p c d <a href="#v:dimapDefault" class="selflink">#</a></p></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.29.1</p></div></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Category</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Category.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Category</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:CAT" class="def"
+	    >CAT</a
+	    > k = <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > k k <a href="src/Proarrow.Core.html#CAT" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L15" class="link"
+	    >Comments</a
+	    > <a href="#t:CAT" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+	    >Promonad</a
+	    > (<a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category"
+	    >CAT</a
+	    > k) =&gt; <a id="t:CategoryOf" class="def"
+	    >CategoryOf</a
+	    > k <a href="src/Proarrow.Core.html#CategoryOf" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L23" class="link"
+	    >Comments</a
+	    > <a href="#t:CategoryOf" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:-126--62-" class="def"
+	      >(~&gt;)</a
+	      > :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category"
+	      >CAT</a
+	      > k <span class="fixity"
+	      >infixr 0</span
+	      ><span class="rightedge"
+	      ></span
+	      > <a href="src/Proarrow.Core.html#~%3E" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:-126--62-" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:Ob" class="def"
+	      >Ob</a
+	      > (a :: k) <a href="src/Proarrow.Core.html#Ob" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:Ob" class="selflink"
+	      >#</a
+	      ></p
+	    > <div class="subs default"
+	    ><p class="caption"
+	      ></p
+	      ><p class="src"
+	      ><span class="keyword"
+		>type</span
+		> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+		>Ob</a
+		> (a :: k) = <a href="Proarrow-Core.html#t:Any" title="Proarrow.Core"
+		>Any</a
+		> a</p
+	      ></div
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:CategoryOf"
+	    >Instances</h4
+	    ><details id="i:CategoryOf" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:1"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+		      >BOOL</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Bool.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The category of 2 objects and one arrow between them, a.k.a. the walking arrow.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Bool.html"
+			>Proarrow.Category.Instance.Bool</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-BOOL:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-BOOL:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Bool.html"
+				  >Proarrow.Category.Instance.Bool</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+				  >Booleans</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:ObBOOLb:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				>BOOL</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:ObBOOLb:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Bool.html"
+				  >Proarrow.Category.Instance.Bool</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				  >BOOL</a
+				  >) = <a href="Proarrow-Category-Instance-Bool.html#t:IsBool" title="Proarrow.Category.Instance.Bool"
+				  >IsBool</a
+				  > b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:2"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+		      >KIND</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Cat.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The category of categories and profunctors between them.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Cat.html"
+			>Proarrow.Category.Instance.Cat</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-KIND:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-KIND:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Cat.html"
+				  >Proarrow.Category.Instance.Cat</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Cat.html#t:Cat" title="Proarrow.Category.Instance.Cat"
+				  >Cat</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:ObKINDc:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (c :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+				>KIND</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:ObKINDc:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Cat.html"
+				  >Proarrow.Category.Instance.Cat</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (c :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+				  >KIND</a
+				  >) = (<a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
+				  >Is</a
+				  > '<a href="Proarrow-Category-Instance-Cat.html#v:K" title="Proarrow.Category.Instance.Cat"
+				  >K</a
+				  > c, <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+				  >CategoryOf</a
+				  > (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+				  >UN</a
+				  > '<a href="Proarrow-Category-Instance-Cat.html#v:K" title="Proarrow.Category.Instance.Cat"
+				  >K</a
+				  > c))</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:3"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+		      >CONSTRAINT</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Constraint.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Constraint.html"
+			>Proarrow.Category.Instance.Constraint</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-CONSTRAINT:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-CONSTRAINT:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Constraint.html"
+				  >Proarrow.Category.Instance.Constraint</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+				  >(:-)</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:ObCONSTRAINTa:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				>CONSTRAINT</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:ObCONSTRAINTa:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Constraint.html"
+				  >Proarrow.Category.Instance.Constraint</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				  >CONSTRAINT</a
+				  >) = <a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
+				  >Is</a
+				  > '<a href="Proarrow-Category-Instance-Constraint.html#v:CNSTRNT" title="Proarrow.Category.Instance.Constraint"
+				  >CNSTRNT</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:4"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+		      >LINEAR</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Linear.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >Category of linear functions.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Linear.html"
+			>Proarrow.Category.Instance.Linear</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-LINEAR:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-LINEAR:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Linear.html"
+				  >Proarrow.Category.Instance.Linear</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Linear.html#t:Linear" title="Proarrow.Category.Instance.Linear"
+				  >Linear</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:ObLINEARa:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+				>LINEAR</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:ObLINEARa:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Linear.html"
+				  >Proarrow.Category.Instance.Linear</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+				  >LINEAR</a
+				  >) = <a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
+				  >Is</a
+				  > '<a href="Proarrow-Category-Instance-Linear.html#t:L" title="Proarrow.Category.Instance.Linear"
+				  >L</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:5"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+		      >Nat</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Simplex.html#line-40" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L40" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Simplex.html"
+			>Proarrow.Category.Instance.Simplex</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-Nat:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-Nat:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Simplex.html"
+				  >Proarrow.Category.Instance.Simplex</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Simplex.html#t:Simplex" title="Proarrow.Category.Instance.Simplex"
+				  >Simplex</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:ObNata:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (a :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+				>Nat</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:ObNata:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Simplex.html"
+				  >Proarrow.Category.Instance.Simplex</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (a :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
+				  >Nat</a
+				  >) = <a href="Proarrow-Category-Instance-Simplex.html#t:IsNat" title="Proarrow.Category.Instance.Simplex"
+				  >IsNat</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:6"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+		      >UNIT</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Unit.html#line-18" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L18" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The category with one object, the terminal category.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Unit.html"
+			>Proarrow.Category.Instance.Unit</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-UNIT:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-UNIT:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Unit.html"
+				  >Proarrow.Category.Instance.Unit</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+				  >Unit</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:ObUNITa:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+				>UNIT</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:ObUNITa:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Unit.html"
+				  >Proarrow.Category.Instance.Unit</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
+				  >UNIT</a
+				  >) = a <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+				  >~</a
+				  > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
+				  >U</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:7"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+		      >VOID</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Zero.html#line-14" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L14" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The category with no objects, the initial category.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Zero.html"
+			>Proarrow.Category.Instance.Zero</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-VOID:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-VOID:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Zero.html"
+				  >Proarrow.Category.Instance.Zero</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+				  >Zero</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:ObVOIDa:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				>VOID</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:ObVOIDa:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Zero.html"
+				  >Proarrow.Category.Instance.Zero</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				  >VOID</a
+				  >) = <a href="Proarrow-Category-Instance-Zero.html#t:IsVoid" title="Proarrow.Category.Instance.Zero"
+				  >IsVoid</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:8"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      ></span
+		    > <a href="src/Proarrow.Core.html#line-80" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L80" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Core.html"
+			>Proarrow.Core</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-TYPE:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-TYPE:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Core.html"
+				  >Proarrow.Core</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = (-&gt;)</div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:R:ObTYPEa:Ob:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				>Ob</a
+				> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:R:ObTYPEa:Ob:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Core.html"
+				  >Proarrow.Core</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+				  >Ob</a
+				  > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) = <a href="Proarrow-Core.html#t:Any" title="Proarrow.Core"
+				  >Any</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:9"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Instance-List.html#t:LIST" title="Proarrow.Category.Instance.List"
+		      >LIST</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Instance.List.html#line-24" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L24" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:9"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-List.html"
+			>Proarrow.Category.Instance.List</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-LIST:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-LIST:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-List.html"
+				  >Proarrow.Category.Instance.List</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-List.html#t:List" title="Proarrow.Category.Instance.List"
+				  >List</a
+				  > :: <a href="Proarrow-Category-Instance-List.html#t:LIST" title="Proarrow.Category.Instance.List"
+				  >LIST</a
+				  > k -&gt; <a href="Proarrow-Category-Instance-List.html#t:LIST" title="Proarrow.Category.Instance.List"
+				  >LIST</a
+				  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:10"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Monoidal-Rev.html#t:REV" title="Proarrow.Category.Monoidal.Rev"
+		      >REV</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Rev.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:10"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Rev.html"
+			>Proarrow.Category.Monoidal.Rev</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-REV:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-REV:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Monoidal-Rev.html"
+				  >Proarrow.Category.Monoidal.Rev</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Monoidal-Rev.html#t:Rev" title="Proarrow.Category.Monoidal.Rev"
+				  >Rev</a
+				  > :: <a href="Proarrow-Category-Monoidal-Rev.html#t:REV" title="Proarrow.Category.Monoidal.Rev"
+				  >REV</a
+				  > k -&gt; <a href="Proarrow-Category-Monoidal-Rev.html#t:REV" title="Proarrow.Category.Monoidal.Rev"
+				  >REV</a
+				  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:11"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Opposite.html#line-27" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L27" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The opposite category of the category of <code
+		      >k</code
+		      >.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:11"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Opposite.html"
+			>Proarrow.Category.Opposite</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-OPPOSITE:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-OPPOSITE:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Opposite.html"
+				  >Proarrow.Category.Opposite</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+				  >Op</a
+				  > (<a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category"
+				  >CAT</a
+				  > k)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:12"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+		      >COPROD</a
+		      > k)</span
+		    > <a href="src/Proarrow.Object.BinaryCoproduct.html#line-75" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L75" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:12"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-BinaryCoproduct.html"
+			>Proarrow.Object.BinaryCoproduct</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-COPROD:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-COPROD:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Object-BinaryCoproduct.html"
+				  >Proarrow.Object.BinaryCoproduct</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Object-BinaryCoproduct.html#t:Coprod" title="Proarrow.Object.BinaryCoproduct"
+				  >Coprod</a
+				  > :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+				  >COPROD</a
+				  > k -&gt; <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+				  >COPROD</a
+				  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:13"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > k)</span
+		    > <a href="src/Proarrow.Object.BinaryProduct.html#line-113" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L113" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:13"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-BinaryProduct.html"
+			>Proarrow.Object.BinaryProduct</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-PROD:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-PROD:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Object-BinaryProduct.html"
+				  >Proarrow.Object.BinaryProduct</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Object-BinaryProduct.html#t:Prod" title="Proarrow.Object.BinaryProduct"
+				  >Prod</a
+				  > :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+				  >PROD</a
+				  > k -&gt; <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+				  >PROD</a
+				  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:14"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > [k]</span
+		    > <a href="src/Proarrow.Category.Monoidal.html#line-107" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L107" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:14"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal.html"
+			>Proarrow.Category.Monoidal</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-List:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-List:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Monoidal.html"
+				  >Proarrow.Category.Monoidal</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Monoidal.html#t:Strictified" title="Proarrow.Category.Monoidal"
+				  >Strictified</a
+				  > :: [k] -&gt; [k] -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:15"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-Bidiscrete.html#t:DiscreteK" title="Proarrow.Category.Bicategory.Bidiscrete"
+		      >DiscreteK</a
+		      > j k)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Bidiscrete.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:15"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Bidiscrete.html"
+			>Proarrow.Category.Bicategory.Bidiscrete</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-DiscreteK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-DiscreteK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-Bidiscrete.html"
+				  >Proarrow.Category.Bicategory.Bidiscrete</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-Bidiscrete.html#t:Bidiscrete" title="Proarrow.Category.Bicategory.Bidiscrete"
+				  >Bidiscrete</a
+				  > :: <a href="Proarrow-Category-Bicategory-Bidiscrete.html#t:DiscreteK" title="Proarrow.Category.Bicategory.Bidiscrete"
+				  >DiscreteK</a
+				  > j k -&gt; <a href="Proarrow-Category-Bicategory-Bidiscrete.html#t:DiscreteK" title="Proarrow.Category.Bicategory.Bidiscrete"
+				  >DiscreteK</a
+				  > j k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:16"
+		      ></span
+		      > (j <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      >~</a
+		      > '<a href="Proarrow-Category-Bicategory-Terminal.html#v:T0" title="Proarrow.Category.Bicategory.Terminal"
+		      >T0</a
+		      >, k <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      >~</a
+		      > '<a href="Proarrow-Category-Bicategory-Terminal.html#v:T0" title="Proarrow.Category.Bicategory.Terminal"
+		      >T0</a
+		      >) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-Terminal.html#t:TERMK" title="Proarrow.Category.Bicategory.Terminal"
+		      >TERMK</a
+		      > j k)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Terminal.html#line-24" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L24" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:16"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Terminal.html"
+			>Proarrow.Category.Bicategory.Terminal</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-TERMK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-TERMK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-Terminal.html"
+				  >Proarrow.Category.Bicategory.Terminal</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-Terminal.html#t:Terminal" title="Proarrow.Category.Bicategory.Terminal"
+				  >Terminal</a
+				  > :: <a href="Proarrow-Category-Bicategory-Terminal.html#t:TERMK" title="Proarrow.Category.Bicategory.Terminal"
+				  >TERMK</a
+				  > j k -&gt; <a href="Proarrow-Category-Bicategory-Terminal.html#t:TERMK" title="Proarrow.Category.Bicategory.Terminal"
+				  >TERMK</a
+				  > j k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:17"
+		      ></span
+		      > (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > j, <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+		      >COPRODUCT</a
+		      > j k)</span
+		    > <a href="src/Proarrow.Category.Instance.Coproduct.html#line-22" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L22" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:17"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Coproduct.html"
+			>Proarrow.Category.Instance.Coproduct</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-COPRODUCT:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-COPRODUCT:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Coproduct.html"
+				  >Proarrow.Category.Instance.Coproduct</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = (<a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category"
+				  >CAT</a
+				  > j) <a href="Proarrow-Category-Instance-Coproduct.html#t::-43--43-:" title="Proarrow.Category.Instance.Coproduct"
+				  >:++:</a
+				  > (<a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category"
+				  >CAT</a
+				  > k)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:18"
+		      ></span
+		      > <a href="Proarrow-Category-Instance-Free.html#t:Rewrite" title="Proarrow.Category.Instance.Free"
+		      >Rewrite</a
+		      > g =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      >FREE</a
+		      > g)</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:18"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Free.html"
+			>Proarrow.Category.Instance.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-FREE:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-FREE:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Free.html"
+				  >Proarrow.Category.Instance.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
+				  >Free</a
+				  > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+				  >FREE</a
+				  > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+				  >FREE</a
+				  > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:19"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-22" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L22" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >Every promonad makes a category.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:19"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-KLEISLI:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-KLEISLI:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+				  >Proarrow.Category.Instance.Kleisli</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+				  >Kleisli</a
+				  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+				  >KLEISLI</a
+				  > p -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+				  >KLEISLI</a
+				  > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:20"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Instance-Nat.html#t:NatK" title="Proarrow.Category.Instance.Nat"
+		      >NatK</a
+		      > j k)</span
+		    > <a href="src/Proarrow.Category.Instance.Nat.html#line-138" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L138" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:20"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Nat.html"
+			>Proarrow.Category.Instance.Nat</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-NatK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-NatK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Nat.html"
+				  >Proarrow.Category.Instance.Nat</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Nat.html#t:Nat-39-" title="Proarrow.Category.Instance.Nat"
+				  >Nat'</a
+				  > :: <a href="Proarrow-Category-Instance-Nat.html#t:NatK" title="Proarrow.Category.Instance.Nat"
+				  >NatK</a
+				  > j k -&gt; <a href="Proarrow-Category-Instance-Nat.html#t:NatK" title="Proarrow.Category.Instance.Nat"
+				  >NatK</a
+				  > j k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:21"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob)</span
+		    > <a href="src/Proarrow.Category.Instance.Sub.html#line-23" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L23" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The subcategory with objects with instances of the given constraint <code
+		      >ob</code
+		      >.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:21"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Sub.html"
+			>Proarrow.Category.Instance.Sub</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-SUBCAT:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-SUBCAT:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Sub.html"
+				  >Proarrow.Category.Instance.Sub</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Sub.html#t:Sub" title="Proarrow.Category.Instance.Sub"
+				  >Sub</a
+				  > :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+				  >SUBCAT</a
+				  > ob -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+				  >SUBCAT</a
+				  > ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:22"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > j k)</span
+		    > <a href="src/Proarrow.Category.Instance.Prof.html#line-13" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L13" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The category of profunctors and natural transformations between them.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:22"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Prof.html"
+			>Proarrow.Category.Instance.Prof</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-FUN:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-FUN:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Prof.html"
+				  >Proarrow.Category.Instance.Prof</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Prof.html#t:Prof" title="Proarrow.Category.Instance.Prof"
+				  >Prof</a
+				  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+				  >PRO</a
+				  > j k -&gt; <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+				  >PRO</a
+				  > j k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:23"
+		      ></span
+		      > (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k1, <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k2) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (k1, k2)</span
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-19" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L19" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:23"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
+			>Proarrow.Category.Instance.Product</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-Tuple2:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-Tuple2:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Product.html"
+				  >Proarrow.Category.Instance.Product</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = (<a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category"
+				  >CAT</a
+				  > k1) <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+				  >:**:</a
+				  > (<a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > :: <a href="Proarrow-Category.html#t:CAT" title="Proarrow.Category"
+				  >CAT</a
+				  > k2)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:24"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Nat.html#line-114" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L114" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:24"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Nat.html"
+			>Proarrow.Category.Instance.Nat</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-FUN:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-FUN:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Nat.html"
+				  >Proarrow.Category.Instance.Nat</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Nat.html#t:Nat" title="Proarrow.Category.Instance.Nat"
+				  >Nat</a
+				  > :: (k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; (k1 -&gt; k2 -&gt; k3 -&gt; k4 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:25"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (k1 -&gt; k2 -&gt; k3 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Nat.html#line-99" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L99" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:25"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Nat.html"
+			>Proarrow.Category.Instance.Nat</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-FUN0:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-FUN0:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Nat.html"
+				  >Proarrow.Category.Instance.Nat</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Nat.html#t:Nat" title="Proarrow.Category.Instance.Nat"
+				  >Nat</a
+				  > :: (k1 -&gt; k2 -&gt; k3 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; (k1 -&gt; k2 -&gt; k3 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:26"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Nat.html#line-27" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L27" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:26"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Nat.html"
+			>Proarrow.Category.Instance.Nat</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-FUN1:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-FUN1:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Nat.html"
+				  >Proarrow.Category.Instance.Nat</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Nat.html#t:Nat" title="Proarrow.Category.Instance.Nat"
+				  >Nat</a
+				  > :: (k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; (k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:27"
+		      ></span
+		      > (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k, <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+		      >Ob</a
+		      > i, <a href="Proarrow-Category.html#t:Ob" title="Proarrow.Category"
+		      >Ob</a
+		      > j) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-CategoryAsBi.html#t:PLAINK" title="Proarrow.Category.Bicategory.CategoryAsBi"
+		      >PLAINK</a
+		      > k i j)</span
+		    > <a href="src/Proarrow.Category.Bicategory.CategoryAsBi.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:27"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-CategoryAsBi.html"
+			>Proarrow.Category.Bicategory.CategoryAsBi</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-PLAINK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-PLAINK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-CategoryAsBi.html"
+				  >Proarrow.Category.Bicategory.CategoryAsBi</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-CategoryAsBi.html#t:Category" title="Proarrow.Category.Bicategory.CategoryAsBi"
+				  >Category</a
+				  > :: <a href="Proarrow-Category-Bicategory-CategoryAsBi.html#t:PLAINK" title="Proarrow.Category.Bicategory.CategoryAsBi"
+				  >PLAINK</a
+				  > k i j -&gt; <a href="Proarrow-Category-Bicategory-CategoryAsBi.html#t:PLAINK" title="Proarrow.Category.Bicategory.CategoryAsBi"
+				  >PLAINK</a
+				  > k i j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:28"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
+		      >MonK</a
+		      > k i j)</span
+		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-19" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L19" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:28"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html"
+			>Proarrow.Category.Bicategory.MonoidalAsBi</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-MonK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-MonK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html"
+				  >Proarrow.Category.Bicategory.MonoidalAsBi</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:Mon2" title="Proarrow.Category.Bicategory.MonoidalAsBi"
+				  >Mon2</a
+				  > :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
+				  >MonK</a
+				  > k i j -&gt; <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
+				  >MonK</a
+				  > k i j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:29"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-Prof.html#t:ProfK" title="Proarrow.Category.Bicategory.Prof"
+		      >ProfK</a
+		      > cl j k)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-42" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L42" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:29"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Prof.html"
+			>Proarrow.Category.Bicategory.Prof</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-ProfK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-ProfK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-Prof.html"
+				  >Proarrow.Category.Bicategory.Prof</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-Prof.html#t:Prof" title="Proarrow.Category.Bicategory.Prof"
+				  >Prof</a
+				  > :: <a href="Proarrow-Category-Bicategory-Prof.html#t:ProfK" title="Proarrow.Category.Bicategory.Prof"
+				  >ProfK</a
+				  > cl j k -&gt; <a href="Proarrow-Category-Bicategory-Prof.html#t:ProfK" title="Proarrow.Category.Bicategory.Prof"
+				  >ProfK</a
+				  > cl j k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:30"
+		      ></span
+		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+		      >Bicategory</a
+		      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > kk k) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+		      >ENDO</a
+		      > kk k)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-30" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L30" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:30"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Endo.html"
+			>Proarrow.Category.Monoidal.Endo</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-ENDO:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-ENDO:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Monoidal-Endo.html"
+				  >Proarrow.Category.Monoidal.Endo</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Monoidal-Endo.html#t:Endo" title="Proarrow.Category.Monoidal.Endo"
+				  >Endo</a
+				  > :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+				  >ENDO</a
+				  > kk k -&gt; <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+				  >ENDO</a
+				  > kk k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:31"
+		      ></span
+		      > (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (kk j k2), <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > kk j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > kk k2, <a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+		      >Bicategory</a
+		      > kk) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory"
+		      >Path</a
+		      > kk j k2)</span
+		    > <a href="src/Proarrow.Category.Bicategory.html#line-165" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L165" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:31"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory.html"
+			>Proarrow.Category.Bicategory</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-Path:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-Path:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory.html"
+				  >Proarrow.Category.Bicategory</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory.html#t:Strictified" title="Proarrow.Category.Bicategory"
+				  >Strictified</a
+				  > :: <a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory"
+				  >Path</a
+				  > kk j k2 -&gt; <a href="Proarrow-Category-Bicategory.html#t:Path" title="Proarrow.Category.Bicategory"
+				  >Path</a
+				  > kk j k2 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:32"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (kk j k2) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co"
+		      >COK</a
+		      > kk j k2)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-25" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L25" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:32"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Co.html"
+			>Proarrow.Category.Bicategory.Co</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-COK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-COK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-Co.html"
+				  >Proarrow.Category.Bicategory.Co</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-Co.html#t:Co" title="Proarrow.Category.Bicategory.Co"
+				  >Co</a
+				  > :: <a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co"
+				  >COK</a
+				  > kk j k2 -&gt; <a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co"
+				  >COK</a
+				  > kk j k2 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:33"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (kk k2 j) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-Op.html#t:OPK" title="Proarrow.Category.Bicategory.Op"
+		      >OPK</a
+		      > kk j k2)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-23" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L23" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:33"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Op.html"
+			>Proarrow.Category.Bicategory.Op</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-OPK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-OPK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-Op.html"
+				  >Proarrow.Category.Bicategory.Op</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-Op.html#t:Op" title="Proarrow.Category.Bicategory.Op"
+				  >Op</a
+				  > :: <a href="Proarrow-Category-Bicategory-Op.html#t:OPK" title="Proarrow.Category.Bicategory.Op"
+				  >OPK</a
+				  > kk j k2 -&gt; <a href="Proarrow-Category-Bicategory-Op.html#t:OPK" title="Proarrow.Category.Bicategory.Op"
+				  >OPK</a
+				  > kk j k2 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:34"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (kk i j) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-Sub.html#t:SUBCAT" title="Proarrow.Category.Bicategory.Sub"
+		      >SUBCAT</a
+		      > tag kk i j)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Sub.html#line-30" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L30" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >The subcategory with objects with instances of the given constraint `IsOb tag`.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:34"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Sub.html"
+			>Proarrow.Category.Bicategory.Sub</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-SUBCAT:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-SUBCAT:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-Sub.html"
+				  >Proarrow.Category.Bicategory.Sub</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-Sub.html#t:Sub" title="Proarrow.Category.Bicategory.Sub"
+				  >Sub</a
+				  > :: <a href="Proarrow-Category-Bicategory-Sub.html#t:SUBCAT" title="Proarrow.Category.Bicategory.Sub"
+				  >SUBCAT</a
+				  > tag kk i j -&gt; <a href="Proarrow-Category-Bicategory-Sub.html#t:SUBCAT" title="Proarrow.Category.Bicategory.Sub"
+				  >SUBCAT</a
+				  > tag kk i j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:35"
+		      ></span
+		      > <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (kk i j) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Double-Quintet.html#t:QKK" title="Proarrow.Category.Double.Quintet"
+		      >QKK</a
+		      > kk i j)</span
+		    > <a href="src/Proarrow.Category.Double.Quintet.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:35"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Double-Quintet.html"
+			>Proarrow.Category.Double.Quintet</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-QKK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-QKK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Double-Quintet.html"
+				  >Proarrow.Category.Double.Quintet</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Double-Quintet.html#t:Q2" title="Proarrow.Category.Double.Quintet"
+				  >Q2</a
+				  > :: <a href="Proarrow-Category-Double-Quintet.html#t:QKK" title="Proarrow.Category.Double.Quintet"
+				  >QKK</a
+				  > kk i j -&gt; <a href="Proarrow-Category-Double-Quintet.html#t:QKK" title="Proarrow.Category.Double.Quintet"
+				  >QKK</a
+				  > kk i j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:36"
+		      ></span
+		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
+		      >MonoidalAction</a
+		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
+		      >MonoidalAction</a
+		      > m' d) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Monoidal-Optic.html#t:OPTIC" title="Proarrow.Category.Monoidal.Optic"
+		      >OPTIC</a
+		      > w c d)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-186" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L186" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:36"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Optic.html"
+			>Proarrow.Category.Monoidal.Optic</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-OPTIC:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-OPTIC:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Monoidal-Optic.html"
+				  >Proarrow.Category.Monoidal.Optic</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Monoidal-Optic.html#t:OpticCat" title="Proarrow.Category.Monoidal.Optic"
+				  >OpticCat</a
+				  > :: <a href="Proarrow-Category-Monoidal-Optic.html#t:OPTIC" title="Proarrow.Category.Monoidal.Optic"
+				  >OPTIC</a
+				  > w c d -&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:OPTIC" title="Proarrow.Category.Monoidal.Optic"
+				  >OPTIC</a
+				  > w c d -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CategoryOf:CategoryOf:37"
+		      ></span
+		      > (<a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (jj (<a href="Proarrow-Category-Bicategory-Product.html#t:Fst" title="Proarrow.Category.Bicategory.Product"
+		      >Fst</a
+		      > ik) (<a href="Proarrow-Category-Bicategory-Product.html#t:Fst" title="Proarrow.Category.Bicategory.Product"
+		      >Fst</a
+		      > jl)), <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (kk (<a href="Proarrow-Category-Bicategory-Product.html#t:Snd" title="Proarrow.Category.Bicategory.Product"
+		      >Snd</a
+		      > ik) (<a href="Proarrow-Category-Bicategory-Product.html#t:Snd" title="Proarrow.Category.Bicategory.Product"
+		      >Snd</a
+		      > jl))) =&gt; <a href="Proarrow-Category.html#t:CategoryOf" title="Proarrow.Category"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Bicategory-Product.html#t:PRODK" title="Proarrow.Category.Bicategory.Product"
+		      >PRODK</a
+		      > jj kk ik jl)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Product.html#line-28" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L28" class="link"
+		    >Comments</a
+		    > <a href="#t:CategoryOf" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CategoryOf:CategoryOf:37"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Product.html"
+			>Proarrow.Category.Bicategory.Product</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-PRODK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-PRODK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Bicategory-Product.html"
+				  >Proarrow.Category.Bicategory.Product</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category.html#t:-126--62-" title="Proarrow.Category"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Bicategory-Product.html#t:Prod" title="Proarrow.Category.Bicategory.Product"
+				  >Prod</a
+				  > :: <a href="Proarrow-Category-Bicategory-Product.html#t:PRODK" title="Proarrow.Category.Bicategory.Product"
+				  >PRODK</a
+				  > jj kk ik jl -&gt; <a href="Proarrow-Category-Bicategory-Product.html#t:PRODK" title="Proarrow.Category.Bicategory.Product"
+				  >PRODK</a
+				  > jj kk ik jl -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dimapDefault" class="def"
+	    >dimapDefault</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} p (c :: k) (a :: k) (b :: k) (d :: k). <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+	    >Promonad</a
+	    > p =&gt; p c a -&gt; p b d -&gt; p a b -&gt; p c d <a href="src/Proarrow.Core.html#dimapDefault" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category.hs#L50" class="link"
+	    >Comments</a
+	    > <a href="#v:dimapDefault" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

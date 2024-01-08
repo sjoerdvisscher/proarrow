@@ -1,0 +1,2544 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.MonoidalAsBi</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier"
+	  >Is</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Kind"
+	><span class="hs-identifier"
+	  >Kind</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html"
+	><span class="hs-identifier"
+	  >Proarrow.Monoid</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html#Monoid"
+	><span class="hs-identifier"
+	  >Monoid</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html#Comonoid"
+	><span class="hs-identifier"
+	  >Comonoid</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>M</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Monad"
+	><span class="hs-identifier"
+	  >Monad</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Comonad"
+	><span class="hs-identifier"
+	  >Comonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MonK"
+	><span class="hs-identifier hs-type"
+	  >MonK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Kind"
+	><span class="hs-identifier hs-type"
+	  >Kind</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >newtype</span
+      ><span
+      > </span
+      ><span id="MonK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MonK"
+	  ><span class="hs-identifier hs-var"
+	    >MonK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191176"
+      ><span class="annot"
+	><a href="#local-6989586621679191176"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191177"
+      ><span class="annot"
+	><a href="#local-6989586621679191177"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191178"
+      ><span class="annot"
+	><a href="#local-6989586621679191178"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="MK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	  ><span class="hs-identifier hs-var"
+	    >MK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191176"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191179"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	  ><span class="hs-identifier hs-type"
+	    >MK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	  ><span class="hs-identifier hs-type"
+	    >MK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679191179"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191179"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679191180"
+      ><span class="annot"
+	><a href="#local-6989586621679191180"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679191181"
+      ><span class="annot"
+	><a href="#local-6989586621679191181"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679191182"
+      ><span class="annot"
+	><a href="#local-6989586621679191182"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MonK"
+	><span class="hs-identifier hs-type"
+	  >MonK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191180"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191181"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191182"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Mon2"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	  ><span class="hs-identifier hs-var"
+	    >Mon2</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191183"
+      ><span class="annot"
+	><a href="#local-6989586621679191183"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191184"
+      ><span class="annot"
+	><a href="#local-6989586621679191184"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191185"
+      ><span id="local-6989586621679191186"
+	><span id="Mon2"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	      ><span class="hs-identifier hs-var"
+		>Mon2</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679191185"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679191186"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	    ><span class="hs-identifier hs-type"
+	      >Mon2</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	    ><span class="hs-identifier hs-type"
+	      >MK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679191185"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	    ><span class="hs-identifier hs-type"
+	      >MK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679191186"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >deriving</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679191195"
+      ><span id="local-6989586621679191209"
+	><span class="annot"
+	  ><span class="annottext"
+	    >CategoryOf (MonK k i j)
+(CategoryOf (MonK k i j), CategoryOf (MonK k i j)) =&gt;
+(forall (c :: MonK k i j) (a :: MonK k i j) (b :: MonK k i j)
+        (d :: MonK k i j).
+ (c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Mon2 a b -&gt; Mon2 c d)
+-&gt; (forall (a :: MonK k i j) (b :: MonK k i j) r.
+    ((Ob a, Ob b) =&gt; r) -&gt; Mon2 a b -&gt; r)
+-&gt; Profunctor Mon2
+forall {j} {k} (p :: PRO j k).
+(CategoryOf j, CategoryOf k) =&gt;
+(forall (c :: j) (a :: j) (b :: k) (d :: k).
+ (c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d)
+-&gt; (forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r)
+-&gt; Profunctor p
+forall k (i :: ()) (j :: ()).
+CategoryOf k =&gt;
+CategoryOf (MonK k i j)
+forall k (i :: ()) (j :: ()) (a :: MonK k i j) (b :: MonK k i j) r.
+CategoryOf k =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; Mon2 a b -&gt; r
+forall k (i :: ()) (j :: ()) (c :: MonK k i j) (a :: MonK k i j)
+       (b :: MonK k i j) (d :: MonK k i j).
+CategoryOf k =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Mon2 a b -&gt; Mon2 c d
+forall (a :: MonK k i j) (b :: MonK k i j) r.
+((Ob a, Ob b) =&gt; r) -&gt; Mon2 a b -&gt; r
+forall (c :: MonK k i j) (a :: MonK k i j) (b :: MonK k i j)
+       (d :: MonK k i j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Mon2 a b -&gt; Mon2 c d
+$cdimap :: forall k (i :: ()) (j :: ()) (c :: MonK k i j) (a :: MonK k i j)
+       (b :: MonK k i j) (d :: MonK k i j).
+CategoryOf k =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Mon2 a b -&gt; Mon2 c d
+dimap :: forall (c :: MonK k i j) (a :: MonK k i j) (b :: MonK k i j)
+       (d :: MonK k i j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Mon2 a b -&gt; Mon2 c d
+$c\\ :: forall k (i :: ()) (j :: ()) (a :: MonK k i j) (b :: MonK k i j) r.
+CategoryOf k =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; Mon2 a b -&gt; r
+\\ :: forall (a :: MonK k i j) (b :: MonK k i j) r.
+((Ob a, Ob b) =&gt; r) -&gt; Mon2 a b -&gt; r
+</span
+	    ><a href="Proarrow.Core.html#Profunctor"
+	    ><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var"
+	      >Profunctor</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679191230"
+      ><span id="local-6989586621679191240"
+	><span class="annot"
+	  ><span class="annottext"
+	    >Profunctor Mon2
+Profunctor Mon2 =&gt;
+(forall (a :: MonK k i j). Ob a =&gt; Mon2 a a)
+-&gt; (forall (b :: MonK k i j) (c :: MonK k i j) (a :: MonK k i j).
+    Mon2 b c -&gt; Mon2 a b -&gt; Mon2 a c)
+-&gt; Promonad Mon2
+forall k (i :: ()) (j :: ()). CategoryOf k =&gt; Profunctor Mon2
+forall k (i :: ()) (j :: ()) (a :: MonK k i j).
+(CategoryOf k, Ob a) =&gt;
+Mon2 a a
+forall k (i :: ()) (j :: ()) (b :: MonK k i j) (c :: MonK k i j)
+       (a :: MonK k i j).
+CategoryOf k =&gt;
+Mon2 b c -&gt; Mon2 a b -&gt; Mon2 a c
+forall {k} (p :: PRO k k).
+Profunctor p =&gt;
+(forall (a :: k). Ob a =&gt; p a a)
+-&gt; (forall (b :: k) (c :: k) (a :: k). p b c -&gt; p a b -&gt; p a c)
+-&gt; Promonad p
+forall (a :: MonK k i j). Ob a =&gt; Mon2 a a
+forall (b :: MonK k i j) (c :: MonK k i j) (a :: MonK k i j).
+Mon2 b c -&gt; Mon2 a b -&gt; Mon2 a c
+$cid :: forall k (i :: ()) (j :: ()) (a :: MonK k i j).
+(CategoryOf k, Ob a) =&gt;
+Mon2 a a
+id :: forall (a :: MonK k i j). Ob a =&gt; Mon2 a a
+$c. :: forall k (i :: ()) (j :: ()) (b :: MonK k i j) (c :: MonK k i j)
+       (a :: MonK k i j).
+CategoryOf k =&gt;
+Mon2 b c -&gt; Mon2 a b -&gt; Mon2 a c
+. :: forall (b :: MonK k i j) (c :: MonK k i j) (a :: MonK k i j).
+Mon2 b c -&gt; Mon2 a b -&gt; Mon2 a c
+</span
+	    ><a href="Proarrow.Core.html#Promonad"
+	    ><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var"
+	      >Promonad</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >via</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >(~&gt;)</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679191253"
+      ><span id="local-6989586621679191254"
+	><span id="local-6989586621679191255"
+	  ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679191253"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MonK"
+	      ><span class="hs-identifier hs-type"
+		>MonK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679191253"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679191254"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679191255"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191261"
+      ><span class="annot"
+	><a href="#local-6989586621679191261"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier hs-type"
+	  >Is</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	><span class="hs-identifier hs-type"
+	  >MK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191261"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	><span class="hs-identifier hs-type"
+	  >MK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191261"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | A monoidal category as a bicategory.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679191047"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	  ><span class="hs-identifier hs-type"
+	    >M.Monoidal</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679191047"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MonK"
+	  ><span class="hs-identifier hs-type"
+	    >MonK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679191047"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="I"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#I"
+	  ><span class="hs-identifier hs-var"
+	    >I</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	><span class="hs-identifier hs-type"
+	  >MK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >M.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679191288"
+      ><span id="local-6989586621679191289"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	    ><span class="hs-identifier hs-type"
+	      >MK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679191288"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="O"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Bicategory.html#O"
+	      ><span class="hs-operator hs-var"
+		>`O`</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	    ><span class="hs-identifier hs-type"
+	      >MK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679191289"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	><span class="hs-identifier hs-type"
+	  >MK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679191289"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >M.**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679191288"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191292"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191292"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191293"
+      ><span class="annot"
+	><span class="annottext"
+	  >o :: forall {k1 :: ()} (i :: ()) (j :: ()) (a :: MonK k i j)
+       (b :: MonK k i j) (c :: MonK k j k1) (d :: MonK k j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	  ><a href="#local-6989586621679191293"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`o`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191298"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191298"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** a) ~&gt; (b ** b)) -&gt; Mon2 ('MK (a ** a)) ('MK (b ** b))
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679191298"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; (a ** a) ~&gt; (b ** b)
+forall (a :: k) (b :: k) (c :: k) (d :: k).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+forall k (a :: k) (b :: k) (c :: k) (d :: k).
+Monoidal k =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`M.par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679191292"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191300"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob0 (MonK k) i, Ob0 (MonK k) j, Ob ps, Ob qs) =&gt; r
+</span
+	  ><a href="#local-6989586621679191300"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191301"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\\ :: forall (i :: ()) (j :: ()) (ps :: MonK k i j) (qs :: MonK k i j) r.
+((Ob0 (MonK k) i, Ob0 (MonK k) j, Ob ps, Ob qs) =&gt; r)
+-&gt; (ps ~&gt; qs) -&gt; r
+</span
+	  ><a href="#local-6989586621679191301"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191306"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191306"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob0 (MonK k) i, Ob0 (MonK k) j, Ob ps, Ob qs) =&gt; r
+</span
+	><a href="#local-6989586621679191300"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679191306"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191322"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (i :: ()) (j :: ()) (a :: MonK k i j). Obj a -&gt; O I a ~&gt; a
+</span
+	  ><a href="#local-6989586621679191322"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191329"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191329"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b ** Unit) ~&gt; b) -&gt; Mon2 ('MK (b ** Unit)) ('MK b)
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; (b ** Unit) ~&gt; b
+forall (a :: k). Obj a -&gt; (a ** Unit) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (a ** Unit) ~&gt; a
+</span
+	><a href="Proarrow.Category.Monoidal.html#rightUnitor"
+	><span class="hs-identifier hs-var"
+	  >M.rightUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191329"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191331"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (i :: ()) (j :: ()) (a :: MonK k i j). Obj a -&gt; a ~&gt; O I a
+</span
+	  ><a href="#local-6989586621679191331"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191338"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191338"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; (b ** Unit)) -&gt; Mon2 ('MK b) ('MK (b ** Unit))
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; b ~&gt; (b ** Unit)
+forall (a :: k). Obj a -&gt; a ~&gt; (a ** Unit)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (a ** Unit)
+</span
+	><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >M.rightUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191338"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191340"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (i :: ()) (j :: ()) (a :: MonK k i j). Obj a -&gt; O a I ~&gt; a
+</span
+	  ><a href="#local-6989586621679191340"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191347"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191347"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Unit ** b) ~&gt; b) -&gt; Mon2 ('MK (Unit ** b)) ('MK b)
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; (Unit ** b) ~&gt; b
+forall (a :: k). Obj a -&gt; (Unit ** a) ~&gt; a
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; (Unit ** a) ~&gt; a
+</span
+	><a href="Proarrow.Category.Monoidal.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >M.leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191347"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191349"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (i :: ()) (j :: ()) (a :: MonK k i j). Obj a -&gt; a ~&gt; O a I
+</span
+	  ><a href="#local-6989586621679191349"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191356"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191356"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; (Unit ** b)) -&gt; Mon2 ('MK b) ('MK (Unit ** b))
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; b ~&gt; (Unit ** b)
+forall (a :: k). Obj a -&gt; a ~&gt; (Unit ** a)
+forall k (a :: k). Monoidal k =&gt; Obj a -&gt; a ~&gt; (Unit ** a)
+</span
+	><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >M.leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191356"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191358"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall {j1 :: ()} {k1 :: ()} (i :: ()) (j2 :: ())
+       (a :: MonK k i j2) (b :: MonK k j2 j1) (c :: MonK k j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	  ><a href="#local-6989586621679191358"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191364"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191364"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191369"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191369"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191375"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191375"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b ** (b ** b)) ~&gt; ((b ** b) ** b))
+-&gt; Mon2 ('MK (b ** (b ** b))) ('MK ((b ** b) ** b))
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; Obj b -&gt; Obj b -&gt; (b ** (b ** b)) ~&gt; ((b ** b) ** b)
+forall (a :: k) (b :: k) (c :: k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span
+	><a href="Proarrow.Category.Monoidal.html#associatorInv"
+	><span class="hs-identifier hs-var"
+	  >M.associatorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191375"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191369"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191364"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191377"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall {j1 :: ()} {k1 :: ()} (i :: ()) (j2 :: ())
+       (a :: MonK k i j2) (b :: MonK k j2 j1) (c :: MonK k j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	  ><a href="#local-6989586621679191377"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191383"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191383"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191388"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191388"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-type"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679191394"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679191394"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((b ** b) ** b) ~&gt; (b ** (b ** b)))
+-&gt; Mon2 ('MK ((b ** b) ** b)) ('MK (b ** (b ** b)))
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; Obj b -&gt; Obj b -&gt; ((b ** b) ** b) ~&gt; (b ** (b ** b))
+forall (a :: k) (b :: k) (c :: k).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+forall k (a :: k) (b :: k) (c :: k).
+Monoidal k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span
+	><a href="Proarrow.Category.Monoidal.html#associator"
+	><span class="hs-identifier hs-var"
+	  >M.associator</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191394"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191388"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679191383"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Monoids in a monoidal category are monads when the monoidal category is seen as a bicategory.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679191146"
+      ><span class="annot"
+	><a href="Proarrow.Monoid.html#Monoid"
+	  ><span class="hs-identifier hs-type"
+	    >Monoid</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679191146"
+	  ><span class="hs-identifier hs-type"
+	    >m</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Monad"
+	  ><span class="hs-identifier hs-type"
+	    >Monad</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	  ><span class="hs-identifier hs-type"
+	    >MK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679191146"
+	  ><span class="hs-identifier hs-type"
+	    >m</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191416"
+      ><span class="annot"
+	><span class="annottext"
+	  >eta :: I ~&gt; 'MK m
+</span
+	  ><a href="#local-6989586621679191416"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >eta</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Unit ~&gt; m) -&gt; Mon2 ('MK Unit) ('MK m)
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Unit ~&gt; m
+forall {k} (m :: k). Monoid m =&gt; Unit ~&gt; m
+</span
+	><a href="Proarrow.Monoid.html#mempty"
+	><span class="hs-identifier hs-var"
+	  >mempty</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191420"
+      ><span class="annot"
+	><span class="annottext"
+	  >mu :: O ('MK m) ('MK m) ~&gt; 'MK m
+</span
+	  ><a href="#local-6989586621679191420"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mu</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((m ** m) ~&gt; m) -&gt; Mon2 ('MK (m ** m)) ('MK m)
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(m ** m) ~&gt; m
+forall {k} (m :: k). Monoid m =&gt; (m ** m) ~&gt; m
+</span
+	><a href="Proarrow.Monoid.html#mappend"
+	><span class="hs-identifier hs-var"
+	  >mappend</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Comonoids in a monoidal category are comonads when the monoidal category is seen as a bicategory.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679191160"
+      ><span class="annot"
+	><a href="Proarrow.Monoid.html#Comonoid"
+	  ><span class="hs-identifier hs-type"
+	    >Comonoid</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679191160"
+	  ><span class="hs-identifier hs-type"
+	    >m</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Comonad"
+	  ><span class="hs-identifier hs-type"
+	    >Comonad</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#MK"
+	  ><span class="hs-identifier hs-type"
+	    >MK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679191160"
+	  ><span class="hs-identifier hs-type"
+	    >m</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191443"
+      ><span class="annot"
+	><span class="annottext"
+	  >epsilon :: 'MK m ~&gt; I
+</span
+	  ><a href="#local-6989586621679191443"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >epsilon</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(m ~&gt; Unit) -&gt; Mon2 ('MK m) ('MK Unit)
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>m ~&gt; Unit
+forall k (c :: k). Comonoid c =&gt; c ~&gt; Unit
+</span
+	><a href="Proarrow.Monoid.html#counit"
+	><span class="hs-identifier hs-var"
+	  >counit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679191447"
+      ><span class="annot"
+	><span class="annottext"
+	  >delta :: 'MK m ~&gt; O ('MK m) ('MK m)
+</span
+	  ><a href="#local-6989586621679191447"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >delta</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(m ~&gt; (m ** m)) -&gt; Mon2 ('MK m) ('MK (m ** m))
+forall {k} {i :: ()} {j :: ()} (a :: k) (b :: k).
+(a ~&gt; b) -&gt; Mon2 ('MK a) ('MK b)
+</span
+	><a href="Proarrow.Category.Bicategory.MonoidalAsBi.html#Mon2"
+	><span class="hs-identifier hs-var"
+	  >Mon2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>m ~&gt; (m ** m)
+forall k (c :: k). Comonoid c =&gt; c ~&gt; (c ** c)
+</span
+	><a href="Proarrow.Monoid.html#comult"
+	><span class="hs-identifier hs-var"
+	  >comult</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ></pre
+    ></body
+  ></html
+>

@@ -1,1 +1,919 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Proarrow.Profunctor.Forget</title><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial" /><link rel="stylesheet" type="text/css" href="quick-jump.css" /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700" /><script src="haddock-bundle.min.js" async="async" type="text/javascript"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script></head><body><div id="package-header"><span class="caption">proarrow-0: Category theory with a central role for profunctors</span><ul class="links" id="page-menu"><li id="quick-jump-button"><a href="#">Quick Jump</a></li><li><a href="index.html">Contents</a></li><li><a href="doc-index.html">Index</a></li></ul></div><div id="content"><div id="module-header"><table class="info"><tr><th>Safe Haskell</th><td>Safe-Inferred</td></tr><tr><th>Language</th><td>Haskell2010</td></tr></table><p class="caption">Proarrow.Profunctor.Forget</p></div><div id="interface"><h1>Documentation</h1><div class="top"><p class="src"><span class="keyword">data</span> <a id="t:Forget" class="def">Forget</a> ob a b <span class="keyword">where</span> <a href="#t:Forget" class="selflink">#</a></p><div class="subs constructors"><p class="caption">Constructors</p><table><tr><td class="src"><a id="v:Forget" class="def">Forget</a> :: ob b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob a (<a href="Proarrow-Category-Instance-Subcategory.html#v:SUB" title="Proarrow.Category.Instance.Subcategory">SUB</a> b)</td><td class="doc empty">&nbsp;</td></tr></table></div><div class="subs instances"><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Forget">Instances</h4><details id="i:Forget" open="open"><summary class="hide-when-js-enabled">Instances details</summary><table><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:Adjunction:1"></span> <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction">Adjunction</a> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a>)</span> <a href="#t:Forget" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Forget:Adjunction:1"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:unit">unit</a> :: <span class="keyword">forall</span> (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a =&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a> <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a>) a a <a href="#v:unit" class="selflink">#</a></p><p class="src"><a href="#v:counit">counit</a> :: (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a>) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core">:~&gt;</a> <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">(~&gt;)</a> <a href="#v:counit" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:Profunctor:2"></span> <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core">CategoryOf</a> k =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob :: k -&gt; <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Forget" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Forget:Profunctor:2"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:dimap">dimap</a> :: <span class="keyword">forall</span> (c :: j) (a :: j) (b :: k0) (d :: k0). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> d) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob a b -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob c d <a href="#v:dimap" class="selflink">#</a></p><p class="src"><a href="#v:-92--92-">(\\)</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob a b -&gt; r <a href="#v:-92--92-" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:Representable:3"></span> <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core">CategoryOf</a> k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob :: k -&gt; <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:Forget" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Forget:Representable:3"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k0). <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k0) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k0) (b :: k0). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:-37-:4"></span> <span class="keyword">type</span> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob :: k -&gt; <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> ('<a href="Proarrow-Category-Instance-Subcategory.html#v:SUB" title="Proarrow.Category.Instance.Subcategory">SUB</a> a :: <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob)</span> <a href="#t:Forget" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:Forget:-37-:4"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="src"><span class="keyword">type</span> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> ob :: k -&gt; <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> ('<a href="Proarrow-Category-Instance-Subcategory.html#v:SUB" title="Proarrow.Category.Instance.Subcategory">SUB</a> a :: <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> ob) = a</div></details></td></tr></table></details></div></div><div class="top"><p class="src"><span class="keyword">data</span> <a id="t:List" class="def">List</a> a b <span class="keyword">where</span> <a href="#t:List" class="selflink">#</a></p><div class="subs constructors"><p class="caption">Constructors</p><table><tr><td class="src"><a id="v:List" class="def">List</a> :: <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a> a =&gt; (a -&gt; [b]) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> (<a href="Proarrow-Category-Instance-Subcategory.html#v:SUB" title="Proarrow.Category.Instance.Subcategory">SUB</a> a) b</td><td class="doc empty">&nbsp;</td></tr></table></div><div class="subs instances"><h4 class="instances details-toggle-control details-toggle" data-details-id="i:List">Instances</h4><details id="i:List" open="open"><summary class="hide-when-js-enabled">Instances details</summary><table><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:Adjunction:1"></span> <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction">Adjunction</a> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a>)</span> <a href="#t:List" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:List:Adjunction:1"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:unit">unit</a> :: <span class="keyword">forall</span> (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a =&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a> <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a>) a a <a href="#v:unit" class="selflink">#</a></p><p class="src"><a href="#v:counit">counit</a> :: (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition">:.:</a> <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget">Forget</a> <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a>) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core">:~&gt;</a> <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">(~&gt;)</a> <a href="#v:counit" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:Profunctor:2"></span> <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core">Profunctor</a> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a></span> <a href="#t:List" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:List:Profunctor:2"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:dimap">dimap</a> :: <span class="keyword">forall</span> (c :: j) (a :: j) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> d) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> a b -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> c d <a href="#v:dimap" class="selflink">#</a></p><p class="src"><a href="#v:-92--92-">(\\)</a> :: <span class="keyword">forall</span> (a :: j) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> a b -&gt; r <a href="#v:-92--92-" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:Representable:3"></span> <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable">Representable</a> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a></span> <a href="#t:List" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:List:Representable:3"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="subs associated-types"><p class="caption">Associated Types</p><p class="src"><span class="keyword">type</span> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a :: j <a href="#t:-37-" class="selflink">#</a></p></div> <div class="subs methods"><p class="caption">Methods</p><p class="src"><a href="#v:index">index</a> :: <span class="keyword">forall</span> (a :: j) (b :: k). <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:index" class="selflink">#</a></p><p class="src"><a href="#v:tabulate">tabulate</a> :: <span class="keyword">forall</span> (b :: k) (a :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core">Ob</a> b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> a b <a href="#v:tabulate" class="selflink">#</a></p><p class="src"><a href="#v:repMap">repMap</a> :: <span class="keyword">forall</span> (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core">~&gt;</a> (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> b) <a href="#v:repMap" class="selflink">#</a></p></div></details></td></tr><tr><td class="src clearfix"><span class="inst-left"><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:-37-:4"></span> <span class="keyword">type</span> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>)</span> <a href="#t:List" class="selflink">#</a></td><td class="doc empty">&nbsp;</td></tr><tr><td colspan="2"><details id="i:id:List:-37-:4"><summary class="hide-when-js-enabled">Instance details</summary><p>Defined in <a href="Proarrow-Profunctor-Forget.html">Proarrow.Profunctor.Forget</a></p> <div class="src"><span class="keyword">type</span> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget">List</a> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable">%</a> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask">Type</a>) = '<a href="Proarrow-Category-Instance-Subcategory.html#v:SUB" title="Proarrow.Category.Instance.Subcategory">SUB</a> [a] :: <a href="Proarrow-Category-Instance-Subcategory.html#t:SUBCAT" title="Proarrow.Category.Instance.Subcategory">SUBCAT</a> <a href="${pkgroot}/../../../share/doc/ghc-9.6.3/html/libraries/base-4.18.1.0/Data-Monoid.html#t:Monoid" title="Data.Monoid">Monoid</a></div></details></td></tr></table></details></div></div></div></div><div id="footer"><p>Produced by <a href="http://www.haskell.org/haddock/">Haddock</a> version 2.29.1</p></div></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Profunctor.Forget</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Profunctor.Forget.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Profunctor.Forget</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Forget" class="def"
+	    >Forget</a
+	    > (ob :: <a href="Proarrow-Core.html#t:OB" title="Proarrow.Core"
+	    >OB</a
+	    > k) (a :: k) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+	    >SUBCAT</a
+	    > ob) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Forget.html#Forget" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L14" class="link"
+	    >Comments</a
+	    > <a href="#t:Forget" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Forget" class="def"
+		  >Forget</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (ob :: <a href="Proarrow-Core.html#t:OB" title="Proarrow.Core"
+		  >OB</a
+		  > k) (b1 :: k) (a :: k). ob b1 =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > b1) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		  >Forget</a
+		  > ob a ('<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+		  >SUB</a
+		  > b1 :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		  >SUBCAT</a
+		  > ob)</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Forget"
+	    >Instances</h4
+	    ><details id="i:Forget" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:Adjunction:1"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+		      >List</a
+		      > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		      >Forget</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+		      >Monoid</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-40" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L40" class="link"
+		    >Comments</a
+		    > <a href="#t:Forget" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Forget:Adjunction:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:unit"
+			  >unit</a
+			  > :: <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  >) a a <a href="src/Proarrow.Adjunction.html#unit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:counit"
+			  >counit</a
+			  > :: (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >(~&gt;)</a
+			  > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+			  >CAT</a
+			  > (<a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >)) <a href="src/Proarrow.Adjunction.html#counit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:counit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:Profunctor:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		      >Forget</a
+		      > ob :: k -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-17" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L17" class="link"
+		    >Comments</a
+		    > <a href="#t:Forget" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Forget:Profunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (d :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob a b -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:Representable:3"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		      >Forget</a
+		      > ob :: k -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:Forget" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Forget:Representable:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob). <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Forget:-37-:4"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		      >Forget</a
+		      > ob :: k -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > ('<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+		      >SUB</a
+		      > a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob)</span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-22" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L22" class="link"
+		    >Comments</a
+		    > <a href="#t:Forget" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Forget:-37-:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			>Forget</a
+			> ob :: k -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			>SUBCAT</a
+			> ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> ('<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+			>SUB</a
+			> a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			>SUBCAT</a
+			> ob) = a</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:List" class="def"
+	    >List</a
+	    > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+	    >SUBCAT</a
+	    > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+	    >Monoid</a
+	    >) b <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Forget.html#List" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L28" class="link"
+	    >Comments</a
+	    > <a href="#t:List" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:List" class="def"
+		  >List</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > a1 b. <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+		  >Monoid</a
+		  > a1 =&gt; (a1 -&gt; [b]) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+		  >List</a
+		  > ('<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+		  >SUB</a
+		  > a1 :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		  >SUBCAT</a
+		  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+		  >Monoid</a
+		  >) b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:List"
+	    >Instances</h4
+	    ><details id="i:List" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:Adjunction:1"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+		      >List</a
+		      > (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		      >Forget</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+		      >Monoid</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-40" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L40" class="link"
+		    >Comments</a
+		    > <a href="#t:List" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:List:Adjunction:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:unit"
+			  >unit</a
+			  > :: <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  >) a a <a href="src/Proarrow.Adjunction.html#unit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:counit"
+			  >counit</a
+			  > :: (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >(~&gt;)</a
+			  > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+			  >CAT</a
+			  > (<a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >)) <a href="src/Proarrow.Adjunction.html#counit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:counit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:Profunctor:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+		      >List</a
+		      ></span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-30" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L30" class="link"
+		    >Comments</a
+		    > <a href="#t:List" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:List:Profunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >) (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >) b d. (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > a b -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >) b r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:Representable:3"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+		      >List</a
+		      ></span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-34" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L34" class="link"
+		    >Comments</a
+		    > <a href="#t:List" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:List:Representable:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-37-TYPESUBCATLista:-37-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+				>List</a
+				> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				>%</a
+				> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-37-TYPESUBCATLista:-37-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Forget.html"
+				  >Proarrow.Profunctor.Forget</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+				  >List</a
+				  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				  >%</a
+				  > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) = '<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+				  >SUB</a
+				  > [a] :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+				  >SUBCAT</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+				  >Monoid</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >) b. <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > b (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  >). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			  >List</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:List:-37-:4"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+		      >List</a
+		      > <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Forget.html#line-35" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Forget.hs#L35" class="link"
+		    >Comments</a
+		    > <a href="#t:List" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:List:-37-:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Forget.html"
+			>Proarrow.Profunctor.Forget</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Profunctor-Forget.html#t:List" title="Proarrow.Profunctor.Forget"
+			>List</a
+			> <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) = '<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+			>SUB</a
+			> [a] :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			>SUBCAT</a
+			> <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-8a80/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			>Monoid</a
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

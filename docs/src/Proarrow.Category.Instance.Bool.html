@@ -1,0 +1,5807 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Bool</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	><span class="hs-identifier"
+	  >HasTerminalObject</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryProduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	><span class="hs-identifier"
+	  >HasBinaryProducts</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#leftUnitorProd"
+	><span class="hs-identifier"
+	  >leftUnitorProd</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#leftUnitorProdInv"
+	><span class="hs-identifier"
+	  >leftUnitorProdInv</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#rightUnitorProd"
+	><span class="hs-identifier"
+	  >rightUnitorProd</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#rightUnitorProdInv"
+	><span class="hs-identifier"
+	  >rightUnitorProdInv</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#associatorProd"
+	><span class="hs-identifier"
+	  >associatorProd</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#associatorProdInv"
+	><span class="hs-identifier"
+	  >associatorProdInv</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#swapProd"
+	><span class="hs-identifier"
+	  >swapProd</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Initial</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	><span class="hs-identifier"
+	  >HasInitialObject</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryCoproduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	><span class="hs-identifier"
+	  >HasBinaryCoproducts</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Exponential</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#Closed"
+	><span class="hs-identifier"
+	  >Closed</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#SymMonoidal"
+	><span class="hs-identifier"
+	  >SymMonoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="BOOL"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	  ><span class="hs-identifier hs-var"
+	    >BOOL</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="FLS"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	  ><span class="hs-identifier hs-var"
+	    >FLS</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >|</span
+      ><span
+      > </span
+      ><span id="TRU"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	  ><span class="hs-identifier hs-var"
+	    >TRU</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	><span class="hs-identifier hs-type"
+	  >Booleans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Booleans"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	  ><span class="hs-identifier hs-var"
+	    >Booleans</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190493"
+      ><span class="annot"
+	><a href="#local-6989586621679190493"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190494"
+      ><span class="annot"
+	><a href="#local-6989586621679190494"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="Fls"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	  ><span class="hs-identifier hs-var"
+	    >Fls</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	><span class="hs-identifier hs-type"
+	  >Booleans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span id="F2T"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	  ><span class="hs-identifier hs-var"
+	    >F2T</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	><span class="hs-identifier hs-type"
+	  >Booleans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span id="Tru"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	  ><span class="hs-identifier hs-var"
+	    >Tru</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	><span class="hs-identifier hs-type"
+	  >Booleans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span id="IsBool"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#IsBool"
+	  ><span class="hs-identifier hs-var"
+	    >IsBool</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679190306"
+      ><span class="annot"
+	><a href="#local-6989586621679190306"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      > </span
+      ><span id="boolId"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#boolId"
+	  ><span class="hs-identifier hs-type"
+	    >boolId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679190306"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679190306"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#IsBool"
+	><span class="hs-identifier hs-type"
+	  >IsBool</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      > </span
+      ><span id="local-6989586621679190502"
+      ><span class="annot"
+	><span class="annottext"
+	  >boolId :: 'FLS ~&gt; 'FLS
+</span
+	  ><a href="Proarrow.Category.Instance.Bool.html#boolId"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >boolId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>'FLS ~&gt; 'FLS
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#IsBool"
+	><span class="hs-identifier hs-type"
+	  >IsBool</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      > </span
+      ><span id="local-6989586621679190505"
+      ><span class="annot"
+	><span class="annottext"
+	  >boolId :: 'TRU ~&gt; 'TRU
+</span
+	  ><a href="Proarrow.Category.Instance.Bool.html#boolId"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >boolId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>'TRU ~&gt; 'TRU
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | The category of 2 objects and one arrow between them, a.k.a. the walking arrow.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier hs-type"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	><span class="hs-identifier hs-type"
+	  >Booleans</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190512"
+      ><span class="annot"
+	><a href="#local-6989586621679190512"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#IsBool"
+	><span class="hs-identifier hs-type"
+	  >IsBool</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679190512"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	><span class="hs-identifier hs-type"
+	  >Booleans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190522"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: BOOL). Ob a =&gt; Booleans a a
+</span
+	  ><a href="#local-6989586621679190522"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a
+Booleans a a
+forall (b :: BOOL). IsBool b =&gt; b ~&gt; b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#boolId"
+	><span class="hs-identifier hs-var"
+	  >boolId</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans b c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190526"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: BOOL) (c :: BOOL) (a :: BOOL).
+Booleans b c -&gt; Booleans a b -&gt; Booleans a c
+</span
+	  ><a href="#local-6989586621679190526"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a c
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans b c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a c
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans b c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a c
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans b c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a c
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#Booleans"
+	><span class="hs-identifier hs-type"
+	  >Booleans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190550"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: BOOL) (a :: BOOL) (b :: BOOL) (d :: BOOL).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Booleans a b -&gt; Booleans c d
+</span
+	  ><a href="#local-6989586621679190550"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Booleans a b -&gt; Booleans c d
+Booleans c a -&gt; Booleans b d -&gt; Booleans a b -&gt; Booleans c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190552"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679190552"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190553"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: BOOL) (b :: BOOL) r.
+((Ob a, Ob b) =&gt; r) -&gt; Booleans a b -&gt; r
+</span
+	  ><a href="#local-6989586621679190553"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679190552"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190560"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679190560"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679190560"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190567"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679190567"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Booleans a b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679190567"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	><span class="hs-identifier hs-type"
+	  >HasTerminalObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="TerminalObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	  ><span class="hs-identifier hs-var"
+	    >TerminalObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190581"
+      ><span class="annot"
+	><span class="annottext"
+	  >terminate' :: forall (a :: BOOL). Obj a -&gt; a ~&gt; TerminalObject
+</span
+	  ><a href="#local-6989586621679190581"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >terminate'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; TerminalObject
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#terminate%27"
+	><span class="hs-identifier hs-var"
+	  >terminate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; TerminalObject
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679190593"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	  ><span class="hs-identifier hs-type"
+	    >HasBinaryProducts</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	  ><span class="hs-identifier hs-type"
+	    >BOOL</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%26%26"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	  ><span class="hs-operator hs-var"
+	    >&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%26%26"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	  ><span class="hs-operator hs-var"
+	    >&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%26%26"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	  ><span class="hs-operator hs-var"
+	    >&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%26%26"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	  ><span class="hs-operator hs-var"
+	    >&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190597"
+      ><span class="annot"
+	><span class="annottext"
+	  >fst' :: forall (a :: BOOL) (b :: BOOL). Obj a -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a
+</span
+	  ><a href="#local-6989586621679190597"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >fst'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; a
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; a
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; a
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; a
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190615"
+      ><span class="annot"
+	><span class="annottext"
+	  >snd' :: forall (a :: BOOL) (b :: BOOL). Obj a -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; b
+</span
+	  ><a href="#local-6989586621679190615"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >snd'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; b
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; b
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; b
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; b
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+Booleans a x
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190635"
+      ><span class="annot"
+	><span class="annottext"
+	  >&amp;&amp;&amp; :: forall (a :: BOOL) (x :: BOOL) (y :: BOOL).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	  ><a href="#local-6989586621679190635"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >&amp;&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+Booleans 'FLS y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+Booleans a x
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+Booleans 'FLS y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+Booleans a x
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+Booleans 'FLS y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+Booleans a x
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+Booleans 'FLS y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+Booleans a x
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+Booleans 'TRU y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	><span class="hs-identifier hs-type"
+	  >HasInitialObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="InitialObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-var"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190663"
+      ><span class="annot"
+	><span class="annottext"
+	  >initiate' :: forall (a :: BOOL). Obj a -&gt; InitialObject ~&gt; a
+</span
+	  ><a href="#local-6989586621679190663"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >initiate'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>InitialObject ~&gt; a
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>InitialObject ~&gt; a
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679190675"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	  ><span class="hs-identifier hs-type"
+	    >HasBinaryCoproducts</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	  ><span class="hs-identifier hs-type"
+	    >BOOL</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%7C%7C"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	  ><span class="hs-operator hs-var"
+	    >||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%7C%7C"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	  ><span class="hs-operator hs-var"
+	    >||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%7C%7C"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	  ><span class="hs-operator hs-var"
+	    >||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-77"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%7C%7C"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	  ><span class="hs-operator hs-var"
+	    >||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-78"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190679"
+      ><span class="annot"
+	><span class="annottext"
+	  >lft' :: forall (a :: BOOL) (b :: BOOL). Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679190679"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lft'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a || b)
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-79"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a || b)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-80"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a || b)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-81"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a || b)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-82"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190697"
+      ><span class="annot"
+	><span class="annottext"
+	  >rgt' :: forall (a :: BOOL) (b :: BOOL). Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679190697"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rgt'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; (a || b)
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-83"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; (a || b)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-84"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; (a || b)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-85"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; (a || b)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-86"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190717"
+      ><span class="annot"
+	><span class="annottext"
+	  >||| :: forall (x :: BOOL) (a :: BOOL) (y :: BOOL).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	  ><a href="#local-6989586621679190717"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >|||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+Booleans y 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x || y) ~&gt; a
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-87"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+Booleans y 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x || y) ~&gt; a
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-88"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+Booleans y 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x || y) ~&gt; a
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-89"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+Booleans y 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x || y) ~&gt; a
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-90"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+Booleans y 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x || y) ~&gt; a
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-91"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-92"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier hs-type"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-93"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Unit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Unit"
+	  ><span class="hs-identifier hs-var"
+	    >Unit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	><span class="hs-identifier hs-type"
+	  >TerminalObject</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-94"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679190751"
+      ><span id="local-6989586621679190752"
+	><span class="annot"
+	  ><a href="#local-6989586621679190751"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%2A%2A"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-var"
+		>**</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679190752"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679190751"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	><span class="hs-operator hs-type"
+	  >&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679190752"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-95"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190754"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679190754"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190755"
+      ><span class="annot"
+	><span class="annottext"
+	  >par :: forall (a :: BOOL) (b :: BOOL) (c :: BOOL) (d :: BOOL).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a ** c) ~&gt; (b ** d)
+</span
+	  ><a href="#local-6989586621679190755"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`par`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190757"
+      ><span class="annot"
+	><span class="annottext"
+	  >c ~&gt; d
+</span
+	  ><a href="#local-6989586621679190757"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679190754"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; (a &amp;&amp; c) ~&gt; (b &amp;&amp; d)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+forall (a :: BOOL) (b :: BOOL) (x :: BOOL) (y :: BOOL).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#%2A%2A%2A"
+	><span class="hs-operator hs-var"
+	  >***</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; d
+</span
+	><a href="#local-6989586621679190757"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-96"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190762"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (a :: BOOL). Obj a -&gt; (Unit ** a) ~&gt; a
+</span
+	  ><a href="#local-6989586621679190762"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; (Unit ** a) ~&gt; a
+(a ~&gt; a) -&gt; (TerminalObject &amp;&amp; a) ~&gt; a
+forall k (a :: k).
+HasProducts k =&gt;
+Obj a -&gt; (TerminalObject &amp;&amp; a) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#leftUnitorProd"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorProd</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-97"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190767"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (a :: BOOL). Obj a -&gt; a ~&gt; (Unit ** a)
+</span
+	  ><a href="#local-6989586621679190767"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; a ~&gt; (Unit ** a)
+(a ~&gt; a) -&gt; a ~&gt; (TerminalObject &amp;&amp; a)
+forall k (a :: k).
+HasProducts k =&gt;
+Obj a -&gt; a ~&gt; (TerminalObject &amp;&amp; a)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#leftUnitorProdInv"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorProdInv</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-98"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190772"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (a :: BOOL). Obj a -&gt; (a ** Unit) ~&gt; a
+</span
+	  ><a href="#local-6989586621679190772"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; (a ** Unit) ~&gt; a
+(a ~&gt; a) -&gt; (a &amp;&amp; TerminalObject) ~&gt; a
+forall k (a :: k).
+HasProducts k =&gt;
+Obj a -&gt; (a &amp;&amp; TerminalObject) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#rightUnitorProd"
+	><span class="hs-identifier hs-var"
+	  >rightUnitorProd</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-99"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190777"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (a :: BOOL). Obj a -&gt; a ~&gt; (a ** Unit)
+</span
+	  ><a href="#local-6989586621679190777"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; a ~&gt; (a ** Unit)
+(a ~&gt; a) -&gt; a ~&gt; (a &amp;&amp; TerminalObject)
+forall k (a :: k).
+HasProducts k =&gt;
+Obj a -&gt; a ~&gt; (a &amp;&amp; TerminalObject)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#rightUnitorProdInv"
+	><span class="hs-identifier hs-var"
+	  >rightUnitorProdInv</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-100"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190782"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall (a :: BOOL) (b :: BOOL) (c :: BOOL).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span
+	  ><a href="#local-6989586621679190782"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a)
+-&gt; (b ~&gt; b) -&gt; (c ~&gt; c) -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+(a ~&gt; a)
+-&gt; (b ~&gt; b) -&gt; (c ~&gt; c) -&gt; ((a &amp;&amp; b) &amp;&amp; c) ~&gt; (a &amp;&amp; (b &amp;&amp; c))
+forall k (a :: k) (b :: k) (c :: k).
+HasProducts k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a &amp;&amp; b) &amp;&amp; c) ~&gt; (a &amp;&amp; (b &amp;&amp; c))
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#associatorProd"
+	><span class="hs-identifier hs-var"
+	  >associatorProd</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-101"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190787"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall (a :: BOOL) (b :: BOOL) (c :: BOOL).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span
+	  ><a href="#local-6989586621679190787"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a)
+-&gt; (b ~&gt; b) -&gt; (c ~&gt; c) -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+(a ~&gt; a)
+-&gt; (b ~&gt; b) -&gt; (c ~&gt; c) -&gt; (a &amp;&amp; (b &amp;&amp; c)) ~&gt; ((a &amp;&amp; b) &amp;&amp; c)
+forall k (a :: k) (b :: k) (c :: k).
+HasProducts k =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a &amp;&amp; (b &amp;&amp; c)) ~&gt; ((a &amp;&amp; b) &amp;&amp; c)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#associatorProdInv"
+	><span class="hs-identifier hs-var"
+	  >associatorProdInv</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-102"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-103"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#SymMonoidal"
+	><span class="hs-identifier hs-type"
+	  >SymMonoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-104"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190795"
+      ><span class="annot"
+	><span class="annottext"
+	  >swap' :: forall (a :: BOOL) (b :: BOOL).
+Obj a -&gt; Obj b -&gt; (a ** b) ~&gt; (b ** a)
+</span
+	  ><a href="#local-6989586621679190795"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >swap'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; (b ~&gt; b) -&gt; (a ** b) ~&gt; (b ** a)
+(a ~&gt; a) -&gt; (b ~&gt; b) -&gt; (a &amp;&amp; b) ~&gt; (b &amp;&amp; a)
+forall {k} (a :: k) (b :: k).
+HasBinaryProducts k =&gt;
+Obj a -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; (b &amp;&amp; a)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#swapProd"
+	><span class="hs-identifier hs-var"
+	  >swapProd</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-105"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-106"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#Closed"
+	><span class="hs-identifier hs-type"
+	  >Closed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#BOOL"
+	><span class="hs-identifier hs-type"
+	  >BOOL</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-107"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="~~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Object.Exponential.html#~~%3E"
+	  ><span class="hs-operator hs-var"
+	    >~~&gt;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-108"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="~~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Object.Exponential.html#~~%3E"
+	  ><span class="hs-operator hs-var"
+	    >~~&gt;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-109"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="~~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Object.Exponential.html#~~%3E"
+	  ><span class="hs-operator hs-var"
+	    >~~&gt;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#FLS"
+	><span class="hs-identifier hs-type"
+	  >FLS</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-110"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="~~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Object.Exponential.html#~~%3E"
+	  ><span class="hs-operator hs-var"
+	    >~~&gt;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Bool.html#TRU"
+	><span class="hs-identifier hs-type"
+	  >TRU</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-111"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190804"
+      ><span class="annot"
+	><span class="annottext"
+	  >curry' :: forall (a :: BOOL) (b :: BOOL) (c :: BOOL).
+Obj a -&gt; Obj b -&gt; ((a ** b) ~&gt; c) -&gt; a ~&gt; (b ~~&gt; c)
+</span
+	  ><a href="#local-6989586621679190804"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >curry'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-112"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#curry%27"
+	><span class="hs-identifier hs-var"
+	  >curry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-113"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#curry%27"
+	><span class="hs-identifier hs-var"
+	  >curry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-114"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#curry%27"
+	><span class="hs-identifier hs-var"
+	  >curry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-115"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#curry%27"
+	><span class="hs-identifier hs-var"
+	  >curry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-116"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#curry%27"
+	><span class="hs-identifier hs-var"
+	  >curry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-117"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#curry%27"
+	><span class="hs-identifier hs-var"
+	  >curry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Booleans a a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'TRU c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-118"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679190848"
+      ><span class="annot"
+	><span class="annottext"
+	  >uncurry' :: forall (b :: BOOL) (c :: BOOL) (a :: BOOL).
+Obj b -&gt; Obj c -&gt; (a ~&gt; (b ~~&gt; c)) -&gt; (a ** b) ~&gt; c
+</span
+	  ><a href="#local-6989586621679190848"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >uncurry'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Booleans c c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans a 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-119"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#uncurry%27"
+	><span class="hs-identifier hs-var"
+	  >uncurry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Booleans c c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans a 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-120"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#uncurry%27"
+	><span class="hs-identifier hs-var"
+	  >uncurry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Booleans c c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans a 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-121"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#uncurry%27"
+	><span class="hs-identifier hs-var"
+	  >uncurry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Booleans c c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans a 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-122"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#uncurry%27"
+	><span class="hs-identifier hs-var"
+	  >uncurry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Booleans c c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans a 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-123"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#uncurry%27"
+	><span class="hs-identifier hs-var"
+	  >uncurry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Booleans c c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans a 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-124"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#uncurry%27"
+	><span class="hs-identifier hs-var"
+	  >uncurry'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Booleans b b
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Booleans c c
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (b ~~&gt; c)
+Booleans a 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-125"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679190894"
+      ><span class="annot"
+	><span class="annottext"
+	  >^^^ :: forall (b :: BOOL) (y :: BOOL) (x :: BOOL) (a :: BOOL).
+(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; (a ~~&gt; b) ~&gt; (x ~~&gt; y)
+</span
+	  ><a href="#local-6989586621679190894"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >^^^</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-126"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-127"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'FLS 'FLS
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-128"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-129"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-130"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'FLS 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-131"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Fls"
+	><span class="hs-identifier hs-var"
+	  >Fls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-132"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#F2T"
+	><span class="hs-identifier hs-var"
+	  >F2T</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-133"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+Booleans b y
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#%5E%5E%5E"
+	><span class="hs-operator hs-var"
+	  >^^^</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+Booleans x a
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~~&gt; b) ~&gt; (x ~~&gt; y)
+Booleans 'TRU 'TRU
+</span
+	><a href="Proarrow.Category.Instance.Bool.html#Tru"
+	><span class="hs-identifier hs-var"
+	  >Tru</span
+	  ></a
+	></span
+      ></pre
+    ></body
+  ></html
+>

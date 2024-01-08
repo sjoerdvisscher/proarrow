@@ -1,0 +1,1815 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Type.Equality</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(~)</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(~~)</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Monad"
+	><span class="hs-identifier"
+	  >Monad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="TK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#TK"
+	  ><span class="hs-identifier hs-var"
+	    >TK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="T0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	  ><span class="hs-identifier hs-var"
+	    >T0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	><span class="hs-identifier hs-type"
+	  >TERMK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#TK"
+	><span class="hs-identifier hs-type"
+	  >TK</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="TERMK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	  ><span class="hs-identifier hs-var"
+	    >TERMK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174419"
+      ><span class="annot"
+	><a href="#local-6989586621679174419"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174420"
+      ><span class="annot"
+	><a href="#local-6989586621679174420"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >  </span
+      ><span id="T1"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#T1"
+	  ><span class="hs-identifier hs-var"
+	    >T1</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	><span class="hs-identifier hs-type"
+	  >TERMK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	><span class="hs-identifier hs-type"
+	  >T0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	><span class="hs-identifier hs-type"
+	  >T0</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-type"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679174421"
+      ><span id="local-6989586621679174422"
+	><span class="annot"
+	  ><a href="Proarrow.Core.html#CAT"
+	    ><span class="hs-identifier hs-type"
+	      >CAT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	    ><span class="hs-identifier hs-type"
+	      >TERMK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679174421"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679174422"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Terminal"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	  ><span class="hs-identifier hs-var"
+	    >Terminal</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174423"
+      ><span class="annot"
+	><a href="#local-6989586621679174423"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174424"
+      ><span class="annot"
+	><a href="#local-6989586621679174424"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="Terminal"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	  ><span class="hs-identifier hs-var"
+	    >Terminal</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-type"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T1"
+	><span class="hs-identifier hs-type"
+	  >T1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T1"
+	><span class="hs-identifier hs-type"
+	  >T1</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-type"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	><span class="hs-identifier hs-type"
+	  >TERMK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	><span class="hs-identifier hs-type"
+	  >T0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	><span class="hs-identifier hs-type"
+	  >T0</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174441"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: TERMK 'T0 'T0) (a :: TERMK 'T0 'T0)
+       (b :: TERMK 'T0 'T0) (d :: TERMK 'T0 'T0).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Terminal a b -&gt; Terminal c d
+</span
+	  ><a href="#local-6989586621679174441"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Terminal a b -&gt; Terminal c d
+Terminal c a -&gt; Terminal b d -&gt; Terminal a b -&gt; Terminal c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174443"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679174443"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174444"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: TERMK 'T0 'T0) (b :: TERMK 'T0 'T0) r.
+((Ob a, Ob b) =&gt; r) -&gt; Terminal a b -&gt; r
+</span
+	  ><a href="#local-6989586621679174444"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Terminal a b
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679174443"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-type"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	><span class="hs-identifier hs-type"
+	  >TERMK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	><span class="hs-identifier hs-type"
+	  >T0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	><span class="hs-identifier hs-type"
+	  >T0</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174462"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: TERMK 'T0 'T0). Ob a =&gt; Terminal a a
+</span
+	  ><a href="#local-6989586621679174462"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Terminal a a
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Terminal b c
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174468"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: TERMK 'T0 'T0) (c :: TERMK 'T0 'T0)
+       (a :: TERMK 'T0 'T0).
+Terminal b c -&gt; Terminal a b -&gt; Terminal a c
+</span
+	  ><a href="#local-6989586621679174468"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Terminal a b
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Terminal a c
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679174291"
+      ><span id="local-6989586621679174292"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679174291"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><span class="hs-operator hs-type"
+	    >~</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	    ><span class="hs-identifier hs-type"
+	      >T0</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679174292"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><span class="hs-operator hs-type"
+	    >~</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	    ><span class="hs-identifier hs-type"
+	      >T0</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	    ><span class="hs-identifier hs-type"
+	      >TERMK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679174291"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679174292"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-type"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174482"
+      ><span class="hs-glyph"
+	>@</span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	  ><span class="hs-identifier hs-type"
+	    >TERMK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679174291"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679174292"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679174482"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679174482"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>~~</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T1"
+	><span class="hs-identifier hs-type"
+	  >T1</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier hs-type"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	><span class="hs-identifier hs-type"
+	  >TERMK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Ob0"
+	  ><span class="hs-identifier hs-var"
+	    >Ob0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174500"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Terminal.html#TERMK"
+	  ><span class="hs-identifier hs-type"
+	    >TERMK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679174500"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679174500"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>~</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T0"
+	><span class="hs-identifier hs-type"
+	  >T0</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="I"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#I"
+	  ><span class="hs-identifier hs-var"
+	    >I</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T1"
+	><span class="hs-identifier hs-type"
+	  >T1</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="O"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#O"
+	  ><span class="hs-identifier hs-var"
+	    >O</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174501"
+      ><span id="local-6989586621679174502"
+	><span class="annot"
+	  ><a href="#local-6989586621679174501"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679174502"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T1"
+	><span class="hs-identifier hs-type"
+	  >T1</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174503"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob0 TERMK i, Ob0 TERMK j, Ob ps, Ob qs) =&gt; r
+</span
+	  ><a href="#local-6989586621679174503"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174504"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\\ :: forall (i :: TK) (j :: TK) (ps :: TERMK i j) (qs :: TERMK i j) r.
+((Ob0 TERMK i, Ob0 TERMK j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+</span
+	  ><a href="#local-6989586621679174504"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>ps ~&gt; qs
+Terminal ps qs
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob0 TERMK i, Ob0 TERMK j, Ob ps, Ob qs) =&gt; r
+</span
+	><a href="#local-6989586621679174503"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Terminal a b
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679174530"
+      ><span class="annot"
+	><span class="annottext"
+	  >o :: forall {k1 :: TK} (i :: TK) (j :: TK) (a :: TERMK i j)
+       (b :: TERMK i j) (c :: TERMK j k1) (d :: TERMK j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	  ><a href="#local-6989586621679174530"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`o`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; d
+Terminal c d
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O a c ~&gt; O b d
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174542"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (i :: TK) (j :: TK) (a :: TERMK i j). Obj a -&gt; O I a ~&gt; a
+</span
+	  ><a href="#local-6989586621679174542"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Terminal a a
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O I a ~&gt; a
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174550"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (i :: TK) (j :: TK) (a :: TERMK i j). Obj a -&gt; a ~&gt; O I a
+</span
+	  ><a href="#local-6989586621679174550"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Terminal a a
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; O I a
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174558"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (i :: TK) (j :: TK) (a :: TERMK i j). Obj a -&gt; O a I ~&gt; a
+</span
+	  ><a href="#local-6989586621679174558"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Terminal a a
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O a I ~&gt; a
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174566"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (i :: TK) (j :: TK) (a :: TERMK i j). Obj a -&gt; a ~&gt; O a I
+</span
+	  ><a href="#local-6989586621679174566"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Terminal a a
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; O a I
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174574"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall {j1 :: TK} {k1 :: TK} (i :: TK) (j2 :: TK) (a :: TERMK i j2)
+       (b :: TERMK j2 j1) (c :: TERMK j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	  ><a href="#local-6989586621679174574"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Terminal a a
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Terminal b b
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Terminal c c
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O (O a b) c ~&gt; O a (O b c)
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174596"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall {j1 :: TK} {k1 :: TK} (i :: TK) (j2 :: TK) (a :: TERMK i j2)
+       (b :: TERMK j2 j1) (c :: TERMK j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	  ><a href="#local-6989586621679174596"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Terminal a a
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Terminal b b
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Terminal c c
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O a (O b c) ~&gt; O (O a b) c
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Monad"
+	><span class="hs-identifier hs-type"
+	  >Monad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Terminal.html#T1"
+	><span class="hs-identifier hs-type"
+	  >T1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174630"
+      ><span class="annot"
+	><span class="annottext"
+	  >eta :: I ~&gt; 'T1
+</span
+	  ><a href="#local-6989586621679174630"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >eta</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; 'T1
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679174632"
+      ><span class="annot"
+	><span class="annottext"
+	  >mu :: O 'T1 'T1 ~&gt; 'T1
+</span
+	  ><a href="#local-6989586621679174632"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mu</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O 'T1 'T1 ~&gt; 'T1
+Terminal 'T1 'T1
+</span
+	><a href="Proarrow.Category.Bicategory.Terminal.html#Terminal"
+	><span class="hs-identifier hs-var"
+	  >Terminal</span
+	  ></a
+	></span
+      ></pre
+    ></body
+  ></html
+>

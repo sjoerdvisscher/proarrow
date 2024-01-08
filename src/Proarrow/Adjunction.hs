@@ -12,6 +12,7 @@ import Proarrow.Profunctor.Star (Star(..))
 import Proarrow.Profunctor.Costar (Costar(..))
 
 type Adjunction :: forall {j} {k}. PRO k j -> PRO j k -> Constraint
+-- | Adjunctions between two profunctors.
 class (Profunctor p, Profunctor q) => Adjunction (p :: PRO k j) (q :: PRO j k) where
   unit :: Ob a => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)

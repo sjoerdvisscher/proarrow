@@ -1,0 +1,1533 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Type.Equality</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(~)</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(~~)</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Kind"
+	><span class="hs-identifier"
+	  >Kind</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	><span class="hs-identifier hs-type"
+	  >DiscreteK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Kind"
+	><span class="hs-identifier hs-type"
+	  >Kind</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="DiscreteK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	  ><span class="hs-identifier hs-var"
+	    >DiscreteK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176358"
+      ><span class="annot"
+	><a href="#local-6989586621679176358"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176359"
+      ><span class="annot"
+	><a href="#local-6989586621679176359"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176360"
+      ><span id="DK"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	    ><span class="hs-identifier hs-var"
+	      >DK</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	  ><span class="hs-identifier hs-type"
+	    >DiscreteK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679176360"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679176360"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-type"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679176361"
+      ><span id="local-6989586621679176362"
+	><span class="annot"
+	  ><a href="Proarrow.Core.html#CAT"
+	    ><span class="hs-identifier hs-type"
+	      >CAT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	    ><span class="hs-identifier hs-type"
+	      >DiscreteK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679176361"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679176362"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Bidiscrete"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	  ><span class="hs-identifier hs-var"
+	    >Bidiscrete</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176363"
+      ><span class="annot"
+	><a href="#local-6989586621679176363"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176364"
+      ><span class="annot"
+	><a href="#local-6989586621679176364"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >  </span
+      ><span id="Bidiscrete"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	  ><span class="hs-identifier hs-var"
+	    >Bidiscrete</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-type"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-type"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176377"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: DiscreteK j k) (a :: DiscreteK j k)
+       (b :: DiscreteK j k) (d :: DiscreteK j k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Bidiscrete a b -&gt; Bidiscrete c d
+</span
+	  ><a href="#local-6989586621679176377"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Bidiscrete a b -&gt; Bidiscrete c d
+Bidiscrete c a
+-&gt; Bidiscrete b d -&gt; Bidiscrete a b -&gt; Bidiscrete c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176379"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679176379"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176380"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: DiscreteK j k) (b :: DiscreteK j k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Bidiscrete a b -&gt; r
+</span
+	  ><a href="#local-6989586621679176380"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Bidiscrete a b
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679176379"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-type"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176409"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: DiscreteK j k). Ob a =&gt; Bidiscrete a a
+</span
+	  ><a href="#local-6989586621679176409"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Bidiscrete 'DK 'DK
+Bidiscrete a a
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Bidiscrete b c
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176416"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: DiscreteK j k) (c :: DiscreteK j k)
+       (a :: DiscreteK j k).
+Bidiscrete b c -&gt; Bidiscrete a b -&gt; Bidiscrete a c
+</span
+	  ><a href="#local-6989586621679176416"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Bidiscrete a b
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Bidiscrete 'DK 'DK
+Bidiscrete a c
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679176423"
+      ><span id="local-6989586621679176424"
+	><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	    ><span class="hs-identifier hs-type"
+	      >DiscreteK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679176423"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679176424"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-type"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176429"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679176429"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	  ><span class="hs-identifier hs-type"
+	    >DiscreteK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679176423"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679176424"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679176423"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>~</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679176424"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679176429"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>~~</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	><span class="hs-identifier hs-type"
+	  >DiscreteK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679176423"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679176423"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | The bicategory with only identity 1-cells and identity 2-cells between those.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier hs-type"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	><span class="hs-identifier hs-type"
+	  >DiscreteK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="I"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#I"
+	  ><span class="hs-identifier hs-var"
+	    >I</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="O"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#O"
+	  ><span class="hs-operator hs-var"
+	    >`O`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Bidiscrete a b
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176454"
+      ><span class="annot"
+	><span class="annottext"
+	  >o :: forall {k1} i j (a :: DiscreteK i j) (b :: DiscreteK i j)
+       (c :: DiscreteK j k1) (d :: DiscreteK j k1).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	  ><a href="#local-6989586621679176454"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`o`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; d
+Bidiscrete c d
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O a c ~&gt; O b d
+Bidiscrete 'DK 'DK
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176465"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob0 DiscreteK i, Ob0 DiscreteK j, Ob ps, Ob qs) =&gt; r
+</span
+	  ><a href="#local-6989586621679176465"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679176466"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\\ :: forall i j (ps :: DiscreteK i j) (qs :: DiscreteK i j) r.
+((Ob0 DiscreteK i, Ob0 DiscreteK j, Ob ps, Ob qs) =&gt; r)
+-&gt; (ps ~&gt; qs) -&gt; r
+</span
+	  ><a href="#local-6989586621679176466"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>ps ~&gt; qs
+Bidiscrete ps qs
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob0 DiscreteK i, Ob0 DiscreteK j, Ob ps, Ob qs) =&gt; r
+</span
+	><a href="#local-6989586621679176465"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176484"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall i j (a :: DiscreteK i j). Obj a -&gt; O I a ~&gt; a
+</span
+	  ><a href="#local-6989586621679176484"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Bidiscrete a a
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O I a ~&gt; a
+Bidiscrete 'DK 'DK
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176491"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall i j (a :: DiscreteK i j). Obj a -&gt; a ~&gt; O I a
+</span
+	  ><a href="#local-6989586621679176491"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Bidiscrete a a
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; O I a
+Bidiscrete 'DK 'DK
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176498"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall i j (a :: DiscreteK i j). Obj a -&gt; O a I ~&gt; a
+</span
+	  ><a href="#local-6989586621679176498"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Bidiscrete a a
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O a I ~&gt; a
+Bidiscrete 'DK 'DK
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176505"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall i j (a :: DiscreteK i j). Obj a -&gt; a ~&gt; O a I
+</span
+	  ><a href="#local-6989586621679176505"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Bidiscrete a a
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; O a I
+Bidiscrete 'DK 'DK
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176512"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall {j1} {k1} i j2 (a :: DiscreteK i j2) (b :: DiscreteK j2 j1)
+       (c :: DiscreteK j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	  ><a href="#local-6989586621679176512"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Bidiscrete a a
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Bidiscrete b b
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Bidiscrete c c
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O (O a b) c ~&gt; O a (O b c)
+Bidiscrete 'DK 'DK
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679176531"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall {j1} {k1} i j2 (a :: DiscreteK i j2) (b :: DiscreteK j2 j1)
+       (c :: DiscreteK j1 k1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	  ><a href="#local-6989586621679176531"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+Bidiscrete a a
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+Bidiscrete b b
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj c
+Bidiscrete c c
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>O a (O b c) ~&gt; O (O a b) c
+Bidiscrete 'DK 'DK
+forall {k}. Bidiscrete 'DK 'DK
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ></pre
+    ></body
+  ></html
+>
