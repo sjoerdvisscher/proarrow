@@ -1,0 +1,828 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE AllowAmbiguousTypes #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Monoid.Applicative</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Kind</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Constraint</span></span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Function</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-operator">($)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Prelude</span></span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">P</span></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Control.Applicative</span></span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">P</span></span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator">(//)</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#lmap"><span class="hs-identifier">lmap</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Functor.html"><span class="hs-identifier">Proarrow.Functor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier">Functor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier">Prelude</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.Terminal.html"><span class="hs-identifier">Proarrow.Object.Terminal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.Terminal.html#El"><span class="hs-identifier">El</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.Terminal.html#terminate"><span class="hs-identifier">terminate</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html"><span class="hs-identifier">Proarrow.Object.BinaryCoproduct</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier">HasBinaryCoproducts</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasCoproducts"><span class="hs-identifier">HasCoproducts</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier">CoproductFunctor</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html"><span class="hs-identifier">Proarrow.Object.BinaryProduct</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"><span class="hs-identifier">HasBinaryProducts</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#HasProducts"><span class="hs-identifier">HasProducts</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#ProductFunctor"><span class="hs-identifier">ProductFunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Monoid.html"><span class="hs-identifier">Proarrow.Monoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier">Monoid</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html"><span class="hs-identifier">Proarrow.Profunctor.Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier">Day</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#PList"><span class="hs-identifier">PList</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Star.html"><span class="hs-identifier">Proarrow.Profunctor.Star</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier">Star</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-17"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.html"><span class="hs-identifier">Proarrow.Object</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.html#obj"><span class="hs-identifier">obj</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier">Strictified</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-19"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html"><span class="hs-identifier">Proarrow.Profunctor.Composition</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator">(:.:)</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span>
+</span><span id="line-22"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679132982"><span class="annot"><a href="#local-6989586621679132982"><span class="hs-identifier hs-type">j</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679132983"><span class="annot"><a href="#local-6989586621679132983"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132982"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132983"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Constraint</span></span><span>
+</span><span id="line-23"></span><span class="hs-keyword">class</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#HasProducts"><span class="hs-identifier hs-type">HasProducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132653"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#HasProducts"><span class="hs-identifier hs-type">HasProducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132654"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132655"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span id="Applicative"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-var">Applicative</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132653"><span id="local-6989586621679132654"><span id="local-6989586621679132655"><span class="annot"><a href="#local-6989586621679132655"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132653"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132654"><span class="hs-identifier hs-type">k</span></a></span></span></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-24"></span><span>  </span><span id="pure"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#pure"><span class="hs-identifier hs-type">pure</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132661"><span class="annot"><a href="Proarrow.Object.Terminal.html#El"><span class="hs-identifier hs-type">El</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132661"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Object.Terminal.html#El"><span class="hs-identifier hs-type">El</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132655"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132661"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span>
+</span><span id="line-25"></span><span>  </span><span id="liftA2"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#liftA2"><span class="hs-identifier hs-type">liftA2</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132663"><span id="local-6989586621679132664"><span id="local-6989586621679132666"><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132663"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#%26%26"><span class="hs-operator hs-type">&amp;&amp;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132664"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132666"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132655"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132663"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#%26%26"><span class="hs-operator hs-type">&amp;&amp;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132655"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132664"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132655"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132666"><span class="hs-identifier hs-type">c</span></a></span></span></span></span><span>
+</span><span id="line-26"></span><span>
+</span><span id="line-27"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132674"><span class="annot"><span class="hs-identifier hs-type">P.Applicative</span></span><span> </span><span class="annot"><a href="#local-6989586621679132674"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132674"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-28"></span><span>  </span><span id="local-6989586621679133010"><span class="annot"><span class="annottext">pure :: forall a. El a -&gt; El (Prelude f a)
+</span><a href="Proarrow.Monoid.Applicative.html#pure"><span class="hs-identifier hs-var hs-var hs-var hs-var">pure</span></a></span></span><span> </span><span id="local-6989586621679133011"><span class="annot"><span class="annottext">El a
+</span><a href="#local-6989586621679133011"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f a -&gt; Prelude f a
+forall {k} (f :: k -&gt; *) (a :: k). f a -&gt; Prelude f a
+</span><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-var">Prelude</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a -&gt; f a
+forall a. a -&gt; f a
+forall (f :: * -&gt; *) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">P.pure</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">El a
+() -&gt; a
+</span><a href="#local-6989586621679133011"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>  </span><span id="local-6989586621679133014"><span class="annot"><span class="annottext">liftA2 :: forall a b c.
+((a &amp;&amp; b) ~&gt; c) -&gt; (Prelude f a &amp;&amp; Prelude f b) ~&gt; Prelude f c
+</span><a href="Proarrow.Monoid.Applicative.html#liftA2"><span class="hs-identifier hs-var hs-var hs-var hs-var">liftA2</span></a></span></span><span> </span><span id="local-6989586621679133015"><span class="annot"><span class="annottext">(a &amp;&amp; b) ~&gt; c
+</span><a href="#local-6989586621679133015"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span id="local-6989586621679133016"><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679133016"><span class="hs-identifier hs-var">fa</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span id="local-6989586621679133017"><span class="annot"><span class="annottext">f b
+</span><a href="#local-6989586621679133017"><span class="hs-identifier hs-var">fb</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f c -&gt; Prelude f c
+forall {k} (f :: k -&gt; *) (a :: k). f a -&gt; Prelude f a
+</span><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-var">Prelude</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+forall a b c. (a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+forall (f :: * -&gt; *) a b c.
+Applicative f =&gt;
+(a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+</span><span class="hs-identifier hs-var">P.liftA2</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((a, b) -&gt; c) -&gt; a -&gt; b -&gt; c
+forall a b c. ((a, b) -&gt; c) -&gt; a -&gt; b -&gt; c
+</span><span class="hs-identifier hs-var">P.curry</span></span><span> </span><span class="annot"><span class="annottext">(a &amp;&amp; b) ~&gt; c
+(a, b) -&gt; c
+</span><a href="#local-6989586621679133015"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679133016"><span class="hs-identifier hs-var">fa</span></a></span><span> </span><span class="annot"><span class="annottext">f b
+</span><a href="#local-6989586621679133017"><span class="hs-identifier hs-var">fb</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span>
+</span><span id="line-31"></span><span id="local-6989586621679133033"><span id="local-6989586621679133039"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">via</span><span> </span><span id="local-6989586621679132697"><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="hs-special">,</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679132697"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><span class="hs-identifier hs-type">P.Monoid</span></span><span> </span><span class="annot"><a href="#local-6989586621679132697"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="hs-special">,</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679132697"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-32"></span><span id="local-6989586621679133058"><span id="local-6989586621679133064"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">via</span><span> </span><span id="local-6989586621679132704"><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679132704"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679132704"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-33"></span><span id="local-6989586621679133083"><span id="local-6989586621679133089"><span class="hs-keyword">deriving</span><span> </span><span class="hs-keyword">via</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span></span></span><span>
+</span><span id="line-34"></span><span>
+</span><span id="line-35"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Alternative"><span class="hs-identifier hs-type">Alternative</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679133096"><span class="annot"><a href="#local-6989586621679133096"><span class="hs-identifier hs-type">j</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679133097"><span class="annot"><a href="#local-6989586621679133097"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679133096"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679133097"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Constraint</span></span><span>
+</span><span id="line-36"></span><span class="hs-keyword">class</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasCoproducts"><span class="hs-identifier hs-type">HasCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132709"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132711"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span id="Alternative"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Alternative"><span class="hs-identifier hs-var">Alternative</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132709"><span id="local-6989586621679132710"><span id="local-6989586621679132711"><span class="annot"><a href="#local-6989586621679132711"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132709"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132710"><span class="hs-identifier hs-type">k</span></a></span></span></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-37"></span><span>  </span><span id="empty"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#empty"><span class="hs-identifier hs-type">empty</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132715"><span class="annot"><a href="Proarrow.Object.Terminal.html#El"><span class="hs-identifier hs-type">El</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132711"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132715"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span>
+</span><span id="line-38"></span><span>  </span><span id="alt"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#alt"><span class="hs-identifier hs-type">alt</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132716"><span id="local-6989586621679132717"><span id="local-6989586621679132719"><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132716"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132717"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132719"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132711"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132716"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#%26%26"><span class="hs-operator hs-type">&amp;&amp;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132711"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132717"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132711"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132719"><span class="hs-identifier hs-type">c</span></a></span></span></span></span><span>
+</span><span id="line-39"></span><span>
+</span><span id="line-40"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132724"><span class="annot"><span class="hs-identifier hs-type">P.Alternative</span></span><span> </span><span class="annot"><a href="#local-6989586621679132724"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Alternative"><span class="hs-identifier hs-type">Alternative</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132724"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-41"></span><span>  </span><span id="local-6989586621679133119"><span class="annot"><span class="annottext">empty :: forall a. El (Prelude f a)
+</span><a href="Proarrow.Monoid.Applicative.html#empty"><span class="hs-identifier hs-var hs-var hs-var hs-var">empty</span></a></span></span><span> </span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f a -&gt; Prelude f a
+forall {k} (f :: k -&gt; *) (a :: k). f a -&gt; Prelude f a
+</span><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-var">Prelude</span></a></span><span> </span><span class="annot"><span class="annottext">f a
+forall a. f a
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a
+</span><span class="hs-identifier hs-var">P.empty</span></span><span>
+</span><span id="line-42"></span><span>  </span><span id="local-6989586621679133125"><span class="annot"><span class="annottext">alt :: forall a b c.
+((a || b) ~&gt; c) -&gt; (Prelude f a &amp;&amp; Prelude f b) ~&gt; Prelude f c
+</span><a href="Proarrow.Monoid.Applicative.html#alt"><span class="hs-identifier hs-var hs-var hs-var hs-var">alt</span></a></span></span><span> </span><span id="local-6989586621679133126"><span class="annot"><span class="annottext">(a || b) ~&gt; c
+</span><a href="#local-6989586621679133126"><span class="hs-identifier hs-var">abc</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span id="local-6989586621679133127"><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679133127"><span class="hs-identifier hs-var">fl</span></a></span></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-type">Prelude</span></a></span><span> </span><span id="local-6989586621679133128"><span class="annot"><span class="annottext">f b
+</span><a href="#local-6989586621679133128"><span class="hs-identifier hs-var">fr</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">f c -&gt; Prelude f c
+forall {k} (f :: k -&gt; *) (a :: k). f a -&gt; Prelude f a
+</span><a href="Proarrow.Functor.html#Prelude"><span class="hs-identifier hs-var">Prelude</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Either a b -&gt; c) -&gt; f (Either a b) -&gt; f c
+forall a b. (a -&gt; b) -&gt; f a -&gt; f b
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-identifier hs-var">P.fmap</span></span><span> </span><span class="annot"><span class="annottext">(a || b) ~&gt; c
+Either a b -&gt; c
+</span><a href="#local-6989586621679133126"><span class="hs-identifier hs-var">abc</span></a></span><span> </span><span class="annot"><span class="annottext">(f (Either a b) -&gt; f c) -&gt; f (Either a b) -&gt; f c
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(a -&gt; Either a b) -&gt; f a -&gt; f (Either a b)
+forall a b. (a -&gt; b) -&gt; f a -&gt; f b
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-identifier hs-var">P.fmap</span></span><span> </span><span class="annot"><span class="annottext">a -&gt; Either a b
+forall a b. a -&gt; Either a b
+</span><span class="hs-identifier hs-var">P.Left</span></span><span> </span><span class="annot"><span class="annottext">f a
+</span><a href="#local-6989586621679133127"><span class="hs-identifier hs-var">fl</span></a></span><span> </span><span class="annot"><span class="annottext">f (Either a b) -&gt; f (Either a b) -&gt; f (Either a b)
+forall a. f a -&gt; f a -&gt; f a
+forall (f :: * -&gt; *) a. Alternative f =&gt; f a -&gt; f a -&gt; f a
+</span><span class="hs-operator hs-var">P.&lt;|&gt;</span></span><span> </span><span class="annot"><span class="annottext">(b -&gt; Either a b) -&gt; f b -&gt; f (Either a b)
+forall a b. (a -&gt; b) -&gt; f a -&gt; f b
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-identifier hs-var">P.fmap</span></span><span> </span><span class="annot"><span class="annottext">b -&gt; Either a b
+forall a b. b -&gt; Either a b
+</span><span class="hs-identifier hs-var">P.Right</span></span><span> </span><span class="annot"><span class="annottext">f b
+</span><a href="#local-6989586621679133128"><span class="hs-identifier hs-var">fr</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-43"></span><span>
+</span><span id="line-44"></span><span class="hs-keyword">data</span><span> </span><span id="AsMonoid"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span></span><span> </span><span id="local-6989586621679133130"><span class="annot"><a href="#local-6989586621679133130"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span id="local-6989586621679133131"><span class="annot"><a href="#local-6989586621679133131"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679133132"><span class="annot"><a href="#local-6989586621679133132"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-45"></span><span>  </span><span id="AsMonoid"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679132741"><span class="annot"><a href="#local-6989586621679132741"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span id="local-6989586621679132742"><span class="annot"><a href="#local-6989586621679132742"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679132743"><span class="annot"><a href="#local-6989586621679132743"><span class="hs-identifier hs-type">b</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132743"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">{</span><span> </span><span id="getAsMonoid"><span class="annot"><span class="annottext">forall {k} {k} (f :: k -&gt; k) (a :: k) (b :: k).
+AsMonoid f a b -&gt; a ~&gt; f b
+</span><a href="Proarrow.Monoid.Applicative.html#getAsMonoid"><span class="hs-identifier hs-var hs-var">getAsMonoid</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132742"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132741"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132743"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132741"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132742"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132743"><span class="hs-identifier hs-type">b</span></a></span><span>
+</span><span id="line-46"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132773"><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132773"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132773"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-47"></span><span>  </span><span id="local-6989586621679133155"><span class="annot"><span class="annottext">dimap :: forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; AsMonoid f a b -&gt; AsMonoid f c d
+</span><a href="#local-6989586621679133155"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679133157"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679133157"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679133158"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679133158"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span id="local-6989586621679133161"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133161"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(c ~&gt; f d) -&gt; AsMonoid f c d
+forall {k} {k} (f :: k -&gt; k) (a :: k) (b :: k).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; AsMonoid f a b
+</span><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(b ~&gt; d) -&gt; f b ~&gt; f d
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; f a ~&gt; f b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679133158"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(f b ~&gt; f d) -&gt; (c ~&gt; f b) -&gt; c ~&gt; f d
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133161"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; (c ~&gt; a) -&gt; c ~&gt; f b
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679133157"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob b, Ob d) =&gt; AsMonoid f c d) -&gt; (b ~&gt; d) -&gt; AsMonoid f c d
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679133158"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-48"></span><span>  </span><span id="local-6989586621679133171"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679133171"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679133172"><span class="annot"><span class="annottext">\\ :: forall (a :: j) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; AsMonoid f a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span id="local-6989586621679133175"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133175"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob (f b)) =&gt; r
+</span><a href="#local-6989586621679133171"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob (f b)) =&gt; r) -&gt; (a ~&gt; f b) -&gt; r
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133175"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132817"><span id="local-6989586621679132818"><span id="local-6989586621679132819"><span id="local-6989586621679133199"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#HasProducts"><span class="hs-identifier hs-type">HasProducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132817"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#HasProducts"><span class="hs-identifier hs-type">HasProducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132818"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132819"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier hs-type">Monoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-type">Strictified</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#ProductFunctor"><span class="hs-identifier hs-type">ProductFunctor</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-type">Strictified</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#ProductFunctor"><span class="hs-identifier hs-type">ProductFunctor</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132819"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132817"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132818"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-51"></span><span>  </span><span id="local-6989586621679133234"><span class="annot"><span class="annottext">mempty :: Day
+  (Strictified ProductFunctor)
+  (Strictified ProductFunctor)
+  '[]
+  '[AsMonoid f]
+</span><a href="#local-6989586621679133234"><span class="hs-identifier hs-var hs-var hs-var hs-var">mempty</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(PList '[]
+ :~&gt; ((Strictified ProductFunctor :.: PList '[AsMonoid f])
+      :.: Strictified ProductFunctor))
+-&gt; Day
+     (Strictified ProductFunctor)
+     (Strictified ProductFunctor)
+     '[]
+     '[AsMonoid f]
+forall {j} {k} (ps :: [PRO j k]) (qs :: [PRO j k])
+       (s :: MONOIDAL j) (t :: MONOIDAL k).
+(Ob ps, Ob qs) =&gt;
+(PList ps :~&gt; ((s :.: PList qs) :.: t)) -&gt; Day s t ps qs
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-glyph">\</span><span class="annot"><span class="annottext">PList '[] a b
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor a ~&gt; Fold ProductFunctor '[TerminalObject])
+-&gt; Strictified ProductFunctor a '[TerminalObject]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">Fold ProductFunctor a ~&gt; Fold ProductFunctor '[TerminalObject]
+TerminalObject ~&gt; TerminalObject
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="annot"><span class="annottext">Strictified ProductFunctor a '[TerminalObject]
+-&gt; PList '[AsMonoid f] '[TerminalObject] '[TerminalObject]
+-&gt; (:.:)
+     (Strictified ProductFunctor)
+     (PList '[AsMonoid f])
+     a
+     '[TerminalObject]
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">AsMonoid f TerminalObject TerminalObject
+-&gt; PList '[] '[] '[]
+-&gt; PList '[AsMonoid f] '[TerminalObject] '[TerminalObject]
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) (ps1 :: [PRO j k])
+       (as1 :: [j]) (bs1 :: [k]).
+Ob p =&gt;
+p a b -&gt; PList ps1 as1 bs1 -&gt; PList (p : ps1) (a : as1) (b : bs1)
+</span><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-identifier hs-var">PCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(TerminalObject ~&gt; f TerminalObject)
+-&gt; AsMonoid f TerminalObject TerminalObject
+forall {k} {k} (f :: k -&gt; k) (a :: k) (b :: k).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; AsMonoid f a b
+</span><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {j} {k} (f :: j -&gt; k) (a :: j).
+Applicative f =&gt;
+El a -&gt; El (f a)
+forall (f :: j -&gt; k) (a :: j). Applicative f =&gt; El a -&gt; El (f a)
+</span><a href="Proarrow.Monoid.Applicative.html#pure"><span class="hs-identifier hs-var">pure</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132819"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><span class="annottext">El TerminalObject
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PList '[] '[] '[]
+forall {j} {k}. PList '[] '[] '[]
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span> </span><span class="annot"><span class="annottext">(:.:)
+  (Strictified ProductFunctor)
+  (PList '[AsMonoid f])
+  a
+  '[TerminalObject]
+-&gt; Strictified ProductFunctor '[TerminalObject] b
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified ProductFunctor)
+     a
+     b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor '[TerminalObject] ~&gt; Fold ProductFunctor b)
+-&gt; Strictified ProductFunctor '[TerminalObject] b
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">Fold ProductFunctor '[TerminalObject] ~&gt; Fold ProductFunctor b
+El TerminalObject
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-52"></span><span>  </span><span id="local-6989586621679133273"><span class="annot"><span class="annottext">mappend :: Day
+  (Strictified ProductFunctor)
+  (Strictified ProductFunctor)
+  '[AsMonoid f, AsMonoid f]
+  '[AsMonoid f]
+</span><a href="#local-6989586621679133273"><span class="hs-identifier hs-var hs-var hs-var hs-var">mappend</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(PList '[AsMonoid f, AsMonoid f]
+ :~&gt; ((Strictified ProductFunctor :.: PList '[AsMonoid f])
+      :.: Strictified ProductFunctor))
+-&gt; Day
+     (Strictified ProductFunctor)
+     (Strictified ProductFunctor)
+     '[AsMonoid f, AsMonoid f]
+     '[AsMonoid f]
+forall {j} {k} (ps :: [PRO j k]) (qs :: [PRO j k])
+       (s :: MONOIDAL j) (t :: MONOIDAL k).
+(Ob ps, Ob qs) =&gt;
+(PList ps :~&gt; ((s :.: PList qs) :.: t)) -&gt; Day s t ps qs
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133284"><span class="annot"><a href="#local-6989586621679133284"><span class="hs-identifier hs-type hs-type">a1</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133285"><span class="annot"><a href="#local-6989586621679133285"><span class="hs-identifier hs-type hs-type">b1</span></a></span></span><span> </span><span id="local-6989586621679133286"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133286"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-operator hs-type">`PCons`</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133295"><span class="annot"><a href="#local-6989586621679133295"><span class="hs-identifier hs-type hs-type">a2</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133296"><span class="annot"><a href="#local-6989586621679133296"><span class="hs-identifier hs-type hs-type">b2</span></a></span></span><span> </span><span id="local-6989586621679133297"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133297"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-operator hs-type">`PCons`</span></a></span><span> </span><span class="annot"><span class="annottext">PList ps1 as1 bs1
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-53"></span><span>    </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133286"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b)
+-&gt; ((Ob a, Ob (f b)) =&gt;
+    (:.:)
+      (Strictified ProductFunctor :.: PList '[AsMonoid f])
+      (Strictified ProductFunctor)
+      a
+      b)
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified ProductFunctor)
+     a
+     b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133297"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b)
+-&gt; ((Ob a, Ob (f b)) =&gt;
+    (:.:)
+      (Strictified ProductFunctor :.: PList '[AsMonoid f])
+      (Strictified ProductFunctor)
+      a
+      b)
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified ProductFunctor)
+     a
+     b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679133318"><span class="annot"><span class="annottext">a12 :: (a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+</span><a href="#local-6989586621679133318"><span class="hs-identifier hs-var hs-var">a12</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133284"><span class="hs-identifier hs-type">a1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; (a ~&gt; a) -&gt; (a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%2A%2A%2A"><span class="hs-operator hs-var">***</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133295"><span class="hs-identifier hs-type">a2</span></a></span><span class="hs-special">;</span><span> </span><span id="local-6989586621679133320"><span class="annot"><span class="annottext">b12 :: (b &amp;&amp; b) ~&gt; (b &amp;&amp; b)
+</span><a href="#local-6989586621679133320"><span class="hs-identifier hs-var hs-var">b12</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: j). (CategoryOf j, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133285"><span class="hs-identifier hs-type">b1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b -&gt; (b ~&gt; b) -&gt; (b &amp;&amp; b) ~&gt; (b &amp;&amp; b)
+forall (a :: j) (b :: j) (x :: j) (y :: j).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%2A%2A%2A"><span class="hs-operator hs-var">***</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: j). (CategoryOf j, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133296"><span class="hs-identifier hs-type">b2</span></a></span><span>
+</span><span id="line-54"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor a ~&gt; Fold ProductFunctor '[a &amp;&amp; a])
+-&gt; Strictified ProductFunctor a '[a &amp;&amp; a]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">Fold ProductFunctor a ~&gt; Fold ProductFunctor '[a &amp;&amp; a]
+(a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+</span><a href="#local-6989586621679133318"><span class="hs-identifier hs-var">a12</span></a></span><span> </span><span class="annot"><span class="annottext">Strictified ProductFunctor a '[a &amp;&amp; a]
+-&gt; PList '[AsMonoid f] '[a &amp;&amp; a] '[b &amp;&amp; b]
+-&gt; (:.:)
+     (Strictified ProductFunctor) (PList '[AsMonoid f]) a '[b &amp;&amp; b]
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">AsMonoid f (a &amp;&amp; a) (b &amp;&amp; b)
+-&gt; PList '[] '[] '[] -&gt; PList '[AsMonoid f] '[a &amp;&amp; a] '[b &amp;&amp; b]
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) (ps1 :: [PRO j k])
+       (as1 :: [j]) (bs1 :: [k]).
+Ob p =&gt;
+p a b -&gt; PList ps1 as1 bs1 -&gt; PList (p : ps1) (a : as1) (b : bs1)
+</span><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-identifier hs-var">PCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((a &amp;&amp; a) ~&gt; f (b &amp;&amp; b)) -&gt; AsMonoid f (a &amp;&amp; a) (b &amp;&amp; b)
+forall {k} {k} (f :: k -&gt; k) (a :: k) (b :: k).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; AsMonoid f a b
+</span><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {j} {k} (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+Applicative f =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+forall (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+Applicative f =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+</span><a href="Proarrow.Monoid.Applicative.html#liftA2"><span class="hs-identifier hs-var">liftA2</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132819"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133285"><span class="hs-identifier hs-type">b1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133296"><span class="hs-identifier hs-type">b2</span></a></span><span> </span><span class="annot"><span class="annottext">(b &amp;&amp; b) ~&gt; (b &amp;&amp; b)
+</span><a href="#local-6989586621679133320"><span class="hs-identifier hs-var">b12</span></a></span><span> </span><span class="annot"><span class="annottext">((f b &amp;&amp; f b) ~&gt; f (b &amp;&amp; b))
+-&gt; ((a &amp;&amp; a) ~&gt; (f b &amp;&amp; f b)) -&gt; (a &amp;&amp; a) ~&gt; f (b &amp;&amp; b)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133286"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; (a ~&gt; f b) -&gt; (a &amp;&amp; a) ~&gt; (f b &amp;&amp; f b)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%2A%2A%2A"><span class="hs-operator hs-var">***</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133297"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PList '[] '[] '[]
+forall {j} {k}. PList '[] '[] '[]
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span> </span><span class="annot"><span class="annottext">(:.:)
+  (Strictified ProductFunctor) (PList '[AsMonoid f]) a '[b &amp;&amp; b]
+-&gt; Strictified ProductFunctor '[b &amp;&amp; b] b
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified ProductFunctor)
+     a
+     b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor '[b &amp;&amp; b] ~&gt; Fold ProductFunctor b)
+-&gt; Strictified ProductFunctor '[b &amp;&amp; b] b
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">Fold ProductFunctor '[b &amp;&amp; b] ~&gt; Fold ProductFunctor b
+(b &amp;&amp; b) ~&gt; (b &amp;&amp; b)
+</span><a href="#local-6989586621679133320"><span class="hs-identifier hs-var">b12</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (a &amp;&amp; a), Ob (a &amp;&amp; a)) =&gt;
+ (:.:)
+   (Strictified ProductFunctor :.: PList '[AsMonoid f])
+   (Strictified ProductFunctor)
+   a
+   b)
+-&gt; ((a &amp;&amp; a) ~&gt; (a &amp;&amp; a))
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified ProductFunctor)
+     a
+     b
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">(a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+</span><a href="#local-6989586621679133318"><span class="hs-identifier hs-var">a12</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (b &amp;&amp; b), Ob (b &amp;&amp; b)) =&gt;
+ (:.:)
+   (Strictified ProductFunctor :.: PList '[AsMonoid f])
+   (Strictified ProductFunctor)
+   a
+   b)
+-&gt; ((b &amp;&amp; b) ~&gt; (b &amp;&amp; b))
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified ProductFunctor)
+     a
+     b
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">(b &amp;&amp; b) ~&gt; (b &amp;&amp; b)
+</span><a href="#local-6989586621679133320"><span class="hs-identifier hs-var">b12</span></a></span><span>
+</span><span id="line-55"></span><span>
+</span><span id="line-56"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132893"><span id="local-6989586621679132894"><span id="local-6989586621679132895"><span id="local-6989586621679133366"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasCoproducts"><span class="hs-identifier hs-type">HasCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132893"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#HasProducts"><span class="hs-identifier hs-type">HasProducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132894"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Alternative"><span class="hs-identifier hs-type">Alternative</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132895"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier hs-type">Monoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-type">Day</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-type">Strictified</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#ProductFunctor"><span class="hs-identifier hs-type">ProductFunctor</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-type">Strictified</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132895"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132893"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132894"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-57"></span><span>  </span><span id="local-6989586621679133398"><span class="annot"><span class="annottext">mempty :: Day
+  (Strictified ProductFunctor)
+  (Strictified CoproductFunctor)
+  '[]
+  '[AsMonoid f]
+</span><a href="Proarrow.Monoid.html#mempty"><span class="hs-identifier hs-var hs-var hs-var hs-var">mempty</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(PList '[]
+ :~&gt; ((Strictified ProductFunctor :.: PList '[AsMonoid f])
+      :.: Strictified CoproductFunctor))
+-&gt; Day
+     (Strictified ProductFunctor)
+     (Strictified CoproductFunctor)
+     '[]
+     '[AsMonoid f]
+forall {j} {k} (ps :: [PRO j k]) (qs :: [PRO j k])
+       (s :: MONOIDAL j) (t :: MONOIDAL k).
+(Ob ps, Ob qs) =&gt;
+(PList ps :~&gt; ((s :.: PList qs) :.: t)) -&gt; Day s t ps qs
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-glyph">\</span><span class="annot"><span class="annottext">PList '[] a b
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor a ~&gt; Fold ProductFunctor '[TerminalObject])
+-&gt; Strictified ProductFunctor a '[TerminalObject]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">Fold ProductFunctor a ~&gt; Fold ProductFunctor '[TerminalObject]
+TerminalObject ~&gt; TerminalObject
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="annot"><span class="annottext">Strictified ProductFunctor a '[TerminalObject]
+-&gt; PList '[AsMonoid f] '[TerminalObject] '[InitialObject]
+-&gt; (:.:)
+     (Strictified ProductFunctor)
+     (PList '[AsMonoid f])
+     a
+     '[InitialObject]
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">AsMonoid f TerminalObject InitialObject
+-&gt; PList '[] '[] '[]
+-&gt; PList '[AsMonoid f] '[TerminalObject] '[InitialObject]
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) (ps1 :: [PRO j k])
+       (as1 :: [j]) (bs1 :: [k]).
+Ob p =&gt;
+p a b -&gt; PList ps1 as1 bs1 -&gt; PList (p : ps1) (a : as1) (b : bs1)
+</span><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-identifier hs-var">PCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(TerminalObject ~&gt; f InitialObject)
+-&gt; AsMonoid f TerminalObject InitialObject
+forall {k} {k} (f :: k -&gt; k) (a :: k) (b :: k).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; AsMonoid f a b
+</span><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span><span> </span><span class="annot"><span class="annottext">TerminalObject ~&gt; f InitialObject
+forall (a :: j). El (f a)
+forall {j} {k} (f :: j -&gt; k) (a :: j). Alternative f =&gt; El (f a)
+</span><a href="Proarrow.Monoid.Applicative.html#empty"><span class="hs-identifier hs-var">empty</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PList '[] '[] '[]
+forall {j} {k}. PList '[] '[] '[]
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span> </span><span class="annot"><span class="annottext">(:.:)
+  (Strictified ProductFunctor)
+  (PList '[AsMonoid f])
+  a
+  '[InitialObject]
+-&gt; Strictified CoproductFunctor '[InitialObject] b
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified CoproductFunctor)
+     a
+     b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">(Fold CoproductFunctor '[InitialObject] ~&gt; Fold CoproductFunctor b)
+-&gt; Strictified CoproductFunctor '[InitialObject] b
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">InitialObject ~&gt; InitialObject
+Fold CoproductFunctor '[InitialObject] ~&gt; Fold CoproductFunctor b
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-58"></span><span>  </span><span id="local-6989586621679133428"><span class="annot"><span class="annottext">mappend :: Day
+  (Strictified ProductFunctor)
+  (Strictified CoproductFunctor)
+  '[AsMonoid f, AsMonoid f]
+  '[AsMonoid f]
+</span><a href="Proarrow.Monoid.html#mappend"><span class="hs-identifier hs-var hs-var hs-var hs-var">mappend</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(PList '[AsMonoid f, AsMonoid f]
+ :~&gt; ((Strictified ProductFunctor :.: PList '[AsMonoid f])
+      :.: Strictified CoproductFunctor))
+-&gt; Day
+     (Strictified ProductFunctor)
+     (Strictified CoproductFunctor)
+     '[AsMonoid f, AsMonoid f]
+     '[AsMonoid f]
+forall {j} {k} (ps :: [PRO j k]) (qs :: [PRO j k])
+       (s :: MONOIDAL j) (t :: MONOIDAL k).
+(Ob ps, Ob qs) =&gt;
+(PList ps :~&gt; ((s :.: PList qs) :.: t)) -&gt; Day s t ps qs
+</span><a href="Proarrow.Profunctor.Day.html#Day"><span class="hs-identifier hs-var">Day</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133438"><span class="annot"><a href="#local-6989586621679133438"><span class="hs-identifier hs-type hs-type">a1</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133439"><span class="annot"><a href="#local-6989586621679133439"><span class="hs-identifier hs-type hs-type">b1</span></a></span></span><span> </span><span id="local-6989586621679133440"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133440"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-operator hs-type">`PCons`</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133449"><span class="annot"><a href="#local-6989586621679133449"><span class="hs-identifier hs-type hs-type">a2</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133450"><span class="annot"><a href="#local-6989586621679133450"><span class="hs-identifier hs-type hs-type">b2</span></a></span></span><span> </span><span id="local-6989586621679133451"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133451"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-operator hs-type">`PCons`</span></a></span><span> </span><span class="annot"><span class="annottext">PList ps1 as1 bs1
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span>
+</span><span id="line-59"></span><span>    </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133440"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b)
+-&gt; ((Ob a, Ob (f b)) =&gt;
+    (:.:)
+      (Strictified ProductFunctor :.: PList '[AsMonoid f])
+      (Strictified CoproductFunctor)
+      a
+      b)
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified CoproductFunctor)
+     a
+     b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133451"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b)
+-&gt; ((Ob a, Ob (f b)) =&gt;
+    (:.:)
+      (Strictified ProductFunctor :.: PList '[AsMonoid f])
+      (Strictified CoproductFunctor)
+      a
+      b)
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified CoproductFunctor)
+     a
+     b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679133472"><span class="annot"><span class="annottext">a12 :: (a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+</span><a href="#local-6989586621679133472"><span class="hs-identifier hs-var hs-var">a12</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133438"><span class="hs-identifier hs-type">a1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; (a ~&gt; a) -&gt; (a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%2A%2A%2A"><span class="hs-operator hs-var">***</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133449"><span class="hs-identifier hs-type">a2</span></a></span><span class="hs-special">;</span><span> </span><span id="local-6989586621679133473"><span class="annot"><span class="annottext">b12 :: (b || b) ~&gt; (b || b)
+</span><a href="#local-6989586621679133473"><span class="hs-identifier hs-var hs-var">b12</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: j). (CategoryOf j, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133439"><span class="hs-identifier hs-type">b1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b -&gt; (b ~&gt; b) -&gt; (b || b) ~&gt; (b || b)
+forall (a :: j) (b :: j) (x :: j) (y :: j).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: j). (CategoryOf j, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133450"><span class="hs-identifier hs-type">b2</span></a></span><span>
+</span><span id="line-60"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor a ~&gt; Fold ProductFunctor '[a &amp;&amp; a])
+-&gt; Strictified ProductFunctor a '[a &amp;&amp; a]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">Fold ProductFunctor a ~&gt; Fold ProductFunctor '[a &amp;&amp; a]
+(a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+</span><a href="#local-6989586621679133472"><span class="hs-identifier hs-var">a12</span></a></span><span> </span><span class="annot"><span class="annottext">Strictified ProductFunctor a '[a &amp;&amp; a]
+-&gt; PList '[AsMonoid f] '[a &amp;&amp; a] '[b || b]
+-&gt; (:.:)
+     (Strictified ProductFunctor) (PList '[AsMonoid f]) a '[b || b]
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">AsMonoid f (a &amp;&amp; a) (b || b)
+-&gt; PList '[] '[] '[] -&gt; PList '[AsMonoid f] '[a &amp;&amp; a] '[b || b]
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) (ps1 :: [PRO j k])
+       (as1 :: [j]) (bs1 :: [k]).
+Ob p =&gt;
+p a b -&gt; PList ps1 as1 bs1 -&gt; PList (p : ps1) (a : as1) (b : bs1)
+</span><a href="Proarrow.Profunctor.Day.html#PCons"><span class="hs-identifier hs-var">PCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((a &amp;&amp; a) ~&gt; f (b || b)) -&gt; AsMonoid f (a &amp;&amp; a) (b || b)
+forall {k} {k} (f :: k -&gt; k) (a :: k) (b :: k).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; AsMonoid f a b
+</span><a href="Proarrow.Monoid.Applicative.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {j} {k} (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+Alternative f =&gt;
+((a || b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+forall (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+Alternative f =&gt;
+((a || b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+</span><a href="Proarrow.Monoid.Applicative.html#alt"><span class="hs-identifier hs-var">alt</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132895"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133439"><span class="hs-identifier hs-type">b1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133450"><span class="hs-identifier hs-type">b2</span></a></span><span> </span><span class="annot"><span class="annottext">(b || b) ~&gt; (b || b)
+</span><a href="#local-6989586621679133473"><span class="hs-identifier hs-var">b12</span></a></span><span> </span><span class="annot"><span class="annottext">((f b &amp;&amp; f b) ~&gt; f (b || b))
+-&gt; ((a &amp;&amp; a) ~&gt; (f b &amp;&amp; f b)) -&gt; (a &amp;&amp; a) ~&gt; f (b || b)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133440"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; (a ~&gt; f b) -&gt; (a &amp;&amp; a) ~&gt; (f b &amp;&amp; f b)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%2A%2A%2A"><span class="hs-operator hs-var">***</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133451"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">PList '[] '[] '[]
+forall {j} {k}. PList '[] '[] '[]
+</span><a href="Proarrow.Profunctor.Day.html#PNil"><span class="hs-identifier hs-var">PNil</span></a></span><span> </span><span class="annot"><span class="annottext">(:.:)
+  (Strictified ProductFunctor) (PList '[AsMonoid f]) a '[b || b]
+-&gt; Strictified CoproductFunctor '[b || b] b
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified CoproductFunctor)
+     a
+     b
+forall {i} {j} {k} (p :: PRO i j) (a :: i) (b :: j) (q :: PRO j k)
+       (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">(Fold CoproductFunctor '[b || b] ~&gt; Fold CoproductFunctor b)
+-&gt; Strictified CoproductFunctor '[b || b] b
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="annot"><span class="annottext">Fold CoproductFunctor '[b || b] ~&gt; Fold CoproductFunctor b
+(b || b) ~&gt; (b || b)
+</span><a href="#local-6989586621679133473"><span class="hs-identifier hs-var">b12</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (a &amp;&amp; a), Ob (a &amp;&amp; a)) =&gt;
+ (:.:)
+   (Strictified ProductFunctor :.: PList '[AsMonoid f])
+   (Strictified CoproductFunctor)
+   a
+   b)
+-&gt; ((a &amp;&amp; a) ~&gt; (a &amp;&amp; a))
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified CoproductFunctor)
+     a
+     b
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">(a &amp;&amp; a) ~&gt; (a &amp;&amp; a)
+</span><a href="#local-6989586621679133472"><span class="hs-identifier hs-var">a12</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (b || b), Ob (b || b)) =&gt;
+ (:.:)
+   (Strictified ProductFunctor :.: PList '[AsMonoid f])
+   (Strictified CoproductFunctor)
+   a
+   b)
+-&gt; ((b || b) ~&gt; (b || b))
+-&gt; (:.:)
+     (Strictified ProductFunctor :.: PList '[AsMonoid f])
+     (Strictified CoproductFunctor)
+     a
+     b
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">(b || b) ~&gt; (b || b)
+</span><a href="#local-6989586621679133473"><span class="hs-identifier hs-var">b12</span></a></span><span>
+</span><span id="line-61"></span><span>
+</span><span id="line-62"></span><span>
+</span><span id="line-63"></span><span class="hs-keyword">class</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132919"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span id="Proapplicative"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Proapplicative"><span class="hs-identifier hs-var">Proapplicative</span></a></span></span><span> </span><span id="local-6989586621679132919"><span class="annot"><a href="#local-6989586621679132919"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-64"></span><span>  </span><span id="pureP"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#pureP"><span class="hs-identifier hs-type">pureP</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132925"><span id="local-6989586621679132926"><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132925"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Object.Terminal.html#El"><span class="hs-identifier hs-type">El</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132926"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132919"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132925"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132926"><span class="hs-identifier hs-type">b</span></a></span></span></span><span>
+</span><span id="line-65"></span><span>  </span><span id="apP"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#apP"><span class="hs-identifier hs-type">apP</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132927"><span id="local-6989586621679132928"><span id="local-6989586621679132929"><span class="annot"><a href="#local-6989586621679132919"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132927"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132928"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132919"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132927"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132929"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132919"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132927"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132928"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#%26%26"><span class="hs-operator hs-type">&amp;&amp;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132929"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span></span></span></span><span>
+</span><span id="line-66"></span><span>
+</span><span id="line-67"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132935"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Applicative"><span class="hs-identifier hs-type">Applicative</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132935"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Proapplicative"><span class="hs-identifier hs-type">Proapplicative</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132935"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-68"></span><span>  </span><span id="local-6989586621679133529"><span class="annot"><span class="annottext">pureP :: forall (a :: j) (b :: k). Ob a =&gt; El b -&gt; Star f a b
+</span><a href="Proarrow.Monoid.Applicative.html#pureP"><span class="hs-identifier hs-var hs-var hs-var hs-var">pureP</span></a></span></span><span> </span><span id="local-6989586621679133530"><span class="annot"><span class="annottext">El b
+</span><a href="#local-6989586621679133530"><span class="hs-identifier hs-var">b</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">El b
+</span><a href="#local-6989586621679133530"><span class="hs-identifier hs-var">b</span></a></span><span> </span><span class="annot"><span class="annottext">El b -&gt; ((Ob TerminalObject, Ob b) =&gt; Star f a b) -&gt; Star f a b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; Star f a b
+forall {k1} {k2} (b :: k1) (a :: k2) (f :: k1 -&gt; k2).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; Star f a b
+</span><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-var">Star</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; TerminalObject) -&gt; (TerminalObject ~&gt; f b) -&gt; a ~&gt; f b
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span><a href="Proarrow.Core.html#lmap"><span class="hs-identifier hs-var">lmap</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; TerminalObject
+forall {k} (a :: k).
+(HasTerminalObject k, Ob a) =&gt;
+a ~&gt; TerminalObject
+</span><a href="Proarrow.Object.Terminal.html#terminate"><span class="hs-identifier hs-var">terminate</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">El b -&gt; TerminalObject ~&gt; f b
+forall (a :: k). El a -&gt; El (f a)
+forall {j} {k} (f :: j -&gt; k) (a :: j).
+Applicative f =&gt;
+El a -&gt; El (f a)
+</span><a href="Proarrow.Monoid.Applicative.html#pure"><span class="hs-identifier hs-var">pure</span></a></span><span> </span><span class="annot"><span class="annottext">El b
+</span><a href="#local-6989586621679133530"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-69"></span><span>  </span><span id="local-6989586621679133539"><span class="annot"><span class="annottext">apP :: forall (a :: j) (b :: k) (c :: k).
+Star f a b -&gt; Star f a c -&gt; Star f a (b &amp;&amp; c)
+</span><a href="Proarrow.Monoid.Applicative.html#apP"><span class="hs-identifier hs-var hs-var hs-var hs-var">apP</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133541"><span class="annot"><a href="#local-6989586621679133541"><span class="hs-identifier hs-type hs-type">b</span></a></span></span><span> </span><span id="local-6989586621679133542"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133542"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133550"><span class="annot"><a href="#local-6989586621679133550"><span class="hs-identifier hs-type hs-type">c</span></a></span></span><span> </span><span id="local-6989586621679133551"><span class="annot"><span class="annottext">a ~&gt; f c
+</span><a href="#local-6989586621679133551"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-70"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679133552"><span class="annot"><span class="annottext">bc :: (b &amp;&amp; c) ~&gt; (b &amp;&amp; c)
+</span><a href="#local-6989586621679133552"><span class="hs-identifier hs-var hs-var">bc</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133541"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b -&gt; (c ~&gt; c) -&gt; (b &amp;&amp; c) ~&gt; (b &amp;&amp; c)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a &amp;&amp; b) ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%2A%2A%2A"><span class="hs-operator hs-var">***</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133550"><span class="hs-identifier hs-type">c</span></a></span><span>
+</span><span id="line-71"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">(b &amp;&amp; c) ~&gt; (b &amp;&amp; c)
+</span><a href="#local-6989586621679133552"><span class="hs-identifier hs-var">bc</span></a></span><span> </span><span class="annot"><span class="annottext">((b &amp;&amp; c) ~&gt; (b &amp;&amp; c))
+-&gt; ((Ob (b &amp;&amp; c), Ob (b &amp;&amp; c)) =&gt; Star f a (b &amp;&amp; c))
+-&gt; Star f a (b &amp;&amp; c)
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f (b &amp;&amp; c)) -&gt; Star f a (b &amp;&amp; c)
+forall {k1} {k2} (b :: k1) (a :: k2) (f :: k1 -&gt; k2).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; Star f a b
+</span><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-var">Star</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {j} {k} (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+Applicative f =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+forall (f :: k -&gt; j) (a :: k) (b :: k) (c :: k).
+Applicative f =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+</span><a href="Proarrow.Monoid.Applicative.html#liftA2"><span class="hs-identifier hs-var">liftA2</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132935"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133541"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133550"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><span class="annottext">(b &amp;&amp; c) ~&gt; (b &amp;&amp; c)
+</span><a href="#local-6989586621679133552"><span class="hs-identifier hs-var">bc</span></a></span><span> </span><span class="annot"><span class="annottext">((f b &amp;&amp; f c) ~&gt; f (b &amp;&amp; c))
+-&gt; (a ~&gt; (f b &amp;&amp; f c)) -&gt; a ~&gt; f (b &amp;&amp; c)
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133542"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; (a ~&gt; f c) -&gt; a ~&gt; (f b &amp;&amp; f c)
+forall (a :: j) (x :: j) (y :: j).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"><span class="hs-operator hs-var">&amp;&amp;&amp;</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f c
+</span><a href="#local-6989586621679133551"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-72"></span><span>
+</span><span id="line-73"></span><span class="hs-keyword">class</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Proapplicative"><span class="hs-identifier hs-type">Proapplicative</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132959"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span id="Proalternative"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Proalternative"><span class="hs-identifier hs-var">Proalternative</span></a></span></span><span> </span><span id="local-6989586621679132959"><span class="annot"><a href="#local-6989586621679132959"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-74"></span><span>  </span><span id="emptyP"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#emptyP"><span class="hs-identifier hs-type">emptyP</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132964"><span id="local-6989586621679132965"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132964"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132965"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132959"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132964"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132965"><span class="hs-identifier hs-type">b</span></a></span></span></span><span>
+</span><span id="line-75"></span><span>  </span><span id="altP"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#altP"><span class="hs-identifier hs-type">altP</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132966"><span id="local-6989586621679132967"><span class="annot"><a href="#local-6989586621679132959"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132966"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132967"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132959"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132966"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132967"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132959"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132966"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132967"><span class="hs-identifier hs-type">b</span></a></span></span></span><span>
+</span><span id="line-76"></span><span>
+</span><span id="line-77"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132970"><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Alternative"><span class="hs-identifier hs-type">Alternative</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132970"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.Applicative.html#Proalternative"><span class="hs-identifier hs-type">Proalternative</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132970"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-78"></span><span>  </span><span id="local-6989586621679133589"><span class="annot"><span class="annottext">emptyP :: forall (a :: j) (b :: k). (Ob a, Ob b) =&gt; Star f a b
+</span><a href="Proarrow.Monoid.Applicative.html#emptyP"><span class="hs-identifier hs-var hs-var hs-var hs-var">emptyP</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; Star f a b
+forall {k1} {k2} (b :: k1) (a :: k2) (f :: k1 -&gt; k2).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; Star f a b
+</span><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-var">Star</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">El (f b)
+forall (a :: k). El (f a)
+forall {j} {k} (f :: j -&gt; k) (a :: j). Alternative f =&gt; El (f a)
+</span><a href="Proarrow.Monoid.Applicative.html#empty"><span class="hs-identifier hs-var">empty</span></a></span><span> </span><span class="annot"><span class="annottext">El (f b) -&gt; (a ~&gt; TerminalObject) -&gt; a ~&gt; f b
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; TerminalObject
+forall {k} (a :: k).
+(HasTerminalObject k, Ob a) =&gt;
+a ~&gt; TerminalObject
+</span><a href="Proarrow.Object.Terminal.html#terminate"><span class="hs-identifier hs-var">terminate</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-79"></span><span>  </span><span id="local-6989586621679133590"><span class="annot"><span class="annottext">altP :: forall (a :: j) (b :: k). Star f a b -&gt; Star f a b -&gt; Star f a b
+</span><a href="Proarrow.Monoid.Applicative.html#altP"><span class="hs-identifier hs-var hs-var hs-var hs-var">altP</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679133592"><span class="annot"><a href="#local-6989586621679133592"><span class="hs-identifier hs-type hs-type">b</span></a></span></span><span> </span><span id="local-6989586621679133593"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133593"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span id="local-6989586621679133601"><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133601"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-80"></span><span>    </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679133602"><span class="annot"><span class="annottext">bb :: (b || b) ~&gt; b
+</span><a href="#local-6989586621679133602"><span class="hs-identifier hs-var hs-var">bb</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133592"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b -&gt; Obj b -&gt; (b || b) ~&gt; b
+forall (x :: k) (a :: k) (y :: k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var">|||</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133592"><span class="hs-identifier hs-type">b</span></a></span><span>
+</span><span id="line-81"></span><span>    </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">(b || b) ~&gt; b
+</span><a href="#local-6989586621679133602"><span class="hs-identifier hs-var">bb</span></a></span><span> </span><span class="annot"><span class="annottext">((b || b) ~&gt; b)
+-&gt; ((Ob (b || b), Ob b) =&gt; Star f a b) -&gt; Star f a b
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; Star f a b
+forall {k1} {k2} (b :: k1) (a :: k2) (f :: k1 -&gt; k2).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; Star f a b
+</span><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-var">Star</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {j} {k} (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+Alternative f =&gt;
+((a || b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+forall (f :: k -&gt; j) (a :: k) (b :: k) (c :: k).
+Alternative f =&gt;
+((a || b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+</span><a href="Proarrow.Monoid.Applicative.html#alt"><span class="hs-identifier hs-var">alt</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132970"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133592"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679133592"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><span class="annottext">(b || b) ~&gt; b
+</span><a href="#local-6989586621679133602"><span class="hs-identifier hs-var">bb</span></a></span><span> </span><span class="annot"><span class="annottext">((f b &amp;&amp; f b) ~&gt; f b) -&gt; (a ~&gt; (f b &amp;&amp; f b)) -&gt; a ~&gt; f b
+forall (b :: j) (c :: j) (a :: j). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133593"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; (a ~&gt; f b) -&gt; a ~&gt; (f b &amp;&amp; f b)
+forall (a :: j) (x :: j) (y :: j).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"><span class="hs-operator hs-var">&amp;&amp;&amp;</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b
+</span><a href="#local-6989586621679133601"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></pre></body></html>

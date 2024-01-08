@@ -1,0 +1,766 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE RecordWildCards #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE DuplicateRecordFields #-}</span><span>
+</span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Monad</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-4"></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Kind</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Type</span></span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Function</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-operator">($)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html"><span class="hs-identifier">Proarrow.Category.Bicategory</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier">Bicategory</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier">Path</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator">(+++)</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#MKKIND"><span class="hs-identifier">MKKIND</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#obj1"><span class="hs-identifier">obj1</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier">withAssoc</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#withUnital"><span class="hs-identifier">withUnital</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier">appendObj</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html"><span class="hs-identifier">Proarrow.Category.Bicategory.Prof</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier">ProfK</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#Biprof"><span class="hs-identifier">Biprof</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfList"><span class="hs-identifier">ProfList</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"><span class="hs-identifier">ProfConstraint</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Kind"><span class="hs-identifier">Kind</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator">(//)</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Promonad.html"><span class="hs-identifier">Proarrow.Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Adjunction.html"><span class="hs-identifier">Proarrow.Adjunction</span></a></span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">Pro</span></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html"><span class="hs-identifier">Proarrow.Profunctor.Composition</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator">(:.:)</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.html"><span class="hs-identifier">Proarrow.Object</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.html#obj"><span class="hs-identifier">obj</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span>
+</span><span id="line-16"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679138572"><span class="annot"><a href="#local-6989586621679138572"><span class="hs-identifier hs-type">kk</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#MKKIND"><span class="hs-identifier hs-type">MKKIND</span></a></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679138573"><span class="annot"><a href="#local-6989586621679138573"><span class="hs-identifier hs-type">i</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Kind"><span class="hs-identifier hs-type">Kind</span></a></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679138574"><span class="annot"><a href="#local-6989586621679138574"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Kind"><span class="hs-identifier hs-type">Kind</span></a></span><span class="hs-special">}</span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138572"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138574"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138573"><span class="hs-identifier hs-type">i</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138572"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138573"><span class="hs-identifier hs-type">i</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138574"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span>
+</span><span id="line-17"></span><span class="hs-keyword">data</span><span> </span><span id="RelMonad"><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-var">RelMonad</span></a></span></span><span> </span><span id="local-6989586621679138575"><span class="annot"><a href="#local-6989586621679138575"><span class="hs-identifier hs-type">j</span></a></span></span><span> </span><span id="local-6989586621679138576"><span class="annot"><a href="#local-6989586621679138576"><span class="hs-identifier hs-type">t</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-18"></span><span>  </span><span id="local-6989586621679138294"><span id="local-6989586621679138295"><span id="local-6989586621679138296"><span id="local-6989586621679138298"><span id="local-6989586621679138299"><span id="RelMonad"><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-var">RelMonad</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138294"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138294"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138296"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138294"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138295"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span>
+</span><span id="line-19"></span><span>    </span><span class="hs-special">{</span><span> </span><span id="%24sel%3Areturn%3ARelMonad"><span class="annot"><span class="annottext">forall (kk :: CAT Kind) (i :: Kind) (k :: Kind) (j :: Path kk k i)
+       (t :: Path kk i k).
+RelMonad j t -&gt; Nil ~&gt; (j +++ t)
+</span><a href="Proarrow.Monad.html#%24sel%3Areturn%3ARelMonad"><span class="hs-identifier hs-var hs-var">return</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138298"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138299"><span class="hs-identifier hs-type">t</span></a></span><span>
+</span><span id="line-20"></span><span>    </span><span class="hs-special">,</span><span> </span><span id="%24sel%3Ajoin%3ARelMonad"><span class="annot"><span class="annottext">forall (kk :: CAT Kind) (i :: Kind) (k :: Kind) (j :: Path kk k i)
+       (t :: Path kk i k).
+RelMonad j t -&gt; (t +++ (j +++ t)) ~&gt; t
+</span><a href="Proarrow.Monad.html#%24sel%3Ajoin%3ARelMonad"><span class="hs-identifier hs-var hs-var">join</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138299"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138298"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138299"><span class="hs-identifier hs-type">t</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138299"><span class="hs-identifier hs-type">t</span></a></span><span>
+</span><span id="line-21"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138298"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138294"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138295"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138296"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138299"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138294"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138296"><span class="hs-identifier hs-type">i</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138295"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span></span></span><span>
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span class="hs-keyword">type</span><span> </span><span id="Monad"><span class="annot"><a href="Proarrow.Monad.html#Monad"><span class="hs-identifier hs-var">Monad</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span>
+</span><span id="line-24"></span><span>
+</span><span id="line-25"></span><span id="local-6989586621679138316"><span id="local-6989586621679138317"><span class="annot"><a href="Proarrow.Monad.html#idMonad"><span class="hs-identifier hs-type">idMonad</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138316"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138316"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138317"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Monad"><span class="hs-identifier hs-type">Monad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138316"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138317"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138317"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-26"></span><span id="idMonad"><span class="annot"><span class="annottext">idMonad :: forall (kk :: CAT Kind) (a :: Kind).
+(Bicategory kk, Ob0 kk a) =&gt;
+Monad Nil
+</span><a href="Proarrow.Monad.html#idMonad"><span class="hs-identifier hs-var hs-var">idMonad</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span> </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">$sel:return:RelMonad :: Nil ~&gt; (Nil +++ Nil)
+</span><a href="Proarrow.Monad.html#%24sel%3Areturn%3ARelMonad"><span class="hs-identifier hs-var">return</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; (Nil +++ Nil)
+Nil ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+forall (a :: Path kk a a). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">$sel:join:RelMonad :: (Nil +++ (Nil +++ Nil)) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Ajoin%3ARelMonad"><span class="hs-identifier hs-var">join</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Nil +++ (Nil +++ Nil)) ~&gt; Nil
+Nil ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+forall (a :: Path kk a a). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-27"></span><span>
+</span><span id="line-28"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679138615"><span class="annot"><a href="#local-6989586621679138615"><span class="hs-identifier hs-type">kk</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#MKKIND"><span class="hs-identifier hs-type">MKKIND</span></a></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679138616"><span class="annot"><a href="#local-6989586621679138616"><span class="hs-identifier hs-type">c</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Kind"><span class="hs-identifier hs-type">Kind</span></a></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679138617"><span class="annot"><a href="#local-6989586621679138617"><span class="hs-identifier hs-type">d</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Kind"><span class="hs-identifier hs-type">Kind</span></a></span><span class="hs-special">}</span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138615"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138616"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138617"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138615"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138617"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138616"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span>
+</span><span id="line-29"></span><span class="hs-keyword">data</span><span> </span><span id="Adjunction"><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-var">Adjunction</span></a></span></span><span> </span><span id="local-6989586621679138618"><span class="annot"><a href="#local-6989586621679138618"><span class="hs-identifier hs-type">l</span></a></span></span><span> </span><span id="local-6989586621679138619"><span class="annot"><a href="#local-6989586621679138619"><span class="hs-identifier hs-type">r</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-30"></span><span>  </span><span id="local-6989586621679138346"><span id="local-6989586621679138347"><span id="local-6989586621679138348"><span id="local-6989586621679138349"><span id="local-6989586621679138350"><span id="Adjunction"><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-var">Adjunction</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138346"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138346"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138347"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138346"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138348"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138349"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138350"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span>
+</span><span id="line-31"></span><span>    </span><span class="hs-special">{</span><span> </span><span id="%24sel%3Aunit%3AAdjunction"><span class="annot"><span class="annottext">forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; Nil ~&gt; (r +++ l)
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-keyword hs-var hs-var">unit</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138350"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138349"><span class="hs-identifier hs-type">l</span></a></span><span>
+</span><span id="line-32"></span><span>    </span><span class="hs-special">,</span><span> </span><span id="%24sel%3Acounit%3AAdjunction"><span class="annot"><span class="annottext">forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; (l +++ r) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Acounit%3AAdjunction"><span class="hs-identifier hs-var hs-var">counit</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679138349"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138350"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span>
+</span><span id="line-33"></span><span>    </span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138349"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138346"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138347"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138348"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138350"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138346"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138348"><span class="hs-identifier hs-type">d</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138347"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span></span></span></span></span></span><span>
+</span><span id="line-34"></span><span>
+</span><span id="line-35"></span><span id="local-6989586621679138362"><span id="local-6989586621679138363"><span class="annot"><a href="Proarrow.Monad.html#idAdjunction"><span class="hs-identifier hs-type">idAdjunction</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138362"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138362"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138363"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138362"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138363"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138363"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span></span></span><span>
+</span><span id="line-36"></span><span id="idAdjunction"><span class="annot"><span class="annottext">idAdjunction :: forall (kk :: CAT Kind) (a :: Kind).
+(Bicategory kk, Ob0 kk a) =&gt;
+Adjunction Nil Nil
+</span><a href="Proarrow.Monad.html#idAdjunction"><span class="hs-identifier hs-var hs-var">idAdjunction</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">$sel:unit:Adjunction :: Nil ~&gt; (Nil +++ Nil)
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-keyword hs-var">unit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; (Nil +++ Nil)
+Nil ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+forall (a :: Path kk a a). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">$sel:counit:Adjunction :: (Nil +++ Nil) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Acounit%3AAdjunction"><span class="hs-identifier hs-var">counit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Nil +++ Nil) ~&gt; Nil
+Nil ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+forall (a :: Path kk a a). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-37"></span><span>
+</span><span id="line-38"></span><span class="annot"><a href="Proarrow.Monad.html#compAdjunction"><span class="hs-identifier hs-type">compAdjunction</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679138370"><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span></span><span> </span><span id="local-6989586621679138371"><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span></span><span> </span><span id="local-6989586621679138372"><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span></span><span> </span><span id="local-6989586621679138373"><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-39"></span><span id="compAdjunction"><span class="annot"><span class="annottext">compAdjunction :: forall {kk :: CAT Kind} {b :: Kind} {a :: Kind} {c :: Kind}
+       (l1 :: Path kk b a) (r1 :: Path kk a b) (l2 :: Path kk c b)
+       (r2 :: Path kk b c).
+Adjunction l1 r1
+-&gt; Adjunction l2 r2 -&gt; Adjunction (l2 +++ l1) (r1 +++ r2)
+</span><a href="Proarrow.Monad.html#compAdjunction"><span class="hs-identifier hs-var hs-var">compAdjunction</span></a></span></span><span> </span><span id="local-6989586621679138660"><span class="annot"><span class="annottext">adj1 :: Adjunction l1 r1
+</span><a href="#local-6989586621679138660"><span class="hs-identifier hs-var">adj1</span></a></span></span><span class="hs-glyph">@</span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span id="local-6989586621679138670"><span class="annot"><span class="annottext">adj2 :: Adjunction l2 r2
+</span><a href="#local-6989586621679138670"><span class="hs-identifier hs-var">adj2</span></a></span></span><span class="hs-glyph">@</span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {i :: k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk i j) (b :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k2, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+forall (a :: Path kk c b) (b :: Path kk b a) (r :: Kind).
+(Bicategory kk, Ob0 kk c, Ob0 kk b, Ob0 kk a, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier hs-var">appendObj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (l2 +++ l1) =&gt; Adjunction (l2 +++ l1) (r1 +++ r2))
+ -&gt; Adjunction (l2 +++ l1) (r1 +++ r2))
+-&gt; (Ob (l2 +++ l1) =&gt; Adjunction (l2 +++ l1) (r1 +++ r2))
+-&gt; Adjunction (l2 +++ l1) (r1 +++ r2)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {i :: k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk i j) (b :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k2, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+forall (a :: Path kk a b) (b :: Path kk b c) (r :: Kind).
+(Bicategory kk, Ob0 kk a, Ob0 kk b, Ob0 kk c, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier hs-var">appendObj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (r1 +++ r2) =&gt; Adjunction (l2 +++ l1) (r1 +++ r2))
+ -&gt; Adjunction (l2 +++ l1) (r1 +++ r2))
+-&gt; (Ob (r1 +++ r2) =&gt; Adjunction (l2 +++ l1) (r1 +++ r2))
+-&gt; Adjunction (l2 +++ l1) (r1 +++ r2)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span>
+</span><span id="line-40"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">$sel:unit:Adjunction :: Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1))
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-keyword hs-var">unit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk a c) (b :: Path kk c b) (c :: Path kk b a)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk a, Ob0 kk c, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span><span> </span><span class="annot"><span class="annottext">((((((r1 +++ r2) +++ l2) +++ l1)
+   ~ ((r1 +++ r2) +++ (l2 +++ l1))) =&gt;
+  Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+ -&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+-&gt; (((((r1 +++ r2) +++ l2) +++ l1)
+     ~ ((r1 +++ r2) +++ (l2 +++ l1))) =&gt;
+    Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+-&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1))
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk a b) (b :: Path kk b c) (c :: Path kk c b)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk a, Ob0 kk b, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="annot"><span class="annottext">(((((r1 +++ r2) +++ l2) ~ (r1 +++ (r2 +++ l2))) =&gt;
+  Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+ -&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+-&gt; ((((r1 +++ r2) +++ l2) ~ (r1 +++ (r2 +++ l2))) =&gt;
+    Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+-&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1))
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+forall (a :: Path kk a b) (r :: Kind).
+(Bicategory kk, Ob0 kk a, Ob0 kk b, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withUnital"><span class="hs-identifier hs-var">withUnital</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="annot"><span class="annottext">((((r1 +++ Nil) ~ r1) =&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+ -&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+-&gt; (((r1 +++ Nil) ~ r1) =&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+-&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1))
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-41"></span><span>      </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk a b).
+(CategoryOf (Path kk a b), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj r1
+-&gt; (Nil ~&gt; (r2 +++ l2)) -&gt; (r1 +++ Nil) ~&gt; (r1 +++ (r2 +++ l2))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">Adjunction l2 r2 -&gt; Nil ~&gt; (r2 +++ l2)
+forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; Nil ~&gt; (r +++ l)
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-keyword hs-var">unit</span></a></span><span> </span><span class="annot"><span class="annottext">Adjunction l2 r2
+</span><a href="#local-6989586621679138670"><span class="hs-identifier hs-var">adj2</span></a></span><span> </span><span class="annot"><span class="annottext">((r1 +++ Nil) ~&gt; (r1 +++ (r2 +++ l2)))
+-&gt; (l1 ~&gt; l1)
+-&gt; ((r1 +++ Nil) +++ l1) ~&gt; ((r1 +++ (r2 +++ l2)) +++ l1)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk b a).
+(CategoryOf (Path kk b a), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((r1 +++ Nil) +++ l1) ~&gt; ((r1 +++ r2) +++ (l2 +++ l1)))
+-&gt; (Nil ~&gt; ((r1 +++ Nil) +++ l1))
+-&gt; Nil ~&gt; ((r1 +++ r2) +++ (l2 +++ l1))
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk a a) (c :: Path kk a a) (a :: Path kk a a).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Adjunction l1 r1 -&gt; Nil ~&gt; (r1 +++ l1)
+forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; Nil ~&gt; (r +++ l)
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-keyword hs-var">unit</span></a></span><span> </span><span class="annot"><span class="annottext">Adjunction l1 r1
+</span><a href="#local-6989586621679138660"><span class="hs-identifier hs-var">adj1</span></a></span><span>
+</span><span id="line-42"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">$sel:counit:Adjunction :: ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Acounit%3AAdjunction"><span class="hs-identifier hs-var">counit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk c a) (b :: Path kk a b) (c :: Path kk b c)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk c, Ob0 kk a, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span><span> </span><span class="annot"><span class="annottext">((((((l2 +++ l1) +++ r1) +++ r2)
+   ~ ((l2 +++ l1) +++ (r1 +++ r2))) =&gt;
+  ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+ -&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+-&gt; (((((l2 +++ l1) +++ r1) +++ r2)
+     ~ ((l2 +++ l1) +++ (r1 +++ r2))) =&gt;
+    ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+-&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk c b) (b :: Path kk b a) (c :: Path kk a b)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk c, Ob0 kk b, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138370"><span class="hs-identifier hs-type">l1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138371"><span class="hs-identifier hs-type">r1</span></a></span><span> </span><span class="annot"><span class="annottext">(((((l2 +++ l1) +++ r1) ~ (l2 +++ (l1 +++ r1))) =&gt;
+  ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+ -&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+-&gt; ((((l2 +++ l1) +++ r1) ~ (l2 +++ (l1 +++ r1))) =&gt;
+    ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+-&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+forall (a :: Path kk c b) (r :: Kind).
+(Bicategory kk, Ob0 kk c, Ob0 kk b, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withUnital"><span class="hs-identifier hs-var">withUnital</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="annot"><span class="annottext">((((l2 +++ Nil) ~ l2) =&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+ -&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+-&gt; (((l2 +++ Nil) ~ l2) =&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil)
+-&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-43"></span><span>      </span><span class="annot"><span class="annottext">Adjunction l2 r2 -&gt; (l2 +++ r2) ~&gt; Nil
+forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; (l +++ r) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Acounit%3AAdjunction"><span class="hs-identifier hs-var">counit</span></a></span><span> </span><span class="annot"><span class="annottext">Adjunction l2 r2
+</span><a href="#local-6989586621679138670"><span class="hs-identifier hs-var">adj2</span></a></span><span> </span><span class="annot"><span class="annottext">((l2 +++ r2) ~&gt; Nil)
+-&gt; (((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; (l2 +++ r2))
+-&gt; ((l2 +++ l1) +++ (r1 +++ r2)) ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk c c) (c :: Path kk c c) (a :: Path kk c c).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk c b).
+(CategoryOf (Path kk c b), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138372"><span class="hs-identifier hs-type">l2</span></a></span><span> </span><span class="annot"><span class="annottext">Obj l2
+-&gt; ((l1 +++ r1) ~&gt; Nil) -&gt; (l2 +++ (l1 +++ r1)) ~&gt; (l2 +++ Nil)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">Adjunction l1 r1 -&gt; (l1 +++ r1) ~&gt; Nil
+forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; (l +++ r) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Acounit%3AAdjunction"><span class="hs-identifier hs-var">counit</span></a></span><span> </span><span class="annot"><span class="annottext">Adjunction l1 r1
+</span><a href="#local-6989586621679138660"><span class="hs-identifier hs-var">adj1</span></a></span><span> </span><span class="annot"><span class="annottext">((l2 +++ (l1 +++ r1)) ~&gt; (l2 +++ Nil))
+-&gt; (r2 ~&gt; r2)
+-&gt; ((l2 +++ (l1 +++ r1)) +++ r2) ~&gt; ((l2 +++ Nil) +++ r2)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk b c).
+(CategoryOf (Path kk b c), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138373"><span class="hs-identifier hs-type">r2</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-44"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-45"></span><span>
+</span><span id="line-46"></span><span class="annot"><a href="Proarrow.Monad.html#adjMonad"><span class="hs-identifier hs-type">adjMonad</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679138428"><span class="annot"><a href="#local-6989586621679138428"><span class="hs-identifier hs-type">l</span></a></span></span><span> </span><span id="local-6989586621679138429"><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138428"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Monad"><span class="hs-identifier hs-type">Monad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138428"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-47"></span><span id="adjMonad"><span class="annot"><span class="annottext">adjMonad :: forall {kk :: CAT Kind} {b :: Kind} {i :: Kind} (l :: Path kk b i)
+       (r :: Path kk i b).
+Adjunction l r -&gt; Monad (r +++ l)
+</span><a href="Proarrow.Monad.html#adjMonad"><span class="hs-identifier hs-var hs-var">adjMonad</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span class="hs-special">{</span><span id="local-6989586621679138791"><span id="local-6989586621679138792"><span class="annot"><span class="annottext">(l +++ r) ~&gt; Nil
+Nil ~&gt; (r +++ l)
+$sel:unit:Adjunction :: forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; Nil ~&gt; (r +++ l)
+$sel:counit:Adjunction :: forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; (l +++ r) ~&gt; Nil
+unit :: Nil ~&gt; (r +++ l)
+counit :: (l +++ r) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span>
+</span><span id="line-48"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">$sel:return:RelMonad :: Nil ~&gt; (Nil +++ (r +++ l))
+</span><a href="Proarrow.Monad.html#%24sel%3Areturn%3ARelMonad"><span class="hs-identifier hs-var">return</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; (r +++ l)
+Nil ~&gt; (Nil +++ (r +++ l))
+</span><a href="#local-6989586621679138791"><span class="hs-keyword hs-var">unit</span></a></span><span>
+</span><span id="line-49"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">$sel:join:RelMonad :: ((r +++ l) +++ (Nil +++ (r +++ l))) ~&gt; (r +++ l)
+</span><a href="Proarrow.Monad.html#%24sel%3Ajoin%3ARelMonad"><span class="hs-identifier hs-var">join</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; (r +++ l)
+</span><a href="#local-6989586621679138791"><span class="hs-keyword hs-var">unit</span></a></span><span> </span><span class="annot"><span class="annottext">(Nil ~&gt; (r +++ l))
+-&gt; ((Ob Nil, Ob (r +++ l)) =&gt;
+    ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+-&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l)
+forall {k1 :: Kind} {k2 :: Kind} (p :: PRO k1 k2) (a :: k1)
+       (b :: k2) (r :: Kind).
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Core.html#%2F%2F"><span class="hs-operator hs-var">//</span></a></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+forall (a :: Path kk i b) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk b, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withUnital"><span class="hs-identifier hs-var">withUnital</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><span class="annottext">((((r +++ Nil) ~ r) =&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+ -&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+-&gt; (((r +++ Nil) ~ r) =&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+-&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk i b) (b :: Path kk b i) (c :: Path kk i b)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk b, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138428"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><span class="annottext">(((((r +++ l) +++ r) ~ (r +++ (l +++ r))) =&gt;
+  ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+ -&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+-&gt; ((((r +++ l) +++ r) ~ (r +++ (l +++ r))) =&gt;
+    ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+-&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk i i) (b :: Path kk i b) (c :: Path kk b i)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138428"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138428"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><span class="annottext">((((((r +++ l) +++ r) +++ l) ~ ((r +++ l) +++ (r +++ l))) =&gt;
+  ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+ -&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+-&gt; (((((r +++ l) +++ r) +++ l) ~ ((r +++ l) +++ (r +++ l))) =&gt;
+    ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l))
+-&gt; ((r +++ l) +++ (r +++ l)) ~&gt; (r +++ l)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-50"></span><span>      </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk i b).
+(CategoryOf (Path kk i b), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138429"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><span class="annottext">Obj r -&gt; ((l +++ r) ~&gt; Nil) -&gt; (r +++ (l +++ r)) ~&gt; (r +++ Nil)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">(l +++ r) ~&gt; Nil
+</span><a href="#local-6989586621679138792"><span class="hs-identifier hs-var">counit</span></a></span><span> </span><span class="annot"><span class="annottext">((r +++ (l +++ r)) ~&gt; (r +++ Nil))
+-&gt; (l ~&gt; l) -&gt; ((r +++ (l +++ r)) +++ l) ~&gt; ((r +++ Nil) +++ l)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk b i).
+(CategoryOf (Path kk b i), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138428"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-51"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-52"></span><span>
+</span><span id="line-53"></span><span class="annot"><a href="Proarrow.Monad.html#adjWrapMonad"><span class="hs-identifier hs-type">adjWrapMonad</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679138447"><span class="annot"><a href="#local-6989586621679138447"><span class="hs-identifier hs-type">r</span></a></span></span><span> </span><span id="local-6989586621679138445"><span class="annot"><a href="#local-6989586621679138445"><span class="hs-identifier hs-type">l</span></a></span></span><span> </span><span id="local-6989586621679138448"><span class="annot"><a href="#local-6989586621679138448"><span class="hs-identifier hs-type">t</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138445"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138447"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Monad"><span class="hs-identifier hs-type">Monad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138448"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Monad"><span class="hs-identifier hs-type">Monad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679138447"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138448"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138445"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-54"></span><span id="adjWrapMonad"><span class="annot"><span class="annottext">adjWrapMonad :: forall {kk :: CAT Kind} {i :: Kind} {j1 :: Kind} (r :: kk i j1)
+       (l :: kk j1 i) (t :: kk j1 j1).
+Adjunction (l ::: Nil) (r ::: Nil)
+-&gt; Monad (t ::: Nil) -&gt; Monad (r ::: (t ::: (l ::: Nil)))
+</span><a href="Proarrow.Monad.html#adjWrapMonad"><span class="hs-identifier hs-var hs-var">adjWrapMonad</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span class="hs-special">{</span><span id="local-6989586621679138841"><span id="local-6989586621679138842"><span class="annot"><span class="annottext">Nil ~&gt; ((r ::: Nil) +++ (l ::: Nil))
+((l ::: Nil) +++ (r ::: Nil)) ~&gt; Nil
+$sel:unit:Adjunction :: forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; Nil ~&gt; (r +++ l)
+$sel:counit:Adjunction :: forall (kk :: CAT Kind) (c :: Kind) (d :: Kind) (l :: Path kk c d)
+       (r :: Path kk d c).
+Adjunction l r -&gt; (l +++ r) ~&gt; Nil
+unit :: Nil ~&gt; ((r ::: Nil) +++ (l ::: Nil))
+counit :: ((l ::: Nil) +++ (r ::: Nil)) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span class="hs-special">{</span><span id="local-6989586621679138865"><span id="local-6989586621679138866"><span class="annot"><span class="annottext">((t ::: Nil) +++ (Nil +++ (t ::: Nil))) ~&gt; (t ::: Nil)
+Nil ~&gt; (Nil +++ (t ::: Nil))
+$sel:return:RelMonad :: forall (kk :: CAT Kind) (i :: Kind) (k :: Kind) (j :: Path kk k i)
+       (t :: Path kk i k).
+RelMonad j t -&gt; Nil ~&gt; (j +++ t)
+$sel:join:RelMonad :: forall (kk :: CAT Kind) (i :: Kind) (k :: Kind) (j :: Path kk k i)
+       (t :: Path kk i k).
+RelMonad j t -&gt; (t +++ (j +++ t)) ~&gt; t
+return :: Nil ~&gt; (Nil +++ (t ::: Nil))
+join :: ((t ::: Nil) +++ (Nil +++ (t ::: Nil))) ~&gt; (t ::: Nil)
+</span><a href="Proarrow.Monad.html#%24sel%3Areturn%3ARelMonad"><span class="hs-glyph hs-var hs-var hs-var hs-var">..</span></a></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span>
+</span><span id="line-55"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">$sel:return:RelMonad :: Nil ~&gt; (Nil +++ (r ::: (t ::: (l ::: Nil))))
+</span><a href="Proarrow.Monad.html#%24sel%3Areturn%3ARelMonad"><span class="hs-identifier hs-var">return</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj (r ::: Nil)
+forall {k1 :: Kind} {kk :: k1 -&gt; k1 -&gt; Kind} {j :: k1} {k2 :: k1}
+       (a :: kk j k2).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+</span><a href="Proarrow.Category.Bicategory.html#obj1"><span class="hs-identifier hs-var">obj1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj (r ::: Nil)
+-&gt; (Nil ~&gt; (t ::: Nil))
+-&gt; ((r ::: Nil) +++ Nil) ~&gt; ((r ::: Nil) +++ (t ::: Nil))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; (Nil +++ (t ::: Nil))
+Nil ~&gt; (t ::: Nil)
+</span><a href="#local-6989586621679138865"><span class="hs-identifier hs-var">return</span></a></span><span> </span><span class="annot"><span class="annottext">(((r ::: Nil) +++ Nil) ~&gt; ((r ::: Nil) +++ (t ::: Nil)))
+-&gt; ((l ::: Nil) ~&gt; (l ::: Nil))
+-&gt; (((r ::: Nil) +++ Nil) +++ (l ::: Nil))
+   ~&gt; (((r ::: Nil) +++ (t ::: Nil)) +++ (l ::: Nil))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">(l ::: Nil) ~&gt; (l ::: Nil)
+forall {k1 :: Kind} {kk :: k1 -&gt; k1 -&gt; Kind} {j :: k1} {k2 :: k1}
+       (a :: kk j k2).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+</span><a href="Proarrow.Category.Bicategory.html#obj1"><span class="hs-identifier hs-var">obj1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((((r ::: Nil) +++ Nil) +++ (l ::: Nil))
+ ~&gt; (r ::: (t ::: (l ::: Nil))))
+-&gt; (Nil ~&gt; (((r ::: Nil) +++ Nil) +++ (l ::: Nil)))
+-&gt; Nil ~&gt; (r ::: (t ::: (l ::: Nil)))
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk i i) (c :: Path kk i i) (a :: Path kk i i).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; (((r ::: Nil) +++ Nil) +++ (l ::: Nil))
+Nil ~&gt; ((r ::: Nil) +++ (l ::: Nil))
+</span><a href="#local-6989586621679138841"><span class="hs-keyword hs-var">unit</span></a></span><span>
+</span><span id="line-56"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">$sel:join:RelMonad :: ((r ::: (t ::: (l ::: Nil)))
+ +++ (Nil +++ (r ::: (t ::: (l ::: Nil)))))
+~&gt; (r ::: (t ::: (l ::: Nil)))
+</span><a href="Proarrow.Monad.html#%24sel%3Ajoin%3ARelMonad"><span class="hs-identifier hs-var">join</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: kk i j1).
+(Bicategory kk, Ob0 kk i, Ob0 kk j1, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+forall {k1 :: Kind} {kk :: k1 -&gt; k1 -&gt; Kind} {j :: k1} {k2 :: k1}
+       (a :: kk j k2).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+</span><a href="Proarrow.Category.Bicategory.html#obj1"><span class="hs-identifier hs-var">obj1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138447"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><span class="annottext">Obj (r ::: Nil)
+-&gt; ((((t ::: Nil) +++ (l ::: (r ::: Nil))) +++ (t ::: Nil))
+    ~&gt; (t ::: Nil))
+-&gt; ((r ::: Nil)
+    +++ (((t ::: Nil) +++ (l ::: (r ::: Nil))) +++ (t ::: Nil)))
+   ~&gt; ((r ::: Nil) +++ (t ::: Nil))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((t ::: Nil) +++ (Nil +++ (t ::: Nil))) ~&gt; (t ::: Nil)
+(t ::: (t ::: Nil)) ~&gt; (t ::: Nil)
+</span><a href="#local-6989586621679138866"><span class="hs-identifier hs-var">join</span></a></span><span> </span><span class="annot"><span class="annottext">((t ::: (t ::: Nil)) ~&gt; (t ::: Nil))
+-&gt; ((((t ::: Nil) +++ (l ::: (r ::: Nil))) +++ (t ::: Nil))
+    ~&gt; (t ::: (t ::: Nil)))
+-&gt; (((t ::: Nil) +++ (l ::: (r ::: Nil))) +++ (t ::: Nil))
+   ~&gt; (t ::: Nil)
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk j1 j1) (c :: Path kk j1 j1)
+       (a :: Path kk j1 j1).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj (t ::: Nil)
+forall {k1 :: Kind} {kk :: k1 -&gt; k1 -&gt; Kind} {j :: k1} {k2 :: k1}
+       (a :: kk j k2).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+</span><a href="Proarrow.Category.Bicategory.html#obj1"><span class="hs-identifier hs-var">obj1</span></a></span><span> </span><span class="annot"><span class="annottext">Obj (t ::: Nil)
+-&gt; ((l ::: (r ::: Nil)) ~&gt; Nil)
+-&gt; ((t ::: Nil) +++ (l ::: (r ::: Nil))) ~&gt; ((t ::: Nil) +++ Nil)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">((l ::: Nil) +++ (r ::: Nil)) ~&gt; Nil
+(l ::: (r ::: Nil)) ~&gt; Nil
+</span><a href="#local-6989586621679138842"><span class="hs-identifier hs-var">counit</span></a></span><span> </span><span class="annot"><span class="annottext">(((t ::: Nil) +++ (l ::: (r ::: Nil))) ~&gt; ((t ::: Nil) +++ Nil))
+-&gt; Obj (t ::: Nil)
+-&gt; (((t ::: Nil) +++ (l ::: (r ::: Nil))) +++ (t ::: Nil))
+   ~&gt; (((t ::: Nil) +++ Nil) +++ (t ::: Nil))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">Obj (t ::: Nil)
+forall {k1 :: Kind} {kk :: k1 -&gt; k1 -&gt; Kind} {j :: k1} {k2 :: k1}
+       (a :: kk j k2).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+</span><a href="Proarrow.Category.Bicategory.html#obj1"><span class="hs-identifier hs-var">obj1</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((r ::: Nil)
+  +++ (((t ::: Nil) +++ (l ::: (r ::: Nil))) +++ (t ::: Nil)))
+ ~&gt; ((r ::: Nil) +++ (t ::: Nil)))
+-&gt; ((l ::: Nil) ~&gt; (l ::: Nil))
+-&gt; (((r ::: Nil)
+     +++ (((t ::: Nil) +++ (l ::: (r ::: Nil))) +++ (t ::: Nil)))
+    +++ (l ::: Nil))
+   ~&gt; (((r ::: Nil) +++ (t ::: Nil)) +++ (l ::: Nil))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: kk j1 i).
+(Bicategory kk, Ob0 kk j1, Ob0 kk i, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+forall {k1 :: Kind} {kk :: k1 -&gt; k1 -&gt; Kind} {j :: k1} {k2 :: k1}
+       (a :: kk j k2).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob (a ::: Nil)) =&gt;
+Obj (a ::: Nil)
+</span><a href="Proarrow.Category.Bicategory.html#obj1"><span class="hs-identifier hs-var">obj1</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679138445"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob Nil, Ob (t ::: Nil)) =&gt;
+ (r ::: (t ::: (l ::: (r ::: (t ::: (l ::: Nil))))))
+ ~&gt; (r ::: (t ::: (l ::: Nil))))
+-&gt; (Nil ~&gt; (t ::: Nil))
+-&gt; (r ::: (t ::: (l ::: (r ::: (t ::: (l ::: Nil))))))
+   ~&gt; (r ::: (t ::: (l ::: Nil)))
+forall {j :: Kind} {k :: Kind} (p :: PRO j k) (a :: j) (b :: k)
+       (r :: Kind).
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: Path kk j1 j1) (b :: Path kk j1 j1) (r :: Kind).
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; (Nil +++ (t ::: Nil))
+Nil ~&gt; (t ::: Nil)
+</span><a href="#local-6989586621679138865"><span class="hs-identifier hs-var">return</span></a></span><span>
+</span><span id="line-57"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-58"></span><span>
+</span><span id="line-59"></span><span id="local-6989586621679138466"><span id="local-6989586621679138467"><span id="local-6989586621679138468"><span class="annot"><a href="Proarrow.Monad.html#promonadMonad"><span class="hs-identifier hs-type">promonadMonad</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138467"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"><span class="hs-identifier hs-type">ProfConstraint</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138468"><span class="hs-identifier hs-type">cl</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138467"><span class="hs-identifier hs-type">p</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Monad"><span class="hs-identifier hs-type">Monad</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#PK"><span class="hs-identifier hs-type">PK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138467"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138468"><span class="hs-identifier hs-type">cl</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679138466"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138466"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span><span>
+</span><span id="line-60"></span><span id="promonadMonad"><span class="annot"><span class="annottext">promonadMonad :: forall (k :: Kind) (p :: PRO k k) (cl :: Kind).
+(Promonad p, ProfConstraint cl p) =&gt;
+Monad ('PK p ::: Nil)
+</span><a href="Proarrow.Monad.html#promonadMonad"><span class="hs-identifier hs-var hs-var">promonadMonad</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#RelMonad"><span class="hs-identifier hs-type">RelMonad</span></a></span><span>
+</span><span id="line-61"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">$sel:return:RelMonad :: Nil ~&gt; (Nil +++ ('PK p ::: Nil))
+</span><a href="Proarrow.Monad.html#%24sel%3Areturn%3ARelMonad"><span class="hs-identifier hs-var">return</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ProfList cl Nil :~&gt; ProfList cl ('PK p ::: Nil))
+-&gt; Biprof Nil ('PK p ::: Nil)
+forall {j :: Kind} {k1 :: Kind} {cl :: Kind}
+       (ps :: Path (ProfK cl) j k1) (qs :: Path (ProfK cl) j k1).
+(CategoryOf j, CategoryOf k1, Ob ps, Ob qs) =&gt;
+(ProfList cl ps :~&gt; ProfList cl qs) -&gt; Biprof ps qs
+</span><a href="Proarrow.Category.Bicategory.Prof.html#Biprof"><span class="hs-identifier hs-var">Biprof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679138936"><span class="annot"><span class="annottext">a ~&gt; b1
+</span><a href="#local-6989586621679138936"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">p a a -&gt; ProfList cl Nil a b -&gt; ProfList cl ('PK p ::: Nil) a b
+forall {j :: Kind} {j1 :: Kind} {k :: Kind} (p :: PRO j j1)
+       (cl :: Kind) (ps1 :: Path (ProfK cl) j1 k) (f :: ProfK cl j j1)
+       (a :: j) (b1 :: j1) (b :: k).
+(Profunctor p, ProfConstraint cl p, Is 'PK f, p ~ UN 'PK f) =&gt;
+p a b1 -&gt; ProfList cl ps1 b1 b -&gt; ProfList cl (f ::: ps1) a b
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-var">ProfCons</span></a></span><span> </span><span class="annot"><span class="annottext">p a a
+forall (a :: k). Ob a =&gt; p a a
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; ProfList cl Nil a b
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679138936"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob b) =&gt; ProfList cl ('PK p ::: Nil) a b)
+-&gt; (a ~&gt; b) -&gt; ProfList cl ('PK p ::: Nil) a b
+forall (a :: k) (b :: k) (r :: Kind).
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j :: Kind} {k :: Kind} (p :: PRO j k) (a :: j) (b :: k)
+       (r :: Kind).
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679138936"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-62"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">$sel:join:RelMonad :: (('PK p ::: Nil) +++ (Nil +++ ('PK p ::: Nil))) ~&gt; ('PK p ::: Nil)
+</span><a href="Proarrow.Monad.html#%24sel%3Ajoin%3ARelMonad"><span class="hs-identifier hs-var">join</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ProfList cl ('PK p ::: ('PK p ::: Nil))
+ :~&gt; ProfList cl ('PK p ::: Nil))
+-&gt; Biprof ('PK p ::: ('PK p ::: Nil)) ('PK p ::: Nil)
+forall {j :: Kind} {k1 :: Kind} {cl :: Kind}
+       (ps :: Path (ProfK cl) j k1) (qs :: Path (ProfK cl) j k1).
+(CategoryOf j, CategoryOf k1, Ob ps, Ob qs) =&gt;
+(ProfList cl ps :~&gt; ProfList cl qs) -&gt; Biprof ps qs
+</span><a href="Proarrow.Category.Bicategory.Prof.html#Biprof"><span class="hs-identifier hs-var">Biprof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-type">ProfCons</span></a></span><span> </span><span id="local-6989586621679138963"><span class="annot"><span class="annottext">p a b1
+</span><a href="#local-6989586621679138963"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-type">ProfCons</span></a></span><span> </span><span id="local-6989586621679138979"><span class="annot"><span class="annottext">p b1 b1
+</span><a href="#local-6989586621679138979"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679138995"><span class="annot"><span class="annottext">b1 ~&gt; b1
+</span><a href="#local-6989586621679138995"><span class="hs-identifier hs-var">h</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">p a b1 -&gt; ProfList cl Nil b1 b -&gt; ProfList cl ('PK p ::: Nil) a b
+forall {j :: Kind} {j1 :: Kind} {k :: Kind} (p :: PRO j j1)
+       (cl :: Kind) (ps1 :: Path (ProfK cl) j1 k) (f :: ProfK cl j j1)
+       (a :: j) (b1 :: j1) (b :: k).
+(Profunctor p, ProfConstraint cl p, Is 'PK f, p ~ UN 'PK f) =&gt;
+p a b1 -&gt; ProfList cl ps1 b1 b -&gt; ProfList cl (f ::: ps1) a b
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-var">ProfCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p b1 b1
+p b1 b1
+</span><a href="#local-6989586621679138979"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">p b1 b1 -&gt; p a b1 -&gt; p a b1
+forall (b :: k) (c :: k) (a :: k). p b c -&gt; p a b -&gt; p a c
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">p a b1
+p a b1
+</span><a href="#local-6989586621679138963"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(b1 ~&gt; b) -&gt; ProfList cl Nil b1 b
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="annot"><span class="annottext">b1 ~&gt; b
+b1 ~&gt; b1
+</span><a href="#local-6989586621679138995"><span class="hs-identifier hs-var">h</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-63"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-64"></span><span>
+</span><span id="line-65"></span><span id="local-6989586621679138525"><span id="local-6989586621679138526"><span id="local-6989586621679138527"><span id="local-6989586621679138529"><span class="annot"><a href="Proarrow.Monad.html#proadjAdj"><span class="hs-identifier hs-type">proadjAdj</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Adjunction.html#Adjunction"><span class="hs-identifier hs-type">Pro.Adjunction</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138526"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138527"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"><span class="hs-identifier hs-type">ProfConstraint</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138529"><span class="hs-identifier hs-type">cl</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138526"><span class="hs-identifier hs-type">l</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfConstraint"><span class="hs-identifier hs-type">ProfConstraint</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138529"><span class="hs-identifier hs-type">cl</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138527"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#PK"><span class="hs-identifier hs-type">PK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138526"><span class="hs-identifier hs-type">l</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138529"><span class="hs-identifier hs-type">cl</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679138525"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138525"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#PK"><span class="hs-identifier hs-type">PK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679138527"><span class="hs-identifier hs-type">r</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%3A%3A%3A"><span class="hs-operator hs-type">:::</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
+</span><span id="line-66"></span><span id="proadjAdj"><span class="annot"><span class="annottext">proadjAdj :: forall (k :: Kind) (l :: PRO k k) (r :: PRO k k) (cl :: Kind).
+(Adjunction l r, ProfConstraint cl l, ProfConstraint cl r) =&gt;
+Adjunction ('PK l ::: Nil) ('PK r ::: Nil)
+</span><a href="Proarrow.Monad.html#proadjAdj"><span class="hs-identifier hs-var hs-var">proadjAdj</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Monad.html#Adjunction"><span class="hs-identifier hs-type">Adjunction</span></a></span><span>
+</span><span id="line-67"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="annot"><span class="annottext">$sel:unit:Adjunction :: Nil ~&gt; (('PK r ::: Nil) +++ ('PK l ::: Nil))
+</span><a href="Proarrow.Monad.html#%24sel%3Aunit%3AAdjunction"><span class="hs-keyword hs-var">unit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ProfList cl Nil :~&gt; ProfList cl ('PK r ::: ('PK l ::: Nil)))
+-&gt; Biprof Nil ('PK r ::: ('PK l ::: Nil))
+forall {j :: Kind} {k1 :: Kind} {cl :: Kind}
+       (ps :: Path (ProfK cl) j k1) (qs :: Path (ProfK cl) j k1).
+(CategoryOf j, CategoryOf k1, Ob ps, Ob qs) =&gt;
+(ProfList cl ps :~&gt; ProfList cl qs) -&gt; Biprof ps qs
+</span><a href="Proarrow.Category.Bicategory.Prof.html#Biprof"><span class="hs-identifier hs-var">Biprof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679139050"><span class="annot"><a href="#local-6989586621679139050"><span class="hs-identifier hs-type hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679139051"><span class="annot"><span class="annottext">a ~&gt; b1
+</span><a href="#local-6989586621679139051"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">(:.:) r l a a
+(Ob a, Ob b) =&gt; (:.:) r l a a
+forall (a :: k). Ob a =&gt; (:.:) r l a a
+forall {j :: Kind} {k :: Kind} (p :: PRO k j) (q :: PRO j k)
+       (a :: j).
+(Adjunction p q, Ob a) =&gt;
+(:.:) q p a a
+</span><a href="Proarrow.Adjunction.html#unit"><span class="hs-identifier hs-var">Pro.unit</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob b) =&gt; (:.:) r l a a) -&gt; (a ~&gt; b) -&gt; (:.:) r l a a
+forall (a :: k) (b :: k) (r :: Kind).
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j :: Kind} {k :: Kind} (p :: PRO j k) (a :: j) (b :: k)
+       (r :: Kind).
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679139051"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="hs-keyword">of</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679139097"><span class="annot"><span class="annottext">r a b
+</span><a href="#local-6989586621679139097"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-type">:.:</span></a></span><span> </span><span id="local-6989586621679139099"><span class="annot"><span class="annottext">l b a
+</span><a href="#local-6989586621679139099"><span class="hs-identifier hs-var">l</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">r a b
+-&gt; ProfList cl ('PK l ::: Nil) b b
+-&gt; ProfList cl ('PK r ::: ('PK l ::: Nil)) a b
+forall {j :: Kind} {j1 :: Kind} {k :: Kind} (p :: PRO j j1)
+       (cl :: Kind) (ps1 :: Path (ProfK cl) j1 k) (f :: ProfK cl j j1)
+       (a :: j) (b1 :: j1) (b :: k).
+(Profunctor p, ProfConstraint cl p, Is 'PK f, p ~ UN 'PK f) =&gt;
+p a b1 -&gt; ProfList cl ps1 b1 b -&gt; ProfList cl (f ::: ps1) a b
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-var">ProfCons</span></a></span><span> </span><span class="annot"><span class="annottext">r a b
+</span><a href="#local-6989586621679139097"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">l b a -&gt; ProfList cl Nil a b -&gt; ProfList cl ('PK l ::: Nil) b b
+forall {j :: Kind} {j1 :: Kind} {k :: Kind} (p :: PRO j j1)
+       (cl :: Kind) (ps1 :: Path (ProfK cl) j1 k) (f :: ProfK cl j j1)
+       (a :: j) (b1 :: j1) (b :: k).
+(Profunctor p, ProfConstraint cl p, Is 'PK f, p ~ UN 'PK f) =&gt;
+p a b1 -&gt; ProfList cl ps1 b1 b -&gt; ProfList cl (f ::: ps1) a b
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-var">ProfCons</span></a></span><span> </span><span class="annot"><span class="annottext">l b a
+</span><a href="#local-6989586621679139099"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; ProfList cl Nil a b
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679139051"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-68"></span><span>  </span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">$sel:counit:Adjunction :: (('PK l ::: Nil) +++ ('PK r ::: Nil)) ~&gt; Nil
+</span><a href="Proarrow.Monad.html#%24sel%3Acounit%3AAdjunction"><span class="hs-identifier hs-var">counit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ProfList cl ('PK l ::: ('PK r ::: Nil)) :~&gt; ProfList cl Nil)
+-&gt; Biprof ('PK l ::: ('PK r ::: Nil)) Nil
+forall {j :: Kind} {k1 :: Kind} {cl :: Kind}
+       (ps :: Path (ProfK cl) j k1) (qs :: Path (ProfK cl) j k1).
+(CategoryOf j, CategoryOf k1, Ob ps, Ob qs) =&gt;
+(ProfList cl ps :~&gt; ProfList cl qs) -&gt; Biprof ps qs
+</span><a href="Proarrow.Category.Bicategory.Prof.html#Biprof"><span class="hs-identifier hs-var">Biprof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-type">ProfCons</span></a></span><span> </span><span id="local-6989586621679139115"><span class="annot"><span class="annottext">p a b1
+</span><a href="#local-6989586621679139115"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-type">ProfCons</span></a></span><span> </span><span id="local-6989586621679139131"><span class="annot"><span class="annottext">p b1 b1
+</span><a href="#local-6989586621679139131"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679139143"><span class="annot"><span class="annottext">b1 ~&gt; b1
+</span><a href="#local-6989586621679139143"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; ProfList cl Nil a b
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b1 ~&gt; b
+b1 ~&gt; b1
+</span><a href="#local-6989586621679139143"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(b1 ~&gt; b) -&gt; (a ~&gt; b1) -&gt; a ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(:.:) p r a b1 -&gt; a ~&gt; b1
+(p :.: r) :~&gt; (~&gt;)
+forall {j :: Kind} {k :: Kind} (p :: PRO k j) (q :: PRO j k).
+Adjunction p q =&gt;
+(p :.: q) :~&gt; (~&gt;)
+</span><a href="Proarrow.Adjunction.html#counit"><span class="hs-identifier hs-var">Pro.counit</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p a b1
+</span><a href="#local-6989586621679139115"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">p a b1 -&gt; r b1 b1 -&gt; (:.:) p r a b1
+forall {i :: Kind} {j :: Kind} {k :: Kind} (p :: PRO i j) (a :: i)
+       (b :: j) (q :: PRO j k) (c :: k).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-var">:.:</span></a></span><span> </span><span class="annot"><span class="annottext">r b1 b1
+p b1 b1
+</span><a href="#local-6989586621679139131"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-69"></span><span>  </span><span class="hs-special">}</span></pre></body></html>

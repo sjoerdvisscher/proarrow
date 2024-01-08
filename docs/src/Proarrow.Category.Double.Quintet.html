@@ -1,0 +1,456 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Category.Double.Quintet</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Function</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-operator">($)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html"><span class="hs-identifier">Proarrow.Category.Double</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Double.html#DOUBLE"><span class="hs-identifier">DOUBLE</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#Double"><span class="hs-identifier">Double</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html"><span class="hs-identifier">Proarrow.Category.Bicategory</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier">Path</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier">appendObj</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier">Bicategory</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator">(+++)</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#withUnital"><span class="hs-identifier">withUnital</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier">withAssoc</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html"><span class="hs-identifier">Proarrow.Category.Bicategory.Co</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#COK"><span class="hs-identifier">COK</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier">UnCoPath</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#Co"><span class="hs-identifier">Co</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#unCoPathAppend"><span class="hs-identifier">unCoPathAppend</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.html"><span class="hs-identifier">Proarrow.Object</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.html#obj"><span class="hs-identifier">obj</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679139566"><span class="annot"><a href="Proarrow.Category.Double.html#DOUBLE"><span class="hs-identifier hs-type">DOUBLE</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139566"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#COK"><span class="hs-identifier hs-type">COK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139566"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">)</span></span><span>
+</span><span id="line-14"></span><span class="hs-keyword">data</span><span> </span><span id="Quintet"><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-var">Quintet</span></a></span></span><span> </span><span id="local-6989586621679139567"><span class="annot"><a href="#local-6989586621679139567"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span id="local-6989586621679139568"><span class="annot"><a href="#local-6989586621679139568"><span class="hs-identifier hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679139569"><span class="annot"><a href="#local-6989586621679139569"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span id="local-6989586621679139570"><span class="annot"><a href="#local-6989586621679139570"><span class="hs-identifier hs-type">gs</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-15"></span><span>  </span><span id="Quintet"><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-var">Quintet</span></a></span></span><span>
+</span><span id="line-16"></span><span>    </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139422"><span class="annot"><a href="#local-6989586621679139422"><span class="hs-identifier hs-type">h</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139424"><span class="annot"><a href="#local-6989586621679139424"><span class="hs-identifier hs-type">i</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139423"><span class="annot"><a href="#local-6989586621679139423"><span class="hs-identifier hs-type">j</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139425"><span class="annot"><a href="#local-6989586621679139425"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139421"><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span></span><span class="hs-special">}</span><span> </span><span id="local-6989586621679139426"><span class="annot"><a href="#local-6989586621679139426"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span id="local-6989586621679139427"><span class="annot"><a href="#local-6989586621679139427"><span class="hs-identifier hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679139428"><span class="annot"><a href="#local-6989586621679139428"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span id="local-6989586621679139429"><span class="annot"><a href="#local-6989586621679139429"><span class="hs-identifier hs-type">gs</span></a></span></span><span>
+</span><span id="line-17"></span><span>     </span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139422"><span class="hs-identifier hs-type">h</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139424"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139423"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139425"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139426"><span class="hs-identifier hs-type">ps</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139427"><span class="hs-identifier hs-type">qs</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139428"><span class="hs-identifier hs-type">fs</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139429"><span class="hs-identifier hs-type">gs</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span>    </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679139426"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139429"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139428"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139427"><span class="hs-identifier hs-type">qs</span></a></span><span>
+</span><span id="line-19"></span><span>    </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139426"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139422"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139423"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139427"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139424"><span class="hs-identifier hs-type">i</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139425"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139428"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#COK"><span class="hs-identifier hs-type">COK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139422"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139424"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139429"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#COK"><span class="hs-identifier hs-type">COK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139421"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139423"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139425"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span class="annot"><span class="hs-comment">-- | The quintet construction. Create a double category of squares @alpha :: ps +++ gs ~&gt; fs +++ qs@ from a bicategory.</span></span><span>
+</span><span id="line-22"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679139411"><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#Double"><span class="hs-identifier hs-type">Double</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#COK"><span class="hs-identifier hs-type">COK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Sq"><span class="annot"><a href="Proarrow.Category.Double.html#Sq"><span class="hs-identifier hs-var">Sq</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#COK"><span class="hs-identifier hs-type">COK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span>
+</span><span id="line-24"></span><span>  </span><span id="local-6989586621679139621"><span class="annot"><span class="annottext">object :: forall (k :: Kind).
+DOb kk (COK kk) k =&gt;
+Sq kk (COK kk) Nil Nil Nil Nil
+</span><a href="#local-6989586621679139621"><span class="hs-identifier hs-var hs-var hs-var hs-var">object</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">((Nil +++ UnCoPath Nil) ~&gt; (UnCoPath Nil +++ Nil))
+-&gt; Quintet Nil Nil Nil Nil
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {kk :: CAT Kind} (ps :: Path kk h j) (qs :: Path kk i k)
+       (fs :: Path (COK kk) h i) (gs :: Path (COK kk) j k).
+(Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob ps, Ob qs, Ob fs,
+ Ob gs) =&gt;
+((ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs))
+-&gt; Quintet ps qs fs gs
+</span><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-var">Quintet</span></a></span><span> </span><span class="annot"><span class="annottext">(Nil +++ UnCoPath Nil) ~&gt; (UnCoPath Nil +++ Nil)
+Nil ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+forall (a :: Path kk k k). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.html#hArr"><span class="hs-identifier hs-type">hArr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139434"><span class="annot"><a href="#local-6989586621679139434"><span class="hs-identifier hs-type">h</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139435"><span class="annot"><a href="#local-6989586621679139435"><span class="hs-identifier hs-type">j</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679139436"><span class="annot"><a href="#local-6989586621679139436"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139434"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139435"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679139437"><span class="annot"><a href="#local-6989586621679139437"><span class="hs-identifier hs-type">qs</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="#local-6989586621679139436"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139437"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139436"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139437"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span>
+</span><span id="line-27"></span><span>  </span><span id="local-6989586621679139628"><span class="annot"><span class="annottext">hArr :: forall {h :: Kind} {j :: Kind} (ps :: Path kk h j)
+       (qs :: Path kk h j).
+(ps ~&gt; qs) -&gt; Quintet ps qs Nil Nil
+</span><a href="Proarrow.Category.Double.html#hArr"><span class="hs-identifier hs-var hs-var hs-var hs-var">hArr</span></a></span></span><span> </span><span id="local-6989586621679139629"><span class="annot"><span class="annottext">ps ~&gt; qs
+</span><a href="#local-6989586621679139629"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+forall (a :: Path kk h j) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk j, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withUnital"><span class="hs-identifier hs-var">withUnital</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139436"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><span class="annottext">((((ps +++ Nil) ~ ps) =&gt; Quintet ps qs Nil Nil)
+ -&gt; Quintet ps qs Nil Nil)
+-&gt; (((ps +++ Nil) ~ ps) =&gt; Quintet ps qs Nil Nil)
+-&gt; Quintet ps qs Nil Nil
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">((ps +++ UnCoPath Nil) ~&gt; (UnCoPath Nil +++ qs))
+-&gt; Quintet ps qs Nil Nil
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {kk :: CAT Kind} (ps :: Path kk h j) (qs :: Path kk i k)
+       (fs :: Path (COK kk) h i) (gs :: Path (COK kk) j k).
+(Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob ps, Ob qs, Ob fs,
+ Ob gs) =&gt;
+((ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs))
+-&gt; Quintet ps qs fs gs
+</span><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-var">Quintet</span></a></span><span> </span><span class="annot"><span class="annottext">ps ~&gt; qs
+(ps +++ UnCoPath Nil) ~&gt; (UnCoPath Nil +++ qs)
+</span><a href="#local-6989586621679139629"><span class="hs-identifier hs-var">n</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob0 kk h, Ob0 kk j, Ob ps, Ob qs) =&gt; Quintet ps qs Nil Nil)
+-&gt; (ps ~&gt; qs) -&gt; Quintet ps qs Nil Nil
+forall (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (r :: Kind).
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+forall (k :: Kind) (kk :: CAT k) (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (r :: Kind).
+Bicategory kk =&gt;
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#%5C%5C%5C"><span class="hs-operator hs-var">\\\</span></a></span><span> </span><span class="annot"><span class="annottext">ps ~&gt; qs
+</span><a href="#local-6989586621679139629"><span class="hs-identifier hs-var">n</span></a></span><span>
+</span><span id="line-28"></span><span>
+</span><span id="line-29"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.html#vArr"><span class="hs-identifier hs-type">vArr</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139459"><span class="annot"><a href="#local-6989586621679139459"><span class="hs-identifier hs-type">h</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139460"><span class="annot"><a href="#local-6989586621679139460"><span class="hs-identifier hs-type">i</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679139461"><span class="annot"><a href="#local-6989586621679139461"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#COK"><span class="hs-identifier hs-type">COK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139459"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139460"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679139462"><span class="annot"><a href="#local-6989586621679139462"><span class="hs-identifier hs-type">gs</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="#local-6989586621679139461"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139462"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139461"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139462"><span class="hs-identifier hs-type">gs</span></a></span><span>
+</span><span id="line-30"></span><span>  </span><span id="local-6989586621679139666"><span class="annot"><span class="annottext">vArr :: forall {h :: Kind} {i :: Kind} (fs :: Path (COK kk) h i)
+       (gs :: Path (COK kk) h i).
+(fs ~&gt; gs) -&gt; Quintet Nil Nil fs gs
+</span><a href="Proarrow.Category.Double.html#vArr"><span class="hs-identifier hs-var hs-var hs-var hs-var">vArr</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#Co"><span class="hs-identifier hs-type">Co</span></a></span><span> </span><span id="local-6989586621679139674"><span class="annot"><span class="annottext">UnCoPath gs ~&gt; UnCoPath fs
+</span><a href="#local-6989586621679139674"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk j, Ob0 kk k2, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+forall (a :: Path kk h i) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a) =&gt;
+(((a +++ Nil) ~ a) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withUnital"><span class="hs-identifier hs-var">withUnital</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139461"><span class="hs-identifier hs-type">fs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((((UnCoPath fs +++ Nil) ~ UnCoPath fs) =&gt; Quintet Nil Nil fs gs)
+ -&gt; Quintet Nil Nil fs gs)
+-&gt; (((UnCoPath fs +++ Nil) ~ UnCoPath fs) =&gt; Quintet Nil Nil fs gs)
+-&gt; Quintet Nil Nil fs gs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">((Nil +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ Nil))
+-&gt; Quintet Nil Nil fs gs
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {kk :: CAT Kind} (ps :: Path kk h j) (qs :: Path kk i k)
+       (fs :: Path (COK kk) h i) (gs :: Path (COK kk) j k).
+(Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob ps, Ob qs, Ob fs,
+ Ob gs) =&gt;
+((ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs))
+-&gt; Quintet ps qs fs gs
+</span><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-var">Quintet</span></a></span><span> </span><span class="annot"><span class="annottext">(Nil +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ Nil)
+UnCoPath gs ~&gt; UnCoPath fs
+</span><a href="#local-6989586621679139674"><span class="hs-identifier hs-var">n</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob0 kk h, Ob0 kk i, Ob (UnCoPath gs), Ob (UnCoPath fs)) =&gt;
+ Quintet Nil Nil fs gs)
+-&gt; (UnCoPath gs ~&gt; UnCoPath fs) -&gt; Quintet Nil Nil fs gs
+forall (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (r :: Kind).
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+forall (k :: Kind) (kk :: CAT k) (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (r :: Kind).
+Bicategory kk =&gt;
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#%5C%5C%5C"><span class="hs-operator hs-var">\\\</span></a></span><span> </span><span class="annot"><span class="annottext">UnCoPath gs ~&gt; UnCoPath fs
+</span><a href="#local-6989586621679139674"><span class="hs-identifier hs-var">n</span></a></span><span>
+</span><span id="line-31"></span><span>
+</span><span id="line-32"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.html#%7C%7C%7C"><span class="hs-operator hs-type">(|||)</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139470"><span class="annot"><a href="#local-6989586621679139470"><span class="hs-identifier hs-type">h</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139471"><span class="annot"><a href="#local-6989586621679139471"><span class="hs-identifier hs-type">j</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679139476"><span class="annot"><a href="#local-6989586621679139476"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139470"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139471"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679139477"><span class="annot"><a href="#local-6989586621679139477"><span class="hs-identifier hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679139480"><span class="annot"><a href="#local-6989586621679139480"><span class="hs-identifier hs-type">rs</span></a></span></span><span> </span><span id="local-6989586621679139478"><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span id="local-6989586621679139479"><span class="annot"><a href="#local-6989586621679139479"><span class="hs-identifier hs-type">gs</span></a></span></span><span> </span><span id="local-6989586621679139481"><span class="annot"><a href="#local-6989586621679139481"><span class="hs-identifier hs-type">hs</span></a></span></span><span> </span><span id="local-6989586621679139482"><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139476"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139477"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139479"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139477"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139480"><span class="hs-identifier hs-type">rs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139481"><span class="hs-identifier hs-type">hs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139476"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139480"><span class="hs-identifier hs-type">rs</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139481"><span class="hs-identifier hs-type">hs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139479"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-33"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span id="local-6989586621679139708"><span class="annot"><span class="annottext">(ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs)
+</span><a href="#local-6989586621679139708"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679139709"><span class="annot"><span class="annottext">||| :: forall {b :: Kind} {b :: Kind} {c :: Kind} {c :: Kind} {h :: Kind}
+       {j :: Kind} (ps :: Path kk h j) (qs :: Path kk b b)
+       (rs :: Path kk c c) (fs :: Path (COK kk) h b)
+       (gs :: Path (COK kk) j b) (hs :: Path (COK kk) b c)
+       (is :: Path (COK kk) b c).
+Quintet ps qs fs gs
+-&gt; Quintet qs rs hs is -&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+</span><a href="Proarrow.Category.Double.html#%7C%7C%7C"><span class="hs-operator hs-var hs-var hs-var hs-var">|||</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span id="local-6989586621679139731"><span class="annot"><span class="annottext">(qs +++ UnCoPath is) ~&gt; (UnCoPath hs +++ rs)
+</span><a href="#local-6989586621679139731"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {i :: k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk i j) (b :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k2, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+forall (a :: Path (COK kk) h b) (b :: Path (COK kk) b c)
+       (r :: Kind).
+(Bicategory (COK kk), Ob0 (COK kk) h, Ob0 (COK kk) b,
+ Ob0 (COK kk) c, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier hs-var">appendObj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139481"><span class="hs-identifier hs-type">hs</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (fs +++ hs) =&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; (Ob (fs +++ hs) =&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {i :: k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk i j) (b :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k2, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+forall (a :: Path (COK kk) j b) (b :: Path (COK kk) b c)
+       (r :: Kind).
+(Bicategory (COK kk), Ob0 (COK kk) j, Ob0 (COK kk) b,
+ Ob0 (COK kk) c, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier hs-var">appendObj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139479"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (gs +++ is) =&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; (Ob (gs +++ is) =&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-34"></span><span>    </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk h b) (b :: Path kk b c) (c :: Path kk c c)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk b, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139481"><span class="hs-identifier hs-type">hs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139480"><span class="hs-identifier hs-type">rs</span></a></span><span> </span><span class="annot"><span class="annottext">(((((UnCoPath fs +++ UnCoPath hs) +++ rs)
+   ~ (UnCoPath fs +++ (UnCoPath hs +++ rs))) =&gt;
+  Quintet ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; ((((UnCoPath fs +++ UnCoPath hs) +++ rs)
+     ~ (UnCoPath fs +++ (UnCoPath hs +++ rs))) =&gt;
+    Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {b :: Kind} {i :: Kind} {j :: Kind} {kk :: CAT Kind}
+       (as :: Path (COK kk) i j) (bs :: Path (COK kk) j b) (r :: Kind).
+(Ob as, Ob bs) =&gt;
+(((UnCoPath as +++ UnCoPath bs) ~ UnCoPath (as +++ bs)) =&gt; r) -&gt; r
+forall (as :: Path (COK kk) h b) (bs :: Path (COK kk) b c)
+       (r :: Kind).
+(Ob as, Ob bs) =&gt;
+(((UnCoPath as +++ UnCoPath bs) ~ UnCoPath (as +++ bs)) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.Co.html#unCoPathAppend"><span class="hs-identifier hs-var">unCoPathAppend</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139481"><span class="hs-identifier hs-type">hs</span></a></span><span> </span><span class="annot"><span class="annottext">((((UnCoPath fs +++ UnCoPath hs) ~ UnCoPath (fs +++ hs)) =&gt;
+  Quintet ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; (((UnCoPath fs +++ UnCoPath hs) ~ UnCoPath (fs +++ hs)) =&gt;
+    Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-35"></span><span>    </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk h b) (b :: Path kk b b) (c :: Path kk b c)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk b, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139477"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((((UnCoPath fs +++ qs) +++ UnCoPath is)
+   ~ (UnCoPath fs +++ (qs +++ UnCoPath is))) =&gt;
+  Quintet ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; ((((UnCoPath fs +++ qs) +++ UnCoPath is)
+     ~ (UnCoPath fs +++ (qs +++ UnCoPath is))) =&gt;
+    Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-36"></span><span>    </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk h j) (b :: Path kk j b) (c :: Path kk b c)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk j, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139476"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139479"><span class="hs-identifier hs-type">gs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((((ps +++ UnCoPath gs) +++ UnCoPath is)
+   ~ (ps +++ (UnCoPath gs +++ UnCoPath is))) =&gt;
+  Quintet ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; ((((ps +++ UnCoPath gs) +++ UnCoPath is)
+     ~ (ps +++ (UnCoPath gs +++ UnCoPath is))) =&gt;
+    Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {b :: Kind} {i :: Kind} {j :: Kind} {kk :: CAT Kind}
+       (as :: Path (COK kk) i j) (bs :: Path (COK kk) j b) (r :: Kind).
+(Ob as, Ob bs) =&gt;
+(((UnCoPath as +++ UnCoPath bs) ~ UnCoPath (as +++ bs)) =&gt; r) -&gt; r
+forall (as :: Path (COK kk) j b) (bs :: Path (COK kk) b c)
+       (r :: Kind).
+(Ob as, Ob bs) =&gt;
+(((UnCoPath as +++ UnCoPath bs) ~ UnCoPath (as +++ bs)) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.Co.html#unCoPathAppend"><span class="hs-identifier hs-var">unCoPathAppend</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139479"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span><span> </span><span class="annot"><span class="annottext">((((UnCoPath gs +++ UnCoPath is) ~ UnCoPath (gs +++ is)) =&gt;
+  Quintet ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; (((UnCoPath gs +++ UnCoPath is) ~ UnCoPath (gs +++ is)) =&gt;
+    Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-37"></span><span>      </span><span class="annot"><span class="annottext">((ps +++ UnCoPath (gs +++ is)) ~&gt; (UnCoPath (fs +++ hs) +++ rs))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {kk :: CAT Kind} (ps :: Path kk h j) (qs :: Path kk i k)
+       (fs :: Path (COK kk) h i) (gs :: Path (COK kk) j k).
+(Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob ps, Ob qs, Ob fs,
+ Ob gs) =&gt;
+((ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs))
+-&gt; Quintet ps qs fs gs
+</span><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-var">Quintet</span></a></span><span> </span><span class="annot"><span class="annottext">(((ps +++ UnCoPath (gs +++ is)) ~&gt; (UnCoPath (fs +++ hs) +++ rs))
+ -&gt; Quintet ps rs (fs +++ hs) (gs +++ is))
+-&gt; ((ps +++ UnCoPath (gs +++ is)) ~&gt; (UnCoPath (fs +++ hs) +++ rs))
+-&gt; Quintet ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk h b).
+(CategoryOf (Path kk h b), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139478"><span class="hs-identifier hs-type">fs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Obj (UnCoPath fs)
+-&gt; ((qs +++ UnCoPath is) ~&gt; (UnCoPath hs +++ rs))
+-&gt; (UnCoPath fs +++ (qs +++ UnCoPath is))
+   ~&gt; (UnCoPath fs +++ (UnCoPath hs +++ rs))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">(qs +++ UnCoPath is) ~&gt; (UnCoPath hs +++ rs)
+</span><a href="#local-6989586621679139731"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((UnCoPath fs +++ (qs +++ UnCoPath is))
+ ~&gt; (UnCoPath fs +++ (UnCoPath hs +++ rs)))
+-&gt; ((ps +++ UnCoPath (gs +++ is))
+    ~&gt; (UnCoPath fs +++ (qs +++ UnCoPath is)))
+-&gt; (ps +++ UnCoPath (gs +++ is))
+   ~&gt; (UnCoPath fs +++ (UnCoPath hs +++ rs))
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk h c) (c :: Path kk h c) (a :: Path kk h c).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs)
+</span><a href="#local-6989586621679139708"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">((ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs))
+-&gt; (UnCoPath is ~&gt; UnCoPath is)
+-&gt; ((ps +++ UnCoPath gs) +++ UnCoPath is)
+   ~&gt; ((UnCoPath fs +++ qs) +++ UnCoPath is)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk b c).
+(CategoryOf (Path kk b c), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139482"><span class="hs-identifier hs-type">is</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-38"></span><span>
+</span><span id="line-39"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.html#%3D%3D%3D"><span class="hs-operator hs-type">(===)</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139534"><span class="annot"><a href="#local-6989586621679139534"><span class="hs-identifier hs-type">h</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139535"><span class="annot"><a href="#local-6989586621679139535"><span class="hs-identifier hs-type">i</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679139540"><span class="annot"><a href="#local-6989586621679139540"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139411"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139534"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139535"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679139541"><span class="annot"><a href="#local-6989586621679139541"><span class="hs-identifier hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679139544"><span class="annot"><a href="#local-6989586621679139544"><span class="hs-identifier hs-type">rs</span></a></span></span><span> </span><span id="local-6989586621679139545"><span class="annot"><a href="#local-6989586621679139545"><span class="hs-identifier hs-type">ss</span></a></span></span><span> </span><span id="local-6989586621679139542"><span class="annot"><a href="#local-6989586621679139542"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span id="local-6989586621679139543"><span class="annot"><a href="#local-6989586621679139543"><span class="hs-identifier hs-type">gs</span></a></span></span><span> </span><span id="local-6989586621679139546"><span class="annot"><a href="#local-6989586621679139546"><span class="hs-identifier hs-type">hs</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139540"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139541"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139542"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139543"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139544"><span class="hs-identifier hs-type">rs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139545"><span class="hs-identifier hs-type">ss</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139543"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139546"><span class="hs-identifier hs-type">hs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139540"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139544"><span class="hs-identifier hs-type">rs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139541"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139545"><span class="hs-identifier hs-type">ss</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139542"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139546"><span class="hs-identifier hs-type">hs</span></a></span><span>
+</span><span id="line-40"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span id="local-6989586621679139815"><span class="annot"><span class="annottext">(ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs)
+</span><a href="#local-6989586621679139815"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679139816"><span class="annot"><span class="annottext">=== :: forall {i :: Kind} {b :: Kind} {j :: Kind} {k :: Kind} {h :: Kind}
+       {i :: Kind} (ps :: Path kk h i) (qs :: Path kk i b)
+       (rs :: Path kk i j) (ss :: Path kk b k) (fs :: Path (COK kk) h i)
+       (gs :: Path (COK kk) i b) (hs :: Path (COK kk) j k).
+Quintet ps qs fs gs
+-&gt; Quintet rs ss gs hs -&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+</span><a href="Proarrow.Category.Double.html#%3D%3D%3D"><span class="hs-operator hs-var hs-var hs-var hs-var">===</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-type">Quintet</span></a></span><span> </span><span id="local-6989586621679139833"><span class="annot"><span class="annottext">(rs +++ UnCoPath hs) ~&gt; (UnCoPath gs +++ ss)
+</span><a href="#local-6989586621679139833"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {i :: k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk i j) (b :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k2, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+forall (a :: Path kk h i) (b :: Path kk i j) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier hs-var">appendObj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139540"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139544"><span class="hs-identifier hs-type">rs</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (ps +++ rs) =&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+ -&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; (Ob (ps +++ rs) =&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {i :: k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk i j) (b :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k2, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+forall (a :: Path kk i b) (b :: Path kk b k) (r :: Kind).
+(Bicategory kk, Ob0 kk i, Ob0 kk b, Ob0 kk k, Ob a, Ob b) =&gt;
+(Ob (a +++ b) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#appendObj"><span class="hs-identifier hs-var">appendObj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139541"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139545"><span class="hs-identifier hs-type">ss</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (qs +++ ss) =&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+ -&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; (Ob (qs +++ ss) =&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-41"></span><span>    </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk h i) (b :: Path kk i b) (c :: Path kk b k)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139542"><span class="hs-identifier hs-type">fs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139541"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139545"><span class="hs-identifier hs-type">ss</span></a></span><span> </span><span class="annot"><span class="annottext">(((((UnCoPath fs +++ qs) +++ ss)
+   ~ (UnCoPath fs +++ (qs +++ ss))) =&gt;
+  Quintet (ps +++ rs) (qs +++ ss) fs hs)
+ -&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; ((((UnCoPath fs +++ qs) +++ ss)
+     ~ (UnCoPath fs +++ (qs +++ ss))) =&gt;
+    Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk h i) (b :: Path kk i b) (c :: Path kk b k)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139540"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139543"><span class="hs-identifier hs-type">gs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139545"><span class="hs-identifier hs-type">ss</span></a></span><span> </span><span class="annot"><span class="annottext">(((((ps +++ UnCoPath gs) +++ ss)
+   ~ (ps +++ (UnCoPath gs +++ ss))) =&gt;
+  Quintet (ps +++ rs) (qs +++ ss) fs hs)
+ -&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; ((((ps +++ UnCoPath gs) +++ ss)
+     ~ (ps +++ (UnCoPath gs +++ ss))) =&gt;
+    Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1}
+       {k2 :: k1} (a :: Path kk h i) (b :: Path kk i j)
+       (c :: Path kk j k2) (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k)
+       (r :: Kind).
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139540"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139544"><span class="hs-identifier hs-type">rs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Co.html#UnCoPath"><span class="hs-identifier hs-type">UnCoPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139546"><span class="hs-identifier hs-type">hs</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((((ps +++ rs) +++ UnCoPath hs)
+   ~ (ps +++ (rs +++ UnCoPath hs))) =&gt;
+  Quintet (ps +++ rs) (qs +++ ss) fs hs)
+ -&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; ((((ps +++ rs) +++ UnCoPath hs)
+     ~ (ps +++ (rs +++ UnCoPath hs))) =&gt;
+    Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-42"></span><span>      </span><span class="annot"><span class="annottext">(((ps +++ rs) +++ UnCoPath hs) ~&gt; (UnCoPath fs +++ (qs +++ ss)))
+-&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {kk :: CAT Kind} (ps :: Path kk h j) (qs :: Path kk i k)
+       (fs :: Path (COK kk) h i) (gs :: Path (COK kk) j k).
+(Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob ps, Ob qs, Ob fs,
+ Ob gs) =&gt;
+((ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs))
+-&gt; Quintet ps qs fs gs
+</span><a href="Proarrow.Category.Double.Quintet.html#Quintet"><span class="hs-identifier hs-var">Quintet</span></a></span><span> </span><span class="annot"><span class="annottext">((((ps +++ rs) +++ UnCoPath hs) ~&gt; (UnCoPath fs +++ (qs +++ ss)))
+ -&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; (((ps +++ rs) +++ UnCoPath hs) ~&gt; (UnCoPath fs +++ (qs +++ ss)))
+-&gt; Quintet (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs)
+</span><a href="#local-6989586621679139815"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">((ps +++ UnCoPath gs) ~&gt; (UnCoPath fs +++ qs))
+-&gt; (ss ~&gt; ss)
+-&gt; ((ps +++ UnCoPath gs) +++ ss) ~&gt; ((UnCoPath fs +++ qs) +++ ss)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk b k).
+(CategoryOf (Path kk b k), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139545"><span class="hs-identifier hs-type">ss</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(((ps +++ UnCoPath gs) +++ ss) ~&gt; (UnCoPath fs +++ (qs +++ ss)))
+-&gt; ((ps +++ (rs +++ UnCoPath hs)) ~&gt; ((ps +++ UnCoPath gs) +++ ss))
+-&gt; (ps +++ (rs +++ UnCoPath hs)) ~&gt; (UnCoPath fs +++ (qs +++ ss))
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk h k) (c :: Path kk h k) (a :: Path kk h k).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k :: Kind} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: Path kk h i).
+(CategoryOf (Path kk h i), Ob a) =&gt;
+Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679139540"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><span class="annottext">Obj ps
+-&gt; ((rs +++ UnCoPath hs) ~&gt; (UnCoPath gs +++ ss))
+-&gt; (ps +++ (rs +++ UnCoPath hs)) ~&gt; (ps +++ (UnCoPath gs +++ ss))
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">(rs +++ UnCoPath hs) ~&gt; (UnCoPath gs +++ ss)
+</span><a href="#local-6989586621679139833"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-43"></span></pre></body></html>

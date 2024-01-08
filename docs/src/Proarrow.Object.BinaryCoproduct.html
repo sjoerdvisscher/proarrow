@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE AllowAmbiguousTypes #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Object.BinaryCoproduct</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Kind</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Type</span></span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Prelude</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">P</span></span><span>
+</span><span id="line-6"></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html"><span class="hs-identifier">Proarrow.Category.Instance.Product</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator">(:**:)</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Tensor"><span class="hs-identifier">Tensor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier">TENSOR</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier">PRO</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.html"><span class="hs-identifier">Proarrow.Object</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.html#Obj"><span class="hs-identifier">Obj</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.html#obj"><span class="hs-identifier">obj</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.Initial.html"><span class="hs-identifier">Proarrow.Object.Initial</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.Initial.html#HasInitialObject"><span class="hs-identifier">HasInitialObject</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Representable.html"><span class="hs-identifier">Proarrow.Profunctor.Representable</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Representable.html#Representable"><span class="hs-identifier">Representable</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Coproduct.html"><span class="hs-identifier">Proarrow.Profunctor.Coproduct</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Coproduct.html#%3A%2B%3A"><span class="hs-operator">(:+:)</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Coproduct.html#coproduct"><span class="hs-identifier">coproduct</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html"><span class="hs-identifier">Proarrow.Category.Instance.Prof</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier">Prof</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Unit.html"><span class="hs-identifier">Proarrow.Category.Instance.Unit</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Unit.html#UNIT"><span class="hs-identifier">UNIT</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier">Unit</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span>
+</span><span id="line-18"></span><span class="hs-keyword">class</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span id="HasBinaryCoproducts"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-var">HasBinaryCoproducts</span></a></span></span><span> </span><span id="local-6989586621679132098"><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-19"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132327"><span class="annot"><a href="#local-6989586621679132327"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span id="local-6989586621679132098"><span> </span><span id="%7C%7C"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-var">||</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132328"><span class="annot"><a href="#local-6989586621679132328"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span></span><span>
+</span><span id="line-20"></span><span>  </span><span id="lft%27"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-type">lft'</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132140"><span id="local-6989586621679132141"><span class="annot"><a href="Proarrow.Object.html#Obj"><span class="hs-identifier hs-type">Obj</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132140"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Object.html#Obj"><span class="hs-identifier hs-type">Obj</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132141"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132140"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132140"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132141"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-21"></span><span>  </span><span id="rgt%27"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-type">rgt'</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132147"><span id="local-6989586621679132148"><span class="annot"><a href="Proarrow.Object.html#Obj"><span class="hs-identifier hs-type">Obj</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132147"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Object.html#Obj"><span class="hs-identifier hs-type">Obj</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132148"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132148"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132147"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132148"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-22"></span><span>  </span><span id="%7C%7C%7C"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-type">(|||)</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132124"><span id="local-6989586621679132125"><span id="local-6989586621679132126"><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132124"><span class="hs-identifier hs-type">x</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132125"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132126"><span class="hs-identifier hs-type">y</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132125"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132124"><span class="hs-identifier hs-type">x</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132126"><span class="hs-identifier hs-type">y</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132125"><span class="hs-identifier hs-type">a</span></a></span></span></span></span><span>
+</span><span id="line-23"></span><span>  </span><span id="%2B%2B%2B"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-type">(+++)</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679132101"><span class="annot"><a href="#local-6989586621679132101"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679132104"><span class="annot"><a href="#local-6989586621679132104"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span id="local-6989586621679132102"><span class="annot"><a href="#local-6989586621679132102"><span class="hs-identifier hs-type">x</span></a></span></span><span> </span><span id="local-6989586621679132105"><span class="annot"><a href="#local-6989586621679132105"><span class="hs-identifier hs-type">y</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132101"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132098"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132102"><span class="hs-identifier hs-type">x</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132104"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132105"><span class="hs-identifier hs-type">y</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132101"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132104"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132102"><span class="hs-identifier hs-type">x</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132105"><span class="hs-identifier hs-type">y</span></a></span><span>
+</span><span id="line-24"></span><span>  </span><span id="local-6989586621679132334"><span id="local-6989586621679132341"><span class="annot"><span class="annottext">a ~&gt; x
+</span><a href="#local-6989586621679132341"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var hs-var">+++</span></a></span><span> </span><span id="local-6989586621679132342"><span class="annot"><span class="annottext">b ~&gt; y
+</span><a href="#local-6989586621679132342"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+a ~&gt; (a || b)
+forall {k} (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft"><span class="hs-identifier hs-var">lft</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132102"><span class="hs-identifier hs-type">x</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132105"><span class="hs-identifier hs-type">y</span></a></span><span> </span><span class="annot"><span class="annottext">(x ~&gt; (x || y)) -&gt; (a ~&gt; x) -&gt; a ~&gt; (x || y)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; x
+</span><a href="#local-6989586621679132341"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (x || y)) -&gt; (b ~&gt; (x || y)) -&gt; (a || b) ~&gt; (x || y)
+forall (x :: k) (a :: k) (y :: k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var">|||</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+b ~&gt; (a || b)
+forall {k} (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt"><span class="hs-identifier hs-var">rgt</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132102"><span class="hs-identifier hs-type">x</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132105"><span class="hs-identifier hs-type">y</span></a></span><span> </span><span class="annot"><span class="annottext">(y ~&gt; (x || y)) -&gt; (b ~&gt; y) -&gt; b ~&gt; (x || y)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; y
+</span><a href="#local-6989586621679132342"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob x) =&gt; (a || b) ~&gt; (x || y))
+-&gt; (a ~&gt; x) -&gt; (a || b) ~&gt; (x || y)
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; x
+</span><a href="#local-6989586621679132341"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob b, Ob y) =&gt; (a || b) ~&gt; (x || y))
+-&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; y
+</span><a href="#local-6989586621679132342"><span class="hs-identifier hs-var">r</span></a></span></span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#lft"><span class="hs-identifier hs-type">lft</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679132120"><span class="annot"><a href="#local-6989586621679132120"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132118"><span class="annot"><a href="#local-6989586621679132118"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132120"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132119"><span class="annot"><a href="#local-6989586621679132119"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132120"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132120"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132118"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132119"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132118"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132118"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132119"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-27"></span><span id="lft"><span class="annot"><span class="annottext">lft :: forall {k} (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft"><span class="hs-identifier hs-var hs-var">lft</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var">lft'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132118"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132119"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-28"></span><span>
+</span><span id="line-29"></span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#rgt"><span class="hs-identifier hs-type">rgt</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679132129"><span class="annot"><a href="#local-6989586621679132129"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132127"><span class="annot"><a href="#local-6989586621679132127"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132129"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132128"><span class="annot"><a href="#local-6989586621679132128"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132129"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132129"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132127"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132128"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132128"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132127"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132128"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span id="rgt"><span class="annot"><span class="annottext">rgt :: forall {k} (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt"><span class="hs-identifier hs-var hs-var">rgt</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var">rgt'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132127"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132128"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-31"></span><span>
+</span><span id="line-32"></span><span>
+</span><span id="line-33"></span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#left"><span class="hs-identifier hs-type">left</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679132149"><span class="annot"><a href="#local-6989586621679132149"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132150"><span class="annot"><a href="#local-6989586621679132150"><span class="hs-identifier hs-type">c</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132149"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132151"><span class="annot"><a href="#local-6989586621679132151"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132149"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132152"><span class="annot"><a href="#local-6989586621679132152"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132149"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132149"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132150"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132151"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132152"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132151"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132150"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132152"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132150"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-34"></span><span id="left"><span class="annot"><span class="annottext">left :: forall {k} (c :: k) (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob c) =&gt;
+(a ~&gt; b) -&gt; (a || c) ~&gt; (b || c)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#left"><span class="hs-identifier hs-var hs-var">left</span></a></span></span><span> </span><span id="local-6989586621679132386"><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679132386"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679132386"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; (c ~&gt; c) -&gt; (a || c) ~&gt; (b || c)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132150"><span class="hs-identifier hs-type">c</span></a></span><span>
+</span><span id="line-35"></span><span>
+</span><span id="line-36"></span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#right"><span class="hs-identifier hs-type">right</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679132157"><span class="annot"><a href="#local-6989586621679132157"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132158"><span class="annot"><a href="#local-6989586621679132158"><span class="hs-identifier hs-type">c</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132157"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132159"><span class="annot"><a href="#local-6989586621679132159"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132157"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132160"><span class="annot"><a href="#local-6989586621679132160"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132157"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132157"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132158"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132159"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132160"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132158"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132159"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132158"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132160"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-37"></span><span id="right"><span class="annot"><span class="annottext">right :: forall {k} (c :: k) (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob c) =&gt;
+(a ~&gt; b) -&gt; (c || a) ~&gt; (c || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#right"><span class="hs-identifier hs-var hs-var">right</span></a></span></span><span> </span><span id="local-6989586621679132394"><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679132394"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679132158"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c -&gt; (a ~&gt; b) -&gt; (c || a) ~&gt; (c || b)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679132394"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-38"></span><span>
+</span><span id="line-39"></span><span>
+</span><span id="line-40"></span><span class="hs-keyword">type</span><span> </span><span id="HasCoproducts"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasCoproducts"><span class="hs-identifier hs-var">HasCoproducts</span></a></span></span><span> </span><span id="local-6989586621679132395"><span class="annot"><a href="#local-6989586621679132395"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.Initial.html#HasInitialObject"><span class="hs-identifier hs-type">HasInitialObject</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132395"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132395"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-41"></span><span>
+</span><span id="line-42"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132403"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-43"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679132407"><span id="local-6989586621679132408"><span class="annot"><a href="#local-6989586621679132407"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span id="%7C%7C"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-var">||</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679132408"><span class="hs-identifier hs-type">b</span></a></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="hs-identifier hs-type">P.Either</span></span><span> </span><span class="annot"><a href="#local-6989586621679132407"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132408"><span class="hs-identifier hs-type">b</span></a></span><span>
+</span><span id="line-44"></span><span>  </span><span id="local-6989586621679132409"><span class="annot"><span class="annottext">lft' :: forall a b. Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var hs-var hs-var hs-var">lft'</span></a></span></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a ~&gt; (a || b)
+a -&gt; Either a b
+forall a b. a -&gt; Either a b
+</span><span class="hs-identifier hs-var">P.Left</span></span><span>
+</span><span id="line-45"></span><span>  </span><span id="local-6989586621679132410"><span class="annot"><span class="annottext">rgt' :: forall a b. Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var hs-var hs-var hs-var">rgt'</span></a></span></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><span class="hs-identifier">_</span></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">b ~&gt; (a || b)
+b -&gt; Either a b
+forall a b. b -&gt; Either a b
+</span><span class="hs-identifier hs-var">P.Right</span></span><span>
+</span><span id="line-46"></span><span>  </span><span id="local-6989586621679132411"><span class="annot"><span class="annottext">||| :: forall x a y. (x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var hs-var hs-var hs-var">(|||)</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+(x -&gt; a) -&gt; (y -&gt; a) -&gt; Either x y -&gt; a
+forall a c b. (a -&gt; c) -&gt; (b -&gt; c) -&gt; Either a b -&gt; c
+</span><span class="hs-identifier hs-var">P.either</span></span><span>
+</span><span id="line-47"></span><span>
+</span><span id="line-48"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132420"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Unit.html#UNIT"><span class="hs-identifier hs-type">UNIT</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-49"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Proarrow.Category.Instance.Unit.html#U"><span class="hs-identifier hs-type">U</span></a></span><span> </span><span id="%7C%7C"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-var">||</span></a></span></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Proarrow.Category.Instance.Unit.html#U"><span class="hs-identifier hs-type">U</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Proarrow.Category.Instance.Unit.html#U"><span class="hs-identifier hs-type">U</span></a></span><span>
+</span><span id="line-50"></span><span>  </span><span id="local-6989586621679132423"><span class="annot"><span class="annottext">lft' :: forall (a :: UNIT) (b :: UNIT). Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var hs-var hs-var hs-var">lft'</span></a></span></span><span> </span><span class="annot"><span class="annottext">Obj a
+Unit a a
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+Unit b b
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a ~&gt; (a || b)
+Unit 'U 'U
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span>
+</span><span id="line-51"></span><span>  </span><span id="local-6989586621679132429"><span class="annot"><span class="annottext">rgt' :: forall (a :: UNIT) (b :: UNIT). Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var hs-var hs-var hs-var">rgt'</span></a></span></span><span> </span><span class="annot"><span class="annottext">Obj a
+Unit a a
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+Unit b b
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">b ~&gt; (a || b)
+Unit 'U 'U
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span>
+</span><span id="line-52"></span><span>  </span><span class="annot"><span class="annottext">x ~&gt; a
+Unit x a
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span> </span><span id="local-6989586621679132436"><span class="annot"><span class="annottext">||| :: forall (x :: UNIT) (a :: UNIT) (y :: UNIT).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var hs-var hs-var hs-var">|||</span></a></span></span><span> </span><span class="annot"><span class="annottext">y ~&gt; a
+Unit y 'U
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(x || y) ~&gt; a
+Unit 'U 'U
+</span><a href="Proarrow.Category.Instance.Unit.html#Unit"><span class="hs-identifier hs-var">Unit</span></a></span><span>
+</span><span id="line-53"></span><span>
+</span><span id="line-54"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132191"><span id="local-6989586621679132192"><span id="local-6989586621679132448"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132191"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132192"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132191"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132192"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-55"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679132451"><span id="local-6989586621679132452"><span class="annot"><a href="#local-6989586621679132451"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span id="%7C%7C"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-var">||</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679132452"><span class="hs-identifier hs-type">q</span></a></span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679132451"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Coproduct.html#%3A%2B%3A"><span class="hs-operator hs-type">:+:</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132452"><span class="hs-identifier hs-type">q</span></a></span><span>
+</span><span id="line-56"></span><span>  </span><span id="local-6989586621679132453"><span class="annot"><span class="annottext">lft' :: forall (a :: PRO j k) (b :: PRO j k).
+Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var hs-var hs-var hs-var">lft'</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a :~&gt; (a :+: b)) -&gt; Prof a (a :+: b)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="annot"><span class="annottext">a a b -&gt; (:+:) a b a b
+a :~&gt; (a :+: b)
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) (q :: PRO j k).
+p a b -&gt; (:+:) p q a b
+</span><a href="Proarrow.Profunctor.Coproduct.html#InjL"><span class="hs-identifier hs-var">InjL</span></a></span><span>
+</span><span id="line-57"></span><span>  </span><span id="local-6989586621679132463"><span class="annot"><span class="annottext">rgt' :: forall (a :: PRO j k) (b :: PRO j k).
+Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var hs-var hs-var hs-var">rgt'</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span class="hs-special">{</span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(b :~&gt; (a :+: b)) -&gt; Prof b (a :+: b)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="annot"><span class="annottext">b a b -&gt; (:+:) a b a b
+b :~&gt; (a :+: b)
+forall {j} {k} (q :: PRO j k) (a :: j) (b :: k) (p :: PRO j k).
+q a b -&gt; (:+:) p q a b
+</span><a href="Proarrow.Profunctor.Coproduct.html#InjR"><span class="hs-identifier hs-var">InjR</span></a></span><span>
+</span><span id="line-58"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679132473"><span class="annot"><span class="annottext">x :~&gt; a
+</span><a href="#local-6989586621679132473"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679132474"><span class="annot"><span class="annottext">||| :: forall (x :: PRO j k) (a :: PRO j k) (y :: PRO j k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var hs-var hs-var hs-var">|||</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-type">Prof</span></a></span><span> </span><span id="local-6989586621679132479"><span class="annot"><span class="annottext">y :~&gt; a
+</span><a href="#local-6989586621679132479"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">((x :+: y) :~&gt; a) -&gt; Prof (x :+: y) a
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(x :~&gt; a) -&gt; (y :~&gt; a) -&gt; (x :+: y) :~&gt; a
+forall {k} {k1} (p :: k -&gt; k1 -&gt; *) (r :: k -&gt; k1 -&gt; *)
+       (q :: k -&gt; k1 -&gt; *).
+(p :~&gt; r) -&gt; (q :~&gt; r) -&gt; (p :+: q) :~&gt; r
+</span><a href="Proarrow.Profunctor.Coproduct.html#coproduct"><span class="hs-identifier hs-var">coproduct</span></a></span><span> </span><span class="annot"><span class="annottext">x a b -&gt; a a b
+x :~&gt; a
+</span><a href="#local-6989586621679132473"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">y a b -&gt; a a b
+y :~&gt; a
+</span><a href="#local-6989586621679132479"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-59"></span><span>
+</span><span id="line-60"></span><span>
+</span><span id="line-61"></span><span>
+</span><span id="line-62"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679132480"><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier hs-type">TENSOR</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132480"><span class="hs-identifier hs-type">k</span></a></span></span><span>
+</span><span id="line-63"></span><span class="hs-keyword">data</span><span> </span><span id="CoproductFunctor"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-var">CoproductFunctor</span></a></span></span><span> </span><span id="local-6989586621679132481"><span class="annot"><a href="#local-6989586621679132481"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679132482"><span class="annot"><a href="#local-6989586621679132482"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-64"></span><span>  </span><span id="CoproductFunctor"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-var">CoproductFunctor</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679132255"><span class="annot"><a href="#local-6989586621679132255"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679132484"><span class="annot"><a href="#local-6989586621679132484"><span class="hs-identifier hs-type">c</span></a></span></span><span> </span><span id="local-6989586621679132485"><span class="annot"><a href="#local-6989586621679132485"><span class="hs-identifier hs-type">d</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132484"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132485"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679132255"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132484"><span class="hs-identifier hs-type">c</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132485"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132255"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132484"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679132485"><span class="hs-identifier hs-type">d</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-65"></span><span>
+</span><span id="line-66"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132240"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132240"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier hs-type">TENSOR</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132240"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-67"></span><span>  </span><span id="local-6989586621679132499"><span class="annot"><span class="annottext">dimap :: forall (c :: k) (a :: k) (b :: (k, k)) (d :: (k, k)).
+(c ~&gt; a)
+-&gt; (b ~&gt; d) -&gt; CoproductFunctor a b -&gt; CoproductFunctor c d
+</span><a href="#local-6989586621679132499"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679132501"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679132501"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132504"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679132504"><span class="hs-identifier hs-var">r1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679132506"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679132506"><span class="hs-identifier hs-var">r2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span id="local-6989586621679132516"><span class="annot"><span class="annottext">a ~&gt; (c || d)
+</span><a href="#local-6989586621679132516"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(c ~&gt; (b1 || b2)) -&gt; CoproductFunctor c '(b1, b2)
+forall {k} (a :: k) (c :: k) (d :: k).
+(Ob c, Ob d) =&gt;
+(a ~&gt; (c || d)) -&gt; CoproductFunctor a '(c, d)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-var">CoproductFunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679132504"><span class="hs-identifier hs-var">r1</span></a></span><span> </span><span class="annot"><span class="annottext">(a1 ~&gt; b1) -&gt; (a2 ~&gt; b2) -&gt; (a1 || a2) ~&gt; (b1 || b2)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679132506"><span class="hs-identifier hs-var">r2</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((a1 || a2) ~&gt; (b1 || b2)) -&gt; (c ~&gt; (a1 || a2)) -&gt; c ~&gt; (b1 || b2)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (a1 || a2)
+a ~&gt; (c || d)
+</span><a href="#local-6989586621679132516"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (a1 || a2)) -&gt; (c ~&gt; a) -&gt; c ~&gt; (a1 || a2)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679132501"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob a1, Ob b1) =&gt; CoproductFunctor c d)
+-&gt; (a1 ~&gt; b1) -&gt; CoproductFunctor c d
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679132504"><span class="hs-identifier hs-var">r1</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob a2, Ob b2) =&gt; CoproductFunctor c d)
+-&gt; (a2 ~&gt; b2) -&gt; CoproductFunctor c d
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679132506"><span class="hs-identifier hs-var">r2</span></a></span><span>
+</span><span id="line-68"></span><span>  </span><span id="local-6989586621679132527"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679132527"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679132528"><span class="annot"><span class="annottext">\\ :: forall (a :: k) (b :: (k, k)) r.
+((Ob a, Ob b) =&gt; r) -&gt; CoproductFunctor a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span id="local-6989586621679132533"><span class="annot"><span class="annottext">a ~&gt; (c || d)
+</span><a href="#local-6989586621679132533"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob (c || d)) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679132527"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob (c || d)) =&gt; r) -&gt; (a ~&gt; (c || d)) -&gt; r
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (c || d)
+</span><a href="#local-6989586621679132533"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-69"></span><span>
+</span><span id="line-70"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132277"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"><span class="hs-identifier hs-type">HasBinaryCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132277"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Representable.html#Representable"><span class="hs-identifier hs-type">Representable</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier hs-type">TENSOR</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132277"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-71"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679132550"><span id="local-6989586621679132551"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span id="%25"><span class="annot"><a href="Proarrow.Profunctor.Representable.html#%25"><span class="hs-operator hs-var">%</span></a></span></span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679132550"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679132551"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679132550"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"><span class="hs-operator hs-type">||</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132551"><span class="hs-identifier hs-type">b</span></a></span><span>
+</span><span id="line-72"></span><span>  </span><span id="local-6989586621679132552"><span class="annot"><span class="annottext">index :: forall (a :: k) (b :: (k, k)).
+CoproductFunctor a b -&gt; a ~&gt; (CoproductFunctor % b)
+</span><a href="#local-6989586621679132552"><span class="hs-identifier hs-var hs-var hs-var hs-var">index</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span id="local-6989586621679132557"><span class="annot"><span class="annottext">a ~&gt; (c || d)
+</span><a href="#local-6989586621679132557"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a ~&gt; (CoproductFunctor % b)
+a ~&gt; (c || d)
+</span><a href="#local-6989586621679132557"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-73"></span><span>  </span><span id="local-6989586621679132568"><span class="annot"><span class="annottext">tabulate :: forall (b :: (k, k)) (a :: k).
+Ob b =&gt;
+(a ~&gt; (CoproductFunctor % b)) -&gt; CoproductFunctor a b
+</span><a href="#local-6989586621679132568"><span class="hs-identifier hs-var hs-var hs-var hs-var">tabulate</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; (CoproductFunctor % b)) -&gt; CoproductFunctor a b
+(a ~&gt; (Fst b || Snd b)) -&gt; CoproductFunctor a '(Fst b, Snd b)
+forall {k} (a :: k) (c :: k) (d :: k).
+(Ob c, Ob d) =&gt;
+(a ~&gt; (c || d)) -&gt; CoproductFunctor a '(c, d)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-var">CoproductFunctor</span></a></span><span>
+</span><span id="line-74"></span><span>  </span><span id="local-6989586621679132570"><span class="annot"><span class="annottext">repMap :: forall (a :: (k, k)) (b :: (k, k)).
+(a ~&gt; b) -&gt; (CoproductFunctor % a) ~&gt; (CoproductFunctor % b)
+</span><a href="#local-6989586621679132570"><span class="hs-identifier hs-var hs-var hs-var hs-var">repMap</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679132575"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679132575"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679132576"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679132576"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679132575"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a1 ~&gt; b1) -&gt; (a2 ~&gt; b2) -&gt; (a1 || a2) ~&gt; (b1 || b2)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679132576"><span class="hs-identifier hs-var">g</span></a></span><span>
+</span><span id="line-75"></span><span>
+</span><span id="line-76"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679132312"><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#HasCoproducts"><span class="hs-identifier hs-type">HasCoproducts</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132312"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Tensor"><span class="hs-identifier hs-type">Tensor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier hs-type">TENSOR</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132312"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-77"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="U"><span class="annot"><a href="Proarrow.Category.Monoidal.html#U"><span class="hs-identifier hs-var">U</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryCoproduct.html#CoproductFunctor"><span class="hs-identifier hs-type">CoproductFunctor</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier hs-type">TENSOR</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679132312"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Object.Initial.html#InitialObject"><span class="hs-identifier hs-type">InitialObject</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132312"><span class="hs-identifier hs-type">k</span></a></span><span>
+</span><span id="line-78"></span><span>  </span><span id="local-6989586621679132601"><span class="annot"><span class="annottext">leftUnitor :: forall (a :: k).
+Obj a -&gt; (CoproductFunctor % '(U CoproductFunctor, a)) ~&gt; a
+</span><a href="#local-6989586621679132601"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitor</span></a></span></span><span> </span><span id="local-6989586621679132603"><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132603"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; InitialObject ~&gt; a
+forall (a :: k). Obj a -&gt; InitialObject ~&gt; a
+forall k (a :: k).
+HasInitialObject k =&gt;
+Obj a -&gt; InitialObject ~&gt; a
+</span><a href="Proarrow.Object.Initial.html#initiate%27"><span class="hs-identifier hs-var">initiate'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132603"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">(InitialObject ~&gt; a) -&gt; Obj a -&gt; (InitialObject || a) ~&gt; a
+forall (x :: k) (a :: k) (y :: k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var">|||</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132603"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-79"></span><span>  </span><span id="local-6989586621679132608"><span class="annot"><span class="annottext">leftUnitorInv :: forall (a :: k).
+Obj a -&gt; a ~&gt; (CoproductFunctor % '(U CoproductFunctor, a))
+</span><a href="#local-6989586621679132608"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitorInv</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj InitialObject -&gt; (a ~&gt; a) -&gt; a ~&gt; (InitialObject || a)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var">rgt'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.Initial.html#InitialObject"><span class="hs-identifier hs-type">InitialObject</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132312"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-80"></span><span>  </span><span id="local-6989586621679132612"><span class="annot"><span class="annottext">rightUnitor :: forall (a :: k).
+Obj a -&gt; (CoproductFunctor % '(a, U CoproductFunctor)) ~&gt; a
+</span><a href="#local-6989586621679132612"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitor</span></a></span></span><span> </span><span id="local-6989586621679132614"><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132614"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132614"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; (InitialObject ~&gt; a) -&gt; (a || InitialObject) ~&gt; a
+forall (x :: k) (a :: k) (y :: k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var">|||</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; InitialObject ~&gt; a
+forall (a :: k). Obj a -&gt; InitialObject ~&gt; a
+forall k (a :: k).
+HasInitialObject k =&gt;
+Obj a -&gt; InitialObject ~&gt; a
+</span><a href="Proarrow.Object.Initial.html#initiate%27"><span class="hs-identifier hs-var">initiate'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132614"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-81"></span><span>  </span><span id="local-6989586621679132618"><span class="annot"><span class="annottext">rightUnitorInv :: forall (a :: k).
+Obj a -&gt; a ~&gt; (CoproductFunctor % '(a, U CoproductFunctor))
+</span><a href="#local-6989586621679132618"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitorInv</span></a></span></span><span> </span><span id="local-6989586621679132620"><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132620"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; Obj InitialObject -&gt; a ~&gt; (a || InitialObject)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var">lft'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132620"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.Initial.html#InitialObject"><span class="hs-identifier hs-type">InitialObject</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679132312"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-82"></span><span>  </span><span id="local-6989586621679132623"><span class="annot"><span class="annottext">associator :: forall (a :: k) (b :: k) (c :: k).
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (CoproductFunctor % '(CoproductFunctor % '(a, b), c))
+   ~&gt; (CoproductFunctor % '(a, CoproductFunctor % '(b, c)))
+</span><a href="#local-6989586621679132623"><span class="hs-identifier hs-var hs-var hs-var hs-var">associator</span></a></span></span><span> </span><span id="local-6989586621679132625"><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132625"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span id="local-6989586621679132626"><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132626"><span class="hs-identifier hs-var">b</span></a></span></span><span> </span><span id="local-6989586621679132627"><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679132627"><span class="hs-identifier hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132625"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; (b ~&gt; (b || c)) -&gt; (a || b) ~&gt; (a || (b || c))
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b -&gt; Obj c -&gt; b ~&gt; (b || c)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var">lft'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132626"><span class="hs-identifier hs-var">b</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679132627"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((a || b) ~&gt; (a || (b || c)))
+-&gt; (c ~&gt; (a || (b || c))) -&gt; ((a || b) || c) ~&gt; (a || (b || c))
+forall (x :: k) (a :: k) (y :: k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var">|||</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a -&gt; Obj (b || c) -&gt; (b || c) ~&gt; (a || (b || c))
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var">rgt'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132625"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132626"><span class="hs-identifier hs-var">b</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b -&gt; Obj c -&gt; Obj (b || c)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679132627"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((b || c) ~&gt; (a || (b || c)))
+-&gt; (c ~&gt; (b || c)) -&gt; c ~&gt; (a || (b || c))
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b -&gt; Obj c -&gt; c ~&gt; (b || c)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var">rgt'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132626"><span class="hs-identifier hs-var">b</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679132627"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob (a || b), Ob (a || b)) =&gt; ((a || b) || c) ~&gt; (a || (b || c)))
+-&gt; ((a || b) ~&gt; (a || b)) -&gt; ((a || b) || c) ~&gt; (a || (b || c))
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132625"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; Obj b -&gt; (a || b) ~&gt; (a || b)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132626"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-83"></span><span>  </span><span id="local-6989586621679132639"><span class="annot"><span class="annottext">associatorInv :: forall (a :: k) (b :: k) (c :: k).
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (CoproductFunctor % '(a, CoproductFunctor % '(b, c)))
+   ~&gt; (CoproductFunctor % '(CoproductFunctor % '(a, b), c))
+</span><a href="#local-6989586621679132639"><span class="hs-identifier hs-var hs-var hs-var hs-var">associatorInv</span></a></span></span><span> </span><span id="local-6989586621679132641"><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132641"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span id="local-6989586621679132642"><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132642"><span class="hs-identifier hs-var">b</span></a></span></span><span> </span><span id="local-6989586621679132643"><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679132643"><span class="hs-identifier hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj (a || b) -&gt; Obj c -&gt; (a || b) ~&gt; ((a || b) || c)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var">lft'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132641"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; Obj b -&gt; Obj (a || b)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132642"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679132643"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">((a || b) ~&gt; ((a || b) || c))
+-&gt; (a ~&gt; (a || b)) -&gt; a ~&gt; ((a || b) || c)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; a ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"><span class="hs-identifier hs-var">lft'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132641"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132642"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; ((a || b) || c))
+-&gt; ((b || c) ~&gt; ((a || b) || c))
+-&gt; (a || (b || c)) ~&gt; ((a || b) || c)
+forall (x :: k) (a :: k) (y :: k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"><span class="hs-operator hs-var">|||</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+forall (a :: k) (b :: k). Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+forall k (a :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; Obj b -&gt; b ~&gt; (a || b)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"><span class="hs-identifier hs-var">rgt'</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132641"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132642"><span class="hs-identifier hs-var">b</span></a></span><span> </span><span class="annot"><span class="annottext">(b ~&gt; (a || b)) -&gt; Obj c -&gt; (b || c) ~&gt; ((a || b) || c)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679132643"><span class="hs-identifier hs-var">c</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob (a || b), Ob (a || b)) =&gt; (a || (b || c)) ~&gt; ((a || b) || c))
+-&gt; Obj (a || b) -&gt; (a || (b || c)) ~&gt; ((a || b) || c)
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679132641"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a -&gt; Obj b -&gt; Obj (a || b)
+forall (a :: k) (b :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+forall k (a :: k) (b :: k) (x :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; x) -&gt; (b ~&gt; y) -&gt; (a || b) ~&gt; (x || y)
+</span><a href="Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B"><span class="hs-operator hs-var">+++</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679132642"><span class="hs-identifier hs-var">b</span></a></span><span class="hs-special">)</span></pre></body></html>

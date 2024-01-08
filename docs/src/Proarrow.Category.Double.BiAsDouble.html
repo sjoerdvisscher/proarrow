@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Category.Double.BiAsDouble</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html"><span class="hs-identifier">Proarrow.Category.Double</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Double.html#DOUBLE"><span class="hs-identifier">DOUBLE</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#Double"><span class="hs-identifier">Double</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Bidiscrete.html"><span class="hs-identifier">Proarrow.Category.Bicategory.Bidiscrete</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Bidiscrete.html#VoidK"><span class="hs-identifier">VoidK</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"><span class="hs-identifier">Bidiscrete</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html"><span class="hs-identifier">Proarrow.Category.Bicategory</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier">Bicategory</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier">Path</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-type">BiSq</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679141865"><span class="annot"><a href="#local-6989586621679141865"><span class="hs-identifier hs-type">kk</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#DOUBLE"><span class="hs-identifier hs-type">DOUBLE</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141865"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Bidiscrete.html#VoidK"><span class="hs-identifier hs-type">VoidK</span></a></span><span>
+</span><span id="line-11"></span><span class="hs-keyword">data</span><span> </span><span id="BiSq"><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-var">BiSq</span></a></span></span><span> </span><span id="local-6989586621679141866"><span class="annot"><a href="#local-6989586621679141866"><span class="hs-identifier hs-type">kk</span></a></span></span><span> </span><span id="local-6989586621679141867"><span class="annot"><a href="#local-6989586621679141867"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span id="local-6989586621679141868"><span class="annot"><a href="#local-6989586621679141868"><span class="hs-identifier hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679141869"><span class="annot"><a href="#local-6989586621679141869"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span id="local-6989586621679141870"><span class="annot"><a href="#local-6989586621679141870"><span class="hs-identifier hs-type">gs</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-12"></span><span>  </span><span id="local-6989586621679141801"><span id="local-6989586621679141804"><span id="local-6989586621679141871"><span id="BiSq"><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-var">BiSq</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679141804"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141871"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-type">BiSq</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141801"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141804"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141871"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span></span></span></span><span>
+</span><span id="line-13"></span><span>
+</span><span id="line-14"></span><span class="annot"><span class="hs-comment">-- | A bicategory as a double category with only identity arrows vertically.</span></span><span>
+</span><span id="line-15"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679141796"><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141796"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#Double"><span class="hs-identifier hs-type">Double</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141796"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Bidiscrete.html#VoidK"><span class="hs-identifier hs-type">VoidK</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-16"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Sq"><span class="annot"><a href="Proarrow.Category.Double.html#Sq"><span class="hs-identifier hs-var">Sq</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679141796"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Bidiscrete.html#VoidK"><span class="hs-identifier hs-type">VoidK</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-type">BiSq</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679141796"><span class="hs-identifier hs-type">kk</span></a></span><span>
+</span><span id="line-17"></span><span>  </span><span id="local-6989586621679141905"><span class="annot"><span class="annottext">object :: forall (k :: Kind). DOb kk VoidK k =&gt; Sq kk VoidK Nil Nil Nil Nil
+</span><a href="#local-6989586621679141905"><span class="hs-identifier hs-var hs-var hs-var hs-var">object</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Nil ~&gt; Nil) -&gt; BiSq kk Nil Nil Nil Nil
+forall {i :: Kind} {k :: Kind} (kk :: CAT Kind) (ps :: Path kk i k)
+       (qs :: Path kk i k).
+(ps ~&gt; qs) -&gt; BiSq kk ps qs Nil Nil
+</span><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-var">BiSq</span></a></span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+forall (a :: Path kk k k). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-18"></span><span>  </span><span id="local-6989586621679141910"><span class="annot"><span class="annottext">hArr :: forall (j :: Kind) (k :: Kind) (ps :: Path kk j k)
+       (qs :: Path kk j k).
+(Ob0 VoidK j, Ob0 VoidK k) =&gt;
+(ps ~&gt; qs) -&gt; Sq kk VoidK ps qs Nil Nil
+</span><a href="#local-6989586621679141910"><span class="hs-identifier hs-var hs-var hs-var hs-var">hArr</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ps ~&gt; qs) -&gt; Sq kk VoidK ps qs Nil Nil
+(ps ~&gt; qs) -&gt; BiSq kk ps qs Nil Nil
+forall {i :: Kind} {k :: Kind} (kk :: CAT Kind) (ps :: Path kk i k)
+       (qs :: Path kk i k).
+(ps ~&gt; qs) -&gt; BiSq kk ps qs Nil Nil
+</span><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-var">BiSq</span></a></span><span>
+</span><span id="line-19"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-type">BiSq</span></a></span><span> </span><span id="local-6989586621679141925"><span class="annot"><span class="annottext">ps ~&gt; qs
+</span><a href="#local-6989586621679141925"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679141926"><span class="annot"><span class="annottext">||| :: forall {a1 :: Kind} {a2 :: Kind} {b1 :: Kind} {b2 :: Kind}
+       {c1 :: Kind} {c2 :: Kind} (ps :: Path kk a1 a2)
+       (qs :: Path kk b1 b2) (fs :: Path VoidK a1 b1)
+       (gs :: Path VoidK a2 b2) (rs :: Path kk c1 c2)
+       (hs :: Path VoidK b1 c1) (is :: Path VoidK b2 c2).
+Sq kk VoidK ps qs fs gs
+-&gt; Sq kk VoidK qs rs hs is
+-&gt; Sq kk VoidK ps rs (fs +++ hs) (gs +++ is)
+</span><a href="#local-6989586621679141926"><span class="hs-operator hs-var hs-var hs-var hs-var">|||</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-type">BiSq</span></a></span><span> </span><span id="local-6989586621679141944"><span class="annot"><span class="annottext">qs ~&gt; qs
+</span><a href="#local-6989586621679141944"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ps ~&gt; rs) -&gt; BiSq kk ps rs Nil Nil
+forall {i :: Kind} {k :: Kind} (kk :: CAT Kind) (ps :: Path kk i k)
+       (qs :: Path kk i k).
+(ps ~&gt; qs) -&gt; BiSq kk ps qs Nil Nil
+</span><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-var">BiSq</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">qs ~&gt; rs
+qs ~&gt; qs
+</span><a href="#local-6989586621679141944"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(qs ~&gt; rs) -&gt; (ps ~&gt; qs) -&gt; ps ~&gt; rs
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk a1 a2) (c :: Path kk a1 a2)
+       (a :: Path kk a1 a2).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">ps ~&gt; qs
+ps ~&gt; qs
+</span><a href="#local-6989586621679141925"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob0 kk a1, Ob0 kk a2, Ob ps, Ob qs) =&gt; BiSq kk ps rs Nil Nil)
+-&gt; (ps ~&gt; qs) -&gt; BiSq kk ps rs Nil Nil
+forall (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (r :: Kind).
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+forall (k :: Kind) (kk :: CAT k) (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (r :: Kind).
+Bicategory kk =&gt;
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#%5C%5C%5C"><span class="hs-operator hs-var">\\\</span></a></span><span> </span><span class="annot"><span class="annottext">ps ~&gt; qs
+ps ~&gt; qs
+</span><a href="#local-6989586621679141925"><span class="hs-identifier hs-var">l</span></a></span><span>
+</span><span id="line-20"></span><span>  </span><span id="local-6989586621679141956"><span class="annot"><span class="annottext">vArr :: forall (j :: Kind) (k :: Kind) (fs :: Path VoidK j k)
+       (gs :: Path VoidK j k).
+(Ob0 kk j, Ob0 kk k) =&gt;
+(fs ~&gt; gs) -&gt; Sq kk VoidK Nil Nil fs gs
+</span><a href="#local-6989586621679141956"><span class="hs-identifier hs-var hs-var hs-var hs-var">vArr</span></a></span></span><span> </span><span class="annot"><span class="annottext">fs ~&gt; gs
+Bidiscrete fs gs
+</span><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"><span class="hs-identifier hs-var">Bidiscrete</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Nil ~&gt; Nil) -&gt; BiSq kk Nil Nil Nil Nil
+forall {i :: Kind} {k :: Kind} (kk :: CAT Kind) (ps :: Path kk i k)
+       (qs :: Path kk i k).
+(ps ~&gt; qs) -&gt; BiSq kk ps qs Nil Nil
+</span><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-var">BiSq</span></a></span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; Nil
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+forall (a :: Path kk j j). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-21"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-type">BiSq</span></a></span><span> </span><span id="local-6989586621679141984"><span class="annot"><span class="annottext">ps ~&gt; qs
+</span><a href="#local-6989586621679141984"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679141985"><span class="annot"><span class="annottext">=== :: forall {h :: Kind} {b1 :: Kind} {i :: Kind} {b2 :: Kind}
+       {j :: Kind} {k :: Kind} (ps :: Path kk h b1) (qs :: Path kk i b2)
+       (fs :: Path VoidK h i) (gs :: Path VoidK b1 b2)
+       (rs :: Path kk b1 j) (ss :: Path kk b2 k) (hs :: Path VoidK j k).
+Sq kk VoidK ps qs fs gs
+-&gt; Sq kk VoidK rs ss gs hs
+-&gt; Sq kk VoidK (ps +++ rs) (qs +++ ss) fs hs
+</span><a href="#local-6989586621679141985"><span class="hs-operator hs-var hs-var hs-var hs-var">===</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-type">BiSq</span></a></span><span> </span><span id="local-6989586621679141997"><span class="annot"><span class="annottext">rs ~&gt; qs
+</span><a href="#local-6989586621679141997"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">((ps +++ rs) ~&gt; (qs +++ ss))
+-&gt; BiSq kk (ps +++ rs) (qs +++ ss) Nil Nil
+forall {i :: Kind} {k :: Kind} (kk :: CAT Kind) (ps :: Path kk i k)
+       (qs :: Path kk i k).
+(ps ~&gt; qs) -&gt; BiSq kk ps qs Nil Nil
+</span><a href="Proarrow.Category.Double.BiAsDouble.html#BiSq"><span class="hs-identifier hs-var">BiSq</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ps ~&gt; qs
+ps ~&gt; qs
+</span><a href="#local-6989586621679141984"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall {c :: Kind} (i :: Kind) (j :: Kind) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall (k :: Kind) (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">rs ~&gt; ss
+rs ~&gt; qs
+</span><a href="#local-6989586621679141997"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span>
+</span><span id="line-24"></span></pre></body></html>

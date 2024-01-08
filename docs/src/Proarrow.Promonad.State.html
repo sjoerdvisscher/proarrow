@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Promonad.State</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Prelude</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">fmap</span></span><span class="hs-special">)</span><span>
+</span><span id="line-4"></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">newtype</span><span> </span><span id="State"><span class="annot"><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-var">State</span></a></span></span><span> </span><span id="local-6989586621679142545"><span class="annot"><a href="#local-6989586621679142545"><span class="hs-identifier hs-type">s</span></a></span></span><span> </span><span id="local-6989586621679142546"><span class="annot"><a href="#local-6989586621679142546"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679142547"><span class="annot"><a href="#local-6989586621679142547"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="State"><span class="annot"><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-var">State</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="getState"><span class="annot"><span class="annottext">forall s a b. State s a b -&gt; (s, a) -&gt; (s, b)
+</span><a href="Proarrow.Promonad.State.html#getState"><span class="hs-identifier hs-var hs-var">getState</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679142545"><span class="hs-identifier hs-type">s</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679142546"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679142545"><span class="hs-identifier hs-type">s</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679142547"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-9"></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679142570"><span id="local-6989586621679142607"><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-type">State</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679142570"><span class="hs-identifier hs-type">s</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-11"></span><span>  </span><span id="local-6989586621679142620"><span class="annot"><span class="annottext">dimap :: forall c a b d. (c ~&gt; a) -&gt; (b ~&gt; d) -&gt; State s a b -&gt; State s c d
+</span><a href="#local-6989586621679142620"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679142622"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679142622"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679142623"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679142623"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-type">State</span></a></span><span> </span><span id="local-6989586621679142624"><span class="annot"><span class="annottext">(s, a) -&gt; (s, b)
+</span><a href="#local-6989586621679142624"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">((s, c) -&gt; (s, d)) -&gt; State s c d
+forall s a b. ((s, a) -&gt; (s, b)) -&gt; State s a b
+</span><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-var">State</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(b -&gt; d) -&gt; (s, b) -&gt; (s, d)
+forall a b. (a -&gt; b) -&gt; (s, a) -&gt; (s, b)
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+b -&gt; d
+</span><a href="#local-6989586621679142623"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((s, b) -&gt; (s, d)) -&gt; ((s, c) -&gt; (s, b)) -&gt; (s, c) -&gt; (s, d)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(s, a) -&gt; (s, b)
+</span><a href="#local-6989586621679142624"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">((s, a) -&gt; (s, b)) -&gt; ((s, c) -&gt; (s, a)) -&gt; (s, c) -&gt; (s, b)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(c -&gt; a) -&gt; (s, c) -&gt; (s, a)
+forall a b. (a -&gt; b) -&gt; (s, a) -&gt; (s, b)
+forall (f :: * -&gt; *) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-identifier hs-var">fmap</span></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+c -&gt; a
+</span><a href="#local-6989586621679142622"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679142587"><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-type">State</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679142587"><span class="hs-identifier hs-type">s</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-14"></span><span>  </span><span id="local-6989586621679142636"><span class="annot"><span class="annottext">id :: forall a. Ob a =&gt; State s a a
+</span><a href="#local-6989586621679142636"><span class="hs-identifier hs-var hs-var hs-var hs-var">id</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">((s, a) -&gt; (s, a)) -&gt; State s a a
+forall s a b. ((s, a) -&gt; (s, b)) -&gt; State s a b
+</span><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-var">State</span></a></span><span> </span><span class="annot"><span class="annottext">(s, a) -&gt; (s, a)
+forall a. Ob a =&gt; a -&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-15"></span><span>  </span><span class="annot"><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-type">State</span></a></span><span> </span><span id="local-6989586621679142639"><span class="annot"><span class="annottext">(s, b) -&gt; (s, c)
+</span><a href="#local-6989586621679142639"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679142640"><span class="annot"><span class="annottext">. :: forall b c a. State s b c -&gt; State s a b -&gt; State s a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var hs-var hs-var hs-var">.</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-type">State</span></a></span><span> </span><span id="local-6989586621679142641"><span class="annot"><span class="annottext">(s, a) -&gt; (s, b)
+</span><a href="#local-6989586621679142641"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">((s, a) -&gt; (s, c)) -&gt; State s a c
+forall s a b. ((s, a) -&gt; (s, b)) -&gt; State s a b
+</span><a href="Proarrow.Promonad.State.html#State"><span class="hs-identifier hs-var">State</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(s, b) -&gt; (s, c)
+</span><a href="#local-6989586621679142639"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">((s, b) -&gt; (s, c)) -&gt; ((s, a) -&gt; (s, b)) -&gt; (s, a) -&gt; (s, c)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(s, a) -&gt; (s, b)
+</span><a href="#local-6989586621679142641"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span></pre></body></html>

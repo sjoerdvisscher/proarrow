@@ -1,0 +1,376 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE AllowAmbiguousTypes #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Category.Monoidal.Endo</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Function</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-operator">($)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Kind"><span class="hs-identifier">Kind</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html"><span class="hs-identifier">Proarrow.Category.Bicategory</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier">Path</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier">Bicategory</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#MKKIND"><span class="hs-identifier">MKKIND</span></a></span><span class="hs-special">,</span><span> </span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator">(+++)</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier">withAssoc</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MONOIDAL"><span class="hs-identifier">MONOIDAL</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier">Monoidal</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html"><span class="hs-identifier">Proarrow.Category.Instance.List</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.List.html#IsList"><span class="hs-identifier">IsList</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#List"><span class="hs-identifier">List</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#%2B%2B"><span class="hs-operator">(++)</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.html"><span class="hs-identifier">Proarrow.Object</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.html#obj"><span class="hs-identifier">obj</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">type</span><span> </span><span class="hs-keyword">family</span><span> </span><span id="ListToPath"><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-var">ListToPath</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679127917"><span class="annot"><a href="#local-6989586621679127917"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127918"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127919"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127919"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127918"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127919"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127919"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-14"></span><span>  </span><span id="ListToPath"><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-var">ListToPath</span></a></span></span><span> </span><span class="hs-special">'</span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Nil"><span class="hs-identifier hs-type">Nil</span></a></span><span>
+</span><span id="line-15"></span><span>  </span><span id="ListToPath"><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-var">ListToPath</span></a></span></span><span> </span><span id="local-6989586621679127920"><span id="local-6989586621679127921"><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127920"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-glyph">:</span><span> </span><span class="annot"><a href="#local-6989586621679127921"><span class="hs-identifier hs-type">ps</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679127920"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127921"><span class="hs-identifier hs-type">ps</span></a></span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span id="local-6989586621679127749"><span id="local-6989586621679127750"><span id="local-6989586621679127754"><span id="local-6989586621679127755"><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-type">listToPath</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127749"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127749"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127750"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#List"><span class="hs-identifier hs-type">List</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127754"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127749"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127750"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127750"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679127755"><span class="hs-identifier hs-type">bs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127754"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127755"><span class="hs-identifier hs-type">bs</span></a></span></span></span></span></span><span>
+</span><span id="line-18"></span><span id="listToPath"><span class="annot"><span class="annottext">listToPath :: forall {k} (kk :: CAT k) (k :: k) (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Bicategory kk, Ob0 kk k) =&gt;
+List as bs -&gt; ListToPath as ~&gt; ListToPath bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var hs-var">listToPath</span></a></span></span><span> </span><span class="annot"><span class="annottext">List as bs
+</span><a href="Proarrow.Category.Instance.List.html#Nil"><span class="hs-identifier hs-var">Nil</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Nil ~&gt; Nil
+ListToPath as ~&gt; ListToPath bs
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+forall (a :: Path kk k k). Ob a =&gt; a ~&gt; a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-19"></span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var">listToPath</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.List.html#Cons"><span class="hs-identifier hs-type">Cons</span></a></span><span> </span><span id="local-6989586621679127952"><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679127952"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679127953"><span class="annot"><span class="annottext">List as1 bs1
+</span><a href="#local-6989586621679127953"><span class="hs-identifier hs-var">fs</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679127952"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(a ~&gt; b)
+-&gt; (ListToPath as1 ~&gt; ListToPath bs1)
+-&gt; (a +++ ListToPath as1) ~&gt; (b +++ ListToPath bs1)
+forall {c :: k} (i :: k) (j :: k) (ps :: Path kk i j)
+       (qs :: Path kk i j) (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall k (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">List as1 bs1 -&gt; ListToPath as1 ~&gt; ListToPath bs1
+forall {k} (kk :: CAT k) (k :: k) (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Bicategory kk, Ob0 kk k) =&gt;
+List as bs -&gt; ListToPath as ~&gt; ListToPath bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var">listToPath</span></a></span><span> </span><span class="annot"><span class="annottext">List as1 bs1
+</span><a href="#local-6989586621679127953"><span class="hs-identifier hs-var">fs</span></a></span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath%27"><span class="hs-identifier hs-type">appendListToPath'</span></a></span><span>
+</span><span id="line-22"></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679127803"><span class="annot"><a href="#local-6989586621679127803"><span class="hs-identifier hs-type">kk</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679127804"><span class="annot"><a href="#local-6989586621679127804"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679127806"><span class="annot"><a href="#local-6989586621679127806"><span class="hs-keyword hs-type">as</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127803"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127804"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127804"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span id="local-6989586621679127805"><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span></span><span> </span><span id="local-6989586621679127808"><span class="annot"><a href="#local-6989586621679127808"><span class="hs-identifier hs-type">r</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127803"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127803"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127804"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#List"><span class="hs-identifier hs-type">List</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127806"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127806"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127806"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span><span> </span><span class="annot"><span class="hs-operator hs-type">~</span></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127806"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#%2B%2B"><span class="hs-operator hs-type">++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127806"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#%2B%2B"><span class="hs-operator hs-type">++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679127808"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679127808"><span class="hs-identifier hs-type">r</span></a></span><span>
+</span><span id="line-24"></span><span id="appendListToPath%27"><span class="annot"><span class="annottext">appendListToPath' :: forall {k} {kk :: CAT k} {k :: k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob bs, Ob (ListToPath bs)) =&gt;
+List as as
+-&gt; (((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+     Ob (as ++ bs)) =&gt;
+    r)
+-&gt; r
+</span><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath%27"><span class="hs-identifier hs-var hs-var">appendListToPath'</span></a></span></span><span> </span><span class="annot"><span class="annottext">List as as
+</span><a href="Proarrow.Category.Instance.List.html#Nil"><span class="hs-identifier hs-var">Nil</span></a></span><span> </span><span id="local-6989586621679127972"><span class="annot"><span class="annottext">((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+ Ob (as ++ bs)) =&gt;
+r
+</span><a href="#local-6989586621679127972"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+ Ob (as ++ bs)) =&gt;
+r
+</span><a href="#local-6989586621679127972"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-25"></span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath%27"><span class="hs-identifier hs-var">appendListToPath'</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.List.html#Cons"><span class="hs-identifier hs-type">Cons</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679127983"><span class="annot"><a href="#local-6989586621679127983"><span class="hs-identifier hs-type hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679127984"><span class="annot"><a href="#local-6989586621679127984"><span class="hs-identifier hs-type hs-type">as'</span></a></span></span><span> </span><span id="local-6989586621679127985"><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679127985"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679127986"><span class="annot"><span class="annottext">List as1 bs1
+</span><a href="#local-6989586621679127986"><span class="hs-identifier hs-var">fs</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679127987"><span class="annot"><span class="annottext">((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+ Ob (as ++ bs)) =&gt;
+r
+</span><a href="#local-6989586621679127987"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k1} {kk :: CAT k1} {h :: k1} {i :: k1} {j :: k1} {k2 :: k1}
+       (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k2) r.
+(Bicategory kk, Ob0 kk h, Ob0 kk i, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+forall (a :: Path kk k k) (b :: Path kk k k) (c :: Path kk k k) r.
+(Bicategory kk, Ob0 kk k, Ob0 kk k, Ob a, Ob b, Ob c) =&gt;
+((((a +++ b) +++ c) ~ (a +++ (b +++ c))) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#withAssoc"><span class="hs-identifier hs-var">withAssoc</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127983"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127984"><span class="hs-identifier hs-type">as'</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (as :: [Path kk k k]) (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob bs, Ob (ListToPath bs)) =&gt;
+List as as
+-&gt; (((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+     Ob (as ++ bs)) =&gt;
+    r)
+-&gt; r
+forall {k} {kk :: CAT k} {k :: k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob bs, Ob (ListToPath bs)) =&gt;
+List as as
+-&gt; (((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+     Ob (as ++ bs)) =&gt;
+    r)
+-&gt; r
+</span><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath%27"><span class="hs-identifier hs-var">appendListToPath'</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127984"><span class="hs-identifier hs-type">as'</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127805"><span class="hs-identifier hs-type">bs</span></a></span><span> </span><span class="annot"><span class="annottext">List as1 as1
+List as1 bs1
+</span><a href="#local-6989586621679127986"><span class="hs-identifier hs-var">fs</span></a></span><span> </span><span class="annot"><span class="annottext">r
+((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+ Ob (as ++ bs)) =&gt;
+r
+((ListToPath as1 +++ ListToPath bs) ~ ListToPath (as1 ++ bs),
+ Ob (as1 ++ bs)) =&gt;
+r
+</span><a href="#local-6989586621679127987"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-26"></span><span>  </span><span class="annot"><span class="annottext">((Ob b, Ob b) =&gt; r) -&gt; (b ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: Path kk k k) (b :: Path kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+b ~&gt; b
+</span><a href="#local-6989586621679127985"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (ListToPath bs1), Ob (ListToPath bs1)) =&gt; r)
+-&gt; (ListToPath bs1 ~&gt; ListToPath bs1) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: Path kk k k) (b :: Path kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">List as1 bs1 -&gt; ListToPath as1 ~&gt; ListToPath bs1
+forall {k} (kk :: CAT k) (k :: k) (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Bicategory kk, Ob0 kk k) =&gt;
+List as bs -&gt; ListToPath as ~&gt; ListToPath bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var">listToPath</span></a></span><span> </span><span class="annot"><span class="annottext">List as1 bs1
+</span><a href="#local-6989586621679127986"><span class="hs-identifier hs-var">fs</span></a></span><span>
+</span><span id="line-27"></span><span>
+</span><span id="line-28"></span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath"><span class="hs-identifier hs-type">appendListToPath</span></a></span><span>
+</span><span id="line-29"></span><span>  </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679127844"><span class="annot"><a href="#local-6989586621679127844"><span class="hs-identifier hs-type">kk</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679127845"><span class="annot"><a href="#local-6989586621679127845"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679127846"><span class="annot"><a href="#local-6989586621679127846"><span class="hs-keyword hs-type">as</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127844"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127845"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127845"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span id="local-6989586621679127847"><span class="annot"><a href="#local-6989586621679127847"><span class="hs-identifier hs-type">bs</span></a></span></span><span> </span><span id="local-6989586621679127848"><span class="annot"><a href="#local-6989586621679127848"><span class="hs-identifier hs-type">r</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127844"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127844"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127845"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127846"><span class="hs-keyword hs-type">as</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127847"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span>  </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127846"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#%2B%2B%2B"><span class="hs-operator hs-type">+++</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127847"><span class="hs-identifier hs-type">bs</span></a></span><span> </span><span class="annot"><span class="hs-operator hs-type">~</span></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127846"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#%2B%2B"><span class="hs-operator hs-type">++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127847"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127846"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#%2B%2B"><span class="hs-operator hs-type">++</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127847"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679127848"><span class="hs-identifier hs-type">r</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679127848"><span class="hs-identifier hs-type">r</span></a></span><span>
+</span><span id="line-31"></span><span id="appendListToPath"><span class="annot"><span class="annottext">appendListToPath :: forall {k} {kk :: CAT k} {k :: k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob as, Ob bs) =&gt;
+(((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+  Ob (as ++ bs)) =&gt;
+ r)
+-&gt; r
+</span><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath"><span class="hs-identifier hs-var hs-var">appendListToPath</span></a></span></span><span> </span><span id="local-6989586621679128050"><span class="annot"><span class="annottext">((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+ Ob (as ++ bs)) =&gt;
+r
+</span><a href="#local-6989586621679128050"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (as :: [Path kk k k]) (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob bs, Ob (ListToPath bs)) =&gt;
+List as as
+-&gt; (((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+     Ob (as ++ bs)) =&gt;
+    r)
+-&gt; r
+forall {k} {kk :: CAT k} {k :: k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob bs, Ob (ListToPath bs)) =&gt;
+List as as
+-&gt; (((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+     Ob (as ++ bs)) =&gt;
+    r)
+-&gt; r
+</span><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath%27"><span class="hs-identifier hs-var">appendListToPath'</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127846"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127847"><span class="hs-identifier hs-type">bs</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (as :: [Path kk k k]). IsList as =&gt; List as as
+forall {k} (as :: [k]). IsList as =&gt; List as as
+</span><a href="Proarrow.Category.Instance.List.html#listId"><span class="hs-identifier hs-var">listId</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127846"><span class="hs-keyword hs-type">as</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">r
+((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+ Ob (as ++ bs)) =&gt;
+r
+</span><a href="#local-6989586621679128050"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (ListToPath bs), Ob (ListToPath bs)) =&gt; r)
+-&gt; (ListToPath bs ~&gt; ListToPath bs) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: Path kk k k) (b :: Path kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">List bs bs -&gt; ListToPath bs ~&gt; ListToPath bs
+forall {k} (kk :: CAT k) (k :: k) (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Bicategory kk, Ob0 kk k) =&gt;
+List as bs -&gt; ListToPath as ~&gt; ListToPath bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var">listToPath</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall (a :: [Path kk k k]).
+(CategoryOf [Path kk k k], Ob a) =&gt;
+Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127847"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-32"></span><span>
+</span><span id="line-33"></span><span>
+</span><span id="line-34"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679128066"><span class="annot"><a href="#local-6989586621679128066"><span class="hs-identifier hs-type">kk</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#MKKIND"><span class="hs-identifier hs-type">MKKIND</span></a></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679128067"><span class="annot"><a href="#local-6989586621679128067"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Kind"><span class="hs-identifier hs-type">Kind</span></a></span><span class="hs-special">}</span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MONOIDAL"><span class="hs-identifier hs-type">MONOIDAL</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679128066"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679128067"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679128067"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-35"></span><span class="hs-keyword">data</span><span> </span><span id="Endo"><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-var">Endo</span></a></span></span><span> </span><span id="local-6989586621679128068"><span class="annot"><a href="#local-6989586621679128068"><span class="hs-keyword hs-type">as</span></a></span></span><span> </span><span id="local-6989586621679128069"><span class="annot"><a href="#local-6989586621679128069"><span class="hs-identifier hs-type">bs</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-36"></span><span>  </span><span id="local-6989586621679127877"><span id="local-6989586621679127878"><span id="Endo"><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-var">Endo</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127877"><span class="hs-keyword hs-type">as</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127878"><span class="hs-identifier hs-type">bs</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127877"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#ListToPath"><span class="hs-identifier hs-type">ListToPath</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127878"><span class="hs-identifier hs-type">bs</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127877"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127878"><span class="hs-identifier hs-type">bs</span></a></span></span></span><span>
+</span><span id="line-37"></span><span>
+</span><span id="line-38"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679127868"><span id="local-6989586621679127869"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127868"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127868"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127869"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MONOIDAL"><span class="hs-identifier hs-type">MONOIDAL</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127868"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127869"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127869"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-39"></span><span>  </span><span id="local-6989586621679128092"><span class="annot"><span class="annottext">dimap :: forall (c :: [Path kk k k]) (a :: [Path kk k k])
+       (b :: [Path kk k k]) (d :: [Path kk k k]).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Endo a b -&gt; Endo c d
+</span><a href="#local-6989586621679128092"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679128094"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679128094"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679128095"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679128095"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span id="local-6989586621679128103"><span class="annot"><span class="annottext">ListToPath a ~&gt; ListToPath b
+</span><a href="#local-6989586621679128103"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ListToPath c ~&gt; ListToPath d) -&gt; Endo c d
+forall {kk :: CAT (*)} {k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Ob as, Ob bs) =&gt;
+(ListToPath as ~&gt; ListToPath bs) -&gt; Endo as bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-var">Endo</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">List b d -&gt; ListToPath b ~&gt; ListToPath d
+forall {k} (kk :: CAT k) (k :: k) (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Bicategory kk, Ob0 kk k) =&gt;
+List as bs -&gt; ListToPath as ~&gt; ListToPath bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var">listToPath</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+List b d
+</span><a href="#local-6989586621679128095"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(ListToPath b ~&gt; ListToPath d)
+-&gt; (ListToPath c ~&gt; ListToPath b) -&gt; ListToPath c ~&gt; ListToPath d
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk k k) (c :: Path kk k k) (a :: Path kk k k).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">ListToPath a ~&gt; ListToPath b
+</span><a href="#local-6989586621679128103"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(ListToPath a ~&gt; ListToPath b)
+-&gt; (ListToPath c ~&gt; ListToPath a) -&gt; ListToPath c ~&gt; ListToPath b
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk k k) (c :: Path kk k k) (a :: Path kk k k).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">List c a -&gt; ListToPath c ~&gt; ListToPath a
+forall {k} (kk :: CAT k) (k :: k) (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Bicategory kk, Ob0 kk k) =&gt;
+List as bs -&gt; ListToPath as ~&gt; ListToPath bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var">listToPath</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+List c a
+</span><a href="#local-6989586621679128094"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob c, Ob a) =&gt; Endo c d) -&gt; List c a -&gt; Endo c d
+forall (a :: [Path kk k k]) (b :: [Path kk k k]) r.
+((Ob a, Ob b) =&gt; r) -&gt; List a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+List c a
+</span><a href="#local-6989586621679128094"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob b, Ob d) =&gt; Endo c d) -&gt; List b d -&gt; Endo c d
+forall (a :: [Path kk k k]) (b :: [Path kk k k]) r.
+((Ob a, Ob b) =&gt; r) -&gt; List a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; d
+List b d
+</span><a href="#local-6989586621679128095"><span class="hs-identifier hs-var">r</span></a></span><span>
+</span><span id="line-40"></span><span>  </span><span id="local-6989586621679128124"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679128124"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679128125"><span class="annot"><span class="annottext">\\ :: forall (a :: [Path kk k k]) (b :: [Path kk k k]) r.
+((Ob a, Ob b) =&gt; r) -&gt; Endo a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span id="local-6989586621679128133"><span class="annot"><span class="annottext">ListToPath a ~&gt; ListToPath b
+</span><a href="#local-6989586621679128133"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+(Ob (ListToPath a), Ob (ListToPath b)) =&gt; r
+</span><a href="#local-6989586621679128124"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (ListToPath a), Ob (ListToPath b)) =&gt; r)
+-&gt; (ListToPath a ~&gt; ListToPath b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: Path kk k k) (b :: Path kk k k) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">ListToPath a ~&gt; ListToPath b
+</span><a href="#local-6989586621679128133"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-41"></span><span>
+</span><span id="line-42"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679127887"><span id="local-6989586621679127888"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127887"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127887"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127888"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MONOIDAL"><span class="hs-identifier hs-type">MONOIDAL</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127887"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127888"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127888"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-43"></span><span>  </span><span class="annot"><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-type">id</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679128151"><span class="annot"><a href="#local-6989586621679128151"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127887"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127888"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127888"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679128151"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679128151"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679128151"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-44"></span><span>  </span><span id="local-6989586621679128162"><span class="annot"><span class="annottext">id :: forall (a :: [Path kk k k]). Ob a =&gt; Endo a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var hs-var hs-var hs-var">id</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ListToPath a ~&gt; ListToPath a) -&gt; Endo a a
+forall {kk :: CAT (*)} {k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Ob as, Ob bs) =&gt;
+(ListToPath as ~&gt; ListToPath bs) -&gt; Endo as bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-var">Endo</span></a></span><span> </span><span class="annot"><span class="annottext">((ListToPath a ~&gt; ListToPath a) -&gt; Endo a a)
+-&gt; (ListToPath a ~&gt; ListToPath a) -&gt; Endo a a
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">List a a -&gt; ListToPath a ~&gt; ListToPath a
+forall {k} (kk :: CAT k) (k :: k) (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Bicategory kk, Ob0 kk k) =&gt;
+List as bs -&gt; ListToPath as ~&gt; ListToPath bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#listToPath"><span class="hs-identifier hs-var">listToPath</span></a></span><span> </span><span class="annot"><span class="annottext">(List a a -&gt; ListToPath a ~&gt; ListToPath a)
+-&gt; List a a -&gt; ListToPath a ~&gt; ListToPath a
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall (as :: [Path kk k k]). IsList as =&gt; List as as
+forall {k} (as :: [k]). IsList as =&gt; List as as
+</span><a href="Proarrow.Category.Instance.List.html#listId"><span class="hs-identifier hs-var">listId</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679128151"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-45"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span id="local-6989586621679128166"><span class="annot"><span class="annottext">ListToPath b ~&gt; ListToPath c
+</span><a href="#local-6989586621679128166"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span id="local-6989586621679128167"><span class="annot"><span class="annottext">. :: forall (b :: [Path kk k k]) (c :: [Path kk k k])
+       (a :: [Path kk k k]).
+Endo b c -&gt; Endo a b -&gt; Endo a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var hs-var hs-var hs-var">.</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span id="local-6989586621679128176"><span class="annot"><span class="annottext">ListToPath a ~&gt; ListToPath b
+</span><a href="#local-6989586621679128176"><span class="hs-identifier hs-var">g</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(ListToPath a ~&gt; ListToPath c) -&gt; Endo a c
+forall {kk :: CAT (*)} {k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Ob as, Ob bs) =&gt;
+(ListToPath as ~&gt; ListToPath bs) -&gt; Endo as bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-var">Endo</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ListToPath b ~&gt; ListToPath c
+</span><a href="#local-6989586621679128166"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(ListToPath b ~&gt; ListToPath c)
+-&gt; (ListToPath a ~&gt; ListToPath b) -&gt; ListToPath a ~&gt; ListToPath c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: Path kk k k) (c :: Path kk k k) (a :: Path kk k k).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">ListToPath a ~&gt; ListToPath b
+</span><a href="#local-6989586621679128176"><span class="hs-identifier hs-var">g</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-46"></span><span>
+</span><span id="line-47"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679127907"><span id="local-6989586621679127908"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Bicategory"><span class="hs-identifier hs-type">Bicategory</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127907"><span class="hs-identifier hs-type">kk</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Ob0"><span class="hs-identifier hs-type">Ob0</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127907"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127908"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127907"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127908"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127908"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MONOIDAL"><span class="hs-identifier hs-type">MONOIDAL</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127907"><span class="hs-identifier hs-type">kk</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127908"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127908"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-48"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679128197"><span class="annot"><a href="#local-6989586621679128197"><span class="hs-keyword hs-type hs-type">as</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679128198"><span class="annot"><a href="#local-6989586621679128198"><span class="hs-identifier hs-type hs-type">bs</span></a></span></span><span> </span><span id="local-6989586621679128199"><span class="annot"><span class="annottext">ListToPath as ~&gt; ListToPath bs
+</span><a href="#local-6989586621679128199"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679128200"><span class="annot"><span class="annottext">par :: forall (as :: [Path kk k k]) (bs :: [Path kk k k])
+       (cs :: [Path kk k k]) (ds :: [Path kk k k]).
+Endo as bs -&gt; Endo cs ds -&gt; Endo (as ++ cs) (bs ++ ds)
+</span><a href="#local-6989586621679128200"><span class="hs-operator hs-var hs-var hs-var hs-var">`par`</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-type">Endo</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679128210"><span class="annot"><a href="#local-6989586621679128210"><span class="hs-identifier hs-type hs-type">cs</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679128211"><span class="annot"><a href="#local-6989586621679128211"><span class="hs-identifier hs-type hs-type">ds</span></a></span></span><span> </span><span id="local-6989586621679128212"><span class="annot"><span class="annottext">ListToPath cs ~&gt; ListToPath ds
+</span><a href="#local-6989586621679128212"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall (as :: [Path kk k k]) (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob as, Ob bs) =&gt;
+(((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+  Ob (as ++ bs)) =&gt;
+ r)
+-&gt; r
+forall {k} {kk :: CAT k} {k :: k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob as, Ob bs) =&gt;
+(((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+  Ob (as ++ bs)) =&gt;
+ r)
+-&gt; r
+</span><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath"><span class="hs-identifier hs-var">appendListToPath</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679128197"><span class="hs-keyword hs-type">as</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679128210"><span class="hs-identifier hs-type">cs</span></a></span><span> </span><span class="annot"><span class="annottext">((((ListToPath as +++ ListToPath cs) ~ ListToPath (as ++ cs),
+   Ob (as ++ cs)) =&gt;
+  Endo (as ++ cs) (bs ++ ds))
+ -&gt; Endo (as ++ cs) (bs ++ ds))
+-&gt; (((ListToPath as +++ ListToPath cs) ~ ListToPath (as ++ cs),
+     Ob (as ++ cs)) =&gt;
+    Endo (as ++ cs) (bs ++ ds))
+-&gt; Endo (as ++ cs) (bs ++ ds)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall (as :: [Path kk k k]) (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob as, Ob bs) =&gt;
+(((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+  Ob (as ++ bs)) =&gt;
+ r)
+-&gt; r
+forall {k} {kk :: CAT k} {k :: k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]) r.
+(Bicategory kk, Ob0 kk k, Ob as, Ob bs) =&gt;
+(((ListToPath as +++ ListToPath bs) ~ ListToPath (as ++ bs),
+  Ob (as ++ bs)) =&gt;
+ r)
+-&gt; r
+</span><a href="Proarrow.Category.Monoidal.Endo.html#appendListToPath"><span class="hs-identifier hs-var">appendListToPath</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679128198"><span class="hs-identifier hs-type">bs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679128211"><span class="hs-identifier hs-type">ds</span></a></span><span> </span><span class="annot"><span class="annottext">((((ListToPath bs +++ ListToPath ds) ~ ListToPath (bs ++ ds),
+   Ob (bs ++ ds)) =&gt;
+  Endo (as ++ cs) (bs ++ ds))
+ -&gt; Endo (as ++ cs) (bs ++ ds))
+-&gt; (((ListToPath bs +++ ListToPath ds) ~ ListToPath (bs ++ ds),
+     Ob (bs ++ ds)) =&gt;
+    Endo (as ++ cs) (bs ++ ds))
+-&gt; Endo (as ++ cs) (bs ++ ds)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(ListToPath (as ++ cs) ~&gt; ListToPath (bs ++ ds))
+-&gt; Endo (as ++ cs) (bs ++ ds)
+forall {kk :: CAT (*)} {k} (as :: [Path kk k k])
+       (bs :: [Path kk k k]).
+(Ob as, Ob bs) =&gt;
+(ListToPath as ~&gt; ListToPath bs) -&gt; Endo as bs
+</span><a href="Proarrow.Category.Monoidal.Endo.html#Endo"><span class="hs-identifier hs-var">Endo</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ListToPath as ~&gt; ListToPath bs
+</span><a href="#local-6989586621679128199"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="annot"><span class="annottext">(ListToPath as ~&gt; ListToPath bs)
+-&gt; (ListToPath cs ~&gt; ListToPath ds)
+-&gt; (ListToPath as +++ ListToPath cs)
+   ~&gt; (ListToPath bs +++ ListToPath ds)
+forall {c} i j (ps :: Path kk i j) (qs :: Path kk i j)
+       (rs :: Path kk j c) (ss :: Path kk j c).
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+forall k (kk :: CAT k) {c :: k} (i :: k) (j :: k)
+       (ps :: Path kk i j) (qs :: Path kk i j) (rs :: Path kk j c)
+       (ss :: Path kk j c).
+Bicategory kk =&gt;
+(ps ~&gt; qs) -&gt; (rs ~&gt; ss) -&gt; (ps +++ rs) ~&gt; (qs +++ ss)
+</span><a href="Proarrow.Category.Bicategory.html#o"><span class="hs-operator hs-var">`o`</span></a></span><span> </span><span class="annot"><span class="annottext">ListToPath cs ~&gt; ListToPath ds
+</span><a href="#local-6989586621679128212"><span class="hs-identifier hs-var">r</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-49"></span></pre></body></html>

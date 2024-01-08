@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Category.Monoidal.Rev</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html"><span class="hs-identifier">Proarrow.Category.Instance.Product</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator">(:**:)</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier">TENSOR</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Tensor"><span class="hs-identifier">Tensor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Representable.html"><span class="hs-identifier">Proarrow.Profunctor.Representable</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Representable.html#Representable"><span class="hs-identifier">Representable</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679127611"><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier hs-type">TENSOR</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127611"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#TENSOR"><span class="hs-identifier hs-type">TENSOR</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127611"><span class="hs-identifier hs-type">k</span></a></span></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">data</span><span> </span><span id="Rev"><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-var">Rev</span></a></span></span><span> </span><span id="local-6989586621679127612"><span class="annot"><a href="#local-6989586621679127612"><span class="hs-identifier hs-type">t</span></a></span></span><span> </span><span id="local-6989586621679127613"><span class="annot"><a href="#local-6989586621679127613"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679127614"><span class="annot"><a href="#local-6989586621679127614"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-10"></span><span>  </span><span id="local-6989586621679127531"><span id="local-6989586621679127532"><span id="local-6989586621679127615"><span id="local-6989586621679127616"><span id="Rev"><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-var">Rev</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679127531"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127532"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127615"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679127616"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127531"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127532"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127616"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679127615"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span></span></span></span></span><span>
+</span><span id="line-11"></span><span>
+</span><span id="line-12"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679127517"><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127517"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127517"><span class="hs-identifier hs-type">t</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-13"></span><span>  </span><span id="local-6989586621679127631"><span class="annot"><span class="annottext">dimap :: forall (c :: j) (a :: j) (b :: (j, j)) (d :: (j, j)).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Rev t a b -&gt; Rev t c d
+</span><a href="#local-6989586621679127631"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679127633"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679127633"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679127636"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679127636"><span class="hs-identifier hs-var">r1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679127638"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679127638"><span class="hs-identifier hs-var">r2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span id="local-6989586621679127646"><span class="annot"><span class="annottext">t a '(c, b)
+</span><a href="#local-6989586621679127646"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">t c '(b2, b1) -&gt; Rev t c '(b1, b2)
+forall {k} (t :: TENSOR k) (a :: k) (c :: k) (b :: k).
+t a '(c, b) -&gt; Rev t a '(b, c)
+</span><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-var">Rev</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(c ~&gt; a) -&gt; ('(c, b) ~&gt; '(b2, b1)) -&gt; t a '(c, b) -&gt; t c '(b2, b1)
+forall (c :: j) (a :: j) (b :: (j, j)) (d :: (j, j)).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; t a b -&gt; t c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span><a href="Proarrow.Core.html#dimap"><span class="hs-identifier hs-var">dimap</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679127633"><span class="hs-identifier hs-var">l</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679127638"><span class="hs-identifier hs-var">r2</span></a></span><span> </span><span class="annot"><span class="annottext">(a2 ~&gt; b2) -&gt; (a1 ~&gt; b1) -&gt; (:**:) (~&gt;) (~&gt;) '(a2, a1) '(b2, b1)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679127636"><span class="hs-identifier hs-var">r1</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">t a '(c, b)
+</span><a href="#local-6989586621679127646"><span class="hs-identifier hs-var">t</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span>  </span><span id="local-6989586621679127647"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679127647"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679127648"><span class="annot"><span class="annottext">\\ :: forall (a :: j) (b :: (j, j)) r.
+((Ob a, Ob b) =&gt; r) -&gt; Rev t a b -&gt; r
+</span><a href="#local-6989586621679127648"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span id="local-6989586621679127652"><span class="annot"><span class="annottext">t a '(c, b)
+</span><a href="#local-6989586621679127652"><span class="hs-identifier hs-var">t</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob '(c, b)) =&gt; r
+</span><a href="#local-6989586621679127647"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob '(c, b)) =&gt; r) -&gt; t a '(c, b) -&gt; r
+forall (a :: j) (b :: (j, j)) r. ((Ob a, Ob b) =&gt; r) -&gt; t a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">t a '(c, b)
+</span><a href="#local-6989586621679127652"><span class="hs-identifier hs-var">t</span></a></span><span>
+</span><span id="line-15"></span><span>
+</span><span id="line-16"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679127567"><span class="annot"><a href="Proarrow.Profunctor.Representable.html#Representable"><span class="hs-identifier hs-type">Representable</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127567"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Representable.html#Representable"><span class="hs-identifier hs-type">Representable</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127567"><span class="hs-identifier hs-type">t</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-17"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679127674"><span id="local-6989586621679127675"><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127567"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span id="%25"><span class="annot"><a href="Proarrow.Profunctor.Representable.html#%25"><span class="hs-operator hs-var">%</span></a></span></span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127674"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679127675"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679127567"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Representable.html#%25"><span class="hs-operator hs-type">%</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679127675"><span class="hs-identifier hs-type">c</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679127674"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-18"></span><span>  </span><span id="local-6989586621679127676"><span class="annot"><span class="annottext">index :: forall (a :: j) (b :: (j, j)). Rev t a b -&gt; a ~&gt; (Rev t % b)
+</span><a href="#local-6989586621679127676"><span class="hs-identifier hs-var hs-var hs-var hs-var">index</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span id="local-6989586621679127680"><span class="annot"><span class="annottext">t a '(c, b)
+</span><a href="#local-6989586621679127680"><span class="hs-identifier hs-var">t</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">t a '(c, b) -&gt; a ~&gt; (t % '(c, b))
+forall (a :: j) (b :: (j, j)). t a b -&gt; a ~&gt; (t % b)
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k).
+Representable p =&gt;
+p a b -&gt; a ~&gt; (p % b)
+</span><a href="Proarrow.Profunctor.Representable.html#index"><span class="hs-identifier hs-var">index</span></a></span><span> </span><span class="annot"><span class="annottext">t a '(c, b)
+</span><a href="#local-6989586621679127680"><span class="hs-identifier hs-var">t</span></a></span><span>
+</span><span id="line-19"></span><span>  </span><span id="local-6989586621679127695"><span class="annot"><span class="annottext">tabulate :: forall (b :: (j, j)) (a :: j).
+Ob b =&gt;
+(a ~&gt; (Rev t % b)) -&gt; Rev t a b
+</span><a href="#local-6989586621679127695"><span class="hs-identifier hs-var hs-var hs-var hs-var">tabulate</span></a></span></span><span> </span><span id="local-6989586621679127697"><span class="annot"><span class="annottext">a ~&gt; (Rev t % b)
+</span><a href="#local-6989586621679127697"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">t a '(Snd b, Fst b) -&gt; Rev t a '(Fst b, Snd b)
+forall {k} (t :: TENSOR k) (a :: k) (c :: k) (b :: k).
+t a '(c, b) -&gt; Rev t a '(b, c)
+</span><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-var">Rev</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; (t % '(Snd b, Fst b))) -&gt; t a '(Snd b, Fst b)
+forall {j} {k} (p :: PRO j k) (b :: k) (a :: j).
+(Representable p, Ob b) =&gt;
+(a ~&gt; (p % b)) -&gt; p a b
+forall (b :: (j, j)) (a :: j). Ob b =&gt; (a ~&gt; (t % b)) -&gt; t a b
+</span><a href="Proarrow.Profunctor.Representable.html#tabulate"><span class="hs-identifier hs-var">tabulate</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; (t % '(Snd b, Fst b))
+a ~&gt; (Rev t % b)
+</span><a href="#local-6989586621679127697"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-20"></span><span>  </span><span id="local-6989586621679127698"><span class="annot"><span class="annottext">repMap :: forall (a :: (j, j)) (b :: (j, j)).
+(a ~&gt; b) -&gt; (Rev t % a) ~&gt; (Rev t % b)
+</span><a href="#local-6989586621679127698"><span class="hs-identifier hs-var hs-var hs-var hs-var">repMap</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679127703"><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679127703"><span class="hs-identifier hs-var">f1</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-type">:**:</span></a></span><span> </span><span id="local-6989586621679127704"><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679127704"><span class="hs-identifier hs-var">f2</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {j} {k} (p :: PRO j k) (a :: k) (b :: k).
+Representable p =&gt;
+(a ~&gt; b) -&gt; (p % a) ~&gt; (p % b)
+forall (p :: PRO j (j, j)) (a :: (j, j)) (b :: (j, j)).
+Representable p =&gt;
+(a ~&gt; b) -&gt; (p % a) ~&gt; (p % b)
+</span><a href="Proarrow.Profunctor.Representable.html#repMap"><span class="hs-identifier hs-var">repMap</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127567"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">a2 ~&gt; b2
+</span><a href="#local-6989586621679127704"><span class="hs-identifier hs-var">f2</span></a></span><span> </span><span class="annot"><span class="annottext">(a2 ~&gt; b2) -&gt; (a1 ~&gt; b1) -&gt; (:**:) (~&gt;) (~&gt;) '(a2, a1) '(b2, b1)
+forall {k1} {k2} (c :: CAT k1) (a1 :: k1) (b1 :: k1) (d :: CAT k2)
+       (a2 :: k2) (b2 :: k2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"><span class="hs-operator hs-var">:**:</span></a></span><span> </span><span class="annot"><span class="annottext">a1 ~&gt; b1
+</span><a href="#local-6989586621679127703"><span class="hs-identifier hs-var">f1</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-21"></span><span>
+</span><span id="line-22"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679127600"><span class="annot"><a href="Proarrow.Category.Monoidal.html#Tensor"><span class="hs-identifier hs-type">Tensor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Tensor"><span class="hs-identifier hs-type">Tensor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-23"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="U"><span class="annot"><a href="Proarrow.Category.Monoidal.html#U"><span class="hs-identifier hs-var">U</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.Rev.html#Rev"><span class="hs-identifier hs-type">Rev</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#U"><span class="hs-identifier hs-type">U</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span>
+</span><span id="line-24"></span><span>  </span><span id="local-6989586621679127724"><span class="annot"><span class="annottext">leftUnitor :: forall (a :: k). Obj a -&gt; (Rev t % '(U (Rev t), a)) ~&gt; a
+</span><a href="#local-6989586621679127724"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitor</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k} (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; (t % '(a, U t)) ~&gt; a
+forall (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; (t % '(a, U t)) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitor"><span class="hs-identifier hs-var">rightUnitor</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span>
+</span><span id="line-25"></span><span>  </span><span id="local-6989586621679127728"><span class="annot"><span class="annottext">leftUnitorInv :: forall (a :: k). Obj a -&gt; a ~&gt; (Rev t % '(U (Rev t), a))
+</span><a href="#local-6989586621679127728"><span class="hs-identifier hs-var hs-var hs-var hs-var">leftUnitorInv</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k} (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; a ~&gt; (t % '(a, U t))
+forall (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; a ~&gt; (t % '(a, U t))
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"><span class="hs-identifier hs-var">rightUnitorInv</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span>
+</span><span id="line-26"></span><span>  </span><span id="local-6989586621679127732"><span class="annot"><span class="annottext">rightUnitor :: forall (a :: k). Obj a -&gt; (Rev t % '(a, U (Rev t))) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitor"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitor</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k} (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; (t % '(U t, a)) ~&gt; a
+forall (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; (t % '(U t, a)) ~&gt; a
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitor"><span class="hs-identifier hs-var">leftUnitor</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span>
+</span><span id="line-27"></span><span>  </span><span id="local-6989586621679127734"><span class="annot"><span class="annottext">rightUnitorInv :: forall (a :: k). Obj a -&gt; a ~&gt; (Rev t % '(a, U (Rev t)))
+</span><a href="Proarrow.Category.Monoidal.html#rightUnitorInv"><span class="hs-identifier hs-var hs-var hs-var hs-var">rightUnitorInv</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k} (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; a ~&gt; (t % '(U t, a))
+forall (t :: TENSOR k) (a :: k).
+Tensor t =&gt;
+Obj a -&gt; a ~&gt; (t % '(U t, a))
+</span><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"><span class="hs-identifier hs-var">leftUnitorInv</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span>
+</span><span id="line-28"></span><span>  </span><span id="local-6989586621679127736"><span class="annot"><span class="annottext">associator :: forall (a :: k) (b :: k) (c :: k).
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (Rev t % '(Rev t % '(a, b), c))
+   ~&gt; (Rev t % '(a, Rev t % '(b, c)))
+</span><a href="#local-6989586621679127736"><span class="hs-identifier hs-var hs-var hs-var hs-var">associator</span></a></span></span><span> </span><span id="local-6989586621679127738"><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679127738"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span id="local-6989586621679127739"><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679127739"><span class="hs-identifier hs-var">b</span></a></span></span><span> </span><span id="local-6989586621679127740"><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679127740"><span class="hs-identifier hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k} (t :: TENSOR k) (a :: k) (b :: k) (c :: k).
+Tensor t =&gt;
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (t % '(a, t % '(b, c))) ~&gt; (t % '(t % '(a, b), c))
+forall (t :: TENSOR k) (a :: k) (b :: k) (c :: k).
+Tensor t =&gt;
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (t % '(a, t % '(b, c))) ~&gt; (t % '(t % '(a, b), c))
+</span><a href="Proarrow.Category.Monoidal.html#associatorInv"><span class="hs-identifier hs-var">associatorInv</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679127740"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679127739"><span class="hs-identifier hs-var">b</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679127738"><span class="hs-identifier hs-var">a</span></a></span><span>
+</span><span id="line-29"></span><span>  </span><span id="local-6989586621679127743"><span class="annot"><span class="annottext">associatorInv :: forall (a :: k) (b :: k) (c :: k).
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (Rev t % '(a, Rev t % '(b, c)))
+   ~&gt; (Rev t % '(Rev t % '(a, b), c))
+</span><a href="Proarrow.Category.Monoidal.html#associatorInv"><span class="hs-identifier hs-var hs-var hs-var hs-var">associatorInv</span></a></span></span><span> </span><span id="local-6989586621679127744"><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679127744"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span id="local-6989586621679127745"><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679127745"><span class="hs-identifier hs-var">b</span></a></span></span><span> </span><span id="local-6989586621679127746"><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679127746"><span class="hs-identifier hs-var">c</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k} (t :: TENSOR k) (a :: k) (b :: k) (c :: k).
+Tensor t =&gt;
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (t % '(t % '(a, b), c)) ~&gt; (t % '(a, t % '(b, c)))
+forall (t :: TENSOR k) (a :: k) (b :: k) (c :: k).
+Tensor t =&gt;
+Obj a
+-&gt; Obj b
+-&gt; Obj c
+-&gt; (t % '(t % '(a, b), c)) ~&gt; (t % '(a, t % '(b, c)))
+</span><a href="Proarrow.Category.Monoidal.html#associator"><span class="hs-identifier hs-var">associator</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679127600"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><span class="annottext">Obj c
+</span><a href="#local-6989586621679127746"><span class="hs-identifier hs-var">c</span></a></span><span> </span><span class="annot"><span class="annottext">Obj b
+</span><a href="#local-6989586621679127745"><span class="hs-identifier hs-var">b</span></a></span><span> </span><span class="annot"><span class="annottext">Obj a
+</span><a href="#local-6989586621679127744"><span class="hs-identifier hs-var">a</span></a></span></pre></body></html>

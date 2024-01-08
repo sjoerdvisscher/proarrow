@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Profunctor.Costar</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier">PRO</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#%3A~%3E"><span class="hs-operator">(:~&gt;)</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Functor.html"><span class="hs-identifier">Proarrow.Functor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier">Functor</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Corepresentable.html"><span class="hs-identifier">Proarrow.Profunctor.Corepresentable</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Corepresentable.html#Corepresentable"><span class="hs-identifier">Corepresentable</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html"><span class="hs-identifier">Proarrow.Profunctor.Composition</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator">(:.:)</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Functor.Compose</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Compose</span></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679125842"><span id="local-6989586621679125843"><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679125842"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679125843"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125842"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125843"><span class="hs-identifier hs-type">k</span></a></span></span></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">data</span><span> </span><span id="Costar"><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-var">Costar</span></a></span></span><span> </span><span id="local-6989586621679125844"><span class="annot"><a href="#local-6989586621679125844"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span id="local-6989586621679125845"><span class="annot"><a href="#local-6989586621679125845"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679125846"><span class="annot"><a href="#local-6989586621679125846"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-11"></span><span>  </span><span id="local-6989586621679125750"><span id="local-6989586621679125751"><span id="local-6989586621679125752"><span id="Costar"><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-var">Costar</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125751"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">{</span><span> </span><span id="getCostar"><span class="annot"><span class="annottext">forall {j} {k} (a :: j) (f :: j -&gt; k) (b :: k).
+Costar f a b -&gt; f a ~&gt; b
+</span><a href="Proarrow.Profunctor.Costar.html#getCostar"><span class="hs-identifier hs-var hs-var">getCostar</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679125750"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125751"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#~%3E"><span class="hs-operator hs-type">~&gt;</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125752"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-special">}</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125750"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125751"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125752"><span class="hs-identifier hs-type">b</span></a></span></span></span></span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679125784"><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125784"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-type">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125784"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-14"></span><span>  </span><span id="local-6989586621679125869"><span class="annot"><span class="annottext">dimap :: forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Costar f a b -&gt; Costar f c d
+</span><a href="#local-6989586621679125869"><span class="hs-identifier hs-var hs-var hs-var hs-var">dimap</span></a></span></span><span> </span><span id="local-6989586621679125871"><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679125871"><span class="hs-identifier hs-var">l</span></a></span></span><span> </span><span id="local-6989586621679125872"><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679125872"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span id="local-6989586621679125875"><span class="annot"><span class="annottext">f a ~&gt; b
+</span><a href="#local-6989586621679125875"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(f c ~&gt; d) -&gt; Costar f c d
+forall {j} {k} (a :: j) (f :: j -&gt; k) (b :: k).
+Ob a =&gt;
+(f a ~&gt; b) -&gt; Costar f a b
+</span><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-var">Costar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b ~&gt; d
+</span><a href="#local-6989586621679125872"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">(b ~&gt; d) -&gt; (f c ~&gt; b) -&gt; f c ~&gt; d
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">f a ~&gt; b
+</span><a href="#local-6989586621679125875"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(f a ~&gt; b) -&gt; (f c ~&gt; f a) -&gt; f c ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(c ~&gt; a) -&gt; f c ~&gt; f a
+forall (a :: j) (b :: j). (a ~&gt; b) -&gt; f a ~&gt; f b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679125871"><span class="hs-identifier hs-var">l</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob c, Ob a) =&gt; Costar f c d) -&gt; (c ~&gt; a) -&gt; Costar f c d
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">c ~&gt; a
+</span><a href="#local-6989586621679125871"><span class="hs-identifier hs-var">l</span></a></span><span>
+</span><span id="line-15"></span><span>  </span><span id="local-6989586621679125885"><span class="annot"><span class="annottext">(Ob a, Ob b) =&gt; r
+</span><a href="#local-6989586621679125885"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679125886"><span class="annot"><span class="annottext">\\ :: forall (a :: j) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Costar f a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var hs-var hs-var hs-var">\\</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span id="local-6989586621679125889"><span class="annot"><span class="annottext">f a ~&gt; b
+</span><a href="#local-6989586621679125889"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">r
+(Ob a, Ob b) =&gt; r
+(Ob (f a), Ob b) =&gt; r
+</span><a href="#local-6989586621679125885"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">((Ob (f a), Ob b) =&gt; r) -&gt; (f a ~&gt; b) -&gt; r
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">f a ~&gt; b
+</span><a href="#local-6989586621679125889"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679125816"><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125816"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Corepresentable.html#Corepresentable"><span class="hs-identifier hs-type">Corepresentable</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125816"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-18"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="local-6989586621679125902"><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125816"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span id="%25%25"><span class="annot"><a href="Proarrow.Profunctor.Corepresentable.html#%25%25"><span class="hs-operator hs-var">%%</span></a></span></span><span> </span><span class="annot"><a href="#local-6989586621679125902"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="#local-6989586621679125816"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125902"><span class="hs-identifier hs-type">a</span></a></span><span>
+</span><span id="line-19"></span><span>  </span><span id="local-6989586621679125903"><span class="annot"><span class="annottext">coindex :: forall (a :: j) (b :: k). Costar f a b -&gt; (Costar f %% a) ~&gt; b
+</span><a href="#local-6989586621679125903"><span class="hs-identifier hs-var hs-var hs-var hs-var">coindex</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Costar f a b -&gt; f a ~&gt; b
+Costar f a b -&gt; (Costar f %% a) ~&gt; b
+forall {j} {k} (a :: j) (f :: j -&gt; k) (b :: k).
+Costar f a b -&gt; f a ~&gt; b
+</span><a href="Proarrow.Profunctor.Costar.html#getCostar"><span class="hs-identifier hs-var">getCostar</span></a></span><span>
+</span><span id="line-20"></span><span>  </span><span id="local-6989586621679125907"><span class="annot"><span class="annottext">cotabulate :: forall (a :: j) (b :: k).
+Ob a =&gt;
+((Costar f %% a) ~&gt; b) -&gt; Costar f a b
+</span><a href="#local-6989586621679125907"><span class="hs-identifier hs-var hs-var hs-var hs-var">cotabulate</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(f a ~&gt; b) -&gt; Costar f a b
+((Costar f %% a) ~&gt; b) -&gt; Costar f a b
+forall {j} {k} (a :: j) (f :: j -&gt; k) (b :: k).
+Ob a =&gt;
+(f a ~&gt; b) -&gt; Costar f a b
+</span><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-var">Costar</span></a></span><span>
+</span><span id="line-21"></span><span>  </span><span id="local-6989586621679125910"><span class="annot"><span class="annottext">corepMap :: forall (a :: j) (b :: j).
+(a ~&gt; b) -&gt; (Costar f %% a) ~&gt; (Costar f %% b)
+</span><a href="#local-6989586621679125910"><span class="hs-identifier hs-var hs-var hs-var hs-var">corepMap</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; f a ~&gt; f b
+(a ~&gt; b) -&gt; (Costar f %% a) ~&gt; (Costar f %% b)
+forall (a :: j) (b :: j). (a ~&gt; b) -&gt; f a ~&gt; f b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span>
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span id="local-6989586621679125825"><span id="local-6989586621679125826"><span class="annot"><a href="Proarrow.Profunctor.Costar.html#composeCostar"><span class="hs-identifier hs-type">composeCostar</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Functor.html#Functor"><span class="hs-identifier hs-type">Functor</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125825"><span class="hs-identifier hs-type">g</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125826"><span class="hs-identifier hs-type">f</span></a></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-type">:.:</span></a></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125825"><span class="hs-identifier hs-type">g</span></a></span><span> </span><span class="annot"><a href="Proarrow.Core.html#%3A~%3E"><span class="hs-operator hs-type">:~&gt;</span></a></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Compose</span></span><span> </span><span class="annot"><a href="#local-6989586621679125825"><span class="hs-identifier hs-type">g</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679125826"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span></span></span><span>
+</span><span id="line-24"></span><span id="composeCostar"><span class="annot"><span class="annottext">composeCostar :: forall {k} {j} (g :: k -&gt; *) (f :: j -&gt; k).
+Functor g =&gt;
+(Costar f :.: Costar g) :~&gt; Costar (Compose g f)
+</span><a href="Proarrow.Profunctor.Costar.html#composeCostar"><span class="hs-identifier hs-var hs-var">composeCostar</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span id="local-6989586621679125918"><span class="annot"><span class="annottext">f a ~&gt; b
+</span><a href="#local-6989586621679125918"><span class="hs-identifier hs-var">f</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-type">:.:</span></a></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span id="local-6989586621679125925"><span class="annot"><span class="annottext">g b ~&gt; b
+</span><a href="#local-6989586621679125925"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Compose g f a ~&gt; b) -&gt; Costar (Compose g f) a b
+forall {j} {k} (a :: j) (f :: j -&gt; k) (b :: k).
+Ob a =&gt;
+(f a ~&gt; b) -&gt; Costar f a b
+</span><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-var">Costar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">g b ~&gt; b
+g b -&gt; b
+</span><a href="#local-6989586621679125925"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">(g b -&gt; b) -&gt; (Compose g f a -&gt; g b) -&gt; Compose g f a -&gt; b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">(f a ~&gt; b) -&gt; g (f a) ~&gt; g b
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; g a ~&gt; g b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">f a ~&gt; b
+</span><a href="#local-6989586621679125918"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">(g (f a) -&gt; g b)
+-&gt; (Compose g f a -&gt; g (f a)) -&gt; Compose g f a -&gt; g b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">Compose g f a -&gt; g (f a)
+forall {k1} {k2} (f :: k1 -&gt; *) (g :: k2 -&gt; k1) (a :: k2).
+Compose f g a -&gt; f (g a)
+</span><span class="hs-identifier hs-var">getCompose</span></span><span class="hs-special">)</span></pre></body></html>

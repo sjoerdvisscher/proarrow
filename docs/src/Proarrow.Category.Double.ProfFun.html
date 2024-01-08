@@ -1,0 +1,528 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# OPTIONS_GHC -Wno-orphans #-}</span><span>
+</span><span id="line-2"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Category.Double.ProfFun</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-3"></span><span>
+</span><span id="line-4"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Function</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-operator">($)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-5"></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator">(\\)</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html"><span class="hs-identifier">Proarrow.Category.Double</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Double.html#DOUBLE"><span class="hs-identifier">DOUBLE</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#Double"><span class="hs-identifier">Double</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#Equipment"><span class="hs-identifier">Equipment</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html"><span class="hs-identifier">Proarrow.Category.Bicategory</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier">Path</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#isPathAppend"><span class="hs-identifier">isPathAppend</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Cat.html"><span class="hs-identifier">Proarrow.Category.Bicategory.Cat</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Cat.html#ApplyAll"><span class="hs-identifier">ApplyAll</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Cat.html#Cat"><span class="hs-identifier">Cat</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Cat.html#withAppendFList"><span class="hs-identifier">withAppendFList</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html"><span class="hs-identifier">Proarrow.Category.Bicategory.Prof</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier">ProfK</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfList"><span class="hs-identifier">ProfList</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#Biprof"><span class="hs-identifier">Biprof</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#psplit"><span class="hs-identifier">psplit</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#pappend"><span class="hs-identifier">pappend</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfC"><span class="hs-identifier">ProfC</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Costar.html"><span class="hs-identifier">Proarrow.Profunctor.Costar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier">Costar</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Star.html"><span class="hs-identifier">Proarrow.Profunctor.Star</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier">Star</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Functor.html"><span class="hs-identifier">Proarrow.Functor</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Functor.html#map"><span class="hs-identifier">map</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span>
+</span><span id="line-15"></span><span class="hs-keyword">type</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-type">ProfSq</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span id="local-6989586621679140190"><span class="annot"><a href="Proarrow.Category.Double.html#DOUBLE"><span class="hs-identifier hs-type">DOUBLE</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679140190"><span class="hs-identifier hs-type">clh</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span></span><span>
+</span><span id="line-16"></span><span class="hs-keyword">data</span><span> </span><span id="ProfSq"><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span></span><span> </span><span id="local-6989586621679140191"><span class="annot"><a href="#local-6989586621679140191"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span id="local-6989586621679140192"><span class="annot"><a href="#local-6989586621679140192"><span class="hs-identifier hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679140193"><span class="annot"><a href="#local-6989586621679140193"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span id="local-6989586621679140194"><span class="annot"><a href="#local-6989586621679140194"><span class="hs-identifier hs-type">gs</span></a></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-17"></span><span>  </span><span id="ProfSq"><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span></span><span>
+</span><span id="line-18"></span><span>    </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139954"><span class="annot"><a href="#local-6989586621679139954"><span class="hs-identifier hs-type">h</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139956"><span class="annot"><a href="#local-6989586621679139956"><span class="hs-identifier hs-type">i</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139955"><span class="annot"><a href="#local-6989586621679139955"><span class="hs-identifier hs-type">j</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139957"><span class="annot"><a href="#local-6989586621679139957"><span class="hs-identifier hs-type">k</span></a></span></span><span class="hs-special">}</span><span> </span><span class="hs-special">{</span><span id="local-6989586621679139953"><span class="annot"><a href="#local-6989586621679139953"><span class="hs-identifier hs-type">clh</span></a></span></span><span class="hs-special">}</span><span> </span><span id="local-6989586621679139958"><span class="annot"><a href="#local-6989586621679139958"><span class="hs-identifier hs-type">ps</span></a></span></span><span> </span><span id="local-6989586621679139959"><span class="annot"><a href="#local-6989586621679139959"><span class="hs-identifier hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679139960"><span class="annot"><a href="#local-6989586621679139960"><span class="hs-identifier hs-type">fs</span></a></span></span><span> </span><span id="local-6989586621679139961"><span class="annot"><a href="#local-6989586621679139961"><span class="hs-identifier hs-type">gs</span></a></span></span><span>
+</span><span id="line-19"></span><span>     </span><span class="hs-operator">.</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139954"><span class="hs-identifier hs-type">h</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139956"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139955"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139957"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139958"><span class="hs-identifier hs-type">ps</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139959"><span class="hs-identifier hs-type">qs</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139960"><span class="hs-identifier hs-type">fs</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139961"><span class="hs-identifier hs-type">gs</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-20"></span><span>    </span><span class="hs-glyph">=&gt;</span><span> </span><span class="hs-special">(</span><span class="hs-keyword">forall</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679139948"><span class="annot"><a href="#local-6989586621679139948"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679139954"><span class="hs-identifier hs-type">h</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span id="local-6989586621679139949"><span class="annot"><a href="#local-6989586621679139949"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679139955"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">)</span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfList"><span class="hs-identifier hs-type">ProfList</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139953"><span class="hs-identifier hs-type">clh</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139958"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139948"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139949"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfList"><span class="hs-identifier hs-type">ProfList</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139953"><span class="hs-identifier hs-type">clh</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139959"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Cat.html#ApplyAll"><span class="hs-identifier hs-type">ApplyAll</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139960"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139948"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Cat.html#ApplyAll"><span class="hs-identifier hs-type">ApplyAll</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139961"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139949"><span class="hs-identifier hs-type">b</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-21"></span><span>    </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-type">ProfSq</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139958"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139953"><span class="hs-identifier hs-type">clh</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139954"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139955"><span class="hs-identifier hs-type">j</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139959"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139953"><span class="hs-identifier hs-type">clh</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139956"><span class="hs-identifier hs-type">i</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139957"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139960"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139954"><span class="hs-identifier hs-type">h</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139956"><span class="hs-identifier hs-type">i</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679139961"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.html#Path"><span class="hs-identifier hs-type">Path</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679139955"><span class="hs-identifier hs-type">j</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139957"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-22"></span><span>
+</span><span id="line-23"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679139937"><span class="annot"><a href="Proarrow.Category.Double.html#Double"><span class="hs-identifier hs-type">Double</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139937"><span class="hs-identifier hs-type">clh</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-24"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Sq"><span class="annot"><a href="Proarrow.Category.Double.html#Sq"><span class="hs-identifier hs-var">Sq</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679139937"><span class="hs-identifier hs-type">clh</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-type">ProfSq</span></a></span><span>
+</span><span id="line-25"></span><span>  </span><span id="local-6989586621679140225"><span class="annot"><span class="annottext">object :: forall (k :: Kind).
+DOb (ProfK clh) (-&gt;) k =&gt;
+Sq (ProfK clh) (-&gt;) Nil Nil Nil Nil
+</span><a href="#local-6989586621679140225"><span class="hs-identifier hs-var hs-var hs-var hs-var">object</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(forall (a :: k) (b :: k).
+ ProfList clh Nil a b
+ -&gt; ProfList clh Nil (ApplyAll Nil a) (ApplyAll Nil b))
+-&gt; ProfSq Nil Nil Nil Nil
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="annot"><span class="annottext">ProfList clh Nil a b -&gt; ProfList clh Nil a b
+ProfList clh Nil a b
+-&gt; ProfList clh Nil (ApplyAll Nil a) (ApplyAll Nil b)
+forall (a :: k) (b :: k).
+ProfList clh Nil a b
+-&gt; ProfList clh Nil (ApplyAll Nil a) (ApplyAll Nil b)
+forall (a :: Kind). Ob a =&gt; a -&gt; a
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span>
+</span><span id="line-26"></span><span>  </span><span id="local-6989586621679140237"><span class="annot"><span class="annottext">hArr :: forall (j :: Kind) (k :: Kind) (ps :: Path (ProfK clh) j k)
+       (qs :: Path (ProfK clh) j k).
+(Ob0 (-&gt;) j, Ob0 (-&gt;) k) =&gt;
+(ps ~&gt; qs) -&gt; Sq (ProfK clh) (-&gt;) ps qs Nil Nil
+</span><a href="#local-6989586621679140237"><span class="hs-identifier hs-var hs-var hs-var hs-var">hArr</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#Biprof"><span class="hs-identifier hs-type">Biprof</span></a></span><span> </span><span id="local-6989586621679140258"><span class="annot"><span class="annottext">ProfList clh ps :~&gt; ProfList clh qs
+</span><a href="#local-6989586621679140258"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(forall (a :: j) (b :: k).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll Nil a) (ApplyAll Nil b))
+-&gt; ProfSq ps qs Nil Nil
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="annot"><span class="annottext">ProfList clh ps a b -&gt; ProfList clh qs a b
+ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll Nil a) (ApplyAll Nil b)
+ProfList clh ps :~&gt; ProfList clh qs
+forall (a :: j) (b :: k).
+ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll Nil a) (ApplyAll Nil b)
+</span><a href="#local-6989586621679140258"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-27"></span><span>  </span><span id="local-6989586621679140263"><span class="annot"><span class="annottext">vArr :: forall (j :: Kind) (k :: Kind) (fs :: Path (-&gt;) j k)
+       (gs :: Path (-&gt;) j k).
+(Ob0 (ProfK clh) j, Ob0 (ProfK clh) k) =&gt;
+(fs ~&gt; gs) -&gt; Sq (ProfK clh) (-&gt;) Nil Nil fs gs
+</span><a href="#local-6989586621679140263"><span class="hs-identifier hs-var hs-var hs-var hs-var">vArr</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Cat.html#Cat"><span class="hs-identifier hs-type">Cat</span></a></span><span> </span><span id="local-6989586621679140284"><span class="annot"><span class="annottext">forall (a :: j) (b :: j).
+(a ~&gt; b) -&gt; ApplyAll fs a ~&gt; ApplyAll gs b
+</span><a href="#local-6989586621679140284"><span class="hs-identifier hs-var">n</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(forall (a :: j) (b :: j).
+ ProfList clh Nil a b
+ -&gt; ProfList clh Nil (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq Nil Nil fs gs
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679140292"><span class="annot"><span class="annottext">a ~&gt; b1
+</span><a href="#local-6989586621679140292"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(ApplyAll fs a ~&gt; ApplyAll gs b)
+-&gt; ProfList clh Nil (ApplyAll fs a) (ApplyAll gs b)
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; ApplyAll fs a ~&gt; ApplyAll gs b
+forall (a :: j) (b :: j).
+(a ~&gt; b) -&gt; ApplyAll fs a ~&gt; ApplyAll gs b
+</span><a href="#local-6989586621679140284"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679140292"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-28"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-type">ProfSq</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140304"><span class="annot"><a href="#local-6989586621679140304"><span class="hs-identifier hs-type hs-type">fs</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140305"><span class="annot"><a href="#local-6989586621679140305"><span class="hs-identifier hs-type hs-type">gs</span></a></span></span><span> </span><span id="local-6989586621679140306"><span class="annot"><span class="annottext">forall (a :: a1) (b :: a2).
+ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+</span><a href="#local-6989586621679140306"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679140307"><span class="annot"><span class="annottext">||| :: forall {a1 :: Kind} {a2 :: Kind} {b1 :: Kind} {b2 :: Kind}
+       {c1 :: Kind} {c2 :: Kind} (ps :: Path (ProfK clh) a1 a2)
+       (qs :: Path (ProfK clh) b1 b2) (fs :: Path (-&gt;) a1 b1)
+       (gs :: Path (-&gt;) a2 b2) (rs :: Path (ProfK clh) c1 c2)
+       (hs :: Path (-&gt;) b1 c1) (is :: Path (-&gt;) b2 c2).
+Sq (ProfK clh) (-&gt;) ps qs fs gs
+-&gt; Sq (ProfK clh) (-&gt;) qs rs hs is
+-&gt; Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is)
+</span><a href="#local-6989586621679140307"><span class="hs-operator hs-var hs-var hs-var hs-var">|||</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-type">ProfSq</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140322"><span class="annot"><a href="#local-6989586621679140322"><span class="hs-identifier hs-type hs-type">hs</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140323"><span class="annot"><a href="#local-6989586621679140323"><span class="hs-identifier hs-type hs-type">is</span></a></span></span><span> </span><span id="local-6989586621679140324"><span class="annot"><span class="annottext">forall (a :: b1) (b :: b2).
+ProfList clh qs a b
+-&gt; ProfList clh rs (ApplyAll hs a) (ApplyAll is b)
+</span><a href="#local-6989586621679140324"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {j :: Kind} {b :: Kind} {k1 :: Kind} (fs :: Path (-&gt;) j b)
+       (gs :: Path (-&gt;) b k1) (r :: Kind).
+(IsPath fs, IsPath gs) =&gt;
+((IsPath (fs +++ gs), forall (a :: j). ApplyAppend fs gs a) =&gt; r)
+-&gt; r
+forall (fs :: Path (-&gt;) a2 b2) (gs :: Path (-&gt;) b2 c2) (r :: Kind).
+(IsPath fs, IsPath gs) =&gt;
+((IsPath (fs +++ gs), forall (a :: a2). ApplyAppend fs gs a) =&gt; r)
+-&gt; r
+</span><a href="Proarrow.Category.Bicategory.Cat.html#withAppendFList"><span class="hs-identifier hs-var">withAppendFList</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140305"><span class="hs-identifier hs-type">gs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140323"><span class="hs-identifier hs-type">is</span></a></span><span> </span><span class="annot"><span class="annottext">(((IsPath (gs +++ is), forall (a :: a2). ApplyAppend gs is a) =&gt;
+  Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is))
+-&gt; ((IsPath (gs +++ is), forall (a :: a2). ApplyAppend gs is a) =&gt;
+    Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is))
+-&gt; Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {j :: Kind} {b :: Kind} {k1 :: Kind} (fs :: Path (-&gt;) j b)
+       (gs :: Path (-&gt;) b k1) (r :: Kind).
+(IsPath fs, IsPath gs) =&gt;
+((IsPath (fs +++ gs), forall (a :: j). ApplyAppend fs gs a) =&gt; r)
+-&gt; r
+forall (fs :: Path (-&gt;) a1 b1) (gs :: Path (-&gt;) b1 c1) (r :: Kind).
+(IsPath fs, IsPath gs) =&gt;
+((IsPath (fs +++ gs), forall (a :: a1). ApplyAppend fs gs a) =&gt; r)
+-&gt; r
+</span><a href="Proarrow.Category.Bicategory.Cat.html#withAppendFList"><span class="hs-identifier hs-var">withAppendFList</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140304"><span class="hs-identifier hs-type">fs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140322"><span class="hs-identifier hs-type">hs</span></a></span><span> </span><span class="annot"><span class="annottext">(((IsPath (fs +++ hs), forall (a :: a1). ApplyAppend fs hs a) =&gt;
+  Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is))
+ -&gt; Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is))
+-&gt; ((IsPath (fs +++ hs), forall (a :: a1). ApplyAppend fs hs a) =&gt;
+    Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is))
+-&gt; Sq (ProfK clh) (-&gt;) ps rs (fs +++ hs) (gs +++ is)
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(forall (a :: a1) (b :: a2).
+ ProfList clh ps a b
+ -&gt; ProfList
+      clh rs (ApplyAll (fs +++ hs) a) (ApplyAll (gs +++ is) b))
+-&gt; ProfSq ps rs (fs +++ hs) (gs +++ is)
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+-&gt; ProfList
+     clh rs (ApplyAll (fs +++ hs) a) (ApplyAll (gs +++ is) b)
+ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+-&gt; ProfList
+     clh rs (ApplyAll hs (ApplyAll fs a)) (ApplyAll is (ApplyAll gs b))
+forall (a :: b1) (b :: b2).
+ProfList clh qs a b
+-&gt; ProfList clh rs (ApplyAll hs a) (ApplyAll is b)
+</span><a href="#local-6989586621679140324"><span class="hs-identifier hs-var">m</span></a></span><span> </span><span class="annot"><span class="annottext">(ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+ -&gt; ProfList
+      clh rs (ApplyAll (fs +++ hs) a) (ApplyAll (gs +++ is) b))
+-&gt; (ProfList clh ps a b
+    -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfList clh ps a b
+-&gt; ProfList
+     clh rs (ApplyAll (fs +++ hs) a) (ApplyAll (gs +++ is) b)
+forall (b :: Kind) (c :: Kind) (a :: Kind).
+(b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+forall (a :: a1) (b :: a2).
+ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+</span><a href="#local-6989586621679140306"><span class="hs-identifier hs-var">n</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>  </span><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-type">ProfSq</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140357"><span class="annot"><a href="#local-6989586621679140357"><span class="hs-identifier hs-type hs-type">ps</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140358"><span class="annot"><a href="#local-6989586621679140358"><span class="hs-identifier hs-type hs-type">qs</span></a></span></span><span> </span><span id="local-6989586621679140359"><span class="annot"><span class="annottext">forall (a :: h) (b :: b1).
+ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+</span><a href="#local-6989586621679140359"><span class="hs-identifier hs-var">n</span></a></span></span><span> </span><span id="local-6989586621679140360"><span class="annot"><span class="annottext">=== :: forall {h :: Kind} {b1 :: Kind} {i :: Kind} {b2 :: Kind}
+       {j :: Kind} {k :: Kind} (ps :: Path (ProfK clh) h b1)
+       (qs :: Path (ProfK clh) i b2) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) b1 b2) (rs :: Path (ProfK clh) b1 j)
+       (ss :: Path (ProfK clh) b2 k) (hs :: Path (-&gt;) j k).
+Sq (ProfK clh) (-&gt;) ps qs fs gs
+-&gt; Sq (ProfK clh) (-&gt;) rs ss gs hs
+-&gt; Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs
+</span><a href="#local-6989586621679140360"><span class="hs-operator hs-var hs-var hs-var hs-var">===</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-type">ProfSq</span></a></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140375"><span class="annot"><a href="#local-6989586621679140375"><span class="hs-identifier hs-type hs-type">rs</span></a></span></span><span> </span><span class="hs-glyph">@</span><span id="local-6989586621679140376"><span class="annot"><a href="#local-6989586621679140376"><span class="hs-identifier hs-type hs-type">ss</span></a></span></span><span> </span><span id="local-6989586621679140377"><span class="annot"><span class="annottext">forall (a :: b1) (b :: j).
+ProfList clh rs a b
+-&gt; ProfList clh ss (ApplyAll gs a) (ApplyAll hs b)
+</span><a href="#local-6989586621679140377"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {k2 :: k1} {kk :: CAT k1} {j :: k1} {k3 :: k1}
+       (ps :: Path kk j k3) (qs :: Path kk k3 k2) (r :: Kind).
+(IsPath ps, IsPath qs) =&gt;
+(IsPath (ps +++ qs) =&gt; r) -&gt; r
+forall (ps :: Path (ProfK clh) h b1) (qs :: Path (ProfK clh) b1 j)
+       (r :: Kind).
+(IsPath ps, IsPath qs) =&gt;
+(IsPath (ps +++ qs) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#isPathAppend"><span class="hs-identifier hs-var">isPathAppend</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140357"><span class="hs-identifier hs-type">ps</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140375"><span class="hs-identifier hs-type">rs</span></a></span><span> </span><span class="annot"><span class="annottext">((IsPath (ps +++ rs) =&gt;
+  Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs)
+ -&gt; Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; (IsPath (ps +++ rs) =&gt;
+    Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">forall {k1 :: Kind} {k2 :: k1} {kk :: CAT k1} {j :: k1} {k3 :: k1}
+       (ps :: Path kk j k3) (qs :: Path kk k3 k2) (r :: Kind).
+(IsPath ps, IsPath qs) =&gt;
+(IsPath (ps +++ qs) =&gt; r) -&gt; r
+forall (ps :: Path (ProfK clh) i b2) (qs :: Path (ProfK clh) b2 k)
+       (r :: Kind).
+(IsPath ps, IsPath qs) =&gt;
+(IsPath (ps +++ qs) =&gt; r) -&gt; r
+</span><a href="Proarrow.Category.Bicategory.html#isPathAppend"><span class="hs-identifier hs-var">isPathAppend</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140358"><span class="hs-identifier hs-type">qs</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679140376"><span class="hs-identifier hs-type">ss</span></a></span><span> </span><span class="annot"><span class="annottext">((IsPath (qs +++ ss) =&gt;
+  Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs)
+ -&gt; Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; (IsPath (qs +++ ss) =&gt;
+    Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; Sq (ProfK clh) (-&gt;) (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(forall (a :: h) (b :: j).
+ ProfList clh (ps +++ rs) a b
+ -&gt; ProfList clh (qs +++ ss) (ApplyAll fs a) (ApplyAll hs b))
+-&gt; ProfSq (ps +++ rs) (qs +++ ss) fs hs
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="annot"><span class="annottext">((forall (a :: h) (b :: j).
+  ProfList clh (ps +++ rs) a b
+  -&gt; ProfList clh (qs +++ ss) (ApplyAll fs a) (ApplyAll hs b))
+ -&gt; ProfSq (ps +++ rs) (qs +++ ss) fs hs)
+-&gt; (forall (a :: h) (b :: j).
+    ProfList clh (ps +++ rs) a b
+    -&gt; ProfList clh (qs +++ ss) (ApplyAll fs a) (ApplyAll hs b))
+-&gt; ProfSq (ps +++ rs) (qs +++ ss) fs hs
+forall (a :: Kind) b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">(forall (b :: b1).
+ ProfList clh ps a b
+ -&gt; ProfList clh rs b b
+ -&gt; ProfList clh (qs +++ ss) (ApplyAll fs a) (ApplyAll hs b))
+-&gt; ProfList clh (ps +++ rs) a b
+-&gt; ProfList clh (qs +++ ss) (ApplyAll fs a) (ApplyAll hs b)
+forall (i :: Kind) (j :: Kind) (k :: Kind) (cl :: Kind)
+       (ps :: Path (ProfK cl) i j) (a :: i) (qs :: Path (ProfK cl) j k)
+       (c :: k) (r :: Kind).
+(CategoryOf i, CategoryOf j, CategoryOf k, IsPath ps) =&gt;
+(forall (b :: j). ProfList cl ps a b -&gt; ProfList cl qs b c -&gt; r)
+-&gt; ProfList cl (ps +++ qs) a c -&gt; r
+</span><a href="Proarrow.Category.Bicategory.Prof.html#psplit"><span class="hs-identifier hs-var">psplit</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">\</span><span id="local-6989586621679140397"><span class="annot"><span class="annottext">ProfList clh ps a b
+</span><a href="#local-6989586621679140397"><span class="hs-identifier hs-var">ps</span></a></span></span><span> </span><span id="local-6989586621679140398"><span class="annot"><span class="annottext">ProfList clh rs b b
+</span><a href="#local-6989586621679140398"><span class="hs-identifier hs-var">rs</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+-&gt; ProfList clh ss (ApplyAll gs b) (ApplyAll hs b)
+-&gt; ProfList clh (qs +++ ss) (ApplyAll fs a) (ApplyAll hs b)
+forall (i :: Kind) (j :: Kind) (k :: Kind) (cl :: Kind)
+       (ps :: Path (ProfK cl) i j) (a :: i) (b :: j)
+       (qs :: Path (ProfK cl) j k) (c :: k).
+(CategoryOf i, CategoryOf j, CategoryOf k) =&gt;
+ProfList cl ps a b
+-&gt; ProfList cl qs b c -&gt; ProfList cl (ps +++ qs) a c
+</span><a href="Proarrow.Category.Bicategory.Prof.html#pappend"><span class="hs-identifier hs-var">pappend</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+forall (a :: h) (b :: b1).
+ProfList clh ps a b
+-&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b)
+</span><a href="#local-6989586621679140359"><span class="hs-identifier hs-var">n</span></a></span><span> </span><span class="annot"><span class="annottext">ProfList clh ps a b
+</span><a href="#local-6989586621679140397"><span class="hs-identifier hs-var">ps</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">ProfList clh rs b b
+-&gt; ProfList clh ss (ApplyAll gs b) (ApplyAll hs b)
+forall (a :: b1) (b :: j).
+ProfList clh rs a b
+-&gt; ProfList clh ss (ApplyAll gs a) (ApplyAll hs b)
+</span><a href="#local-6989586621679140377"><span class="hs-identifier hs-var">m</span></a></span><span> </span><span class="annot"><span class="annottext">ProfList clh rs b b
+</span><a href="#local-6989586621679140398"><span class="hs-identifier hs-var">rs</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span>
+</span><span id="line-31"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Proarrow.Category.Double.html#Equipment"><span class="hs-identifier hs-type">Equipment</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfC"><span class="hs-identifier hs-type">ProfC</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-32"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Companion"><span class="annot"><a href="Proarrow.Category.Double.html#Companion"><span class="hs-identifier hs-var">Companion</span></a></span></span><span> </span><span id="local-6989586621679140407"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfC"><span class="hs-identifier hs-type">ProfC</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679140407"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#PK"><span class="hs-identifier hs-type">PK</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679140407"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-33"></span><span>  </span><span class="hs-keyword">type</span><span> </span><span id="Conjoint"><span class="annot"><a href="Proarrow.Category.Double.html#Conjoint"><span class="hs-identifier hs-var">Conjoint</span></a></span></span><span> </span><span id="local-6989586621679140408"><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfK"><span class="hs-identifier hs-type">ProfK</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfC"><span class="hs-identifier hs-type">ProfC</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-glyph">-&gt;</span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679140408"><span class="hs-identifier hs-type">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#PK"><span class="hs-identifier hs-type">PK</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679140408"><span class="hs-identifier hs-type">f</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-34"></span><span>  </span><span id="local-6989586621679140453"><span class="annot"><span class="annottext">fromRight :: forall {j :: Kind} {k1 :: Kind} (f :: j -&gt; k1).
+Ob1 (-&gt;) f =&gt;
+Sq
+  (ProfK ProfC)
+  (-&gt;)
+  Nil
+  (Companion (ProfK ProfC) (-&gt;) f ::: Nil)
+  Nil
+  (f ::: Nil)
+</span><a href="#local-6989586621679140453"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromRight</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(forall (a :: j) (b :: j).
+ ProfList ProfC Nil a b
+ -&gt; ProfList
+      ProfC
+      ('PK (Costar f) ::: Nil)
+      (ApplyAll Nil a)
+      (ApplyAll (f ::: Nil) b))
+-&gt; ProfSq Nil ('PK (Costar f) ::: Nil) Nil (f ::: Nil)
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679140461"><span class="annot"><span class="annottext">a ~&gt; b1
+</span><a href="#local-6989586621679140461"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Costar f a (f b)
+-&gt; ProfList ProfC Nil (f b) (f b)
+-&gt; ProfList ProfC ('PK (Costar f) ::: Nil) a (f b)
+forall {j :: Kind} {j1 :: Kind} {k :: Kind} (p :: PRO j j1)
+       (cl :: Kind) (ps1 :: Path (ProfK cl) j1 k) (f :: ProfK cl j j1)
+       (a :: j) (b1 :: j1) (b :: k).
+(Profunctor p, ProfConstraint cl p, Is 'PK f, p ~ UN 'PK f) =&gt;
+p a b1 -&gt; ProfList cl ps1 b1 b -&gt; ProfList cl (f ::: ps1) a b
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-var">ProfCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(f a ~&gt; f b) -&gt; Costar f a (f b)
+forall {j :: Kind} {k :: Kind} (a :: j) (f :: j -&gt; k) (b :: k).
+Ob a =&gt;
+(f a ~&gt; b) -&gt; Costar f a b
+</span><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-var">Costar</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (a :: j) (b :: j). (a ~&gt; b) -&gt; f a ~&gt; f b
+forall {k1 :: Kind} {k2 :: Kind} (f :: k1 -&gt; k2) (a :: k1)
+       (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679140461"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(f b ~&gt; f b) -&gt; ProfList ProfC Nil (f b) (f b)
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="annot"><span class="annottext">f b ~&gt; f b
+forall (a :: k1). Ob a =&gt; a ~&gt; a
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob b) =&gt; ProfList ProfC ('PK (Costar f) ::: Nil) a (f b))
+-&gt; (a ~&gt; b) -&gt; ProfList ProfC ('PK (Costar f) ::: Nil) a (f b)
+forall (a :: j) (b :: j) (r :: Kind).
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j :: Kind} {k :: Kind} (p :: PRO j k) (a :: j) (b :: k)
+       (r :: Kind).
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679140461"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-35"></span><span>  </span><span id="local-6989586621679140505"><span class="annot"><span class="annottext">toLeft :: forall {j :: Kind} {k :: Kind} (f :: j -&gt; k).
+Ob1 (-&gt;) f =&gt;
+Sq
+  (ProfK ProfC)
+  (-&gt;)
+  (Companion (ProfK ProfC) (-&gt;) f ::: Nil)
+  Nil
+  (f ::: Nil)
+  Nil
+</span><a href="#local-6989586621679140505"><span class="hs-identifier hs-var hs-var hs-var hs-var">toLeft</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(forall (a :: j) (b :: k).
+ ProfList ProfC ('PK (Costar f) ::: Nil) a b
+ -&gt; ProfList ProfC Nil (ApplyAll (f ::: Nil) a) (ApplyAll Nil b))
+-&gt; ProfSq ('PK (Costar f) ::: Nil) Nil (f ::: Nil) Nil
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-type">ProfCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Costar.html#Costar"><span class="hs-identifier hs-type">Costar</span></a></span><span> </span><span id="local-6989586621679140520"><span class="annot"><span class="annottext">f a ~&gt; b1
+</span><a href="#local-6989586621679140520"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679140531"><span class="annot"><span class="annottext">b1 ~&gt; b1
+</span><a href="#local-6989586621679140531"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(f a ~&gt; b) -&gt; ProfList ProfC Nil (f a) b
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">b1 ~&gt; b
+b1 ~&gt; b1
+</span><a href="#local-6989586621679140531"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">(b1 ~&gt; b) -&gt; (f a ~&gt; b1) -&gt; f a ~&gt; b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">f a ~&gt; b1
+f a ~&gt; b1
+</span><a href="#local-6989586621679140520"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-36"></span><span>  </span><span id="local-6989586621679140564"><span class="annot"><span class="annottext">toRight :: forall {j :: Kind} {k1 :: Kind} (f :: j -&gt; k1).
+Ob1 (-&gt;) f =&gt;
+Sq
+  (ProfK ProfC)
+  (-&gt;)
+  Nil
+  (Conjoint (ProfK ProfC) (-&gt;) f ::: Nil)
+  (f ::: Nil)
+  Nil
+</span><a href="#local-6989586621679140564"><span class="hs-identifier hs-var hs-var hs-var hs-var">toRight</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(forall (a :: j) (b :: j).
+ ProfList ProfC Nil a b
+ -&gt; ProfList
+      ProfC
+      ('PK (Star f) ::: Nil)
+      (ApplyAll (f ::: Nil) a)
+      (ApplyAll Nil b))
+-&gt; ProfSq Nil ('PK (Star f) ::: Nil) (f ::: Nil) Nil
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679140572"><span class="annot"><span class="annottext">a ~&gt; b1
+</span><a href="#local-6989586621679140572"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Star f (f a) b
+-&gt; ProfList ProfC Nil b b
+-&gt; ProfList ProfC ('PK (Star f) ::: Nil) (f a) b
+forall {j :: Kind} {j1 :: Kind} {k :: Kind} (p :: PRO j j1)
+       (cl :: Kind) (ps1 :: Path (ProfK cl) j1 k) (f :: ProfK cl j j1)
+       (a :: j) (b1 :: j1) (b :: k).
+(Profunctor p, ProfConstraint cl p, Is 'PK f, p ~ UN 'PK f) =&gt;
+p a b1 -&gt; ProfList cl ps1 b1 b -&gt; ProfList cl (f ::: ps1) a b
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-var">ProfCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(f a ~&gt; f b) -&gt; Star f (f a) b
+forall {k1 :: Kind} {k2 :: Kind} (b :: k1) (a :: k2)
+       (f :: k1 -&gt; k2).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; Star f a b
+</span><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-var">Star</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (a :: j) (b :: j). (a ~&gt; b) -&gt; f a ~&gt; f b
+forall {k1 :: Kind} {k2 :: Kind} (f :: k1 -&gt; k2) (a :: k1)
+       (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679140572"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(b ~&gt; b) -&gt; ProfList ProfC Nil b b
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="annot"><span class="annottext">b ~&gt; b
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k :: Kind} (p :: PRO k k) (a :: k).
+(Promonad p, Ob a) =&gt;
+p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob b) =&gt; ProfList ProfC ('PK (Star f) ::: Nil) (f a) b)
+-&gt; (a ~&gt; b) -&gt; ProfList ProfC ('PK (Star f) ::: Nil) (f a) b
+forall (a :: j) (b :: j) (r :: Kind).
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j :: Kind} {k :: Kind} (p :: PRO j k) (a :: j) (b :: k)
+       (r :: Kind).
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+a ~&gt; b1
+</span><a href="#local-6989586621679140572"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-37"></span><span>  </span><span id="local-6989586621679140616"><span class="annot"><span class="annottext">fromLeft :: forall {j :: Kind} {k1 :: Kind} (f :: j -&gt; k1).
+Ob1 (-&gt;) f =&gt;
+Sq
+  (ProfK ProfC)
+  (-&gt;)
+  (Conjoint (ProfK ProfC) (-&gt;) f ::: Nil)
+  Nil
+  Nil
+  (f ::: Nil)
+</span><a href="#local-6989586621679140616"><span class="hs-identifier hs-var hs-var hs-var hs-var">fromLeft</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(forall (a :: k1) (b :: j).
+ ProfList ProfC ('PK (Star f) ::: Nil) a b
+ -&gt; ProfList ProfC Nil (ApplyAll Nil a) (ApplyAll (f ::: Nil) b))
+-&gt; ProfSq ('PK (Star f) ::: Nil) Nil Nil (f ::: Nil)
+forall {h :: Kind} {i :: Kind} {j :: Kind} {k :: Kind}
+       {clh :: Kind} (ps :: Path (ProfK clh) h j)
+       (qs :: Path (ProfK clh) i k) (fs :: Path (-&gt;) h i)
+       (gs :: Path (-&gt;) j k).
+(CategoryOf h, CategoryOf i, CategoryOf j, CategoryOf k, Ob ps,
+ Ob qs, Ob fs, Ob gs) =&gt;
+(forall (a :: h) (b :: j).
+ ProfList clh ps a b
+ -&gt; ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
+-&gt; ProfSq ps qs fs gs
+</span><a href="Proarrow.Category.Double.ProfFun.html#ProfSq"><span class="hs-identifier hs-var">ProfSq</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfCons"><span class="hs-identifier hs-type">ProfCons</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Star.html#Star"><span class="hs-identifier hs-type">Star</span></a></span><span> </span><span id="local-6989586621679140631"><span class="annot"><span class="annottext">a ~&gt; f b1
+</span><a href="#local-6989586621679140631"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-type">ProfNil</span></a></span><span> </span><span id="local-6989586621679140643"><span class="annot"><span class="annottext">b1 ~&gt; b1
+</span><a href="#local-6989586621679140643"><span class="hs-identifier hs-var">g</span></a></span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">(a ~&gt; f b) -&gt; ProfList ProfC Nil a (f b)
+forall {j :: Kind} (a :: j) (b1 :: j) (cl :: Kind).
+CategoryOf j =&gt;
+(a ~&gt; b1) -&gt; ProfList cl Nil a b1
+</span><a href="Proarrow.Category.Bicategory.Prof.html#ProfNil"><span class="hs-identifier hs-var">ProfNil</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(b1 ~&gt; b) -&gt; f b1 ~&gt; f b
+forall (a :: j) (b :: j). (a ~&gt; b) -&gt; f a ~&gt; f b
+forall {k1 :: Kind} {k2 :: Kind} (f :: k1 -&gt; k2) (a :: k1)
+       (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span><a href="Proarrow.Functor.html#map"><span class="hs-identifier hs-var">map</span></a></span><span> </span><span class="annot"><span class="annottext">b1 ~&gt; b
+b1 ~&gt; b1
+</span><a href="#local-6989586621679140643"><span class="hs-identifier hs-var">g</span></a></span><span> </span><span class="annot"><span class="annottext">(f b1 ~&gt; f b) -&gt; (a ~&gt; f b1) -&gt; a ~&gt; f b
+forall (b :: k1) (c :: k1) (a :: k1).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k :: Kind} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; f b1
+</span><a href="#local-6989586621679140631"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span></pre></body></html>

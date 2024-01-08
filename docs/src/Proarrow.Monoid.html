@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE AllowAmbiguousTypes #-}</span><span>
+</span><span id="line-2"></span><span class="hs-pragma">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span><span>
+</span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Proarrow.Monoid</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-4"></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Kind</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Type</span></span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Prelude</span></span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">P</span></span><span>
+</span><span id="line-7"></span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Core.html"><span class="hs-identifier">Proarrow.Core</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier">CategoryOf</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier">Promonad</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier">Profunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier">PRO</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#rmap"><span class="hs-identifier">rmap</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html"><span class="hs-identifier">Proarrow.Category.Monoidal</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MONOIDAL"><span class="hs-identifier">MONOIDAL</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier">Monoidal</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Compose"><span class="hs-identifier">Compose</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier">Strictified</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html"><span class="hs-identifier">Proarrow.Object.BinaryProduct</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#ProductFunctor"><span class="hs-identifier">ProductFunctor</span></a></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html"><span class="hs-identifier">Proarrow.Category.Instance.List</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.List.html#List"><span class="hs-identifier">List</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#All"><span class="hs-identifier">All</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Object.html"><span class="hs-identifier">Proarrow.Object</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Object.html#obj"><span class="hs-identifier">obj</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html"><span class="hs-identifier">Proarrow.Category.Instance.Prof</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier">Prof</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html"><span class="hs-identifier">Proarrow.Profunctor.Composition</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator">(:.:)</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Identity.html"><span class="hs-identifier">Proarrow.Profunctor.Identity</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Identity.html#Id"><span class="hs-identifier">Id</span></a></span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span>
+</span><span id="line-18"></span><span class="hs-keyword">class</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Monoidal"><span class="hs-identifier hs-type">Monoidal</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131750"><span class="hs-identifier hs-type">t</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="Proarrow.Core.html#CategoryOf"><span class="hs-identifier hs-type">CategoryOf</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131748"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span id="Monoid"><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier hs-var">Monoid</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679131750"><span class="annot"><a href="#local-6989586621679131750"><span class="hs-identifier hs-type">t</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#MONOIDAL"><span class="hs-identifier hs-type">MONOIDAL</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131748"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-identifier">m</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier">k</span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-19"></span><span>  </span><span id="mempty"><span class="annot"><a href="Proarrow.Monoid.html#mempty"><span class="hs-identifier hs-type">mempty</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679131750"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">'</span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-20"></span><span>  </span><span id="mappend"><span class="annot"><a href="Proarrow.Monoid.html#mappend"><span class="hs-identifier hs-type">mappend</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679131750"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">]</span><span> </span><span class="hs-special">'</span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-21"></span><span>  </span><span id="mconcat"><span class="annot"><a href="Proarrow.Monoid.html#mconcat"><span class="hs-identifier hs-type">mconcat</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679131755"><span class="annot"><a href="#local-6989586621679131755"><span class="hs-identifier hs-type">ms</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Proarrow.Core.html#Ob"><span class="hs-identifier hs-type">Ob</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131755"><span class="hs-identifier hs-type">ms</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#All"><span class="hs-identifier hs-type">All</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-operator hs-type">(~)</span></span><span> </span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><a href="#local-6989586621679131755"><span class="hs-identifier hs-type">ms</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="#local-6989586621679131750"><span class="hs-identifier hs-type">t</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131755"><span class="hs-identifier hs-type">ms</span></a></span><span> </span><span class="hs-special">'</span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-22"></span><span>  </span><span id="local-6989586621679131897"><span class="annot"><a href="Proarrow.Monoid.html#mconcat"><span class="hs-identifier hs-var hs-var">mconcat</span></a></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">forall (a :: [k]). (CategoryOf [k], Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span><a href="Proarrow.Object.html#obj"><span class="hs-identifier hs-var">obj</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679131755"><span class="hs-identifier hs-type">ms</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-23"></span><span>    </span><span class="annot"><span class="annottext">Obj ms
+List ms ms
+</span><a href="Proarrow.Category.Instance.List.html#Nil"><span class="hs-identifier hs-var">Nil</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">t ms '[m]
+t '[] '[m]
+forall k (t :: MONOIDAL k) (m :: k). Monoid t m =&gt; t '[] '[m]
+</span><a href="Proarrow.Monoid.html#mempty"><span class="hs-identifier hs-var">mempty</span></a></span><span>
+</span><span id="line-24"></span><span>    </span><span class="annot"><a href="Proarrow.Category.Instance.List.html#Cons"><span class="hs-identifier hs-type">Cons</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+</span><span class="hs-identifier">_</span></span><span> </span><span id="local-6989586621679131929"><span class="annot"><span class="annottext">List as1 bs1
+</span><a href="#local-6989586621679131929"><span class="hs-identifier hs-var">ms'</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">t '[m, m] '[m]
+forall k (t :: MONOIDAL k) (m :: k). Monoid t m =&gt; t '[m, m] '[m]
+</span><a href="Proarrow.Monoid.html#mappend"><span class="hs-identifier hs-var">mappend</span></a></span><span> </span><span class="annot"><span class="annottext">t '[m, m] '[m] -&gt; t ms '[m, m] -&gt; t ms '[m]
+forall (b :: [k]) (c :: [k]) (a :: [k]). t b c -&gt; t a b -&gt; t a c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+forall (p :: MONOIDAL k) (a :: [k]). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">'</span><span class="hs-special">[</span><span class="annot"><a href="#local-6989586621679131751"><span class="hs-identifier hs-type">m</span></a></span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">t '[m] '[m] -&gt; t bs1 '[m] -&gt; t ('[m] ++ bs1) ('[m] ++ '[m])
+forall (as :: [k]) (bs :: [k]) (cs :: [k]) (ds :: [k]).
+t as bs -&gt; t cs ds -&gt; t (as ++ cs) (bs ++ ds)
+forall k (t :: MONOIDAL k) (as :: [k]) (bs :: [k]) (cs :: [k])
+       (ds :: [k]).
+Monoidal t =&gt;
+t as bs -&gt; t cs ds -&gt; t (as ++ cs) (bs ++ ds)
+</span><a href="Proarrow.Category.Monoidal.html#par"><span class="hs-operator hs-var">`par`</span></a></span><span> </span><span class="annot"><span class="annottext">t bs1 '[m]
+forall (ms :: [k]). (Ob ms, All ((~) m) ms) =&gt; t ms '[m]
+forall k (t :: MONOIDAL k) (m :: k) (ms :: [k]).
+(Monoid t m, Ob ms, All ((~) m) ms) =&gt;
+t ms '[m]
+</span><a href="Proarrow.Monoid.html#mconcat"><span class="hs-identifier hs-var">mconcat</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob as1, Ob bs1) =&gt; t ms '[m]) -&gt; List as1 bs1 -&gt; t ms '[m]
+forall (a :: [k]) (b :: [k]) r.
+((Ob a, Ob b) =&gt; r) -&gt; List a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">List as1 bs1
+</span><a href="#local-6989586621679131929"><span class="hs-identifier hs-var">ms'</span></a></span></span><span>
+</span><span id="line-25"></span><span>
+</span><span id="line-26"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679131813"><span id="local-6989586621679131964"><span class="annot"><span class="hs-identifier hs-type">P.Monoid</span></span><span> </span><span class="annot"><a href="#local-6989586621679131813"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier hs-type">Monoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-type">Strictified</span></a></span><span> </span><span class="annot"><a href="Proarrow.Object.BinaryProduct.html#ProductFunctor"><span class="hs-identifier hs-type">ProductFunctor</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="#local-6989586621679131813"><span class="hs-identifier hs-type">m</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Type</span></span><span class="hs-special">)</span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-27"></span><span>  </span><span id="local-6989586621679131990"><span class="annot"><span class="annottext">mempty :: Strictified ProductFunctor '[] '[m]
+</span><a href="Proarrow.Monoid.html#mempty"><span class="hs-identifier hs-var hs-var hs-var hs-var">mempty</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor '[] ~&gt; Fold ProductFunctor '[m])
+-&gt; Strictified ProductFunctor '[] '[m]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">m
+forall a. Monoid a =&gt; a
+</span><span class="hs-identifier hs-var">P.mempty</span></span><span>
+</span><span id="line-28"></span><span>  </span><span id="local-6989586621679132002"><span class="annot"><span class="annottext">mappend :: Strictified ProductFunctor '[m, m] '[m]
+</span><a href="Proarrow.Monoid.html#mappend"><span class="hs-identifier hs-var hs-var hs-var hs-var">mappend</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Fold ProductFunctor '[m, m] ~&gt; Fold ProductFunctor '[m])
+-&gt; Strictified ProductFunctor '[m, m] '[m]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(m -&gt; m -&gt; m) -&gt; (m, m) -&gt; m
+forall a b c. (a -&gt; b -&gt; c) -&gt; (a, b) -&gt; c
+</span><span class="hs-identifier hs-var">P.uncurry</span></span><span> </span><span class="annot"><span class="annottext">m -&gt; m -&gt; m
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">(P.&lt;&gt;)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-29"></span><span>
+</span><span id="line-30"></span><span class="hs-keyword">newtype</span><span> </span><span id="AsMonoid"><span class="annot"><a href="Proarrow.Monoid.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span></span><span> </span><span id="local-6989586621679131825"><span class="annot"><a href="#local-6989586621679131825"><span class="hs-identifier hs-type">p</span></a></span></span><span> </span><span id="local-6989586621679131826"><span class="annot"><a href="#local-6989586621679131826"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span id="local-6989586621679131827"><span class="annot"><a href="#local-6989586621679131827"><span class="hs-identifier hs-type">b</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="AsMonoid"><span class="annot"><a href="Proarrow.Monoid.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span></span><span> </span><span class="hs-special">{</span><span> </span><span id="getAsMonoid"><span class="annot"><span class="annottext">forall {k} {k} (p :: k -&gt; k -&gt; *) (a :: k) (b :: k).
+AsMonoid p a b -&gt; p a b
+</span><a href="Proarrow.Monoid.html#getAsMonoid"><span class="hs-identifier hs-var hs-var">getAsMonoid</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679131825"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131826"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131827"><span class="hs-identifier hs-type">b</span></a></span><span> </span><span class="hs-special">}</span><span>
+</span><span id="line-31"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span id="local-6989586621679132014"><span id="local-6989586621679132022"><span class="annot"><span class="annottext">CategoryOf j
+CategoryOf k
+(CategoryOf j, CategoryOf k) =&gt;
+(forall (c :: j) (a :: j) (b :: k) (d :: k).
+ (c ~&gt; a) -&gt; (b ~&gt; d) -&gt; AsMonoid p a b -&gt; AsMonoid p c d)
+-&gt; (forall (a :: j) (b :: k) r.
+    ((Ob a, Ob b) =&gt; r) -&gt; AsMonoid p a b -&gt; r)
+-&gt; Profunctor (AsMonoid p)
+forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; AsMonoid p a b -&gt; AsMonoid p c d
+forall (a :: j) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; AsMonoid p a b -&gt; r
+forall {j} {k} (p :: PRO j k). Profunctor p =&gt; CategoryOf j
+forall j k (p :: j -&gt; k -&gt; *). Profunctor p =&gt; CategoryOf k
+forall j k (p :: j -&gt; k -&gt; *) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; AsMonoid p a b -&gt; AsMonoid p c d
+forall j k (p :: j -&gt; k -&gt; *) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; AsMonoid p a b -&gt; r
+forall {j} {k} (p :: PRO j k).
+(CategoryOf j, CategoryOf k) =&gt;
+(forall (c :: j) (a :: j) (b :: k) (d :: k).
+ (c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d)
+-&gt; (forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r)
+-&gt; Profunctor p
+$cdimap :: forall j k (p :: j -&gt; k -&gt; *) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; AsMonoid p a b -&gt; AsMonoid p c d
+dimap :: forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; AsMonoid p a b -&gt; AsMonoid p c d
+$c\\ :: forall j k (p :: j -&gt; k -&gt; *) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; AsMonoid p a b -&gt; r
+\\ :: forall (a :: j) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; AsMonoid p a b -&gt; r
+</span><a href="Proarrow.Core.html#Profunctor"><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Profunctor</span></a></span></span></span><span>
+</span><span id="line-32"></span><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679131857"><span id="local-6989586621679131858"><span id="local-6989586621679132041"><span class="annot"><a href="Proarrow.Core.html#Promonad"><span class="hs-identifier hs-type">Promonad</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131858"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Proarrow.Monoid.html#Monoid"><span class="hs-identifier hs-type">Monoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-type">Strictified</span></a></span><span> </span><span class="annot"><a href="Proarrow.Category.Monoidal.html#Compose"><span class="hs-identifier hs-type">Compose</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131858"><span class="hs-identifier hs-type">p</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Proarrow.Core.html#PRO"><span class="hs-identifier hs-type">PRO</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131857"><span class="hs-identifier hs-type">k</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679131857"><span class="hs-identifier hs-type">k</span></a></span><span class="hs-special">)</span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-33"></span><span>  </span><span id="local-6989586621679132065"><span class="annot"><span class="annottext">mempty :: Strictified Compose '[] '[AsMonoid p]
+</span><a href="Proarrow.Monoid.html#mempty"><span class="hs-identifier hs-var hs-var hs-var hs-var">mempty</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Fold Compose '[] ~&gt; Fold Compose '[AsMonoid p])
+-&gt; Strictified Compose '[] '[AsMonoid p]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Id :~&gt; AsMonoid p) -&gt; Prof Id (AsMonoid p)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Profunctor.Identity.html#Id"><span class="hs-identifier hs-type">Id</span></a></span><span> </span><span id="local-6989586621679132075"><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679132075"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">p a b -&gt; AsMonoid p a b
+forall {k} {k} (p :: k -&gt; k -&gt; *) (a :: k) (b :: k).
+p a b -&gt; AsMonoid p a b
+</span><a href="Proarrow.Monoid.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(a ~&gt; b) -&gt; p a a -&gt; p a b
+forall {j} {k} (p :: PRO j k) (b :: k) (d :: k) (a :: j).
+Profunctor p =&gt;
+(b ~&gt; d) -&gt; p a b -&gt; p a d
+</span><a href="Proarrow.Core.html#rmap"><span class="hs-identifier hs-var">rmap</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679132075"><span class="hs-identifier hs-var">f</span></a></span><span> </span><span class="annot"><span class="annottext">p a a
+forall (a :: k). Ob a =&gt; p a a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span><a href="Proarrow.Core.html#id"><span class="hs-identifier hs-var">id</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">((Ob a, Ob b) =&gt; AsMonoid p a b) -&gt; (a ~&gt; b) -&gt; AsMonoid p a b
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span><a href="Proarrow.Core.html#%5C%5C"><span class="hs-operator hs-var">\\</span></a></span><span> </span><span class="annot"><span class="annottext">a ~&gt; b
+</span><a href="#local-6989586621679132075"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-34"></span><span>  </span><span id="local-6989586621679132093"><span class="annot"><span class="annottext">mappend :: Strictified Compose '[AsMonoid p, AsMonoid p] '[AsMonoid p]
+</span><a href="Proarrow.Monoid.html#mappend"><span class="hs-identifier hs-var hs-var hs-var hs-var">mappend</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">(Fold Compose '[AsMonoid p, AsMonoid p]
+ ~&gt; Fold Compose '[AsMonoid p])
+-&gt; Strictified Compose '[AsMonoid p, AsMonoid p] '[AsMonoid p]
+forall {k} (as :: [k]) (bs :: [k]) (t :: PRO k (k, k)).
+(Ob as, Ob bs) =&gt;
+(Fold t as ~&gt; Fold t bs) -&gt; Strictified t as bs
+</span><a href="Proarrow.Category.Monoidal.html#Strictified"><span class="hs-identifier hs-var">Strictified</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">((AsMonoid p :.: AsMonoid p) :~&gt; AsMonoid p)
+-&gt; Prof (AsMonoid p :.: AsMonoid p) (AsMonoid p)
+forall {j} {k} (p :: PRO j k) (q :: PRO j k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span><a href="Proarrow.Category.Instance.Prof.html#Prof"><span class="hs-identifier hs-var">Prof</span></a></span><span> </span><span class="hs-glyph">\</span><span class="hs-special">(</span><span class="annot"><a href="Proarrow.Monoid.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span id="local-6989586621679132095"><span class="annot"><span class="annottext">p a b
+</span><a href="#local-6989586621679132095"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="annot"><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"><span class="hs-operator hs-type">:.:</span></a></span><span> </span><span class="annot"><a href="Proarrow.Monoid.html#AsMonoid"><span class="hs-identifier hs-type">AsMonoid</span></a></span><span> </span><span id="local-6989586621679132097"><span class="annot"><span class="annottext">p b b
+</span><a href="#local-6989586621679132097"><span class="hs-identifier hs-var">q</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">p a b -&gt; AsMonoid p a b
+forall {k} {k} (p :: k -&gt; k -&gt; *) (a :: k) (b :: k).
+p a b -&gt; AsMonoid p a b
+</span><a href="Proarrow.Monoid.html#AsMonoid"><span class="hs-identifier hs-var">AsMonoid</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">p b b
+</span><a href="#local-6989586621679132097"><span class="hs-identifier hs-var">q</span></a></span><span> </span><span class="annot"><span class="annottext">p b b -&gt; p a b -&gt; p a b
+forall (b :: k) (c :: k) (a :: k). p b c -&gt; p a b -&gt; p a c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span><a href="Proarrow.Core.html#."><span class="hs-operator hs-var">.</span></a></span><span> </span><span class="annot"><span class="annottext">p a b
+</span><a href="#local-6989586621679132095"><span class="hs-identifier hs-var">p</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span>
+</span><span id="line-35"></span></pre></body></html>
