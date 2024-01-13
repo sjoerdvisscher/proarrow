@@ -20,6 +20,7 @@ data ProfSq ps qs fs gs where
     => (forall (a :: h) (b :: j). ProfList clh ps a b -> ProfList clh qs (ApplyAll fs a) (ApplyAll gs b))
     -> ProfSq (ps :: Path (ProfK clh) h j) (qs :: Path (ProfK clh) i k) (fs :: Path (->) h i) (gs :: Path (->) j k)
 
+-- | The double category of profunctors and functors.
 instance Double (ProfK clh) (->) where
   type Sq (ProfK clh) (->) = ProfSq
   object = ProfSq id
@@ -28,6 +29,7 @@ instance Double (ProfK clh) (->) where
   ProfSq @_ @_ @fs @gs n ||| ProfSq @_ @_ @hs @is m = withAppendFList @gs @is $ withAppendFList @fs @hs $ ProfSq (m . n)
   ProfSq @ps @qs n === ProfSq @rs @ss m = isPathAppend @ps @rs $ isPathAppend @qs @ss $ ProfSq $ psplit (\ps rs -> pappend (n ps) (m rs))
 
+-- | The proarrow equipment of profunctors and functors.
 instance Equipment (ProfK ProfC) (->) where
   type Companion (ProfK ProfC) (->) f = PK (Costar f)
   type Conjoint (ProfK ProfC) (->) f = PK (Star f)

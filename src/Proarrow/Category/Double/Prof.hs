@@ -38,6 +38,7 @@ type ProfSq :: DOUBLE (ProfK ProfC) (COK (ProfK ProfCorepC))
 data ProfSq ps qs fs gs where
   ProfSq :: (Ob ps, Ob qs, Ob fs, Ob gs) => Quintet ps qs (UnCorep fs) (UnCorep gs) -> ProfSq ps qs fs gs
 
+-- | The double category of profunctors and corepresentable profunctors.
 instance Double (ProfK ProfC) (COK (ProfK ProfCorepC)) where
   type Sq (ProfK ProfC) (COK (ProfK ProfCorepC)) = ProfSq
   object = ProfSq object
@@ -47,6 +48,7 @@ instance Double (ProfK ProfC) (COK (ProfK ProfCorepC)) where
   ProfSq @ps @qs @_ @_ n@Quintet{} === ProfSq @rs @ss @_ @_ m@Quintet{} = appendObj @ps @rs $ appendObj @qs @ss $ ProfSq $ n === m
 
 
+-- | The proarrow equipment of profunctors and corepresentable profunctors.
 instance Equipment (ProfK ProfC) (COK (ProfK ProfCorepC)) where
   type Companion (ProfK ProfC) (COK (ProfK ProfCorepC)) f = PK (UN PK (UN CO f))
   type Conjoint (ProfK ProfC) (COK (ProfK ProfCorepC)) f = PK (StarCorep (UN PK (UN CO f)))

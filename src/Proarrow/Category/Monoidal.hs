@@ -3,14 +3,14 @@ module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (PRO, Promonad(..), CategoryOf(..), Profunctor (..), (:~>), lmap, rmap)
-import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Object (obj, Obj)
 import Proarrow.Category.Instance.List (type (++), List (..), append)
-import Proarrow.Profunctor.Composition ((:.:) (..), dimapComp)
+import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Core (PRO, Promonad(..), CategoryOf(..), Profunctor (..), (:~>), lmap, rmap)
+import Proarrow.Profunctor.Composition ((:.:) (..), dimapComp)
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Object (obj, Obj)
 
 
 type TENSOR k = PRO k (k, k)
