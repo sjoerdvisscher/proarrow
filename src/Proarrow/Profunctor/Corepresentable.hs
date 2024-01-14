@@ -6,6 +6,8 @@ import Data.Kind (Constraint)
 import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..))
 import Proarrow.Object (obj)
 
+infixl 8 %%
+
 type Corepresentable :: forall {j} {k}. PRO j k -> Constraint
 class Profunctor p => Corepresentable (p :: PRO j k) where
   type p %% (a :: j) :: k

@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE TypeData #-}
 module Proarrow.Category.Bicategory (
   -- * Bicategories
   Bicategory(..)

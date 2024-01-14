@@ -14,6 +14,9 @@ import Proarrow.Profunctor.Product ((:*:) (..), prod)
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 
+infixl 5 &&
+infixl 5 &&&
+infixl 5 ***
 
 class CategoryOf k => HasBinaryProducts k where
   type (a :: k) && (b :: k) :: k
