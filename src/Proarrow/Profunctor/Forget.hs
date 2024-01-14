@@ -7,7 +7,7 @@ import Proarrow.Category.Instance.Subcategory (SUBCAT(..), Sub (..))
 import Proarrow.Core (OB, PRO, Profunctor(..), CategoryOf(..), Promonad(..))
 import Proarrow.Adjunction (Adjunction(..))
 import Proarrow.Profunctor.Composition ((:.:)(..))
-import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 
 
 type Forget :: forall (ob :: OB k) -> PRO k (SUBCAT ob)
@@ -28,7 +28,7 @@ type List :: PRO (SUBCAT Monoid) Type
 data List a b where
   List :: Monoid a => (a -> [b]) -> List (SUB a) b
 instance Profunctor List where
-  dimap (Sub l) r (List f) = List (map r . f . l)
+  dimap = dimapRep
   r \\ List{} = r
 
 instance Representable List where

@@ -9,7 +9,7 @@ import Proarrow.Category.Monoidal (Tensor(..), TENSOR)
 import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject(..))
-import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 import Proarrow.Profunctor.Coproduct ((:+:)(..), coproduct)
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
@@ -64,7 +64,7 @@ data CoproductFunctor a b where
   CoproductFunctor :: forall a c d. (Ob c, Ob d) => a ~> (c || d) -> CoproductFunctor a '(c, d)
 
 instance HasBinaryCoproducts k => Profunctor (CoproductFunctor :: TENSOR k) where
-  dimap l (r1 :**: r2) (CoproductFunctor f) = CoproductFunctor ((r1 +++ r2) . f . l) \\ r1 \\ r2
+  dimap = dimapRep
   r \\ CoproductFunctor f = r \\ f
 
 instance HasBinaryCoproducts k => Representable (CoproductFunctor :: TENSOR k) where

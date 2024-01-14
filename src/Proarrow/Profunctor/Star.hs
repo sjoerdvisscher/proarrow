@@ -2,7 +2,7 @@ module Proarrow.Profunctor.Star where
 
 import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>))
 import Proarrow.Functor (Functor(..), Prelude(..))
-import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 import Proarrow.Profunctor.Composition ((:.:)(..))
 import Data.Functor.Compose (Compose(..))
 import qualified Prelude as P
@@ -12,7 +12,7 @@ data Star f a b where
   Star :: Ob b => { getStar :: a ~> f b } -> Star f a b
 
 instance Functor f => Profunctor (Star f) where
-  dimap l r (Star f) = Star (map @f r . f . l) \\ r
+  dimap = dimapRep
   r \\ Star f = r \\ f
 
 instance Functor f => Representable (Star f) where

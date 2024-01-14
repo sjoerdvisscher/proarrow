@@ -6,10 +6,10 @@ import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Opposite (OPPOSITE(..), Op (..))
-import Proarrow.Core (PRO, CategoryOf (..), Profunctor(..), Promonad(..), dimapDefault, (//))
+import Proarrow.Core (PRO, CategoryOf (..), Profunctor(..), Promonad(..), (//))
 import Proarrow.Object (Obj, obj, src)
 import Proarrow.Object.BinaryProduct (HasProducts, HasBinaryProducts (..), ProductFunctor)
-import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 import Proarrow.Object.Terminal (El)
 import Proarrow.Category.Monoidal (leftUnitor, associator)
 import Proarrow.Category.Instance.Prof (Prof(..))
@@ -47,7 +47,7 @@ instance CartesianClosed Type where
   type a ~~> b = a -> b
   curry' _ _ = P.curry
   uncurry' _ _ = P.uncurry
-  (^^^) = P.flip dimapDefault
+  (^^^) = P.flip dimap
 
 instance CartesianClosed UNIT where
   type U ~~> U = U
@@ -69,7 +69,7 @@ data ExponentialFunctor a b where
   ExponentialFunctor :: (Ob c, Ob d) => a ~> (c ~~> d) -> ExponentialFunctor a '(OP c, d)
 
 instance CartesianClosed k => Profunctor (ExponentialFunctor :: PRO k (OPPOSITE k, k)) where
-  dimap l (Op r1 :**: r2) (ExponentialFunctor f) = ExponentialFunctor ((r2 ^^^ r1) . f . l) \\ r1 \\ r2
+  dimap = dimapRep
   r \\ ExponentialFunctor f = r \\ f
 
 instance CartesianClosed k => Representable (ExponentialFunctor :: PRO k (OPPOSITE k, k)) where

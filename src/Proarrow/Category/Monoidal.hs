@@ -7,9 +7,9 @@ import Proarrow.Category.Instance.List (type (++), List (..), append)
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Core (PRO, Promonad(..), CategoryOf(..), Profunctor (..), (:~>), lmap, rmap)
-import Proarrow.Profunctor.Composition ((:.:) (..), dimapComp)
+import Proarrow.Profunctor.Composition ((:.:) (..), bimapComp)
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 import Proarrow.Object (obj, Obj)
 
 
@@ -102,14 +102,14 @@ data Compose p qr where
   Compose :: (Profunctor p, Profunctor q, Profunctor r) => p :~> q :.: r -> Compose p '(q, r)
 
 instance CategoryOf k => Profunctor (Compose :: TENSOR (PRO k k)) where
-  dimap (Prof l) (Prof r1 :**: Prof r2) (Compose f) = Compose (\(f . l -> p :.: q) -> r1 p :.: r2 q)
+  dimap = dimapRep
   r \\ Compose f = r \\ f
 
 instance CategoryOf k => Representable (Compose :: TENSOR (PRO k k)) where
   type Compose % '(p, q) = p :.: q
   index (Compose f) = Prof f
   tabulate (Prof f) = Compose f
-  repMap (f :**: g) = dimapComp f g
+  repMap (f :**: g) = bimapComp f g
 
 instance CategoryOf k => Tensor (Compose :: TENSOR (PRO k k)) where
   type U Compose = Id

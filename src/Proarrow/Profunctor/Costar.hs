@@ -2,7 +2,7 @@ module Proarrow.Profunctor.Costar where
 
 import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>))
 import Proarrow.Functor (Functor(..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable(..), dimapCorep)
 import Proarrow.Profunctor.Composition ((:.:)(..))
 import Data.Functor.Compose (Compose(..))
 
@@ -11,7 +11,7 @@ data Costar f a b where
   Costar :: Ob a => { getCostar :: f a ~> b } -> Costar f a b
 
 instance Functor f => Profunctor (Costar f) where
-  dimap l r (Costar f) = Costar (r . f . map l) \\ l
+  dimap = dimapCorep
   r \\ Costar f = r \\ f
 
 instance Functor f => Corepresentable (Costar f) where

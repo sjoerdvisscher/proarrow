@@ -6,10 +6,10 @@ import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Monoidal (Tensor (..))
-import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..), (//))
+import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 import Proarrow.Profunctor.Product ((:*:) (..), prod)
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
@@ -72,7 +72,7 @@ data ProductFunctor a b where
   ProductFunctor :: forall a c d. (Ob c, Ob d) => a ~> (c && d) -> ProductFunctor a '(c, d)
 
 instance HasBinaryProducts k => Profunctor (ProductFunctor :: PRO k (k, k)) where
-  dimap l (r1 :**: r2) (ProductFunctor f) = r1 // r2 // ProductFunctor ((r1 *** r2) . f . l)
+  dimap = dimapRep
   r \\ ProductFunctor f = r \\ f
 
 instance HasBinaryProducts k => Representable (ProductFunctor :: PRO k (k, k)) where

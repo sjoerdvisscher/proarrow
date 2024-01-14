@@ -8,7 +8,7 @@ import Proarrow.Category.Opposite (OPPOSITE(..), Op (..))
 import Proarrow.Core (Promonad(..), CategoryOf(..), PRO, Profunctor (..))
 import Proarrow.Object.BinaryProduct (HasProducts, type (&&))
 import Proarrow.Object.Terminal (TerminalObject)
-import Proarrow.Profunctor.Representable (Representable(..))
+import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 import Proarrow.Category.Instance.Product ((:**:)(..))
 
 
@@ -27,7 +27,7 @@ data TypeCat a bc where
   TypeCat :: (Ob b, Ob c) => (a -> b ~> c) -> TypeCat a '(OP b, c)
 
 instance CategoryOf k => Profunctor (TypeCat :: ECAT Type k) where
-  dimap l (Op r1 :**: r2) (TypeCat f) = TypeCat (dimap r1 r2 . f . l) \\ r1 \\ r2
+  dimap = dimapRep
   r \\ TypeCat f = r \\ f
 
 instance CategoryOf k => Representable (TypeCat :: ECAT Type k) where
