@@ -1,68 +1,39 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Profunctor.Day where
 
-import Data.Function (($))
-
-import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad(..), (//), (:~>))
-import Proarrow.Functor (Functor(..))
+import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad(..), lmap, rmap)
 import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Monoidal (MONOIDAL, Monoidal (..))
-import Proarrow.Category.Instance.List (List (..), type (++), obAppend)
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Object (Obj, obj)
-
-type PList :: [PRO j k] -> PRO [j] [k]
-data PList ps as bs where
-  PNil :: PList '[] '[] '[]
-  PCons :: Ob p => p a b -> PList ps as bs -> PList (p ': ps) (a ': as) (b ': bs)
-
-instance (CategoryOf j, CategoryOf k) => Profunctor (PList (ps :: [PRO j k])) where
-  dimap Nil Nil PNil = PNil
-  dimap (Cons l ls) (Cons r rs) (PCons p ps) = PCons (dimap l r p) (dimap ls rs ps)
-  dimap Nil Cons{} p = case p of
-  dimap Cons{} Nil p = case p of
-  r \\ PNil = r
-  r \\ PCons p ps = r \\ p \\ ps
-
-instance (CategoryOf j, CategoryOf k) => Functor (PList :: [PRO j k] -> PRO [j] [k]) where
-  map Nil = Prof \PNil -> PNil
-  map (Cons (Prof n) ns) = ns // Prof \(PCons p ps) -> PCons (n p) (getProf (map ns) ps)
-
-splitP
-  :: forall ps1 ps2 as bs r. Ob ps1
-  => PList (ps1 ++ ps2) as bs
-  -> (forall as1 as2 bs1 bs2. (as ~ as1 ++ as2, bs ~ bs1 ++ bs2) => PList ps1 as1 bs1 -> PList ps2 as2 bs2 -> r)
-  -> r
-splitP = h (obj @ps1)
-  where
-    h :: forall qs as' bs'. Obj qs -> PList (qs ++ ps2) as' bs'
-      -> (forall as1 as2 bs1 bs2. (as' ~ as1 ++ as2, bs' ~ bs1 ++ bs2) => PList qs as1 bs1 -> PList ps2 as2 bs2 -> r) -> r
-    h Nil ps k = k PNil ps
-    h (Cons _ qs) (PCons p ps) k = h qs ps (k . PCons p)
-
-appendP :: PList ps1 as1 bs1 -> PList ps2 as2 bs2 -> PList (ps1 ++ ps2) (as1 ++ as2) (bs1 ++ bs2)
-appendP PNil ps2 = ps2
-appendP (PCons p ps1) ps2 = PCons p (appendP ps1 ps2)
+import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Object (src, tgt)
 
 
+data DayUnit a b where
+  DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
 
-type Day :: MONOIDAL j -> MONOIDAL k -> MONOIDAL (PRO j k)
-data Day s t ps qs where
-  Day :: (Ob ps, Ob qs) => { getDay :: PList ps :~> (s :.: PList qs :.: t) } -> Day s t ps qs
+instance (CategoryOf j, CategoryOf k) => Profunctor (DayUnit :: PRO j k) where
+  dimap l r (DayUnit f g) = DayUnit (f . l) (r . g)
+  r \\ DayUnit f g = r \\ f \\ g
 
-instance (CategoryOf j, CategoryOf k) => Profunctor (Day s t :: MONOIDAL (PRO j k)) where
-  dimap l r (Day f) = l // r // Day \ps -> case f (getProf (map l) ps) of
-    s :.: qs :.: t -> s :.: getProf (map r) qs :.: t
-  r \\ Day{} = r
+data Day p q a b where
+  Day :: a ~> c ** e -> p c d -> q e f -> d ** f ~> b -> Day p q a b
 
-instance (CategoryOf j, CategoryOf k, Promonad s, Promonad t) => Promonad (Day s t :: MONOIDAL (PRO j k)) where
-  id = Day \ps -> id :.: ps :.: id \\ ps
-  Day f . Day g = Day \ps -> case g ps of
-    s1 :.: qs :.: t1 -> case f qs of
-      s2 :.: rs :.: t2 -> (s2 . s1) :.: rs :.: (t1 . t2)
+instance (Profunctor p, Profunctor q) => Profunctor (Day p q) where
+  dimap l r (Day f p q g) = Day (lmap l f) p q (rmap r g)
+  r \\ Day f _ _ g = r \\ f \\ g
 
-instance (CategoryOf j, CategoryOf k, Monoidal s, Monoidal t) => Monoidal (Day s t :: MONOIDAL (PRO j k)) where
-  par (Day @ps1 @qs1 f) (Day @ps2 @qs2 g) = obAppend @ps1 @ps2 $ obAppend @qs1 @qs2 $
-    Day \ps -> splitP @ps1 @ps2 ps \ps1 ps2 -> case (f ps1, g ps2) of
-      (s1 :.: qs1 :.: t1, s2 :.: qs2 :.: t2) -> par s1 s2 :.: appendP qs1 qs2 :.: par t1 t2
-
-
+instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
+  type Unit = DayUnit
+  type p ** q = Day p q
+  Prof m `par` Prof n = Prof \(Day f p q g) -> Day f (m p) (n q) g
+  leftUnitor Prof{} = Prof \(Day f (DayUnit h i) q g) -> dimap (leftUnitor (src q) . (h `par` src q) . f) (g . (i `par` tgt q) . leftUnitorInv (tgt q)) q
+  leftUnitorInv Prof{} = Prof \q -> Day (leftUnitorInv (src q)) (DayUnit id id) q (leftUnitor (tgt q))
+  rightUnitor Prof{} = Prof \(Day f p (DayUnit h i) g) -> dimap (rightUnitor (src p) . (src p `par` h) . f) (g . (tgt p `par` i) . rightUnitorInv (tgt p)) p
+  rightUnitorInv Prof{} = Prof \p -> Day (rightUnitorInv (src p)) p (DayUnit id id) (rightUnitor (tgt p))
+  associator Prof{} Prof{} Prof{} = Prof \(Day f1 (Day f2 p2 q2 g2) q1 g1) ->
+    let f = associator (src p2) (src q2) (src q1) . (f2 `par` src q1) . f1
+        g = g1 . (g2 `par` tgt q1) . associatorInv (tgt p2) (tgt q2) (tgt q1)
+    in Day f p2 (Day (src q2 `par` src q1) q2 q1 (tgt q2 `par` tgt q1)) g
+  associatorInv Prof{} Prof{} Prof{} = Prof \(Day f1 p1 (Day f2 p2 q2 g2) g1) ->
+    let f = associatorInv (src p1) (src p2) (src q2) . (src p1 `par` f2) . f1
+        g = g1 . (tgt p1 `par` g2) . associator (tgt p1) (tgt p2) (tgt q2)
+    in Day f (Day (src p1 `par` src p2) p1 p2 (tgt p1 `par` tgt p2)) q2 g

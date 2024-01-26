@@ -4,61 +4,66 @@ module Proarrow.Category.Double.Prof where
 
 import Data.Function (($))
 
-import Proarrow.Category.Bicategory (Path(..), SPath (..), IsPath (..), type (+++), appendObj)
-import Proarrow.Category.Bicategory.Co (COK(..))
-import Proarrow.Category.Bicategory.Prof (ProfK(..), ProfList(..), Biprof(..), ProfC, ProfCorepC)
-import Proarrow.Category.Double (DOUBLE, Double (..), Equipment(..), Companion, Conjoint)
-import Proarrow.Category.Double.Quintet (Quintet(..))
+import Proarrow.Category.Bicategory (Path(..), SPath (..), IsPath (..), type (+++), appendObj, Strictified (..))
+import Proarrow.Category.Bicategory.Co (COK(..), Co(..))
+import Proarrow.Category.Bicategory.Prof (ProfK(..), ProfC, ProfCorepC, PROFK, Prof(..))
+import Proarrow.Category.Double (SQ, Double (..), Equipment(..), Companion, Conjoint)
+import Proarrow.Category.Double.Quintet (Quintet(..), Sq1 (Q1))
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
 import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), Promonad (..), UN, (//))
-import Proarrow.Object (src)
 import Unsafe.Coerce (unsafeCoerce)
+import Proarrow.Profunctor.Composition ((:.:)(..))
 
 
-type family UnCorep (fs :: Path (COK (ProfK ProfCorepC)) h i) :: Path (COK (ProfK ProfC)) h i
+type family UnCorep (fs :: Path (COK (ProfK cl)) h i) :: Path (COK PROFK) h i
 type instance UnCorep Nil = Nil
 type instance UnCorep (CO (PK f) ::: fs) = CO (PK f) ::: UnCorep fs
 
 unCorepAppend'
   :: forall as bs r. (Ob bs)
-  => SPath as -> ((UnCorep as +++ UnCorep bs ~ UnCorep (as +++ bs), Ob (as +++ bs)) => r) -> r
+  => SPath as -> ((UnCorep as +++ UnCorep bs ~ UnCorep (as +++ bs)) => r) -> r
 unCorepAppend' SNil r = r
-unCorepAppend' (SCons @(CO p) @ps' ps) r = unCorepAppend' @ps' @bs ps r
+unCorepAppend' (SCons @p @ps' (Co Prof{}) ps) r = unCorepAppend' @ps' @bs ps r
 
 unCorepAppend
   :: forall as bs r. (Ob as, Ob bs)
-  => ((UnCorep as +++ UnCorep bs ~ UnCorep (as +++ bs), Ob (as +++ bs)) => r) -> r
+  => ((UnCorep as +++ UnCorep bs ~ UnCorep (as +++ bs)) => r) -> r
 unCorepAppend = unCorepAppend' @as @bs (singPath @as)
 
 unCorep :: ps ~> qs -> UnCorep ps ~> UnCorep qs
 unCorep = unsafeCoerce
 
 
-type ProfSq :: DOUBLE (ProfK ProfC) (COK (ProfK ProfCorepC))
+type ProfSq :: SQ (ProfK ProfC) (COK (ProfK ProfCorepC))
 data ProfSq ps qs fs gs where
-  ProfSq :: (Ob ps, Ob qs, Ob fs, Ob gs) => Quintet ps qs (UnCorep fs) (UnCorep gs) -> ProfSq ps qs fs gs
+  ProfSq :: forall ps qs fs gs. (Ob fs, Ob gs) => Quintet ps qs (UnCorep fs) (UnCorep gs) -> ProfSq ps qs fs gs
 
 -- | The double category of profunctors and corepresentable profunctors.
-instance Double (ProfK ProfC) (COK (ProfK ProfCorepC)) where
-  type Sq (ProfK ProfC) (COK (ProfK ProfCorepC)) = ProfSq
+instance Double ProfSq where
+  data Sq1 ProfSq p q f g where
+    P1 :: Sq1 Quintet p q (CO (PK f)) (CO (PK g)) -> Sq1 ProfSq p q (CO (PK f)) (CO (PK g))
+  r \\\\ ProfSq sq = r \\\\ sq
   object = ProfSq object
   hArr n = n // ProfSq $ hArr n
-  vArr n = n // ProfSq $ vArr $ unCorep n
-  ProfSq @_ @_ @fs @gs n@Quintet{} ||| ProfSq @_ @_ @hs @is m@Quintet{} = unCorepAppend @fs @hs $ unCorepAppend @gs @is $ ProfSq $ n ||| m
-  ProfSq @ps @qs @_ @_ n@Quintet{} === ProfSq @rs @ss @_ @_ m@Quintet{} = appendObj @ps @rs $ appendObj @qs @ss $ ProfSq $ n === m
+  vArr n@Str{} = let n' = unCorep n in n' // ProfSq $ vArr n'
+  ProfSq @_ @_ @fs @gs n@Q{} ||| ProfSq @_ @_ @hs @is m@Q{} =
+    unCorepAppend @fs @hs $ unCorepAppend @gs @is $ appendObj @fs @hs $ appendObj @gs @is $
+      ProfSq $ n ||| m
+  ProfSq @ps @qs @_ @_ n@(Q Q1{}) === ProfSq @rs @ss @_ @_ m@(Q Q1{}) = appendObj @ps @rs $ appendObj @qs @ss $ ProfSq $ n === m
 
 
 -- | The proarrow equipment of profunctors and corepresentable profunctors.
-instance Equipment (ProfK ProfC) (COK (ProfK ProfCorepC)) where
-  type Companion (ProfK ProfC) (COK (ProfK ProfCorepC)) f = PK (UN PK (UN CO f))
-  type Conjoint (ProfK ProfC) (COK (ProfK ProfCorepC)) f = PK (StarCorep (UN PK (UN CO f)))
-  fromRight = ProfSq $ Quintet id
-  toLeft = ProfSq $ Quintet id
-  toRight
-    :: forall f. Corepresentable f
-    => ProfSq Nil (PK (StarCorep f) ::: Nil) (CO (PK f) ::: Nil) Nil
-  toRight = ProfSq $ Quintet $ Biprof \(ProfNil f) -> f // let fa = corepMap @f (src f) in ProfCons (cotabulate @f fa) (ProfCons (StarCorep fa) (ProfNil f))
-  fromLeft = ProfSq $ Quintet $ Biprof \(ProfCons (StarCorep f) (ProfCons g (ProfNil h))) -> ProfNil (h . coindex g . f)
+instance Equipment ProfSq where
+  type Companion ProfSq f = PK (UN PK (UN CO f))
+  type Conjoint ProfSq f = PK (StarCorep (UN PK (UN CO f)))
+  fromRight = ProfSq $ Q $ Q1 id
+  toLeft = ProfSq $ Q $ Q1 id
+  toRight :: forall f p. (Ob f, p ~ UN PK (UN CO f)) => ProfSq Nil (PK (StarCorep p) ::: Nil) (f ::: Nil) Nil
+  toRight = ProfSq $ Q $ Q1 $ Prof \(f :.: g) -> cotabulate @p (corepMap @p f) :.: StarCorep (corepMap @p g) \\ f \\ g
+  fromLeft :: forall f p. (Ob f, p ~ UN PK (UN CO f)) => ProfSq (PK (StarCorep p) ::: Nil) Nil Nil (f ::: Nil)
+  fromLeft = ProfSq $ Q $ Q1 $ Prof \(StarCorep f :.: g) -> f :.: coindex @p g
+  withComOb Co{} r = r
+  withConOb Co{} r = r
 
 
 type StarCorep :: PRO a b -> PRO b a

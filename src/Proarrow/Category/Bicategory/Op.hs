@@ -1,58 +1,38 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Bicategory.Op where
 
-import Data.Function (($))
-
-import Proarrow.Category.Bicategory (Bicategory(..), MKKIND, BICAT, Path(..), IsPath(..), SPath(..), type (+++))
+import Proarrow.Category.Bicategory (Bicategory(..))
 import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault, UN, Is)
 
 
-type OPK :: MKKIND -> MKKIND
+type OPK :: CAT k -> CAT k
 newtype OPK kk j k = OP (kk k j)
 type instance UN OP (OP k) = k
 
-type UnOpPath ps = UnOpPath' ps Nil
-type family UnOpPath' (ps :: Path (OPK kk) a b) (acc :: Path kk a c) :: Path kk b c
-type instance UnOpPath' Nil acc = acc
-type instance UnOpPath' (OP p ::: ps) acc = UnOpPath' ps (p ::: acc)
+type Op :: CAT (OPK kk k j)
+data Op a b where
+  Op :: a ~> b -> Op (OP a) (OP b)
 
-unOpPathNested
-  :: forall {j} {k} {kk} as (bs :: Path (OPK kk) j k) cs r
-   . SPath bs -> (UnOpPath' bs (as +++ cs) ~ UnOpPath' bs as +++ cs => r) -> r
-unOpPathNested SNil r = r
-unOpPathNested (SCons @(OP p) @ps ps) r = unOpPathNested @(p ::: as) @ps @cs ps r
-
-unOpPathAppend'
-  :: forall {i} {j} {k} {kk} (as :: Path (OPK kk) i j) (bs :: Path (OPK kk) j k) cs r. (Ob bs)
-  => SPath as -> ((UnOpPath' bs (UnOpPath' as cs) ~ UnOpPath' (as +++ bs) cs, IsPath (as +++ bs)) => r) -> r
-unOpPathAppend' SNil r = r
-unOpPathAppend' (SCons @(OP p) @ps ps) r = unOpPathAppend' @ps @bs @(p ::: cs) ps r
-
-unOpPathAppend
-  :: forall {i} {j} {kk} (as :: Path (OPK kk) i j) bs r. (Ob as, Ob bs)
-  => ((UnOpPath bs +++ UnOpPath as ~ UnOpPath (as +++ bs), IsPath (as +++ bs)) => r) -> r
-unOpPathAppend r = unOpPathNested @Nil @bs @(UnOpPath as) (singPath @bs) $ unOpPathAppend' @as @bs @Nil (singPath @as) r
-
-
-type Op :: BICAT (OPK kk)
-data Op as bs where
-  Op :: (Ob as, Ob bs) => UnOpPath as ~> UnOpPath bs -> Op as bs
-
-instance (CategoryOf (Path kk j k)) => Profunctor (Op :: CAT (Path (OPK kk) k j)) where
+instance (CategoryOf (kk k j)) => Profunctor (Op :: CAT (OPK kk j k)) where
   dimap = dimapDefault
   r \\ Op f = r \\ f
-instance (CategoryOf (Path kk j k)) => Promonad (Op :: CAT (Path (OPK kk) k j)) where
+instance (CategoryOf (kk k j)) => Promonad (Op :: CAT (OPK kk j k)) where
   id = Op id
   Op f . Op g = Op (f . g)
-instance (CategoryOf (Path kk j k)) => CategoryOf (Path (OPK kk) k j) where
+instance (CategoryOf (kk k j)) => CategoryOf (OPK kk j k) where
   type (~>) = Op
-  type Ob (ps :: Path (OPK kk) k j) = (IsPath ps, Ob (UnOpPath ps))
+  type Ob a = (Is OP a, Ob (UN OP a))
 
 -- | Create a dual of a bicategory by reversing the 1-cells.
 instance Bicategory kk => Bicategory (OPK kk) where
   type Ob0 (OPK kk) k = Ob0 kk k
-  type Ob1 (OPK kk) p = (Is OP p, Ob1 kk (UN OP p))
-  Op @as @bs f `o` Op @cs @ds g =
-    unOpPathAppend @as @cs $ unOpPathAppend @bs @ds $
-      let fg = g `o` f in Op fg \\\ fg
+  type I = OP I
+  type O a b = OP (UN OP b `O` UN OP a)
   r \\\ Op f = r \\\ f
+  Op f `o` Op g = Op (g `o` f)
+  leftUnitor (Op p) = Op (rightUnitor p)
+  leftUnitorInv (Op p) = Op (rightUnitorInv p)
+  rightUnitor (Op p) = Op (leftUnitor p)
+  rightUnitorInv (Op p) = Op (leftUnitorInv p)
+  associator (Op p) (Op q) (Op r) = Op (associatorInv r q p)
+  associatorInv (Op p) (Op q) (Op r) = Op (associator r q p)

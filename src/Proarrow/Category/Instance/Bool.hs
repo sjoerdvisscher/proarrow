@@ -2,10 +2,11 @@ module Proarrow.Category.Instance.Bool where
 
 import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
 import Proarrow.Object.Terminal (HasTerminalObject(..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
+import Proarrow.Object.BinaryProduct (HasBinaryProducts(..), leftUnitorProd, leftUnitorProdInv, rightUnitorProd, rightUnitorProdInv, associatorProd, associatorProdInv, swapProd)
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
-import Proarrow.Object.Exponential (CartesianClosed(..))
+import Proarrow.Object.Exponential (Closed(..))
+import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal (..))
 
 
 data BOOL = FLS | TRU
@@ -88,7 +89,21 @@ instance HasBinaryCoproducts BOOL where
   Tru ||| F2T = Tru
   Tru ||| Tru = Tru
 
-instance CartesianClosed BOOL where
+instance Monoidal BOOL where
+  type Unit = TerminalObject
+  type a ** b = a && b
+  f `par` g = f *** g
+  leftUnitor = leftUnitorProd
+  leftUnitorInv = leftUnitorProdInv
+  rightUnitor = rightUnitorProd
+  rightUnitorInv = rightUnitorProdInv
+  associator = associatorProd
+  associatorInv = associatorProdInv
+
+instance SymMonoidal BOOL where
+  swap' = swapProd
+
+instance Closed BOOL where
   type FLS ~~> FLS = TRU
   type FLS ~~> TRU = TRU
   type TRU ~~> FLS = FLS

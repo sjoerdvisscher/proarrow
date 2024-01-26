@@ -32,3 +32,9 @@ instance Functor Ran where
 instance Profunctor j => Adjunction (Star ((:.:) j)) (Star (Ran (OP j))) where
   unit = unitFromStarUnit (Prof \p -> p // Ran (:.: p))
   counit = counitFromStarCounit (Prof \(j :.: r) -> runRan j r)
+
+ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => Ran (OP i) (Ran (OP j) p) ~> Ran (OP (j :.: i)) p
+ranCompose = Prof \k -> k // Ran \(j :.: i) -> runRan j (runRan i k)
+
+ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => Ran (OP (j :.: i)) p ~> Ran (OP i) (Ran (OP j) p)
+ranComposeInv = Prof \k -> k // Ran \i -> Ran \j -> runRan (j :.: i) k

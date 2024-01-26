@@ -1,121 +1,167 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
+import Prelude (($))
 
-import Proarrow.Category.Instance.List (type (++), List (..), append)
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Core (PRO, Promonad(..), CategoryOf(..), Profunctor (..), (:~>), lmap, rmap)
-import Proarrow.Profunctor.Composition ((:.:) (..), bimapComp)
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Core (CAT, PRO, Promonad(..), CategoryOf(..), Profunctor (..), dimapDefault)
 import Proarrow.Object (obj, Obj)
 
+class (CategoryOf k, Ob (Unit :: k)) => Monoidal k where
+  type Unit :: k
+  type (a :: k) ** (b :: k) :: k
+  par :: ((a :: k) ~> b) -> (c ~> d) -> (a ** c) ~> (b ** d)
+  leftUnitor :: Obj (a :: k) -> Unit ** a ~> a
+  leftUnitorInv :: Obj (a :: k) -> a ~> Unit ** a
+  rightUnitor :: Obj (a :: k) -> a ** Unit ~> a
+  rightUnitorInv :: Obj (a :: k) -> a ~> a ** Unit
+  associator :: Obj (a :: k) -> Obj b -> Obj c -> (a ** b) ** c ~> a ** (b ** c)
+  associatorInv :: Obj (a :: k) -> Obj b -> Obj c -> a ** (b ** c) ~> (a ** b) ** c
 
-type TENSOR k = PRO k (k, k)
-type Tensor :: forall {k}. TENSOR k -> Constraint
-class (Representable t, Ob @k (U t)) => Tensor (t :: TENSOR k) where
-  type U t :: k
-  leftUnitor :: Obj a -> t % '(U t, a) ~> a
-  leftUnitorInv :: Obj a -> a ~> t % '(U t, a)
-  rightUnitor :: Obj a -> t % '(a, U t) ~> a
-  rightUnitorInv :: Obj a -> a ~> t % '(a, U t)
-  associator :: Obj a -> Obj b -> Obj c -> t % '(t % '(a, b), c) ~> t % '(a, t % '(b, c))
-  associatorInv :: Obj a -> Obj b -> Obj c -> t % '(a, t % '(b, c)) ~> t % '(t % '(a, b), c)
+class Monoidal k => SymMonoidal k where
+  swap' :: forall a b. Obj (a :: k) -> Obj b -> (a ** b) ~> (b ** a)
 
+swap :: forall {k} a b. (SymMonoidal k, Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
+swap = swap' (obj @a) (obj @b)
 
-type MONOIDAL k = PRO [k] [k]
+-- withUnital
+--   :: forall {k} (a :: [k]) r
+--    . (CategoryOf k, Ob a)
+--   => (a ++ '[] ~ a => r) -> r
+-- withUnital = go (obj @a)
+--   where
+--     go :: forall a'. Obj a' -> (a' ++ '[] ~ a' => r) -> r
+--     go Nil r = r
+--     go (Cons _ as) r = go as r
 
-class (Promonad t, CategoryOf k) => Monoidal (t :: MONOIDAL k) where
-  par :: t as bs -> t cs ds -> t (as ++ cs) (bs ++ ds)
+type family All (pred :: k -> Constraint) (as :: [k]) :: Constraint where
+  All pred '[] = () :: Constraint
+  All pred (a ': as) = (pred a, All pred as)
 
-lift :: Monoidal t => a ~> b -> t '[a] '[b]
-lift f = rmap (Cons f Nil) id \\ f
+type family (as :: [k]) ++ (bs :: [k]) :: [k] where
+  '[] ++ bs = bs
+  (a ': as) ++ bs = a ': (as ++ bs)
 
+data SList as where
+  Nil :: SList '[]
+  Cons :: (Ob a, Ob as) => Obj a -> SList as -> SList (a ': as)
 
-instance CategoryOf k => Monoidal (List :: MONOIDAL k) where
-  par = append
+type IsList :: forall {k}. [k] -> Constraint
+class CategoryOf k => IsList (as :: [k]) where sList :: SList as
+instance CategoryOf k => IsList ('[] :: [k]) where sList = Nil
+instance (Ob a, Ob as) => IsList (a ': as) where sList = Cons (obj @a) (sList @as)
 
+type family Fold (as :: [k]) :: k where
+  Fold ('[] :: [k]) = Unit :: k
+  Fold '[a] = a
+  Fold (a ': as) = a ** Fold as
 
-
-type family Fold (t :: PRO k (k, k)) (as :: [k]) :: k where
-  Fold t '[] = U t
-  Fold t '[a] = a
-  Fold t (a ': as) = t % '(a, Fold t as)
-
-fold :: forall {k} t as bs. Tensor (t :: PRO k (k, k)) => List (as :: [k]) bs -> Fold t as ~> Fold t bs
+fold :: forall {k} as. Monoidal k => SList (as :: [k]) -> Fold as ~> Fold as
 fold Nil = id
 fold (Cons f Nil) = f
-fold (Cons f fs@Cons{}) = repMap @t (f :**: fold @t fs)
+fold (Cons f fs@Cons{}) = f `par` fold fs
 
 concatFold
-  :: forall {k} (t :: PRO k (k, k)) (as :: [k]) (bs :: [k]). (Ob as, Ob bs, Tensor t)
-  => t % '(Fold t as, Fold t bs) ~> Fold t (as ++ bs)
+  :: forall {k} (as :: [k]) (bs :: [k]). (Ob as, Ob bs, Monoidal k)
+  => Fold as ** Fold bs ~> Fold (as ++ bs)
 concatFold =
-  let fbs = fold @t (obj @bs)
-      h :: forall cs. Obj cs -> t % '(Fold t cs, Fold t bs) ~> Fold t (cs ++ bs)
-      h Nil = leftUnitor @t fbs
-      h (Cons c Nil) = case obj @bs of
-        Nil -> rightUnitor @t c
-        Cons{} -> repMap @t (c :**: fbs)
-      h (Cons c cs@Cons{}) =
-        repMap @t (c :**: h cs) . associator @t c (fold @t cs) fbs
-  in h (obj @as)
+  let fbs = fold (sList @bs)
+      h :: forall (cs :: [k]). SList cs -> (Fold cs ** Fold bs) ~> Fold (cs ++ bs)
+      h Nil = leftUnitor fbs
+      h (Cons c Nil) = case sList @bs of
+        Nil -> rightUnitor c
+        Cons{} -> c `par` fbs
+      h (Cons c cs@Cons{}) = (c `par` h cs) . associator c (fold cs) fbs
+  in h (sList @as)
 
 splitFold
-  :: forall {k} (t :: PRO k (k, k)) (as :: [k]) (bs :: [k]). (Ob as, Ob bs, Tensor t)
-  => Fold t (as ++ bs) ~> t % '(Fold t as, Fold t bs)
+  :: forall {k} (as :: [k]) (bs :: [k]). (Ob as, Ob bs, Monoidal k)
+  => Fold (as ++ bs) ~> (Fold as ** Fold bs)
 splitFold =
-  let fbs = fold @t (obj @bs)
-      h :: forall cs. Obj cs -> Fold t (cs ++ bs) ~> t % '(Fold t cs, Fold t bs)
-      h Nil = leftUnitorInv @t fbs
-      h (Cons c Nil) = case obj @bs of
-        Nil -> rightUnitorInv @t c
-        Cons{} -> repMap @t (c :**: fbs)
-      h (Cons c cs@Cons{}) = associatorInv @t c (fold @t cs) fbs . repMap @t (c :**: h cs)
-  in h (obj @as)
+  let fbs = fold (sList @bs)
+      h :: forall cs. SList cs -> Fold (cs ++ bs) ~> Fold cs ** Fold bs
+      h Nil = leftUnitorInv fbs
+      h (Cons c Nil) = case sList @bs of
+        Nil -> rightUnitorInv c
+        Cons{} -> c `par` fbs
+      h (Cons c cs@Cons{}) = associatorInv c (fold cs) fbs . (c `par` h cs)
+  in h (sList @as)
 
 
+type Strictified :: CAT [k]
+data Strictified as bs where
+  Str :: (Ob as, Ob bs) => Fold as ~> Fold bs -> Strictified as bs
 
-type Strictified :: PRO k (k, k) -> MONOIDAL k
-data Strictified t as bs where
-  Strictified :: (Ob as, Ob bs) => Fold t as ~> Fold t bs -> Strictified t as bs
+singleton :: CategoryOf k => Obj (a :: k) -> Obj '[a]
+singleton a = Str a \\ a
 
-instance Tensor (t :: PRO k (k, k)) => Profunctor (Strictified t :: MONOIDAL k) where
-  dimap ls rs (Strictified f) = Strictified (fold @t rs . f . fold @t ls) \\ ls \\ rs
-  r \\ Strictified f = r \\ f
+instance Monoidal k => Profunctor (Strictified :: CAT [k]) where
+  dimap = dimapDefault
+  r \\ Str f = r \\ f
 
-instance Tensor (t :: PRO k (k, k)) => Promonad (Strictified t :: MONOIDAL k) where
-  id :: forall (as :: [k]). Ob as => Strictified t as as
-  id = Strictified (fold @t (obj @as))
-  Strictified f . Strictified g = Strictified (f . g)
+instance Monoidal k => Promonad (Strictified :: CAT [k]) where
+  id :: forall (as :: [k]). Ob as => Strictified as as
+  id = Str (fold (sList @as))
+  Str f . Str g = Str (f . g)
 
-instance Tensor (t :: PRO k (k, k)) => Monoidal (Strictified t :: MONOIDAL k) where
-  par (Strictified @as @bs f) (Strictified @cs @ds g) =
-    Strictified (concatFold @t @bs @ds . repMap @t (f :**: g) . splitFold @t @as @cs)
-      \\ (obj @as `append` obj @cs) \\ (obj @bs `append` obj @ds)
+instance Monoidal k => CategoryOf [k] where
+  type (~>) = Strictified
+  type Ob as = IsList as
+
+instance Monoidal k => Monoidal [k] where
+  type Unit = '[]
+  type as ** bs = as ++ bs
+  par :: (as :: [k]) ~> bs -> cs ~> ds -> as ++ cs ~> bs ++ ds
+  par (Str @as @bs f) (Str @cs @ds g) =
+    withAppend @as @cs $ withAppend @bs @ds $
+      Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)
+  leftUnitor a = a
+  leftUnitorInv a = a
+  rightUnitor :: forall as. Obj (as :: [k]) -> as ** Unit ~> as
+  rightUnitor as' = go (sList @as) \\ as' where
+    go :: forall (bs :: [k]). SList bs -> bs ** Unit ~> bs
+    go Nil = id
+    go (Cons _ Nil) = id
+    go (Cons a as@Cons{}) = singleton a `par` go as
+  rightUnitorInv :: forall as. Obj (as :: [k]) -> as ~> as ** Unit
+  rightUnitorInv as' = go (sList @as) \\ as' where
+    go :: forall (bs :: [k]). SList bs -> bs ~> bs ** Unit
+    go Nil = id
+    go (Cons _ Nil) = id
+    go (Cons a as@Cons{}) = singleton a `par` go as
+  associator :: forall as bs cs. Obj (as :: [k]) -> Obj bs -> Obj cs -> (as ** bs) ** cs ~> as ** (bs ** cs)
+  associator as' bs' cs' = go (sList @as) \\ as' where
+    go :: forall (as' :: [k]). SList as' -> (as' ** bs) ** cs ~> as' ** (bs ** cs)
+    go Nil = bs' `par` cs'
+    go (Cons a Nil) = singleton a `par` (bs' `par` cs')
+    go (Cons a as@Cons{}) = singleton a `par` go as
+  associatorInv :: forall as bs cs. Obj (as :: [k]) -> Obj bs -> Obj cs -> as ** (bs ** cs) ~> (as ** bs) ** cs
+  associatorInv as' bs' cs' = go (sList @as) \\ as' where
+    go :: forall (as' :: [k]). SList as' -> as' ** (bs ** cs) ~> (as' ** bs) ** cs
+    go Nil = bs' `par` cs'
+    go (Cons a Nil) = singleton a `par` (bs' `par` cs')
+    go (Cons a as@Cons{}) = singleton a `par` go as
+
+withAppend :: forall as bs r. (Ob as, Ob bs) => (Ob (as ++ bs) => r) -> r
+withAppend = withAppend' @bs (sList @as)
+
+withAppend' :: forall {k} bs as r. Ob bs => SList (as :: [k]) -> (Ob (as ++ bs) => r) -> r
+withAppend' Nil r = r
+withAppend' (Cons _ as) r = withAppend' @bs as r
+
+-- instance SymMonoidal k => SymMonoidal [k] where
+--   swap :: forall k (as :: [k]) (bs :: [k]). SymMonoidal k => Obj as -> Obj bs -> (as ** bs) ~> (bs ** as)
+--   swap as bs = go (sList @as) (sList @bs) \\ as \\ bs
+--     where
+--       go :: forall (as' :: [k]) bs'. SList as' -> SList bs' -> (as' ** bs') ~> (bs' ** as')
+--       go as Nil = rightUnitor _
+--       go Nil bs = rightUnitorInv _
+--       go (Cons a as) (Cons b bs) = _
+--       swap1 :: Obj (a :: k) -> SList (as :: [k]) -> (a ': as) ~> (as ++ '[a])
+--       swap1 = swap1
 
 
-type Compose :: TENSOR (PRO k k)
-data Compose p qr where
-  Compose :: (Profunctor p, Profunctor q, Profunctor r) => p :~> q :.: r -> Compose p '(q, r)
-
-instance CategoryOf k => Profunctor (Compose :: TENSOR (PRO k k)) where
-  dimap = dimapRep
-  r \\ Compose f = r \\ f
-
-instance CategoryOf k => Representable (Compose :: TENSOR (PRO k k)) where
-  type Compose % '(p, q) = p :.: q
-  index (Compose f) = Prof f
-  tabulate (Prof f) = Compose f
-  repMap (f :**: g) = bimapComp f g
-
-instance CategoryOf k => Tensor (Compose :: TENSOR (PRO k k)) where
-  type U Compose = Id
-  leftUnitor Prof{} = Prof \(Id f :.: p) -> lmap f p
-  leftUnitorInv Prof{} = Prof \p -> Id id :.: p \\ p
-  rightUnitor Prof{} = Prof \(p :.: Id f) -> rmap f p
-  rightUnitorInv Prof{} = Prof \p -> p :.: Id id \\ p
-  associator Prof{} Prof{} Prof{} = Prof \((p :.: q) :.: r) -> p :.: (q :.: r)
-  associatorInv Prof{} Prof{} Prof{} = Prof \(p :.: (q :.: r)) -> (p :.: q) :.: r
+class (Monoidal j, Monoidal k) => MonoidalProfunctor (p :: PRO j k) where
+  lift0 :: p Unit Unit
+  lift2 :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)

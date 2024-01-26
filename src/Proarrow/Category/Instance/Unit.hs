@@ -5,7 +5,7 @@ import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 
 
-data UNIT = U
+type data UNIT = U
 
 type Unit :: CAT UNIT
 data Unit a b where

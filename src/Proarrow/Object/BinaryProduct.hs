@@ -1,18 +1,18 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Object.BinaryProduct where
 
 import Data.Kind (Type)
 import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (Tensor (..))
-import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal(..))
+import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..), UN, CAT, Is, dimapDefault)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 import Proarrow.Profunctor.Product ((:*:) (..), prod)
 import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
+import Proarrow.Category.Instance.Unit qualified as U
 
 infixl 5 &&
 infixl 5 &&&
@@ -42,17 +42,22 @@ second f = obj @c *** f
 
 type HasProducts k = (HasTerminalObject k, HasBinaryProducts k)
 
+class a ** b ~ a && b => TensorIsProduct a b
+instance a ** b ~ a && b => TensorIsProduct a b
+class (HasProducts k, Monoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
+instance (HasProducts k, Monoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
+
 instance HasBinaryProducts Type where
   type a && b = (a, b)
   fst' _ _ = P.fst
   snd' _ _ = P.snd
   f &&& g = \a -> (f a, g a)
 
-instance HasBinaryProducts UNIT where
-  type 'U && 'U = 'U
-  fst' Unit Unit = Unit
-  snd' Unit Unit = Unit
-  Unit &&& Unit = Unit
+instance HasBinaryProducts U.UNIT where
+  type U.U && U.U = U.U
+  fst' U.Unit U.Unit = U.Unit
+  snd' U.Unit U.Unit = U.Unit
+  U.Unit &&& U.Unit = U.Unit
 
 instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
   type '(a1, a2) && '(b1, b2) = '(a1 && b1, a2 && b2)
@@ -66,26 +71,94 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
   snd' Prof{} Prof{} = Prof sndP
   Prof l &&& Prof r = Prof (prod l r)
 
+leftUnitorProd :: HasProducts k => Obj (a :: k) -> TerminalObject && a ~> a
+leftUnitorProd = snd' (obj @TerminalObject)
 
-type ProductFunctor :: PRO k (k, k)
-data ProductFunctor a b where
-  ProductFunctor :: forall a c d. (Ob c, Ob d) => a ~> (c && d) -> ProductFunctor a '(c, d)
+leftUnitorProdInv :: HasProducts k => Obj (a :: k) -> a ~> TerminalObject && a
+leftUnitorProdInv a = terminate' a &&& a
 
-instance HasBinaryProducts k => Profunctor (ProductFunctor :: PRO k (k, k)) where
-  dimap = dimapRep
-  r \\ ProductFunctor f = r \\ f
+rightUnitorProd :: HasProducts k => Obj (a :: k) -> a && TerminalObject ~> a
+rightUnitorProd a = fst' a (obj @TerminalObject)
 
-instance HasBinaryProducts k => Representable (ProductFunctor :: PRO k (k, k)) where
-  type ProductFunctor % '(a, b) = a && b
-  index (ProductFunctor f) = f
-  tabulate = ProductFunctor
-  repMap (f :**: g) = f *** g
+rightUnitorProdInv :: HasProducts k => Obj (a :: k) -> a ~> a && TerminalObject
+rightUnitorProdInv a = a &&& terminate' a
 
-instance HasProducts k => Tensor (ProductFunctor :: PRO k (k, k)) where
-  type U (ProductFunctor :: PRO k (k, k)) = TerminalObject :: k
-  leftUnitor = snd' (obj @(TerminalObject :: k))
-  leftUnitorInv a = terminate' a &&& a
-  rightUnitor a = fst' a (obj @(TerminalObject :: k))
-  rightUnitorInv a = a &&& terminate' a
-  associator a b c = (fst' a b . fst' (a *** b) c) &&& (snd' a b *** c) \\ (a *** b)
-  associatorInv a b c = (a *** fst' b c) &&& (snd' b c . snd' a (b *** c)) \\ (a *** b)
+associatorProd :: HasProducts k => Obj (a :: k) -> Obj b -> Obj c -> (a && b) && c ~> a && (b && c)
+associatorProd a b c = (fst' a b . fst' (a *** b) c) &&& (snd' a b *** c) \\ (a *** b)
+
+associatorProdInv :: HasProducts k => Obj (a :: k) -> Obj b -> Obj c -> a && (b && c) ~> (a && b) && c
+associatorProdInv a b c = (a *** fst' b c) &&& (snd' b c . snd' a (b *** c)) \\ (a *** b)
+
+swapProd :: forall {k} (a :: k) (b :: k). HasBinaryProducts k => Obj a -> Obj b -> (a && b) ~> (b && a)
+swapProd a b = snd' a b &&& fst' a b
+
+
+newtype PROD k = PR k
+type instance UN PR (PR k) = k
+
+type Prod :: CAT (PROD k)
+data Prod (a :: PROD k) b where
+  Prod :: (Ob a, Ob b) => UN PR a ~> UN PR b -> Prod a b
+
+mkProd :: CategoryOf k => (a :: k) ~> b -> Prod (PR a) (PR b)
+mkProd f = Prod f \\ f
+
+instance CategoryOf k => Profunctor (Prod :: CAT (PROD k)) where
+  dimap = dimapDefault
+  r \\ Prod f = r \\ f
+instance CategoryOf k => Promonad (Prod :: CAT (PROD k)) where
+  id = Prod id
+  Prod f . Prod g = Prod (f . g)
+instance CategoryOf k => CategoryOf (PROD k) where
+  type (~>) = Prod
+  type Ob a = (Is PR a, Ob (UN PR a))
+
+instance HasTerminalObject k => HasTerminalObject (PROD k) where
+  type TerminalObject = PR TerminalObject
+  terminate' (Prod a) = Prod (terminate' a)
+instance HasBinaryProducts k => HasBinaryProducts (PROD k) where
+  type a && b = PR (UN PR a && UN PR b)
+  fst' (Prod a) (Prod b) = mkProd (fst' a b)
+  snd' (Prod a) (Prod b) = mkProd (snd' a b)
+  Prod f &&& Prod g = mkProd (f &&& g)
+  Prod f *** Prod g = mkProd (f *** g)
+
+instance HasProducts k => Monoidal (PROD k) where
+  type Unit = TerminalObject
+  type a ** b = a && b
+  f `par` g = f *** g
+  leftUnitor = leftUnitorProd
+  leftUnitorInv = leftUnitorProdInv
+  rightUnitor = rightUnitorProd
+  rightUnitorInv = rightUnitorProdInv
+  associator = associatorProd
+  associatorInv = associatorProdInv
+
+
+instance Monoidal Type where
+  type Unit = TerminalObject
+  type a ** b = a && b
+  f `par` g = f *** g
+  leftUnitor = leftUnitorProd
+  leftUnitorInv = leftUnitorProdInv
+  rightUnitor = rightUnitorProd
+  rightUnitorInv = rightUnitorProdInv
+  associator = associatorProd
+  associatorInv = associatorProdInv
+
+instance SymMonoidal Type where
+  swap' = swapProd
+
+instance Monoidal U.UNIT where
+  type Unit = TerminalObject
+  type a ** b = a && b
+  f `par` g = f *** g
+  leftUnitor = leftUnitorProd
+  leftUnitorInv = leftUnitorProdInv
+  rightUnitor = rightUnitorProd
+  rightUnitorInv = rightUnitorProdInv
+  associator = associatorProd
+  associatorInv = associatorProdInv
+
+instance SymMonoidal U.UNIT where
+  swap' = swapProd

@@ -4,15 +4,13 @@ module Proarrow.Object.BinaryCoproduct where
 import Data.Kind (Type)
 import qualified Prelude as P
 
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (Tensor(..), TENSOR)
-import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..))
+import Proarrow.Core (CAT, PRO, CategoryOf(..), Promonad (..), Profunctor(..), UN, Is, dimapDefault)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject(..))
-import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
 import Proarrow.Profunctor.Coproduct ((:+:)(..), coproduct)
 import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
+import Proarrow.Category.Instance.Unit qualified as U
+import Proarrow.Category.Monoidal (Monoidal(..))
 
 
 class CategoryOf k => HasBinaryCoproducts k where
@@ -45,11 +43,11 @@ instance HasBinaryCoproducts Type where
   rgt' _ _ = P.Right
   (|||) = P.either
 
-instance HasBinaryCoproducts UNIT where
-  type 'U || 'U = 'U
-  lft' Unit Unit = Unit
-  rgt' Unit Unit = Unit
-  Unit ||| Unit = Unit
+instance HasBinaryCoproducts U.UNIT where
+  type U.U || U.U = U.U
+  lft' U.Unit U.Unit = U.Unit
+  rgt' U.Unit U.Unit = U.Unit
+  U.Unit ||| U.Unit = U.Unit
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (PRO j k) where
   type p || q = p :+: q
@@ -58,26 +56,33 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (PRO j k) where
   Prof l ||| Prof r = Prof (coproduct l r)
 
 
+newtype COPROD k = COPR k
+type instance UN COPR (COPR k) = k
 
-type CoproductFunctor :: TENSOR k
-data CoproductFunctor a b where
-  CoproductFunctor :: forall a c d. (Ob c, Ob d) => a ~> (c || d) -> CoproductFunctor a '(c, d)
+type Coprod :: CAT (COPROD k)
+data Coprod a b where
+  Coprod :: (Ob a, Ob b) => UN COPR a ~> UN COPR b -> Coprod a b
 
-instance HasBinaryCoproducts k => Profunctor (CoproductFunctor :: TENSOR k) where
-  dimap = dimapRep
-  r \\ CoproductFunctor f = r \\ f
+mkCoprod :: CategoryOf k => (a :: k) ~> b -> Coprod (COPR a) (COPR b)
+mkCoprod f = Coprod f \\ f
 
-instance HasBinaryCoproducts k => Representable (CoproductFunctor :: TENSOR k) where
-  type CoproductFunctor % '(a, b) = a || b
-  index (CoproductFunctor f) = f
-  tabulate = CoproductFunctor
-  repMap (f :**: g) = f +++ g
+instance CategoryOf k => Profunctor (Coprod :: CAT (COPROD k)) where
+  dimap = dimapDefault
+  r \\ Coprod f = r \\ f
+instance CategoryOf k => Promonad (Coprod :: CAT (COPROD k)) where
+  id = Coprod id
+  Coprod f . Coprod g = Coprod (f . g)
+instance CategoryOf k => CategoryOf (COPROD k) where
+  type (~>) = Coprod
+  type Ob a = (Is COPR a, Ob (UN COPR a))
 
-instance HasCoproducts k => Tensor (CoproductFunctor :: TENSOR k) where
-  type U (CoproductFunctor :: TENSOR k) = InitialObject :: k
-  leftUnitor a = initiate' a ||| a
-  leftUnitorInv = rgt' (obj @(InitialObject :: k))
-  rightUnitor a = a ||| initiate' a
-  rightUnitorInv a = lft' a (obj @(InitialObject :: k))
-  associator a b c = (a +++ lft' b c) ||| (rgt' a (b +++ c) . rgt' b c) \\ (a +++ b)
-  associatorInv a b c = (lft' (a +++ b) c . lft' a b) ||| (rgt' a b +++ c) \\ (a +++ b)
+instance HasCoproducts k => Monoidal (COPROD k) where
+  type Unit = COPR InitialObject
+  type a ** b = COPR (UN COPR a || UN COPR b)
+  Coprod f `par` Coprod g = mkCoprod (f +++ g)
+  leftUnitor (Coprod a) = mkCoprod (initiate' a ||| a)
+  leftUnitorInv (Coprod a) = mkCoprod (rgt' (obj @InitialObject) a)
+  rightUnitor (Coprod a) = mkCoprod (a ||| initiate' a)
+  rightUnitorInv (Coprod a) = mkCoprod (lft' a (obj @InitialObject))
+  associator (Coprod a) (Coprod b) (Coprod c) = mkCoprod ((a +++ lft' b c) ||| (rgt' a (b +++ c) . rgt' b c) \\ (a +++ b))
+  associatorInv (Coprod a) (Coprod b) (Coprod c) = mkCoprod ((lft' (a +++ b) c . lft' a b) ||| (rgt' a b +++ c) \\ (a +++ b))

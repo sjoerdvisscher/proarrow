@@ -2,41 +2,49 @@
 module Proarrow.Category.Enriched where
 
 import Data.Kind (Constraint, Type)
-import Prelude (uncurry)
+import Prelude (($))
 
-import Proarrow.Category.Opposite (OPPOSITE(..), Op (..))
-import Proarrow.Core (Promonad(..), CategoryOf(..), PRO, Profunctor (..))
-import Proarrow.Object.BinaryProduct (HasProducts, type (&&))
-import Proarrow.Object.Terminal (TerminalObject)
-import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
-import Proarrow.Category.Instance.Product ((:**:)(..))
+import Proarrow.Core (Promonad(..), CategoryOf(..), CAT, UN, Is)
+import Proarrow.Category.Bicategory (Bicategory(..), Monad(..))
+import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2(..), MonK(..))
+import Proarrow.Object.BinaryProduct ()
 
 
-type EPRO v j k = PRO v (OPPOSITE j, k) -- a functor J^op x K -> V as a representable profunctor
-type ECAT v k = EPRO v k k
+type family V (vk :: k -> Type) :: CAT k
+type family Arr (v :: CAT k) (a :: vk exta) (b :: vk extb) :: v exta extb
+type (a :: vk (exta :: k)) %~> (b :: vk extb) = Arr (V vk) a b
 
-class (HasProducts v, Representable p) => ECategory (p :: ECAT v k) where
-  type EOb p (a :: k) :: Constraint
-  eid :: EOb p a => TerminalObject ~> p % '(OP a, a)
-  ecomp :: p % '(OP b, c) && p % '(OP a, b) ~> p % '(OP a, c)
+class (Bicategory (V vk)) => ECategory (vk :: k -> Type) where
+  type EOb (a :: vk exta) :: Constraint
+  eid :: EOb (a :: vk exta) => I ~> a %~> a
+  ecomp :: (EOb (a :: vk exta), EOb (b :: vk extb), EOb (c :: vk extc))
+        => ((a :: vk exta) %~> b) `O` (b %~> c) ~> a %~> c
 
 
+type CATK :: Type -> () -> Type
+data CATK k ext where
+  CK :: k -> CATK k i
+type instance UN CK (CK a) = a
 
-type TypeCat :: ECAT Type k
-data TypeCat a bc where
-  TypeCat :: (Ob b, Ob c) => (a -> b ~> c) -> TypeCat a '(OP b, c)
+type instance V (CATK k) = MonK Type
+type instance Arr (MonK Type) a b = MK (UN CK a ~> UN CK b)
 
-instance CategoryOf k => Profunctor (TypeCat :: ECAT Type k) where
-  dimap = dimapRep
-  r \\ TypeCat f = r \\ f
+-- | A regular category as a Type-enriched category
+instance CategoryOf k => ECategory (CATK k) where
+  type EOb (a :: CATK k exta) = (Is CK a, Ob (UN CK a))
+  eid = Mon2 $ \() -> id
+  ecomp = Mon2 $ \(f, g) -> g . f
 
-instance CategoryOf k => Representable (TypeCat :: ECAT Type k) where
-  type TypeCat % '(OP a, b) = a ~> b
-  index (TypeCat f) = f
-  tabulate = TypeCat
-  repMap (Op f :**: g) = dimap f g
 
-instance CategoryOf k => ECategory (TypeCat :: ECAT Type k) where
-  type EOb TypeCat a = Ob a
-  eid () = id
-  ecomp = uncurry (.)
+type MONADK :: forall {k} {kk} {a}. kk (a :: k) a -> k -> Type
+data MONADK t ext where
+  MDK :: () -> MONADK (t :: kk a a) exta
+
+type instance V (MONADK (t :: kk a a)) = kk
+type instance Arr kk (m :: MONADK (t :: kk a a) a) (n :: MONADK t a) = t
+
+-- | A monad in a bicategory as a one object enriched category
+instance Monad t => ECategory (MONADK (t :: kk a a)) where
+  type EOb (m :: MONADK (t :: kk a a) exta) = (Is MDK m, exta ~ a)
+  eid = eta
+  ecomp = mu

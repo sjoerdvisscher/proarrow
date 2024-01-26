@@ -2,48 +2,53 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Instance.List where
 
-import Data.Kind (Constraint)
+import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault, UN, Is)
+import Proarrow.Category.Monoidal (Monoidal(..), type (++))
 
-import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
-import Proarrow.Object (obj)
+type data LIST k = L [k]
+type instance UN L (L as) = as
 
-
-type List :: CAT [k]
+type List :: CAT (LIST k)
 -- | The free monoid in CAT
 data List as bs where
-  Nil :: List '[] '[]
-  Cons :: a ~> b -> List as bs -> List (a ': as) (b ': bs)
+  Nil :: List (L '[]) (L '[])
+  Cons :: (IsList as, IsList bs) => a ~> b -> List (L as) (L bs) -> List (L (a ': as)) (L (b ': bs))
 
-class IsList as where listId :: List as as
+mkCons :: CategoryOf k => (a :: k) ~> b -> L as ~> L bs -> L (a ': as) ~> L (b ': bs)
+mkCons f fs = Cons f fs \\ fs
+
+class IsList as where listId :: List (L as) (L as)
 instance IsList '[] where listId = Nil
 instance (CategoryOf k, Ob (a :: k), IsList as) => IsList (a ': as) where listId = Cons id id
 
-instance CategoryOf k => CategoryOf [k] where
+instance CategoryOf k => CategoryOf (LIST k) where
   type (~>) = List
-  type Ob as = IsList as
+  type Ob as = (Is L as, IsList (UN L as))
 
-instance CategoryOf k => Promonad (List :: CAT [k]) where
+instance CategoryOf k => Promonad (List :: CAT (LIST k)) where
   id = listId
   Nil . Nil = Nil
   Cons f fs . Cons g gs = Cons (f . g) (fs . gs)
 
-instance CategoryOf k => Profunctor (List :: CAT [k]) where
+instance CategoryOf k => Profunctor (List :: CAT (LIST k)) where
   dimap = dimapDefault
   r \\ Nil = r
   r \\ Cons f fs = r \\ f \\ fs
 
-
-type family All (pred :: k -> Constraint) (as :: [k]) :: Constraint where
-  All pred '[] = () :: Constraint
-  All pred (a ': as) = (pred a, All pred as)
-
-type family (as :: [k]) ++ (bs :: [k]) :: [k] where
-  '[] ++ bs = bs
-  (a ': as) ++ bs = a ': (as ++ bs)
-
-append :: List a1 b1 -> List a2 b2 -> List (a1 ++ a2) (b1 ++ b2)
-append Nil bs = bs
-append (Cons a as) bs = Cons a (append as bs)
-
-obAppend :: forall {k} (as :: [k]) bs r. (CategoryOf k, Ob as, Ob bs) => (Ob (as ++ bs) => r) -> r
-obAppend r = r \\ append (obj @as) (obj @bs)
+instance CategoryOf k => Monoidal (LIST k) where
+  type Unit = L '[]
+  type p ** q = L (UN L p ++ UN L q)
+  Nil `par` Nil = Nil
+  Nil `par` gs@Cons{} = gs
+  Cons f fs `par` Nil = mkCons f (fs `par` Nil)
+  Cons f fs `par` Cons g gs = mkCons f (fs `par` Cons g gs)
+  leftUnitor f = listId \\ f
+  leftUnitorInv f = listId \\ f
+  rightUnitor Nil = listId
+  rightUnitor (Cons f fs) = mkCons f (rightUnitor fs)
+  rightUnitorInv Nil = listId
+  rightUnitorInv (Cons f fs) = mkCons f (rightUnitorInv fs)
+  associator Nil bs cs = listId \\ bs `par` cs
+  associator (Cons f fs) bs cs = mkCons f (associator fs bs cs)
+  associatorInv Nil bs cs = listId \\ bs `par` cs
+  associatorInv (Cons f fs) bs cs = mkCons f (associatorInv fs bs cs)

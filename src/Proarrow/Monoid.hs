@@ -1,34 +1,33 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 module Proarrow.Monoid where
 
-import Data.Kind (Type)
+import Data.Kind (Type, Constraint)
 import Prelude qualified as P
 
-import Proarrow.Core (CategoryOf(..), Promonad(..), Profunctor (..), PRO, rmap)
-import Proarrow.Category.Monoidal (MONOIDAL, Monoidal(..), Compose, Strictified(..))
-import Proarrow.Object.BinaryProduct (ProductFunctor (..))
-import Proarrow.Category.Instance.List (List(..), All)
-import Proarrow.Object (obj)
-import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Core (CategoryOf(..), Promonad(..), arr)
+import Proarrow.Category.Monoidal (Monoidal(..))
+import Proarrow.Object.BinaryProduct ((&&&), Cartesian)
 import Proarrow.Profunctor.Composition ((:.:)(..))
-import Proarrow.Profunctor.Identity (Id(..))
+import Proarrow.Category.Bicategory.Prof (Prof(..), PROFK, ProfK(PK))
+import Proarrow.Category.Monoidal.Endo (Endo(..), ENDO (E))
+import Proarrow.Object.Terminal (terminate)
 
 
-class (Monoidal t, Ob m, CategoryOf k) => Monoid (t :: MONOIDAL k) (m :: k) where
-  mempty :: t '[] '[m]
-  mappend :: t '[m, m] '[m]
-  mconcat :: forall ms. Ob ms => All ((~) m) ms => t ms '[m]
-  mconcat = case obj @ms of
-    Nil -> mempty
-    Cons _ ms' -> mappend . (id @_ @'[m] `par` mconcat) \\ ms'
+type Monoid :: forall {k}. k -> Constraint
+class (Monoidal k, Ob m) => Monoid (m :: k) where
+  mempty :: Unit ~> m
+  mappend :: m ** m ~> m
 
-instance P.Monoid m => Monoid (Strictified ProductFunctor) (m :: Type) where
-  mempty = Strictified \() -> P.mempty
-  mappend = Strictified (P.uncurry (P.<>))
+instance P.Monoid m => Monoid (m :: Type) where
+  mempty () = P.mempty
+  mappend = P.uncurry (P.<>)
 
-newtype AsMonoid p a b = AsMonoid { getAsMonoid :: p a b }
-  deriving Profunctor
-instance Promonad p => Monoid (Strictified Compose) (AsMonoid p :: PRO k k) where
-  mempty = Strictified (Prof \(Id f) -> AsMonoid (rmap f id) \\ f)
-  mappend = Strictified (Prof \(AsMonoid p :.: AsMonoid q) -> AsMonoid (q . p))
+newtype GenElt x m = GenElt (x ~> m)
+
+instance (Monoid m, Cartesian k) => P.Semigroup (GenElt x (m :: k)) where
+  GenElt f <> GenElt g = GenElt (mappend . (f &&& g))
+instance (Monoid m, Cartesian k, Ob x) => P.Monoid (GenElt x (m :: k)) where
+  mempty = GenElt (mempty . arr terminate)
+
+instance Promonad p => Monoid (E (PK p) :: ENDO PROFK k) where
+  mempty = Endo (Prof arr)
+  mappend = Endo (Prof \(p :.: q) -> q . p)

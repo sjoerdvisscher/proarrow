@@ -1,48 +1,41 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Monoidal.Endo where
 
-import Data.Function (($))
 
-import Proarrow.Core (Promonad(..), CategoryOf(..), Profunctor(..), Kind)
-import Proarrow.Category.Bicategory (Path(..), Bicategory(..), MKKIND, type (+++), withAssoc)
-import Proarrow.Category.Monoidal (MONOIDAL, Monoidal(..))
-import Proarrow.Category.Instance.List (IsList (..), List (..), type (++))
-import Proarrow.Object (obj)
+import Proarrow.Core (Promonad(..), CategoryOf(..), Profunctor(..), UN, Is, CAT, dimapDefault)
+import Proarrow.Category.Bicategory (Bicategory(..))
+import Proarrow.Category.Bicategory qualified as B
+import Proarrow.Category.Monoidal (Monoidal(..))
 
 
-type family ListToPath (ps :: [Path kk k k]) :: Path kk k k where
-  ListToPath '[] = Nil
-  ListToPath (p ': ps) = p +++ ListToPath ps
+type data ENDO (kk :: CAT j) (k :: j) = E (kk k k)
+type instance UN E (E p) = p
 
-listToPath :: (Bicategory kk, Ob0 kk k) => List (as :: [Path kk k k]) bs -> ListToPath as ~> ListToPath bs
-listToPath Nil = id
-listToPath (Cons f fs) = f `o` listToPath fs
+type Endo :: forall {kk} {k}. CAT (ENDO kk k)
+data Endo p q where
+  Endo :: p ~> q -> Endo (E p) (E q)
 
-appendListToPath'
-  :: forall {kk} {k} (as :: [Path kk k k]) bs r. (Bicategory kk, Ob0 kk k, Ob bs, Ob (ListToPath bs))
-  => List as as -> ((ListToPath as +++ ListToPath bs ~ ListToPath (as ++ bs), Ob (as ++ bs)) => r) -> r
-appendListToPath' Nil r = r
-appendListToPath' (Cons @_ @a @as' f fs) r = withAssoc @a @(ListToPath as') @(ListToPath bs) (appendListToPath' @as' @bs fs r)
-  \\ f \\ listToPath fs
+mkEndo :: CategoryOf (kk k k) => (p :: kk k k) ~> q -> Endo (E p) (E q)
+mkEndo pq = Endo pq \\ pq
 
-appendListToPath
-  :: forall {kk} {k} (as :: [Path kk k k]) bs r. (Bicategory kk, Ob0 kk k, Ob as, Ob bs)
-  => ((ListToPath as +++ ListToPath bs ~ ListToPath (as ++ bs), Ob (as ++ bs)) => r) -> r
-appendListToPath r = appendListToPath' @as @bs (listId @as) r \\ listToPath (obj @bs)
-
-
-type Endo :: forall {kk :: MKKIND} {k :: Kind}. MONOIDAL (Path kk k k)
-data Endo as bs where
-  Endo :: (Ob as, Ob bs) => ListToPath as ~> ListToPath bs -> Endo as bs
-
-instance (Bicategory kk, Ob0 kk k) => Profunctor (Endo :: MONOIDAL (Path kk k k)) where
-  dimap l r (Endo f) = Endo (listToPath r . f . listToPath l) \\ l \\ r
+instance (Bicategory kk, Ob0 kk k) => Profunctor (Endo :: CAT (ENDO kk k)) where
+  dimap = dimapDefault
   r \\ Endo f = r \\ f
+instance (Bicategory kk, Ob0 kk k) => Promonad (Endo :: CAT (ENDO kk k)) where
+  id = Endo id
+  Endo m . Endo n = Endo (m . n)
+instance (Bicategory kk, Ob0 kk k) => CategoryOf (ENDO kk k) where
+  type (~>) = Endo
+  type Ob p = (Is E p, Ob (UN E p))
 
-instance (Bicategory kk, Ob0 kk k) => Promonad (Endo :: MONOIDAL (Path kk k k)) where
-  id :: forall (a :: [Path kk k k]). Ob a => Endo a a
-  id = Endo $ listToPath $ listId @a
-  Endo f . Endo g = Endo (f . g)
-
-instance (Bicategory kk, Ob0 kk k, CategoryOf (kk k k)) => Monoidal (Endo :: MONOIDAL (Path kk k k)) where
-  Endo @as @bs l `par` Endo @cs @ds r = appendListToPath @as @cs $ appendListToPath @bs @ds $ Endo (l `o` r)
+-- | The monoidal subcategory of a bicategory for a single object.
+instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
+  type Unit = E I
+  type E p ** E q = E (p `O` q)
+  Endo f `par` Endo g = mkEndo (f `o` g)
+  leftUnitor (Endo p) = mkEndo (B.leftUnitor p)
+  leftUnitorInv (Endo p) = mkEndo (B.leftUnitorInv p)
+  rightUnitor (Endo p) = mkEndo (B.rightUnitor p)
+  rightUnitorInv (Endo p) = mkEndo (B.rightUnitorInv p)
+  associator (Endo p) (Endo q) (Endo r) = mkEndo (B.associator p q r)
+  associatorInv (Endo p) (Endo q) (Endo r) = mkEndo (B.associatorInv p q r)

@@ -1,29 +1,37 @@
 module Proarrow.Category.Monoidal.Rev where
 
-import Proarrow.Core (Profunctor(..))
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (TENSOR, Tensor(..))
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Core (CAT, Profunctor(..), Promonad(..), CategoryOf(..), dimapDefault, UN, Is)
+import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal(..))
 
-type Rev :: TENSOR k -> TENSOR k
-data Rev t a b where
-  Rev :: t a '(c, b) -> Rev t a '(b, c)
+type data REV k = R k
+type instance UN R (R a) = a
 
-instance Profunctor t => Profunctor (Rev t) where
-  dimap l (r1 :**: r2) (Rev t) = Rev (dimap l (r2 :**: r1) t)
+type Rev :: CAT k
+data Rev a b where
+  Rev :: a ~> b -> Rev (R a) (R b)
+
+instance CategoryOf k => Profunctor (Rev :: CAT (REV k)) where
+  dimap = dimapDefault
   r \\ Rev t = r \\ t
 
-instance Representable t => Representable (Rev t) where
-  type Rev t % '(b, c) = t % '(c, b)
-  index (Rev t) = index t
-  tabulate f = Rev (tabulate f)
-  repMap (f1 :**: f2) = repMap @t (f2 :**: f1)
+instance CategoryOf k => Promonad (Rev :: CAT (REV k)) where
+  id = Rev id
+  Rev f . Rev g = Rev (f . g)
 
-instance Tensor t => Tensor (Rev t) where
-  type U (Rev t) = U t
-  leftUnitor = rightUnitor @t
-  leftUnitorInv = rightUnitorInv @t
-  rightUnitor = leftUnitor @t
-  rightUnitorInv = leftUnitorInv @t
-  associator a b c = associatorInv @t c b a
-  associatorInv a b c = associator @t c b a
+instance CategoryOf k => CategoryOf (REV k) where
+  type (~>) = Rev
+  type Ob a = (Is R a, Ob (UN R a))
+
+instance Monoidal k => Monoidal (REV k) where
+  type Unit = R Unit
+  type (R a) ** (R b) = R (b ** a)
+  Rev f `par` Rev g = Rev (g `par` f)
+  leftUnitor (Rev a) = Rev (rightUnitor a)
+  leftUnitorInv (Rev a) = Rev (rightUnitorInv a)
+  rightUnitor (Rev a) = Rev (leftUnitor a)
+  rightUnitorInv (Rev a) = Rev (leftUnitorInv a)
+  associator (Rev a) (Rev b) (Rev c) = Rev (associatorInv c b a)
+  associatorInv (Rev a) (Rev b) (Rev c) = Rev (associator c b a)
+
+instance SymMonoidal k => SymMonoidal (REV k) where
+  swap' (Rev a) (Rev b) = Rev (swap' b a)

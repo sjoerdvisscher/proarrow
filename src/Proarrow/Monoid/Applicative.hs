@@ -6,17 +6,16 @@ import Data.Function (($))
 import Prelude qualified as P
 import Control.Applicative qualified as P
 
-import Proarrow.Core (Promonad(..), CategoryOf(..), (//), lmap, Profunctor (..))
+import Proarrow.Core (Promonad(..), CategoryOf(..), (//), lmap, Profunctor (..), UN)
 import Proarrow.Functor (Functor(..), Prelude (..))
 import Proarrow.Object.Terminal (El, terminate)
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), HasCoproducts, CoproductFunctor)
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), HasProducts, ProductFunctor (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), HasCoproducts, COPROD (..), Coprod (..))
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Prod (..))
 import Proarrow.Monoid (Monoid(..))
-import Proarrow.Profunctor.Day (Day(..), PList (..))
+import Proarrow.Profunctor.Day (Day(..), DayUnit(..))
 import Proarrow.Profunctor.Star (Star(..))
 import Proarrow.Object (obj)
-import Proarrow.Category.Monoidal (Strictified(..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Category.Instance.Prof (Prof(..))
 
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
@@ -42,22 +41,24 @@ instance P.Alternative f => Alternative (Prelude f) where
   alt abc (Prelude fl, Prelude fr) = Prelude (P.fmap abc $ P.fmap P.Left fl P.<|> P.fmap P.Right fr)
 
 data AsMonoid f a b where
-  AsMonoid :: forall f a b. Ob b => { getAsMonoid :: a ~> f b } -> AsMonoid f a b
+  AsMonoid :: forall {j} {k} (f :: j -> k) a b. (Ob a, Ob b) => UN PR a ~> f (UN PR b) -> AsMonoid f a b
 instance Functor f => Profunctor (AsMonoid f) where
-  dimap l r (AsMonoid g) = AsMonoid (map r . g . l) \\ r
+  dimap (Prod l) (Prod r) (AsMonoid g) = AsMonoid (map r . g . l) \\ r \\ l
   r \\ AsMonoid f = r \\ f
 
-instance (HasProducts j, HasProducts k, Applicative f) => Monoid (Day (Strictified ProductFunctor) (Strictified ProductFunctor)) (AsMonoid (f :: j -> k)) where
-  mempty = Day \PNil -> Strictified id :.: PCons (AsMonoid (pure @f id)) PNil :.: Strictified id
-  mappend = Day \(AsMonoid @_ @a1 @b1 f `PCons` (AsMonoid @_ @a2 @b2 g `PCons` PNil)) ->
-    f // g // let a12 = obj @a1 *** obj @a2; b12 = obj @b1 *** obj @b2
-    in Strictified a12 :.: PCons (AsMonoid (liftA2 @f @b1 @b2 b12 . (f *** g))) PNil :.: Strictified b12 \\ a12 \\ b12
+instance (HasProducts j, HasProducts k, Applicative f) => Monoid (AsMonoid (f :: j -> k)) where
+  mempty = Prof \(DayUnit (Prod f) (Prod g)) -> AsMonoid (pure @f g . f) \\ f \\ g
+  mappend = Prof \(Day (Prod f) (AsMonoid @_ @_ @x p) (AsMonoid @_ @_ @y q) (Prod g)) -> AsMonoid (liftA2 @f @(UN PR x) @(UN PR y) g . (p *** q) . f)
 
-instance (HasCoproducts j, HasProducts k, Alternative f) => Monoid (Day (Strictified ProductFunctor) (Strictified CoproductFunctor)) (AsMonoid (f :: j -> k)) where
-  mempty = Day \PNil -> Strictified id :.: PCons (AsMonoid empty) PNil :.: Strictified id
-  mappend = Day \(AsMonoid @_ @a1 @b1 f `PCons` (AsMonoid @_ @a2 @b2 g `PCons` PNil)) ->
-    f // g // let a12 = obj @a1 *** obj @a2; b12 = obj @b1 +++ obj @b2
-    in Strictified a12 :.: PCons (AsMonoid (alt @f @b1 @b2 b12 . (f *** g))) PNil :.: Strictified b12 \\ a12 \\ b12
+data AsMonoidAlt f a b where
+  AsMonoidAlt :: forall {j} {k} (f :: j -> k) a b. (Ob a, Ob b) => UN PR a ~> f (UN COPR b) -> AsMonoidAlt f a b
+instance Functor f => Profunctor (AsMonoidAlt f) where
+  dimap (Prod l) (Coprod r) (AsMonoidAlt g) = AsMonoidAlt (map r . g . l) \\ r \\ l
+  r \\ AsMonoidAlt f = r \\ f
+
+instance (HasCoproducts j, HasProducts k, Alternative f) => Monoid (AsMonoidAlt (f :: j -> k)) where
+  mempty = Prof \(DayUnit (Prod f) (Coprod g)) -> AsMonoidAlt (empty @f . f) \\ f \\ g
+  mappend = Prof \(Day (Prod f) (AsMonoidAlt @_ @_ @x p) (AsMonoidAlt @_ @_ @y q) (Coprod g)) -> AsMonoidAlt (alt @f @(UN COPR x) @(UN COPR y) g . (p *** q) . f)
 
 
 class Profunctor p => Proapplicative p where

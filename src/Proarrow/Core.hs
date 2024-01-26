@@ -52,6 +52,8 @@ class Profunctor p => Promonad p where
   id :: Ob a => p a a
   (.) :: p b c -> p a b -> p a c
 
+arr :: Promonad p => a ~> b -> p a b
+arr f = rmap f id \\ f
 
 
 instance Profunctor (->) where
