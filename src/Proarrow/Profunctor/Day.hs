@@ -3,8 +3,9 @@ module Proarrow.Profunctor.Day where
 
 import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad(..), lmap, rmap)
 import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Object (src, tgt)
+import Proarrow.Monoid (Monoid (..))
 
 
 data DayUnit a b where
@@ -37,3 +38,8 @@ instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
     let f = associatorInv (src p1) (src p2) (src q2) . (src p1 `par` f2) . f1
         g = g1 . (tgt p1 `par` g2) . associator (tgt p1) (tgt p2) (tgt q2)
     in Day f (Day (src p1 `par` src p2) p1 p2 (tgt p1 `par` tgt p2)) q2 g
+
+
+instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
+  mempty = Prof \(DayUnit f g) -> dimap f g lift0
+  mappend = Prof \(Day f p q g) -> dimap f g (lift2 p q)

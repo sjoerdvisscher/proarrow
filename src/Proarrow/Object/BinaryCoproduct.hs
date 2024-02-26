@@ -61,7 +61,7 @@ type instance UN COPR (COPR k) = k
 
 type Coprod :: CAT (COPROD k)
 data Coprod a b where
-  Coprod :: (Ob a, Ob b) => UN COPR a ~> UN COPR b -> Coprod a b
+  Coprod :: (Ob a, Ob b) => { getCoprod :: UN COPR a ~> UN COPR b } -> Coprod a b
 
 mkCoprod :: CategoryOf k => (a :: k) ~> b -> Coprod (COPR a) (COPR b)
 mkCoprod f = Coprod f \\ f

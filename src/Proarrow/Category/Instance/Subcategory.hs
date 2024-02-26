@@ -1,6 +1,7 @@
 module Proarrow.Category.Instance.Subcategory where
 
-import Proarrow.Core (CAT, OB, UN, Is, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
+import Proarrow.Core (CAT, OB, UN, Is, CategoryOf (..), Promonad (..), Profunctor (..), dimapDefault)
+import Proarrow.Category.Monoidal (Monoidal (..))
 
 
 newtype SUBCAT (ob :: OB k) = SUB k
@@ -22,3 +23,17 @@ instance Promonad ((~>) :: CAT k) => Promonad (Sub :: CAT (SUBCAT (ob :: OB k)))
 instance CategoryOf k => CategoryOf (SUBCAT (ob :: OB k)) where
   type (~>) = Sub
   type Ob (a :: SUBCAT ob) = (Is SUB a, Ob (UN SUB a), ob (UN SUB a))
+
+class (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
+instance (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
+
+instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => Monoidal (SUBCAT (ob :: OB k)) where
+  type Unit = SUB Unit
+  type a ** b = SUB (UN SUB a ** UN SUB b)
+  Sub f `par` Sub g = Sub (f `par` g)
+  leftUnitor (Sub a) = Sub (leftUnitor a)
+  leftUnitorInv (Sub a) = Sub (leftUnitorInv a)
+  rightUnitor (Sub a) = Sub (rightUnitor a)
+  rightUnitorInv (Sub a) = Sub (rightUnitorInv a)
+  associator (Sub a) (Sub b) (Sub c) = Sub (associator a b c)
+  associatorInv (Sub a) (Sub b) (Sub c) = Sub (associatorInv a b c)

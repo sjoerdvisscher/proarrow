@@ -25,19 +25,6 @@ class Monoidal k => SymMonoidal k where
 swap :: forall {k} a b. (SymMonoidal k, Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
 swap = swap' (obj @a) (obj @b)
 
--- withUnital
---   :: forall {k} (a :: [k]) r
---    . (CategoryOf k, Ob a)
---   => (a ++ '[] ~ a => r) -> r
--- withUnital = go (obj @a)
---   where
---     go :: forall a'. Obj a' -> (a' ++ '[] ~ a' => r) -> r
---     go Nil r = r
---     go (Cons _ as) r = go as r
-
-type family All (pred :: k -> Constraint) (as :: [k]) :: Constraint where
-  All pred '[] = () :: Constraint
-  All pred (a ': as) = (pred a, All pred as)
 
 type family (as :: [k]) ++ (bs :: [k]) :: [k] where
   '[] ++ bs = bs
@@ -162,6 +149,6 @@ withAppend' (Cons _ as) r = withAppend' @bs as r
 --       swap1 = swap1
 
 
-class (Monoidal j, Monoidal k) => MonoidalProfunctor (p :: PRO j k) where
+class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k) where
   lift0 :: p Unit Unit
   lift2 :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)

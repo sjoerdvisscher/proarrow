@@ -1,9 +1,13 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Instance.Nat where
 
-import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), Is, UN, dimapDefault)
-import Proarrow.Functor (Functor(..), type (.~>))
 import Data.Kind (Type)
+import Data.Functor.Identity (Identity (..))
+import Data.Functor.Compose (Compose (..))
+
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), Profunctor (..), Is, UN, dimapDefault)
+import Proarrow.Functor (Functor (..), type (.~>))
+import Proarrow.Category.Monoidal (Monoidal (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -24,6 +28,18 @@ instance Promonad (Nat :: CAT (j -> Type)) where
 instance Profunctor (Nat :: CAT (k1 -> Type)) where
   dimap = dimapDefault
   r \\ Nat{} = r
+
+instance Monoidal (Type -> Type) where
+  type Unit = Identity
+  type f ** g = Compose f g
+  Nat n `par` Nat m = Nat (\(Compose fg) -> Compose (n (map m fg)))
+  leftUnitor Nat{} = Nat (runIdentity . getCompose)
+  leftUnitorInv Nat{} = Nat (Compose . Identity)
+  rightUnitor Nat{} = Nat (map runIdentity . getCompose)
+  rightUnitorInv Nat{} = Nat (Compose . map Identity)
+  associator Nat{} Nat{} Nat{} = Nat (Compose . map Compose . getCompose . getCompose)
+  associatorInv Nat{} Nat{} Nat{} = Nat (Compose . Compose . map getCompose . getCompose)
+
 
 
 instance CategoryOf (k1 -> k2 -> k3 -> Type) where
