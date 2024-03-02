@@ -8,7 +8,7 @@ import Proarrow.Core (PRO, CategoryOf(..), Promonad(..), Profunctor(..), (:~>), 
 import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
 import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
 import Proarrow.Category.Instance.Zero (VOID)
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod)
+import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod, dimapCorep)
 import Proarrow.Profunctor.Ran (type (|>), Ran(..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor(TerminalProfunctor'))
 import Proarrow.Object (Obj)
@@ -17,9 +17,11 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..), lft, rgt)
 
 type Unweighted = TerminalProfunctor
 
+class Corepresentable (Colimit j d) => IsCorepresentableColimit j d
+instance Corepresentable (Colimit j d) => IsCorepresentableColimit j d
+
 type HasColimits :: PRO i a -> Kind -> Constraint
-class HasColimits (j :: PRO i a) k where
-  -- Colimit has to be Corepresentable too
+class (forall (d :: PRO i k). Corepresentable d => IsCorepresentableColimit j d) => HasColimits (j :: PRO i a) k where
   type Colimit (j :: PRO i a) (d :: PRO i k) :: PRO a k
   colimit :: Corepresentable (d :: PRO i k) => Colimit j d :~> j |> d
   colimitInv :: Corepresentable (d :: PRO i k) => j |> d :~> Colimit j d
@@ -27,11 +29,19 @@ class HasColimits (j :: PRO i a) k where
 
 type InitialLimit :: PRO VOID k -> PRO UNIT k
 data InitialLimit d a b where
-  InitialLimit :: forall d a. Ob a => InitialObject ~> a -> InitialLimit d U a
+  InitialLimit :: forall d a. InitialObject ~> a -> InitialLimit d U a
 
+instance HasInitialObject k => Profunctor (InitialLimit (d :: PRO VOID k)) where
+  dimap = dimapCorep
+  r \\ InitialLimit f = r \\ f
+instance HasInitialObject k => Corepresentable (InitialLimit (d :: PRO VOID k)) where
+  type InitialLimit d %% U = InitialObject
+  coindex (InitialLimit f) = f
+  cotabulate = InitialLimit
+  corepMap Unit = id
 instance HasInitialObject k => HasColimits (Unweighted :: PRO VOID UNIT) k where
   type Colimit Unweighted d = InitialLimit d
-  colimit (InitialLimit @d f) = Ran \(TerminalProfunctor' o _) -> cotabulate $ f . case o of
+  colimit (InitialLimit @d f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . case o of
   colimitInv Ran{} = InitialLimit initiate
 
 

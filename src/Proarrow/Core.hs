@@ -56,6 +56,19 @@ arr :: Promonad p => a ~> b -> p a b
 arr f = rmap f id \\ f
 
 
+type Obj a = a ~> a
+
+obj :: forall {k} (a :: k). (CategoryOf k, Ob a) => Obj a
+obj = id @_ @a
+
+src :: forall {k} a b p. Profunctor p => p (a :: k) b -> Obj a
+src p = obj @a \\ p
+
+tgt :: forall {k} a b p. Profunctor p => p (a :: k) b -> Obj b
+tgt p = obj @b \\ p
+
+
+
 instance Profunctor (->) where
   dimap = dimapDefault
 

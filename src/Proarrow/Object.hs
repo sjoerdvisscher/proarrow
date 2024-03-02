@@ -1,15 +1,12 @@
-module Proarrow.Object where
+module Proarrow.Object (
+  Obj,
+  obj,
+  src,
+  tgt,
+  module Proarrow.Object
+) where
 
-import Proarrow.Core (CategoryOf(..), Promonad (..))
-import Proarrow.Profunctor (Profunctor (..))
-
-type Obj a = a ~> a
-obj :: forall {k} (a :: k). (CategoryOf k, Ob a) => Obj a
-obj = id @_ @a
-src :: forall {k} a b p. Profunctor p => p (a :: k) b -> Obj a
-src p = obj @a \\ p
-tgt :: forall {k} a b p. Profunctor p => p (a :: k) b -> Obj b
-tgt p = obj @b \\ p
+import Proarrow.Core (CategoryOf(..), Obj, obj, src, tgt)
 
 class Ob a => Ob' a
 instance Ob a => Ob' a

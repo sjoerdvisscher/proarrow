@@ -2,6 +2,7 @@
 module Proarrow.Category.Bicategory.Op where
 
 import Proarrow.Category.Bicategory (Bicategory(..))
+import Proarrow.Category.Bicategory.Kan (RightKanExtension(..), LeftKanExtension(..), RightKanLift(..), LeftKanLift(..))
 import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault, UN, Is)
 
 
@@ -36,3 +37,23 @@ instance Bicategory kk => Bicategory (OPK kk) where
   rightUnitorInv (Op p) = Op (leftUnitorInv p)
   associator (Op p) (Op q) (Op r) = Op (associatorInv r q p)
   associatorInv (Op p) (Op q) (Op r) = Op (associator r q p)
+
+instance RightKanExtension j f => RightKanLift (OP j) (OP f) where
+  type Rift (OP j) (OP f) = OP (Ran j f)
+  rift = Op (ran @j @f)
+  riftUniv (Op n) = Op (ranUniv @j @f n)
+
+instance LeftKanExtension j f => LeftKanLift (OP j) (OP f) where
+  type Lift (OP j) (OP f) = OP (Lan j f)
+  lift = Op (lan @j @f)
+  liftUniv (Op n) = Op (lanUniv @j @f n)
+
+instance RightKanLift j f => RightKanExtension (OP j) (OP f) where
+  type Ran (OP j) (OP f) = OP (Rift j f)
+  ran = Op (rift @j @f)
+  ranUniv (Op n) = Op (riftUniv @j @f n)
+
+instance LeftKanLift j f => LeftKanExtension (OP j) (OP f) where
+  type Lan (OP j) (OP f) = OP (Lift j f)
+  lan = Op (lift @j @f)
+  lanUniv (Op n) = Op (liftUniv @j @f n)

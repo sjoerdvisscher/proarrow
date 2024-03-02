@@ -6,16 +6,18 @@ import Data.Functor.Identity (Identity (..))
 import Data.Functor.Compose (Compose (..))
 import Prelude (uncurry, Either, either, fst, snd, ($), Maybe (..), const, Traversable, Monad (..), fmap)
 
-import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, OB)
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, OB, Kind, CAT, dimapDefault)
 import Proarrow.Category.Monoidal (Monoidal(..))
+import Proarrow.Category.Monoidal.Product ()
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Functor (Functor(..), Prelude (..))
 import Proarrow.Object.BinaryProduct ()
-import Proarrow.Object.BinaryCoproduct (COPROD(..), Coprod (..))
+import Proarrow.Object.BinaryCoproduct (COPROD(..), Coprod (..), mkCoprod)
 import Proarrow.Category.Instance.Subcategory (SUBCAT(..), Sub (..))
-import Proarrow.Promonad (KLEISLI(..), Kleisli(..))
+import Proarrow.Category.Instance.Kleisli (KLEISLI(..), Kleisli(..))
 import Proarrow.Profunctor.Star (Star(..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 
 
 class (Monoidal m, CategoryOf k) => MonoidalAction m k where
@@ -26,13 +28,29 @@ class (Monoidal m, CategoryOf k) => MonoidalAction m k where
   multiplicator :: Obj (p :: m) -> Obj (q :: m) -> Obj (x :: k) -> Act p (Act q x) ~> Act (p ** q) x
   multiplicatorInv :: Obj (p :: m) -> Obj (q :: m) -> Obj (x :: k) -> Act (p ** q) x ~> Act p (Act q x)
 
-instance Monoidal m => MonoidalAction m m where
-  type Act (p :: m) (x :: m) = p ** x
+instance MonoidalAction Type Type where
+  type Act p x = p ** x
   act = par
   unitor = leftUnitor obj
   unitorInv = leftUnitorInv obj
   multiplicator = associatorInv
   multiplicatorInv = associator
+
+instance MonoidalAction (COPROD Type) (COPROD Type) where
+  type Act p x = p ** x
+  act = par
+  unitor = leftUnitor obj
+  unitorInv = leftUnitorInv obj
+  multiplicator = associatorInv
+  multiplicatorInv = associator
+
+instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
+  type Act '(p, q) '(x, y) = '(Act p x, Act q y)
+  act (p :**: q) (x :**: y) = act p x :**: act q y
+  unitor = unitor @n :**: unitor @m
+  unitorInv = unitorInv @n :**: unitorInv @m
+  multiplicator (p :**: q) (r :**: s) (x :**: y) = multiplicator p r x :**: multiplicator q s y
+  multiplicatorInv (p :**: q) (r :**: s) (x :**: y) = multiplicatorInv p r x :**: multiplicatorInv q s y
 
 instance MonoidalAction Type (COPROD Type) where
   type Act (p :: Type) (COPR x :: COPROD Type) = COPR (p ** x)
@@ -44,11 +62,11 @@ instance MonoidalAction Type (COPROD Type) where
 
 instance MonoidalAction (COPROD Type) Type where
   type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
-  f@Coprod{} `act` g = getCoprod (f `par` Coprod g)
+  f@Coprod{} `act` g = getCoprod (f `par` mkCoprod g)
   unitor = getCoprod (leftUnitor obj)
   unitorInv = getCoprod (leftUnitorInv obj)
-  multiplicator p@Coprod{} q@Coprod{} x = getCoprod (associatorInv p q (Coprod x))
-  multiplicatorInv p@Coprod{} q@Coprod{} x = getCoprod (associator p q (Coprod x))
+  multiplicator p@Coprod{} q@Coprod{} x = getCoprod (associatorInv p q (mkCoprod x))
+  multiplicatorInv p@Coprod{} q@Coprod{} x = getCoprod (associator p q (mkCoprod x))
 
 instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) Type where
   type Act (p :: SUBCAT ob) (x :: Type) = Act (UN SUB p) x
@@ -95,6 +113,27 @@ instance (MonoidalAction m c, MonoidalAction m d) => Tambara m (Optic m (a :: c)
   tambara x (Optic m f g) = Optic (x `par` m)
     (multiplicator x m (obj @a) . act x f)
     (act x g . multiplicatorInv x m (obj @b))
+
+parallel :: Optic m a b s t -> Optic n c d u v -> Optic (m, n) '(a, c) '(b, d) '(s, u) '(t, v)
+parallel (Optic x f g) (Optic y h i) = Optic (x :**: y) (f :**: h) (g :**: i)
+
+
+type data OPTIC (m :: Kind) (c :: Kind) (d :: Kind) = OPT c d
+type family LCat (p :: OPTIC m c d) where LCat (OPT c d) = c
+type family RCat (p :: OPTIC m c d) where RCat (OPT c d) = d
+type OpticCat :: CAT (OPTIC m c d)
+data OpticCat ab st where
+  OpticCat :: Optic m a b s t -> OpticCat (OPT a b :: OPTIC m c d) (OPT s t)
+
+instance (MonoidalAction m c, MonoidalAction m d) => Profunctor (OpticCat :: CAT (OPTIC m c d)) where
+  dimap = dimapDefault
+  r \\ OpticCat (Optic _ f g) = r \\ f \\ g
+instance (MonoidalAction m c, MonoidalAction m d) => Promonad (OpticCat :: CAT (OPTIC m c d)) where
+  id = OpticCat (prof2ex id)
+  OpticCat l@Optic{} . OpticCat r@Optic{} = OpticCat $ prof2ex (ex2prof l . ex2prof r)
+instance (MonoidalAction m c, MonoidalAction m d) => CategoryOf (OPTIC m c d) where
+  type (~>) = OpticCat
+  type Ob a = (a ~ OPT (LCat a) (RCat a), Ob (LCat a), Ob (RCat a))
 
 
 type ProfOptic m (a :: c) (b :: d) s t = forall p. Tambara m p => p a b -> p s t

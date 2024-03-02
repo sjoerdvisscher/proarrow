@@ -4,14 +4,18 @@ module Proarrow.Category.Bicategory.Prof where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Adjunction (..))
-import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), (:~>), CAT, Promonad (..), dimapDefault, lmap, rmap, UN, Is, arr, IsCategoryOf)
+import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Adjunction(..))
+import Proarrow.Category.Bicategory.Kan (RightKanExtension(..), RightKanLift (..))
+import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), (:~>), CAT, Promonad (..), dimapDefault, lmap, rmap, UN, Is, arr, IsCategoryOf, (//))
 import Proarrow.Profunctor.Representable (Representable)
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Category.Instance.Prof ()
 import Proarrow.Profunctor.Composition ((:.:)(..))
 import Proarrow.Object (src, tgt)
-import qualified Proarrow.Adjunction as A
+import Proarrow.Adjunction qualified as A
+import Proarrow.Profunctor.Ran qualified as R
+import Proarrow.Profunctor.Rift qualified as R
+import Proarrow.Category.Opposite (OPPOSITE(..))
 
 
 type data ProfCl = ProfC | ProfRepC | ProfCorepC
@@ -67,3 +71,13 @@ instance (IsCategoryOf j cj, IsCategoryOf k ck, Profunctor p) =>
 instance (A.Adjunction l r) => Adjunction (PK l :: PROFK c d) (PK r) where
   unit = Prof \f -> lmap f A.unit \\ f
   counit = Prof A.counit
+
+instance (Profunctor f, Profunctor j) => RightKanExtension (PK j :: PROFK c d) (PK f :: PROFK c e) where
+  type Ran (PK j) (PK f) = PK (R.Ran (OP j) f)
+  ran = Prof \(j :.: r) -> R.runRan j r
+  ranUniv (Prof n) = Prof \g -> g // R.Ran \j -> n (j :.: g)
+
+instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK d c) (PK f :: PROFK e c) where
+  type Rift (PK j) (PK f) = PK (R.Rift (OP j) f)
+  rift = Prof \(r :.: j) -> R.runRift j r
+  riftUniv (Prof n) = Prof \g -> g // R.Rift \j -> n (g :.: j)

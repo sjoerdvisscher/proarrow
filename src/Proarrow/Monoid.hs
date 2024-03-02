@@ -6,9 +6,6 @@ import Prelude qualified as P
 import Proarrow.Core (CategoryOf(..), Promonad(..), arr)
 import Proarrow.Category.Monoidal (Monoidal(..))
 import Proarrow.Object.BinaryProduct ((&&&), Cartesian)
-import Proarrow.Profunctor.Composition ((:.:)(..))
-import Proarrow.Category.Bicategory.Prof (Prof(..), PROFK, ProfK(PK))
-import Proarrow.Category.Monoidal.Endo (Endo(..), ENDO (E))
 import Proarrow.Object.Terminal (terminate)
 
 
@@ -28,6 +25,6 @@ instance (Monoid m, Cartesian k) => P.Semigroup (GenElt x (m :: k)) where
 instance (Monoid m, Cartesian k, Ob x) => P.Monoid (GenElt x (m :: k)) where
   mempty = GenElt (mempty . arr terminate)
 
-instance Promonad p => Monoid (E (PK p) :: ENDO PROFK k) where
-  mempty = Endo (Prof arr)
-  mappend = Endo (Prof \(p :.: q) -> q . p)
+class (Monoidal k, Ob c) => Comonoid (c :: k) where
+  counit :: c ~> Unit
+  comult :: c ~> c ** c

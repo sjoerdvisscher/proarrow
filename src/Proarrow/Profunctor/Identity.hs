@@ -11,6 +11,10 @@ instance CategoryOf k => Profunctor (Id :: CAT k) where
   dimap l r (Id f) = Id (r . f . l)
   r \\ Id f = r \\ f
 
+instance CategoryOf k => Promonad (Id :: CAT k) where
+  id = Id id
+  Id f . Id g = Id (f . g)
+
 instance CategoryOf k => Representable (Id :: CAT k) where
   type Id % a = a
   index = getId

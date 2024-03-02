@@ -3,9 +3,10 @@ module Proarrow.Category.Monoidal.Endo where
 
 
 import Proarrow.Core (Promonad(..), CategoryOf(..), Profunctor(..), UN, Is, CAT, dimapDefault)
-import Proarrow.Category.Bicategory (Bicategory(..))
+import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Comonad(..))
 import Proarrow.Category.Bicategory qualified as B
 import Proarrow.Category.Monoidal (Monoidal(..))
+import Proarrow.Monoid (Monoid(..), Comonoid(..))
 
 
 type data ENDO (kk :: CAT j) (k :: j) = E (kk k k)
@@ -39,3 +40,13 @@ instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
   rightUnitorInv (Endo p) = mkEndo (B.rightUnitorInv p)
   associator (Endo p) (Endo q) (Endo r) = mkEndo (B.associator p q r)
   associatorInv (Endo p) (Endo q) (Endo r) = mkEndo (B.associatorInv p q r)
+
+-- | Monads are monoids in the category of endo-1-cells.
+instance (Bicategory kk, Monad m) => Monoid (E m :: ENDO kk a) where
+  mempty = mkEndo eta
+  mappend = mkEndo mu
+
+-- | Comonads are comonoids in the category of endo-1-cells.
+instance (Bicategory kk, Comonad c) => Comonoid (E c :: ENDO kk a) where
+  counit = mkEndo epsilon
+  comult = mkEndo delta
