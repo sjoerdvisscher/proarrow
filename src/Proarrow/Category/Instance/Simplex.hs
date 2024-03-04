@@ -2,12 +2,11 @@ module Proarrow.Category.Instance.Simplex where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CAT, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault, PRO)
+import Proarrow.Core (CAT, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault, PRO, Obj, obj, src)
 import Proarrow.Profunctor.Representable (dimapRep, Representable(..))
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Category.Monoidal (Monoidal(..))
-import Proarrow.Object (Obj, obj, src)
 import Proarrow.Monoid (Monoid(..))
 
 type data Nat = Z | S Nat
@@ -22,6 +21,10 @@ instance IsNat a => IsNat (S a) where singNat = SS singNat
 
 singNat' :: forall a. Obj a -> SNat a
 singNat' a = singNat @a \\ a
+
+singObj :: SNat a -> Obj a
+singObj SZ = obj
+singObj (SS n) = suc (singObj n)
 
 type Simplex :: CAT Nat
 data Simplex a b where
@@ -104,24 +107,29 @@ instance Monoidal Nat where
   X f `par` g = X (f `par` g)
   leftUnitor a = a
   leftUnitorInv a = a
-  rightUnitor a = go (singNat' a) where
-    go :: SNat b -> Simplex (b + Z) b
-    go SZ = Z
-    go (SS n) = suc (go n)
-  rightUnitorInv a = go (singNat' a) where
-    go :: SNat b -> Simplex b (b + Z)
-    go SZ = Z
-    go (SS n) = suc (go n)
-  associator a' b' = go (singNat' a') (singNat' b') where
-    go :: SNat a -> SNat b -> Obj c -> Simplex ((a + b) + c) (a + (b + c))
-    go SZ SZ c = c
-    go SZ (SS b) c = suc (go SZ b c)
-    go (SS a) b c = suc (go a b c)
-  associatorInv  a' b' = go (singNat' a') (singNat' b') where
-    go :: SNat a -> SNat b -> Obj c -> Simplex (a + (b + c)) ((a + b) + c)
-    go SZ SZ c = c
-    go SZ (SS b) c = suc (go SZ b c)
-    go (SS a) b c = suc (go a b c)
+  rightUnitor = rightUnitor' . singNat'
+  rightUnitorInv = rightUnitorInv' . singNat'
+  associator a' b' = associator' (singNat' a') (singNat' b')
+  associatorInv a' b' = associatorInv' (singNat' a') (singNat' b')
+
+rightUnitor' :: SNat b -> Simplex (b + Z) b
+rightUnitor' SZ = Z
+rightUnitor' (SS n) = suc (rightUnitor' n)
+
+rightUnitorInv' :: SNat b -> Simplex b (b + Z)
+rightUnitorInv' SZ = Z
+rightUnitorInv' (SS n) = suc (rightUnitorInv' n)
+
+associator' :: SNat a -> SNat b -> Obj c -> Simplex ((a + b) + c) (a + (b + c))
+associator' SZ SZ c = c
+associator' SZ (SS b) c = suc (associator' SZ b c)
+associator' (SS a) b c = suc (associator' a b c)
+
+associatorInv' :: SNat a -> SNat b -> Obj c -> Simplex (a + (b + c)) ((a + b) + c)
+associatorInv' SZ SZ c = c
+associatorInv' SZ (SS b) c = suc (associatorInv' SZ b c)
+associatorInv' (SS a) b c = suc (associatorInv' a b c)
+
 
 instance Monoid (S Z) where
   mempty = Y Z

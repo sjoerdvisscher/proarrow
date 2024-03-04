@@ -6,6 +6,7 @@ import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
+import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal(..))
 
 
 newtype OPPOSITE k = OP k
@@ -22,7 +23,7 @@ instance Profunctor p => Profunctor (Op p) where
   dimap (Op l) (Op r) = Op . dimap r l . getOp
   r \\ Op f = r \\ f
 
--- | The opposite category of category `c`.
+-- | The opposite category of the category of `k`.
 instance CategoryOf k => CategoryOf (OPPOSITE k) where
   type (~>) = Op (~>)
   type Ob a = (Is OP a, Ob (UN OP a))
@@ -50,3 +51,17 @@ instance HasBinaryProducts k => HasBinaryCoproducts (OPPOSITE k) where
   lft' (Op a) (Op b) = Op (fst' a b)
   rgt' (Op a) (Op b) = Op (snd' a b)
   Op a ||| Op b = Op (a &&& b)
+
+instance Monoidal k => Monoidal (OPPOSITE k) where
+  type Unit = OP Unit
+  type a ** b = OP (UN OP a ** UN OP b)
+  Op l `par` Op r = Op (l `par` r)
+  leftUnitor (Op a) = Op (leftUnitorInv a)
+  leftUnitorInv (Op a) = Op (leftUnitor a)
+  rightUnitor (Op a) = Op (rightUnitorInv a)
+  rightUnitorInv (Op a) = Op (rightUnitor a)
+  associator (Op a) (Op b) (Op c) = Op (associatorInv a b c)
+  associatorInv (Op a) (Op b) (Op c) = Op (associator a b c)
+
+instance SymMonoidal k => SymMonoidal (OPPOSITE k) where
+  swap' (Op a) (Op b) = Op (swap' b a)

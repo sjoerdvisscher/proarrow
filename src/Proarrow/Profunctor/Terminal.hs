@@ -2,6 +2,7 @@ module Proarrow.Profunctor.Terminal (TerminalProfunctor(.., TerminalProfunctor')
 
 import Proarrow.Core (PRO, Profunctor (..), CategoryOf(..))
 import Proarrow.Object (Obj, obj)
+import Proarrow.Category.Monoidal (MonoidalProfunctor(..), Monoidal (par))
 
 type TerminalProfunctor :: PRO j k
 data TerminalProfunctor a b where
@@ -11,6 +12,9 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (TerminalProfunctor :: PRO j
   dimap l r TerminalProfunctor = TerminalProfunctor \\ l \\ r
   r \\ TerminalProfunctor = r
 
+instance (Monoidal j, Monoidal k) => MonoidalProfunctor (TerminalProfunctor :: PRO j k) where
+  lift0 = TerminalProfunctor
+  lift2 (TerminalProfunctor' a1 b1) (TerminalProfunctor' a2 b2) = TerminalProfunctor' (a1 `par` a2) (b1 `par` b2)
 
 getObs :: (CategoryOf j, CategoryOf k) => TerminalProfunctor (a :: j) (b :: k) -> (Obj a, Obj b)
 getObs TerminalProfunctor = (obj, obj)

@@ -6,6 +6,7 @@ import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Nat (Nat(..))
 import Proarrow.Profunctor.Representable (Representable(..), withRepCod)
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod)
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 
 
 type (:.:) :: PRO i j -> PRO j k -> PRO i k
@@ -38,6 +39,10 @@ instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) whe
   cotabulate :: forall a b. Ob a => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
   cotabulate f = withCorepCod @p @a (cotabulate id :.: cotabulate f)
   corepMap f = corepMap @q (corepMap @p f)
+
+instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
+  lift0 = lift0 :.: lift0
+  lift2 (p :.: q) (r :.: s) = lift2 p r :.: lift2 q s
 
 
 -- | Horizontal composition

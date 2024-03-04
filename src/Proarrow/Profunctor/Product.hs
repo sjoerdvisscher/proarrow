@@ -1,6 +1,7 @@
 module Proarrow.Profunctor.Product where
 
 import Proarrow.Core (PRO, Profunctor (..), (:~>))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 
 type (:*:) :: PRO j k -> PRO j k -> PRO j k
 data (p :*: q) a b where
@@ -9,6 +10,10 @@ data (p :*: q) a b where
 instance (Profunctor p, Profunctor q) => Profunctor (p :*: q) where
   dimap l r (p :*: q) = dimap l r p :*: dimap l r q
   r \\ (p :*: _) = r \\ p
+
+instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :*: q) where
+  lift0 = lift0 :*: lift0
+  lift2 (p1 :*: p2) (q1 :*: q2) = lift2 p1 q1 :*: lift2 p2 q2
 
 prod :: (r :~> p) -> (r :~> q) -> r :~> p :*: q
 prod l r p = l p :*: r p

@@ -134,6 +134,8 @@ instance HasProducts k => Monoidal (PROD k) where
   associator = associatorProd
   associatorInv = associatorProdInv
 
+instance HasProducts k => SymMonoidal (PROD k) where
+  swap' (Prod a) (Prod b) = mkProd (swapProd a b)
 
 instance Monoidal Type where
   type Unit = TerminalObject

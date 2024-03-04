@@ -8,16 +8,15 @@ import Prelude (uncurry, Either, either, fst, snd, ($), Maybe (..), const, Trave
 
 import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, OB, Kind, CAT, dimapDefault)
 import Proarrow.Category.Monoidal (Monoidal(..))
-import Proarrow.Category.Monoidal.Product ()
 import Proarrow.Category.Instance.Nat (Nat (..))
-import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Functor (Functor(..), Prelude (..))
-import Proarrow.Object.BinaryProduct ()
+import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD(..), Coprod (..), mkCoprod)
+import Proarrow.Object.BinaryProduct ()
 import Proarrow.Category.Instance.Subcategory (SUBCAT(..), Sub (..))
 import Proarrow.Category.Instance.Kleisli (KLEISLI(..), Kleisli(..))
-import Proarrow.Profunctor.Star (Star(..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Profunctor.Star (Star(..))
 
 
 class (Monoidal m, CategoryOf k) => MonoidalAction m k where
@@ -68,8 +67,8 @@ instance MonoidalAction (COPROD Type) Type where
   multiplicator p@Coprod{} q@Coprod{} x = getCoprod (associatorInv p q (mkCoprod x))
   multiplicatorInv p@Coprod{} q@Coprod{} x = getCoprod (associator p q (mkCoprod x))
 
-instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) Type where
-  type Act (p :: SUBCAT ob) (x :: Type) = Act (UN SUB p) x
+instance (MonoidalAction m k, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) k where
+  type Act (p :: SUBCAT ob) (x :: k) = Act (UN SUB p) x
   act (Sub f) g = f `act` g
   unitor = unitor @m
   unitorInv = unitorInv @m
@@ -99,8 +98,9 @@ class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Tambara m (p :: 
 
 
 data Optic m a b s t where
-  Optic :: (MonoidalAction m c, MonoidalAction m d, Ob (a :: c), Ob (b :: d))
-        => Obj (x :: m)
+  Optic :: forall {c} {d} a b s t m (x :: m)
+        . (MonoidalAction m c, MonoidalAction m d, Ob (a :: c), Ob (b :: d))
+        => Obj x
         -> s ~> (x `Act` a)
         -> (x `Act` b) ~> t
         -> Optic m a b s t

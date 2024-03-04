@@ -33,7 +33,7 @@ type instance Arr (MonK Type) a b = MK (UN CK a ~> UN CK b)
 instance CategoryOf k => ECategory (CATK k) where
   type EOb (a :: CATK k exta) = (Is CK a, Ob (UN CK a))
   eid = Mon2 $ \() -> id
-  ecomp = Mon2 $ \(f, g) -> g . f
+  ecomp = Mon2 $ \(f, g) -> f . g
 
 
 type MONADK :: forall {k} {kk} {a}. kk (a :: k) a -> k -> Type

@@ -1,7 +1,7 @@
 module Proarrow.Category.Instance.Subcategory where
 
 import Proarrow.Core (CAT, OB, UN, Is, CategoryOf (..), Promonad (..), Profunctor (..), dimapDefault)
-import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
 
 
 newtype SUBCAT (ob :: OB k) = SUB k
@@ -37,3 +37,6 @@ instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => M
   rightUnitorInv (Sub a) = Sub (rightUnitorInv a)
   associator (Sub a) (Sub b) (Sub c) = Sub (associator a b c)
   associatorInv (Sub a) (Sub b) (Sub c) = Sub (associatorInv a b c)
+
+instance (SymMonoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SymMonoidal (SUBCAT (ob :: OB k)) where
+  swap' (Sub a) (Sub b) = Sub (swap' a b)

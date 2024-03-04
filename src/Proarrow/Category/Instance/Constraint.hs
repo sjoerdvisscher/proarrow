@@ -11,8 +11,8 @@ import Proarrow.Core (UN, Is, CategoryOf(..), Profunctor(..), Promonad(..), dima
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
 import Proarrow.Object.BinaryProduct qualified as P
-import Prelude (Semigroup, Monoid, Maybe, Eq, Ord)
-import Proarrow.Category.Monoidal (Monoidal(..))
+import Prelude (Semigroup, Monoid, Maybe)
+import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal (..))
 import Proarrow.Object.Exponential (Closed(..))
 import Proarrow.Object (Obj)
 
@@ -56,6 +56,9 @@ instance Monoidal CONSTRAINT where
   associator = P.associatorProd
   associatorInv = P.associatorProdInv
 
+instance SymMonoidal CONSTRAINT where
+  swap' Entails{} Entails{} = Entails \r -> r
+
 class (b => c) => b :=> c
 instance (b => c) => b :=> c
 
@@ -70,8 +73,10 @@ instance Closed CONSTRAINT where
       h :: (((x => y :=> z) => r) -> r) -> (((x, y) => z) => r) -> r
       h g = g
 
-eqIsSuperOrd :: CNSTRNT (Ord a) :- CNSTRNT (Eq a)
-eqIsSuperOrd = Entails \r -> r
+-- I am solving the constraint ‘Eq a’ in a way that might turn out to loop at runtime.
+-- See § Undecidable instances and loopy superclasses.
+-- eqIsSuperOrd :: CNSTRNT (Ord a) :- CNSTRNT (Eq a)
+-- eqIsSuperOrd = Entails \r -> r
 
 maybeLiftsSemigroup :: CNSTRNT (Semigroup a) :- CNSTRNT (Monoid (Maybe a))
 maybeLiftsSemigroup = Entails \r -> r

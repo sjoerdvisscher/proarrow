@@ -5,8 +5,7 @@ module Proarrow.Category.Monoidal where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Core (CAT, PRO, Promonad(..), CategoryOf(..), Profunctor (..), dimapDefault)
-import Proarrow.Object (obj, Obj)
+import Proarrow.Core (CAT, PRO, Promonad(..), CategoryOf(..), Profunctor (..), dimapDefault, obj, Obj)
 
 class (CategoryOf k, Ob (Unit :: k)) => Monoidal k where
   type Unit :: k
@@ -20,10 +19,19 @@ class (CategoryOf k, Ob (Unit :: k)) => Monoidal k where
   associatorInv :: Obj (a :: k) -> Obj b -> Obj c -> a ** (b ** c) ~> (a ** b) ** c
 
 class Monoidal k => SymMonoidal k where
-  swap' :: forall a b. Obj (a :: k) -> Obj b -> (a ** b) ~> (b ** a)
+  swap' :: Obj (a :: k) -> Obj b -> (a ** b) ~> (b ** a)
 
 swap :: forall {k} a b. (SymMonoidal k, Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
 swap = swap' (obj @a) (obj @b)
+
+isObPar :: forall {k} a b r. (Monoidal k, Ob (a :: k), Ob b) => (Ob (a ** b) => r) -> r
+isObPar r = r \\ (obj @a `par` obj @b)
+
+first :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (a ** c) ~> (b ** c)
+first f = f `par` obj @c
+
+second :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (c ** a) ~> (c ** b)
+second f = obj @c `par` f
 
 
 type family (as :: [k]) ++ (bs :: [k]) :: [k] where
@@ -101,7 +109,7 @@ instance Monoidal k => Monoidal [k] where
   type as ** bs = as ++ bs
   par :: (as :: [k]) ~> bs -> cs ~> ds -> as ++ cs ~> bs ++ ds
   par (Str @as @bs f) (Str @cs @ds g) =
-    withAppend @as @cs $ withAppend @bs @ds $
+    isObPar @as @cs $ isObPar @bs @ds $
       Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)
   leftUnitor a = a
   leftUnitorInv a = a
@@ -130,13 +138,6 @@ instance Monoidal k => Monoidal [k] where
     go (Cons a Nil) = singleton a `par` (bs' `par` cs')
     go (Cons a as@Cons{}) = singleton a `par` go as
 
-withAppend :: forall as bs r. (Ob as, Ob bs) => (Ob (as ++ bs) => r) -> r
-withAppend = withAppend' @bs (sList @as)
-
-withAppend' :: forall {k} bs as r. Ob bs => SList (as :: [k]) -> (Ob (as ++ bs) => r) -> r
-withAppend' Nil r = r
-withAppend' (Cons _ as) r = withAppend' @bs as r
-
 -- instance SymMonoidal k => SymMonoidal [k] where
 --   swap :: forall k (as :: [k]) (bs :: [k]). SymMonoidal k => Obj as -> Obj bs -> (as ** bs) ~> (bs ** as)
 --   swap as bs = go (sList @as) (sList @bs) \\ as \\ bs
@@ -152,3 +153,11 @@ withAppend' (Cons _ as) r = withAppend' @bs as r
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k) where
   lift0 :: p Unit Unit
   lift2 :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
+
+newtype Hom a b = Hom { getHom :: a ~> b }
+instance CategoryOf k => Profunctor (Hom :: PRO k k) where
+  dimap l r (Hom f) = Hom (dimap l r f)
+  r \\ Hom f = r \\ f
+instance Monoidal k => MonoidalProfunctor (Hom :: PRO k k) where
+  lift0 = Hom id
+  lift2 (Hom f) (Hom g) = Hom (f `par` g)

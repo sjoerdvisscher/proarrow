@@ -1,11 +1,12 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Profunctor.Day where
 
-import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad(..), lmap, rmap)
+import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad(..), lmap, rmap, (//))
 import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap)
 import Proarrow.Object (src, tgt)
 import Proarrow.Monoid (Monoid (..))
+import Proarrow.Object.Exponential (Closed(..))
 
 
 data DayUnit a b where
@@ -16,7 +17,7 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (DayUnit :: PRO j k) where
   r \\ DayUnit f g = r \\ f \\ g
 
 data Day p q a b where
-  Day :: a ~> c ** e -> p c d -> q e f -> d ** f ~> b -> Day p q a b
+  Day :: forall p q a b c d e f. a ~> c ** e -> p c d -> q e f -> d ** f ~> b -> Day p q a b
 
 instance (Profunctor p, Profunctor q) => Profunctor (Day p q) where
   dimap l r (Day f p q g) = Day (lmap l f) p q (rmap r g)
@@ -38,6 +39,23 @@ instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
     let f = associatorInv (src p1) (src p2) (src q2) . (src p1 `par` f2) . f1
         g = g1 . (tgt p1 `par` g2) . associator (tgt p1) (tgt p2) (tgt q2)
     in Day f (Day (src p1 `par` src p2) p1 p2 (tgt p1 `par` tgt p2)) q2 g
+
+instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (PRO j k) where
+  swap' Prof{} Prof{} = Prof \(Day @p @q @a @b @c @d @e @f f p q g) -> Day (swap @c @e . f) q p (g . swap @f @d) \\ p \\ q
+
+
+data DayExp p q a b where
+  DayExp :: forall p q a b. (Ob a, Ob b) => (forall c d e f. e ~> a ** c -> b ** d ~> f -> p c d -> q e f) -> DayExp p q a b
+
+instance (Monoidal j, Monoidal k, Profunctor p, Profunctor q) => Profunctor (DayExp (p :: PRO j k) q) where
+  dimap l r (DayExp n) = l // r // DayExp \f g p -> n ((l `par` src p) . f) (g . (r `par` tgt p)) p
+  r \\ DayExp n = r \\ n
+
+instance (Monoidal j, Monoidal k) => Closed (PRO j k) where
+  type p ~~> q = DayExp p q
+  curry' Prof{} Prof{} (Prof n) = Prof \p -> p // DayExp \f g q -> n (Day f p q g)
+  uncurry' Prof{} Prof{} (Prof n) = Prof \(Day f p q g) -> case n p of DayExp h -> h f g q
+  (^^^) (Prof n) (Prof m) = Prof \(DayExp k) -> DayExp \f g p -> n (k f g (m p))
 
 
 instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
