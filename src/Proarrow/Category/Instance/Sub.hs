@@ -1,7 +1,7 @@
 module Proarrow.Category.Instance.Sub where
 
 import Proarrow.Core (CAT, OB, UN, Is, CategoryOf (..), Promonad (..), Profunctor (..), dimapDefault)
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), MonoidalProfunctor (..))
 
 
 type data SUBCAT (ob :: OB k) = SUB k
@@ -40,3 +40,7 @@ instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => M
 
 instance (SymMonoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SymMonoidal (SUBCAT (ob :: OB k)) where
   swap' (Sub a) (Sub b) = Sub (swap' a b)
+
+instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => MonoidalProfunctor (Sub :: CAT (SUBCAT (ob :: OB k))) where
+  lift0 = id
+  lift2 = par

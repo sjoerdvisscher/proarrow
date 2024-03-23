@@ -6,7 +6,7 @@ import Data.Kind (Type)
 import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal(..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal(..), MonoidalProfunctor (..))
 import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..), UN, CAT, Is, dimapDefault)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -137,6 +137,11 @@ instance HasProducts k => Monoidal (PROD k) where
 instance HasProducts k => SymMonoidal (PROD k) where
   swap' (Prod a) (Prod b) = mkProd (swapProd a b)
 
+instance HasProducts k => MonoidalProfunctor (Prod :: CAT (PROD k)) where
+  lift0 = id
+  lift2 = par
+
+
 instance Monoidal Type where
   type Unit = TerminalObject
   type a ** b = a && b
@@ -151,6 +156,10 @@ instance Monoidal Type where
 instance SymMonoidal Type where
   swap' = swapProd
 
+instance MonoidalProfunctor (->) where
+  lift0 = id
+  lift2 = par
+
 instance Monoidal U.UNIT where
   type Unit = TerminalObject
   type a ** b = a && b
@@ -164,3 +173,7 @@ instance Monoidal U.UNIT where
 
 instance SymMonoidal U.UNIT where
   swap' = swapProd
+
+instance MonoidalProfunctor U.Unit where
+  lift0 = id
+  lift2 = par
