@@ -10,7 +10,7 @@ import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Profunctor.Coproduct ((:+:)(..), coproduct)
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal (..), MonoidalProfunctor (..))
 
 
 class CategoryOf k => HasBinaryCoproducts k where
@@ -89,3 +89,7 @@ instance HasCoproducts k => Monoidal (COPROD k) where
 
 instance HasCoproducts k => SymMonoidal (COPROD k) where
   swap' (Coprod a) (Coprod b) = mkCoprod (rgt' b a ||| lft' b a)
+
+instance HasCoproducts k => MonoidalProfunctor (Coprod :: CAT (COPROD k)) where
+  lift0 = id
+  lift2 = par

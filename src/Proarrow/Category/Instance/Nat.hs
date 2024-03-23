@@ -7,7 +7,7 @@ import Data.Functor.Compose (Compose (..))
 
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), Profunctor (..), Is, UN, dimapDefault)
 import Proarrow.Functor (Functor (..), type (.~>))
-import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -40,6 +40,9 @@ instance Monoidal (Type -> Type) where
   associator Nat{} Nat{} Nat{} = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv Nat{} Nat{} Nat{} = Nat (Compose . Compose . map getCompose . getCompose)
 
+instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
+  lift0 = id
+  lift2 = par
 
 
 instance CategoryOf (k1 -> k2 -> k3 -> Type) where
