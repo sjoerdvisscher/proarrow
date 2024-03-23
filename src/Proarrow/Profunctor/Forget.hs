@@ -3,7 +3,7 @@ module Proarrow.Profunctor.Forget where
 import Prelude (Monoid(..), map, foldMap)
 import Data.Kind (Type)
 
-import Proarrow.Category.Instance.Subcategory (SUBCAT(..), Sub (..))
+import Proarrow.Category.Instance.Sub (SUBCAT(..), Sub (..))
 import Proarrow.Core (OB, PRO, Profunctor(..), CategoryOf(..), Promonad(..))
 import Proarrow.Adjunction (Adjunction(..))
 import Proarrow.Profunctor.Composition ((:.:)(..))

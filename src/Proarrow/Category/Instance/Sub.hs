@@ -1,10 +1,10 @@
-module Proarrow.Category.Instance.Subcategory where
+module Proarrow.Category.Instance.Sub where
 
 import Proarrow.Core (CAT, OB, UN, Is, CategoryOf (..), Promonad (..), Profunctor (..), dimapDefault)
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
 
 
-newtype SUBCAT (ob :: OB k) = SUB k
+type data SUBCAT (ob :: OB k) = SUB k
 type instance UN SUB (SUB k) = k
 
 type Sub :: CAT (SUBCAT ob)
