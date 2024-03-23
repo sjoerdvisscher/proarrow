@@ -8,11 +8,12 @@ import Proarrow.Category.Bicategory (Path(..), SPath (..), IsPath (..), type (++
 import Proarrow.Category.Bicategory.Co (COK(..), Co(..))
 import Proarrow.Category.Bicategory.Prof (ProfK(..), ProfC, ProfCorepC, PROFK, Prof(..))
 import Proarrow.Category.Double (SQ, Double (..), Equipment(..), Companion, Conjoint)
-import Proarrow.Category.Double.Quintet (Quintet(..), Sq1 (Q1))
+import Proarrow.Category.Double.Quintet (Quintet(..), Sq1 (Q1), Quintet1, QKK (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
 import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), Promonad (..), UN, (//))
 import Unsafe.Coerce (unsafeCoerce)
 import Proarrow.Profunctor.Composition ((:.:)(..))
+import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..))
 
 
 type family UnCorep (fs :: Path (COK (ProfK cl)) h i) :: Path (COK PROFK) h i
@@ -34,22 +35,29 @@ unCorep :: ps ~> qs -> UnCorep ps ~> UnCorep qs
 unCorep = unsafeCoerce
 
 
-type ProfSq :: SQ (ProfK ProfC) (COK (ProfK ProfCorepC))
-data ProfSq ps qs fs gs where
-  ProfSq :: forall ps qs fs gs. (Ob fs, Ob gs) => Quintet ps qs (UnCorep fs) (UnCorep gs) -> ProfSq ps qs fs gs
+data ProfCorep
+instance Corepresentable p => IsOb ProfCorep p
+
+-- type ProfSq :: SQ (ProfK ProfC) (COK (ProfK ProfCorepC))
+-- data ProfSq ps qs fs gs where
+--   ProfSq :: forall ps qs fs gs. (Ob fs, Ob gs) => Quintet ps qs (UnCorep fs) (UnCorep gs) -> ProfSq ps qs fs gs
+type ProfSq = Sq PROFK (COK (SUBCAT ProfCorep PROFK))
+type ProfSq1 = Sq1 PROFK (COK (SUBCAT ProfCorep PROFK))
 
 -- | The double category of profunctors and corepresentable profunctors.
-instance Double ProfSq where
-  data Sq1 ProfSq p q f g where
-    P1 :: Sq1 Quintet p q (CO (PK f)) (CO (PK g)) -> Sq1 ProfSq p q (CO (PK f)) (CO (PK g))
+instance Double PROFK (COK (SUBCAT ProfCorep PROFK)) where
+  data Sq PROFK (COK (SUBCAT ProfCorep PROFK)) ps qs fs gs where
+    ProfSq :: forall ps qs fs gs. (Ob fs, Ob gs) => Quintet (QK ps) (QK qs) (UnCorep fs) (UnCorep gs) -> ProfSq ps qs fs gs
+  data Sq1 PROFK (COK (SUBCAT ProfCorep PROFK)) p q f g where
+    P1 :: Quintet1 p q (CO (PK f)) (CO (PK g)) -> ProfSq1 p q (CO (PK f)) (CO (PK g))
   r \\\\ ProfSq sq = r \\\\ sq
   object = ProfSq object
   hArr n = n // ProfSq $ hArr n
   vArr n@Str{} = let n' = unCorep n in n' // ProfSq $ vArr n'
-  ProfSq @_ @_ @fs @gs n@Q{} ||| ProfSq @_ @_ @hs @is m@Q{} =
-    unCorepAppend @fs @hs $ unCorepAppend @gs @is $ appendObj @fs @hs $ appendObj @gs @is $
-      ProfSq $ n ||| m
-  ProfSq @ps @qs @_ @_ n@(Q Q1{}) === ProfSq @rs @ss @_ @_ m@(Q Q1{}) = appendObj @ps @rs $ appendObj @qs @ss $ ProfSq $ n === m
+  -- ProfSq @_ @_ @fs @gs n@Q{} ||| ProfSq @_ @_ @hs @is m@Q{} =
+  --   unCorepAppend @fs @hs $ unCorepAppend @gs @is $ appendObj @fs @hs $ appendObj @gs @is $
+  --     ProfSq $ n ||| m
+  -- ProfSq @ps @qs @_ @_ n@(Q Q1{}) === ProfSq @rs @ss @_ @_ m@(Q Q1{}) = appendObj @ps @rs $ appendObj @qs @ss $ ProfSq $ n === m
 
 
 -- | The proarrow equipment of profunctors and corepresentable profunctors.
