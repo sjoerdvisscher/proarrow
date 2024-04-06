@@ -188,7 +188,7 @@ instance (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d) => Cate
   type Ob a = (a ~ OPT (LCat a) (RCat a), Ob (LCat a), Ob (RCat a))
 
 
-type ProfOptic w (a :: c) (b :: d) s t = forall p. Tambara w p => p a b -> p s t
+type ProfOptic w a b s t = forall p. Tambara w p => p a b -> p s t
 type MixedOptic m a b s t = ProfOptic ((~>) @m) a b s t
 
 ex2prof :: Optic w a b s t -> ProfOptic w a b s t

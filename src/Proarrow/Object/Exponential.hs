@@ -6,13 +6,13 @@ import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))
 import Proarrow.Category.Opposite (OPPOSITE(..), Op (..))
-import Proarrow.Core (PRO, CategoryOf (..), Profunctor(..), Promonad(..), UN, (//))
+import Proarrow.Core (PRO, CategoryOf (..), Profunctor(..), Promonad(..), UN, (//), tgt)
 import Proarrow.Object (Obj, obj, src)
 import Proarrow.Profunctor.Representable (Representable(..), dimapRep)
-import Proarrow.Category.Monoidal (leftUnitor, associator, Monoidal(..))
+import Proarrow.Category.Monoidal (leftUnitor, associator, Monoidal(..), MonoidalProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof(..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Object.BinaryProduct (PROD(..), Prod (..))
+import Proarrow.Object.BinaryProduct (PROD(..), Prod (..), Cartesian, HasBinaryProducts (..))
 import Proarrow.Profunctor.Exponential ((:~>:) (..))
 import Proarrow.Profunctor.Product ((:*:)(..))
 
@@ -38,8 +38,12 @@ comp = let a = obj @a; b2c = obj @c ^^^ obj @b; a2b = obj @b ^^^ a in
 mkExponential :: forall {k} a b. Closed k => (a :: k) ~> b -> Unit ~> (a ~~> b)
 mkExponential ab = curry @_ @a (ab . leftUnitor (src ab)) \\ ab
 
+eval' :: Closed k => Obj a -> Obj b -> ((a :: k) ~~> b) ** a ~> b
+eval' a b = uncurry' a b (b ^^^ a)
+
 eval :: forall {k} a b. (Closed k, Ob a, Ob b) => ((a :: k) ~~> b) ** a ~> b
-eval = uncurry @_ @a @b (obj @b ^^^ obj @a)
+eval = eval' (obj @a) (obj @b)
+
 
 
 instance Closed Type where
@@ -76,3 +80,10 @@ instance Closed k => Representable (ExponentialFunctor :: PRO k (OPPOSITE k, k))
   index (ExponentialFunctor f) = f
   tabulate = ExponentialFunctor
   repMap (Op f :**: g) = g ^^^ f
+
+
+ap
+  :: forall {j} {k} y a x p
+  . (Cartesian j, Closed k, MonoidalProfunctor (p :: PRO j k), Ob y)
+  => p a (x ~~> y) -> p a x -> p a y
+ap pf px = let a = src pf in dimap (a &&& a) (eval' (tgt px) (obj @y)) (lift2 pf px)
