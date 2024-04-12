@@ -4,15 +4,15 @@ module Proarrow.Category.Enriched where
 import Data.Kind (Constraint, Type)
 import Prelude (($))
 
-import Proarrow.Core (Promonad(..), CategoryOf(..), CAT, UN, Is)
-import Proarrow.Category.Bicategory (Bicategory(..), Monad(..))
+import Proarrow.Core (Promonad(..), CategoryOf(..), CAT, UN, Is, Kind)
+import Proarrow.Category.Bicategory (Bicategory(O, I), Monad(..))
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2(..), MonK(..))
 import Proarrow.Object.BinaryProduct ()
 
 
 type family V (vk :: k -> Type) :: CAT k
 type family Arr (v :: CAT k) (a :: vk exta) (b :: vk extb) :: v exta extb
-type (a :: vk (exta :: k)) %~> (b :: vk extb) = Arr (V vk) a b
+type (a :: vk exta) %~> (b :: vk extb) = Arr (V vk) a b
 
 class (Bicategory (V vk)) => ECategory (vk :: k -> Type) where
   type EOb (a :: vk exta) :: Constraint
@@ -21,13 +21,13 @@ class (Bicategory (V vk)) => ECategory (vk :: k -> Type) where
         => ((a :: vk exta) %~> b) `O` (b %~> c) ~> a %~> c
 
 
-type CATK :: Type -> () -> Type
+type CATK :: Kind -> () -> Kind
 data CATK k ext where
   CK :: k -> CATK k i
 type instance UN CK (CK a) = a
 
 type instance V (CATK k) = MonK Type
-type instance Arr (MonK Type) a b = MK (UN CK a ~> UN CK b)
+type instance Arr (MonK Type) (CK a) (CK b) = MK (a ~> b)
 
 -- | A regular category as a Type-enriched category
 instance CategoryOf k => ECategory (CATK k) where
