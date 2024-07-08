@@ -1,6 +1,6 @@
 module Proarrow.Category.Bicategory.CategoryAsBi where
 
-import Prelude (Maybe(..), liftA2, (>>))
+import Prelude (Maybe(..), liftA2, (>>), type (~))
 
 import Proarrow.Core (CAT, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault)
 import Proarrow.Category.Bicategory (Bicategory (..))

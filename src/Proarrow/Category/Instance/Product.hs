@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Instance.Product where
 
+import Prelude (type (~))
+
 import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..))
 import Proarrow.Profunctor.Representable (Representable(..))
 import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal, swap')

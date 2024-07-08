@@ -1,5 +1,7 @@
 module Proarrow.Category.Instance.Unit where
 
+import Prelude (type (~))
+
 import Proarrow.Core (CAT, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault)
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))

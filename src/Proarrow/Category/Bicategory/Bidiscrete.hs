@@ -1,6 +1,6 @@
 module Proarrow.Category.Bicategory.Bidiscrete where
 
-import Data.Type.Equality (type (~~))
+import Data.Type.Equality (type (~), type (~~))
 
 import Proarrow.Category.Bicategory (Bicategory(..))
 import Proarrow.Core (CAT, Profunctor (..), Promonad (..), CategoryOf(..), dimapDefault, Kind)

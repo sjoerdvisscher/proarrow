@@ -39,7 +39,7 @@ instance CategoryOf k => Profunctor (Terminate :: PRO UNIT k) where
   r \\ Terminate = r
 instance HasTerminalObject KIND where
   type TerminalObject = K UNIT
-  terminate' (Cat @a) = Cat @_ @_ @Terminate
+  terminate' Cat = Cat @_ @_ @Terminate
 
 
 type FstCat :: PRO j (j, k)

@@ -45,7 +45,7 @@ concatFoldCo
    . (Bicategory kk, Ob qs, Ob0 kk i, Ob0 kk j, Ob0 kk k)
   => SPath ps -> UN CO (Fold ps) `O` UN CO (Fold qs) ~> UN CO (Fold (ps +++ qs))
 concatFoldCo SNil = leftUnitor (obj @(UN CO (Fold qs)))
-concatFoldCo (SCons @_ @ps1 (Co p) SNil) = case singPath @qs of
+concatFoldCo (SCons (Co p) SNil) = case singPath @qs of
   SNil -> rightUnitor p
   SCons{} -> p `o` obj @(UN CO (Fold qs))
 concatFoldCo (SCons @_ @ps1 (Co p) ps@SCons{})
@@ -58,7 +58,7 @@ splitFoldCo
    . (Bicategory kk, Ob qs, Ob0 kk i, Ob0 kk j, Ob0 kk k)
   => SPath ps -> UN CO (Fold (ps +++ qs)) ~> UN CO (Fold ps) `O` UN CO (Fold qs)
 splitFoldCo SNil = leftUnitorInv (obj @(UN CO (Fold qs)))
-splitFoldCo (SCons @_ @ps1 (Co p) SNil) = case singPath @qs of
+splitFoldCo (SCons (Co p) SNil) = case singPath @qs of
   SNil -> rightUnitorInv p
   SCons{} -> p `o` obj @(UN CO (Fold qs))
 splitFoldCo (SCons @_ @ps1 (Co p) ps@SCons{})

@@ -20,7 +20,7 @@ import Proarrow.Category.Instance.Product ((:**:)(..), Fst, Snd)
 class Representable (Limit j d) => IsRepresentableLimit j d
 instance Representable (Limit j d) => IsRepresentableLimit j d
 
--- profunctor-weighted limits
+-- | profunctor-weighted limits
 type HasLimits :: PRO a i -> Kind -> Constraint
 class (forall (d :: PRO k i). Representable d => IsRepresentableLimit j d) => HasLimits (j :: PRO a i) k where
   type Limit (j :: PRO a i) (d :: PRO k i) :: PRO k a
@@ -45,7 +45,7 @@ instance HasTerminalObject k => Representable (TerminalLimit (d :: PRO k VOID)) 
 
 instance HasTerminalObject k => HasLimits (Unweighted :: PRO UNIT VOID) k where
   type Limit Unweighted d = TerminalLimit d
-  limit (TerminalLimit @d f) = f // Rift \(TerminalProfunctor' _ o) -> tabulate (case o of . f)
+  limit (TerminalLimit f) = f // Rift \(TerminalProfunctor' _ o) -> tabulate (case o of . f)
   limitInv Rift{} = TerminalLimit terminate
 
 

@@ -5,7 +5,7 @@ import Data.Kind (Constraint, Type)
 import Data.Bifunctor (bimap)
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Compose (Compose (..))
-import Prelude (uncurry, Either, either, fst, snd, ($), Maybe (..), const, Traversable, Monad (..), fmap)
+import Prelude (uncurry, Either, either, fst, snd, ($), Maybe (..), const, Traversable, Monad (..), fmap, type (~))
 
 import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, OB, Kind, CAT, dimapDefault, (:~>))
 import Proarrow.Category.Monoidal (Monoidal(..), MonoidalProfunctor (..))
@@ -137,7 +137,7 @@ class (MonoidalAction m c, Monoid a, Ob n) => ModuleObject (a :: m) (n :: c) whe
 class (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d, Profunctor p) => Tambara (w :: PRO m m') (p :: PRO c d) where
   tambara :: w x x' -> p a b -> p (x `Act` a) (x' `Act` b)
 
-instance (Profunctor p, Tambara w p) => ModuleObject w p where
+instance (Profunctor p, Tambara w p, Monoid w) => ModuleObject w p where
   action = Prof \(DayAct f w p g) -> dimap f g $ tambara w p
 
 data Optic w a b s t where

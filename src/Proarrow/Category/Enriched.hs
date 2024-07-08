@@ -2,7 +2,7 @@
 module Proarrow.Category.Enriched where
 
 import Data.Kind (Constraint, Type)
-import Prelude (($))
+import Prelude (($), type (~))
 
 import Proarrow.Core (Promonad(..), CategoryOf(..), CAT, UN, Is, Kind)
 import Proarrow.Category.Bicategory (Bicategory(O, I), Monad(..))

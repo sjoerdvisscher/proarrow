@@ -39,7 +39,7 @@ import Data.Kind (Constraint, Type)
 
 import Proarrow.Core (CategoryOf(..), CAT, id, Any, Profunctor(..), Promonad(..), dimapDefault)
 import Proarrow.Object (Obj, obj)
-import Prelude (($))
+import Prelude (($), type (~))
 
 infixr 5 :::
 infixl 5 +++

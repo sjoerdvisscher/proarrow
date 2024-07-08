@@ -6,6 +6,7 @@ import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Core (CAT, PRO, Promonad(..), CategoryOf(..), Profunctor (..), dimapDefault, obj, Obj)
+import Proarrow.Profunctor.Identity (Id(..))
 
 class (CategoryOf k, Ob (Unit :: k)) => Monoidal k where
   type Unit :: k
@@ -32,6 +33,9 @@ first f = f `par` obj @c
 
 second :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (c ** a) ~> (c ** b)
 second f = obj @c `par` f
+
+swapInner :: SymMonoidal k => Obj (a :: k) -> Obj b -> Obj c -> Obj d -> ((a ** b) ** (c ** d)) ~> ((a ** c) ** (b ** d))
+swapInner a b c d = associatorInv a c (b `par` d) . (a `par` (associator c b d . (swap' b c `par` d) . associatorInv b c d)) . associator a b (c `par` d)
 
 
 type family (as :: [k]) ++ (bs :: [k]) :: [k] where
@@ -154,10 +158,6 @@ class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k
   lift0 :: p Unit Unit
   lift2 :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
 
-newtype Hom a b = Hom { getHom :: a ~> b }
-instance CategoryOf k => Profunctor (Hom :: PRO k k) where
-  dimap l r (Hom f) = Hom (dimap l r f)
-  r \\ Hom f = r \\ f
-instance Monoidal k => MonoidalProfunctor (Hom :: PRO k k) where
-  lift0 = Hom id
-  lift2 (Hom f) (Hom g) = Hom (f `par` g)
+instance Monoidal k => MonoidalProfunctor (Id :: PRO k k) where
+  lift0 = Id id
+  lift2 (Id f) (Id g) = Id (f `par` g)

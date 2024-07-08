@@ -1,6 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Bicategory.Product where
 
+import Prelude (type (~))
 
 import Proarrow.Category.Bicategory (Bicategory (..))
 import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault)

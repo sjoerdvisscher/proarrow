@@ -3,6 +3,7 @@
 module Proarrow.Object.BinaryProduct where
 
 import Data.Kind (Type)
+import Prelude (type (~))
 import qualified Prelude as P
 
 import Proarrow.Category.Instance.Product ((:**:)(..))

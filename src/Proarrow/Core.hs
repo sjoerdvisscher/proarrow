@@ -4,6 +4,7 @@
 module Proarrow.Core where
 
 import Data.Kind (Type, Constraint)
+import Prelude (type (~))
 
 infixr 0 ~>, :~>
 infixl 1 \\

@@ -20,6 +20,7 @@ type Unweighted = TerminalProfunctor
 class Corepresentable (Colimit j d) => IsCorepresentableColimit j d
 instance Corepresentable (Colimit j d) => IsCorepresentableColimit j d
 
+-- | profunctor-weighted colimits
 type HasColimits :: PRO i a -> Kind -> Constraint
 class (forall (d :: PRO i k). Corepresentable d => IsCorepresentableColimit j d) => HasColimits (j :: PRO i a) k where
   type Colimit (j :: PRO i a) (d :: PRO i k) :: PRO a k
@@ -41,7 +42,7 @@ instance HasInitialObject k => Corepresentable (InitialLimit (d :: PRO VOID k)) 
   corepMap Unit = id
 instance HasInitialObject k => HasColimits (Unweighted :: PRO VOID UNIT) k where
   type Colimit Unweighted d = InitialLimit d
-  colimit (InitialLimit @d f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . case o of
+  colimit (InitialLimit f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . case o of
   colimitInv Ran{} = InitialLimit initiate
 
 
