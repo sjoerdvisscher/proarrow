@@ -7,6 +7,8 @@ import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Comonad(..))
 import Proarrow.Category.Bicategory qualified as B
 import Proarrow.Category.Monoidal (Monoidal(..))
 import Proarrow.Monoid (Monoid(..), Comonoid(..))
+import Proarrow.Object.Exponential (Closed(..))
+import Proarrow.Category.Bicategory.Kan (RightKanLift(..), dimapRift)
 
 
 type data ENDO (kk :: CAT j) (k :: j) = E (kk k k)
@@ -40,6 +42,12 @@ instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
   rightUnitorInv (Endo p) = mkEndo (B.rightUnitorInv p)
   associator (Endo p) (Endo q) (Endo r) = mkEndo (B.associator p q r)
   associatorInv (Endo p) (Endo q) (Endo r) = mkEndo (B.associatorInv p q r)
+
+instance (Bicategory kk, Ob0 kk k, forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanLift f g) => Closed (ENDO kk k) where
+  type E f ~~> E g = E (Rift f g)
+  curry' (Endo @g g) (Endo @j j) (Endo h) = Endo (riftUniv @j @_ @g h) \\ g \\ j \\ h
+  uncurry' (Endo @j j) (Endo @f f) (Endo h) = Endo (rift @j @f . (h `o` j)) \\ j \\ f
+  (^^^) (Endo f) (Endo g) = Endo (dimapRift g f) \\ f \\ g
 
 -- | Monads are monoids in the category of endo-1-cells.
 instance (Bicategory kk, Monad m) => Monoid (E m :: ENDO kk a) where

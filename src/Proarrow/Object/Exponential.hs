@@ -82,6 +82,10 @@ instance Closed k => Representable (ExponentialFunctor :: PRO k (OPPOSITE k, k))
   repMap (Op f :**: g) = g ^^^ f
 
 
+class (Cartesian k, Closed k) => CCC k
+instance (Cartesian k, Closed k) => CCC k
+
+
 ap
   :: forall {j} {k} y a x p
   . (Cartesian j, Closed k, MonoidalProfunctor (p :: PRO j k), Ob y)
