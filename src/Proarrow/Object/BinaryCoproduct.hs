@@ -34,6 +34,9 @@ left f = f +++ obj @c
 right :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryCoproducts k, Ob c) => a ~> b -> (c || a) ~> (c || b)
 right f = obj @c +++ f
 
+codiag :: forall {k} (a :: k). (HasBinaryCoproducts k, Ob a) => (a || a) ~> a
+codiag = id ||| id
+
 
 type HasCoproducts k = (HasInitialObject k, HasBinaryCoproducts k)
 

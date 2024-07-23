@@ -4,7 +4,7 @@ module Proarrow.Category.Bicategory.Prof where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Adjunction(..))
+import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Adjunction(..), Comonad (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension(..), RightKanLift (..))
 import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), (:~>), CAT, Promonad (..), dimapDefault, lmap, rmap, UN, Is, arr, IsCategoryOf, (//))
 import Proarrow.Profunctor.Representable (Representable)
@@ -16,6 +16,7 @@ import Proarrow.Adjunction qualified as A
 import Proarrow.Profunctor.Ran qualified as R
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Category.Opposite (OPPOSITE(..))
+import Proarrow.Promonad (Procomonad (..))
 
 
 type data ProfCl = ProfC | ProfRepC | ProfCorepC
@@ -62,6 +63,10 @@ instance (forall i j k (p :: PRO i j) (q :: PRO j k). (ProfConstraint cl p, Prof
 instance Promonad p => Monad (PK p :: PROFK k k) where
   eta = Prof arr
   mu = Prof \(p :.: q) -> q . p
+
+instance Procomonad p => Comonad (PK p :: PROFK k k) where
+  epsilon = Prof extract
+  delta = Prof duplicate
 
 instance (IsCategoryOf j cj, IsCategoryOf k ck, Profunctor p) =>
     Bimodule (PK cj) (PK ck) (PK p :: PROFK j k) where

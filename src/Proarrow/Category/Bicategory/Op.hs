@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Bicategory.Op where
 
-import Proarrow.Category.Bicategory (Bicategory(..))
+import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Comonad(..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension(..), LeftKanExtension(..), RightKanLift(..), LeftKanLift(..))
 import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault, UN, Is)
 
@@ -57,3 +57,15 @@ instance LeftKanLift j f => LeftKanExtension (OP j) (OP f) where
   type Lan (OP j) (OP f) = OP (Lift j f)
   lan = Op (lift @j @f)
   lanUniv (Op n) = Op (liftUniv @j @f n)
+
+instance Monad t => Monad (OP t) where
+  eta = Op eta
+  mu = Op mu
+
+instance Comonad t => Comonad (OP t) where
+  epsilon = Op epsilon
+  delta = Op delta
+
+instance Bimodule s t p => Bimodule (OP t) (OP s) (OP p) where
+  leftAction = Op (rightAction @s @t @p)
+  rightAction = Op (leftAction @s @t @p)

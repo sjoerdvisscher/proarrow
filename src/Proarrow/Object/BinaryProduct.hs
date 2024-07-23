@@ -40,6 +40,9 @@ first f = f *** obj @c
 second :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryProducts k, Ob c) => a ~> b -> (c && a) ~> (c && b)
 second f = obj @c *** f
 
+diag :: forall {k} (a :: k). (HasBinaryProducts k, Ob a) => a ~> a && a
+diag = id &&& id
+
 
 type HasProducts k = (HasTerminalObject k, HasBinaryProducts k)
 

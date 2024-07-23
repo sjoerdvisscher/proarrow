@@ -17,6 +17,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
 import Proarrow.Object.Exponential (Closed(..))
 import Proarrow.Object.Initial (HasInitialObject(..))
 import Proarrow.Object.Terminal (HasTerminalObject(..))
+import Proarrow.Monoid (Comonoid (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -94,6 +95,28 @@ instance Monoidal (Type -> Type) where
 instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
   lift0 = id
   lift2 = par
+
+data CatAsComonoid k a where
+  CatAsComonoid :: forall {k} (c :: k) a. Ob c => (forall c'. c ~> c' -> a) -> CatAsComonoid k a
+instance Functor (CatAsComonoid k) where
+  map f (CatAsComonoid k) = CatAsComonoid (f . k)
+
+instance CategoryOf k => Comonoid (CatAsComonoid k) where
+  counit = Nat \(CatAsComonoid k) -> Identity (k id)
+  comult = Nat \(CatAsComonoid @a k) -> Compose (CatAsComonoid @a
+    \(f :: a ~> b) -> f // CatAsComonoid @b
+      \g -> k (g . f))
+
+data ComonoidAsCat (w :: Type -> Type) a b where
+  ComonoidAsCat :: (w a -> b) -> ComonoidAsCat w a b
+
+instance Functor w => Profunctor (ComonoidAsCat w) where
+  dimap f g (ComonoidAsCat h) = ComonoidAsCat (g . h . map f)
+
+instance Comonoid w => Promonad (ComonoidAsCat w) where
+  id = ComonoidAsCat (runIdentity . getNat counit)
+  ComonoidAsCat f . ComonoidAsCat g = ComonoidAsCat (f . map g . getCompose . getNat comult)
+
 
 
 instance CategoryOf (k1 -> k2 -> k3 -> Type) where

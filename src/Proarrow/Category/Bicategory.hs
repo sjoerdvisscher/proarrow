@@ -244,6 +244,7 @@ instance (Bicategory (Path kk), Ob0 kk a) => Monad (Nil :: Path kk a a) where
   eta = id
   mu = id
 
+type Comonad :: forall {kk} {a}. kk a a -> Constraint
 class (Bicategory kk, Ob0 kk a, Ob t) => Comonad (t :: kk a a) where
   epsilon :: t ~> I
   delta :: t ~> t `O` t
@@ -252,7 +253,8 @@ instance (Bicategory (Path kk), Ob0 kk a) => Comonad (Nil :: Path kk a a) where
   epsilon = id
   delta = id
 
-class (Monad s, Monad t) => Bimodule s t (p :: kk a b) where
+type Bimodule :: forall {kk} {a} {b}. kk a a -> kk b b -> kk a b -> Constraint
+class (Monad s, Monad t) => Bimodule s t p where
   leftAction :: s `O` p ~> p
   rightAction :: p `O` t ~> p
 

@@ -1,11 +1,13 @@
 {-# LANGUAGE TupleSections #-}
 module Proarrow.Promonad.Writer where
 
-import Prelude (Monoid(..), (<>), fmap)
+import Prelude (Monoid(..), (<>), fmap, fst, snd)
 
 import Proarrow.Core (Promonad(..), Profunctor(..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Object.BinaryProduct ()
+import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Profunctor.Composition ((:.:)(..))
 
 newtype Writer m a b = Writer { getWriter :: a -> (m, b) }
 
@@ -15,6 +17,10 @@ instance Profunctor (Writer m) where
 instance Monoid m => Promonad (Writer m) where
   id = Writer (mempty,)
   Writer g . Writer f = Writer \a -> case f a of (m1, b) -> case g b of (m2, c) -> (m1 <> m2, c)
+
+instance Procomonad (Writer m) where
+  extract (Writer f) = snd . f
+  duplicate (Writer f) = Writer (\a -> (fst (f a), a)) :.: Writer f
 
 instance Monoid m => MonoidalProfunctor (Writer m) where
   lift0 = id
