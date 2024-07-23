@@ -161,3 +161,6 @@ class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k
 instance Monoidal k => MonoidalProfunctor (Id :: PRO k k) where
   lift0 = Id id
   lift2 (Id f) (Id g) = Id (f `par` g)
+
+class (Monoidal j, Monoidal k, Profunctor p) => OplaxMonoidalProfunctor (p :: PRO j k) where
+  unlift2 :: p (x1 ** y1) (x2 ** y2) -> (p x1 x2, p y1 y2)
