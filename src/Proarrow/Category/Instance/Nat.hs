@@ -4,10 +4,19 @@ module Proarrow.Category.Instance.Nat where
 import Data.Kind (Type)
 import Data.Functor.Identity (Identity (..))
 import Data.Functor.Compose (Compose (..))
+import Data.Functor.Const (Const (..))
+import Data.Functor.Product (Product (..))
+import Data.Functor.Sum (Sum (..))
+import Data.Void (Void, absurd)
 
-import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), Profunctor (..), Is, UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), Profunctor (..), Is, UN, dimapDefault, (//))
 import Proarrow.Functor (Functor (..), type (.~>))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Object.BinaryProduct (HasBinaryProducts(..), PROD(..), Prod (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
+import Proarrow.Object.Exponential (Closed(..))
+import Proarrow.Object.Initial (HasInitialObject(..))
+import Proarrow.Object.Terminal (HasTerminalObject(..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -28,6 +37,48 @@ instance Promonad (Nat :: CAT (j -> Type)) where
 instance Profunctor (Nat :: CAT (k1 -> Type)) where
   dimap = dimapDefault
   r \\ Nat{} = r
+
+instance CategoryOf k1 => HasTerminalObject (k1 -> Type) where
+  type TerminalObject = Const ()
+  terminate' Nat{} = Nat \_ -> Const ()
+
+instance CategoryOf k1 => HasInitialObject (k1 -> Type) where
+  type InitialObject = Const Void
+  initiate' Nat{} = Nat \(Const v) -> absurd v
+
+instance (Functor f, Functor g) => Functor (Product f g) where
+  map f (Pair x y) = Pair (map f x) (map f y)
+
+instance HasBinaryProducts (k1 -> Type) where
+  type f && g = Product f g
+  fst' Nat{} Nat{} = Nat \(Pair f _) -> f
+  snd' Nat{} Nat{} = Nat \(Pair _ g) -> g
+  Nat f &&& Nat g = Nat \a -> Pair (f a) (g a)
+
+instance (Functor f, Functor g) => Functor (Sum f g) where
+  map f (InL x) = InL (map f x)
+  map f (InR y) = InR (map f y)
+
+instance HasBinaryCoproducts (k1 -> Type) where
+  type f || g = Sum f g
+  lft' Nat{} Nat{} = Nat InL
+  rgt' Nat{} Nat{} = Nat InR
+  Nat f ||| Nat g = Nat \case
+    InL x -> f x
+    InR y -> g y
+
+data (f :~>: g) a where
+  Exp :: Ob a => (forall b. a ~> b -> f b -> g b) -> (f :~>: g) a
+
+instance (Functor f, Functor g) => Functor (f :~>: g) where
+  map ab (Exp k) = ab // Exp \bc fc -> k (bc . ab) fc
+
+instance CategoryOf k1 => Closed (PROD (k1 -> Type)) where
+  type f ~~> g = PR (UN PR f :~>: UN PR g)
+  curry' (Prod Nat{}) (Prod Nat{}) (Prod (Nat n)) = Prod (Nat \f -> Exp \ab g -> n (Pair (map ab f) g) \\ ab)
+  uncurry' (Prod Nat{}) (Prod Nat{}) (Prod (Nat n)) = Prod (Nat \(Pair f g) -> case n f of Exp k -> k id g)
+  Prod (Nat m) ^^^ Prod (Nat n) = Prod (Nat \(Exp k) -> Exp \cd h -> m (k cd (n h)) \\ cd)
+
 
 instance Monoidal (Type -> Type) where
   type Unit = Identity
