@@ -1,10 +1,19 @@
 module Proarrow.Category.Bicategory.Adj where
 
-import Proarrow.Core (CAT, Profunctor(..), Promonad(..), CategoryOf(..), dimapDefault, UN, Is)
-import Proarrow.Category.Bicategory (Path(..), type (+++), Bicategory (..), IsPath(..), SPath(..), withUnital, Monad(..), Comonad(..))
-import Proarrow.Category.Instance.Simplex (Nat(..), Simplex(..))
+import Proarrow.Category.Bicategory
+  ( Bicategory (..)
+  , Comonad (..)
+  , IsPath (..)
+  , Monad (..)
+  , Path (..)
+  , SPath (..)
+  , withUnital
+  , type (+++)
+  )
+import Proarrow.Category.Double (DOUBLE, Double (..), Equipment (..))
+import Proarrow.Category.Instance.Simplex (Nat (..), Simplex (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (src, tgt)
-import Proarrow.Category.Double (Double(..), Equipment(..), DOUBLE)
 
 type data AB = A | B
 
@@ -36,11 +45,12 @@ instance Profunctor (Adj :: CAT (ADJK a b)) where
   r \\ AdjCup f = r \\ f
   r \\ AdjCap f = r \\ f
 instance Promonad (Adj :: CAT (ADJK a b)) where
-  id :: forall (ps :: ADJK a b). Ob ps => Adj ps ps
-  id = go (singPath @(UN AK ps)) where
-    go :: forall ps'. SPath ps' -> Adj (AK ps') (AK ps')
-    go SNil = AdjNil
-    go (SCons @rl _ ps) = rOrL @rl (go ps)
+  id :: forall (ps :: ADJK a b). (Ob ps) => Adj ps ps
+  id = go (singPath @(UN AK ps))
+    where
+      go :: forall ps'. SPath ps' -> Adj (AK ps') (AK ps')
+      go SNil = AdjNil
+      go (SCons @rl _ ps) = rOrL @rl (go ps)
   AdjNil . f = f
   f . AdjNil = f
   AdjR f . AdjR g = AdjR (f . g)
@@ -128,7 +138,6 @@ toSimplexOp (AdjR f) = go f id
     go (AdjL g) xny = xny (X (Y (toSimplexOp g)))
     go (AdjCap g) xny = go g (xny . X)
 
-
 instance Monad (AK (L ::: R ::: Nil)) where
   eta = AdjCap AdjNil
   mu = AdjL (AdjCup (AdjR AdjNil))
@@ -145,7 +154,7 @@ type data ARRK a b where
 
 type Arr :: CAT (ARRK i j)
 data Arr a b where
-  ArrId :: Ob a => Arr a a
+  ArrId :: (Ob a) => Arr a a
 
 instance Profunctor (Arr :: CAT (ARRK i j)) where
   dimap = dimapDefault
@@ -161,7 +170,6 @@ instance Bicategory ARRK where
   type Ob0 ARRK a = ()
   r \\\ ArrId = r
   ArrId `o` ArrId = _
-
 
 type family Arr2Adj (ps :: Path ARRK a b) :: Path ADJK a b
 type instance Arr2Adj (IDA ::: ps) = Arr2Adj ps

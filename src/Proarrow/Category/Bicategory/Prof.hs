@@ -1,23 +1,38 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Prof where
 
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Adjunction(..), Comonad (..))
-import Proarrow.Category.Bicategory.Kan (RightKanExtension(..), RightKanLift (..))
-import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), (:~>), CAT, Promonad (..), dimapDefault, lmap, rmap, UN, Is, arr, IsCategoryOf, (//))
-import Proarrow.Profunctor.Representable (Representable)
-import Proarrow.Profunctor.Corepresentable (Corepresentable)
-import Proarrow.Category.Instance.Prof ()
-import Proarrow.Profunctor.Composition ((:.:)(..))
-import Proarrow.Object (src, tgt)
 import Proarrow.Adjunction qualified as A
+import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Bimodule (..), Comonad (..), Monad (..))
+import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
+import Proarrow.Category.Instance.Prof ()
+import Proarrow.Category.Opposite (OPPOSITE (..))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Is
+  , IsCategoryOf
+  , PRO
+  , Profunctor (..)
+  , Promonad (..)
+  , UN
+  , arr
+  , dimapDefault
+  , lmap
+  , rmap
+  , (//)
+  , (:~>)
+  )
+import Proarrow.Object (src, tgt)
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Profunctor.Ran qualified as R
+import Proarrow.Profunctor.Representable (Representable)
 import Proarrow.Profunctor.Rift qualified as R
-import Proarrow.Category.Opposite (OPPOSITE(..))
 import Proarrow.Promonad (Procomonad (..))
-
 
 type data ProfCl = ProfC | ProfRepC | ProfCorepC
 
@@ -42,12 +57,17 @@ instance Promonad Prof where
   Prof m . Prof n = Prof (m . n)
 instance CategoryOf (ProfK cl j k) where
   type (~>) = Prof
-  type Ob @(ProfK cl j k) p = (Is PK p, Profunctor (UN PK p), ProfConstraint cl (UN PK p), ProfConstraint cl ((~>) @j), ProfConstraint cl ((~>) @k))
+  type
+    Ob @(ProfK cl j k) p =
+      (Is PK p, Profunctor (UN PK p), ProfConstraint cl (UN PK p), ProfConstraint cl ((~>) @j), ProfConstraint cl ((~>) @k))
 
-class ProfConstraint cl (p :.: q) => ComposeConstraint cl i j k (p :: PRO i j) (q :: PRO j k)
-instance ProfConstraint cl (p :.: q) => ComposeConstraint cl i j k (p :: PRO i j) (q :: PRO j k)
+class (ProfConstraint cl (p :.: q)) => ComposeConstraint cl i j k (p :: PRO i j) (q :: PRO j k)
+instance (ProfConstraint cl (p :.: q)) => ComposeConstraint cl i j k (p :: PRO i j) (q :: PRO j k)
 
-instance (forall i j k (p :: PRO i j) (q :: PRO j k). (ProfConstraint cl p, ProfConstraint cl q) => ComposeConstraint cl i j k p q) => Bicategory (ProfK cl) where
+instance
+  (forall i j k (p :: PRO i j) (q :: PRO j k). (ProfConstraint cl p, ProfConstraint cl q) => ComposeConstraint cl i j k p q)
+  => Bicategory (ProfK cl)
+  where
   type Ob0 (ProfK cl) k = (CategoryOf k, ProfConstraint cl ((~>) :: CAT k))
   type I = PK (~>)
   type p `O` q = PK (UN PK p :.: UN PK q)
@@ -60,16 +80,18 @@ instance (forall i j k (p :: PRO i j) (q :: PRO j k). (ProfConstraint cl p, Prof
   associator Prof{} Prof{} Prof{} = Prof $ \((p :.: q) :.: r) -> p :.: (q :.: r)
   associatorInv Prof{} Prof{} Prof{} = Prof $ \(p :.: (q :.: r)) -> (p :.: q) :.: r
 
-instance Promonad p => Monad (PK p :: PROFK k k) where
+instance (Promonad p) => Monad (PK p :: PROFK k k) where
   eta = Prof arr
   mu = Prof \(p :.: q) -> q . p
 
-instance Procomonad p => Comonad (PK p :: PROFK k k) where
+instance (Procomonad p) => Comonad (PK p :: PROFK k k) where
   epsilon = Prof extract
   delta = Prof duplicate
 
-instance (IsCategoryOf j cj, IsCategoryOf k ck, Profunctor p) =>
-    Bimodule (PK cj) (PK ck) (PK p :: PROFK j k) where
+instance
+  (IsCategoryOf j cj, IsCategoryOf k ck, Profunctor p)
+  => Bimodule (PK cj) (PK ck) (PK p :: PROFK j k)
+  where
   leftAction = Prof \(f :.: p) -> lmap f p
   rightAction = Prof \(p :.: f) -> rmap f p
 

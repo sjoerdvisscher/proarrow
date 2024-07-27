@@ -1,25 +1,26 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Object.BinaryProduct where
 
 import Data.Kind (Type)
 import Prelude (type (~))
-import qualified Prelude as P
+import Prelude qualified as P
 
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal(..), MonoidalProfunctor (..))
-import Proarrow.Core (PRO, CategoryOf(..), Promonad (..), Profunctor(..), UN, CAT, Is, dimapDefault)
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Instance.Unit qualified as U
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Product ((:*:) (..), prod)
-import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Instance.Unit qualified as U
+import Proarrow.Profunctor.Product (prod, (:*:) (..))
 
 infixl 5 &&
 infixl 5 &&&
 infixl 5 ***
 
-class CategoryOf k => HasBinaryProducts k where
+class (CategoryOf k) => HasBinaryProducts k where
   type (a :: k) && (b :: k) :: k
   fst' :: Obj (a :: k) -> Obj b -> a && b ~> a
   snd' :: Obj (a :: k) -> Obj b -> a && b ~> b
@@ -33,7 +34,6 @@ fst = fst' (obj @a) (obj @b)
 snd :: forall {k} (a :: k) (b :: k). (HasBinaryProducts k, Ob a, Ob b) => (a && b) ~> b
 snd = snd' (obj @a) (obj @b)
 
-
 first :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryProducts k, Ob c) => a ~> b -> (a && c) ~> (b && c)
 first f = f *** obj @c
 
@@ -43,11 +43,10 @@ second f = obj @c *** f
 diag :: forall {k} (a :: k). (HasBinaryProducts k, Ob a) => a ~> a && a
 diag = id &&& id
 
-
 type HasProducts k = (HasTerminalObject k, HasBinaryProducts k)
 
-class a ** b ~ a && b => TensorIsProduct a b
-instance a ** b ~ a && b => TensorIsProduct a b
+class (a ** b ~ a && b) => TensorIsProduct a b
+instance (a ** b ~ a && b) => TensorIsProduct a b
 class (HasProducts k, Monoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
 instance (HasProducts k, Monoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
 
@@ -75,27 +74,26 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
   snd' Prof{} Prof{} = Prof sndP
   Prof l &&& Prof r = Prof (prod l r)
 
-leftUnitorProd :: HasProducts k => Obj (a :: k) -> TerminalObject && a ~> a
+leftUnitorProd :: (HasProducts k) => Obj (a :: k) -> TerminalObject && a ~> a
 leftUnitorProd = snd' (obj @TerminalObject)
 
-leftUnitorProdInv :: HasProducts k => Obj (a :: k) -> a ~> TerminalObject && a
+leftUnitorProdInv :: (HasProducts k) => Obj (a :: k) -> a ~> TerminalObject && a
 leftUnitorProdInv a = terminate' a &&& a
 
-rightUnitorProd :: HasProducts k => Obj (a :: k) -> a && TerminalObject ~> a
+rightUnitorProd :: (HasProducts k) => Obj (a :: k) -> a && TerminalObject ~> a
 rightUnitorProd a = fst' a (obj @TerminalObject)
 
-rightUnitorProdInv :: HasProducts k => Obj (a :: k) -> a ~> a && TerminalObject
+rightUnitorProdInv :: (HasProducts k) => Obj (a :: k) -> a ~> a && TerminalObject
 rightUnitorProdInv a = a &&& terminate' a
 
-associatorProd :: HasProducts k => Obj (a :: k) -> Obj b -> Obj c -> (a && b) && c ~> a && (b && c)
+associatorProd :: (HasProducts k) => Obj (a :: k) -> Obj b -> Obj c -> (a && b) && c ~> a && (b && c)
 associatorProd a b c = (fst' a b . fst' (a *** b) c) &&& (snd' a b *** c) \\ (a *** b)
 
-associatorProdInv :: HasProducts k => Obj (a :: k) -> Obj b -> Obj c -> a && (b && c) ~> (a && b) && c
+associatorProdInv :: (HasProducts k) => Obj (a :: k) -> Obj b -> Obj c -> a && (b && c) ~> (a && b) && c
 associatorProdInv a b c = (a *** fst' b c) &&& (snd' b c . snd' a (b *** c)) \\ (a *** b)
 
-swapProd :: forall {k} (a :: k) (b :: k). HasBinaryProducts k => Obj a -> Obj b -> (a && b) ~> (b && a)
+swapProd :: forall {k} (a :: k) (b :: k). (HasBinaryProducts k) => Obj a -> Obj b -> (a && b) ~> (b && a)
 swapProd a b = snd' a b &&& fst' a b
-
 
 newtype PROD k = PR k
 type instance UN PR (PR k) = k
@@ -104,30 +102,30 @@ type Prod :: CAT (PROD k)
 data Prod (a :: PROD k) b where
   Prod :: (Ob a, Ob b) => UN PR a ~> UN PR b -> Prod a b
 
-mkProd :: CategoryOf k => (a :: k) ~> b -> Prod (PR a) (PR b)
+mkProd :: (CategoryOf k) => (a :: k) ~> b -> Prod (PR a) (PR b)
 mkProd f = Prod f \\ f
 
-instance CategoryOf k => Profunctor (Prod :: CAT (PROD k)) where
+instance (CategoryOf k) => Profunctor (Prod :: CAT (PROD k)) where
   dimap = dimapDefault
   r \\ Prod f = r \\ f
-instance CategoryOf k => Promonad (Prod :: CAT (PROD k)) where
+instance (CategoryOf k) => Promonad (Prod :: CAT (PROD k)) where
   id = Prod id
   Prod f . Prod g = Prod (f . g)
-instance CategoryOf k => CategoryOf (PROD k) where
+instance (CategoryOf k) => CategoryOf (PROD k) where
   type (~>) = Prod
   type Ob a = (Is PR a, Ob (UN PR a))
 
-instance HasTerminalObject k => HasTerminalObject (PROD k) where
+instance (HasTerminalObject k) => HasTerminalObject (PROD k) where
   type TerminalObject = PR TerminalObject
   terminate' (Prod a) = Prod (terminate' a)
-instance HasBinaryProducts k => HasBinaryProducts (PROD k) where
+instance (HasBinaryProducts k) => HasBinaryProducts (PROD k) where
   type a && b = PR (UN PR a && UN PR b)
   fst' (Prod a) (Prod b) = mkProd (fst' a b)
   snd' (Prod a) (Prod b) = mkProd (snd' a b)
   Prod f &&& Prod g = mkProd (f &&& g)
   Prod f *** Prod g = mkProd (f *** g)
 
-instance HasProducts k => Monoidal (PROD k) where
+instance (HasProducts k) => Monoidal (PROD k) where
   type Unit = TerminalObject
   type a ** b = a && b
   f `par` g = f *** g
@@ -138,13 +136,12 @@ instance HasProducts k => Monoidal (PROD k) where
   associator = associatorProd
   associatorInv = associatorProdInv
 
-instance HasProducts k => SymMonoidal (PROD k) where
+instance (HasProducts k) => SymMonoidal (PROD k) where
   swap' (Prod a) (Prod b) = mkProd (swapProd a b)
 
-instance HasProducts k => MonoidalProfunctor (Prod :: CAT (PROD k)) where
+instance (HasProducts k) => MonoidalProfunctor (Prod :: CAT (PROD k)) where
   lift0 = id
   lift2 = par
-
 
 instance Monoidal Type where
   type Unit = TerminalObject

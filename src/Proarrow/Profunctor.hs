@@ -1,9 +1,9 @@
-module Proarrow.Profunctor (
-  PRO
-  , Profunctor(..)
+module Proarrow.Profunctor
+  ( PRO
+  , Profunctor (..)
   , lmap
   , rmap
   , (//)
-) where
+  ) where
 
 import Proarrow.Core

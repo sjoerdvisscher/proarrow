@@ -1,13 +1,12 @@
 module Proarrow.Profunctor.Composition where
 
-import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad (..), lmap, rmap)
-import Proarrow.Functor (Functor(..))
-import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Instance.Nat (Nat(..))
-import Proarrow.Profunctor.Representable (Representable(..), withRepCod)
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..), withCorepCod)
+import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), lmap, rmap)
+import Proarrow.Functor (Functor (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepCod)
+import Proarrow.Profunctor.Representable (Representable (..), withRepCod)
 
 type (:.:) :: PRO i j -> PRO j k -> PRO i k
 data (p :.: q) a c where
@@ -17,7 +16,7 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :.: q) where
   dimap l r (p :.: q) = lmap l p :.: rmap r q
   r \\ p :.: q = r \\ p \\ q
 
-instance Profunctor p => Functor ((:.:) p) where
+instance (Profunctor p) => Functor ((:.:) p) where
   map (Prof n) = Prof \(p :.: q) -> p :.: n q
 
 instance Functor (:.:) where
@@ -29,14 +28,14 @@ bimapComp f g = getNat (map f) . map g \\ f \\ g
 instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)
   index (p :.: q) = repMap @p (index q) . index p
-  tabulate :: forall a b. Ob b => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
+  tabulate :: forall a b. (Ob b) => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
   tabulate f = withRepCod @q @b (tabulate f :.: tabulate id)
   repMap f = repMap @p (repMap @q f)
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where
   type (p :.: q) %% a = q %% (p %% a)
   coindex (p :.: q) = coindex q . corepMap @q (coindex p)
-  cotabulate :: forall a b. Ob a => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
+  cotabulate :: forall a b. (Ob a) => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
   cotabulate f = withCorepCod @p @a (cotabulate id :.: cotabulate f)
   corepMap f = corepMap @q (corepMap @p f)
 
@@ -44,8 +43,8 @@ instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :
   lift0 = lift0 :.: lift0
   lift2 (p :.: q) (r :.: s) = lift2 p r :.: lift2 q s
 
-
 -- | Horizontal composition
-o :: forall {i} {j} {k} (p :: PRO i j) (q :: PRO i j) (r :: PRO j k) (s :: PRO j k)
-  . Prof p q -> Prof r s -> Prof (p :.: r) (q :.: s)
+o
+  :: forall {i} {j} {k} (p :: PRO i j) (q :: PRO i j) (r :: PRO j k) (s :: PRO j k)
+   . Prof p q -> Prof r s -> Prof (p :.: r) (q :.: s)
 Prof pq `o` Prof rs = Prof \(p :.: r) -> pq p :.: rs r

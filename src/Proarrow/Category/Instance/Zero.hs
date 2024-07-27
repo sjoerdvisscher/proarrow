@@ -1,6 +1,6 @@
 module Proarrow.Category.Instance.Zero where
 
-import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 data VOID
 
@@ -17,8 +17,8 @@ instance CategoryOf VOID where
 
 instance Promonad Zero where
   id = voidId
-  (.) = \case
+  (.) = \case {}
 
 instance Profunctor Zero where
   dimap = dimapDefault
-  _ \\ x = case x of
+  _ \\ x = case x of {}

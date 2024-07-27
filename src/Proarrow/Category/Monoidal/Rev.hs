@@ -1,7 +1,7 @@
 module Proarrow.Category.Monoidal.Rev where
 
-import Proarrow.Core (CAT, Profunctor(..), Promonad(..), CategoryOf(..), dimapDefault, UN, Is)
-import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal(..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data REV k = R k
 type instance UN R (R a) = a
@@ -10,19 +10,19 @@ type Rev :: CAT k
 data Rev a b where
   Rev :: a ~> b -> Rev (R a) (R b)
 
-instance CategoryOf k => Profunctor (Rev :: CAT (REV k)) where
+instance (CategoryOf k) => Profunctor (Rev :: CAT (REV k)) where
   dimap = dimapDefault
   r \\ Rev t = r \\ t
 
-instance CategoryOf k => Promonad (Rev :: CAT (REV k)) where
+instance (CategoryOf k) => Promonad (Rev :: CAT (REV k)) where
   id = Rev id
   Rev f . Rev g = Rev (f . g)
 
-instance CategoryOf k => CategoryOf (REV k) where
+instance (CategoryOf k) => CategoryOf (REV k) where
   type (~>) = Rev
   type Ob a = (Is R a, Ob (UN R a))
 
-instance Monoidal k => Monoidal (REV k) where
+instance (Monoidal k) => Monoidal (REV k) where
   type Unit = R Unit
   type (R a) ** (R b) = R (b ** a)
   Rev f `par` Rev g = Rev (g `par` f)
@@ -33,5 +33,5 @@ instance Monoidal k => Monoidal (REV k) where
   associator (Rev a) (Rev b) (Rev c) = Rev (associatorInv c b a)
   associatorInv (Rev a) (Rev b) (Rev c) = Rev (associator c b a)
 
-instance SymMonoidal k => SymMonoidal (REV k) where
+instance (SymMonoidal k) => SymMonoidal (REV k) where
   swap' (Rev a) (Rev b) = Rev (swap' b a)

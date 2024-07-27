@@ -2,8 +2,8 @@ module Proarrow.Category.Bicategory.Bidiscrete where
 
 import Data.Type.Equality (type (~), type (~~))
 
-import Proarrow.Category.Bicategory (Bicategory(..))
-import Proarrow.Core (CAT, Profunctor (..), Promonad (..), CategoryOf(..), dimapDefault, Kind)
+import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault)
 
 type DiscreteK :: CAT Kind
 data DiscreteK j k where

@@ -1,22 +1,22 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Kan where
 
+import Data.Functor.Compose (Compose (..))
 import Data.Kind (Constraint, Type)
-
-import Proarrow.Category.Bicategory (Bicategory(..))
-import Proarrow.Category.Bicategory.MonoidalAsBi (MonK(..), Mon2 (..))
-import Proarrow.Core (CAT, Ob, obj, CategoryOf (..), Promonad (..), (\\), Profunctor (..))
-import Data.Functor.Compose (Compose(..))
 import Prelude (($))
-import Proarrow.Category.Instance.Nat (Nat(..))
-import Proarrow.Functor (map, Functor)
 
+import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
+import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Core (CAT, CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (\\))
+import Proarrow.Functor (Functor, map)
 
 type LeftKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lan j f)) => LeftKanExtension (j :: kk c d) (f :: kk c e) where
   type Lan j f :: kk d e
   lan :: f ~> j `O` Lan j f
-  lanUniv :: Ob g => (f ~> j `O` g) -> Lan j f ~> g
+  lanUniv :: (Ob g) => (f ~> j `O` g) -> Lan j f ~> g
 
 mapLan :: forall j f g. (LeftKanExtension j f, LeftKanExtension j g) => (f ~> g) -> Lan j f ~> Lan j g
 mapLan fg = lanUniv @j (lan @j . fg)
@@ -27,12 +27,11 @@ rebaseLan ij = lanUniv @j ((ij `o` obj @(Lan i f)) . lan @i @f)
 dimapLan :: forall i j f g. (LeftKanExtension j f, LeftKanExtension i g) => (i ~> j) -> (f ~> g) -> (Lan j f ~> Lan i g)
 dimapLan ij fg = lanUniv @j ((ij `o` obj @(Lan i g)) . lan @i . fg) \\ ij
 
-
 type RightKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Ran j f)) => RightKanExtension (j :: kk c d) (f :: kk c e) where
   type Ran j f :: kk d e
   ran :: j `O` Ran j f ~> f
-  ranUniv :: Ob g => (j `O` g ~> f) -> g ~> Ran j f
+  ranUniv :: (Ob g) => (j `O` g ~> f) -> g ~> Ran j f
 
 mapRan :: forall j f g. (RightKanExtension j f, RightKanExtension j g) => (f ~> g) -> Ran j f ~> Ran j g
 mapRan fg = ranUniv @j (fg . ran @j)
@@ -40,15 +39,15 @@ mapRan fg = ranUniv @j (fg . ran @j)
 rebaseRan :: forall f i j. (RightKanExtension j f, RightKanExtension i f) => (i ~> j) -> Ran j f ~> Ran i f
 rebaseRan ij = ranUniv @i @f (ran @j . (ij `o` obj @(Ran j f)))
 
-dimapRan :: forall i j f g. (RightKanExtension j f, RightKanExtension i g) => (i ~> j) -> (f ~> g) -> (Ran j f ~> Ran i g)
+dimapRan
+  :: forall i j f g. (RightKanExtension j f, RightKanExtension i g) => (i ~> j) -> (f ~> g) -> (Ran j f ~> Ran i g)
 dimapRan ij fg = ranUniv @i (fg . ran @j . (ij `o` obj @(Ran j f))) \\ ij
-
 
 type LeftKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lift j f)) => LeftKanLift (j :: kk d c) (f :: kk e c) where
   type Lift j f :: kk e d
   lift :: f ~> Lift j f `O` j
-  liftUniv :: Ob g => (f ~> g `O` j) -> Lift j f ~> g
+  liftUniv :: (Ob g) => (f ~> g `O` j) -> Lift j f ~> g
 
 mapLift :: forall j f g. (LeftKanLift j f, LeftKanLift j g) => (f ~> g) -> Lift j f ~> Lift j g
 mapLift fg = liftUniv @j (lift @j . fg)
@@ -59,12 +58,11 @@ rebaseLift ij = liftUniv @j ((obj @(Lift i f) `o` ij) . lift @i @f)
 dimapLift :: forall i j f g. (LeftKanLift j f, LeftKanLift i g) => (i ~> j) -> (f ~> g) -> (Lift j f ~> Lift i g)
 dimapLift ij fg = liftUniv @j ((obj @(Lift i g) `o` ij) . lift @i . fg) \\ ij
 
-
 type RightKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Rift j f)) => RightKanLift (j :: kk d c) (f :: kk e c) where
   type Rift j f :: kk e d
   rift :: Rift j f `O` j ~> f
-  riftUniv :: Ob g => (g `O` j ~> f) -> g ~> Rift j f
+  riftUniv :: (Ob g) => (g `O` j ~> f) -> g ~> Rift j f
 
 mapRift :: forall j f g. (RightKanLift j f, RightKanLift j g) => (f ~> g) -> Rift j f ~> Rift j g
 mapRift fg = riftUniv @j (fg . rift @j)
@@ -75,8 +73,7 @@ rebaseRift ij = riftUniv @i (rift @j @f . (obj @(Rift j f) `o` ij))
 dimapRift :: forall i j f g. (RightKanLift j f, RightKanLift i g) => (i ~> j) -> (f ~> g) -> (Rift j f ~> Rift i g)
 dimapRift ij fg = riftUniv @i (fg . rift @j . (obj @(Rift j f) `o` ij)) \\ ij
 
-
-newtype HaskRan g h a = Ran { runRan :: forall b. (a -> g b) -> h b }
+newtype HaskRan g h a = Ran {runRan :: forall b. (a -> g b) -> h b}
 instance Functor (HaskRan g h) where
   map f (Ran k) = Ran $ \g -> k (g . f)
 instance (Functor j, Functor f) => RightKanExtension (MK (j :: Type -> Type)) (MK f) where

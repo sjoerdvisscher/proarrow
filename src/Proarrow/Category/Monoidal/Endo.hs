@@ -1,15 +1,14 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Monoidal.Endo where
 
-
-import Proarrow.Core (Promonad(..), CategoryOf(..), Profunctor(..), UN, Is, CAT, dimapDefault)
-import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Comonad(..))
+import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
-import Proarrow.Category.Monoidal (Monoidal(..))
-import Proarrow.Monoid (Monoid(..), Comonoid(..))
-import Proarrow.Object.Exponential (Closed(..))
-import Proarrow.Category.Bicategory.Kan (RightKanLift(..), dimapRift)
-
+import Proarrow.Category.Bicategory.Kan (RightKanLift (..), dimapRift)
+import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object.Exponential (Closed (..))
 
 type data ENDO (kk :: CAT j) (k :: j) = E (kk k k)
 type instance UN E (E p) = p
@@ -18,7 +17,7 @@ type Endo :: forall {kk} {k}. CAT (ENDO kk k)
 data Endo p q where
   Endo :: p ~> q -> Endo (E p) (E q)
 
-mkEndo :: CategoryOf (kk k k) => (p :: kk k k) ~> q -> Endo (E p) (E q)
+mkEndo :: (CategoryOf (kk k k)) => (p :: kk k k) ~> q -> Endo (E p) (E q)
 mkEndo pq = Endo pq \\ pq
 
 instance (Bicategory kk, Ob0 kk k) => Profunctor (Endo :: CAT (ENDO kk k)) where

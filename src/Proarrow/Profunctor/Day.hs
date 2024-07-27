@@ -1,14 +1,15 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Profunctor.Day where
 
-import Proarrow.Core (PRO, Profunctor(..), CategoryOf(..), Promonad(..), lmap, rmap, (//), obj, src, tgt)
-import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner)
-import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object.Exponential (Closed(..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), lmap, obj, rmap, src, tgt, (//))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Category.Instance.Nat (Nat(..))
+import Proarrow.Monoid (Monoid (..))
+import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 
 data DayUnit a b where
@@ -25,7 +26,7 @@ instance (Profunctor p, Profunctor q) => Profunctor (Day p q) where
   dimap l r (Day f p q g) = Day (lmap l f) p q (rmap r g)
   r \\ Day f _ _ g = r \\ f \\ g
 
-instance Profunctor p => Functor (Day p) where
+instance (Profunctor p) => Functor (Day p) where
   map (Prof n) = Prof \(Day f p q g) -> Day f p (n q) g
 
 instance Functor Day where
@@ -56,7 +57,7 @@ duoidal
   => (p :.: p') `Day` (q :.: q') ~> (p `Day` q) :.: (p' `Day` q')
 duoidal = Prof \(Day f (p :.: p') (q :.: q') g) -> let b = tgt p `par` tgt q in Day f p q b :.: Day b p' q' g
 
-instance Monoidal k => Monoid (Id :: PRO k k) where
+instance (Monoidal k) => Monoid (Id :: PRO k k) where
   mempty = Prof \(DayUnit f g) -> Id (g . f)
   mappend = Prof \(Day f (Id p) (Id q) g) -> Id (g . (p `par` q) . f)
 
@@ -80,14 +81,23 @@ instance (Monoidal j, Monoidal k) => Closed (PRO j k) where
 multDayExp
   :: (SymMonoidal j, SymMonoidal k, Profunctor (p :: PRO j k), Profunctor q, Profunctor p', Profunctor q')
   => (p ~~> q) `Day` (p' ~~> q') ~> (p `Day` p') ~~> (q `Day` q')
-multDayExp = Prof \(Day @_ @_ @_ @_ @c @d @e @f g (DayExp pq) (DayExp pq') h)
-  -> g // h // DayExp (\l r (Day i p p' j)
-    -> p // p' // let c = obj @c; d = obj @d; e = obj @e; f = obj @f; c' = src p; d' = tgt p; e' = src p'; f' = tgt p'
-      in Day (swapInner c e c' e' . (g `par` i) . l) (pq (c `par` c') (d `par` d') p) (pq' (e `par` e') (f `par` f') p') (r . (h `par` j) . swapInner d d' f f'))
-
+multDayExp = Prof \(Day @_ @_ @_ @_ @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
+  g
+    // h
+    // DayExp
+      ( \l r (Day i p p' j) ->
+          p
+            // p'
+            // let c = obj @c; d = obj @d; e = obj @e; f = obj @f; c' = src p; d' = tgt p; e' = src p'; f' = tgt p'
+               in Day
+                    (swapInner c e c' e' . (g `par` i) . l)
+                    (pq (c `par` c') (d `par` d') p)
+                    (pq' (e `par` e') (f `par` f') p')
+                    (r . (h `par` j) . swapInner d d' f f')
+      )
 
 newtype MonoidInProf p a b = MonoidInProf (p a b)
-instance Profunctor p => Profunctor (MonoidInProf p) where
+instance (Profunctor p) => Profunctor (MonoidInProf p) where
   dimap l r (MonoidInProf p) = MonoidInProf (dimap l r p)
   r \\ MonoidInProf p = r \\ p
 

@@ -1,6 +1,7 @@
 module Proarrow.Category.Bicategory.Mod where
-import Proarrow.Core (CAT, Profunctor(..), Promonad(..), CategoryOf(..), dimapDefault, Is, UN)
-import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Path(..))
+
+import Proarrow.Category.Bicategory (Bicategory (..), Bimodule (..), Monad (..), Path (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data MONK kk where
   MON :: Path kk a a -> MONK kk
@@ -14,7 +15,9 @@ type family UNMOD (p :: MODK kk s t) :: Path kk (MONObj0 s) (MONObj0 t) where
 
 type Mod :: forall {kk} {s} {t}. CAT (MODK kk s t)
 data Mod p q where
-  Mod :: (Ob p, Ob q, s' ~ UN MON s, t' ~ UN MON t, Bimodule s' t' p, Bimodule s' t' q) => p ~> q -> Mod (MOD p :: MODK kk s t) (MOD q)
+  Mod
+    :: (Ob p, Ob q, s' ~ UN MON s, t' ~ UN MON t, Bimodule s' t' p, Bimodule s' t' q)
+    => p ~> q -> Mod (MOD p :: MODK kk s t) (MOD q)
 instance (Bicategory kk, Ob0 kk (MONObj0 s), Ob0 kk (MONObj0 t)) => Profunctor (Mod :: CAT (MODK kk s t)) where
   dimap = dimapDefault
   r \\ Mod f = r \\ f

@@ -2,11 +2,11 @@ module Proarrow.Object.Terminal where
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CategoryOf(..), Profunctor (..), PRO)
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..))
 import Proarrow.Object (Obj, obj)
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Profunctor.Terminal (TerminalProfunctor(..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (CategoryOf k, Ob (TerminalObject :: k)) => HasTerminalObject k where
   type TerminalObject :: k

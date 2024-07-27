@@ -1,27 +1,27 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use id" #-}
 {-# HLINT ignore "Avoid lambda" #-}
 {-# HLINT ignore "Use const" #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
 module Proarrow.Category.Instance.Constraint where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (UN, Is, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault)
-import Proarrow.Object.Terminal (HasTerminalObject(..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
-import Proarrow.Object.BinaryProduct qualified as P
-import Prelude (Semigroup, Monoid, Maybe)
-import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal (..))
-import Proarrow.Object.Exponential (Closed(..))
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (Obj)
-
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.BinaryProduct qualified as P
+import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Prelude (Maybe, Monoid, Semigroup)
 
 newtype CONSTRAINT = CNSTRNT Constraint
 type instance UN CNSTRNT (CNSTRNT a) = a
 
 data (:-) a b where
-  Entails :: { getEntails :: forall r. ((a => b) => r) -> r } -> CNSTRNT a :- CNSTRNT b
+  Entails :: {getEntails :: forall r. (((a) => b) => r) -> r} -> CNSTRNT a :- CNSTRNT b
 
 instance CategoryOf CONSTRAINT where
   type (~>) = (:-)
@@ -59,8 +59,8 @@ instance Monoidal CONSTRAINT where
 instance SymMonoidal CONSTRAINT where
   swap' Entails{} Entails{} = Entails \r -> r
 
-class (b => c) => b :=> c
-instance (b => c) => b :=> c
+class ((b) => c) => b :=> c
+instance ((b) => c) => b :=> c
 
 instance Closed CONSTRAINT where
   type CNSTRNT a ~~> CNSTRNT b = CNSTRNT (a :=> b)
@@ -70,7 +70,7 @@ instance Closed CONSTRAINT where
   uncurry' :: forall (a :: CONSTRAINT) b c. Obj b -> Obj c -> (a ~> (b ~~> c)) -> (a ** b) ~> c
   uncurry' Entails{} Entails{} (Entails f) = Entails (h @(UN CNSTRNT a) @(UN CNSTRNT b) @(UN CNSTRNT c) f)
     where
-      h :: (((x => y :=> z) => r) -> r) -> (((x, y) => z) => r) -> r
+      h :: ((((x) => y :=> z) => r) -> r) -> (((x, y) => z) => r) -> r
       h g = g
 
 -- I am solving the constraint ‘Eq a’ in a way that might turn out to loop at runtime.

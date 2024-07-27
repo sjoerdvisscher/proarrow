@@ -1,53 +1,52 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Limit where
 
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Category.Instance.Coproduct (COPRODUCT(..), (:++:)(..))
-import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
+import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
+import Proarrow.Category.Instance.Unit (UNIT (..), Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
-import Proarrow.Core (PRO, (:~>), CategoryOf (..), Promonad(..), Profunctor(..), (//), CategoryOf, Kind, UN)
-import Proarrow.Profunctor.Terminal (TerminalProfunctor(TerminalProfunctor'))
-import Proarrow.Profunctor.Representable (Representable (..), withRepCod, dimapRep)
-import Proarrow.Profunctor.Rift (type (<|), Rift (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), UN, (//), (:~>))
 import Proarrow.Object (Obj)
-import Proarrow.Object.Terminal (HasTerminalObject(..), terminate)
-import Proarrow.Object.BinaryProduct (HasBinaryProducts(..), fst, snd)
-import Proarrow.Category.Opposite (OPPOSITE(..), Op(..))
-import Proarrow.Category.Instance.Product ((:**:)(..), Fst, Snd)
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
+import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepCod)
+import Proarrow.Profunctor.Rift (Rift (..), type (<|))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 
-class Representable (Limit j d) => IsRepresentableLimit j d
-instance Representable (Limit j d) => IsRepresentableLimit j d
+class (Representable (Limit j d)) => IsRepresentableLimit j d
+instance (Representable (Limit j d)) => IsRepresentableLimit j d
 
 -- | profunctor-weighted limits
 type HasLimits :: PRO a i -> Kind -> Constraint
-class (forall (d :: PRO k i). Representable d => IsRepresentableLimit j d) => HasLimits (j :: PRO a i) k where
+class (forall (d :: PRO k i). (Representable d) => IsRepresentableLimit j d) => HasLimits (j :: PRO a i) k where
   type Limit (j :: PRO a i) (d :: PRO k i) :: PRO k a
-  limit :: Representable (d :: PRO k i) => Limit j d :~> d <| j
-  limitInv :: Representable (d :: PRO k i) => d <| j :~> Limit j d
+  limit :: (Representable (d :: PRO k i)) => Limit j d :~> d <| j
+  limitInv :: (Representable (d :: PRO k i)) => d <| j :~> Limit j d
 
 type Unweighted = TerminalProfunctor
-
 
 type TerminalLimit :: PRO k VOID -> PRO k UNIT
 data TerminalLimit d a b where
   TerminalLimit :: forall d a. a ~> TerminalObject -> TerminalLimit d a U
 
-instance HasTerminalObject k => Profunctor (TerminalLimit (d :: PRO k VOID)) where
+instance (HasTerminalObject k) => Profunctor (TerminalLimit (d :: PRO k VOID)) where
   dimap = dimapRep
   r \\ TerminalLimit f = r \\ f
-instance HasTerminalObject k => Representable (TerminalLimit (d :: PRO k VOID)) where
+instance (HasTerminalObject k) => Representable (TerminalLimit (d :: PRO k VOID)) where
   type TerminalLimit d % U = TerminalObject
   index (TerminalLimit f) = f
   tabulate = TerminalLimit
   repMap Unit = id
 
-instance HasTerminalObject k => HasLimits (Unweighted :: PRO UNIT VOID) k where
+instance (HasTerminalObject k) => HasLimits (Unweighted :: PRO UNIT VOID) k where
   type Limit Unweighted d = TerminalLimit d
-  limit (TerminalLimit f) = f // Rift \(TerminalProfunctor' _ o) -> tabulate (case o of . f)
+  limit (TerminalLimit f) = f // Rift \(TerminalProfunctor' _ o) -> tabulate (case o of {} . f)
   limitInv Rift{} = TerminalLimit terminate
-
 
 type ProductLimit :: PRO k (COPRODUCT UNIT UNIT) -> PRO k UNIT
 data ProductLimit d a b where
@@ -62,7 +61,7 @@ instance (HasBinaryProducts k, Representable d) => Representable (ProductLimit d
   tabulate = ProductLimit
   repMap Unit = (***) @_ @(d % L U) @(d % R U) (repMap @d (InjL Unit)) (repMap @d (InjR Unit))
 
-instance HasBinaryProducts k => HasLimits (Unweighted :: PRO UNIT (COPRODUCT UNIT UNIT)) k where
+instance (HasBinaryProducts k) => HasLimits (Unweighted :: PRO UNIT (COPRODUCT UNIT UNIT)) k where
   type Limit Unweighted d = ProductLimit d
   limit (ProductLimit @d f) = f // Rift \(TerminalProfunctor' _ o) -> tabulate $ choose @_ @d o . f
   limitInv (Rift k) =
@@ -72,24 +71,22 @@ instance HasBinaryProducts k => HasLimits (Unweighted :: PRO UNIT (COPRODUCT UNI
 
 choose
   :: forall k (d :: PRO k (COPRODUCT UNIT UNIT)) b
-  .  (HasBinaryProducts k, Representable d)
+   . (HasBinaryProducts k, Representable d)
   => Obj b -> ((d % L U) && (d % R U)) ~> (d % b)
 choose b = withRepCod @d @(L U) $ withRepCod @d @(R U) $ case b of
   (InjL Unit) -> fst @(d % L U) @(d % R U)
   (InjR Unit) -> snd @(d % L U) @(d % R U)
 
-
-
-newtype End d = End { getEnd :: forall a b. a ~> b -> d % '(OP a, b) }
+newtype End d = End {getEnd :: forall a b. a ~> b -> d % '(OP a, b)}
 
 type EndLimit :: PRO Type (OPPOSITE k, k) -> PRO Type UNIT
 data EndLimit d a b where
   EndLimit :: forall d a. (a -> End d) -> EndLimit d a U
 
-instance Representable d => Profunctor (EndLimit (d :: PRO Type (OPPOSITE k, k))) where
+instance (Representable d) => Profunctor (EndLimit (d :: PRO Type (OPPOSITE k, k))) where
   dimap = dimapRep
   r \\ EndLimit f = r \\ f
-instance Representable d => Representable (EndLimit (d :: PRO Type (OPPOSITE k, k))) where
+instance (Representable d) => Representable (EndLimit (d :: PRO Type (OPPOSITE k, k))) where
   type EndLimit d % U = End d
   index (EndLimit f) = f
   tabulate = EndLimit
@@ -97,12 +94,12 @@ instance Representable d => Representable (EndLimit (d :: PRO Type (OPPOSITE k, 
 
 type Hom :: PRO UNIT (OPPOSITE k, k)
 data Hom a b where
-  Hom :: Ob ab => UN OP (Fst ab) ~> Snd ab -> Hom U ab
-instance CategoryOf k => Profunctor (Hom :: PRO UNIT (OPPOSITE k, k)) where
+  Hom :: (Ob ab) => UN OP (Fst ab) ~> Snd ab -> Hom U ab
+instance (CategoryOf k) => Profunctor (Hom :: PRO UNIT (OPPOSITE k, k)) where
   dimap Unit (Op l :**: r) (Hom f) = Hom (r . f . l) \\ l \\ r
   r \\ Hom f = r \\ f
 
-instance CategoryOf k => HasLimits (Hom :: PRO UNIT (OPPOSITE k, k)) Type where
+instance (CategoryOf k) => HasLimits (Hom :: PRO UNIT (OPPOSITE k, k)) Type where
   type Limit Hom d = EndLimit d
   limit (EndLimit @d f) = f // Rift \(Hom k) -> tabulate @d (\a -> getEnd (f a) k)
   limitInv (Rift n) = EndLimit \a -> End \x -> index (n (Hom x)) a \\ x

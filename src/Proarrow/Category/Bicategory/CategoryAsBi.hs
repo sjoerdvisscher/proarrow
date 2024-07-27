@@ -1,9 +1,9 @@
 module Proarrow.Category.Bicategory.CategoryAsBi where
 
-import Prelude (Maybe(..), liftA2, (>>), type (~))
+import Prelude (Maybe (..), liftA2, (>>), type (~))
 
-import Proarrow.Core (CAT, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault)
 import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 type PLAINK :: forall k -> CAT k
 data PLAINK k i j = PLAIN -- should be @PLAIN (i ~> j)@ storing a value at type level, but that needs dependent types
@@ -22,7 +22,7 @@ instance (CategoryOf k, Ob i, Ob j) => CategoryOf (PLAINK k i j) where
   type (~>) = Category
   type Ob a = (a ~ PLAIN)
 
-instance CategoryOf k => Bicategory (PLAINK k) where
+instance (CategoryOf k) => Bicategory (PLAINK k) where
   type Ob0 (PLAINK k) a = Ob a
   type I = PLAIN
   type O PLAIN PLAIN = PLAIN

@@ -1,42 +1,43 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Category.Double.Prof where
 
 import Data.Function (($))
-
-import Proarrow.Category.Bicategory (Path(..), SPath (..), IsPath (..), type (+++), appendObj, Strictified (..))
-import Proarrow.Category.Bicategory.Co (COK(..), Co(..))
-import Proarrow.Category.Bicategory.Prof (ProfK(..), ProfC, ProfCorepC, PROFK, Prof(..))
-import Proarrow.Category.Double (SQ, Double (..), Equipment(..), Companion, Conjoint)
-import Proarrow.Category.Double.Quintet (Quintet(..), Sq1 (Q1), Quintet1, QKK (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
-import Proarrow.Core (PRO, CategoryOf(..), Profunctor(..), Promonad (..), UN, (//))
 import Unsafe.Coerce (unsafeCoerce)
-import Proarrow.Profunctor.Composition ((:.:)(..))
-import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..))
 
+import Proarrow.Category.Bicategory (IsPath (..), Path (..), SPath (..), Strictified (..), appendObj, type (+++))
+import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
+import Proarrow.Category.Bicategory.Prof (PROFK, Prof (..), ProfC, ProfCorepC, ProfK (..))
+import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..))
+import Proarrow.Category.Double (Companion, Conjoint, Double (..), Equipment (..), SQ)
+import Proarrow.Category.Double.Quintet (QKK (..), Quintet (..), Quintet1, Sq1 (Q1))
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, (//))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 type family UnCorep (fs :: Path (COK (ProfK cl)) h i) :: Path (COK PROFK) h i
 type instance UnCorep Nil = Nil
 type instance UnCorep (CO (PK f) ::: fs) = CO (PK f) ::: UnCorep fs
 
 unCorepAppend'
-  :: forall as bs r. (Ob bs)
+  :: forall as bs r
+   . (Ob bs)
   => SPath as -> ((UnCorep as +++ UnCorep bs ~ UnCorep (as +++ bs)) => r) -> r
 unCorepAppend' SNil r = r
 unCorepAppend' (SCons @p @ps' (Co Prof{}) ps) r = unCorepAppend' @ps' @bs ps r
 
 unCorepAppend
-  :: forall as bs r. (Ob as, Ob bs)
+  :: forall as bs r
+   . (Ob as, Ob bs)
   => ((UnCorep as +++ UnCorep bs ~ UnCorep (as +++ bs)) => r) -> r
 unCorepAppend = unCorepAppend' @as @bs (singPath @as)
 
 unCorep :: ps ~> qs -> UnCorep ps ~> UnCorep qs
 unCorep = unsafeCoerce
 
-
 data ProfCorep
-instance Corepresentable p => IsOb ProfCorep p
+instance (Corepresentable p) => IsOb ProfCorep p
 
 -- type ProfSq :: SQ (ProfK ProfC) (COK (ProfK ProfCorepC))
 -- data ProfSq ps qs fs gs where
@@ -54,11 +55,11 @@ instance Double PROFK (COK (SUBCAT ProfCorep PROFK)) where
   object = ProfSq object
   hArr n = n // ProfSq $ hArr n
   vArr n@Str{} = let n' = unCorep n in n' // ProfSq $ vArr n'
-  -- ProfSq @_ @_ @fs @gs n@Q{} ||| ProfSq @_ @_ @hs @is m@Q{} =
-  --   unCorepAppend @fs @hs $ unCorepAppend @gs @is $ appendObj @fs @hs $ appendObj @gs @is $
-  --     ProfSq $ n ||| m
-  -- ProfSq @ps @qs @_ @_ n@(Q Q1{}) === ProfSq @rs @ss @_ @_ m@(Q Q1{}) = appendObj @ps @rs $ appendObj @qs @ss $ ProfSq $ n === m
 
+-- ProfSq @_ @_ @fs @gs n@Q{} ||| ProfSq @_ @_ @hs @is m@Q{} =
+--   unCorepAppend @fs @hs $ unCorepAppend @gs @is $ appendObj @fs @hs $ appendObj @gs @is $
+--     ProfSq $ n ||| m
+-- ProfSq @ps @qs @_ @_ n@(Q Q1{}) === ProfSq @rs @ss @_ @_ m@(Q Q1{}) = appendObj @ps @rs $ appendObj @qs @ss $ ProfSq $ n === m
 
 -- | The proarrow equipment of profunctors and corepresentable profunctors.
 instance Equipment ProfSq where
@@ -73,10 +74,9 @@ instance Equipment ProfSq where
   withComOb Co{} r = r
   withConOb Co{} r = r
 
-
 type StarCorep :: PRO a b -> PRO b a
 data StarCorep p a b where
-  StarCorep :: Ob b => a ~> (p %% b) -> StarCorep p a b
-instance Corepresentable p => Profunctor (StarCorep p) where
+  StarCorep :: (Ob b) => a ~> (p %% b) -> StarCorep p a b
+instance (Corepresentable p) => Profunctor (StarCorep p) where
   dimap f g (StarCorep p) = g // StarCorep $ dimap f (corepMap @p g) p
   r \\ StarCorep p = r \\ p

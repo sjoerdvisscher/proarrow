@@ -1,13 +1,21 @@
 module Proarrow.Category.Instance.Bool where
 
-import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault)
-import Proarrow.Object.Terminal (HasTerminalObject(..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts(..), leftUnitorProd, leftUnitorProdInv, rightUnitorProd, rightUnitorProdInv, associatorProd, associatorProdInv, swapProd)
-import Proarrow.Object.Initial (HasInitialObject(..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
-import Proarrow.Object.Exponential (Closed(..))
-import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal (..))
-
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryProduct
+  ( HasBinaryProducts (..)
+  , associatorProd
+  , associatorProdInv
+  , leftUnitorProd
+  , leftUnitorProdInv
+  , rightUnitorProd
+  , rightUnitorProdInv
+  , swapProd
+  )
+import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 data BOOL = FLS | TRU
 
@@ -16,7 +24,6 @@ data Booleans a b where
   Fls :: Booleans FLS FLS
   F2T :: Booleans FLS TRU
   Tru :: Booleans TRU TRU
-
 
 class IsBool (b :: BOOL) where boolId :: b ~> b
 instance IsBool FLS where boolId = Fls
@@ -39,7 +46,6 @@ instance Profunctor Booleans where
   r \\ Fls = r
   r \\ F2T = r
   r \\ Tru = r
-
 
 instance HasTerminalObject BOOL where
   type TerminalObject = TRU

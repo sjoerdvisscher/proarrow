@@ -1,22 +1,21 @@
 module Proarrow.Monoid where
 
-import Data.Kind (Type, Constraint)
+import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Core (CategoryOf(..), Promonad(..), arr)
-import Proarrow.Category.Monoidal (Monoidal(..))
-import Proarrow.Object.BinaryCoproduct (HasCoproducts, COPROD(..), mkCoprod, codiag)
-import Proarrow.Object.BinaryProduct ((&&&), Cartesian, HasProducts, PROD(..), mkProd, diag)
-import Proarrow.Object.Terminal (terminate)
+import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Core (CategoryOf (..), Promonad (..), arr)
+import Proarrow.Object.BinaryCoproduct (COPROD (..), HasCoproducts, codiag, mkCoprod)
+import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), diag, mkProd, (&&&))
 import Proarrow.Object.Initial (initiate)
-
+import Proarrow.Object.Terminal (terminate)
 
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
   mempty :: Unit ~> m
   mappend :: m ** m ~> m
 
-instance P.Monoid m => Monoid (m :: Type) where
+instance (P.Monoid m) => Monoid (m :: Type) where
   mempty () = P.mempty
   mappend = P.uncurry (P.<>)
 
@@ -30,7 +29,6 @@ instance (Monoid m, Cartesian k, Ob x) => P.Monoid (GenElt x (m :: k)) where
 instance (HasCoproducts k, Ob a) => Monoid (COPR (a :: k)) where
   mempty = mkCoprod initiate
   mappend = mkCoprod codiag
-
 
 type Comonoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob c) => Comonoid (c :: k) where

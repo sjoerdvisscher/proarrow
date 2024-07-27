@@ -1,21 +1,21 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Instance.Cat where
 
-import Proarrow.Category.Instance.Product ((:**:)(..))
-import Proarrow.Category.Instance.Unit (UNIT(..), Unit(..))
-import Proarrow.Core (CAT, PRO, UN, Is, CategoryOf(..), Promonad(..), Profunctor(..), dimapDefault, Kind)
-import Proarrow.Profunctor.Identity (Id)
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Unit (UNIT (..), Unit (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, PRO, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
-import Proarrow.Object.Terminal (HasTerminalObject(..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
-
+import Proarrow.Profunctor.Identity (Id)
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
 
 type Cat :: CAT KIND
 data Cat a b where
-  Cat :: Profunctor (p :: PRO j k) => Cat (K k) (K j)
+  Cat :: (Profunctor (p :: PRO j k)) => Cat (K k) (K j)
 
 -- | The category of categories and profunctors between them.
 instance CategoryOf KIND where
@@ -30,28 +30,26 @@ instance Profunctor Cat where
   dimap = dimapDefault
   r \\ Cat = r
 
-
 type Terminate :: PRO UNIT k
 data Terminate a b where
-  Terminate :: Ob b => Terminate U b
-instance CategoryOf k => Profunctor (Terminate :: PRO UNIT k) where
+  Terminate :: (Ob b) => Terminate U b
+instance (CategoryOf k) => Profunctor (Terminate :: PRO UNIT k) where
   dimap Unit r Terminate = Terminate \\ r
   r \\ Terminate = r
 instance HasTerminalObject KIND where
   type TerminalObject = K UNIT
   terminate' Cat = Cat @_ @_ @Terminate
 
-
 type FstCat :: PRO j (j, k)
 data FstCat a b where
-  FstCat :: Ob c => a ~> b -> FstCat a '(b, c)
+  FstCat :: (Ob c) => a ~> b -> FstCat a '(b, c)
 instance (CategoryOf j, CategoryOf k) => Profunctor (FstCat :: PRO j (j, k)) where
   dimap l (r1 :**: r2) (FstCat f) = FstCat (r1 . f . l) \\ r2
   r \\ FstCat f = r \\ f
 
 type SndCat :: PRO k (j, k)
 data SndCat a b where
-  SndCat :: Ob b => a ~> c -> SndCat a '(b, c)
+  SndCat :: (Ob b) => a ~> c -> SndCat a '(b, c)
 instance (CategoryOf j, CategoryOf k) => Profunctor (SndCat :: PRO k (j, k)) where
   dimap l (r1 :**: r2) (SndCat f) = SndCat (r2 . f . l) \\ r1
   r \\ SndCat f = r \\ f

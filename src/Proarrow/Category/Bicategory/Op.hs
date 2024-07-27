@@ -1,10 +1,15 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Op where
 
-import Proarrow.Category.Bicategory (Bicategory(..), Monad(..), Bimodule(..), Comonad(..))
-import Proarrow.Category.Bicategory.Kan (RightKanExtension(..), LeftKanExtension(..), RightKanLift(..), LeftKanLift(..))
-import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault, UN, Is)
-
+import Proarrow.Category.Bicategory (Bicategory (..), Bimodule (..), Comonad (..), Monad (..))
+import Proarrow.Category.Bicategory.Kan
+  ( LeftKanExtension (..)
+  , LeftKanLift (..)
+  , RightKanExtension (..)
+  , RightKanLift (..)
+  )
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type OPK :: CAT k -> CAT k
 newtype OPK kk j k = OP (kk k j)
@@ -25,7 +30,7 @@ instance (CategoryOf (kk k j)) => CategoryOf (OPK kk j k) where
   type Ob a = (Is OP a, Ob (UN OP a))
 
 -- | Create a dual of a bicategory by reversing the 1-cells.
-instance Bicategory kk => Bicategory (OPK kk) where
+instance (Bicategory kk) => Bicategory (OPK kk) where
   type Ob0 (OPK kk) k = Ob0 kk k
   type I = OP I
   type O a b = OP (UN OP b `O` UN OP a)
@@ -38,34 +43,34 @@ instance Bicategory kk => Bicategory (OPK kk) where
   associator (Op p) (Op q) (Op r) = Op (associatorInv r q p)
   associatorInv (Op p) (Op q) (Op r) = Op (associator r q p)
 
-instance RightKanExtension j f => RightKanLift (OP j) (OP f) where
+instance (RightKanExtension j f) => RightKanLift (OP j) (OP f) where
   type Rift (OP j) (OP f) = OP (Ran j f)
   rift = Op (ran @j @f)
   riftUniv (Op n) = Op (ranUniv @j @f n)
 
-instance LeftKanExtension j f => LeftKanLift (OP j) (OP f) where
+instance (LeftKanExtension j f) => LeftKanLift (OP j) (OP f) where
   type Lift (OP j) (OP f) = OP (Lan j f)
   lift = Op (lan @j @f)
   liftUniv (Op n) = Op (lanUniv @j @f n)
 
-instance RightKanLift j f => RightKanExtension (OP j) (OP f) where
+instance (RightKanLift j f) => RightKanExtension (OP j) (OP f) where
   type Ran (OP j) (OP f) = OP (Rift j f)
   ran = Op (rift @j @f)
   ranUniv (Op n) = Op (riftUniv @j @f n)
 
-instance LeftKanLift j f => LeftKanExtension (OP j) (OP f) where
+instance (LeftKanLift j f) => LeftKanExtension (OP j) (OP f) where
   type Lan (OP j) (OP f) = OP (Lift j f)
   lan = Op (lift @j @f)
   lanUniv (Op n) = Op (liftUniv @j @f n)
 
-instance Monad t => Monad (OP t) where
+instance (Monad t) => Monad (OP t) where
   eta = Op eta
   mu = Op mu
 
-instance Comonad t => Comonad (OP t) where
+instance (Comonad t) => Comonad (OP t) where
   epsilon = Op epsilon
   delta = Op delta
 
-instance Bimodule s t p => Bimodule (OP t) (OP s) (OP p) where
+instance (Bimodule s t p) => Bimodule (OP t) (OP s) (OP p) where
   leftAction = Op (rightAction @s @t @p)
   rightAction = Op (leftAction @s @t @p)

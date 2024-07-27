@@ -1,9 +1,10 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
 {-# HLINT ignore "Redundant lambda" #-}
 {-# HLINT ignore "Avoid lambda" #-}
 module Proarrow.Core where
 
-import Data.Kind (Type, Constraint)
+import Data.Kind (Constraint, Type)
 import Prelude (type (~))
 
 infixr 0 ~>, :~>
@@ -27,7 +28,6 @@ class (Promonad ((~>) :: CAT k)) => CategoryOf k where
 
 type IsCategoryOf k cat = (CategoryOf k, cat ~ (~>) @k, Promonad cat)
 
-
 type p :~> q = forall a b. p a b -> q a b
 
 type Profunctor :: forall {j} {k}. PRO j k -> Constraint
@@ -37,38 +37,35 @@ class (CategoryOf j, CategoryOf k) => Profunctor (p :: PRO j k) where
   default (\\) :: (Ob a, Ob b) => ((Ob a, Ob b) => r) -> p a b -> r
   r \\ _ = r
 
-(//) :: Profunctor p => p a b -> ((Ob a, Ob b) => r) -> r
+(//) :: (Profunctor p) => p a b -> ((Ob a, Ob b) => r) -> r
 p // r = r \\ p
 
-lmap :: Profunctor p => c ~> a -> p a b -> p c b
+lmap :: (Profunctor p) => c ~> a -> p a b -> p c b
 lmap l p = dimap l id p \\ p
 
-rmap :: Profunctor p => b ~> d -> p a b -> p a d
+rmap :: (Profunctor p) => b ~> d -> p a b -> p a d
 rmap r p = dimap id r p \\ p
 
-dimapDefault :: Promonad p => p c a -> p b d -> p a b -> p c d
+dimapDefault :: (Promonad p) => p c a -> p b d -> p a b -> p c d
 dimapDefault f g h = g . h . f
 
-class Profunctor p => Promonad p where
-  id :: Ob a => p a a
+class (Profunctor p) => Promonad p where
+  id :: (Ob a) => p a a
   (.) :: p b c -> p a b -> p a c
 
-arr :: Promonad p => a ~> b -> p a b
+arr :: (Promonad p) => a ~> b -> p a b
 arr f = rmap f id \\ f
-
 
 type Obj a = a ~> a
 
 obj :: forall {k} (a :: k). (CategoryOf k, Ob a) => Obj a
 obj = id @_ @a
 
-src :: forall {k} a b p. Profunctor p => p (a :: k) b -> Obj a
+src :: forall {k} a b p. (Profunctor p) => p (a :: k) b -> Obj a
 src p = obj @a \\ p
 
-tgt :: forall {k} a b p. Profunctor p => p (a :: k) b -> Obj b
+tgt :: forall {k} a b p. (Profunctor p) => p (a :: k) b -> Obj b
 tgt p = obj @b \\ p
-
-
 
 instance Profunctor (->) where
   dimap = dimapDefault
@@ -79,7 +76,6 @@ instance Promonad (->) where
 
 instance CategoryOf Type where
   type (~>) = (->)
-
 
 -- | A helper type family to unwrap a wrapped kind.
 -- This is needed because the field selector functions of newtypes have to be

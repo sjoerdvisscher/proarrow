@@ -1,19 +1,24 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Product where
 
 import Prelude (type (~))
 
 import Proarrow.Category.Bicategory (Bicategory (..))
-import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 type PRODK :: CAT j -> CAT k -> CAT (j, k)
 data PRODK jj kk j k where
   PROD :: jj (Fst ik) (Fst jl) -> kk (Snd ik) (Snd jl) -> PRODK jj kk ik jl
 
-type family PRODFST (p :: PRODK jj kk j k) :: jj (Fst j) (Fst k) where PRODFST (PROD p q) = p
-type family PRODSND (p :: PRODK jj kk j k) :: kk (Snd j) (Snd k) where PRODSND (PROD p q) = q
-type family Fst (p :: (j, k)) :: j where Fst '(a, b) = a
-type family Snd (p :: (j, k)) :: k where Snd '(a, b) = b
+type family PRODFST (p :: PRODK jj kk j k) :: jj (Fst j) (Fst k) where
+  PRODFST (PROD p q) = p
+type family PRODSND (p :: PRODK jj kk j k) :: kk (Snd j) (Snd k) where
+  PRODSND (PROD p q) = q
+type family Fst (p :: (j, k)) :: j where
+  Fst '(a, b) = a
+type family Snd (p :: (j, k)) :: k where
+  Snd '(a, b) = b
 
 type Prod :: CAT (PRODK jj kk j k)
 data Prod a b where

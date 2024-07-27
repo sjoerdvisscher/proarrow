@@ -1,20 +1,20 @@
 {-# LANGUAGE LinearTypes #-}
+
 module Proarrow.Category.Instance.Linear where
 
 import Data.Kind (Type)
 import Data.Void (Void)
-import Prelude (Either(..))
+import Prelude (Either (..))
 
-import Proarrow.Core (UN, Is, CAT, Profunctor (..), dimapDefault, Promonad (..), CategoryOf(..), PRO)
-import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal (..), MonoidalProfunctor (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
-import Proarrow.Adjunction (Adjunction(..))
-import Proarrow.Profunctor.Composition ((:.:)(..))
-import Proarrow.Object.Exponential (Closed(..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
-import Proarrow.Object.Initial (HasInitialObject(..))
-import Proarrow.Functor (Functor(..))
-
+import Proarrow.Adjunction (Adjunction (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Functor (Functor (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 type data LINEAR = L Type
 type instance UN L (L a) = a
@@ -29,6 +29,7 @@ instance Profunctor Linear where
 instance Promonad Linear where
   id = Linear \x -> x
   Linear f . Linear g = Linear \x -> f (g x)
+
 -- | Category of linear functions.
 instance CategoryOf LINEAR where
   type (~>) = Linear
@@ -54,7 +55,6 @@ instance Closed LINEAR where
   uncurry' Linear{} Linear{} (Linear f) = Linear \(a, b) -> f a b
   Linear f ^^^ Linear g = Linear \h x -> f (h (g x))
 
-
 type Forget :: PRO LINEAR Type
 data Forget a b where
   Forget :: (a -> b) -> Forget (L a) b
@@ -69,7 +69,6 @@ instance Corepresentable Forget where
 instance MonoidalProfunctor Forget where
   lift0 = Forget \() -> ()
   lift2 (Forget f) (Forget g) = Forget \(x, y) -> (f x, g y)
-
 
 data Ur a where
   Ur :: a -> Ur a
@@ -101,11 +100,9 @@ unlift2Free = Linear \(Ur (x, y)) -> (Ur x, Ur y)
 unlift2Forget :: (Ob x, Ob y) => Forget %% (x ** y) ~> (Forget %% x) ** (Forget %% y)
 unlift2Forget = id
 
-
 instance Adjunction Free Forget where
   unit = Forget id :.: Free unur
   counit (Free f :.: Forget g) a = g (f (Ur a))
-
 
 instance HasBinaryCoproducts LINEAR where
   type L a || L b = L (Either a b)
@@ -117,4 +114,4 @@ instance HasBinaryCoproducts LINEAR where
 
 instance HasInitialObject LINEAR where
   type InitialObject = L Void
-  initiate' Linear{} = Linear \case
+  initiate' Linear{} = Linear \case {}

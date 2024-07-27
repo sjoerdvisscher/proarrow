@@ -2,17 +2,15 @@ module Proarrow.Category.Instance.Unit where
 
 import Prelude (type (~))
 
-import Proarrow.Core (CAT, CategoryOf(..), Profunctor(..), Promonad(..), dimapDefault)
-import Proarrow.Object.Initial (HasInitialObject(..))
-import Proarrow.Object.Terminal (HasTerminalObject(..))
-
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 type data UNIT = U
 
 type Unit :: CAT UNIT
 data Unit a b where
   Unit :: Unit U U
-
 
 -- | The category with one object, the terminal category.
 instance CategoryOf UNIT where

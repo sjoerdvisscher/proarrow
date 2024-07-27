@@ -2,18 +2,18 @@ module Proarrow.Profunctor.Fix where
 
 import Data.Functor.Const (Const (..))
 
-import Proarrow.Core (Profunctor(..), PRO, Promonad (..), (:~>))
-import Proarrow.Functor (Functor(..))
-import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Profunctor.Star (Star(..))
-import Proarrow.Category.Instance.Nat (Nat(..))
-import Proarrow.Profunctor.Composition ((:.:)(..))
+import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Core (PRO, Profunctor (..), Promonad (..), (:~>))
+import Proarrow.Functor (Functor (..))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Star (Star (..))
 
 type Fix :: PRO k k -> PRO k k
 newtype Fix p a b where
-  In :: { out :: (p :.: Fix p) a b } -> Fix p a b
+  In :: {out :: (p :.: Fix p) a b} -> Fix p a b
 
-instance Profunctor p => Profunctor (Fix p) where
+instance (Profunctor p) => Profunctor (Fix p) where
   dimap l r = In . dimap l r . out \\ l \\ r
   r \\ In p = r \\ p
 
@@ -26,7 +26,6 @@ cata alg = getProf go where go = Prof alg . map go . Prof out
 ana :: (Profunctor p, Profunctor r) => (r :~> p :.: r) -> r :~> Fix p
 ana coalg = getProf go where go = Prof In . map go . Prof coalg
 
-
 data ListF x l = Nil | Cons x l
 instance Functor (ListF x) where
   map _ Nil = Nil
@@ -34,11 +33,11 @@ instance Functor (ListF x) where
 
 embed :: ListF x [x] -> [x]
 embed Nil = []
-embed (Cons x xs) = x:xs
+embed (Cons x xs) = x : xs
 
 project :: [x] -> ListF x [x]
 project [] = Nil
-project (x:xs) = Cons x xs
+project (x : xs) = Cons x xs
 
 embed' :: Star (ListF x) :.: Star (Const [x]) :~> Star (Const [x])
 embed' (Star f :.: Star g) = Star (Const . embed . map (getConst . g) . f)

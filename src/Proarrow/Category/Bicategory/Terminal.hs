@@ -1,10 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Terminal where
 
 import Data.Type.Equality (type (~), type (~~))
 
-import Proarrow.Category.Bicategory (Bicategory(..), Monad (..))
-import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault)
+import Proarrow.Category.Bicategory (Bicategory (..), Monad (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 data TK = T0
 type TERMK :: CAT TK

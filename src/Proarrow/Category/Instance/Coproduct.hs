@@ -2,7 +2,7 @@ module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..), IsCategoryOf)
+import Proarrow.Core (CAT, CategoryOf (..), IsCategoryOf, Profunctor (..), Promonad (..))
 
 data COPRODUCT j k = L j | R k
 
@@ -32,7 +32,7 @@ instance (IsCategoryOf j c, IsCategoryOf k d) => Promonad ((c :++: d) :: CAT (CO
 instance (Profunctor c, Profunctor d) => Profunctor (c :++: d) where
   dimap (InjL l) (InjL r) (InjL f) = InjL (dimap l r f)
   dimap (InjR l) (InjR r) (InjR f) = InjR (dimap l r f)
-  dimap (InjL _) (InjR _) f = case f of
-  dimap (InjR _) (InjL _) f = case f of
+  dimap (InjL _) (InjR _) f = case f of {}
+  dimap (InjR _) (InjL _) f = case f of {}
   r \\ InjL f = r \\ f
   r \\ InjR f = r \\ f

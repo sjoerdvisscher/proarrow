@@ -1,8 +1,8 @@
-module Proarrow.Profunctor.Terminal (TerminalProfunctor(.., TerminalProfunctor')) where
+module Proarrow.Profunctor.Terminal (TerminalProfunctor (.., TerminalProfunctor')) where
 
-import Proarrow.Core (PRO, Profunctor (..), CategoryOf(..))
+import Proarrow.Category.Monoidal (Monoidal (par), MonoidalProfunctor (..))
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..))
 import Proarrow.Object (Obj, obj)
-import Proarrow.Category.Monoidal (MonoidalProfunctor(..), Monoidal (par))
 
 type TerminalProfunctor :: PRO j k
 data TerminalProfunctor a b where
@@ -20,7 +20,8 @@ getObs :: (CategoryOf j, CategoryOf k) => TerminalProfunctor (a :: j) (b :: k) -
 getObs TerminalProfunctor = (obj, obj)
 
 pattern TerminalProfunctor' :: (CategoryOf j, CategoryOf k) => Obj (a :: j) -> Obj (b :: k) -> TerminalProfunctor a b
-pattern TerminalProfunctor' x y <- (getObs -> (x, y)) where
-  TerminalProfunctor' a b = TerminalProfunctor \\ a \\ b
+pattern TerminalProfunctor' x y <- (getObs -> (x, y))
+  where
+    TerminalProfunctor' a b = TerminalProfunctor \\ a \\ b
 
 {-# COMPLETE TerminalProfunctor' #-}

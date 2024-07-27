@@ -1,12 +1,26 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Co where
 
-
-import Proarrow.Category.Bicategory (Bicategory (..), Monad(..), Comonad(..), Fold, type (+++), Path (..), SPath (..), singPath, asObj)
-import Proarrow.Category.Bicategory.Kan (RightKanExtension(..), LeftKanExtension(..), RightKanLift(..), LeftKanLift(..))
-import Proarrow.Core (CategoryOf(..), Profunctor(..), CAT, Promonad (..), dimapDefault, UN, Is)
+import Proarrow.Category.Bicategory
+  ( Bicategory (..)
+  , Comonad (..)
+  , Fold
+  , Monad (..)
+  , Path (..)
+  , SPath (..)
+  , asObj
+  , singPath
+  , type (+++)
+  )
+import Proarrow.Category.Bicategory.Kan
+  ( LeftKanExtension (..)
+  , LeftKanLift (..)
+  , RightKanExtension (..)
+  , RightKanLift (..)
+  )
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (obj)
-
 
 type COK :: CAT k -> CAT k
 newtype COK kk j k = CO (kk j k)
@@ -27,7 +41,7 @@ instance (CategoryOf (kk j k)) => CategoryOf (COK kk j k) where
   type Ob a = (Is CO a, Ob (UN CO a))
 
 -- | Create a dual of a bicategory by reversing the 2-cells.
-instance Bicategory kk => Bicategory (COK kk) where
+instance (Bicategory kk) => Bicategory (COK kk) where
   type Ob0 (COK kk) k = Ob0 kk k
   type I = CO I
   type a `O` b = CO (UN CO a `O` UN CO b)
@@ -48,10 +62,10 @@ concatFoldCo SNil = leftUnitor (obj @(UN CO (Fold qs)))
 concatFoldCo (SCons (Co p) SNil) = case singPath @qs of
   SNil -> rightUnitor p
   SCons{} -> p `o` obj @(UN CO (Fold qs))
-concatFoldCo (SCons @_ @ps1 (Co p) ps@SCons{})
-  = (p `o` concatFoldCo @qs ps)
-  . associator p (obj @(UN CO (Fold ps1))) (obj @(UN CO (Fold qs)))
-  \\ asObj ps
+concatFoldCo (SCons @_ @ps1 (Co p) ps@SCons{}) =
+  (p `o` concatFoldCo @qs ps)
+    . associator p (obj @(UN CO (Fold ps1))) (obj @(UN CO (Fold qs)))
+    \\ asObj ps
 
 splitFoldCo
   :: forall {kk} {i} {j} {k} {ps :: Path (COK kk) i j} (qs :: Path (COK kk) j k)
@@ -61,37 +75,35 @@ splitFoldCo SNil = leftUnitorInv (obj @(UN CO (Fold qs)))
 splitFoldCo (SCons (Co p) SNil) = case singPath @qs of
   SNil -> rightUnitorInv p
   SCons{} -> p `o` obj @(UN CO (Fold qs))
-splitFoldCo (SCons @_ @ps1 (Co p) ps@SCons{})
-  = associatorInv p (obj @(UN CO (Fold ps1))) (obj @(UN CO (Fold qs)))
-  . (p `o` splitFoldCo @qs ps)
-  \\ asObj ps
+splitFoldCo (SCons @_ @ps1 (Co p) ps@SCons{}) =
+  associatorInv p (obj @(UN CO (Fold ps1))) (obj @(UN CO (Fold qs)))
+    . (p `o` splitFoldCo @qs ps)
+    \\ asObj ps
 
-
-
-instance Comonad m => Monad (CO m) where
+instance (Comonad m) => Monad (CO m) where
   eta = Co epsilon
   mu = Co delta
 
-instance Monad m => Comonad (CO m) where
+instance (Monad m) => Comonad (CO m) where
   epsilon = Co eta
   delta = Co mu
 
-instance RightKanExtension j f => LeftKanExtension (CO j) (CO f) where
+instance (RightKanExtension j f) => LeftKanExtension (CO j) (CO f) where
   type Lan (CO j) (CO f) = CO (Ran j f)
   lan = Co (ran @j @f)
   lanUniv (Co n) = Co (ranUniv @j @f n)
 
-instance LeftKanExtension j f => RightKanExtension (CO j) (CO f) where
+instance (LeftKanExtension j f) => RightKanExtension (CO j) (CO f) where
   type Ran (CO j) (CO f) = CO (Lan j f)
   ran = Co (lan @j @f)
   ranUniv (Co n) = Co (lanUniv @j @f n)
 
-instance RightKanLift j f => LeftKanLift (CO j) (CO f) where
+instance (RightKanLift j f) => LeftKanLift (CO j) (CO f) where
   type Lift (CO j) (CO f) = CO (Rift j f)
   lift = Co (rift @j @f)
   liftUniv (Co n) = Co (riftUniv @j @f n)
 
-instance LeftKanLift j f => RightKanLift (CO j) (CO f) where
+instance (LeftKanLift j f) => RightKanLift (CO j) (CO f) where
   type Rift (CO j) (CO f) = CO (Lift j f)
   rift = Co (lift @j @f)
   riftUniv (Co n) = Co (liftUniv @j @f n)

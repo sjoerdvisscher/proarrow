@@ -1,11 +1,11 @@
 module Proarrow.Profunctor.Product where
 
-import Proarrow.Core (PRO, Profunctor (..), (:~>))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
+import Proarrow.Core (PRO, Profunctor (..), (:~>))
 
 type (:*:) :: PRO j k -> PRO j k -> PRO j k
 data (p :*: q) a b where
-  (:*:) :: { fstP :: p a b, sndP :: q a b } -> (p :*: q) a b
+  (:*:) :: {fstP :: p a b, sndP :: q a b} -> (p :*: q) a b
 
 instance (Profunctor p, Profunctor q) => Profunctor (p :*: q) where
   dimap l r (p :*: q) = dimap l r p :*: dimap l r q

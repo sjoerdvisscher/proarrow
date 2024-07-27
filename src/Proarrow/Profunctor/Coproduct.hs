@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Coproduct where
 
-import Proarrow.Core (PRO, Profunctor(..), (:~>))
+import Proarrow.Core (PRO, Profunctor (..), (:~>))
 
 type (:+:) :: PRO j k -> PRO j k -> PRO j k
 data (p :+: q) a b where

@@ -1,16 +1,19 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Category.Instance.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Core (CAT, CategoryOf(..), Promonad(..), Profunctor(..))
-import Proarrow.Profunctor.Representable (Representable(..))
-import Proarrow.Category.Monoidal (Monoidal(..), SymMonoidal, swap')
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal, swap')
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 type Fst :: (a, b) -> a
-type family Fst a where Fst '(a, b) = a
+type family Fst a where
+  Fst '(a, b) = a
 type Snd :: (a, b) -> b
-type family Snd a where Snd '(a, b) = b
+type family Snd a where
+  Snd '(a, b) = b
 
 type (:**:) :: CAT k1 -> CAT k2 -> CAT (k1, k2)
 data (c :**: d) a b where
@@ -19,7 +22,6 @@ data (c :**: d) a b where
 instance (CategoryOf k1, CategoryOf k2) => CategoryOf (k1, k2) where
   type (~>) = (~>) :**: (~>)
   type Ob a = (a ~ '(Fst a, Snd a), Ob (Fst a), Ob (Snd a))
-
 
 -- | The product promonad of promonads `p` and `q`.
 instance (Promonad p, Promonad q) => Promonad (p :**: q) where
@@ -35,7 +37,6 @@ instance (Representable p, Representable q) => Representable (p :**: q) where
   index (p :**: q) = index p :**: index q
   tabulate (f :**: g) = tabulate f :**: tabulate g
   repMap (f :**: g) = repMap @p f :**: repMap @q g
-
 
 instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   type Unit = '(Unit, Unit)
