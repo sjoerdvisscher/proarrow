@@ -1,9 +1,11 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Functor where
 
 import Data.Functor.Compose (Compose (..))
 import Data.Functor.Const (Const (..))
 import Data.Functor.Identity (Identity)
 import Data.Kind (Constraint, Type)
+import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
 import Proarrow.Core (CategoryOf (..), Promonad (..))
@@ -22,6 +24,8 @@ instance (P.Functor f) => Functor (Prelude f) where
 
 deriving via Prelude ((,) a) instance Functor ((,) a)
 deriving via Prelude (P.Either a) instance Functor (P.Either a)
+deriving via Prelude P.Maybe instance Functor P.Maybe
+deriving via Prelude P.NonEmpty instance Functor P.NonEmpty
 deriving via Prelude ((->) a) instance Functor ((->) a)
 deriving via Prelude [] instance Functor []
 deriving via Prelude Identity instance Functor Identity

@@ -1,13 +1,24 @@
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Profunctor.Forget where
 
-import Data.Kind (Type)
-import Prelude (Monoid (..), foldMap, map)
+import Data.Kind (Type, Constraint)
+import Data.List.NonEmpty (NonEmpty (..))
+import Data.Maybe (fromMaybe)
+import Data.Semigroup (Semigroup (..))
+import Prelude (Monoid (..), Maybe (..), ($), foldMap)
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Core (CategoryOf (..), OB, PRO, Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Functor (Functor (..))
+import Proarrow.Category.Instance.Nat (Nat(..))
+import Proarrow.Category.Monoidal.Applicative (Applicative (..))
+import Proarrow.Object.Terminal (El)
+import Proarrow.Object.BinaryProduct (HasBinaryProducts(..), HasProducts)
+import Proarrow.Object (Ob')
 
 type Forget :: forall (ob :: OB k) -> PRO k (SUBCAT ob)
 data Forget ob a b where
@@ -39,3 +50,53 @@ instance Representable List where
 instance Adjunction List (Forget Monoid) where
   unit = Forget (: []) :.: List id
   counit (List g :.: Forget f) = Sub (foldMap f . g)
+
+type HasFree :: forall {k}. (k -> Constraint) -> Constraint
+class (forall a. Super c a => c (Free c a), Functor (Free c)) => HasFree (c :: k -> Constraint) where
+  type Super c :: k -> Constraint
+  type Super c = Ob'
+  type Free c :: k -> k
+  lift :: Super c a => a ~> Free c a
+  retract :: c a => Free c a ~> a
+
+instance HasFree Semigroup where
+  type Free Semigroup = NonEmpty
+  lift = (:| [])
+  retract = sconcat
+
+instance HasFree Monoid where
+  type Super Monoid = Semigroup
+  type Free Monoid = Maybe
+  lift = Just
+  retract = fromMaybe mempty
+
+type Ap :: (k -> Type) -> k -> Type
+data Ap f a where
+  Pure :: El a -> Ap f a
+  Eff :: f a -> Ap f a
+  LiftA2 :: (Ob a, Ob b) => (a && b ~> c) -> Ap f a -> Ap f b -> Ap f c
+
+instance (CategoryOf k, Functor f) => Functor (Ap (f :: k -> Type)) where
+  map f (Pure a) = Pure (f . a)
+  map f (Eff x) = Eff (map f x)
+  map f (LiftA2 k x y) = LiftA2 (f . k) x y
+
+instance Functor Ap where
+  map (Nat n) = Nat $ \case
+    Pure a -> Pure a
+    Eff fa -> Eff (n fa)
+    LiftA2 k x y -> LiftA2 k (getNat (map (Nat n)) x) (getNat (map (Nat n)) y)
+
+instance (HasProducts k, Functor f) => Applicative (Ap (f :: k -> Type)) where
+  pure a () = Pure a
+  liftA2 f (fa, fb) = LiftA2 f fa fb
+
+retractAp :: Applicative f => Ap f a -> f a
+retractAp (Pure a) = pure a ()
+retractAp (Eff fa) = fa
+retractAp (LiftA2 k x y) = liftA2 k (retractAp x, retractAp y)
+
+instance HasProducts k => HasFree (Applicative :: (k -> Type) -> Constraint) where
+  type Free Applicative = Ap
+  lift = Nat Eff
+  retract = Nat retractAp

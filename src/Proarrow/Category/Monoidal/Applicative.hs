@@ -18,7 +18,7 @@ import Proarrow.Profunctor.Star (Star (..))
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
 class (HasProducts j, HasProducts k, Functor f) => Applicative (f :: j -> k) where
   pure :: El a -> El (f a)
-  liftA2 :: (a && b ~> c) -> f a && f b ~> f c
+  liftA2 :: (Ob a, Ob b) => (a && b ~> c) -> f a && f b ~> f c
 
 instance (P.Applicative f) => Applicative (Prelude f) where
   pure a () = Prelude (P.pure (a ()))
