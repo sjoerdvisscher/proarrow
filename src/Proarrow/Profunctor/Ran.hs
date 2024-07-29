@@ -6,10 +6,11 @@ import Proarrow.Adjunction (Adjunction (..), counitFromStarCounit, unitFromStarU
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//))
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//), lmap)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Costar (Costar (..))
 
 type j |> p = Ran (OP j) p
 
@@ -19,6 +20,12 @@ data Ran j p a b where
 
 runRan :: (Profunctor j) => j x a -> Ran (OP j) p a b -> p x b
 runRan j (Ran k) = k j \\ j
+
+flipRan :: (Functor j, Profunctor p) => Star j |> p ~> Costar j :.: p
+flipRan = Prof \(Ran k) -> Costar id :.: k (Star id)
+
+flipRanInv :: (Functor j, Profunctor p) => Costar j :.: p ~> Star j |> p
+flipRanInv = Prof \(Costar f :.: p) -> p // Ran \(Star g) -> lmap (f . g) p
 
 instance (Profunctor p, Profunctor j) => Profunctor (Ran (OP j) p) where
   dimap l r (Ran k) = l // r // Ran (rmap r . k . rmap l)
@@ -34,8 +41,8 @@ instance (Profunctor j) => Adjunction (Star ((:.:) j)) (Star (Ran (OP j))) where
   unit = unitFromStarUnit (Prof \p -> p // Ran (:.: p))
   counit = counitFromStarCounit (Prof \(j :.: r) -> runRan j r)
 
-ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => Ran (OP i) (Ran (OP j) p) ~> Ran (OP (j :.: i)) p
+ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (j :.: i) |> p
 ranCompose = Prof \k -> k // Ran \(j :.: i) -> runRan j (runRan i k)
 
-ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => Ran (OP (j :.: i)) p ~> Ran (OP i) (Ran (OP j) p)
+ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (j :.: i) |> p ~> i |> (j |> p)
 ranComposeInv = Prof \k -> k // Ran \i -> Ran \j -> runRan (j :.: i) k

@@ -5,15 +5,17 @@ module Proarrow.Category.Limit where
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
+import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Unit (UNIT (..), Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), UN, (//), (:~>))
+import Proarrow.Core (CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), UN, lmap, (//), (:~>))
 import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
+import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepCod)
 import Proarrow.Profunctor.Rift (Rift (..), type (<|))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
@@ -22,11 +24,29 @@ class (Representable (Limit j d)) => IsRepresentableLimit j d
 instance (Representable (Limit j d)) => IsRepresentableLimit j d
 
 -- | profunctor-weighted limits
-type HasLimits :: PRO a i -> Kind -> Constraint
+type HasLimits :: forall {a} {i}. PRO a i -> Kind -> Constraint
 class (forall (d :: PRO k i). (Representable d) => IsRepresentableLimit j d) => HasLimits (j :: PRO a i) k where
   type Limit (j :: PRO a i) (d :: PRO k i) :: PRO k a
   limit :: (Representable (d :: PRO k i)) => Limit j d :~> d <| j
   limitInv :: (Representable (d :: PRO k i)) => d <| j :~> Limit j d
+
+rightAdjointPreservesLimits
+  :: forall {k} {i} {a} f g (d :: PRO k i) (j :: PRO a i)
+   . (Adjunction f g, Representable d, HasLimits j k)
+  => (g :.: d) <| j :~> g :.: Limit j d
+rightAdjointPreservesLimits (Rift k) =
+  case unit @f @g of
+    g :.: f ->
+      g :.: limitInv @j @k @d (f // Rift \j -> case k j of g' :.: d -> lmap (counit (f :.: g')) d)
+
+rightAdjointPreservesLimitsInv
+  :: forall {k} {i} {a} f g (d :: PRO k i) (j :: PRO a i)
+   . (Adjunction f g, Representable d, HasLimits j k)
+  => g :.: Limit j (d :: PRO k i) :~> (g :.: d) <| j
+rightAdjointPreservesLimitsInv (g :.: l) =
+  g // l // Rift \j ->
+    case unit @f @g of
+      g' :.: f -> g' :.: lmap (counit (f :.: g)) (case limit @j @k @d l of Rift k -> k j)
 
 type Unweighted = TerminalProfunctor
 
@@ -72,7 +92,8 @@ instance (HasBinaryProducts k) => HasLimits (Unweighted :: PRO UNIT (COPRODUCT U
 choose
   :: forall k (d :: PRO k (COPRODUCT UNIT UNIT)) b
    . (HasBinaryProducts k, Representable d)
-  => Obj b -> ((d % L U) && (d % R U)) ~> (d % b)
+  => Obj b
+  -> ((d % L U) && (d % R U)) ~> (d % b)
 choose b = withRepCod @d @(L U) $ withRepCod @d @(R U) $ case b of
   (InjL Unit) -> fst @(d % L U) @(d % R U)
   (InjR Unit) -> snd @(d % L U) @(d % R U)

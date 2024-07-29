@@ -11,6 +11,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Promonad (Procomonad (..))
 
 type Adjunction :: forall {j} {k}. PRO k j -> PRO j k -> Constraint
 
@@ -23,14 +24,16 @@ leftAdjunct
   :: forall l r a b
    . (Adjunction (Star l) (Star r), Functor r)
   => (Ob a)
-  => (l a ~> b) -> (a ~> r b)
+  => (l a ~> b)
+  -> (a ~> r b)
 leftAdjunct f = case unit @(Star l) @(Star r) @a of Star r :.: Star l -> map (f . l) . r
 
 rightAdjunct
   :: forall l r a b
    . (Adjunction (Star l) (Star r), Functor l)
   => (Ob b)
-  => (a ~> r b) -> (l a ~> b)
+  => (a ~> r b)
+  -> (l a ~> b)
 rightAdjunct f = counit (Star (map id) :.: Star f) \\ f
 
 unitFromStarUnit
@@ -70,3 +73,7 @@ instance (CategoryOf k) => Adjunction (Id :: CAT k) Id where
 instance (Adjunction p q) => Promonad (q :.: p) where
   id = unit
   (q :.: p) . (q' :.: p') = rmap (counit (p' :.: q)) q' :.: p
+
+instance (Adjunction p q) => Procomonad (p :.: q) where
+  extract = counit
+  duplicate (p :.: q) = p // case unit of q' :.: p' -> (p :.: q') :.: (p' :.: q)

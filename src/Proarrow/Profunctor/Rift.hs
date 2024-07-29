@@ -39,8 +39,8 @@ instance (Profunctor j) => Adjunction (Star (Precompose j)) (Star (Rift (OP j)))
   unit = unitFromStarUnit (Prof \p -> p // Rift \j -> Precompose (p :.: j))
   counit = counitFromStarCounit (Prof \(Precompose (r :.: j)) -> runRift j r)
 
-riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => Rift (OP i) (Rift (OP j) p) ~> Rift (OP (i :.: j)) p
+riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => (p <| j) <| i ~> p <| (i :.: j)
 riftCompose = Prof \k -> k // Rift \(i :.: j) -> runRift j (runRift i k)
 
-riftComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => Rift (OP (i :.: j)) p ~> Rift (OP i) (Rift (OP j) p)
+riftComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => p <| (i :.: j) ~> (p <| j) <| i
 riftComposeInv = Prof \k -> k // Rift \i -> Rift \j -> runRift (i :.: j) k
