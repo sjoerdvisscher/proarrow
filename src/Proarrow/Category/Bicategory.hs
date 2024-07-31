@@ -6,18 +6,27 @@ module Proarrow.Category.Bicategory
   , BicategoryConstraints
   , IIsOb
   , appendObj
+  , leftUnitorWith
+  , leftUnitorInvWith
+  , rightUnitorWith
+  , rightUnitorInvWith
 
     -- * Paths
   , Path (..)
   , SPath (..)
+  , (>>)
   , IsPath (..)
+  , withIsPath
   , asObj
   , asSPath
   , type (+++)
   , append
+  , singleton
   , withAssoc
   , withUnital
   , Strictified (..)
+  , str
+  , unStr
   , Fold
   , fold
   , obj1
@@ -38,12 +47,13 @@ where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Core (Any, CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, tgt, src)
+import Proarrow.Core (Any, CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, src, tgt)
 import Proarrow.Object (Obj, obj)
 import Prelude (($), type (~))
 
 infixr 5 :::
 infixl 5 +++
+infixr 5 >>
 
 -- | The type of 2-parameter kind constructors.
 type Path :: CAT k -> CAT k
@@ -61,22 +71,29 @@ type instance (p ::: ps) +++ qs = p ::: (ps +++ qs)
 type SPath :: Path kk j k -> Type
 data SPath ps where
   SNil :: (Ob0 kk k) => SPath (Nil :: Path kk k k)
-  SCons :: forall {kk} {j} {k} (p :: kk j k) ps. (Ob0 kk j, Ob0 kk k) => Obj p -> SPath ps -> SPath (p ::: ps)
+  SCons :: forall {kk} {i} {j} {k} (p :: kk i j) (ps :: Path kk j k). (Ob0 kk i) => Obj p -> SPath ps -> SPath (p ::: ps)
+
+(>>) :: (Bicategory kk) => Obj (p :: kk j k) -> SPath ps -> SPath (p ::: ps)
+p >> ps = SCons p ps \\\ p
 
 type IsPath :: forall {kk} {j} {k}. Path kk j k -> Constraint
-class IsPath (ps :: Path kk j k) where
+class (Bicategory kk, Ob0 kk j, Ob0 kk k) => IsPath (ps :: Path kk j k) where
   singPath :: SPath ps
-instance (Ob0 kk k) => IsPath (Nil :: Path kk k k) where
+instance (Bicategory kk, Ob0 kk k) => IsPath (Nil :: Path kk k k) where
   singPath = SNil
-instance (Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob (p :: kk i j), IsPath (ps :: Path kk j k), Bicategory kk) => IsPath (p ::: ps) where
+instance (Ob0 kk i, Ob (p :: kk i j), IsPath (ps :: Path kk j k)) => IsPath (p ::: ps) where
   singPath = let p = obj @p in SCons p singPath
+
+withIsPath :: (Bicategory kk) => SPath (ps :: Path kk j k) -> ((IsPath ps, Ob0 kk j, Ob0 kk k) => r) -> r
+withIsPath SNil r = r
+withIsPath (SCons p ps) r = withIsPath ps r \\\ p
 
 append :: SPath ps -> SPath qs -> SPath (ps +++ qs)
 append SNil qs = qs
 append (SCons p ps) qs = SCons p (append ps qs)
 
-singleton :: (Bicategory kk, Ob0 kk i, Ob0 kk j) => (p :: kk i j) ~> q -> (p ::: Nil) ~> (q ::: Nil)
-singleton f = Str f \\ f
+singleton :: (Bicategory kk) => (p :: kk i j) ~> q -> (p ::: Nil) ~> (q ::: Nil)
+singleton f = Str (SCons (src f) SNil) (SCons (tgt f) SNil) f \\\ f
 
 obj1 :: forall {kk} {i} {j} p. (Bicategory kk, Ob (p :: kk i j), Ob0 kk i, Ob0 kk j) => Obj (p ::: Nil)
 obj1 = singleton (obj @p)
@@ -87,12 +104,16 @@ asObj (SCons p SNil) = singleton p
 asObj (SCons p ps@SCons{}) = singleton p `o` asObj ps \\ p
 
 asSPath :: (Bicategory kk) => Obj (ps :: Path kk i j) -> SPath ps
-asSPath p = singPath \\\ p
+asSPath (Str p _ _) = p
 
 withAssoc
   :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k) r
    . (Bicategory kk)
-  => Obj a -> Obj b -> Obj c -> (((a +++ b) +++ c ~ a +++ (b +++ c)) => r) -> r
+  => Obj a
+  -> Obj b
+  -> Obj c
+  -> (((a +++ b) +++ c ~ a +++ (b +++ c)) => r)
+  -> r
 withAssoc as@Str{} Str{} Str{} = go (asSPath as)
   where
     go :: forall a'. SPath a' -> (((a' +++ b) +++ c ~ a' +++ (b +++ c)) => r) -> r
@@ -102,8 +123,10 @@ withAssoc as@Str{} Str{} Str{} = go (asSPath as)
 withUnital
   :: forall {kk} {j} {k} (a :: Path kk j k) r
    . (Bicategory kk)
-  => Obj a -> ((a +++ Nil ~ a) => r) -> r
-withUnital Str{} = go (singPath @a)
+  => SPath a
+  -> ((a +++ Nil ~ a) => r)
+  -> r
+withUnital = go
   where
     go :: forall a'. SPath a' -> ((a' +++ Nil ~ a') => r) -> r
     go SNil r = r
@@ -111,33 +134,37 @@ withUnital Str{} = go (singPath @a)
 
 concatFold
   :: forall {kk} {i} {j} {k} (as :: Path kk i j) (bs :: Path kk j k)
-   . (Ob as, Ob bs, Ob0 kk i, Ob0 kk j, Ob0 kk k, Bicategory kk)
-  => Fold as `O` Fold bs ~> Fold (as +++ bs)
-concatFold =
-  let fbs = fold (singPath @bs)
-      h :: forall cs. SPath cs -> (Fold cs `O` Fold bs) ~> Fold (cs +++ bs)
+   . (Bicategory kk)
+  => SPath as
+  -> SPath bs
+  -> Fold as `O` Fold bs ~> Fold (as +++ bs)
+concatFold as bs =
+  let fbs = fold bs
+      h :: forall cs. (Ob0 kk k) => SPath cs -> (Fold cs `O` Fold bs) ~> Fold (cs +++ bs)
       h SNil = leftUnitor fbs
       -- h (SCons c cs) = (c `o` h cs) . associator c (fold cs) fbs
-      h (SCons c SNil) = case singPath @bs of
+      h (SCons c SNil) = case bs of
         SNil -> rightUnitor c
         SCons{} -> c `o` fbs
       h (SCons c cs@SCons{}) = (c `o` h cs) . associator c (fold cs) fbs
-  in h (singPath @as)
+  in h as \\\ fbs
 
 splitFold
   :: forall {kk} {i} {j} {k} (as :: Path kk i j) (bs :: Path kk j k)
-   . (Ob as, Ob bs, Ob0 kk i, Ob0 kk j, Ob0 kk k, Bicategory kk)
-  => Fold (as +++ bs) ~> Fold as `O` Fold bs
-splitFold =
-  let fbs = fold (singPath @bs)
-      h :: forall cs. SPath cs -> Fold (cs +++ bs) ~> Fold cs `O` Fold bs
+   . (Bicategory kk)
+  => SPath as
+  -> SPath bs
+  -> Fold (as +++ bs) ~> Fold as `O` Fold bs
+splitFold as bs =
+  let fbs = fold bs
+      h :: forall cs. (Ob0 kk k) => SPath cs -> Fold (cs +++ bs) ~> Fold cs `O` Fold bs
       h SNil = leftUnitorInv fbs
       -- h (SCons c cs) = associatorInv c (fold cs) fbs . (c `o` h cs)
-      h (SCons c SNil) = case singPath @bs of
+      h (SCons c SNil) = case bs of
         SNil -> rightUnitorInv c
         SCons{} -> c `o` fbs
       h (SCons c cs@SCons{}) = associatorInv c (fold cs) fbs . (c `o` h cs)
-  in h (singPath @as)
+  in h as \\\ fbs
 
 type family Fold (as :: Path kk j k) :: kk j k
 type instance Fold (Nil :: Path kk j j) = (I :: kk j j)
@@ -156,36 +183,46 @@ type Strictified :: CAT (Path kk j k)
 data Strictified ps qs where
   Str
     :: forall {kk} {j} {k} (ps :: Path kk j k) qs
-     . (Ob ps, Ob qs, Ob0 kk j, Ob0 kk k) => Fold ps ~> Fold qs -> Strictified ps qs
+     . (Ob0 kk j, Ob0 kk k)
+    => SPath ps
+    -> SPath qs
+    -> Fold ps ~> Fold qs
+    -> Strictified ps qs
 
-instance (CategoryOf (kk j k), Ob0 kk j, Ob0 kk k, Bicategory kk) => Profunctor (Strictified :: CAT (Path kk j k)) where
+str :: (Bicategory kk) => SPath (ps :: Path kk j k) -> SPath qs -> (Fold ps ~> Fold qs) -> Strictified ps qs
+str ps qs f = Str ps qs f \\\ f
+
+unStr :: Strictified ps qs -> Fold ps ~> Fold qs
+unStr (Str _ _ f) = f
+
+instance (CategoryOf (kk j k), Bicategory kk) => Profunctor (Strictified :: CAT (Path kk j k)) where
   dimap = dimapDefault
-  r \\ Str{} = r
-instance (CategoryOf (kk j k), Ob0 kk j, Ob0 kk k, Bicategory kk) => Promonad (Strictified :: CAT (Path kk j k)) where
+  r \\ Str ps qs _ = withIsPath ps (withIsPath qs r)
+instance (CategoryOf (kk j k), Bicategory kk) => Promonad (Strictified :: CAT (Path kk j k)) where
   id :: forall (a :: Path kk j k). (Ob a) => Strictified a a
-  id = Str (fold (singPath @a))
-  Str m . Str n = Str (m . n)
-instance (CategoryOf (kk j k), Ob0 kk j, Ob0 kk k, Bicategory kk) => CategoryOf (Path kk j k) where
+  id = let a = singPath @a in Str a a (fold a)
+  Str _ r m . Str p _ n = Str p r (m . n)
+instance (CategoryOf (kk j k), Bicategory kk) => CategoryOf (Path kk j k) where
   type (~>) = Strictified
-  type Ob (ps :: Path kk j k) = (IsPath ps)
+  type Ob (ps :: Path kk j k) = (IsPath ps, Ob0 kk j, Ob0 kk k)
 
 introI :: forall {kk} {j}. (Ob0 kk j, Bicategory kk) => (Nil :: Path kk j j) ~> (I ::: Nil)
-introI = Str obj
+introI = Str SNil (SCons obj SNil) obj
 
 elimI :: forall {kk} {j}. (Ob0 kk j, Bicategory kk) => (I ::: Nil) ~> (Nil :: Path kk j j)
-elimI = Str obj
+elimI = Str (SCons obj SNil) SNil obj
 
 introO
   :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
    . (Ob0 kk i, Ob0 kk j, Ob0 kk k, Bicategory kk, Ob p, Ob q)
   => (p ::: q ::: Nil) ~> (p `O` q ::: Nil)
-introO = Str id \\ (obj @p `o` obj @q)
+introO = let p = obj @p; q = obj @q; pq = p `o` q in Str (SCons p (SCons q SNil)) (SCons pq SNil) pq
 
 elimO
   :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
    . (Ob0 kk i, Ob0 kk j, Ob0 kk k, Bicategory kk, Ob p, Ob q)
   => (p `O` q ::: Nil) ~> (p ::: q ::: Nil)
-elimO = Str id \\ (obj @p `o` obj @q)
+elimO = let p = obj @p; q = obj @q; pq = p `o` q in Str (SCons pq SNil) (SCons p (SCons q SNil)) pq
 
 class (Ob (I :: kk i i)) => IIsOb kk i
 instance (Ob (I :: kk i i)) => IIsOb kk i
@@ -222,25 +259,35 @@ class (BicategoryConstraints kk) => Bicategory kk where
   associator :: Obj (a :: kk i j) -> Obj b -> Obj c -> (a `O` b) `O` c ~> a `O` (b `O` c)
   associatorInv :: Obj (a :: kk i j) -> Obj b -> Obj c -> a `O` (b `O` c) ~> (a `O` b) `O` c
 
+leftUnitorWith :: (Bicategory kk) => (c ~> (I :: kk i i)) -> a ~> b -> (c `O` a) ~> b
+leftUnitorWith c ab = (leftUnitor ab . (c `o` src ab)) \\\ ab
+
+leftUnitorInvWith :: (Bicategory kk) => ((I :: kk i i) ~> c) -> a ~> b -> a ~> (c `O` b)
+leftUnitorInvWith c ab = ((c `o` tgt ab) . leftUnitorInv ab) \\\ ab
+
+rightUnitorWith :: (Bicategory kk) => (c ~> (I :: kk i i)) -> a ~> b -> (a `O` c) ~> b
+rightUnitorWith c ab = (rightUnitor ab . (src ab `o` c)) \\\ ab
+
+rightUnitorInvWith :: (Bicategory kk) => ((I :: kk i i) ~> c) -> a ~> b -> a ~> (b `O` c)
+rightUnitorInvWith c ab = ((tgt ab `o` c) . rightUnitorInv ab) \\\ ab
+
 appendObj
   :: forall {kk} {i} {j} {k} (a :: kk i j) (b :: kk j k) r
    . (Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b)
-  => ((Ob (a `O` b)) => r) -> r
+  => ((Ob (a `O` b)) => r)
+  -> r
 appendObj r = r \\\ (obj @a `o` obj @b)
 
 instance (Bicategory kk) => Bicategory (Path kk) where
   type Ob0 (Path kk) j = Ob0 kk j
   type I = Nil
   type O ps qs = ps +++ qs
-  r \\\ Str{} = r
-  Str @as @bs ps `o` Str @cs @ds qs =
-    appendObj @as @cs $
-      appendObj @bs @ds $
-        Str (concatFold @bs @ds . (ps `o` qs) . splitFold @as @cs)
+  r \\\ Str ps qs _ = withIsPath ps $ withIsPath qs r
+  Str as bs ps `o` Str cs ds qs = Str (append as cs) (append bs ds) (concatFold bs ds . (ps `o` qs) . splitFold as cs)
   leftUnitor p = p
   leftUnitorInv p = p
-  rightUnitor p = withUnital (src p) p \\\ p
-  rightUnitorInv p = withUnital (tgt p) p \\\ p
+  rightUnitor f@(Str ps _ _) = withUnital ps f
+  rightUnitorInv f@(Str _ ps _) = withUnital ps f
   associator p@Str{} q@Str{} r@Str{} = withAssoc p q r (p `o` (q `o` r))
   associatorInv p@Str{} q@Str{} r@Str{} = withAssoc p q r (p `o` (q `o` r))
 
@@ -273,13 +320,17 @@ instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
 
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where
-  unit :: I ~> r `O` l
-  counit :: l `O` r ~> I
+  unit :: I ~> l `O` r
+  counit :: r `O` l ~> I
 
-instance (Adjunction l r, Ob (r `O` l)) => Monad (r ::: l ::: Nil) where
-  eta = Str (unit @l @r)
-  mu = let r = obj @r; l = obj @l in Str (r `o` (leftUnitor l . (counit @l @r `o` l) . associatorInv l r l))
+instance (Adjunction l r) => Monad (l ::: r ::: Nil) where
+  eta = Str SNil (SCons (obj @l) (SCons (obj @r) SNil)) (unit @l @r)
+  mu =
+    let r = obj @r; l = obj @l; lr = SCons l (SCons r SNil)
+    in Str (append lr lr) lr (l `o` (leftUnitor r . (counit @l @r `o` r) . associatorInv r l r))
 
-instance (Adjunction l r, Ob (l `O` r)) => Comonad (l ::: r ::: Nil) where
-  epsilon = Str (counit @l @r)
-  delta = let r = obj @r; l = obj @l in Str (l `o` (associator r l r . (unit @l @r `o` r) . leftUnitorInv r))
+instance (Adjunction l r) => Comonad (r ::: l ::: Nil) where
+  epsilon = Str (SCons (obj @r) (SCons (obj @l) SNil)) SNil (counit @l @r)
+  delta =
+    let r = obj @r; l = obj @l; rl = SCons r (SCons l SNil)
+    in Str rl (append rl rl) (r `o` (associator l r l . (unit @l @r `o` l) . leftUnitorInv l))

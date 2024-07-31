@@ -7,12 +7,14 @@ module Proarrow.Core where
 import Data.Kind (Constraint, Type)
 import Prelude (type (~))
 
-infixr 0 ~>, :~>
+infixr 0 ~>, :~>, +->
 infixl 1 \\
 infixr 0 //
 infixr 9 .
 
 type PRO j k = j -> k -> Type
+type j +-> k = PRO k j
+
 type CAT k = PRO k k
 type BI k = (k, k) -> k
 type OB k = k -> Constraint

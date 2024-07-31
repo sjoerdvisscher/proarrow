@@ -2,7 +2,7 @@
 
 module Proarrow.Category.Bicategory.Op where
 
-import Proarrow.Category.Bicategory (Bicategory (..), Bimodule (..), Comonad (..), Monad (..))
+import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Bimodule (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory.Kan
   ( LeftKanExtension (..)
   , LeftKanLift (..)
@@ -62,6 +62,10 @@ instance (LeftKanLift j f) => LeftKanExtension (OP j) (OP f) where
   type Lan (OP j) (OP f) = OP (Lift j f)
   lan = Op (lift @j @f)
   lanUniv (Op n) = Op (liftUniv @j @f n)
+
+instance (Adjunction f g) => Adjunction (OP g) (OP f) where
+  unit = Op (unit @f @g)
+  counit = Op (counit @f @g)
 
 instance (Monad t) => Monad (OP t) where
   eta = Op eta
