@@ -87,10 +87,10 @@ instance Monoidal (Type -> Type) where
   type Unit = Identity
   type f ** g = Compose f g
   Nat n `par` Nat m = Nat (\(Compose fg) -> Compose (n (map m fg)))
-  leftUnitor Nat{} = Nat (runIdentity . getCompose)
-  leftUnitorInv Nat{} = Nat (Compose . Identity)
-  rightUnitor Nat{} = Nat (map runIdentity . getCompose)
-  rightUnitorInv Nat{} = Nat (Compose . map Identity)
+  leftUnitor (Nat n) = Nat (n . runIdentity . getCompose)
+  leftUnitorInv (Nat n) = Nat (Compose . Identity . n)
+  rightUnitor (Nat n) = Nat (n . map runIdentity . getCompose)
+  rightUnitorInv (Nat n) = Nat (Compose . map Identity . n)
   associator Nat{} Nat{} Nat{} = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv Nat{} Nat{} Nat{} = Nat (Compose . Compose . map getCompose . getCompose)
 

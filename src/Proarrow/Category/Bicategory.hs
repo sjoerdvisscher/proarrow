@@ -38,7 +38,7 @@ where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Core (Any, CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id)
+import Proarrow.Core (Any, CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, tgt, src)
 import Proarrow.Object (Obj, obj)
 import Prelude (($), type (~))
 
@@ -158,11 +158,6 @@ data Strictified ps qs where
     :: forall {kk} {j} {k} (ps :: Path kk j k) qs
      . (Ob ps, Ob qs, Ob0 kk j, Ob0 kk k) => Fold ps ~> Fold qs -> Strictified ps qs
 
-mkStr
-  :: forall {kk} {j} {k} (ps :: Path kk j k) qs
-   . (Bicategory kk, IsPath ps, IsPath qs, Ob0 kk j, Ob0 kk k) => (Fold ps ~> Fold qs) -> Strictified ps qs
-mkStr f = Str f \\ f
-
 instance (CategoryOf (kk j k), Ob0 kk j, Ob0 kk k, Bicategory kk) => Profunctor (Strictified :: CAT (Path kk j k)) where
   dimap = dimapDefault
   r \\ Str{} = r
@@ -172,7 +167,7 @@ instance (CategoryOf (kk j k), Ob0 kk j, Ob0 kk k, Bicategory kk) => Promonad (S
   Str m . Str n = Str (m . n)
 instance (CategoryOf (kk j k), Ob0 kk j, Ob0 kk k, Bicategory kk) => CategoryOf (Path kk j k) where
   type (~>) = Strictified
-  type Ob (ps :: Path kk j k) = (IsPath ps, Ob (Fold ps))
+  type Ob (ps :: Path kk j k) = (IsPath ps)
 
 introI :: forall {kk} {j}. (Ob0 kk j, Bicategory kk) => (Nil :: Path kk j j) ~> (I ::: Nil)
 introI = Str obj
@@ -220,10 +215,10 @@ class (BicategoryConstraints kk) => Bicategory kk where
   -- | Observe constraints from a 2-cell value.
   (\\\) :: ((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) => r) -> (ps :: kk i j) ~> qs -> r
 
-  leftUnitor :: Obj (a :: kk i j) -> (I `O` a) ~> a
-  leftUnitorInv :: Obj (a :: kk i j) -> a ~> (I `O` a)
-  rightUnitor :: Obj (a :: kk i j) -> (a `O` I) ~> a
-  rightUnitorInv :: Obj (a :: kk i j) -> a ~> (a `O` I)
+  leftUnitor :: (a :: kk i j) ~> b -> (I `O` a) ~> b
+  leftUnitorInv :: (a :: kk i j) ~> b -> a ~> (I `O` b)
+  rightUnitor :: (a :: kk i j) ~> b -> (a `O` I) ~> b
+  rightUnitorInv :: (a :: kk i j) ~> b -> a ~> (b `O` I)
   associator :: Obj (a :: kk i j) -> Obj b -> Obj c -> (a `O` b) `O` c ~> a `O` (b `O` c)
   associatorInv :: Obj (a :: kk i j) -> Obj b -> Obj c -> a `O` (b `O` c) ~> (a `O` b) `O` c
 
@@ -244,8 +239,8 @@ instance (Bicategory kk) => Bicategory (Path kk) where
         Str (concatFold @bs @ds . (ps `o` qs) . splitFold @as @cs)
   leftUnitor p = p
   leftUnitorInv p = p
-  rightUnitor p = withUnital p p
-  rightUnitorInv p = withUnital p p
+  rightUnitor p = withUnital (src p) p \\\ p
+  rightUnitorInv p = withUnital (tgt p) p \\\ p
   associator p@Str{} q@Str{} r@Str{} = withAssoc p q r (p `o` (q `o` r))
   associatorInv p@Str{} q@Str{} r@Str{} = withAssoc p q r (p `o` (q `o` r))
 
@@ -283,8 +278,8 @@ class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) => Adjunction (l :: kk c d
 
 instance (Adjunction l r, Ob (r `O` l)) => Monad (r ::: l ::: Nil) where
   eta = Str (unit @l @r)
-  mu = let r = obj @r; l = obj @l in mkStr (r `o` (leftUnitor l . (counit @l @r `o` l) . associatorInv l r l))
+  mu = let r = obj @r; l = obj @l in Str (r `o` (leftUnitor l . (counit @l @r `o` l) . associatorInv l r l))
 
 instance (Adjunction l r, Ob (l `O` r)) => Comonad (l ::: r ::: Nil) where
   epsilon = Str (counit @l @r)
-  delta = let r = obj @r; l = obj @l in mkStr (l `o` (associator r l r . (unit @l @r `o` r) . leftUnitorInv r))
+  delta = let r = obj @r; l = obj @l in Str (l `o` (associator r l r . (unit @l @r `o` r) . leftUnitorInv r))

@@ -73,10 +73,10 @@ instance
   type p `O` q = PK (UN PK p :.: UN PK q)
   Prof m `o` Prof n = Prof $ \(p :.: q) -> m p :.: n q
   r \\\ Prof{} = r
-  leftUnitor Prof{} = Prof $ \(h :.: q) -> lmap h q
-  leftUnitorInv Prof{} = Prof $ \p -> src p :.: p
-  rightUnitor Prof{} = Prof $ \(p :.: h) -> rmap h p
-  rightUnitorInv Prof{} = Prof $ \p -> p :.: tgt p
+  leftUnitor (Prof n) = Prof $ \(h :.: q) -> n (lmap h q)
+  leftUnitorInv (Prof n) = Prof $ \p -> src p :.: n p
+  rightUnitor (Prof n) = Prof $ \(p :.: h) -> n (rmap h p)
+  rightUnitorInv (Prof n) = Prof $ \p -> n p :.: tgt p
   associator Prof{} Prof{} Prof{} = Prof $ \((p :.: q) :.: r) -> p :.: (q :.: r)
   associatorInv Prof{} Prof{} Prof{} = Prof $ \(p :.: (q :.: r)) -> (p :.: q) :.: r
 

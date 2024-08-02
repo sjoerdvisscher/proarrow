@@ -5,13 +5,7 @@ module Proarrow.Category.Bicategory.Co where
 import Proarrow.Category.Bicategory
   ( Bicategory (..)
   , Comonad (..)
-  , Fold
   , Monad (..)
-  , Path (..)
-  , SPath (..)
-  , asObj
-  , singPath
-  , type (+++)
   )
 import Proarrow.Category.Bicategory.Kan
   ( LeftKanExtension (..)
@@ -20,7 +14,6 @@ import Proarrow.Category.Bicategory.Kan
   , RightKanLift (..)
   )
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Object (obj)
 
 type COK :: CAT k -> CAT k
 newtype COK kk j k = CO (kk j k)
@@ -54,31 +47,6 @@ instance (Bicategory kk) => Bicategory (COK kk) where
   associator (Co p) (Co q) (Co r) = Co (associatorInv p q r)
   associatorInv (Co p) (Co q) (Co r) = Co (associator p q r)
 
-concatFoldCo
-  :: forall {kk} {i} {j} {k} {ps :: Path (COK kk) i j} (qs :: Path (COK kk) j k)
-   . (Bicategory kk, Ob qs, Ob0 kk i, Ob0 kk j, Ob0 kk k)
-  => SPath ps -> UN CO (Fold ps) `O` UN CO (Fold qs) ~> UN CO (Fold (ps +++ qs))
-concatFoldCo SNil = leftUnitor (obj @(UN CO (Fold qs)))
-concatFoldCo (SCons (Co p) SNil) = case singPath @qs of
-  SNil -> rightUnitor p
-  SCons{} -> p `o` obj @(UN CO (Fold qs))
-concatFoldCo (SCons @_ @ps1 (Co p) ps@SCons{}) =
-  (p `o` concatFoldCo @qs ps)
-    . associator p (obj @(UN CO (Fold ps1))) (obj @(UN CO (Fold qs)))
-    \\ asObj ps
-
-splitFoldCo
-  :: forall {kk} {i} {j} {k} {ps :: Path (COK kk) i j} (qs :: Path (COK kk) j k)
-   . (Bicategory kk, Ob qs, Ob0 kk i, Ob0 kk j, Ob0 kk k)
-  => SPath ps -> UN CO (Fold (ps +++ qs)) ~> UN CO (Fold ps) `O` UN CO (Fold qs)
-splitFoldCo SNil = leftUnitorInv (obj @(UN CO (Fold qs)))
-splitFoldCo (SCons (Co p) SNil) = case singPath @qs of
-  SNil -> rightUnitorInv p
-  SCons{} -> p `o` obj @(UN CO (Fold qs))
-splitFoldCo (SCons @_ @ps1 (Co p) ps@SCons{}) =
-  associatorInv p (obj @(UN CO (Fold ps1))) (obj @(UN CO (Fold qs)))
-    . (p `o` splitFoldCo @qs ps)
-    \\ asObj ps
 
 instance (Comonad m) => Monad (CO m) where
   eta = Co epsilon

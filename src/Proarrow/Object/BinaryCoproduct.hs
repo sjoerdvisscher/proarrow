@@ -8,7 +8,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault, tgt)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
@@ -80,10 +80,10 @@ instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)
   Coprod f `par` Coprod g = mkCoprod (f +++ g)
-  leftUnitor (Coprod a) = mkCoprod (initiate' a ||| a)
-  leftUnitorInv (Coprod a) = mkCoprod (rgt' (obj @InitialObject) a)
-  rightUnitor (Coprod a) = mkCoprod (a ||| initiate' a)
-  rightUnitorInv (Coprod a) = mkCoprod (lft' a (obj @InitialObject))
+  leftUnitor (Coprod f) = mkCoprod (initiate' (tgt f) ||| f)
+  leftUnitorInv (Coprod f) = mkCoprod (rgt' (obj @InitialObject) (tgt f) . f)
+  rightUnitor (Coprod f) = mkCoprod (f ||| initiate' (tgt f))
+  rightUnitorInv (Coprod f) = mkCoprod (lft' (tgt f) (obj @InitialObject) . f)
   associator (Coprod a) (Coprod b) (Coprod c) = mkCoprod ((a +++ lft' b c) ||| (rgt' a (b +++ c) . rgt' b c) \\ (a +++ b))
   associatorInv (Coprod a) (Coprod b) (Coprod c) = mkCoprod ((lft' (a +++ b) c . lft' a b) ||| (rgt' a b +++ c) \\ (a +++ b))
 

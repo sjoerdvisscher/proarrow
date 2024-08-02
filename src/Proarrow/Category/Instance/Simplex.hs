@@ -3,7 +3,7 @@ module Proarrow.Category.Instance.Simplex where
 import Data.Kind (Type)
 
 import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, src)
+import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, src, tgt)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -105,10 +105,10 @@ instance Monoidal Nat where
   Z `par` g = g
   Y f `par` g = Y (f `par` g)
   X f `par` g = X (f `par` g)
-  leftUnitor a = a
-  leftUnitorInv a = a
-  rightUnitor = rightUnitor' . singNat'
-  rightUnitorInv = rightUnitorInv' . singNat'
+  leftUnitor f = f
+  leftUnitorInv f = f
+  rightUnitor f = f . rightUnitor' (singNat' (src f))
+  rightUnitorInv f = rightUnitorInv' (singNat' (tgt f)) . f
   associator a' b' = associator' (singNat' a') (singNat' b')
   associatorInv a' b' = associatorInv' (singNat' a') (singNat' b')
 

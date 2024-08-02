@@ -13,10 +13,10 @@ class (CategoryOf k, Ob (Unit :: k)) => Monoidal k where
   type Unit :: k
   type (a :: k) ** (b :: k) :: k
   par :: ((a :: k) ~> b) -> (c ~> d) -> (a ** c) ~> (b ** d)
-  leftUnitor :: Obj (a :: k) -> Unit ** a ~> a
-  leftUnitorInv :: Obj (a :: k) -> a ~> Unit ** a
-  rightUnitor :: Obj (a :: k) -> a ** Unit ~> a
-  rightUnitorInv :: Obj (a :: k) -> a ~> a ** Unit
+  leftUnitor :: (a :: k) ~> b -> Unit ** a ~> b
+  leftUnitorInv :: (a :: k) ~> b -> a ~> Unit ** b
+  rightUnitor :: (a :: k) ~> b -> a ** Unit ~> b
+  rightUnitorInv :: (a :: k) ~> b -> a ~> b ** Unit
   associator :: Obj (a :: k) -> Obj b -> Obj c -> (a ** b) ** c ~> a ** (b ** c)
   associatorInv :: Obj (a :: k) -> Obj b -> Obj c -> a ** (b ** c) ~> (a ** b) ** c
 
@@ -123,17 +123,17 @@ instance (Monoidal k) => Monoidal [k] where
         Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)
   leftUnitor a = a
   leftUnitorInv a = a
-  rightUnitor :: forall as. Obj (as :: [k]) -> as ** Unit ~> as
-  rightUnitor as' = go (sList @as) \\ as'
+  rightUnitor :: forall (as :: [k]) bs. as ~> bs -> as ** Unit ~> bs
+  rightUnitor f = f . go (sList @as) \\ f
     where
-      go :: forall (bs :: [k]). SList bs -> bs ** Unit ~> bs
+      go :: forall (cs :: [k]). SList cs -> cs ** Unit ~> cs
       go Nil = id
       go (Cons _ Nil) = id
       go (Cons a as@Cons{}) = singleton a `par` go as
-  rightUnitorInv :: forall as. Obj (as :: [k]) -> as ~> as ** Unit
-  rightUnitorInv as' = go (sList @as) \\ as'
+  rightUnitorInv :: forall (as :: [k]) bs. as ~> bs -> as ~> bs ** Unit
+  rightUnitorInv f = go (sList @bs) . f \\ f
     where
-      go :: forall (bs :: [k]). SList bs -> bs ~> bs ** Unit
+      go :: forall (cs :: [k]). SList cs -> cs ~> cs ** Unit
       go Nil = id
       go (Cons _ Nil) = id
       go (Cons a as@Cons{}) = singleton a `par` go as

@@ -11,7 +11,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault, src)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
@@ -74,17 +74,17 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
   snd' Prof{} Prof{} = Prof sndP
   Prof l &&& Prof r = Prof (prod l r)
 
-leftUnitorProd :: (HasProducts k) => Obj (a :: k) -> TerminalObject && a ~> a
-leftUnitorProd = snd' (obj @TerminalObject)
+leftUnitorProd :: (HasProducts k) => (a :: k) ~> b -> TerminalObject && a ~> b
+leftUnitorProd f = f . snd' (obj @TerminalObject) (src f)
 
-leftUnitorProdInv :: (HasProducts k) => Obj (a :: k) -> a ~> TerminalObject && a
-leftUnitorProdInv a = terminate' a &&& a
+leftUnitorProdInv :: (HasProducts k) => (a :: k) ~> b -> a ~> TerminalObject && b
+leftUnitorProdInv f = terminate' (src f) &&& f
 
-rightUnitorProd :: (HasProducts k) => Obj (a :: k) -> a && TerminalObject ~> a
-rightUnitorProd a = fst' a (obj @TerminalObject)
+rightUnitorProd :: (HasProducts k) => (a :: k) ~> b -> a && TerminalObject ~> b
+rightUnitorProd f = f . fst' (src f) (obj @TerminalObject)
 
-rightUnitorProdInv :: (HasProducts k) => Obj (a :: k) -> a ~> a && TerminalObject
-rightUnitorProdInv a = a &&& terminate' a
+rightUnitorProdInv :: (HasProducts k) => (a :: k) ~> b -> a ~> b && TerminalObject
+rightUnitorProdInv f = f &&& terminate' (src f)
 
 associatorProd :: (HasProducts k) => Obj (a :: k) -> Obj b -> Obj c -> (a && b) && c ~> a && (b && c)
 associatorProd a b c = (fst' a b . fst' (a *** b) c) &&& (snd' a b *** c) \\ (a *** b)
