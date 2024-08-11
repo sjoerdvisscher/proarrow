@@ -1,0 +1,2547 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Profunctor.Free</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Profunctor.Free.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Profunctor.Free</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	    >CategoryOf</a
+	    > k, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > (<a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+	    >Free</a
+	    > ob), <span class="keyword"
+	    >forall</span
+	    > (b :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b =&gt; ob (<a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+	    >Free</a
+	    > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > b)) =&gt; <a id="t:HasFree" class="def"
+	    >HasFree</a
+	    > (ob :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Free.html#HasFree" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L44" class="link"
+	    >Comments</a
+	    > <a href="#t:HasFree" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:Free" class="def"
+	      >Free</a
+	      > (ob :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	      >Constraint</a
+	      >) :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k <a href="src/Proarrow.Profunctor.Free.html#Free" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:Free" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:lift-39-" class="def"
+	      >lift'</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+	      >Free</a
+	      > ob a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L44" class="link"
+	      >Comments</a
+	      > <a href="#v:lift-39-" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:retract-39-" class="def"
+	      >retract'</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (b :: k) (a :: k). ob b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+	      >Free</a
+	      > ob a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L44" class="link"
+	      >Comments</a
+	      > <a href="#v:retract-39-" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:HasFree"
+	    >Instances</h4
+	    ><details id="i:HasFree" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasFree:HasFree:1"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+		      >Monoid</a
+		      ></span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-73" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L73" class="link"
+		    >Comments</a
+		    > <a href="#t:HasFree" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasFree:HasFree:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:FreeTYPEMonoid:Free:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				>Free</a
+				> <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+				>Monoid</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:FreeTYPEMonoid:Free:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Free.html"
+				  >Proarrow.Profunctor.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				  >Free</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+				  >Monoid</a
+				  > = <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+				  >Star</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-List.html#t:List" title="Data.List"
+				  >[]</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift-39-"
+			  >lift'</a
+			  > :: (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L46" class="link"
+			  >Comments</a
+			  > <a href="#v:lift-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:retract-39-"
+			  >retract'</a
+			  > :: <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L47" class="link"
+			  >Comments</a
+			  > <a href="#v:retract-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasFree:HasFree:2"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+		      >Semigroup</a
+		      ></span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-78" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L78" class="link"
+		    >Comments</a
+		    > <a href="#t:HasFree" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasFree:HasFree:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:FreeTYPESemigroup:Free:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				>Free</a
+				> <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+				>Semigroup</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:FreeTYPESemigroup:Free:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Free.html"
+				  >Proarrow.Profunctor.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				  >Free</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+				  >Semigroup</a
+				  > = <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+				  >Star</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-List-NonEmpty.html#t:NonEmpty" title="Data.List.NonEmpty"
+				  >NonEmpty</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift-39-"
+			  >lift'</a
+			  > :: (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  > a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L46" class="link"
+			  >Comments</a
+			  > <a href="#v:lift-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:retract-39-"
+			  >retract'</a
+			  > :: <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L47" class="link"
+			  >Comments</a
+			  > <a href="#v:retract-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasFree:HasFree:3"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoid</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k)), <span class="keyword"
+		      >forall</span
+		      > (b :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoidIsMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoidIsMonoid</a
+		      > b, <a href="Proarrow-Object-BinaryProduct.html#t:Cartesian" title="Proarrow.Object.BinaryProduct"
+		      >Cartesian</a
+		      > k) =&gt; <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+		      >Monoid</a
+		      > :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      >Constraint</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-207" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L207" class="link"
+		    >Comments</a
+		    > <a href="#t:HasFree" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasFree:HasFree:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:FreekMonoid:Free:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				>Free</a
+				> (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+				>Monoid</a
+				> :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+				>Constraint</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:FreekMonoid:Free:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Free.html"
+				  >Proarrow.Profunctor.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				  >Free</a
+				  > (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+				  >Monoid</a
+				  > :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+				  >Constraint</a
+				  >) = <a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+				  >FreeMonoid</a
+				  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+				  >(~&gt;)</a
+				  > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+				  >CAT</a
+				  > k)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift-39-"
+			  >lift'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+			  >Monoid</a
+			  > :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  >Constraint</a
+			  >) a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L46" class="link"
+			  >Comments</a
+			  > <a href="#v:lift-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:retract-39-"
+			  >retract'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: k) (a :: k). <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+			  >Monoid</a
+			  > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+			  >Monoid</a
+			  > :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  >Constraint</a
+			  >) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L47" class="link"
+			  >Comments</a
+			  > <a href="#v:retract-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasFree:HasFree:4"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > k k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      >Constraint</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-138" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L138" class="link"
+		    >Comments</a
+		    > <a href="#t:HasFree" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasFree:HasFree:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:FreeFUNPromonad:Free:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				>Free</a
+				> (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+				>Promonad</a
+				> :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+				>PRO</a
+				> k k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+				>Constraint</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:FreeFUNPromonad:Free:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Free.html"
+				  >Proarrow.Profunctor.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				  >Free</a
+				  > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+				  >Promonad</a
+				  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+				  >PRO</a
+				  > k k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+				  >Constraint</a
+				  >) = <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+				  >Star</a
+				  > (<a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+				  >FreePromonad</a
+				  > :: (k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift-39-"
+			  >lift'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k k) (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+			  >Promonad</a
+			  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  >Constraint</a
+			  >) a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L46" class="link"
+			  >Comments</a
+			  > <a href="#v:lift-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:retract-39-"
+			  >retract'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k k) (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k k). <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+			  >Promonad</a
+			  > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+			  >Promonad</a
+			  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  >Constraint</a
+			  >) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L47" class="link"
+			  >Comments</a
+			  > <a href="#v:retract-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasFree:HasFree:5"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      >Constraint</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Coyoneda.html#line-24" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L24" class="link"
+		    >Comments</a
+		    > <a href="#t:HasFree" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasFree:HasFree:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Coyoneda.html"
+			>Proarrow.Profunctor.Coyoneda</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:FreeFUNProfunctor:Free:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				>Free</a
+				> (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+				>Profunctor</a
+				> :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+				>PRO</a
+				> j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+				>Constraint</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:FreeFUNProfunctor:Free:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Coyoneda.html"
+				  >Proarrow.Profunctor.Coyoneda</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				  >Free</a
+				  > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+				  >Profunctor</a
+				  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+				  >PRO</a
+				  > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+				  >Constraint</a
+				  >) = <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+				  >Star</a
+				  > (<a href="Proarrow-Profunctor-Coyoneda.html#t:Coyoneda" title="Proarrow.Profunctor.Coyoneda"
+				  >Coyoneda</a
+				  > :: (j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) -&gt; j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift-39-"
+			  >lift'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k) (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+			  >Profunctor</a
+			  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  >Constraint</a
+			  >) a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L46" class="link"
+			  >Comments</a
+			  > <a href="#v:lift-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:retract-39-"
+			  >retract'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k) (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+			  >Profunctor</a
+			  > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+			  >Profunctor</a
+			  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  >Constraint</a
+			  >) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L47" class="link"
+			  >Comments</a
+			  > <a href="#v:retract-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasFree:HasFree:6"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > (<a href="Proarrow-Category-Instance-Sub.html#t:On" title="Proarrow.Category.Instance.Sub"
+		      >On</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+		      >Monoid</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+		      >Semigroup</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-83" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L83" class="link"
+		    >Comments</a
+		    > <a href="#t:HasFree" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasFree:HasFree:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:FreeSUBCATOn:Free:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				>Free</a
+				> (<a href="Proarrow-Category-Instance-Sub.html#t:On" title="Proarrow.Category.Instance.Sub"
+				>On</a
+				> <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+				>Monoid</a
+				> <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+				>Semigroup</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:FreeSUBCATOn:Free:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Free.html"
+				  >Proarrow.Profunctor.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+				  >Free</a
+				  > (<a href="Proarrow-Category-Instance-Sub.html#t:On" title="Proarrow.Category.Instance.Sub"
+				  >On</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+				  >Monoid</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+				  >Semigroup</a
+				  >) = <a href="Proarrow-Category-Instance-Sub.html#t:Sub" title="Proarrow.Category.Instance.Sub"
+				  >Sub</a
+				  > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+				  >Star</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+				  >Maybe</a
+				  >) :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+				  >SUBCAT</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+				  >Semigroup</a
+				  > -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+				  >SUBCAT</a
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+				  >Semigroup</a
+				  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:lift-39-"
+			  >lift'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Category-Instance-Sub.html#t:On" title="Proarrow.Category.Instance.Sub"
+			  >On</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  >) a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L46" class="link"
+			  >Comments</a
+			  > <a href="#v:lift-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:retract-39-"
+			  >retract'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  >) (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  >). <a href="Proarrow-Category-Instance-Sub.html#t:On" title="Proarrow.Category.Instance.Sub"
+			  >On</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			  >Free</a
+			  > (<a href="Proarrow-Category-Instance-Sub.html#t:On" title="Proarrow.Category.Instance.Sub"
+			  >On</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Monoid.html#t:Monoid" title="Data.Monoid"
+			  >Monoid</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Semigroup" title="Prelude"
+			  >Semigroup</a
+			  >) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L47" class="link"
+			  >Comments</a
+			  > <a href="#v:retract-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:lift" class="def"
+	    >lift</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {j} (ob :: j -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) (a :: j). (<a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+	    >HasFree</a
+	    > ob, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (<a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+	    >Free</a
+	    > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > a) <a href="src/Proarrow.Profunctor.Free.html#lift" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L50" class="link"
+	    >Comments</a
+	    > <a href="#v:lift" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:retract" class="def"
+	    >retract</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (ob :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) (a :: k). (<a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+	    >HasFree</a
+	    > ob, ob a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; (<a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+	    >Free</a
+	    > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a <a href="src/Proarrow.Profunctor.Free.html#retract" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L53" class="link"
+	    >Comments</a
+	    > <a href="#v:retract" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:FreeSub" class="def"
+	    >FreeSub</a
+	    > (ob :: <a href="Proarrow-Core.html#t:OB" title="Proarrow.Core"
+	    >OB</a
+	    > k) (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+	    >SUBCAT</a
+	    > ob) (b :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Free.html#FreeSub" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L56" class="link"
+	    >Comments</a
+	    > <a href="#t:FreeSub" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:FreeSub" class="def"
+		  >FreeSub</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (ob :: <a href="Proarrow-Core.html#t:OB" title="Proarrow.Core"
+		  >OB</a
+		  > k) (a1 :: k) (b :: k). ob a1 =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+		  >Free</a
+		  > ob a1 b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+		  >FreeSub</a
+		  > ob ('<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+		  >SUB</a
+		  > a1 :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		  >SUBCAT</a
+		  > ob) b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FreeSub"
+	    >Instances</h4
+	    ><details id="i:FreeSub" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeSub:Representable:1"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > ob =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+		      >FreeSub</a
+		      > ob :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-63" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L63" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeSub" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeSub:Representable:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (b :: j). <a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: j) (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeSub:Adjunction:2"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > ob =&gt; <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+		      >FreeSub</a
+		      > ob :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+		      >Forget</a
+		      > ob :: k -&gt; <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-69" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L69" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeSub" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeSub:Adjunction:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:unit"
+			  >unit</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob) a a <a href="src/Proarrow.Adjunction.html#unit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L24" class="link"
+			  >Comments</a
+			  > <a href="#v:unit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:counit"
+			  >counit</a
+			  > :: (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Forget.html#t:Forget" title="Proarrow.Profunctor.Forget"
+			  >Forget</a
+			  > ob) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >(~&gt;)</a
+			  > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+			  >CAT</a
+			  > (<a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob)) <a href="src/Proarrow.Adjunction.html#counit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:counit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeSub:Profunctor:3"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Free.html#t:HasFree" title="Proarrow.Profunctor.Free"
+		      >HasFree</a
+		      > ob =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+		      >FreeSub</a
+		      > ob :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-59" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L59" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeSub" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeSub:Profunctor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob a b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			  >SUBCAT</a
+			  > ob) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			  >FreeSub</a
+			  > ob a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeSub:-37-:4"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+		      >FreeSub</a
+		      > ob :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+		      >SUBCAT</a
+		      > ob -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > (a :: j)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-64" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L64" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeSub" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeSub:-37-:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Profunctor-Free.html#t:FreeSub" title="Proarrow.Profunctor.Free"
+			>FreeSub</a
+			> ob :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			>SUBCAT</a
+			> ob -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> (a :: j) = '<a href="Proarrow-Category-Instance-Sub.html#t:SUB" title="Proarrow.Category.Instance.Sub"
+			>SUB</a
+			> (<a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
+			>Free</a
+			> ob <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> a) :: <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+			>SUBCAT</a
+			> ob</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:FreePromonad" class="def"
+	    >FreePromonad</a
+	    > (p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) (a :: k) (b :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Free.html#FreePromonad" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L119" class="link"
+	    >Comments</a
+	    > <a href="#t:FreePromonad" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Unit" class="def"
+		  >Unit</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (a :: k) (b :: k) (p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		  >Type</a
+		  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+		  >FreePromonad</a
+		  > p a b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td class="src"
+		><a id="v:Comp" class="def"
+		  >Comp</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		  >Type</a
+		  >) (b1 :: k) (b :: k) (a :: k). p b1 b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+		  >FreePromonad</a
+		  > p a b1 -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+		  >FreePromonad</a
+		  > p a b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FreePromonad"
+	    >Instances</h4
+	    ><details id="i:FreePromonad" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreePromonad:Profunctor:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+		      >FreePromonad</a
+		      > p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-123" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L123" class="link"
+		    >Comments</a
+		    > <a href="#t:FreePromonad" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreePromonad:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > p a b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreePromonad:Promonad:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+		      >FreePromonad</a
+		      > p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-129" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L129" class="link"
+		    >Comments</a
+		    > <a href="#t:FreePromonad" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreePromonad:Promonad:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:id"
+			  >id</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > p a a <a href="src/Proarrow.Core.html#id" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L56" class="link"
+			  >Comments</a
+			  > <a href="#v:id" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:."
+			  >(.)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: k) (c :: k) (a :: k). <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > p b c -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > p a b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > p a c <a href="src/Proarrow.Core.html#." class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L57" class="link"
+			  >Comments</a
+			  > <a href="#v:." class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreePromonad:Functor:3"
+		      ></span
+		      > <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+		      >FreePromonad</a
+		      > :: (k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) -&gt; k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-133" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L133" class="link"
+		    >Comments</a
+		    > <a href="#t:FreePromonad" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreePromonad:Functor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:map"
+			  >map</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) (b :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Profunctor-Free.html#t:FreePromonad" title="Proarrow.Profunctor.Free"
+			  >FreePromonad</a
+			  > b <a href="src/Proarrow.Functor.html#map" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Functor.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:map" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > (<a href="Proarrow-Profunctor-Free.html#t:Lift" title="Proarrow.Profunctor.Free"
+	    >Lift</a
+	    > c f a) =&gt; <a id="t:ObLift" class="def"
+	    >ObLift</a
+	    > (c :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) (f :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    >) k (a :: k) <a href="src/Proarrow.Profunctor.Free.html#ObLift" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L145" class="link"
+	    >Comments</a
+	    > <a href="#t:ObLift" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ObLift"
+	    >Instances</h4
+	    ><details id="i:ObLift" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ObLift:ObLift:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:Lift" title="Proarrow.Profunctor.Free"
+		      >Lift</a
+		      > c f a) =&gt; <a href="Proarrow-Profunctor-Free.html#t:ObLift" title="Proarrow.Profunctor.Free"
+		      >ObLift</a
+		      > c f k (a :: k)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-146" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L146" class="link"
+		    >Comments</a
+		    > <a href="#t:ObLift" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ObLift:ObLift:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > (<a href="Proarrow-Profunctor-Free.html#t:Retract" title="Proarrow.Profunctor.Free"
+	    >Retract</a
+	    > c f a) =&gt; <a id="t:ObRetract" class="def"
+	    >ObRetract</a
+	    > (c :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) (f :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    >) k (a :: f k) <a href="src/Proarrow.Profunctor.Free.html#ObRetract" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L147" class="link"
+	    >Comments</a
+	    > <a href="#t:ObRetract" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ObRetract"
+	    >Instances</h4
+	    ><details id="i:ObRetract" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ObRetract:ObRetract:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:Retract" title="Proarrow.Profunctor.Free"
+		      >Retract</a
+		      > c f a) =&gt; <a href="Proarrow-Profunctor-Free.html#t:ObRetract" title="Proarrow.Profunctor.Free"
+		      >ObRetract</a
+		      > c f k (a :: f k)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-148" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L148" class="link"
+		    >Comments</a
+		    > <a href="#t:ObRetract" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ObRetract:ObRetract:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<span class="keyword"
+	    >forall</span
+	    > (a :: k). <a href="Proarrow-Profunctor-Free.html#t:ObLift" title="Proarrow.Profunctor.Free"
+	    >ObLift</a
+	    > c f k a, <span class="keyword"
+	    >forall</span
+	    > (a :: f k). <a href="Proarrow-Profunctor-Free.html#t:ObRetract" title="Proarrow.Profunctor.Free"
+	    >ObRetract</a
+	    > c f k a) =&gt; <a id="t:ObLiftRetract" class="def"
+	    >ObLiftRetract</a
+	    > (c :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) (f :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    >) k <a href="src/Proarrow.Profunctor.Free.html#ObLiftRetract" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L149" class="link"
+	    >Comments</a
+	    > <a href="#t:ObLiftRetract" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ObLiftRetract"
+	    >Instances</h4
+	    ><details id="i:ObLiftRetract" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ObLiftRetract:ObLiftRetract:1"
+		      ></span
+		      > (<span class="keyword"
+		      >forall</span
+		      > (a :: k). <a href="Proarrow-Profunctor-Free.html#t:ObLift" title="Proarrow.Profunctor.Free"
+		      >ObLift</a
+		      > c f k a, <span class="keyword"
+		      >forall</span
+		      > (a :: f k). <a href="Proarrow-Profunctor-Free.html#t:ObRetract" title="Proarrow.Profunctor.Free"
+		      >ObRetract</a
+		      > c f k a) =&gt; <a href="Proarrow-Profunctor-Free.html#t:ObLiftRetract" title="Proarrow.Profunctor.Free"
+		      >ObLiftRetract</a
+		      > c f k</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-150" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L150" class="link"
+		    >Comments</a
+		    > <a href="#t:ObLiftRetract" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ObLiftRetract:ObLiftRetract:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<span class="keyword"
+	    >forall</span
+	    > k. <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	    >CategoryOf</a
+	    > k =&gt; c (f k), <span class="keyword"
+	    >forall</span
+	    > k. <a href="Proarrow-Profunctor-Free.html#t:ObLiftRetract" title="Proarrow.Profunctor.Free"
+	    >ObLiftRetract</a
+	    > c f k) =&gt; <a id="t:HasFreeK" class="def"
+	    >HasFreeK</a
+	    > (c :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) (f :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    > -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	    >Kind</a
+	    >) | c -&gt; f <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Free.html#HasFreeK" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L152" class="link"
+	    >Comments</a
+	    > <a href="#t:HasFreeK" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:Lift" class="def"
+	      >Lift</a
+	      > (c :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	      >Kind</a
+	      > -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	      >Constraint</a
+	      >) (f :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	      >Kind</a
+	      > -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	      >Kind</a
+	      >) (a :: k) :: f k <a href="src/Proarrow.Profunctor.Free.html#Lift" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:Lift" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:Retract" class="def"
+	      >Retract</a
+	      > (c :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	      >Kind</a
+	      > -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+	      >Constraint</a
+	      >) (f :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	      >Kind</a
+	      > -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
+	      >Kind</a
+	      >) (a :: f k) :: k <a href="src/Proarrow.Profunctor.Free.html#Retract" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:Retract" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:liftK" class="def"
+	      >liftK</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: k) (b :: k). <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	      >CategoryOf</a
+	      > k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Lift" title="Proarrow.Profunctor.Free"
+	      >Lift</a
+	      > c f a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Profunctor-Free.html#t:Lift" title="Proarrow.Profunctor.Free"
+	      >Lift</a
+	      > c f b <a href="src/Proarrow.Profunctor.Free.html#liftK" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L152" class="link"
+	      >Comments</a
+	      > <a href="#v:liftK" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:retractK" class="def"
+	      >retractK</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: f k) (b :: f k). c k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Retract" title="Proarrow.Profunctor.Free"
+	      >Retract</a
+	      > c f a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Profunctor-Free.html#t:Retract" title="Proarrow.Profunctor.Free"
+	      >Retract</a
+	      > c f b <a href="src/Proarrow.Profunctor.Free.html#retractK" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L152" class="link"
+	      >Comments</a
+	      > <a href="#v:retractK" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:FreeMonoid" class="def"
+	    >FreeMonoid</a
+	    > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Free.html#FreeMonoid" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L169" class="link"
+	    >Comments</a
+	    > <a href="#t:FreeMonoid" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Nil" class="def"
+		  >Nil</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (a :: k) (b :: k) (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b) =&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		  >FreeMonoid</a
+		  > p a b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td class="src"
+		><a id="v:Cons" class="def"
+		  >Cons</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k) (b :: k). p a b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		  >FreeMonoid</a
+		  > p a b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		  >FreeMonoid</a
+		  > p a b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FreeMonoid"
+	    >Instances</h4
+	    ><details id="i:FreeMonoid" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeMonoid:Profunctor:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoid</a
+		      > p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-198" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L198" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeMonoid" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeMonoid:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+			  >FreeMonoid</a
+			  > p a b -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+			  >FreeMonoid</a
+			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+			  >FreeMonoid</a
+			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeMonoid:Monoid:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+		      >Monoid</a
+		      > ('<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+		      >PR</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoid</a
+		      > p) :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+		      >PROD</a
+		      > (k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >))</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-173" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L173" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeMonoid" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeMonoid:Monoid:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:mempty"
+			  >mempty</a
+			  > :: (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
+			  >PROD</a
+			  > (k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > '<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+			  >PR</a
+			  > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+			  >FreeMonoid</a
+			  > p) <a href="src/Proarrow.Monoid.html#mempty" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:mempty" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:mappend"
+			  >mappend</a
+			  > :: ('<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+			  >PR</a
+			  > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+			  >FreeMonoid</a
+			  > p) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > '<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+			  >PR</a
+			  > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+			  >FreeMonoid</a
+			  > p)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > '<a href="Proarrow-Object-BinaryProduct.html#v:PR" title="Proarrow.Object.BinaryProduct"
+			  >PR</a
+			  > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+			  >FreeMonoid</a
+			  > p) <a href="src/Proarrow.Monoid.html#mappend" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:mappend" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > <a id="t:FreeMonoidF" class="def"
+	    >FreeMonoidF</a
+	    > (b :: k) :: k <a href="src/Proarrow.Profunctor.Free.html#FreeMonoidF" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L179" class="link"
+	    >Comments</a
+	    > <a href="#t:FreeMonoidF" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FreeMonoidF"
+	    >Instances</h4
+	    ><details id="i:FreeMonoidF" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:FreeMonoidF:Monoid:1"
+		      ></span
+		      > (<a href="Proarrow-Object-BinaryProduct.html#t:Cartesian" title="Proarrow.Object.BinaryProduct"
+		      >Cartesian</a
+		      > k, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoid</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k)), <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > b, (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoid</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > b) <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      >~</a
+		      > <a href="Proarrow-Profunctor-Free.html#t:FreeMonoidF" title="Proarrow.Profunctor.Free"
+		      >FreeMonoidF</a
+		      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoid</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > b)) =&gt; <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+		      >Monoid</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoidF" title="Proarrow.Profunctor.Free"
+		      >FreeMonoidF</a
+		      > b :: k)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-181" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L181" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeMonoidF" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:if:FreeMonoidF:Monoid:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:mempty"
+			  >mempty</a
+			  > :: (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Profunctor-Free.html#t:FreeMonoidF" title="Proarrow.Profunctor.Free"
+			  >FreeMonoidF</a
+			  > b <a href="src/Proarrow.Monoid.html#mempty" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:mempty" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:mappend"
+			  >mappend</a
+			  > :: (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoidF" title="Proarrow.Profunctor.Free"
+			  >FreeMonoidF</a
+			  > b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Profunctor-Free.html#t:FreeMonoidF" title="Proarrow.Profunctor.Free"
+			  >FreeMonoidF</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Profunctor-Free.html#t:FreeMonoidF" title="Proarrow.Profunctor.Free"
+			  >FreeMonoidF</a
+			  > b <a href="src/Proarrow.Monoid.html#mappend" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:mappend" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+	    >Monoid</a
+	    > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+	    >FreeMonoid</a
+	    > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > b) =&gt; <a id="t:FreeMonoidIsMonoid" class="def"
+	    >FreeMonoidIsMonoid</a
+	    > (b :: k) <a href="src/Proarrow.Profunctor.Free.html#FreeMonoidIsMonoid" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L204" class="link"
+	    >Comments</a
+	    > <a href="#t:FreeMonoidIsMonoid" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FreeMonoidIsMonoid"
+	    >Instances</h4
+	    ><details id="i:FreeMonoidIsMonoid" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:FreeMonoidIsMonoid:FreeMonoidIsMonoid:1"
+		      ></span
+		      > <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+		      >Monoid</a
+		      > (<a href="Proarrow-Profunctor-Free.html#t:FreeMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoid</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > b) =&gt; <a href="Proarrow-Profunctor-Free.html#t:FreeMonoidIsMonoid" title="Proarrow.Profunctor.Free"
+		      >FreeMonoidIsMonoid</a
+		      > (b :: k)</span
+		    > <a href="src/Proarrow.Profunctor.Free.html#line-205" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L205" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeMonoidIsMonoid" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:FreeMonoidIsMonoid:FreeMonoidIsMonoid:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Free.html"
+			>Proarrow.Profunctor.Free</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

@@ -1,0 +1,1875 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Preorder.ThinCategory</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Preorder.ThinCategory.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Preorder.ThinCategory</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p =&gt; <a id="t:ThinProfunctor" class="def"
+	    >ThinProfunctor</a
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Preorder.ThinCategory.html#ThinProfunctor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L9" class="link"
+	    >Comments</a
+	    > <a href="#t:ThinProfunctor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:HasArrow" class="def"
+	      >HasArrow</a
+	      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: j) <a href="src/Proarrow.Preorder.ThinCategory.html#HasArrow" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:HasArrow" class="selflink"
+	      >#</a
+	      ></p
+	    > <div class="subs default"
+	    ><p class="caption"
+	      ></p
+	      ><p class="src"
+	      ><span class="keyword"
+		>type</span
+		> <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+		>HasArrow</a
+		> (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		>+-&gt;</a
+		> k) (a :: k) (b :: j) = ()</p
+	      ></div
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:arr" class="def"
+	      >arr</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+	      >HasArrow</a
+	      > p a b) =&gt; p a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L9" class="link"
+	      >Comments</a
+	      > <a href="#v:arr" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:withArr" class="def"
+	      >withArr</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j) r. p a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+	      >HasArrow</a
+	      > p a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L9" class="link"
+	      >Comments</a
+	      > <a href="#v:withArr" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ThinProfunctor"
+	    >Instances</h4
+	    ><details id="i:ThinProfunctor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:1"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+		      >Booleans</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Bool.html#line-57" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L57" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Bool.html"
+			>Proarrow.Category.Instance.Bool</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:HasArrowBOOLBOOLBooleansab:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+				>Booleans</a
+				> (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				>BOOL</a
+				>) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				>BOOL</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:HasArrowBOOLBOOLBooleansab:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Bool.html"
+				  >Proarrow.Category.Instance.Bool</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+				  >Booleans</a
+				  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				  >BOOL</a
+				  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				  >BOOL</a
+				  >) = <a href="Proarrow-Category-Instance-Bool.html#t:IsBoolArr" title="Proarrow.Category.Instance.Bool"
+				  >IsBoolArr</a
+				  > a b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b) =&gt; <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) r. <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:2"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+		      >(:-)</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Constraint.html#line-40" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L40" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Constraint.html"
+			>Proarrow.Category.Instance.Constraint</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:HasArrowCONSTRAINTCONSTRAINT:-45-CNSTRNTCNSTRNT:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+				>(:-)</a
+				> ('<a href="Proarrow-Category-Instance-Constraint.html#v:CNSTRNT" title="Proarrow.Category.Instance.Constraint"
+				>CNSTRNT</a
+				> a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				>CONSTRAINT</a
+				>) ('<a href="Proarrow-Category-Instance-Constraint.html#v:CNSTRNT" title="Proarrow.Category.Instance.Constraint"
+				>CNSTRNT</a
+				> b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				>CONSTRAINT</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:HasArrowCONSTRAINTCONSTRAINT:-45-CNSTRNTCNSTRNT:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Constraint.html"
+				  >Proarrow.Category.Instance.Constraint</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+				  >(:-)</a
+				  > ('<a href="Proarrow-Category-Instance-Constraint.html#v:CNSTRNT" title="Proarrow.Category.Instance.Constraint"
+				  >CNSTRNT</a
+				  > a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				  >CONSTRAINT</a
+				  >) ('<a href="Proarrow-Category-Instance-Constraint.html#v:CNSTRNT" title="Proarrow.Category.Instance.Constraint"
+				  >CNSTRNT</a
+				  > b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				  >CONSTRAINT</a
+				  >) = a <a href="Proarrow-Category-Instance-Constraint.html#t::-61--62-" title="Proarrow.Category.Instance.Constraint"
+				  >:=&gt;</a
+				  > b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >(:-)</a
+			  > a b) =&gt; a <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >:-</a
+			  > b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) r. (a <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >:-</a
+			  > b) -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >(:-)</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:3"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+		      >Zero</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Zero.html#line-28" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L28" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Zero.html"
+			>Proarrow.Category.Instance.Zero</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:R:HasArrowVOIDVOIDZeroab:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+				>Zero</a
+				> (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				>VOID</a
+				>) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				>VOID</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:R:HasArrowVOIDVOIDZeroab:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Zero.html"
+				  >Proarrow.Category.Instance.Zero</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+				  >Zero</a
+				  > (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				  >VOID</a
+				  >) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				  >VOID</a
+				  >) = ()</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b) =&gt; <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >) r. <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:4"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Unit.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Unit.html"
+			>Proarrow.Category.Instance.Unit</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:HasArrowUnitUnitUnit-40--41--40--41-:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+				>Unit</a
+				> '() '()</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:HasArrowUnitUnitUnit-40--41--40--41-:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Unit.html"
+				  >Proarrow.Category.Instance.Unit</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+				  >Unit</a
+				  > '() '() = ()</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b) =&gt; <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()) r. <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:5"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+		      >LTE</a
+		      > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+		      >FIN</a
+		      > n -&gt; <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+		      >FIN</a
+		      > n -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Fin.html#line-60" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L60" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Fin.html"
+			>Proarrow.Category.Instance.Fin</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n) (b :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n) (b :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n) r. <a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:6"
+		      ></span
+		      > <a href="Proarrow-Preorder.html#t:PreorderOf" title="Proarrow.Preorder"
+		      >PreorderOf</a
+		      > k =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:PoAsCat" title="Proarrow.Category.Instance.PreorderAsCategory"
+		      >PoAsCat</a
+		      > :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+		      >POCATK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+		      >POCATK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.PreorderAsCategory.html#line-31" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L31" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-PreorderAsCategory.html"
+			>Proarrow.Category.Instance.PreorderAsCategory</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:PoAsCat" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >PoAsCat</a
+			  > :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:PoAsCat" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >PoAsCat</a
+			  > a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k) r. <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:PoAsCat" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >PoAsCat</a
+			  > a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:PoAsCat" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >PoAsCat</a
+			  > :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
+			  >POCATK</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:7"
+		      ></span
+		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > q) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+		      >:**:</a
+		      > q :: (k1, k2) -&gt; (k1, k2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-36" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L36" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
+			>Proarrow.Category.Instance.Product</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (k1, k2)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b) =&gt; (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (k1, k2)) r. (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:8"
+		      ></span
+		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+		      >Thin</a
+		      > j, <a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+		      >Thin</a
+		      > k, <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > p) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+		      >Collage</a
+		      > :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+		      >COLLAGE</a
+		      > p -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+		      >COLLAGE</a
+		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Collage.html#line-76" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L76" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Collage.html"
+			>Proarrow.Category.Instance.Collage</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p) r. <a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+	    >ThinProfunctor</a
+	    > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) =&gt; <a id="t:Thin" class="def"
+	    >Thin</a
+	    > k <a href="src/Proarrow.Preorder.ThinCategory.html#Thin" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L15" class="link"
+	    >Comments</a
+	    > <a href="#t:Thin" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Thin"
+	    >Instances</h4
+	    ><details id="i:Thin" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Thin:Thin:1"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+		      >Thin</a
+		      > k</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-16" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L16" class="link"
+		    >Comments</a
+		    > <a href="#t:Thin" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Thin:Thin:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+	    >HasArrow</a
+	    > p a b =&gt; <a id="t:HasArrow-39-" class="def"
+	    >HasArrow'</a
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: j) <a href="src/Proarrow.Preorder.ThinCategory.html#HasArrow%27" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L18" class="link"
+	    >Comments</a
+	    > <a href="#t:HasArrow-39-" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:HasArrow-39-"
+	    >Instances</h4
+	    ><details id="i:HasArrow-39-" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasArrow-39-:HasArrow-39-:1"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+		      >HasArrow</a
+		      > p a b =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow-39-" title="Proarrow.Preorder.ThinCategory"
+		      >HasArrow'</a
+		      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) (a :: k) (b :: j)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-19" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L19" class="link"
+		    >Comments</a
+		    > <a href="#t:HasArrow-39-" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasArrow-39-:HasArrow-39-:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+	    >ThinProfunctor</a
+	    > p, <span class="keyword"
+	    >forall</span
+	    > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow-39-" title="Proarrow.Preorder.ThinCategory"
+	    >HasArrow'</a
+	    > p a b) =&gt; <a id="t:Codiscrete" class="def"
+	    >Codiscrete</a
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <a href="src/Proarrow.Preorder.ThinCategory.html#Codiscrete" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L21" class="link"
+	    >Comments</a
+	    > <a href="#t:Codiscrete" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Codiscrete"
+	    >Instances</h4
+	    ><details id="i:Codiscrete" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Codiscrete:Codiscrete:1"
+		      ></span
+		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <span class="keyword"
+		      >forall</span
+		      > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > b) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow-39-" title="Proarrow.Preorder.ThinCategory"
+		      >HasArrow'</a
+		      > p a b) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:Codiscrete" title="Proarrow.Preorder.ThinCategory"
+		      >Codiscrete</a
+		      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-22" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L22" class="link"
+		    >Comments</a
+		    > <a href="#t:Codiscrete" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Codiscrete:Codiscrete:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >newtype</span
+	    > <a id="t:THIN" class="def"
+	    >THIN</a
+	    > k <a href="src/Proarrow.Preorder.ThinCategory.html#THIN" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L24" class="link"
+	    >Comments</a
+	    > <a href="#t:THIN" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:T" class="def"
+		  >T</a
+		  > k</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:THIN"
+	    >Instances</h4
+	    ><details id="i:THIN" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:THIN:PreorderOf:1"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+		      >Thin</a
+		      > k =&gt; <a href="Proarrow-Preorder.html#t:PreorderOf" title="Proarrow.Preorder"
+		      >PreorderOf</a
+		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-37" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L37" class="link"
+		    >Comments</a
+		    > <a href="#t:THIN" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:THIN:PreorderOf:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-60--61-THIN:-60--61-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Preorder.html#t:-60--61-" title="Proarrow.Preorder"
+				>(&lt;=)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-60--61-THIN:-60--61-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+				  >Proarrow.Preorder.ThinCategory</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Preorder.html#t:-60--61-" title="Proarrow.Preorder"
+				  >(&lt;=)</a
+				  > = <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+				  >ThinCategory</a
+				  > :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+				  >THIN</a
+				  > k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+				  >THIN</a
+				  > k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+				  >Constraint</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:THIN:CProfunctor:2"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+		      >Thin</a
+		      > k =&gt; <a href="Proarrow-Preorder.html#t:CProfunctor" title="Proarrow.Preorder"
+		      >CProfunctor</a
+		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+		      >ThinCategory</a
+		      > :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      >Constraint</a
+		      >)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-30" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L30" class="link"
+		    >Comments</a
+		    > <a href="#t:THIN" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:THIN:CProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:cdimap"
+			  >cdimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k) (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k) (b :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k) (d :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k). (c <a href="Proarrow-Preorder.html#t:-60--61-" title="Proarrow.Preorder"
+			  >&lt;=</a
+			  > a, b <a href="Proarrow-Preorder.html#t:-60--61-" title="Proarrow.Preorder"
+			  >&lt;=</a
+			  > d, <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			  >ThinCategory</a
+			  > a b) <a href="Proarrow-Preorder.html#t::-45-" title="Proarrow.Preorder"
+			  >:-</a
+			  > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			  >ThinCategory</a
+			  > c d <a href="src/Proarrow.Preorder.html#cdimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:cdimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:obs"
+			  >obs</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k) (b :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k). <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			  >ThinCategory</a
+			  > a b <a href="Proarrow-Preorder.html#t::-45-" title="Proarrow.Preorder"
+			  >:-</a
+			  > (<a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+			  >COb</a
+			  > a, <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+			  >COb</a
+			  > b) <a href="src/Proarrow.Preorder.html#obs" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:obs" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:THIN:CPromonad:3"
+		      ></span
+		      > <a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+		      >Thin</a
+		      > k =&gt; <a href="Proarrow-Preorder.html#t:CPromonad" title="Proarrow.Preorder"
+		      >CPromonad</a
+		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+		      >ThinCategory</a
+		      > :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      >Constraint</a
+		      >)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:THIN" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:THIN:CPromonad:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:cid"
+			  >cid</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k). <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+			  >COb</a
+			  > a =&gt; () <a href="Proarrow-Preorder.html#t::-45-" title="Proarrow.Preorder"
+			  >:-</a
+			  > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			  >ThinCategory</a
+			  > a a <a href="src/Proarrow.Preorder.html#cid" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:cid" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:ccomp"
+			  >ccomp</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k) (b :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k) (c :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			  >THIN</a
+			  > k). (<a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			  >ThinCategory</a
+			  > b c, <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			  >ThinCategory</a
+			  > a b) <a href="Proarrow-Preorder.html#t::-45-" title="Proarrow.Preorder"
+			  >:-</a
+			  > <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			  >ThinCategory</a
+			  > a c <a href="src/Proarrow.Preorder.html#ccomp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:ccomp" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:THIN:UN:4"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+		      >T</a
+		      > :: j -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > j) ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+		      >T</a
+		      > a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > j)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-25" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L25" class="link"
+		    >Comments</a
+		    > <a href="#t:THIN" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:THIN:UN:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+			>T</a
+			> :: j -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			>THIN</a
+			> j) ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+			>T</a
+			> a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			>THIN</a
+			> j) = a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:THIN:-60--61-:5"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Preorder.html#t:-60--61-" title="Proarrow.Preorder"
+		      >(&lt;=)</a
+		      ></span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-38" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L38" class="link"
+		    >Comments</a
+		    > <a href="#t:THIN" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:THIN:-60--61-:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Preorder.html#t:-60--61-" title="Proarrow.Preorder"
+			>(&lt;=)</a
+			> = <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+			>ThinCategory</a
+			> :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			>THIN</a
+			> k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			>THIN</a
+			> k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			>Constraint</a
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:THIN:COb:6"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+		      >COb</a
+		      > (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-39" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L39" class="link"
+		    >Comments</a
+		    > <a href="#t:THIN" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:THIN:COb:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+			>COb</a
+			> (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			>THIN</a
+			> k) = (<a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
+			>Is</a
+			> ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+			>T</a
+			> :: k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			>THIN</a
+			> k) a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			>Ob</a
+			> (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+			>T</a
+			> :: k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+			>THIN</a
+			> k) a))</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+	    >Thin</a
+	    > k, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+	    >HasArrow</a
+	    > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+	    >UN</a
+	    > ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+	    >T</a
+	    > :: k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+	    >THIN</a
+	    > k) a) (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+	    >UN</a
+	    > ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+	    >T</a
+	    > :: k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+	    >THIN</a
+	    > k) b), <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+	    >COb</a
+	    > a, <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+	    >COb</a
+	    > b) =&gt; <a id="t:ThinCategory" class="def"
+	    >ThinCategory</a
+	    > (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+	    >THIN</a
+	    > k) (b :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+	    >THIN</a
+	    > k) <a href="src/Proarrow.Preorder.ThinCategory.html#ThinCategory" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L27" class="link"
+	    >Comments</a
+	    > <a href="#t:ThinCategory" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ThinCategory"
+	    >Instances</h4
+	    ><details id="i:ThinCategory" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinCategory:ThinCategory:1"
+		      ></span
+		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:Thin" title="Proarrow.Preorder.ThinCategory"
+		      >Thin</a
+		      > k, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+		      >HasArrow</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+		      >T</a
+		      > :: k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k) a) (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Preorder-ThinCategory.html#v:T" title="Proarrow.Preorder.ThinCategory"
+		      >T</a
+		      > :: k -&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k) b), <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+		      >COb</a
+		      > a, <a href="Proarrow-Preorder.html#t:COb" title="Proarrow.Preorder"
+		      >COb</a
+		      > b) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:ThinCategory" title="Proarrow.Preorder.ThinCategory"
+		      >ThinCategory</a
+		      > (a :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k) (b :: <a href="Proarrow-Preorder-ThinCategory.html#t:THIN" title="Proarrow.Preorder.ThinCategory"
+		      >THIN</a
+		      > k)</span
+		    > <a href="src/Proarrow.Preorder.ThinCategory.html#line-28" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L28" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinCategory" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinCategory:ThinCategory:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Preorder-ThinCategory.html"
+			>Proarrow.Preorder.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

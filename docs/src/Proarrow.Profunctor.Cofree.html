@@ -1,0 +1,2672 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html"
+	><span class="hs-identifier"
+	  >Proarrow.Adjunction</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html#Adjunction"
+	><span class="hs-identifier"
+	  >Adjunction</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html#counitFromRepCounit"
+	><span class="hs-identifier"
+	  >counitFromRepCounit</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html#unitFromRepUnit"
+	><span class="hs-identifier"
+	  >unitFromRepUnit</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Sub.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Sub.html#SUBCAT"
+	><span class="hs-identifier"
+	  >SUBCAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Sub.html#Sub"
+	><span class="hs-identifier"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#OB"
+	><span class="hs-identifier"
+	  >OB</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2B-%3E"
+	><span class="hs-operator"
+	  >(+-&gt;)</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Forget.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Forget</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Forget.html#Forget"
+	><span class="hs-identifier"
+	  >Forget</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Representable</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#Representable"
+	><span class="hs-identifier"
+	  >Representable</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#dimapRep"
+	><span class="hs-identifier"
+	  >dimapRep</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#repObj"
+	><span class="hs-identifier"
+	  >repObj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#HasCofree"
+	><span class="hs-identifier hs-type"
+	  >HasCofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679291799"
+      ><span class="annot"
+	><a href="#local-6989586621679291799"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679291799"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier hs-type"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291652"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#Representable"
+	><span class="hs-identifier hs-type"
+	  >Representable</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291653"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291658"
+      ><span class="annot"
+	><a href="#local-6989586621679291658"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291658"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291653"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291653"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#%25"
+	><span class="hs-operator hs-type"
+	  >%</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291658"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="HasCofree"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#HasCofree"
+	  ><span class="hs-identifier hs-var"
+	    >HasCofree</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679291652"
+      ><span id="local-6989586621679291653"
+	><span class="annot"
+	  ><a href="#local-6989586621679291653"
+	    ><span class="hs-identifier hs-type"
+	      >ob</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291652"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>-&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><span class="hs-identifier hs-type"
+	  >Constraint</span
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Cofree"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	  ><span class="hs-identifier hs-var"
+	    >Cofree</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291652"
+      ><span id="local-6989586621679291653"
+	><span class="annot"
+	  ><a href="#local-6989586621679291653"
+	    ><span class="hs-identifier hs-type"
+	      >ob</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291652"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#%2B-%3E"
+	  ><span class="hs-operator hs-type"
+	    >+-&gt;</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291652"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span id="lower%27"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#lower%27"
+	  ><span class="hs-identifier hs-type"
+	    >lower'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291668"
+      ><span id="local-6989586621679291669"
+	><span class="annot"
+	  ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	    ><span class="hs-identifier hs-type"
+	      >Cofree</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291653"
+	    ><span class="hs-identifier hs-type"
+	      >ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291668"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291669"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291668"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291669"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >  </span
+      ><span id="section%27"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#section%27"
+	  ><span class="hs-identifier hs-type"
+	    >section'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291691"
+      ><span id="local-6989586621679291692"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291653"
+	    ><span class="hs-identifier hs-type"
+	      >ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291691"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291692"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291691"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	    ><span class="hs-identifier hs-type"
+	      >Cofree</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291653"
+	    ><span class="hs-identifier hs-type"
+	      >ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291692"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679291691"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#lower"
+	><span class="hs-identifier hs-type"
+	  >lower</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291662"
+      ><span class="annot"
+	><a href="#local-6989586621679291662"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291663"
+      ><span class="annot"
+	><a href="#local-6989586621679291663"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#HasCofree"
+	><span class="hs-identifier hs-type"
+	  >HasCofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291662"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291663"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291662"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#%25"
+	><span class="hs-operator hs-type"
+	  >%</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291663"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291663"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span id="lower"
+      ><span class="annot"
+	><span class="annottext"
+	  >lower :: forall {k} (ob :: k -&gt; Constraint) (a :: k).
+(HasCofree ob, Ob a) =&gt;
+(Cofree ob % a) ~&gt; a
+</span
+	  ><a href="Proarrow.Profunctor.Cofree.html#lower"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >lower</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (ob :: k -&gt; Constraint) (a :: k) (b :: k).
+HasCofree ob =&gt;
+Cofree ob a b -&gt; a ~&gt; b
+forall (ob :: k -&gt; Constraint) (a :: k) (b :: k).
+HasCofree ob =&gt;
+Cofree ob a b -&gt; a ~&gt; b
+</span
+	><a href="Proarrow.Profunctor.Cofree.html#lower%27"
+	><span class="hs-identifier hs-var"
+	  >lower'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679291662"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {j} {k} (p :: j +-&gt; k) (b :: j) (a :: k).
+(Representable p, Ob b) =&gt;
+(a ~&gt; (p % b)) -&gt; p a b
+forall (p :: k +-&gt; k) (b :: k) (a :: k).
+(Representable p, Ob b) =&gt;
+(a ~&gt; (p % b)) -&gt; p a b
+</span
+	><a href="Proarrow.Profunctor.Representable.html#tabulate"
+	><span class="hs-identifier hs-var"
+	  >tabulate</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291662"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {j} {k} (p :: j +-&gt; k) (a :: j).
+(Representable p, Ob a) =&gt;
+Obj (p % a)
+forall (p :: k +-&gt; k) (a :: k).
+(Representable p, Ob a) =&gt;
+Obj (p % a)
+</span
+	><a href="Proarrow.Profunctor.Representable.html#repObj"
+	><span class="hs-identifier hs-var"
+	  >repObj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291662"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679291663"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#section"
+	><span class="hs-identifier hs-type"
+	  >section</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291682"
+      ><span class="annot"
+	><a href="#local-6989586621679291682"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291683"
+      ><span class="annot"
+	><a href="#local-6989586621679291683"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#HasCofree"
+	><span class="hs-identifier hs-type"
+	  >HasCofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291682"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291682"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291683"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291683"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291683"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291682"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#%25"
+	><span class="hs-operator hs-type"
+	  >%</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291683"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span id="section"
+      ><span class="annot"
+	><span class="annottext"
+	  >section :: forall {j} (ob :: j -&gt; Constraint) (a :: j).
+(HasCofree ob, ob a, Ob a) =&gt;
+a ~&gt; (Cofree ob % a)
+</span
+	  ><a href="Proarrow.Profunctor.Cofree.html#section"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >section</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j).
+Representable p =&gt;
+p a b -&gt; a ~&gt; (p % b)
+forall (p :: j +-&gt; j) (a :: j) (b :: j).
+Representable p =&gt;
+p a b -&gt; a ~&gt; (p % b)
+</span
+	><a href="Proarrow.Profunctor.Representable.html#index"
+	><span class="hs-identifier hs-var"
+	  >index</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291682"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (ob :: k -&gt; Constraint) (b :: k) (a :: k).
+(HasCofree ob, ob b) =&gt;
+(a ~&gt; b) -&gt; Cofree ob a b
+forall (ob :: j -&gt; Constraint) (b :: j) (a :: j).
+(HasCofree ob, ob b) =&gt;
+(a ~&gt; b) -&gt; Cofree ob a b
+</span
+	><a href="Proarrow.Profunctor.Cofree.html#section%27"
+	><span class="hs-identifier hs-var"
+	  >section'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679291682"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a
+forall (a :: j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	><span class="hs-identifier hs-type"
+	  >CofreeSub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291830"
+      ><span class="hs-keyword"
+	>forall</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span id="local-6989586621679291831"
+	><span class="annot"
+	  ><a href="#local-6989586621679291831"
+	    ><span class="hs-identifier hs-type"
+	      >ob</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#OB"
+	  ><span class="hs-identifier hs-type"
+	    >OB</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291830"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>-&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291830"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#%2B-%3E"
+	  ><span class="hs-operator hs-type"
+	    >+-&gt;</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Sub.html#SUBCAT"
+	  ><span class="hs-identifier hs-type"
+	    >SUBCAT</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291831"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="CofreeSub"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	  ><span class="hs-identifier hs-var"
+	    >CofreeSub</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291832"
+      ><span class="annot"
+	><a href="#local-6989586621679291832"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291833"
+      ><span class="annot"
+	><a href="#local-6989586621679291833"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291834"
+      ><span class="annot"
+	><a href="#local-6989586621679291834"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291758"
+      ><span id="local-6989586621679291760"
+	><span id="local-6989586621679291835"
+	  ><span id="CofreeSub"
+	    ><span class="annot"
+	      ><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+		><span class="hs-identifier hs-var"
+		  >CofreeSub</span
+		  ></a
+		></span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291758"
+	      ><span class="hs-identifier hs-type"
+		>ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291835"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	      ><span class="hs-identifier hs-type"
+		>Cofree</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291758"
+	      ><span class="hs-identifier hs-type"
+		>ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291835"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291760"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	      ><span class="hs-identifier hs-type"
+		>CofreeSub</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291758"
+	      ><span class="hs-identifier hs-type"
+		>ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Sub.html#SUB"
+	      ><span class="hs-identifier hs-type"
+		>SUB</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291835"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679291760"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291716"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#HasCofree"
+	  ><span class="hs-identifier hs-type"
+	    >HasCofree</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291716"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Profunctor"
+	  ><span class="hs-identifier hs-type"
+	    >Profunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	  ><span class="hs-identifier hs-type"
+	    >CofreeSub</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291716"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291853"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: SUBCAT ob) (a :: SUBCAT ob) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; CofreeSub ob a b -&gt; CofreeSub ob c d
+</span
+	  ><a href="#local-6989586621679291853"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; CofreeSub ob a b -&gt; CofreeSub ob c d
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) (c :: k) (d :: j).
+Representable p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Profunctor.Representable.html#dimapRep"
+	><span class="hs-identifier hs-var"
+	  >dimapRep</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291855"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679291855"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291856"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: SUBCAT ob) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; CofreeSub ob a b -&gt; r
+</span
+	  ><a href="#local-6989586621679291856"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	><span class="hs-identifier hs-type"
+	  >CofreeSub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291861"
+      ><span class="annot"
+	><span class="annottext"
+	  >Cofree ob a b
+</span
+	  ><a href="#local-6989586621679291861"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679291855"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; Cofree ob a b -&gt; r
+forall (a :: k) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Cofree ob a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cofree ob a b
+</span
+	><a href="#local-6989586621679291861"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291718"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#HasCofree"
+	  ><span class="hs-identifier hs-type"
+	    >HasCofree</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291718"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Representable.html#Representable"
+	  ><span class="hs-identifier hs-type"
+	    >Representable</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	  ><span class="hs-identifier hs-type"
+	    >CofreeSub</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291718"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291884"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	  ><span class="hs-identifier hs-type"
+	    >CofreeSub</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291718"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%25"
+	><span class="annot"
+	  ><a href="Proarrow.Profunctor.Representable.html#%25"
+	    ><span class="hs-operator hs-var"
+	      >%</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291884"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Sub.html#SUB"
+	><span class="hs-identifier hs-type"
+	  >SUB</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291718"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#%25"
+	><span class="hs-operator hs-type"
+	  >%</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291884"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291885"
+      ><span class="annot"
+	><span class="annottext"
+	  >index :: forall (a :: SUBCAT ob) (b :: j).
+CofreeSub ob a b -&gt; a ~&gt; (CofreeSub ob % b)
+</span
+	  ><a href="Proarrow.Profunctor.Representable.html#index"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >index</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	><span class="hs-identifier hs-type"
+	  >CofreeSub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291889"
+      ><span class="annot"
+	><span class="annottext"
+	  >Cofree ob a b
+</span
+	  ><a href="#local-6989586621679291889"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; (Cofree ob % b)) -&gt; Sub (~&gt;) (SUB a) (SUB (Cofree ob % b))
+forall {k} (ob :: OB k) (a1 :: k) (b1 :: k) (p :: CAT k).
+(ob a1, ob b1) =&gt;
+p a1 b1 -&gt; Sub p (SUB a1) (SUB b1)
+</span
+	><a href="Proarrow.Category.Instance.Sub.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cofree ob a b -&gt; a ~&gt; (Cofree ob % b)
+forall (a :: j) (b :: j). Cofree ob a b -&gt; a ~&gt; (Cofree ob % b)
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j).
+Representable p =&gt;
+p a b -&gt; a ~&gt; (p % b)
+</span
+	><a href="Proarrow.Profunctor.Representable.html#index"
+	><span class="hs-identifier hs-var"
+	  >index</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cofree ob a b
+</span
+	><a href="#local-6989586621679291889"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; Sub (~&gt;) (SUB a) (SUB (Cofree ob % b)))
+-&gt; Cofree ob a b -&gt; Sub (~&gt;) (SUB a) (SUB (Cofree ob % b))
+forall (a :: j) (b :: j) r.
+((Ob a, Ob b) =&gt; r) -&gt; Cofree ob a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cofree ob a b
+</span
+	><a href="#local-6989586621679291889"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291898"
+      ><span class="annot"
+	><span class="annottext"
+	  >tabulate :: forall (b :: j) (a :: SUBCAT ob).
+Ob b =&gt;
+(a ~&gt; (CofreeSub ob % b)) -&gt; CofreeSub ob a b
+</span
+	  ><a href="Proarrow.Profunctor.Representable.html#tabulate"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >tabulate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Sub.html#Sub"
+	><span class="hs-identifier hs-type"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291907"
+      ><span class="annot"
+	><span class="annottext"
+	  >a1 ~&gt; b1
+</span
+	  ><a href="#local-6989586621679291907"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cofree ob a1 b -&gt; CofreeSub ob (SUB a1) b
+forall {k} (ob :: k -&gt; Constraint) (a :: k) (b :: k).
+ob a =&gt;
+Cofree ob a b -&gt; CofreeSub ob (SUB a) b
+</span
+	><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	><span class="hs-identifier hs-var"
+	  >CofreeSub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a1 ~&gt; (Cofree ob % b)) -&gt; Cofree ob a1 b
+forall (b :: j) (a :: j).
+Ob b =&gt;
+(a ~&gt; (Cofree ob % b)) -&gt; Cofree ob a b
+forall {j} {k} (p :: j +-&gt; k) (b :: j) (a :: k).
+(Representable p, Ob b) =&gt;
+(a ~&gt; (p % b)) -&gt; p a b
+</span
+	><a href="Proarrow.Profunctor.Representable.html#tabulate"
+	><span class="hs-identifier hs-var"
+	  >tabulate</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a1 ~&gt; b1
+a1 ~&gt; (Cofree ob % b)
+</span
+	><a href="#local-6989586621679291907"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291909"
+      ><span class="annot"
+	><span class="annottext"
+	  >repMap :: forall (a :: j) (b :: j).
+(a ~&gt; b) -&gt; (CofreeSub ob % a) ~&gt; (CofreeSub ob % b)
+</span
+	  ><a href="#local-6989586621679291909"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >repMap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679291911"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679291911"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Cofree ob % a) ~&gt; (Cofree ob % b))
+-&gt; Sub (~&gt;) (SUB (Cofree ob % a)) (SUB (Cofree ob % b))
+forall {k} (ob :: OB k) (a1 :: k) (b1 :: k) (p :: CAT k).
+(ob a1, ob b1) =&gt;
+p a1 b1 -&gt; Sub p (SUB a1) (SUB b1)
+</span
+	><a href="Proarrow.Category.Instance.Sub.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {j} {k} (p :: j +-&gt; k) (a :: j) (b :: j).
+Representable p =&gt;
+(a ~&gt; b) -&gt; (p % a) ~&gt; (p % b)
+forall (p :: j +-&gt; j) (a :: j) (b :: j).
+Representable p =&gt;
+(a ~&gt; b) -&gt; (p % a) ~&gt; (p % b)
+</span
+	><a href="Proarrow.Profunctor.Representable.html#repMap"
+	><span class="hs-identifier hs-var"
+	  >repMap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Cofree.html#Cofree"
+	><span class="hs-identifier hs-type"
+	  >Cofree</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679291718"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679291911"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt;
+ Sub (~&gt;) (SUB (Cofree ob % a)) (SUB (Cofree ob % b)))
+-&gt; (a ~&gt; b) -&gt; Sub (~&gt;) (SUB (Cofree ob % a)) (SUB (Cofree ob % b))
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679291911"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679291777"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#HasCofree"
+	  ><span class="hs-identifier hs-type"
+	    >HasCofree</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291777"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Adjunction.html#Adjunction"
+	  ><span class="hs-identifier hs-type"
+	    >Adjunction</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Forget.html#Forget"
+	  ><span class="hs-identifier hs-type"
+	    >Forget</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291777"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Cofree.html#CofreeSub"
+	  ><span class="hs-identifier hs-type"
+	    >CofreeSub</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679291777"
+	  ><span class="hs-identifier hs-type"
+	    >ob</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291950"
+      ><span class="annot"
+	><span class="annottext"
+	  >unit :: forall (a :: SUBCAT ob).
+Ob a =&gt;
+(:.:) (CofreeSub ob) (Forget ob) a a
+</span
+	  ><a href="#local-6989586621679291950"
+	  ><span class="hs-keyword hs-var hs-var hs-var"
+	    >unit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; (CofreeSub ob % (Forget ob % a)))
+-&gt; (:.:) (CofreeSub ob) (Forget ob) a a
+forall {i} {j} (l :: i +-&gt; j) (r :: j +-&gt; i) (a :: i).
+(Representable l, Representable r, Ob a) =&gt;
+(a ~&gt; (r % (l % a))) -&gt; (:.:) r l a a
+</span
+	><a href="Proarrow.Adjunction.html#unitFromRepUnit"
+	><span class="hs-identifier hs-var"
+	  >unitFromRepUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN SUB a ~&gt; (Cofree ob % UN SUB a))
+-&gt; Sub (~&gt;) (SUB (UN SUB a)) (SUB (Cofree ob % UN SUB a))
+forall {k} (ob :: OB k) (a1 :: k) (b1 :: k) (p :: CAT k).
+(ob a1, ob b1) =&gt;
+p a1 b1 -&gt; Sub p (SUB a1) (SUB b1)
+</span
+	><a href="Proarrow.Category.Instance.Sub.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {j} (ob :: j -&gt; Constraint) (a :: j).
+(HasCofree ob, ob a, Ob a) =&gt;
+a ~&gt; (Cofree ob % a)
+forall (ob :: k -&gt; Constraint) (a :: k).
+(HasCofree ob, ob a, Ob a) =&gt;
+a ~&gt; (Cofree ob % a)
+</span
+	><a href="Proarrow.Profunctor.Cofree.html#section"
+	><span class="hs-identifier hs-var"
+	  >section</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679291777"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679291954"
+      ><span class="annot"
+	><span class="annottext"
+	  >counit :: (Forget ob :.: CofreeSub ob) :~&gt; (~&gt;)
+</span
+	  ><a href="#local-6989586621679291954"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >counit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(forall (c :: k). Ob c =&gt; (Forget ob % (CofreeSub ob % c)) ~&gt; c)
+-&gt; (Forget ob :.: CofreeSub ob) :~&gt; (~&gt;)
+forall {j} {k1} (l :: j +-&gt; k1) (r :: k1 +-&gt; j).
+(Representable l, Representable r) =&gt;
+(forall (c :: k1). Ob c =&gt; (l % (r % c)) ~&gt; c)
+-&gt; (l :.: r) :~&gt; (~&gt;)
+</span
+	><a href="Proarrow.Adjunction.html#counitFromRepCounit"
+	><span class="hs-identifier hs-var"
+	  >counitFromRepCounit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (ob :: k -&gt; Constraint) (a :: k).
+(HasCofree ob, Ob a) =&gt;
+(Cofree ob % a) ~&gt; a
+forall (ob :: k -&gt; Constraint) (a :: k).
+(HasCofree ob, Ob a) =&gt;
+(Cofree ob % a) ~&gt; a
+</span
+	><a href="Proarrow.Profunctor.Cofree.html#lower"
+	><span class="hs-identifier hs-var"
+	  >lower</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679291777"
+	><span class="hs-identifier hs-type"
+	  >ob</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>

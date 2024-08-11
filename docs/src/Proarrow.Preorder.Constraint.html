@@ -1,0 +1,792 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# OPTIONS_GHC -Wno-orphans #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.Constraint.html"
+	><span class="hs-identifier"
+	  >Proarrow.Preorder.Constraint</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html"
+	><span class="hs-identifier"
+	  >Proarrow.Preorder</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#CProfunctor"
+	><span class="hs-identifier"
+	  >CProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#CPromonad"
+	><span class="hs-identifier"
+	  >CPromonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#Dict"
+	><span class="hs-identifier"
+	  >Dict</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#POS"
+	><span class="hs-identifier"
+	  >POS</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#PreorderOf"
+	><span class="hs-identifier"
+	  >PreorderOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#%3A-"
+	><span class="hs-operator"
+	  >(:-)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679254856"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679254857"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="local-6989586621679254856"
+      ><span class="annot"
+	><a href="#local-6989586621679254856"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="%3A%3D%3E"
+      ><span class="annot"
+	><a href="Proarrow.Preorder.Constraint.html#%3A%3D%3E"
+	  ><span class="hs-operator hs-var"
+	    >:=&gt;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679254857"
+      ><span class="annot"
+	><a href="#local-6989586621679254857"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >  </span
+      ><span id="entails"
+      ><span class="annot"
+	><a href="Proarrow.Preorder.Constraint.html#entails"
+	  ><span class="hs-identifier hs-type"
+	    >entails</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679254856"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#%3A-"
+	><span class="hs-operator hs-type"
+	  >:-</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679254857"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679254862"
+      ><span id="local-6989586621679254863"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679254862"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679254863"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679254862"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Preorder.Constraint.html#%3A%3D%3E"
+	    ><span class="hs-operator hs-type"
+	      >:=&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679254863"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679254910"
+      ><span class="annot"
+	><span class="annottext"
+	  >entails :: a :- b
+</span
+	  ><a href="Proarrow.Preorder.Constraint.html#entails"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >entails</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a =&gt; Dict b) -&gt; a :- b
+forall (a :: Constraint) (b :: Constraint). (a =&gt; Dict b) -&gt; a :- b
+</span
+	><a href="Proarrow.Preorder.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dict b
+a =&gt; Dict b
+forall (a :: Constraint). a =&gt; Dict a
+</span
+	><a href="Proarrow.Preorder.html#Dict"
+	><span class="hs-identifier hs-var"
+	  >Dict</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#CProfunctor"
+	><span class="hs-identifier hs-type"
+	  >CProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.Constraint.html#%3A%3D%3E"
+	><span class="hs-operator hs-type"
+	  >(:=&gt;)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#POS"
+	><span class="hs-identifier hs-type"
+	  >POS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679254920"
+      ><span class="annot"
+	><span class="annottext"
+	  >cdimap :: forall (c :: Constraint) (a :: Constraint) (b :: Constraint)
+       (d :: Constraint).
+(c &lt;= a, b &lt;= d, a :=&gt; b) :- (c :=&gt; d)
+</span
+	  ><a href="#local-6989586621679254920"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >cdimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((c :=&gt; a, b :=&gt; d, a :=&gt; b) =&gt; Dict (c :=&gt; d))
+-&gt; (c :=&gt; a, b :=&gt; d, a :=&gt; b) :- (c :=&gt; d)
+forall (a :: Constraint) (b :: Constraint). (a =&gt; Dict b) -&gt; a :- b
+</span
+	><a href="Proarrow.Preorder.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dict (c :=&gt; d)
+(c :=&gt; a, b :=&gt; d, a :=&gt; b) =&gt; Dict (c :=&gt; d)
+forall (a :: Constraint). a =&gt; Dict a
+</span
+	><a href="Proarrow.Preorder.html#Dict"
+	><span class="hs-identifier hs-var"
+	  >Dict</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679254931"
+      ><span class="annot"
+	><span class="annottext"
+	  >obs :: forall (a :: Constraint) (b :: Constraint).
+(a :=&gt; b) :- (COb a, COb b)
+</span
+	  ><a href="#local-6989586621679254931"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >obs</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a :=&gt; b) =&gt; Dict (() :: Constraint, () :: Constraint))
+-&gt; (a :=&gt; b) :- (() :: Constraint, () :: Constraint)
+forall (a :: Constraint) (b :: Constraint). (a =&gt; Dict b) -&gt; a :- b
+</span
+	><a href="Proarrow.Preorder.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dict (() :: Constraint, () :: Constraint)
+(a :=&gt; b) =&gt; Dict (() :: Constraint, () :: Constraint)
+forall (a :: Constraint). a =&gt; Dict a
+</span
+	><a href="Proarrow.Preorder.html#Dict"
+	><span class="hs-identifier hs-var"
+	  >Dict</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#CPromonad"
+	><span class="hs-identifier hs-type"
+	  >CPromonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.Constraint.html#%3A%3D%3E"
+	><span class="hs-operator hs-type"
+	  >(:=&gt;)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#POS"
+	><span class="hs-identifier hs-type"
+	  >POS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679254944"
+      ><span class="annot"
+	><span class="annottext"
+	  >cid :: forall (a :: Constraint). COb a =&gt; (() :: Constraint) :- (a :=&gt; a)
+</span
+	  ><a href="#local-6989586621679254944"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >cid</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((() :: Constraint) =&gt; Dict (a :=&gt; a))
+-&gt; (() :: Constraint) :- (a :=&gt; a)
+forall (a :: Constraint) (b :: Constraint). (a =&gt; Dict b) -&gt; a :- b
+</span
+	><a href="Proarrow.Preorder.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dict (a :=&gt; a)
+(() :: Constraint) =&gt; Dict (a :=&gt; a)
+forall (a :: Constraint). a =&gt; Dict a
+</span
+	><a href="Proarrow.Preorder.html#Dict"
+	><span class="hs-identifier hs-var"
+	  >Dict</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679254949"
+      ><span class="annot"
+	><span class="annottext"
+	  >ccomp :: forall (a :: Constraint) (b :: Constraint) (c :: Constraint).
+(b :=&gt; c, a :=&gt; b) :- (a :=&gt; c)
+</span
+	  ><a href="#local-6989586621679254949"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >ccomp</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b :=&gt; c, a :=&gt; b) =&gt; Dict (a :=&gt; c))
+-&gt; (b :=&gt; c, a :=&gt; b) :- (a :=&gt; c)
+forall (a :: Constraint) (b :: Constraint). (a =&gt; Dict b) -&gt; a :- b
+</span
+	><a href="Proarrow.Preorder.html#Sub"
+	><span class="hs-identifier hs-var"
+	  >Sub</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dict (a :=&gt; c)
+(b :=&gt; c, a :=&gt; b) =&gt; Dict (a :=&gt; c)
+forall (a :: Constraint). a =&gt; Dict a
+</span
+	><a href="Proarrow.Preorder.html#Dict"
+	><span class="hs-identifier hs-var"
+	  >Dict</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.html#PreorderOf"
+	><span class="hs-identifier hs-type"
+	  >PreorderOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="%3C%3D"
+      ><span class="annot"
+	><a href="Proarrow.Preorder.html#%3C%3D"
+	  ><span class="hs-operator hs-var"
+	    >(&lt;=)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.Constraint.html#%3A%3D%3E"
+	><span class="hs-operator hs-type"
+	  >(:=&gt;)</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ></pre
+    ></body
+  ></html
+>

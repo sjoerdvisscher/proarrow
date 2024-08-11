@@ -1,0 +1,4067 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Equipment.BiAsEquipment</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory.Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	><span class="hs-identifier"
+	  >DiscreteK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Equipment</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier"
+	  >Is</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="WKK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	  ><span class="hs-identifier hs-var"
+	    >WKK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262215"
+      ><span class="annot"
+	><a href="#local-6989586621679262215"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262216"
+      ><span class="annot"
+	><a href="#local-6989586621679262216"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262217"
+      ><span class="annot"
+	><a href="#local-6989586621679262217"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="WK"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	  ><span class="hs-identifier hs-var"
+	    >WK</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679262215"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262216"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262217"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262218"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	  ><span class="hs-identifier hs-type"
+	    >WK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	  ><span class="hs-identifier hs-type"
+	    >WK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262218"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262218"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679262219"
+      ><span id="local-6989586621679262220"
+	><span id="local-6989586621679262221"
+	  ><span class="annot"
+	    ><a href="Proarrow.Core.html#CAT"
+	      ><span class="hs-identifier hs-type"
+		>CAT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	      ><span class="hs-identifier hs-type"
+		>WKK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262219"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262220"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262221"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="W"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	  ><span class="hs-identifier hs-var"
+	    >W</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262222"
+      ><span class="annot"
+	><a href="#local-6989586621679262222"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262223"
+      ><span class="annot"
+	><a href="#local-6989586621679262223"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262224"
+      ><span id="local-6989586621679262225"
+	><span id="W"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	      ><span class="hs-identifier hs-var"
+		>W</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679262224"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679262225"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	    ><span class="hs-identifier hs-type"
+	      >W</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	    ><span class="hs-identifier hs-type"
+	      >WK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679262224"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	    ><span class="hs-identifier hs-type"
+	      >WK</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679262225"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679261915"
+      ><span id="local-6989586621679261916"
+	><span id="local-6989586621679261917"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261915"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261916"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261917"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Profunctor"
+	      ><span class="hs-identifier hs-type"
+		>Profunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	      ><span class="hs-identifier hs-type"
+		>W</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CAT"
+	      ><span class="hs-identifier hs-type"
+		>CAT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	      ><span class="hs-identifier hs-type"
+		>WKK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261915"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261916"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261917"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262243"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: WKK kk i j) (a :: WKK kk i j) (b :: WKK kk i j)
+       (d :: WKK kk i j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; W a b -&gt; W c d
+</span
+	  ><a href="#local-6989586621679262243"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; W a b -&gt; W c d
+W c a -&gt; W b d -&gt; W a b -&gt; W c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262245"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679262245"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262246"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: WKK kk i j) (b :: WKK kk i j) r.
+((Ob a, Ob b) =&gt; r) -&gt; W a b -&gt; r
+</span
+	  ><a href="#local-6989586621679262246"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262251"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262251"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679262245"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall (a :: kk i j) (b :: kk i j) r.
+((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262251"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679261920"
+      ><span id="local-6989586621679261921"
+	><span id="local-6989586621679261922"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261920"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261921"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261922"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Promonad"
+	      ><span class="hs-identifier hs-type"
+		>Promonad</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	      ><span class="hs-identifier hs-type"
+		>W</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CAT"
+	      ><span class="hs-identifier hs-type"
+		>CAT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	      ><span class="hs-identifier hs-type"
+		>WKK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261920"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261921"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679261922"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262277"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: WKK kk i j). Ob a =&gt; W a a
+</span
+	  ><a href="#local-6989586621679262277"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN WK a ~&gt; UN WK a) -&gt; W (WK (UN WK a)) (WK (UN WK a))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN WK a ~&gt; UN WK a
+forall (a :: kk i j). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262281"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262281"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262282"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: WKK kk i j) (c :: WKK kk i j) (a :: WKK kk i j).
+W b c -&gt; W a b -&gt; W a c
+</span
+	  ><a href="#local-6989586621679262282"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262290"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262290"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; W (WK a) (WK b)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262281"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; a) -&gt; a ~&gt; b
+forall (b :: kk i j) (c :: kk i j) (a :: kk i j).
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a
+a ~&gt; b
+</span
+	><a href="#local-6989586621679262290"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679262291"
+      ><span id="local-6989586621679262292"
+	><span id="local-6989586621679262293"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262291"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262292"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262293"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	      ><span class="hs-identifier hs-type"
+		>WKK</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262291"
+	      ><span class="hs-identifier hs-type"
+		>kk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262292"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679262293"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262299"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679262299"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	  ><span class="hs-identifier hs-type"
+	    >WKK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262291"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262292"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262293"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier hs-type"
+	  >Is</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262299"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262299"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679262037"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262037"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	  ><span class="hs-identifier hs-type"
+	    >WKK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262037"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Ob0"
+	  ><span class="hs-identifier hs-var"
+	    >Ob0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262325"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	  ><span class="hs-identifier hs-type"
+	    >WKK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262037"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262325"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	><span class="hs-identifier hs-type"
+	  >Ob0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262037"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262325"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="I"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#I"
+	  ><span class="hs-identifier hs-var"
+	    >I</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#I"
+	><span class="hs-identifier hs-type"
+	  >I</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="O"
+      ><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#O"
+	  ><span class="hs-identifier hs-var"
+	    >O</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262326"
+      ><span id="local-6989586621679262327"
+	><span class="annot"
+	  ><a href="#local-6989586621679262326"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679262327"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262326"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#O"
+	><span class="hs-operator hs-type"
+	  >`O`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262327"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262332"
+      ><span class="annot"
+	><span class="annottext"
+	  >iObj :: forall (i :: s). Ob0 (WKK kk) i =&gt; Obj I
+</span
+	  ><a href="#local-6989586621679262332"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >iObj</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; W (WK I) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262334"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob0 (WKK kk) i, Ob0 (WKK kk) j, Ob ps, Ob qs) =&gt; r
+</span
+	  ><a href="#local-6989586621679262334"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262335"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\\ :: forall (i :: s) (j :: s) (ps :: WKK kk i j) (qs :: WKK kk i j) r.
+((Ob0 (WKK kk) i, Ob0 (WKK kk) j, Ob ps, Ob qs) =&gt; r)
+-&gt; (ps ~&gt; qs) -&gt; r
+</span
+	  ><a href="#local-6989586621679262335"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262340"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262340"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob0 kk i, Ob0 kk j, Ob a, Ob b) =&gt; r
+(Ob0 (WKK kk) i, Ob0 (WKK kk) j, Ob ps, Ob qs) =&gt; r
+</span
+	><a href="#local-6989586621679262334"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob0 kk i, Ob0 kk j, Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall (i :: s) (j :: s) (ps :: kk i j) (qs :: kk i j) r.
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (ps :: kk i j)
+       (qs :: kk i j) r.
+Bicategory kk =&gt;
+((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) =&gt; r) -&gt; (ps ~&gt; qs) -&gt; r
+</span
+	><a href="Proarrow.Category.Bicategory.html#%5C%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262340"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262359"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262359"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262360"
+      ><span class="annot"
+	><span class="annottext"
+	  >o :: forall {i :: s} (j :: s) (k :: s) (a :: WKK kk j k)
+       (b :: WKK kk j k) (c :: WKK kk i j) (d :: WKK kk i j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	  ><a href="#local-6989586621679262360"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`o`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262365"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262365"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O a a ~&gt; O b b) -&gt; W (WK (O a a)) (WK (O b b))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262359"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; O a a ~&gt; O b b
+forall {i :: s} (j :: s) (k :: s) (a :: kk j k) (b :: kk j k)
+       (c :: kk i j) (d :: kk i j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall {s} (kk :: CAT s) {i :: s} (j :: s) (k :: s) (a :: kk j k)
+       (b :: kk j k) (c :: kk i j) (d :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262365"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262366"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (i :: s) (j :: s) (a :: WKK kk i j) (b :: WKK kk i j).
+(a ~&gt; b) -&gt; O I a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262366"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262371"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262371"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O I a ~&gt; b) -&gt; W (WK (O I a)) (WK b)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; O I a ~&gt; b
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; O I a ~&gt; b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; O I a ~&gt; b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262371"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262372"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (i :: s) (j :: s) (a :: WKK kk i j) (b :: WKK kk i j).
+(a ~&gt; b) -&gt; a ~&gt; O I b
+</span
+	  ><a href="#local-6989586621679262372"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262377"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262377"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; O I b) -&gt; W (WK a) (WK (O I b))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; a ~&gt; O I b
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; a ~&gt; O I b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; a ~&gt; O I b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262377"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262378"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (i :: s) (j :: s) (a :: WKK kk i j) (b :: WKK kk i j).
+(a ~&gt; b) -&gt; O a I ~&gt; b
+</span
+	  ><a href="#local-6989586621679262378"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262383"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262383"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O a I ~&gt; b) -&gt; W (WK (O a I)) (WK b)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; O a I ~&gt; b
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; O a I ~&gt; b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; O a I ~&gt; b
+</span
+	><a href="Proarrow.Category.Bicategory.html#rightUnitor"
+	><span class="hs-identifier hs-var"
+	  >rightUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262383"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262384"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (i :: s) (j :: s) (a :: WKK kk i j) (b :: WKK kk i j).
+(a ~&gt; b) -&gt; a ~&gt; O b I
+</span
+	  ><a href="#local-6989586621679262384"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262389"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262389"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; O b I) -&gt; W (WK a) (WK (O b I))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; a ~&gt; O b I
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; a ~&gt; O b I
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; a ~&gt; O b I
+</span
+	><a href="Proarrow.Category.Bicategory.html#rightUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >rightUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679262389"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262390"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s) (a :: WKK kk i2 j2)
+       (b :: WKK kk j1 i2) (c :: WKK kk i1 j1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	  ><a href="#local-6989586621679262390"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262396"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262396"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262401"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262401"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262407"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262407"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O (O b b) b ~&gt; O b (O b b))
+-&gt; W (WK (O (O b b) b)) (WK (O b (O b b)))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; Obj b -&gt; Obj b -&gt; O (O b b) b ~&gt; O b (O b b)
+forall {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s) (a :: kk i2 j2)
+       (b :: kk j1 i2) (c :: kk i1 j1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+forall {s} (kk :: CAT s) {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s)
+       (a :: kk i2 j2) (b :: kk j1 i2) (c :: kk i1 j1).
+Bicategory kk =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	><a href="Proarrow.Category.Bicategory.html#associator"
+	><span class="hs-identifier hs-var"
+	  >associator</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679262396"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679262401"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679262407"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262408"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s) (a :: WKK kk i2 j2)
+       (b :: WKK kk j1 i2) (c :: WKK kk i1 j1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	  ><a href="#local-6989586621679262408"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262414"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262414"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262419"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262419"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-type"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679262425"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679262425"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O b (O b b) ~&gt; O (O b b) b)
+-&gt; W (WK (O b (O b b))) (WK (O (O b b) b))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b -&gt; Obj b -&gt; Obj b -&gt; O b (O b b) ~&gt; O (O b b) b
+forall {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s) (a :: kk i2 j2)
+       (b :: kk j1 i2) (c :: kk i1 j1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+forall {s} (kk :: CAT s) {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s)
+       (a :: kk i2 j2) (b :: kk j1 i2) (c :: kk i1 j1).
+Bicategory kk =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O a (O b c) ~&gt; O (O a b) c
+</span
+	><a href="Proarrow.Category.Bicategory.html#associatorInv"
+	><span class="hs-identifier hs-var"
+	  >associatorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679262414"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679262419"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Obj b
+</span
+	><a href="#local-6989586621679262425"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | A bicategory as a proarrow equipment with only identity arrows vertically.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679262137"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262137"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#HasCompanions"
+	  ><span class="hs-identifier hs-type"
+	    >HasCompanions</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	  ><span class="hs-identifier hs-type"
+	    >WKK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262137"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	  ><span class="hs-identifier hs-type"
+	    >DiscreteK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Ob0%27"
+	  ><span class="hs-identifier hs-type"
+	    >Ob0'</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262137"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Companion"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Companion"
+	  ><span class="hs-identifier hs-var"
+	    >Companion</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	><span class="hs-identifier hs-type"
+	  >WKK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262137"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	><span class="hs-identifier hs-type"
+	  >DiscreteK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.html#Ob0%27"
+	><span class="hs-identifier hs-type"
+	  >Ob0'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262137"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#I"
+	><span class="hs-identifier hs-type"
+	  >I</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262443"
+      ><span class="annot"
+	><span class="annottext"
+	  >mapCompanion :: forall {j :: s} {k :: s} (f :: DiscreteK (Ob0' kk) j k)
+       (g :: DiscreteK (Ob0' kk) j k).
+(f ~&gt; g)
+-&gt; Companion (WKK kk) (DiscreteK (Ob0' kk)) g
+   ~&gt; Companion (WKK kk) (DiscreteK (Ob0' kk)) f
+</span
+	  ><a href="#local-6989586621679262443"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mapCompanion</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f ~&gt; g
+Bidiscrete f g
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj I
+Companion (WKK kk) (DiscreteK (Ob0' kk)) g
+~&gt; Companion (WKK kk) (DiscreteK (Ob0' kk)) f
+forall (i :: s). Ob0 (WKK kk) i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262464"
+      ><span class="annot"
+	><span class="annottext"
+	  >compToId :: forall (k :: s).
+Ob0 (DiscreteK (Ob0' kk)) k =&gt;
+Companion (WKK kk) (DiscreteK (Ob0' kk)) I ~&gt; I
+</span
+	  ><a href="#local-6989586621679262464"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >compToId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; W (WK I) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262471"
+      ><span class="annot"
+	><span class="annottext"
+	  >compFromId :: forall (k :: s).
+Ob0 (DiscreteK (Ob0' kk)) k =&gt;
+I ~&gt; Companion (WKK kk) (DiscreteK (Ob0' kk)) I
+</span
+	  ><a href="#local-6989586621679262471"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >compFromId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; W (WK I) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262473"
+      ><span class="annot"
+	><span class="annottext"
+	  >compToCompose :: forall {k1 :: s} {k2 :: s} {i :: s}
+       (f :: DiscreteK (Ob0' kk) k1 k2) (g :: DiscreteK (Ob0' kk) i k1).
+Obj f
+-&gt; Obj g
+-&gt; Companion (WKK kk) (DiscreteK (Ob0' kk)) (O f g)
+   ~&gt; O (Companion (WKK kk) (DiscreteK (Ob0' kk)) f)
+        (Companion (WKK kk) (DiscreteK (Ob0' kk)) g)
+</span
+	  ><a href="#local-6989586621679262473"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >compToCompose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj f
+Bidiscrete f f
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+Bidiscrete g g
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; O I I) -&gt; W (WK I) (WK (O I I))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; I ~&gt; O I I
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; a ~&gt; O I b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; a ~&gt; O I b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262492"
+      ><span class="annot"
+	><span class="annottext"
+	  >compFromCompose :: forall {j1 :: s} {k :: s} {j2 :: s} (f :: DiscreteK (Ob0' kk) j1 k)
+       (g :: DiscreteK (Ob0' kk) j2 j1).
+Obj f
+-&gt; Obj g
+-&gt; O (Companion (WKK kk) (DiscreteK (Ob0' kk)) f)
+     (Companion (WKK kk) (DiscreteK (Ob0' kk)) g)
+   ~&gt; Companion (WKK kk) (DiscreteK (Ob0' kk)) (O f g)
+</span
+	  ><a href="#local-6989586621679262492"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >compFromCompose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj f
+Bidiscrete f f
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+Bidiscrete g g
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O I I ~&gt; I) -&gt; W (WK (O I I)) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; O I I ~&gt; I
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; O I a ~&gt; b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; O I a ~&gt; b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679262190"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	  ><span class="hs-identifier hs-type"
+	    >Bicategory</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262190"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Equipment"
+	  ><span class="hs-identifier hs-type"
+	    >Equipment</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	  ><span class="hs-identifier hs-type"
+	    >WKK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262190"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	  ><span class="hs-identifier hs-type"
+	    >DiscreteK</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Ob0%27"
+	  ><span class="hs-identifier hs-type"
+	    >Ob0'</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679262190"
+	  ><span class="hs-identifier hs-type"
+	    >kk</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Conjoint"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Conjoint"
+	  ><span class="hs-identifier hs-var"
+	    >Conjoint</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WKK"
+	><span class="hs-identifier hs-type"
+	  >WKK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262190"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DiscreteK"
+	><span class="hs-identifier hs-type"
+	  >DiscreteK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.html#Ob0%27"
+	><span class="hs-identifier hs-type"
+	  >Ob0'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679262190"
+	><span class="hs-identifier hs-type"
+	  >kk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.Bidiscrete.html#DK"
+	><span class="hs-identifier hs-type"
+	  >DK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.BiAsEquipment.html#WK"
+	><span class="hs-identifier hs-type"
+	  >WK</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#I"
+	><span class="hs-identifier hs-type"
+	  >I</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262523"
+      ><span class="annot"
+	><span class="annottext"
+	  >mapConjoint :: forall {j :: s} {k :: s} (f :: DiscreteK (Ob0' kk) j k)
+       (g :: DiscreteK (Ob0' kk) j k).
+(f ~&gt; g)
+-&gt; Conjoint (WKK kk) (DiscreteK (Ob0' kk)) f
+   ~&gt; Conjoint (WKK kk) (DiscreteK (Ob0' kk)) g
+</span
+	  ><a href="#local-6989586621679262523"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mapConjoint</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f ~&gt; g
+Bidiscrete f g
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj I
+Conjoint (WKK kk) (DiscreteK (Ob0' kk)) f
+~&gt; Conjoint (WKK kk) (DiscreteK (Ob0' kk)) g
+forall (i :: s). Ob0 (WKK kk) i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262542"
+      ><span class="annot"
+	><span class="annottext"
+	  >conjToId :: forall (k :: s).
+Ob0 (DiscreteK (Ob0' kk)) k =&gt;
+Conjoint (WKK kk) (DiscreteK (Ob0' kk)) I ~&gt; I
+</span
+	  ><a href="#local-6989586621679262542"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >conjToId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; W (WK I) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262549"
+      ><span class="annot"
+	><span class="annottext"
+	  >conjFromId :: forall (k :: s).
+Ob0 (DiscreteK (Ob0' kk)) k =&gt;
+I ~&gt; Conjoint (WKK kk) (DiscreteK (Ob0' kk)) I
+</span
+	  ><a href="#local-6989586621679262549"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >conjFromId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; W (WK I) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262551"
+      ><span class="annot"
+	><span class="annottext"
+	  >conjToCompose :: forall {j :: s} {i :: s} {k :: s} (f :: DiscreteK (Ob0' kk) j i)
+       (g :: DiscreteK (Ob0' kk) k j).
+Obj f
+-&gt; Obj g
+-&gt; Conjoint (WKK kk) (DiscreteK (Ob0' kk)) (O f g)
+   ~&gt; O (Conjoint (WKK kk) (DiscreteK (Ob0' kk)) g)
+        (Conjoint (WKK kk) (DiscreteK (Ob0' kk)) f)
+</span
+	  ><a href="#local-6989586621679262551"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >conjToCompose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj f
+Bidiscrete f f
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+Bidiscrete g g
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; O I I) -&gt; W (WK I) (WK (O I I))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; I ~&gt; O I I
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; a ~&gt; O I b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; a ~&gt; O I b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262570"
+      ><span class="annot"
+	><span class="annottext"
+	  >conjFromCompose :: forall {j1 :: s} {k :: s} {j2 :: s} (f :: DiscreteK (Ob0' kk) j1 k)
+       (g :: DiscreteK (Ob0' kk) j2 j1).
+Obj f
+-&gt; Obj g
+-&gt; O (Conjoint (WKK kk) (DiscreteK (Ob0' kk)) g)
+     (Conjoint (WKK kk) (DiscreteK (Ob0' kk)) f)
+   ~&gt; Conjoint (WKK kk) (DiscreteK (Ob0' kk)) (O f g)
+</span
+	  ><a href="#local-6989586621679262570"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >conjFromCompose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj f
+Bidiscrete f f
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+Bidiscrete g g
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O I I ~&gt; I) -&gt; W (WK (O I I)) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; O I I ~&gt; I
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; O I a ~&gt; b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; O I a ~&gt; b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262589"
+      ><span class="annot"
+	><span class="annottext"
+	  >comConUnit :: forall {i :: s} {k :: s} (f :: DiscreteK (Ob0' kk) i k).
+Obj f
+-&gt; I
+   ~&gt; O (Conjoint (WKK kk) (DiscreteK (Ob0' kk)) f)
+        (Companion (WKK kk) (DiscreteK (Ob0' kk)) f)
+</span
+	  ><a href="#local-6989586621679262589"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >comConUnit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj f
+Bidiscrete f f
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; O I I) -&gt; W (WK I) (WK (O I I))
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; I ~&gt; O I I
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; a ~&gt; O I b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; a ~&gt; O I b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679262601"
+      ><span class="annot"
+	><span class="annottext"
+	  >comConCounit :: forall {j :: s} {i :: s} (f :: DiscreteK (Ob0' kk) j i).
+Obj f
+-&gt; O (Companion (WKK kk) (DiscreteK (Ob0' kk)) f)
+     (Conjoint (WKK kk) (DiscreteK (Ob0' kk)) f)
+   ~&gt; I
+</span
+	  ><a href="#local-6989586621679262601"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >comConCounit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj f
+Bidiscrete f f
+</span
+	><a href="Proarrow.Category.Bicategory.Bidiscrete.html#Bidiscrete"
+	><span class="hs-identifier hs-var"
+	  >Bidiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O I I ~&gt; I) -&gt; W (WK (O I I)) (WK I)
+forall {k} {k} {kk :: k -&gt; k -&gt; Type} {i :: k} {j :: k}
+       (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; W (WK a) (WK b)
+</span
+	><a href="Proarrow.Category.Equipment.BiAsEquipment.html#W"
+	><span class="hs-identifier hs-var"
+	  >W</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(I ~&gt; I) -&gt; O I I ~&gt; I
+forall (i :: s) (j :: s) (a :: kk i j) (b :: kk i j).
+(a ~&gt; b) -&gt; O I a ~&gt; b
+forall {s} (kk :: CAT s) (i :: s) (j :: s) (a :: kk i j)
+       (b :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; O I a ~&gt; b
+</span
+	><a href="Proarrow.Category.Bicategory.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>I ~&gt; I
+forall (i :: s). Ob0 kk i =&gt; Obj I
+forall {s} (kk :: CAT s) (i :: s).
+(Bicategory kk, Ob0 kk i) =&gt;
+Obj I
+</span
+	><a href="Proarrow.Category.Bicategory.html#iObj"
+	><span class="hs-identifier hs-var"
+	  >iObj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>

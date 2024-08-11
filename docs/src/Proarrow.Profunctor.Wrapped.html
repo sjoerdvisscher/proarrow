@@ -1,0 +1,1952 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Prof.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html"
+	><span class="hs-identifier"
+	  >Proarrow.Monoid</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html#Comonoid"
+	><span class="hs-identifier"
+	  >Comonoid</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Monoid.html#Monoid"
+	><span class="hs-identifier"
+	  >Monoid</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Day.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Day.html#Day"
+	><span class="hs-identifier"
+	  >Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Day.html#DayUnit"
+	><span class="hs-identifier"
+	  >DayUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >newtype</span
+      ><span
+      > </span
+      ><span id="Wrapped"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	  ><span class="hs-identifier hs-var"
+	    >Wrapped</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287405"
+      ><span class="annot"
+	><a href="#local-6989586621679287405"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287406"
+      ><span class="annot"
+	><a href="#local-6989586621679287406"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287407"
+      ><span class="annot"
+	><a href="#local-6989586621679287407"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="Wrapped"
+      ><span class="annot"
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	  ><span class="hs-identifier hs-var"
+	    >Wrapped</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="unWrapped"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+Wrapped p a b -&gt; p a b
+</span
+	  ><a href="Proarrow.Profunctor.Wrapped.html#unWrapped"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >unWrapped</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679287405"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679287406"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679287407"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679287434"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Profunctor"
+	  ><span class="hs-identifier hs-type"
+	    >Profunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287434"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Profunctor"
+	  ><span class="hs-identifier hs-type"
+	    >Profunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	  ><span class="hs-identifier hs-type"
+	    >Wrapped</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287434"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287548"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Wrapped p a b -&gt; Wrapped p c d
+</span
+	  ><a href="#local-6989586621679287548"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287550"
+      ><span class="annot"
+	><span class="annottext"
+	  >c ~&gt; a
+</span
+	  ><a href="#local-6989586621679287550"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287551"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; d
+</span
+	  ><a href="#local-6989586621679287551"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p c d -&gt; Wrapped p c d
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+p a b -&gt; Wrapped p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-var"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p c d -&gt; Wrapped p c d)
+-&gt; (Wrapped p a b -&gt; p c d) -&gt; Wrapped p a b -&gt; Wrapped p c d
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall (c :: j) (a :: j) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; a
+</span
+	><a href="#local-6989586621679287550"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; d
+</span
+	><a href="#local-6989586621679287551"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p a b -&gt; p c d)
+-&gt; (Wrapped p a b -&gt; p a b) -&gt; Wrapped p a b -&gt; p c d
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Wrapped p a b -&gt; p a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+Wrapped p a b -&gt; p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#unWrapped"
+	><span class="hs-identifier hs-var"
+	  >unWrapped</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287554"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679287554"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287555"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: j) (b :: k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Wrapped p a b -&gt; r
+</span
+	  ><a href="#local-6989586621679287555"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-type"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287557"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679287557"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679287554"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679287557"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679287452"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Promonad"
+	  ><span class="hs-identifier hs-type"
+	    >Promonad</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287452"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Promonad"
+	  ><span class="hs-identifier hs-type"
+	    >Promonad</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	  ><span class="hs-identifier hs-type"
+	    >Wrapped</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287452"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287574"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: k). Ob a =&gt; Wrapped p a a
+</span
+	  ><a href="#local-6989586621679287574"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a a -&gt; Wrapped p a a
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+p a b -&gt; Wrapped p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-var"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a a
+forall (a :: k). Ob a =&gt; p a a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-type"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287577"
+      ><span class="annot"
+	><span class="annottext"
+	  >p b c
+</span
+	  ><a href="#local-6989586621679287577"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287578"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: k) (c :: k) (a :: k).
+Wrapped p b c -&gt; Wrapped p a b -&gt; Wrapped p a c
+</span
+	  ><a href="Proarrow.Core.html#."
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-type"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287579"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679287579"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a c -&gt; Wrapped p a c
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+p a b -&gt; Wrapped p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-var"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b c
+</span
+	><a href="#local-6989586621679287577"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b c -&gt; p a b -&gt; p a c
+forall (b :: k) (c :: k) (a :: k). p b c -&gt; p a b -&gt; p a c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679287579"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679287474"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >MonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287474"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >MonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	  ><span class="hs-identifier hs-type"
+	    >Wrapped</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287474"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287598"
+      ><span class="annot"
+	><span class="annottext"
+	  >par0 :: Wrapped p Unit Unit
+</span
+	  ><a href="#local-6989586621679287598"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >par0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p Unit Unit -&gt; Wrapped p Unit Unit
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+p a b -&gt; Wrapped p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-var"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p Unit Unit
+forall j k (p :: j +-&gt; k). MonoidalProfunctor p =&gt; p Unit Unit
+</span
+	><a href="Proarrow.Category.Monoidal.html#par0"
+	><span class="hs-identifier hs-var"
+	  >par0</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-type"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287601"
+      ><span class="annot"
+	><span class="annottext"
+	  >p x1 x2
+</span
+	  ><a href="#local-6989586621679287601"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287602"
+      ><span class="annot"
+	><span class="annottext"
+	  >par :: forall (x1 :: k) (x2 :: j) (y1 :: k) (y2 :: j).
+Wrapped p x1 x2
+-&gt; Wrapped p y1 y2 -&gt; Wrapped p (x1 ** y1) (x2 ** y2)
+</span
+	  ><a href="#local-6989586621679287602"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`par`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-type"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287604"
+      ><span class="annot"
+	><span class="annottext"
+	  >p y1 y2
+</span
+	  ><a href="#local-6989586621679287604"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p (x1 ** y1) (x2 ** y2) -&gt; Wrapped p (x1 ** y1) (x2 ** y2)
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+p a b -&gt; Wrapped p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-var"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p x1 x2
+</span
+	><a href="#local-6989586621679287601"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall (x1 :: k) (x2 :: j) (y1 :: k) (y2 :: j).
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall j k (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k) (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p y1 y2
+</span
+	><a href="#local-6989586621679287604"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679287493"
+      ><span id="local-6989586621679287494"
+	><span id="local-6989586621679287495"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Monoid.html#Comonoid"
+	      ><span class="hs-identifier hs-type"
+		>Comonoid</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679287493"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Monoid.html#Monoid"
+	      ><span class="hs-identifier hs-type"
+		>Monoid</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679287494"
+	      ><span class="hs-identifier hs-type"
+		>m</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	      ><span class="hs-identifier hs-type"
+		>MonoidalProfunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679287495"
+	      ><span class="hs-identifier hs-type"
+		>p</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Monoid.html#Monoid"
+	      ><span class="hs-identifier hs-type"
+		>Monoid</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	      ><span class="hs-identifier hs-type"
+		>Wrapped</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679287495"
+	      ><span class="hs-identifier hs-type"
+		>p</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679287493"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679287494"
+	      ><span class="hs-identifier hs-type"
+		>m</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287624"
+      ><span class="annot"
+	><span class="annottext"
+	  >mempty :: Unit ~&gt; Wrapped p c m
+</span
+	  ><a href="#local-6989586621679287624"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mempty</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; Unit) -&gt; (Unit ~&gt; m) -&gt; Wrapped p Unit Unit -&gt; Wrapped p c m
+forall (c :: k) (a :: k) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Wrapped p a b -&gt; Wrapped p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; Unit
+forall {k} (c :: k). Comonoid c =&gt; c ~&gt; Unit
+</span
+	><a href="Proarrow.Monoid.html#counit"
+	><span class="hs-identifier hs-var"
+	  >counit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Unit ~&gt; m
+forall {k} (m :: k). Monoid m =&gt; Unit ~&gt; m
+</span
+	><a href="Proarrow.Monoid.html#mempty"
+	><span class="hs-identifier hs-var"
+	  >mempty</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Wrapped p Unit Unit
+forall j k (p :: j +-&gt; k). MonoidalProfunctor p =&gt; p Unit Unit
+</span
+	><a href="Proarrow.Category.Monoidal.html#par0"
+	><span class="hs-identifier hs-var"
+	  >par0</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287631"
+      ><span class="annot"
+	><span class="annottext"
+	  >mappend :: (Wrapped p c m ** Wrapped p c m) ~&gt; Wrapped p c m
+</span
+	  ><a href="#local-6989586621679287631"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mappend</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679287633"
+      ><span class="annot"
+	><span class="annottext"
+	  >Wrapped p c m
+</span
+	  ><a href="#local-6989586621679287633"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679287634"
+      ><span class="annot"
+	><span class="annottext"
+	  >Wrapped p c m
+</span
+	  ><a href="#local-6989586621679287634"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; (c ** c))
+-&gt; ((m ** m) ~&gt; m) -&gt; Wrapped p (c ** c) (m ** m) -&gt; Wrapped p c m
+forall (c :: k) (a :: k) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Wrapped p a b -&gt; Wrapped p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; (c ** c)
+forall {k} (c :: k). Comonoid c =&gt; c ~&gt; (c ** c)
+</span
+	><a href="Proarrow.Monoid.html#comult"
+	><span class="hs-identifier hs-var"
+	  >comult</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(m ** m) ~&gt; m
+forall {k} (m :: k). Monoid m =&gt; (m ** m) ~&gt; m
+</span
+	><a href="Proarrow.Monoid.html#mappend"
+	><span class="hs-identifier hs-var"
+	  >mappend</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Wrapped p c m
+</span
+	><a href="#local-6989586621679287633"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Wrapped p c m -&gt; Wrapped p c m -&gt; Wrapped p (c ** c) (m ** m)
+forall (x1 :: k) (x2 :: k) (y1 :: k) (y2 :: k).
+Wrapped p x1 x2
+-&gt; Wrapped p y1 y2 -&gt; Wrapped p (x1 ** y1) (x2 ** y2)
+forall j k (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k) (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Wrapped p c m
+</span
+	><a href="#local-6989586621679287634"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679287506"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >MonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287506"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Monoid.html#Monoid"
+	  ><span class="hs-identifier hs-type"
+	    >Monoid</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	  ><span class="hs-identifier hs-type"
+	    >Wrapped</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679287506"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287655"
+      ><span class="annot"
+	><span class="annottext"
+	  >mempty :: Unit ~&gt; Wrapped p
+</span
+	  ><a href="Proarrow.Monoid.html#mempty"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mempty</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(DayUnit :~&gt; Wrapped p) -&gt; Prof DayUnit (Wrapped p)
+forall {k} {j} (p :: j +-&gt; k) (q :: j +-&gt; k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Day.html#DayUnit"
+	><span class="hs-identifier hs-type"
+	  >DayUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287660"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; Unit
+</span
+	  ><a href="#local-6989586621679287660"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287661"
+      ><span class="annot"
+	><span class="annottext"
+	  >Unit ~&gt; b
+</span
+	  ><a href="#local-6989586621679287661"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b -&gt; Wrapped p a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+p a b -&gt; Wrapped p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-var"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; Unit) -&gt; (Unit ~&gt; b) -&gt; p Unit Unit -&gt; p a b
+forall (c :: k) (a :: k) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; Unit
+</span
+	><a href="#local-6989586621679287660"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Unit ~&gt; b
+</span
+	><a href="#local-6989586621679287661"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p Unit Unit
+forall j k (p :: j +-&gt; k). MonoidalProfunctor p =&gt; p Unit Unit
+</span
+	><a href="Proarrow.Category.Monoidal.html#par0"
+	><span class="hs-identifier hs-var"
+	  >par0</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679287667"
+      ><span class="annot"
+	><span class="annottext"
+	  >mappend :: (Wrapped p ** Wrapped p) ~&gt; Wrapped p
+</span
+	  ><a href="Proarrow.Monoid.html#mappend"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >mappend</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Day (Wrapped p) (Wrapped p) :~&gt; Wrapped p)
+-&gt; Prof (Day (Wrapped p) (Wrapped p)) (Wrapped p)
+forall {k} {j} (p :: j +-&gt; k) (q :: j +-&gt; k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Day.html#Day"
+	><span class="hs-identifier hs-type"
+	  >Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287671"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; (c ** e)
+</span
+	  ><a href="#local-6989586621679287671"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-type"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287672"
+      ><span class="annot"
+	><span class="annottext"
+	  >p c d
+</span
+	  ><a href="#local-6989586621679287672"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-type"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679287673"
+      ><span class="annot"
+	><span class="annottext"
+	  >p e f
+</span
+	  ><a href="#local-6989586621679287673"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679287674"
+      ><span class="annot"
+	><span class="annottext"
+	  >(d ** f) ~&gt; b
+</span
+	  ><a href="#local-6989586621679287674"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b -&gt; Wrapped p a b
+forall {k} {k} (p :: k -&gt; k -&gt; Type) (a :: k) (b :: k).
+p a b -&gt; Wrapped p a b
+</span
+	><a href="Proarrow.Profunctor.Wrapped.html#Wrapped"
+	><span class="hs-identifier hs-var"
+	  >Wrapped</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; (c ** e)) -&gt; ((d ** f) ~&gt; b) -&gt; p (c ** e) (d ** f) -&gt; p a b
+forall (c :: k) (a :: k) (b :: k) (d :: k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (c ** e)
+</span
+	><a href="#local-6989586621679287671"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(d ** f) ~&gt; b
+</span
+	><a href="#local-6989586621679287674"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p c d
+</span
+	><a href="#local-6989586621679287672"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p c d -&gt; p e f -&gt; p (c ** e) (d ** f)
+forall (x1 :: k) (x2 :: k) (y1 :: k) (y2 :: k).
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall j k (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k) (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p e f
+</span
+	><a href="#local-6989586621679287673"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ></pre
+    ></body
+  ></html
+>

@@ -6,7 +6,7 @@ import Data.Function (($))
 import Data.Kind (Constraint)
 
 import Proarrow.Adjunction (Adjunction (..))
-import Proarrow.Category.Instance.Coproduct (COPRODUCT, L, R, pattern InjL, pattern InjR)
+import Proarrow.Category.Instance.Coproduct (COPRODUCT, COLLAGE(..), pattern InjL, pattern InjR)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))

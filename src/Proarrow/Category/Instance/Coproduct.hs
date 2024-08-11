@@ -1,4 +1,4 @@
-module Proarrow.Category.Instance.Coproduct (COPRODUCT, L, R, (:++:), pattern InjL, pattern InjR) where
+module Proarrow.Category.Instance.Coproduct (COPRODUCT, COLLAGE(..), (:++:), pattern InjL, pattern InjR) where
 
 import Prelude (type (~))
 

@@ -71,27 +71,29 @@
 	      >Limit</a
 	      > j1 d) =&gt; <a href="#t:IsRepresentableLimit"
 	      >IsRepresentableLimit</a
-	      > (j1 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k i) (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > j i)</li
+	      > (j1 :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > j) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k)</li
 	    ><li class="src short"
 	    ><span class="keyword"
 	      >class</span
-	      > (<span class="keyword"
+	      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > j, <span class="keyword"
 	      >forall</span
-	      > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k i). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 	      >Representable</a
 	      > d =&gt; <a href="Proarrow-Category-Limit.html#t:IsRepresentableLimit" title="Proarrow.Category.Limit"
 	      >IsRepresentableLimit</a
 	      > j d) =&gt; <a href="#t:HasLimits"
 	      >HasLimits</a
-	      > (j :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > a i) k <span class="keyword"
+	      > (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > a) k <span class="keyword"
 	      >where</span
 	      ><ul class="subs"
 	      ><li
@@ -99,47 +101,117 @@
 		  >type</span
 		  > <a href="#t:Limit"
 		  >Limit</a
-		  > (j :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > a i) (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > k i) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > k a</li
+		  > (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > a) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) :: a <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k</li
 		><li
 		><a href="#v:limit"
 		  >limit</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > k i). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		  > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 		  >Representable</a
-		  > d =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+		  > d =&gt; (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 		  >Limit</a
-		  > j d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+		  > j d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
+		  > j) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 		  >:~&gt;</a
-		  > (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-		  >&lt;|</a
-		  > j)</li
+		  > d</li
 		><li
-		><a href="#v:limitInv"
-		  >limitInv</a
+		><a href="#v:limitUniv"
+		  >limitUniv</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		  > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 		  >PRO</a
-		  > k i). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		  > k a). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 		  >Representable</a
-		  > d =&gt; (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-		  >&lt;|</a
+		  > d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		  >Profunctor</a
+		  > p) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
 		  > j) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+		  >:~&gt;</a
+		  > d) -&gt; p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 		  >:~&gt;</a
 		  > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 		  >Limit</a
 		  > j d</li
 		></ul
 	      ></li
+	    ><li class="src short"
+	    ><a href="#v:rightAdjointPreservesLimits"
+	      >rightAdjointPreservesLimits</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {k'} {i} {a} (f :: k' <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (g :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k') (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > a). (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+	      >Adjunction</a
+	      > f g, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > d, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > g, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	      >HasLimits</a
+	      > j k, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	      >HasLimits</a
+	      > j k') =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	      >Limit</a
+	      > j (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > d) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	      >:~&gt;</a
+	      > (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	      >Limit</a
+	      > j d)</li
+	    ><li class="src short"
+	    ><a href="#v:rightAdjointPreservesLimitsInv"
+	      >rightAdjointPreservesLimitsInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {k'} {i} {a} (g :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k') (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > a). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > d, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > g, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	      >HasLimits</a
+	      > j k, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	      >HasLimits</a
+	      > j k') =&gt; (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	      >Limit</a
+	      > j d) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	      >:~&gt;</a
+	      > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	      >Limit</a
+	      > j (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > d)</li
 	    ><li class="src short"
 	    ><span class="keyword"
 	      >type</span
@@ -155,13 +227,11 @@
 	      >data</span
 	      > <a href="#t:TerminalLimit"
 	      >TerminalLimit</a
-	      > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+	      > (d :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 	      >VOID</a
-	      >) (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >) <span class="keyword"
+	      > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: ()) <span class="keyword"
 	      >where</span
 	      ><ul class="subs"
 	      ><li
@@ -169,19 +239,17 @@
 		  >TerminalLimit</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > k <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+		  > {k} (d :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 		  >VOID</a
-		  >) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
 		  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
 		  >TerminalObject</a
 		  > :: k)) -&gt; <a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 		  >TerminalLimit</a
-		  > d a '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  ></li
+		  > d a '()</li
 		></ul
 	      ></li
 	    ><li class="src short"
@@ -189,17 +257,11 @@
 	      >data</span
 	      > <a href="#t:ProductLimit"
 	      >ProductLimit</a
-	      > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+	      > (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 	      >COPRODUCT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >)) (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >) <span class="keyword"
+	      > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: ()) <span class="keyword"
 	      >where</span
 	      ><ul class="subs"
 	      ><li
@@ -207,27 +269,19 @@
 		  >ProductLimit</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+		  > {k} (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 		  >COPRODUCT</a
-		  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		  >UNIT</a
-		  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		  >UNIT</a
-		  >)) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
 		  > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 		  >ProductLimit</a
 		  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		  >%</a
-		  > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  >)) -&gt; <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+		  > '())) -&gt; <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 		  >ProductLimit</a
-		  > d a '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  ></li
+		  > d a '()</li
 		></ul
 	      ></li
 	    ><li class="src short"
@@ -235,21 +289,13 @@
 	      >choose</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > k (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+	      > k (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 	      >COPRODUCT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >)) (b :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+	      > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (b :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 	      >COPRODUCT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >). (<a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
+	      > () ()). (<a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
 	      >HasBinaryProducts</a
 	      > k, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 	      >Representable</a
@@ -257,31 +303,27 @@
 	      >Obj</a
 	      > b -&gt; ((d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 	      >%</a
-	      > ('<a href="Proarrow-Category-Instance-Coproduct.html#v:L" title="Proarrow.Category.Instance.Coproduct"
+	      > ('<a href="Proarrow-Category-Instance-Collage.html#t:L" title="Proarrow.Category.Instance.Collage"
 	      >L</a
-	      > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-	      >U</a
-	      > :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-	      >COPRODUCT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >)) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      > '() :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+	      >COLLAGE</a
+	      > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+	      >InitialProfunctor</a
+	      > :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >))) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
 	      >&amp;&amp;</a
 	      > (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 	      >%</a
-	      > ('<a href="Proarrow-Category-Instance-Coproduct.html#v:R" title="Proarrow.Category.Instance.Coproduct"
+	      > ('<a href="Proarrow-Category-Instance-Collage.html#t:R" title="Proarrow.Category.Instance.Collage"
 	      >R</a
-	      > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-	      >U</a
-	      > :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-	      >COPRODUCT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >))) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      > '() :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+	      >COLLAGE</a
+	      > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+	      >InitialProfunctor</a
+	      > :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >)))) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	      >~&gt;</a
 	      > (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 	      >%</a
@@ -291,18 +333,18 @@
 	      >newtype</span
 	      > <a href="#t:End"
 	      >End</a
-	      > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
+	      > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+	      >OPPOSITE</a
+	      > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
 	      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	      >Type</a
-	      > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-	      >OPPOSITE</a
-	      > k, k)) = <a href="#v:End"
+	      >) = <a href="#v:End"
 	      >End</a
 	      > {<ul class="subs"
 	      ><li
-		><a href="#v:getEnd"
-		  >getEnd</a
+		><a href="#v:unEnd"
+		  >unEnd</a
 		  > :: <span class="keyword"
 		  >forall</span
 		  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
@@ -319,15 +361,13 @@
 	      >data</span
 	      > <a href="#t:EndLimit"
 	      >EndLimit</a
-	      > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
+	      > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+	      >OPPOSITE</a
+	      > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
 	      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	      >Type</a
-	      > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-	      >OPPOSITE</a
-	      > k, k)) a (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >) <span class="keyword"
+	      >) a (b :: ()) <span class="keyword"
 	      >where</span
 	      ><ul class="subs"
 	      ><li
@@ -335,19 +375,17 @@
 		  >EndLimit</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
+		  > {k} (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		  >OPPOSITE</a
+		  > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
 		  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		  >Type</a
-		  > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-		  >OPPOSITE</a
-		  > k, k)) a. (a -&gt; <a href="Proarrow-Category-Limit.html#t:End" title="Proarrow.Category.Limit"
+		  >) a. (a -&gt; <a href="Proarrow-Category-Limit.html#t:End" title="Proarrow.Category.Limit"
 		  >End</a
 		  > d) -&gt; <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
 		  >EndLimit</a
-		  > d a '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  ></li
+		  > d a '()</li
 		></ul
 	      ></li
 	    ><li class="src short"
@@ -355,9 +393,7 @@
 	      >data</span
 	      > <a href="#t:Hom"
 	      >Hom</a
-	      > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	      >UNIT</a
-	      >) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+	      > (a :: ()) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 	      >OPPOSITE</a
 	      > k, k)) <span class="keyword"
 	      >where</span
@@ -367,27 +403,13 @@
 		  >Hom</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-		  >OPPOSITE</a
-		  > k, k)). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-		  >Ob</a
-		  > b =&gt; (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-		  >UN</a
-		  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-		  >OP</a
-		  > :: k -&gt; <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-		  >OPPOSITE</a
-		  > k) (<a href="Proarrow-Category-Instance-Product.html#t:Fst" title="Proarrow.Category.Instance.Product"
-		  >Fst</a
-		  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > {k} (a1 :: k) (b1 :: k). (a1 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
-		  > <a href="Proarrow-Category-Instance-Product.html#t:Snd" title="Proarrow.Category.Instance.Product"
-		  >Snd</a
-		  > b) -&gt; <a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
+		  > b1) -&gt; <a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 		  >Hom</a
-		  > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  > b</li
+		  > '() '('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		  >OP</a
+		  > a1, b1)</li
 		></ul
 	      ></li
 	    ></ul
@@ -406,13 +428,13 @@
 	    >Limit</a
 	    > j1 d) =&gt; <a id="t:IsRepresentableLimit" class="def"
 	    >IsRepresentableLimit</a
-	    > (j1 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k i) (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > j i) <a href="src/Proarrow.Category.Limit.html#IsRepresentableLimit" class="link"
+	    > (j1 :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <a href="src/Proarrow.Category.Limit.html#IsRepresentableLimit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L20" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L22" class="link"
 	    >Comments</a
 	    > <a href="#t:IsRepresentableLimit" class="selflink"
 	    >#</a
@@ -435,14 +457,14 @@
 		      >Limit</a
 		      > j2 d) =&gt; <a href="Proarrow-Category-Limit.html#t:IsRepresentableLimit" title="Proarrow.Category.Limit"
 		      >IsRepresentableLimit</a
-		      > (j2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > k i) (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j1 i)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-21" class="link"
+		      > (j2 :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > j1) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-23" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L21" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L23" class="link"
 		    >Comments</a
 		    > <a href="#t:IsRepresentableLimit" class="selflink"
 		    >#</a
@@ -470,23 +492,25 @@
 	><p class="src"
 	  ><span class="keyword"
 	    >class</span
-	    > (<span class="keyword"
+	    > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > j, <span class="keyword"
 	    >forall</span
-	    > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k i). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 	    >Representable</a
 	    > d =&gt; <a href="Proarrow-Category-Limit.html#t:IsRepresentableLimit" title="Proarrow.Category.Limit"
 	    >IsRepresentableLimit</a
 	    > j d) =&gt; <a id="t:HasLimits" class="def"
 	    >HasLimits</a
-	    > (j :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > a i) k <span class="keyword"
+	    > (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > a) k <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Category.Limit.html#HasLimits" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L25" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L27" class="link"
 	    >Comments</a
 	    > <a href="#t:HasLimits" class="selflink"
 	    >#</a
@@ -503,13 +527,13 @@
 	      >type</span
 	      > <a id="t:Limit" class="def"
 	      >Limit</a
-	      > (j :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > a i) (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k i) :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k a <a href="src/Proarrow.Category.Limit.html#Limit" class="link"
+	      > (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > a) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) :: a <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k <a href="src/Proarrow.Category.Limit.html#Limit" class="link"
 	      >Source</a
 	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L" class="link"
 	      >Comments</a
@@ -525,43 +549,49 @@
 	      >limit</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > k i). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 	      >Representable</a
-	      > d =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	      > d =&gt; (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 	      >Limit</a
-	      > j d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	      > j d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > j) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 	      >:~&gt;</a
-	      > (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-	      >&lt;|</a
-	      > j) <a href="src/Proarrow.Category.Limit.html#limit" class="link"
+	      > d <a href="src/Proarrow.Category.Limit.html#limit" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L25" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L27" class="link"
 	      >Comments</a
 	      > <a href="#v:limit" class="selflink"
 	      >#</a
 	      ></p
 	    ><p class="src"
-	    ><a id="v:limitInv" class="def"
-	      >limitInv</a
+	    ><a id="v:limitUniv" class="def"
+	      >limitUniv</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	      > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 	      >PRO</a
-	      > k i). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      > k a). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 	      >Representable</a
-	      > d =&gt; (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-	      >&lt;|</a
+	      > d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > p) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
 	      > j) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	      >:~&gt;</a
+	      > d) -&gt; p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 	      >:~&gt;</a
 	      > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 	      >Limit</a
-	      > j d <a href="src/Proarrow.Category.Limit.html#limitInv" class="link"
+	      > j d <a href="src/Proarrow.Category.Limit.html#limitUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L25" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L27" class="link"
 	      >Comments</a
-	      > <a href="#v:limitInv" class="selflink"
+	      > <a href="#v:limitUniv" class="selflink"
 	      >#</a
 	      ></p
 	    ></div
@@ -583,16 +613,14 @@
 		      >HasLimits</a
 		      > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 		      >Unweighted</a
-		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+		      > :: () -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 		      >VOID</a
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) k</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-46" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-65" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L46" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L65" class="link"
 		    >Comments</a
 		    > <a href="#t:HasLimits" class="selflink"
 		    >#</a
@@ -617,79 +645,77 @@
 			  >limit</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > k <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  > (d :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 			  >VOID</a
-			  >). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 			  >Representable</a
-			  > d =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			  > d =&gt; (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 			  >VOID</a
 			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-			  >:~&gt;</a
-			  > (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
+			  >) d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
-			  >VOID</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="src/Proarrow.Category.Limit.html#limit" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L27" class="link"
-			  >Comments</a
-			  > <a href="#v:limit" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:limitInv"
-			  >limitInv</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > k <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
-			  >VOID</a
-			  >). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
-			  >Representable</a
-			  > d =&gt; (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
-			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
-			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 			  >VOID</a
 			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
 			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
+			  > d <a href="src/Proarrow.Category.Limit.html#limit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:limit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:limitUniv"
+			  >limitUniv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k ()). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+			  >Profunctor</a
+			  > p) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
+			  >Unweighted</a
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > d) -&gt; p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
 			  > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 			  >VOID</a
 			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="src/Proarrow.Category.Limit.html#limitInv" class="link"
+			  >) d <a href="src/Proarrow.Category.Limit.html#limitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L28" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L30" class="link"
 			  >Comments</a
-			  > <a href="#v:limitInv" class="selflink"
+			  > <a href="#v:limitUniv" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -707,18 +733,16 @@
 		      >HasLimits</a
 		      > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 		      >Hom</a
-		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 		      >OPPOSITE</a
 		      > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Limit.html#line-105" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-123" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L105" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L123" class="link"
 		    >Comments</a
 		    > <a href="#t:HasLimits" class="selflink"
 		    >#</a
@@ -743,83 +767,83 @@
 			  >limit</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
+			  > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
 			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k, k)). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 			  >Representable</a
-			  > d =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			  > d =&gt; (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-			  >:~&gt;</a
-			  > (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
+			  >) d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="src/Proarrow.Category.Limit.html#limit" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L27" class="link"
-			  >Comments</a
-			  > <a href="#v:limit" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:limitInv"
-			  >limitInv</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k, k)). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
-			  >Representable</a
-			  > d =&gt; (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
-			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
-			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
 			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
+			  > d <a href="src/Proarrow.Category.Limit.html#limit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:limit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:limitUniv"
+			  >limitUniv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > ()). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+			  >Profunctor</a
+			  > p) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
+			  >Hom</a
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > d) -&gt; p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
 			  > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="src/Proarrow.Category.Limit.html#limitInv" class="link"
+			  >) d <a href="src/Proarrow.Category.Limit.html#limitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L28" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L30" class="link"
 			  >Comments</a
-			  > <a href="#v:limitInv" class="selflink"
+			  > <a href="#v:limitUniv" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -837,20 +861,14 @@
 		      >HasLimits</a
 		      > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 		      >Unweighted</a
-		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+		      > :: () -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 		      >COPRODUCT</a
-		      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > () () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) k</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-65" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-83" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L65" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L83" class="link"
 		    >Comments</a
 		    > <a href="#t:HasLimits" class="selflink"
 		    >#</a
@@ -875,103 +893,77 @@
 			  >limit</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+			  > (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 			  >COPRODUCT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >)). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 			  >Representable</a
-			  > d =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			  > d =&gt; (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 			  >COPRODUCT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  > () () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-			  >:~&gt;</a
-			  > (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
+			  >) d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 			  >COPRODUCT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  > () () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >)) <a href="src/Proarrow.Category.Limit.html#limit" class="link"
+			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > d <a href="src/Proarrow.Category.Limit.html#limit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L27" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L29" class="link"
 			  >Comments</a
 			  > <a href="#v:limit" class="selflink"
 			  >#</a
 			  ></p
 			><p class="src"
-			><a href="#v:limitInv"
-			  >limitInv</a
+			><a href="#v:limitUniv"
+			  >limitUniv</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+			  > (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 			  >COPRODUCT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >)). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > k ()). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 			  >Representable</a
-			  > d =&gt; (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
+			  > d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+			  >Profunctor</a
+			  > p) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 			  >COPRODUCT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  > () () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
 			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > d) -&gt; p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
 			  > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Unweighted" title="Proarrow.Category.Limit"
 			  >Unweighted</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+			  > :: () -&gt; <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 			  >COPRODUCT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  > () () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="src/Proarrow.Category.Limit.html#limitInv" class="link"
+			  >) d <a href="src/Proarrow.Category.Limit.html#limitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L28" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L30" class="link"
 			  >Comments</a
-			  > <a href="#v:limitInv" class="selflink"
+			  > <a href="#v:limitUniv" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -981,6 +973,86 @@
 		></table
 	      ></details
 	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:rightAdjointPreservesLimits" class="def"
+	    >rightAdjointPreservesLimits</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} {k'} {i} {a} (f :: k' <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (g :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k') (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > a). (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+	    >Adjunction</a
+	    > f g, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > d, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > g, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	    >HasLimits</a
+	    > j k, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	    >HasLimits</a
+	    > j k') =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	    >Limit</a
+	    > j (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > d) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    >:~&gt;</a
+	    > (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	    >Limit</a
+	    > j d) <a href="src/Proarrow.Category.Limit.html#rightAdjointPreservesLimits" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L36" class="link"
+	    >Comments</a
+	    > <a href="#v:rightAdjointPreservesLimits" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:rightAdjointPreservesLimitsInv" class="def"
+	    >rightAdjointPreservesLimitsInv</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} {k'} {i} {a} (g :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k') (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (j :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > a). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > d, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > g, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	    >HasLimits</a
+	    > j k, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+	    >HasLimits</a
+	    > j k') =&gt; (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	    >Limit</a
+	    > j d) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    >:~&gt;</a
+	    > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+	    >Limit</a
+	    > j (g <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > d) <a href="src/Proarrow.Category.Limit.html#rightAdjointPreservesLimitsInv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L48" class="link"
+	    >Comments</a
+	    > <a href="#v:rightAdjointPreservesLimitsInv" class="selflink"
+	    >#</a
+	    ></p
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -994,7 +1066,7 @@
 	    >Type</a
 	    > <a href="src/Proarrow.Category.Limit.html#Unweighted" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L30" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L50" class="link"
 	    >Comments</a
 	    > <a href="#t:Unweighted" class="selflink"
 	    >#</a
@@ -1006,17 +1078,15 @@
 	    >data</span
 	    > <a id="t:TerminalLimit" class="def"
 	    >TerminalLimit</a
-	    > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+	    > (d :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 	    >VOID</a
-	    >) (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >) <span class="keyword"
+	    > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: ()) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Category.Limit.html#TerminalLimit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L34" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L53" class="link"
 	    >Comments</a
 	    > <a href="#t:TerminalLimit" class="selflink"
 	    >#</a
@@ -1031,19 +1101,17 @@
 		  >TerminalLimit</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > k <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+		  > {k} (d :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
 		  >VOID</a
-		  >) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
 		  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
 		  >TerminalObject</a
 		  > :: k)) -&gt; <a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 		  >TerminalLimit</a
-		  > d a '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  ></td
+		  > d a '()</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
@@ -1067,14 +1135,12 @@
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 		      >TerminalLimit</a
-		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-37" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-56" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L37" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L56" class="link"
 		    >Comments</a
 		    > <a href="#t:TerminalLimit" class="selflink"
 		    >#</a
@@ -1099,11 +1165,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: k) (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (d0 :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (c :: k) (a :: k) (b :: ()) (d0 :: ()). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1113,7 +1175,7 @@
 			  >TerminalLimit</a
 			  > d c d0 <a href="src/Proarrow.Core.html#dimap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
 			  >Comments</a
 			  > <a href="#v:dimap" class="selflink"
 			  >#</a
@@ -1123,9 +1185,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: k) (b :: ()) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -1133,7 +1193,7 @@
 			  >TerminalLimit</a
 			  > d a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
 			  >Comments</a
 			  > <a href="#v:-92--92-" class="selflink"
 			  >#</a
@@ -1153,14 +1213,12 @@
 		      >Representable</a
 		      > (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 		      >TerminalLimit</a
-		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-40" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-59" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L40" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L59" class="link"
 		    >Comments</a
 		    > <a href="#t:TerminalLimit" class="selflink"
 		    >#</a
@@ -1185,9 +1243,7 @@
 			  >index</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). <a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
+			  > (a :: k) (b :: ()). <a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 			  >TerminalLimit</a
 			  > d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1197,7 +1253,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
 			  >Comments</a
 			  > <a href="#v:index" class="selflink"
 			  >#</a
@@ -1207,9 +1263,7 @@
 			  >tabulate</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (b :: ()) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1221,7 +1275,7 @@
 			  >TerminalLimit</a
 			  > d a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L17" class="link"
 			  >Comments</a
 			  > <a href="#v:tabulate" class="selflink"
 			  >#</a
@@ -1231,11 +1285,7 @@
 			  >repMap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (a :: ()) (b :: ()). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > b) -&gt; (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 			  >TerminalLimit</a
@@ -1249,7 +1299,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:repMap" class="selflink"
 			  >#</a
@@ -1267,18 +1317,14 @@
 		      >type</span
 		      > (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 		      >TerminalLimit</a
-		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		      >%</a
-		      > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		      >U</a
-		      ></span
-		    > <a href="src/Proarrow.Category.Limit.html#line-41" class="link"
+		      > '()</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-60" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L41" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L60" class="link"
 		    >Comments</a
 		    > <a href="#t:TerminalLimit" class="selflink"
 		    >#</a
@@ -1300,15 +1346,11 @@
 			>type</span
 			> (<a href="Proarrow-Category-Limit.html#t:TerminalLimit" title="Proarrow.Category.Limit"
 			>TerminalLimit</a
-			> d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			> d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
 			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			>%</a
-			> '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-			>U</a
-			> = <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			> '() = <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
 			>TerminalObject</a
 			> :: k</div
 		      ></details
@@ -1324,21 +1366,15 @@
 	    >data</span
 	    > <a id="t:ProductLimit" class="def"
 	    >ProductLimit</a
-	    > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+	    > (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 	    >COPRODUCT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >)) (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >) <span class="keyword"
+	    > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: ()) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Category.Limit.html#ProductLimit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L53" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L71" class="link"
 	    >Comments</a
 	    > <a href="#t:ProductLimit" class="selflink"
 	    >#</a
@@ -1353,27 +1389,19 @@
 		  >ProductLimit</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+		  > {k} (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 		  >COPRODUCT</a
-		  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		  >UNIT</a
-		  > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		  >UNIT</a
-		  >)) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
 		  > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 		  >ProductLimit</a
 		  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		  >%</a
-		  > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  >)) -&gt; <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+		  > '())) -&gt; <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 		  >ProductLimit</a
-		  > d a '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  ></td
+		  > d a '()</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
@@ -1399,14 +1427,12 @@
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 		      >ProductLimit</a
-		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-56" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-74" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L56" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L74" class="link"
 		    >Comments</a
 		    > <a href="#t:ProductLimit" class="selflink"
 		    >#</a
@@ -1431,11 +1457,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: k) (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (d0 :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (c :: k) (a :: k) (b :: ()) (d0 :: ()). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1445,7 +1467,7 @@
 			  >ProductLimit</a
 			  > d c d0 <a href="src/Proarrow.Core.html#dimap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
 			  >Comments</a
 			  > <a href="#v:dimap" class="selflink"
 			  >#</a
@@ -1455,9 +1477,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: k) (b :: ()) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -1465,7 +1485,7 @@
 			  >ProductLimit</a
 			  > d a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
 			  >Comments</a
 			  > <a href="#v:-92--92-" class="selflink"
 			  >#</a
@@ -1487,14 +1507,12 @@
 		      >Representable</a
 		      > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 		      >ProductLimit</a
-		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-59" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-77" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L59" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L77" class="link"
 		    >Comments</a
 		    > <a href="#t:ProductLimit" class="selflink"
 		    >#</a
@@ -1519,9 +1537,7 @@
 			  >index</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
+			  > (a :: k) (b :: ()). <a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 			  >ProductLimit</a
 			  > d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1531,7 +1547,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
 			  >Comments</a
 			  > <a href="#v:index" class="selflink"
 			  >#</a
@@ -1541,9 +1557,7 @@
 			  >tabulate</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (b :: ()) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1555,7 +1569,7 @@
 			  >ProductLimit</a
 			  > d a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L17" class="link"
 			  >Comments</a
 			  > <a href="#v:tabulate" class="selflink"
 			  >#</a
@@ -1565,11 +1579,7 @@
 			  >repMap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (a :: ()) (b :: ()). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > b) -&gt; (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 			  >ProductLimit</a
@@ -1583,7 +1593,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:repMap" class="selflink"
 			  >#</a
@@ -1601,18 +1611,14 @@
 		      >type</span
 		      > (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 		      >ProductLimit</a
-		      > d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		      >%</a
-		      > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		      >U</a
-		      ></span
-		    > <a href="src/Proarrow.Category.Limit.html#line-60" class="link"
+		      > '()</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-78" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L60" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L78" class="link"
 		    >Comments</a
 		    > <a href="#t:ProductLimit" class="selflink"
 		    >#</a
@@ -1634,41 +1640,33 @@
 			>type</span
 			> (<a href="Proarrow-Category-Limit.html#t:ProductLimit" title="Proarrow.Category.Limit"
 			>ProductLimit</a
-			> d :: k -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			> d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
 			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			>%</a
-			> '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-			>U</a
-			> = (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			> '() = (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			>%</a
-			> ('<a href="Proarrow-Category-Instance-Coproduct.html#v:L" title="Proarrow.Category.Instance.Coproduct"
+			> ('<a href="Proarrow-Category-Instance-Collage.html#t:L" title="Proarrow.Category.Instance.Collage"
 			>L</a
-			> '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-			>U</a
-			> :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-			>COPRODUCT</a
-			> <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			> <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			>)) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			> '() :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			>COLLAGE</a
+			> (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			>InitialProfunctor</a
+			> :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>))) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
 			>&amp;&amp;</a
 			> (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			>%</a
-			> ('<a href="Proarrow-Category-Instance-Coproduct.html#v:R" title="Proarrow.Category.Instance.Coproduct"
+			> ('<a href="Proarrow-Category-Instance-Collage.html#t:R" title="Proarrow.Category.Instance.Collage"
 			>R</a
-			> '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-			>U</a
-			> :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-			>COPRODUCT</a
-			> <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			> <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			>))</div
+			> '() :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			>COLLAGE</a
+			> (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			>InitialProfunctor</a
+			> :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>)))</div
 		      ></details
 		    ></td
 		  ></tr
@@ -1682,21 +1680,13 @@
 	    >choose</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > k (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k (<a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+	    > k (d :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 	    >COPRODUCT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >)) (b :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+	    > () () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (b :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 	    >COPRODUCT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >). (<a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
+	    > () ()). (<a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
 	    >HasBinaryProducts</a
 	    > k, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 	    >Representable</a
@@ -1704,37 +1694,33 @@
 	    >Obj</a
 	    > b -&gt; ((d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 	    >%</a
-	    > ('<a href="Proarrow-Category-Instance-Coproduct.html#v:L" title="Proarrow.Category.Instance.Coproduct"
+	    > ('<a href="Proarrow-Category-Instance-Collage.html#t:L" title="Proarrow.Category.Instance.Collage"
 	    >L</a
-	    > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-	    >U</a
-	    > :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-	    >COPRODUCT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >)) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	    > '() :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+	    >COLLAGE</a
+	    > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+	    >InitialProfunctor</a
+	    > :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >))) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
 	    >&amp;&amp;</a
 	    > (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 	    >%</a
-	    > ('<a href="Proarrow-Category-Instance-Coproduct.html#v:R" title="Proarrow.Category.Instance.Coproduct"
+	    > ('<a href="Proarrow-Category-Instance-Collage.html#t:R" title="Proarrow.Category.Instance.Collage"
 	    >R</a
-	    > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-	    >U</a
-	    > :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-	    >COPRODUCT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    > <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >))) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    > '() :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+	    >COLLAGE</a
+	    > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+	    >InitialProfunctor</a
+	    > :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >)))) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
 	    > (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 	    >%</a
 	    > b) <a href="src/Proarrow.Category.Limit.html#choose" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L77" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L97" class="link"
 	    >Comments</a
 	    > <a href="#v:choose" class="selflink"
 	    >#</a
@@ -1746,15 +1732,15 @@
 	    >newtype</span
 	    > <a id="t:End" class="def"
 	    >End</a
-	    > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
+	    > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+	    >OPPOSITE</a
+	    > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
 	    > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
-	    > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-	    >OPPOSITE</a
-	    > k, k)) <a href="src/Proarrow.Category.Limit.html#End" class="link"
+	    >) <a href="src/Proarrow.Category.Limit.html#End" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L83" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L101" class="link"
 	    >Comments</a
 	    > <a href="#t:End" class="selflink"
 	    >#</a
@@ -1779,8 +1765,8 @@
 		    ><ul
 		    ><li
 		      ><dfn class="src"
-			><a id="v:getEnd" class="def"
-			  >getEnd</a
+			><a id="v:unEnd" class="def"
+			  >unEnd</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
@@ -1806,19 +1792,17 @@
 	    >data</span
 	    > <a id="t:EndLimit" class="def"
 	    >EndLimit</a
-	    > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
+	    > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+	    >OPPOSITE</a
+	    > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
 	    > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
-	    > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-	    >OPPOSITE</a
-	    > k, k)) a (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >) <span class="keyword"
+	    >) a (b :: ()) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Category.Limit.html#EndLimit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L86" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L104" class="link"
 	    >Comments</a
 	    > <a href="#t:EndLimit" class="selflink"
 	    >#</a
@@ -1833,19 +1817,17 @@
 		  >EndLimit</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
+		  > {k} (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		  >OPPOSITE</a
+		  > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
 		  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		  >Type</a
-		  > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-		  >OPPOSITE</a
-		  > k, k)) a. (a -&gt; <a href="Proarrow-Category-Limit.html#t:End" title="Proarrow.Category.Limit"
+		  >) a. (a -&gt; <a href="Proarrow-Category-Limit.html#t:End" title="Proarrow.Category.Limit"
 		  >End</a
 		  > d) -&gt; <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
 		  >EndLimit</a
-		  > d a '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  ></td
+		  > d a '()</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
@@ -1871,14 +1853,12 @@
 		      >EndLimit</a
 		      > d :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-89" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-107" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L89" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L107" class="link"
 		    >Comments</a
 		    > <a href="#t:EndLimit" class="selflink"
 		    >#</a
@@ -1903,11 +1883,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > c a (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (d0 :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > c a (b :: ()) (d0 :: ()). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1917,7 +1893,7 @@
 			  >EndLimit</a
 			  > d c d0 <a href="src/Proarrow.Core.html#dimap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
 			  >Comments</a
 			  > <a href="#v:dimap" class="selflink"
 			  >#</a
@@ -1927,9 +1903,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > a (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > a (b :: ()) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -1937,7 +1911,7 @@
 			  >EndLimit</a
 			  > d a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
 			  >Comments</a
 			  > <a href="#v:-92--92-" class="selflink"
 			  >#</a
@@ -1959,14 +1933,12 @@
 		      >EndLimit</a
 		      > d :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-92" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-110" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L92" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L110" class="link"
 		    >Comments</a
 		    > <a href="#t:EndLimit" class="selflink"
 		    >#</a
@@ -1991,9 +1963,7 @@
 			  >index</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > a (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			  > a (b :: ()). <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
 			  >EndLimit</a
 			  > d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -2003,7 +1973,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L14" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
 			  >Comments</a
 			  > <a href="#v:index" class="selflink"
 			  >#</a
@@ -2013,9 +1983,7 @@
 			  >tabulate</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) a. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (b :: ()) a. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -2027,7 +1995,7 @@
 			  >EndLimit</a
 			  > d a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L17" class="link"
 			  >Comments</a
 			  > <a href="#v:tabulate" class="selflink"
 			  >#</a
@@ -2037,11 +2005,7 @@
 			  >repMap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (a :: ()) (b :: ()). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > b) -&gt; (<a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
 			  >EndLimit</a
@@ -2055,7 +2019,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:repMap" class="selflink"
 			  >#</a
@@ -2075,18 +2039,14 @@
 		      >EndLimit</a
 		      > d :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		      >%</a
-		      > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		      >U</a
-		      ></span
-		    > <a href="src/Proarrow.Category.Limit.html#line-93" class="link"
+		      > '()</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-111" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L93" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L111" class="link"
 		    >Comments</a
 		    > <a href="#t:EndLimit" class="selflink"
 		    >#</a
@@ -2110,15 +2070,11 @@
 			>EndLimit</a
 			> d :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
-			> -&gt; <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			> -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
 			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			>%</a
-			> '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-			>U</a
-			> = <a href="Proarrow-Category-Limit.html#t:End" title="Proarrow.Category.Limit"
+			> '() = <a href="Proarrow-Category-Limit.html#t:End" title="Proarrow.Category.Limit"
 			>End</a
 			> d</div
 		      ></details
@@ -2134,15 +2090,13 @@
 	    >data</span
 	    > <a id="t:Hom" class="def"
 	    >Hom</a
-	    > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-	    >UNIT</a
-	    >) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+	    > (a :: ()) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 	    >OPPOSITE</a
 	    > k, k)) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Category.Limit.html#Hom" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L99" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L117" class="link"
 	    >Comments</a
 	    > <a href="#t:Hom" class="selflink"
 	    >#</a
@@ -2157,27 +2111,13 @@
 		  >Hom</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-		  >OPPOSITE</a
-		  > k, k)). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-		  >Ob</a
-		  > b =&gt; (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-		  >UN</a
-		  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-		  >OP</a
-		  > :: k -&gt; <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-		  >OPPOSITE</a
-		  > k) (<a href="Proarrow-Category-Instance-Product.html#t:Fst" title="Proarrow.Category.Instance.Product"
-		  >Fst</a
-		  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > {k} (a1 :: k) (b1 :: k). (a1 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
-		  > <a href="Proarrow-Category-Instance-Product.html#t:Snd" title="Proarrow.Category.Instance.Product"
-		  >Snd</a
-		  > b) -&gt; <a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
+		  > b1) -&gt; <a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 		  >Hom</a
-		  > '<a href="Proarrow-Category-Instance-Unit.html#t:U" title="Proarrow.Category.Instance.Unit"
-		  >U</a
-		  > b</td
+		  > '() '('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		  >OP</a
+		  > a1, b1)</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
@@ -2201,16 +2141,14 @@
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 		      >Hom</a
-		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 		      >OPPOSITE</a
 		      > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-101" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-119" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L101" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L119" class="link"
 		    >Comments</a
 		    > <a href="#t:Hom" class="selflink"
 		    >#</a
@@ -2235,11 +2173,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > (c :: ()) (a :: ()) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k)) (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
@@ -2253,7 +2187,7 @@
 			  >Hom</a
 			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
 			  >Comments</a
 			  > <a href="#v:dimap" class="selflink"
 			  >#</a
@@ -2263,9 +2197,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  >) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > (a :: ()) (b :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k)) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -2275,7 +2207,7 @@
 			  >Hom</a
 			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
 			  >Comments</a
 			  > <a href="#v:-92--92-" class="selflink"
 			  >#</a
@@ -2295,18 +2227,16 @@
 		      >HasLimits</a
 		      > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 		      >Hom</a
-		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 		      >OPPOSITE</a
 		      > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Limit.html#line-105" class="link"
+		    > <a href="src/Proarrow.Category.Limit.html#line-123" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L105" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L123" class="link"
 		    >Comments</a
 		    > <a href="#t:Hom" class="selflink"
 		    >#</a
@@ -2331,83 +2261,83 @@
 			  >limit</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
+			  > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
 			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k, k)). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 			  >Representable</a
-			  > d =&gt; <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			  > d =&gt; (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-			  >:~&gt;</a
-			  > (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
+			  >) d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="src/Proarrow.Category.Limit.html#limit" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L27" class="link"
-			  >Comments</a
-			  > <a href="#v:limit" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:limitInv"
-			  >limitInv</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k, k)). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
-			  >Representable</a
-			  > d =&gt; (d <a href="Proarrow-Profunctor-Rift.html#t:-60--124-" title="Proarrow.Profunctor.Rift"
-			  >&lt;|</a
-			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
-			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
 			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
+			  > d <a href="src/Proarrow.Category.Limit.html#limit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:limit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:limitUniv"
+			  >limitUniv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+			  >PRO</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > ()). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+			  >Profunctor</a
+			  > p) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
+			  >Hom</a
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > d) -&gt; p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
 			  > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
 			  >Limit</a
 			  > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 			  >Hom</a
-			  > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			  >UNIT</a
-			  > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
 			  > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >) d <a href="src/Proarrow.Category.Limit.html#limitInv" class="link"
+			  >) d <a href="src/Proarrow.Category.Limit.html#limitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L28" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L30" class="link"
 			  >Comments</a
-			  > <a href="#v:limitInv" class="selflink"
+			  > <a href="#v:limitUniv" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -2425,22 +2355,20 @@
 		      >Limit</a
 		      > (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 		      >Hom</a
-		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-		      >UNIT</a
-		      > -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      > :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 		      >OPPOSITE</a
 		      > k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
-		      >) (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
+		      >) (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
 		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
-		      > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-		      >OPPOSITE</a
-		      > k, k))</span
-		    > <a href="src/Proarrow.Category.Limit.html#line-106" class="link"
+		      >)</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-124" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L106" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L124" class="link"
 		    >Comments</a
 		    > <a href="#t:Hom" class="selflink"
 		    >#</a
@@ -2464,19 +2392,17 @@
 			>Limit</a
 			> (<a href="Proarrow-Category-Limit.html#t:Hom" title="Proarrow.Category.Limit"
 			>Hom</a
-			> :: <a href="Proarrow-Category-Instance-Unit.html#t:UNIT" title="Proarrow.Category.Instance.Unit"
-			>UNIT</a
-			> -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			> :: () -&gt; (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			>OPPOSITE</a
 			> k, k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
-			>) (d :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			>PRO</a
+			>) (d :: (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			>OPPOSITE</a
+			> k, k) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			>+-&gt;</a
 			> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
-			> (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			>OPPOSITE</a
-			> k, k)) = <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
+			>) = <a href="Proarrow-Category-Limit.html#t:EndLimit" title="Proarrow.Category.Limit"
 			>EndLimit</a
 			> d</div
 		      ></details

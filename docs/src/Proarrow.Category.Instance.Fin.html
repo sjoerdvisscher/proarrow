@@ -1,0 +1,8690 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Fin</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Obj"
+	><span class="hs-identifier"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Initial</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	><span class="hs-identifier"
+	  >HasInitialObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	><span class="hs-identifier"
+	  >HasTerminalObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryCoproduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	><span class="hs-identifier"
+	  >HasBinaryCoproducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryProduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	><span class="hs-identifier"
+	  >HasBinaryProducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.ThinCategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Preorder.ThinCategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.ThinCategory.html#ThinProfunctor"
+	><span class="hs-identifier"
+	  >ThinProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="NAT"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#NAT"
+	  ><span class="hs-identifier hs-var"
+	    >NAT</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="Z"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#Z"
+	  ><span class="hs-identifier hs-var"
+	    >Z</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >|</span
+      ><span
+      > </span
+      ><span id="S"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-var"
+	    >S</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#NAT"
+	><span class="hs-identifier hs-type"
+	  >NAT</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="FIN"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-var"
+	    >FIN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283115"
+      ><span class="annot"
+	><a href="#local-6989586621679283115"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283116"
+      ><span id="FZ"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	    ><span class="hs-identifier hs-var"
+	      >FZ</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283116"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283117"
+      ><span id="FS"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-var"
+	      >FS</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283117"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>-&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283117"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="FIN0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN0"
+	  ><span class="hs-identifier hs-var"
+	    >FIN0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	><span class="hs-identifier hs-type"
+	  >FIN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#Z"
+	><span class="hs-identifier hs-type"
+	  >Z</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="FIN1"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN1"
+	  ><span class="hs-identifier hs-var"
+	    >FIN1</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	><span class="hs-identifier hs-type"
+	  >FIN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#S"
+	><span class="hs-identifier hs-type"
+	  >S</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#Z"
+	><span class="hs-identifier hs-type"
+	  >Z</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="FIN2"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN2"
+	  ><span class="hs-identifier hs-var"
+	    >FIN2</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	><span class="hs-identifier hs-type"
+	  >FIN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#S"
+	><span class="hs-identifier hs-type"
+	  >S</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#S"
+	><span class="hs-identifier hs-type"
+	  >S</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#Z"
+	><span class="hs-identifier hs-type"
+	  >Z</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="FIN3"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN3"
+	  ><span class="hs-identifier hs-var"
+	    >FIN3</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	><span class="hs-identifier hs-type"
+	  >FIN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#S"
+	><span class="hs-identifier hs-type"
+	  >S</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#S"
+	><span class="hs-identifier hs-type"
+	  >S</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#S"
+	><span class="hs-identifier hs-type"
+	  >S</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#Z"
+	><span class="hs-identifier hs-type"
+	  >Z</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	><span class="hs-identifier hs-type"
+	  >LTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283122"
+      ><span class="annot"
+	><a href="#local-6989586621679283122"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#NAT"
+	><span class="hs-identifier hs-type"
+	  >NAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	><span class="hs-identifier hs-type"
+	  >FIN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283122"
+	><span class="hs-identifier hs-type"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="LTE"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	  ><span class="hs-identifier hs-var"
+	    >LTE</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283123"
+      ><span class="annot"
+	><a href="#local-6989586621679283123"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283124"
+      ><span class="annot"
+	><a href="#local-6989586621679283124"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span id="ZEQ"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	  ><span class="hs-identifier hs-var"
+	    >ZEQ</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	><span class="hs-identifier hs-type"
+	  >LTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283126"
+      ><span id="ZLT"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	    ><span class="hs-identifier hs-var"
+	      >ZLT</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	  ><span class="hs-identifier hs-type"
+	    >LTE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283126"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>-&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	  ><span class="hs-identifier hs-type"
+	    >LTE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FS"
+	  ><span class="hs-identifier hs-type"
+	    >FS</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283126"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283128"
+      ><span id="local-6989586621679283129"
+	><span id="SLT"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	      ><span class="hs-identifier hs-var"
+		>SLT</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	    ><span class="hs-identifier hs-type"
+	      >LTE</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283128"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283129"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	    ><span class="hs-identifier hs-type"
+	      >LTE</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283128"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283129"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span id="IsFin"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#IsFin"
+	  ><span class="hs-identifier hs-var"
+	    >IsFin</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679282723"
+      ><span id="local-6989586621679282724"
+	><span class="annot"
+	  ><a href="#local-6989586621679282724"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282723"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span id="finId"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#finId"
+	  ><span class="hs-identifier hs-type"
+	    >finId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Obj"
+	><span class="hs-identifier hs-type"
+	  >Obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282724"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679282725"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#IsFin"
+	  ><span class="hs-identifier hs-type"
+	    >IsFin</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679282725"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#Z"
+	  ><span class="hs-identifier hs-type"
+	    >Z</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283136"
+      ><span class="annot"
+	><span class="annottext"
+	  >finId :: Obj a
+</span
+	  ><a href="Proarrow.Category.Instance.Fin.html#finId"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >finId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+forall (n :: NAT) (a :: FIN n). IsFin a =&gt; Obj a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#finId"
+	><span class="hs-identifier hs-var"
+	  >finId</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#IsFin"
+	><span class="hs-identifier hs-type"
+	  >IsFin</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283139"
+      ><span class="annot"
+	><span class="annottext"
+	  >finId :: Obj FZ
+</span
+	  ><a href="Proarrow.Category.Instance.Fin.html#finId"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >finId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj FZ
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679282736"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#IsFin"
+	  ><span class="hs-identifier hs-type"
+	    >IsFin</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282736"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#IsFin"
+	  ><span class="hs-identifier hs-type"
+	    >IsFin</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FS"
+	  ><span class="hs-identifier hs-type"
+	    >FS</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282736"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283144"
+      ><span class="annot"
+	><span class="annottext"
+	  >finId :: Obj (FS b)
+</span
+	  ><a href="Proarrow.Category.Instance.Fin.html#finId"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >finId</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE b b -&gt; LTE (FS b) (FS b)
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+LTE b b
+forall (n :: NAT) (a :: FIN n). IsFin a =&gt; Obj a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#finId"
+	><span class="hs-identifier hs-var"
+	  >finId</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	><span class="hs-identifier hs-type"
+	  >LTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283156"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: FIN n) (a :: FIN n) (b :: FIN n) (d :: FIN n).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; LTE a b -&gt; LTE c d
+</span
+	  ><a href="#local-6989586621679283156"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; LTE a b -&gt; LTE c d
+LTE c a -&gt; LTE b d -&gt; LTE a b -&gt; LTE c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283158"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679283158"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283159"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: FIN n) (b :: FIN n) r.
+((Ob a, Ob b) =&gt; r) -&gt; LTE a b -&gt; r
+</span
+	  ><a href="#local-6989586621679283159"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679283158"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283171"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679283171"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283180"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283180"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob FZ, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679283171"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob FZ, Ob b) =&gt; r) -&gt; LTE FZ b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: FIN (S n)) (b :: FIN (S n)) r.
+((Ob a, Ob b) =&gt; r) -&gt; LTE a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="#local-6989586621679283180"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283188"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679283188"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283197"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283197"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679283188"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; LTE a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: FIN (S n)) (b :: FIN (S n)) r.
+((Ob a, Ob b) =&gt; r) -&gt; LTE a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="#local-6989586621679283197"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	><span class="hs-identifier hs-type"
+	  >LTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283214"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: FIN n). Ob a =&gt; LTE a a
+</span
+	  ><a href="#local-6989586621679283214"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a a
+forall (n :: NAT) (a :: FIN n). IsFin a =&gt; Obj a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#finId"
+	><span class="hs-identifier hs-var"
+	  >finId</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE b c
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283221"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: FIN n) (c :: FIN n) (a :: FIN n).
+LTE b c -&gt; LTE a b -&gt; LTE a c
+</span
+	  ><a href="#local-6989586621679283221"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a c
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283237"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283237"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="#local-6989586621679283237"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283254"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283254"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283272"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283272"
+	  ><span class="hs-identifier hs-var"
+	    >za</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="#local-6989586621679283254"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b -&gt; LTE FZ a -&gt; LTE FZ b
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: FIN (S n)) (c :: FIN (S n)) (a :: FIN (S n)).
+LTE b c -&gt; LTE a b -&gt; LTE a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ a
+LTE FZ b
+</span
+	><a href="#local-6989586621679283272"
+	><span class="hs-identifier hs-var"
+	  >za</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283280"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283280"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283298"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283298"
+	  ><span class="hs-identifier hs-var"
+	    >bc</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b -&gt; LTE (FS a) (FS b)
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="#local-6989586621679283280"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b -&gt; LTE a a -&gt; LTE a b
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+forall (b :: FIN (S n)) (c :: FIN (S n)) (a :: FIN (S n)).
+LTE b c -&gt; LTE a b -&gt; LTE a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a a
+LTE a b
+</span
+	><a href="#local-6989586621679283298"
+	><span class="hs-identifier hs-var"
+	  >bc</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283299"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#CategoryOf"
+	  ><span class="hs-identifier hs-type"
+	    >CategoryOf</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283299"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	><span class="hs-identifier hs-type"
+	  >LTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283304"
+      ><span class="annot"
+	><a href="#local-6989586621679283304"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#IsFin"
+	><span class="hs-identifier hs-type"
+	  >IsFin</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span id="IsLTE"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#IsLTE"
+	  ><span class="hs-identifier hs-var"
+	    >IsLTE</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679282809"
+      ><span class="annot"
+	><a href="#local-6989586621679282809"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	><span class="hs-identifier hs-type"
+	  >FIN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282808"
+	><span class="hs-identifier hs-type"
+	  >n</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-identifier"
+      >b</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-identifier"
+      >FIN</span
+      ><span
+      > </span
+      ><span class="hs-identifier"
+      >n</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span id="lte"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#lte"
+	  ><span class="hs-identifier hs-type"
+	    >lte</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282809"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282810"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#IsLTE"
+	><span class="hs-identifier hs-type"
+	  >IsLTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283309"
+      ><span class="annot"
+	><span class="annottext"
+	  >lte :: FZ ~&gt; FZ
+</span
+	  ><a href="Proarrow.Category.Instance.Fin.html#lte"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lte</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; FZ
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679282815"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#IsLTE"
+	  ><span class="hs-identifier hs-type"
+	    >IsLTE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282815"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#IsLTE"
+	  ><span class="hs-identifier hs-type"
+	    >IsLTE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FS"
+	  ><span class="hs-identifier hs-type"
+	    >FS</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282815"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283314"
+      ><span class="annot"
+	><span class="annottext"
+	  >lte :: FZ ~&gt; FS b
+</span
+	  ><a href="Proarrow.Category.Instance.Fin.html#lte"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lte</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+forall (n :: NAT) (a :: FIN n) (b :: FIN n). IsLTE a b =&gt; a ~&gt; b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#lte"
+	><span class="hs-identifier hs-var"
+	  >lte</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679282820"
+      ><span id="local-6989586621679282821"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#IsLTE"
+	    ><span class="hs-identifier hs-type"
+	      >IsLTE</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282820"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282821"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#IsLTE"
+	    ><span class="hs-identifier hs-type"
+	      >IsLTE</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282820"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282821"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283319"
+      ><span class="annot"
+	><span class="annottext"
+	  >lte :: FS a ~&gt; FS b
+</span
+	  ><a href="Proarrow.Category.Instance.Fin.html#lte"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lte</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b -&gt; LTE (FS a) (FS b)
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+forall (n :: NAT) (a :: FIN n) (b :: FIN n). IsLTE a b =&gt; a ~&gt; b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#lte"
+	><span class="hs-identifier hs-var"
+	  >lte</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.ThinCategory.html#ThinProfunctor"
+	><span class="hs-identifier hs-type"
+	  >ThinProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	><span class="hs-identifier hs-type"
+	  >LTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="HasArrow"
+      ><span class="annot"
+	><a href="Proarrow.Preorder.ThinCategory.html#HasArrow"
+	  ><span class="hs-identifier hs-var"
+	    >HasArrow</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283326"
+      ><span id="local-6989586621679283327"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#LTE"
+	    ><span class="hs-identifier hs-type"
+	      >LTE</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283326"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283327"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#IsLTE"
+	><span class="hs-identifier hs-type"
+	  >IsLTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283326"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283327"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283333"
+      ><span class="annot"
+	><span class="annottext"
+	  >arr :: forall (a :: FIN n) (b :: FIN n).
+(Ob a, Ob b, HasArrow LTE a b) =&gt;
+LTE a b
+</span
+	  ><a href="#local-6989586621679283333"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >arr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+forall (n :: NAT) (a :: FIN n) (b :: FIN n). IsLTE a b =&gt; a ~&gt; b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#lte"
+	><span class="hs-identifier hs-var"
+	  >lte</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283335"
+      ><span class="annot"
+	><span class="annottext"
+	  >withArr :: forall (a :: FIN n) (b :: FIN n) r.
+LTE a b -&gt; (HasArrow LTE a b =&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679283335"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withArr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283346"
+      ><span class="annot"
+	><span class="annottext"
+	  >HasArrow LTE a b =&gt; r
+</span
+	  ><a href="#local-6989586621679283346"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+HasArrow LTE a b =&gt; r
+</span
+	><a href="#local-6989586621679283346"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.ThinCategory.html#withArr"
+	><span class="hs-identifier hs-var"
+	  >withArr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283355"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283355"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283356"
+      ><span class="annot"
+	><span class="annottext"
+	  >HasArrow LTE a b =&gt; r
+</span
+	  ><a href="#local-6989586621679283356"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; (HasArrow LTE FZ b =&gt; r) -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+ThinProfunctor p =&gt;
+p a b -&gt; (HasArrow p a b =&gt; r) -&gt; r
+forall (a :: FIN (S n)) (b :: FIN (S n)) r.
+LTE a b -&gt; (HasArrow LTE a b =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Preorder.ThinCategory.html#withArr"
+	><span class="hs-identifier hs-var"
+	  >withArr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="#local-6989586621679283355"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+HasArrow LTE a b =&gt; r
+HasArrow LTE FZ b =&gt; r
+</span
+	><a href="#local-6989586621679283356"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Preorder.ThinCategory.html#withArr"
+	><span class="hs-identifier hs-var"
+	  >withArr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283369"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283369"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283370"
+      ><span class="annot"
+	><span class="annottext"
+	  >HasArrow LTE a b =&gt; r
+</span
+	  ><a href="#local-6989586621679283370"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b -&gt; (HasArrow LTE a b =&gt; r) -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+ThinProfunctor p =&gt;
+p a b -&gt; (HasArrow p a b =&gt; r) -&gt; r
+forall (a :: FIN (S n)) (b :: FIN (S n)) r.
+LTE a b -&gt; (HasArrow LTE a b =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Preorder.ThinCategory.html#withArr"
+	><span class="hs-identifier hs-var"
+	  >withArr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><a href="#local-6989586621679283369"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+HasArrow LTE a b =&gt; r
+HasArrow LTE a b =&gt; r
+</span
+	><a href="#local-6989586621679283370"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679282852"
+      ><span class="annot"
+	><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >HasInitialObject</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282852"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="InitialObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-var"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283383"
+      ><span class="annot"
+	><span class="annottext"
+	  >initiate' :: forall (a' :: FIN (S n)) (a :: FIN (S n)).
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+</span
+	  ><a href="#local-6989586621679283383"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >initiate'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a' ~&gt; a
+LTE a' a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>InitialObject ~&gt; a
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283399"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283399"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="#local-6989586621679283399"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283407"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283407"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; InitialObject ~&gt; b
+forall k (a' :: k) (a :: k).
+HasInitialObject k =&gt;
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+forall (a' :: FIN (S n)) (a :: FIN (S n)).
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+</span
+	><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679283407"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	><span class="hs-identifier hs-type"
+	  >HasTerminalObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	><span class="hs-identifier hs-type"
+	  >FIN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#S"
+	><span class="hs-identifier hs-type"
+	  >S</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#Z"
+	><span class="hs-identifier hs-type"
+	  >Z</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="TerminalObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	  ><span class="hs-identifier hs-var"
+	    >TerminalObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283416"
+      ><span class="annot"
+	><span class="annottext"
+	  >terminate' :: forall (a :: FIN (S Z)) (a' :: FIN (S Z)).
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+</span
+	  ><a href="#local-6989586621679283416"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >terminate'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; TerminalObject
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-77"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679282870"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	  ><span class="hs-identifier hs-type"
+	    >HasTerminalObject</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282870"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	  ><span class="hs-identifier hs-type"
+	    >HasTerminalObject</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282870"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-78"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="TerminalObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	  ><span class="hs-identifier hs-var"
+	    >TerminalObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	><span class="hs-identifier hs-type"
+	  >FS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	><span class="hs-identifier hs-type"
+	  >TerminalObject</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-79"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283437"
+      ><span class="annot"
+	><span class="annottext"
+	  >terminate' :: forall (a :: FIN (S (S n))) (a' :: FIN (S (S n))).
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+</span
+	  ><a href="Proarrow.Object.Terminal.html#terminate%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >terminate'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ TerminalObject -&gt; LTE FZ (FS TerminalObject)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ ~&gt; FZ) -&gt; FZ ~&gt; TerminalObject
+forall k (a :: k) (a' :: k).
+HasTerminalObject k =&gt;
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+forall (a :: FIN (S n)) (a' :: FIN (S n)).
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+</span
+	><a href="Proarrow.Object.Terminal.html#terminate%27"
+	><span class="hs-identifier hs-var"
+	  >terminate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; FZ
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-80"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#terminate%27"
+	><span class="hs-identifier hs-var"
+	  >terminate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283457"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283457"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ TerminalObject -&gt; LTE FZ (FS TerminalObject)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ ~&gt; b) -&gt; FZ ~&gt; TerminalObject
+forall k (a :: k) (a' :: k).
+HasTerminalObject k =&gt;
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+forall (a :: FIN (S n)) (a' :: FIN (S n)).
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+</span
+	><a href="Proarrow.Object.Terminal.html#terminate%27"
+	><span class="hs-identifier hs-var"
+	  >terminate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+</span
+	><a href="#local-6989586621679283457"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-81"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#terminate%27"
+	><span class="hs-identifier hs-var"
+	  >terminate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283468"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283468"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a TerminalObject -&gt; LTE (FS a) (FS TerminalObject)
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; a ~&gt; TerminalObject
+forall k (a :: k) (a' :: k).
+HasTerminalObject k =&gt;
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+forall (a :: FIN (S n)) (a' :: FIN (S n)).
+(a ~&gt; a') -&gt; a ~&gt; TerminalObject
+</span
+	><a href="Proarrow.Object.Terminal.html#terminate%27"
+	><span class="hs-identifier hs-var"
+	  >terminate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679283468"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-82"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-83"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283475"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	  ><span class="hs-identifier hs-type"
+	    >HasBinaryCoproducts</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#Z"
+	  ><span class="hs-identifier hs-type"
+	    >Z</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-84"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283479"
+      ><span id="local-6989586621679283480"
+	><span class="annot"
+	  ><a href="#local-6989586621679283479"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%7C%7C"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-var"
+		>||</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283480"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283479"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-85"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283481"
+      ><span class="annot"
+	><span class="annottext"
+	  >lft' :: forall (a :: FIN Z) (a' :: FIN Z) (b :: FIN Z).
+(a ~&gt; a') -&gt; Obj b -&gt; a ~&gt; (a' || b)
+</span
+	  ><a href="#local-6989586621679283481"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lft'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-86"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283483"
+      ><span class="annot"
+	><span class="annottext"
+	  >rgt' :: forall (a :: FIN Z) (b :: FIN Z) (b' :: FIN Z).
+Obj a -&gt; (b ~&gt; b') -&gt; b ~&gt; (a || b')
+</span
+	  ><a href="#local-6989586621679283483"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rgt'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-87"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283485"
+      ><span class="annot"
+	><span class="annottext"
+	  >||| :: forall (x :: FIN Z) (a :: FIN Z) (y :: FIN Z).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	  ><a href="#local-6989586621679283485"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >(|||)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-88"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-89"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283493"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	  ><span class="hs-identifier hs-type"
+	    >HasBinaryCoproducts</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#Z"
+	  ><span class="hs-identifier hs-type"
+	    >Z</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-90"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%7C%7C"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	  ><span class="hs-operator hs-var"
+	    >||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-91"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283496"
+      ><span class="annot"
+	><span class="annottext"
+	  >lft' :: forall (a :: FIN (S Z)) (a' :: FIN (S Z)) (b :: FIN (S Z)).
+(a ~&gt; a') -&gt; Obj b -&gt; a ~&gt; (a' || b)
+</span
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lft'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+LTE b b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a' || b)
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-92"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283516"
+      ><span class="annot"
+	><span class="annottext"
+	  >rgt' :: forall (a :: FIN (S Z)) (b :: FIN (S Z)) (b' :: FIN (S Z)).
+Obj a -&gt; (b ~&gt; b') -&gt; b ~&gt; (a || b')
+</span
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rgt'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+LTE b b'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; (a || b')
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-93"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+LTE x a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283547"
+      ><span class="annot"
+	><span class="annottext"
+	  >||| :: forall (x :: FIN (S Z)) (a :: FIN (S Z)) (y :: FIN (S Z)).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >|||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+LTE y FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x || y) ~&gt; a
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-94"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-95"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Maximum</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-96"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679282920"
+      ><span id="local-6989586621679283563"
+	><span class="annot"
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	    ><span class="hs-identifier hs-type"
+	      >HasBinaryCoproducts</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	    ><span class="hs-identifier hs-type"
+	      >FIN</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#S"
+	    ><span class="hs-identifier hs-type"
+	      >S</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282920"
+	    ><span class="hs-identifier hs-type"
+	      >n</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	    ><span class="hs-identifier hs-type"
+	      >HasBinaryCoproducts</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	    ><span class="hs-identifier hs-type"
+	      >FIN</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#S"
+	    ><span class="hs-identifier hs-type"
+	      >S</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#S"
+	    ><span class="hs-identifier hs-type"
+	      >S</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282920"
+	    ><span class="hs-identifier hs-type"
+	      >n</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-97"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283566"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%7C%7C"
+	><span class="annot"
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	    ><span class="hs-operator hs-var"
+	      >||</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283566"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283566"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-98"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283567"
+      ><span class="annot"
+	><a href="#local-6989586621679283567"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%7C%7C"
+	><span class="annot"
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	    ><span class="hs-operator hs-var"
+	      >||</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283567"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-99"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283568"
+      ><span id="local-6989586621679283569"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283568"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%7C%7C"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-var"
+		>||</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283569"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	><span class="hs-identifier hs-type"
+	  >FS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679283568"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	><span class="hs-operator hs-type"
+	  >||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283569"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-100"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283570"
+      ><span class="annot"
+	><span class="annottext"
+	  >lft' :: forall (a :: FIN (S (S n))) (a' :: FIN (S (S n)))
+       (b :: FIN (S (S n))).
+(a ~&gt; a') -&gt; Obj b -&gt; a ~&gt; (a' || b)
+</span
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lft'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+LTE b b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a' || b)
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-101"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283617"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283617"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ a -&gt; LTE FZ (FS a)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; InitialObject ~&gt; a
+forall k (a' :: k) (a :: k).
+HasInitialObject k =&gt;
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+forall (a' :: FIN (S n)) (a :: FIN (S n)).
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+</span
+	><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a
+LTE a b
+</span
+	><a href="#local-6989586621679283617"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-102"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283618"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; a'
+</span
+	  ><a href="#local-6989586621679283618"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+LTE b b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+a ~&gt; (a' || b)
+</span
+	><a href="#local-6989586621679283618"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-103"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283639"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283639"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283656"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283656"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ (b || a) -&gt; LTE FZ (FS (b || a))
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ ~&gt; b) -&gt; Obj a -&gt; FZ ~&gt; (b || a)
+forall k (a :: k) (a' :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; a') -&gt; Obj b -&gt; a ~&gt; (a' || b)
+forall (a :: FIN (S n)) (a' :: FIN (S n)) (b :: FIN (S n)).
+(a ~&gt; a') -&gt; Obj b -&gt; a ~&gt; (a' || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+</span
+	><a href="#local-6989586621679283639"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679283656"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-104"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283669"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283669"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283686"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283686"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a (b || a) -&gt; LTE (FS a) (FS (b || a))
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; Obj a -&gt; a ~&gt; (b || a)
+forall k (a :: k) (a' :: k) (b :: k).
+HasBinaryCoproducts k =&gt;
+(a ~&gt; a') -&gt; Obj b -&gt; a ~&gt; (a' || b)
+forall (a :: FIN (S n)) (a' :: FIN (S n)) (b :: FIN (S n)).
+(a ~&gt; a') -&gt; Obj b -&gt; a ~&gt; (a' || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#lft%27"
+	><span class="hs-identifier hs-var"
+	  >lft'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679283669"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679283686"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-105"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-106"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283687"
+      ><span class="annot"
+	><span class="annottext"
+	  >rgt' :: forall (a :: FIN (S (S n))) (b :: FIN (S (S n)))
+       (b' :: FIN (S (S n))).
+Obj a -&gt; (b ~&gt; b') -&gt; b ~&gt; (a || b')
+</span
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rgt'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+LTE b b'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; (a || b')
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-107"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283722"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283722"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+LTE b b'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ a -&gt; LTE FZ (FS a)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; InitialObject ~&gt; a
+forall k (a' :: k) (a :: k).
+HasInitialObject k =&gt;
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+forall (a' :: FIN (S n)) (a :: FIN (S n)).
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+</span
+	><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a
+LTE a b
+</span
+	><a href="#local-6989586621679283722"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-108"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283743"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; b'
+</span
+	  ><a href="#local-6989586621679283743"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+b ~&gt; (a || b')
+</span
+	><a href="#local-6989586621679283743"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-109"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283759"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283759"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283773"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679283773"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ (a || b) -&gt; LTE FZ (FS (a || b))
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a -&gt; (FZ ~&gt; b) -&gt; FZ ~&gt; (a || b)
+forall k (a :: k) (b :: k) (b' :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; (b ~&gt; b') -&gt; b ~&gt; (a || b')
+forall (a :: FIN (S n)) (b :: FIN (S n)) (b' :: FIN (S n)).
+Obj a -&gt; (b ~&gt; b') -&gt; b ~&gt; (a || b')
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679283759"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+</span
+	><a href="#local-6989586621679283773"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-110"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283789"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283789"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283803"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283803"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a (a || b) -&gt; LTE (FS a) (FS (a || b))
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a -&gt; (a ~&gt; b) -&gt; a ~&gt; (a || b)
+forall k (a :: k) (b :: k) (b' :: k).
+HasBinaryCoproducts k =&gt;
+Obj a -&gt; (b ~&gt; b') -&gt; b ~&gt; (a || b')
+forall (a :: FIN (S n)) (b :: FIN (S n)) (b' :: FIN (S n)).
+Obj a -&gt; (b ~&gt; b') -&gt; b ~&gt; (a || b')
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#rgt%27"
+	><span class="hs-identifier hs-var"
+	  >rgt'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679283789"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679283803"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-111"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-112"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+LTE x a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283815"
+      ><span class="annot"
+	><span class="annottext"
+	  >||| :: forall (x :: FIN (S (S n))) (a :: FIN (S (S n)))
+       (y :: FIN (S (S n))).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	  ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >|||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+LTE y FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x || y) ~&gt; a
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-113"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283845"
+      ><span class="annot"
+	><span class="annottext"
+	  >y ~&gt; a
+</span
+	  ><a href="#local-6989586621679283845"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>y ~&gt; a
+(x || y) ~&gt; a
+</span
+	><a href="#local-6989586621679283845"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-114"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679283846"
+      ><span class="annot"
+	><span class="annottext"
+	  >x ~&gt; a
+</span
+	  ><a href="#local-6989586621679283846"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+(x || y) ~&gt; a
+</span
+	><a href="#local-6989586621679283846"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-115"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283880"
+      ><span class="annot"
+	><span class="annottext"
+	  >a :: LTE FZ b
+</span
+	  ><a href="#local-6989586621679283880"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283902"
+      ><span class="annot"
+	><span class="annottext"
+	  >b :: LTE FZ b
+</span
+	  ><a href="#local-6989586621679283902"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ (FS b) -&gt; LTE FZ (FS (FS b))
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; FS b
+LTE FZ b
+</span
+	><a href="#local-6989586621679283880"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ ~&gt; FS b) -&gt; (FZ ~&gt; FS b) -&gt; (FZ || FZ) ~&gt; FS b
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall (x :: FIN (S (S n))) (a :: FIN (S (S n)))
+       (y :: FIN (S (S n))).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; FS b
+LTE FZ b
+</span
+	><a href="#local-6989586621679283902"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-116"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283919"
+      ><span class="annot"
+	><span class="annottext"
+	  >a :: LTE FZ b
+</span
+	  ><a href="#local-6989586621679283919"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283942"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283942"
+	  ><span class="hs-identifier hs-var"
+	    >bc</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE (FZ || a) (FS b) -&gt; LTE (FS (FZ || a)) (FS (FS b))
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; FS b
+LTE FZ b
+</span
+	><a href="#local-6989586621679283919"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ ~&gt; FS b) -&gt; (a ~&gt; FS b) -&gt; (FZ || a) ~&gt; FS b
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall (x :: FIN (S (S n))) (a :: FIN (S (S n)))
+       (y :: FIN (S (S n))).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; FS b
+LTE a b
+</span
+	><a href="#local-6989586621679283942"
+	><span class="hs-identifier hs-var"
+	  >bc</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-117"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283955"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283955"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283968"
+      ><span class="annot"
+	><span class="annottext"
+	  >c :: LTE FZ b
+</span
+	  ><a href="#local-6989586621679283968"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE (a || FZ) (FS b) -&gt; LTE (FS (a || FZ)) (FS (FS b))
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; FS b
+LTE a b
+</span
+	><a href="#local-6989586621679283955"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; FS b) -&gt; (FZ ~&gt; FS b) -&gt; (a || FZ) ~&gt; FS b
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall (x :: FIN (S (S n))) (a :: FIN (S (S n)))
+       (y :: FIN (S (S n))).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; FS b
+LTE FZ b
+</span
+	><a href="#local-6989586621679283968"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-118"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283992"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679283992"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284006"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284006"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE (a || a) b -&gt; LTE (FS (a || a)) (FS b)
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679283992"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; (a || a) ~&gt; b
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall (x :: FIN (S n)) (a :: FIN (S n)) (y :: FIN (S n)).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679284006"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-119"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-120"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679284013"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	  ><span class="hs-identifier hs-type"
+	    >HasBinaryProducts</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#Z"
+	  ><span class="hs-identifier hs-type"
+	    >Z</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-121"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679284017"
+      ><span id="local-6989586621679284018"
+	><span class="annot"
+	  ><a href="#local-6989586621679284017"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%26%26"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	      ><span class="hs-operator hs-var"
+		>&amp;&amp;</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679284018"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679284017"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-122"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679284019"
+      ><span class="annot"
+	><span class="annottext"
+	  >fst' :: forall (a :: FIN Z) (a' :: FIN Z) (b :: FIN Z).
+(a ~&gt; a') -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a'
+</span
+	  ><a href="#local-6989586621679284019"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >fst'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-123"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679284021"
+      ><span class="annot"
+	><span class="annottext"
+	  >snd' :: forall (a :: FIN Z) (b :: FIN Z) (b' :: FIN Z).
+Obj a -&gt; (b ~&gt; b') -&gt; (a &amp;&amp; b) ~&gt; b'
+</span
+	  ><a href="#local-6989586621679284021"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >snd'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-124"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679284023"
+      ><span class="annot"
+	><span class="annottext"
+	  >&amp;&amp;&amp; :: forall (a :: FIN Z) (x :: FIN Z) (y :: FIN Z).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	  ><a href="#local-6989586621679284023"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >(&amp;&amp;&amp;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-125"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-126"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679284031"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	  ><span class="hs-identifier hs-type"
+	    >HasBinaryProducts</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	  ><span class="hs-identifier hs-type"
+	    >FIN</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#S"
+	  ><span class="hs-identifier hs-type"
+	    >S</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#Z"
+	  ><span class="hs-identifier hs-type"
+	    >Z</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-127"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="%26%26"
+      ><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	  ><span class="hs-operator hs-var"
+	    >&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-128"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679284034"
+      ><span class="annot"
+	><span class="annottext"
+	  >fst' :: forall (a :: FIN (S Z)) (a' :: FIN (S Z)) (b :: FIN (S Z)).
+(a ~&gt; a') -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a'
+</span
+	  ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >fst'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+LTE b b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; a'
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-129"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679284054"
+      ><span class="annot"
+	><span class="annottext"
+	  >snd' :: forall (a :: FIN (S Z)) (b :: FIN (S Z)) (b' :: FIN (S Z)).
+Obj a -&gt; (b ~&gt; b') -&gt; (a &amp;&amp; b) ~&gt; b'
+</span
+	  ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >snd'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+LTE b b'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; b'
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-130"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+LTE a x
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284085"
+      ><span class="annot"
+	><span class="annottext"
+	  >&amp;&amp;&amp; :: forall (a :: FIN (S Z)) (x :: FIN (S Z)) (y :: FIN (S Z)).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	  ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >&amp;&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+LTE FZ y
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-131"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-132"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Minimum</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-133"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283043"
+      ><span id="local-6989586621679284101"
+	><span class="annot"
+	  ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	    ><span class="hs-identifier hs-type"
+	      >HasBinaryProducts</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	    ><span class="hs-identifier hs-type"
+	      >FIN</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#S"
+	    ><span class="hs-identifier hs-type"
+	      >S</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283043"
+	    ><span class="hs-identifier hs-type"
+	      >n</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	    ><span class="hs-identifier hs-type"
+	      >HasBinaryProducts</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FIN"
+	    ><span class="hs-identifier hs-type"
+	      >FIN</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#S"
+	    ><span class="hs-identifier hs-type"
+	      >S</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#S"
+	    ><span class="hs-identifier hs-type"
+	      >S</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283043"
+	    ><span class="hs-identifier hs-type"
+	      >n</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-134"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679284104"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%26%26"
+	><span class="annot"
+	  ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	    ><span class="hs-operator hs-var"
+	      >&amp;&amp;</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679284104"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-135"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679284105"
+      ><span class="annot"
+	><a href="#local-6989586621679284105"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%26%26"
+	><span class="annot"
+	  ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	    ><span class="hs-operator hs-var"
+	      >&amp;&amp;</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	  ><span class="hs-identifier hs-type"
+	    >FZ</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FZ"
+	><span class="hs-identifier hs-type"
+	  >FZ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-136"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679284106"
+      ><span id="local-6989586621679284107"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679284106"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%26%26"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	      ><span class="hs-operator hs-var"
+		>&amp;&amp;</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	    ><span class="hs-identifier hs-type"
+	      >FS</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679284107"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#FS"
+	><span class="hs-identifier hs-type"
+	  >FS</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679284106"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	><span class="hs-operator hs-type"
+	  >&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679284107"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-137"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679284108"
+      ><span class="annot"
+	><span class="annottext"
+	  >fst' :: forall (a :: FIN (S (S n))) (a' :: FIN (S (S n)))
+       (b :: FIN (S (S n))).
+(a ~&gt; a') -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a'
+</span
+	  ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >fst'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+LTE b b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; a'
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-138"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+LTE a a'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; a'
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-139"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284148"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; a'
+</span
+	  ><a href="#local-6989586621679284148"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+LTE b b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a') -&gt; InitialObject ~&gt; a'
+forall k (a' :: k) (a :: k).
+HasInitialObject k =&gt;
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+forall (a' :: FIN (S (S n))) (a :: FIN (S (S n))).
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+</span
+	><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; a'
+</span
+	><a href="#local-6989586621679284148"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-140"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284170"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679284170"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284187"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284187"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ ~&gt; b) -&gt; Obj a -&gt; (FZ &amp;&amp; a) ~&gt; b
+forall k (a :: k) (a' :: k) (b :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; a') -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a'
+forall (a :: FIN (S n)) (a' :: FIN (S n)) (b :: FIN (S n)).
+(a ~&gt; a') -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a'
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+</span
+	><a href="#local-6989586621679284170"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679284187"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ &amp;&amp; a) ~&gt; b
+LTE (FZ &amp;&amp; a) b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284204"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679284204"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="#local-6989586621679284204"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-141"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284217"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284217"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284234"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284234"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE (a &amp;&amp; a) b -&gt; LTE (FS (a &amp;&amp; a)) (FS b)
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; Obj a -&gt; (a &amp;&amp; a) ~&gt; b
+forall k (a :: k) (a' :: k) (b :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; a') -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a'
+forall (a :: FIN (S n)) (a' :: FIN (S n)) (b :: FIN (S n)).
+(a ~&gt; a') -&gt; Obj b -&gt; (a &amp;&amp; b) ~&gt; a'
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#fst%27"
+	><span class="hs-identifier hs-var"
+	  >fst'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679284217"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679284234"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-142"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-143"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679284235"
+      ><span class="annot"
+	><span class="annottext"
+	  >snd' :: forall (a :: FIN (S (S n))) (b :: FIN (S (S n)))
+       (b' :: FIN (S (S n))).
+Obj a -&gt; (b ~&gt; b') -&gt; (a &amp;&amp; b) ~&gt; b'
+</span
+	  ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >snd'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+LTE b b'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; b'
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-144"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+LTE b b'
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; b) ~&gt; b'
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-145"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a a
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284284"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; b'
+</span
+	  ><a href="#local-6989586621679284284"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; b') -&gt; InitialObject ~&gt; b'
+forall k (a' :: k) (a :: k).
+HasInitialObject k =&gt;
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+forall (a' :: FIN (S (S n))) (a :: FIN (S (S n))).
+(a' ~&gt; a) -&gt; InitialObject ~&gt; a
+</span
+	><a href="Proarrow.Object.Initial.html#initiate%27"
+	><span class="hs-identifier hs-var"
+	  >initiate'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; b'
+</span
+	><a href="#local-6989586621679284284"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-146"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284300"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284300"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284314"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679284314"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a -&gt; (FZ ~&gt; b) -&gt; (a &amp;&amp; FZ) ~&gt; b
+forall k (a :: k) (b :: k) (b' :: k).
+HasBinaryProducts k =&gt;
+Obj a -&gt; (b ~&gt; b') -&gt; (a &amp;&amp; b) ~&gt; b'
+forall (a :: FIN (S n)) (b :: FIN (S n)) (b' :: FIN (S n)).
+Obj a -&gt; (b ~&gt; b') -&gt; (a &amp;&amp; b) ~&gt; b'
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679284300"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+</span
+	><a href="#local-6989586621679284314"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a &amp;&amp; FZ) ~&gt; b
+LTE (a &amp;&amp; FZ) b
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284333"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679284333"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b -&gt; LTE FZ (FS b)
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><a href="#local-6989586621679284333"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-147"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284349"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284349"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284363"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284363"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE (a &amp;&amp; a) b -&gt; LTE (FS (a &amp;&amp; a)) (FS b)
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a -&gt; (a ~&gt; b) -&gt; (a &amp;&amp; a) ~&gt; b
+forall k (a :: k) (b :: k) (b' :: k).
+HasBinaryProducts k =&gt;
+Obj a -&gt; (b ~&gt; b') -&gt; (a &amp;&amp; b) ~&gt; b'
+forall (a :: FIN (S n)) (b :: FIN (S n)) (b' :: FIN (S n)).
+Obj a -&gt; (b ~&gt; b') -&gt; (a &amp;&amp; b) ~&gt; b'
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#snd%27"
+	><span class="hs-identifier hs-var"
+	  >snd'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+LTE a b
+</span
+	><a href="#local-6989586621679284349"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679284363"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-148"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-149"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+LTE a x
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284375"
+      ><span class="annot"
+	><span class="annottext"
+	  >&amp;&amp;&amp; :: forall (a :: FIN (S (S n))) (x :: FIN (S (S n)))
+       (y :: FIN (S (S n))).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	  ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >&amp;&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+LTE FZ y
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-150"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; y
+LTE FZ y
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-151"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; x
+LTE a x
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (x &amp;&amp; y)
+LTE FZ FZ
+forall {n :: NAT}. LTE FZ FZ
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZEQ"
+	><span class="hs-identifier hs-var"
+	  >ZEQ</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-152"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284436"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679284436"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-type"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284447"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE FZ b
+</span
+	  ><a href="#local-6989586621679284447"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE FZ (b &amp;&amp; b) -&gt; LTE FZ (FS (b &amp;&amp; b))
+forall {n :: NAT} (b :: FIN (S n)). LTE FZ b -&gt; LTE FZ (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#ZLT"
+	><span class="hs-identifier hs-var"
+	  >ZLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+</span
+	><a href="#local-6989586621679284436"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(FZ ~&gt; b) -&gt; (FZ ~&gt; b) -&gt; FZ ~&gt; (b &amp;&amp; b)
+forall k (a :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+forall (a :: FIN (S n)) (x :: FIN (S n)) (y :: FIN (S n)).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>FZ ~&gt; b
+LTE FZ b
+</span
+	><a href="#local-6989586621679284447"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-153"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284460"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284460"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-type"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679284474"
+      ><span class="annot"
+	><span class="annottext"
+	  >LTE a b
+</span
+	  ><a href="#local-6989586621679284474"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>LTE a (b &amp;&amp; b) -&gt; LTE (FS a) (FS (b &amp;&amp; b))
+forall {n :: NAT} (b :: FIN (S n)) (b :: FIN (S n)).
+LTE b b -&gt; LTE (FS b) (FS b)
+</span
+	><a href="Proarrow.Category.Instance.Fin.html#SLT"
+	><span class="hs-identifier hs-var"
+	  >SLT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679284460"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; a ~&gt; (b &amp;&amp; b)
+forall k (a :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+forall (a :: FIN (S n)) (x :: FIN (S n)) (y :: FIN (S n)).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >&amp;&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+LTE a b
+</span
+	><a href="#local-6989586621679284474"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>
