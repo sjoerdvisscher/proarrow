@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Functor where
 
 import Data.Functor.Compose (Compose (..))

@@ -6,11 +6,11 @@ import Proarrow.Adjunction (Adjunction (..), counitFromStarCounit, unitFromStarU
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//), lmap)
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), lmap, rmap, (//))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Costar (Costar (..))
+import Proarrow.Profunctor.Star (Star (..))
 
 type j |> p = Ran (OP j) p
 

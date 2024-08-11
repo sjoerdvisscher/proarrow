@@ -47,7 +47,6 @@ instance (Bicategory kk) => Bicategory (COK kk) where
   associator (Co p) (Co q) (Co r) = Co (associatorInv p q r)
   associatorInv (Co p) (Co q) (Co r) = Co (associator p q r)
 
-
 instance (Comonad m) => Monad (CO m) where
   eta = Co epsilon
   mu = Co delta
