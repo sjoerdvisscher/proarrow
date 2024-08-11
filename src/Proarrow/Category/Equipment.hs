@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FunctionalDependencies #-}
 
-module Proarrow.Category.Double where
+module Proarrow.Category.Equipment where
 
 import Data.Kind (Constraint)
 import Prelude (($), type (~))
@@ -21,6 +21,7 @@ instance (Ob0 kk k) => Ob0' kk k
 
 -- |
 -- The kind of a square @'(p, f) '(q, g)@.
+--
 -- > h--f--i
 -- > |  v  |
 -- > p--@--q
@@ -317,7 +318,7 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
         . rightUnitorInvWith (comConUnit gs) cfs
 
   comConUnit fs' = case asSPath fs' of
-    SNil -> id \\\ mapConjoint @(Path hk) fs'
+    SNil -> id
     SCons f sfs ->
       let fs = asObj sfs
           ls = mapCompanion @(Path hk) fs
@@ -330,7 +331,7 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
           \\\ r
 
   comConCounit fs' = case asSPath fs' of
-    SNil -> id \\\ mapConjoint @(Path hk) fs'
+    SNil -> id
     SCons @f f sfs ->
       let fs = asObj sfs
           ls = mapCompanion @(Path hk) fs

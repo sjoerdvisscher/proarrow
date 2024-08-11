@@ -1,8 +1,8 @@
-module Proarrow.Category.Double.Quintet where
+module Proarrow.Category.Equipment.Quintet where
 
 import Proarrow.Category.Bicategory (Bicategory (..))
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
-import Proarrow.Category.Double (HasCompanions (..))
+import Proarrow.Category.Equipment (HasCompanions (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data QKK kk i j = QK (kk i j)

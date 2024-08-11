@@ -10,7 +10,7 @@ import Proarrow.Category.Bicategory
   , withUnital
   , type (+++)
   )
-import Proarrow.Category.Double (DOUBLE, Double (..), Equipment (..))
+import Proarrow.Category.Equipment (DOUBLE, Double (..), Equipment (..))
 import Proarrow.Category.Instance.Simplex (Nat (..), Simplex (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (src, tgt)

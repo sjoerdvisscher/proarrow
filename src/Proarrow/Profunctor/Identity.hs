@@ -1,5 +1,6 @@
 module Proarrow.Profunctor.Identity where
 
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
@@ -26,3 +27,7 @@ instance (CategoryOf k) => Corepresentable (Id :: CAT k) where
   coindex = getId
   cotabulate = Id
   corepMap = id
+
+instance (Monoidal k) => MonoidalProfunctor (Id :: CAT k) where
+  lift0 = Id id
+  lift2 (Id f) (Id g) = Id (f `par` g)

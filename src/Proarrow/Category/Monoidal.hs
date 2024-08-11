@@ -7,7 +7,6 @@ import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Profunctor.Identity (Id (..))
 
 class (CategoryOf k, Ob (Unit :: k)) => Monoidal k where
   type Unit :: k
@@ -100,6 +99,10 @@ data Strictified as bs where
 singleton :: (CategoryOf k) => Obj (a :: k) -> Obj '[a]
 singleton a = Str a \\ a
 
+asObj :: (Monoidal k) => SList (as :: [k]) -> Obj as
+asObj Nil = obj
+asObj (Cons a as) = singleton a `par` asObj as
+
 instance (Monoidal k) => Profunctor (Strictified :: CAT [k]) where
   dimap = dimapDefault
   r \\ Str f = r \\ f
@@ -152,24 +155,28 @@ instance (Monoidal k) => Monoidal [k] where
       go (Cons a Nil) = singleton a `par` (bs' `par` cs')
       go (Cons a as@Cons{}) = singleton a `par` go as
 
--- instance SymMonoidal k => SymMonoidal [k] where
---   swap :: forall k (as :: [k]) (bs :: [k]). SymMonoidal k => Obj as -> Obj bs -> (as ** bs) ~> (bs ** as)
---   swap as bs = go (sList @as) (sList @bs) \\ as \\ bs
---     where
---       go :: forall (as' :: [k]) bs'. SList as' -> SList bs' -> (as' ** bs') ~> (bs' ** as')
---       go as Nil = rightUnitor _
---       go Nil bs = rightUnitorInv _
---       go (Cons a as) (Cons b bs) = _
---       swap1 :: Obj (a :: k) -> SList (as :: [k]) -> (a ': as) ~> (as ++ '[a])
---       swap1 = swap1
+instance (SymMonoidal k) => SymMonoidal [k] where
+  swap' :: forall (as :: [k]) (bs :: [k]). (SymMonoidal k) => Obj as -> Obj bs -> (as ** bs) ~> (bs ** as)
+  swap' as bs = go (sList @as) (sList @bs) \\ as \\ bs
+    where
+      go :: forall (as' :: [k]) bs'. SList as' -> SList bs' -> (as' ** bs') ~> (bs' ** as')
+      go as' Nil = rightUnitor (asObj as')
+      go Nil bs' = rightUnitorInv (asObj bs')
+      go (Cons a as') (Cons b bs') =
+        let sa = singleton a; sb = singleton b; sas = asObj as'; sbs = asObj bs'
+        in (singleton b `par` (associator sbs sa sas . (swap1 a bs' `par` sas) . (singleton a `par` go as' bs')))
+            . (strSwap a b `par` (sas `par` sbs))
+            . (sa `par` ((swap1Inv b as' `par` sbs) . associatorInv sas sb sbs))
+      strSwap :: Obj (a :: k) -> Obj b -> '[a, b] ~> '[b, a]
+      strSwap a b = Str (swap' a b) \\ a \\ b
+      swap1 :: forall x xs. Obj (x :: k) -> SList (xs :: [k]) -> (x ': xs) ~> (xs ++ '[x])
+      swap1 = swap1
+      swap1Inv :: forall x xs. Obj (x :: k) -> SList (xs :: [k]) -> (xs ++ '[x]) ~> (x ': xs)
+      swap1Inv = swap1Inv
 
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k) where
   lift0 :: p Unit Unit
   lift2 :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
-
-instance (Monoidal k) => MonoidalProfunctor (Id :: PRO k k) where
-  lift0 = Id id
-  lift2 (Id f) (Id g) = Id (f `par` g)
 
 class (Monoidal j, Monoidal k, Profunctor p) => OplaxMonoidalProfunctor (p :: PRO j k) where
   unlift2 :: p (x1 ** y1) (x2 ** y2) -> (p x1 x2, p y1 y2)
