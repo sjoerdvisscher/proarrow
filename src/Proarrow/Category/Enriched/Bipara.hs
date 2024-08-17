@@ -7,7 +7,7 @@ import Proarrow.Category.Bicategory (Bicategory (I))
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
 import Proarrow.Category.Enriched (Arr, ECategory (..), V, type (%~>))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal, first, second, swap')
+import Proarrow.Category.Monoidal (Monoidal (..), first, second)
 import Proarrow.Core (CategoryOf (..), Is, Kind, PRO, Profunctor (..), Promonad (..), UN, obj, (//))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
 
@@ -28,7 +28,7 @@ instance (Monoidal k, Ob a, Ob b) => Profunctor (Bipara (a :: k) b) where
   r \\ Bipara{} = r
 
 -- | Bipara as a profunctor enriched category.
-instance (SymMonoidal k) => ECategory (BIPARAK k) where
+instance (Monoidal k) => ECategory (BIPARAK k) where
   type EOb a = (Is BIPARA a, Ob (UN BIPARA a))
 
   eid :: forall {exta} (a :: BIPARAK k exta). (EOb a) => I ~> (a %~> a)
@@ -37,13 +37,13 @@ instance (SymMonoidal k) => ECategory (BIPARAK k) where
       let a = obj @(UN BIPARA a)
       in (g `par` a) . leftUnitorInv a . rightUnitor a . (a `par` f)
 
-  ecomp = Mon2 $ Prof $ \(Day g (Bipara @c @d @bb @cc p) (Bipara @e @f @aa q) h) ->
+  ecomp = Mon2 $ Prof $ \(Day g (Bipara @c @d @aa p) (Bipara @e @f @bb @cc q) h) ->
     g // h // Bipara $
       let c = obj @c; d = obj @d; e = obj @e; f = obj @f; aa = obj @aa; bb = obj @bb; cc = obj @cc
-      in ((h . swap' f d) `par` cc)
-          . associatorInv f d cc
-          . (f `par` p)
-          . associator f bb c
-          . (q `par` c)
-          . associatorInv aa e c
-          . (aa `par` (swap' c e . g))
+      in (h `par` cc)
+          . associatorInv d f cc
+          . (d `par` q)
+          . associator d bb e
+          . (p `par` e)
+          . associatorInv aa c e
+          . (aa `par` g)

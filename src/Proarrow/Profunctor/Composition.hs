@@ -3,12 +3,12 @@ module Proarrow.Profunctor.Composition where
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), lmap, rmap)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepCod)
 import Proarrow.Profunctor.Representable (Representable (..), withRepCod)
 
-type (:.:) :: PRO i j -> PRO j k -> PRO i k
+type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
   (:.:) :: p a b -> q b c -> (p :.: q) a c
 
@@ -45,6 +45,8 @@ instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :
 
 -- | Horizontal composition
 o
-  :: forall {i} {j} {k} (p :: PRO i j) (q :: PRO i j) (r :: PRO j k) (s :: PRO j k)
-   . Prof p q -> Prof r s -> Prof (p :.: r) (q :.: s)
+  :: forall {i} {j} {k} (p :: j +-> k) (q :: j +-> k) (r :: i +-> j) (s :: i +-> j)
+   . Prof p q
+  -> Prof r s
+  -> Prof (p :.: r) (q :.: s)
 Prof pq `o` Prof rs = Prof \(p :.: r) -> pq p :.: rs r

@@ -31,8 +31,8 @@ instance (CategoryOf (kk i j)) => CategoryOf (SUBCAT tag kk i j) where
   type (~>) = Sub
   type Ob (a :: SUBCAT tag kk i j) = (Is SUB a, Ob (UN SUB a), IsOb tag (UN SUB a))
 
-class (IsOb tag (a `O` b)) => IsObO tag kk i j k (a :: kk i j) (b :: kk j k)
-instance (IsOb tag (a `O` b)) => IsObO tag kk i j k (a :: kk i j) (b :: kk j k)
+class (IsOb tag (a `O` b)) => IsObO tag kk i j k (a :: kk j k) (b :: kk i j)
+instance (IsOb tag (a `O` b)) => IsObO tag kk i j k (a :: kk j k) (b :: kk i j)
 
 class (IsOb tag (I :: kk i i)) => IsObI tag kk i
 instance (IsOb tag (I :: kk i i)) => IsObI tag kk i
@@ -40,7 +40,7 @@ instance (IsOb tag (I :: kk i i)) => IsObI tag kk i
 instance
   ( Bicategory kk
   , forall i. (Ob0 kk i) => IsObI tag kk i
-  , forall i j k (a :: kk i j) (b :: kk j k). (IsOb tag a, IsOb tag b) => IsObO tag kk i j k a b
+  , forall i j k (a :: kk j k) (b :: kk i j). (IsOb tag a, IsOb tag b) => IsObO tag kk i j k a b
   )
   => Bicategory (SUBCAT tag kk)
   where

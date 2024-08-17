@@ -19,7 +19,7 @@ class (Bicategory (V vk)) => ECategory (vk :: k -> Type) where
   eid :: (EOb (a :: vk exta)) => I ~> a %~> a
   ecomp
     :: (EOb (a :: vk exta), EOb (b :: vk extb), EOb (c :: vk extc))
-    => ((a :: vk exta) %~> b) `O` (b %~> c) ~> a %~> c
+    => ((b :: vk extb) %~> c) `O` (a %~> b) ~> a %~> c
 
 type CATK :: Kind -> () -> Kind
 data CATK k ext where
@@ -33,7 +33,7 @@ type instance Arr (MonK Type) (CK a) (CK b) = MK (a ~> b)
 instance (CategoryOf k) => ECategory (CATK k) where
   type EOb (a :: CATK k exta) = (Is CK a, Ob (UN CK a))
   eid = Mon2 $ \() -> id
-  ecomp = Mon2 $ \(f, g) -> f . g
+  ecomp = Mon2 $ \(f, g) -> g . f
 
 type MONADK :: forall {k} {kk} {a}. kk (a :: k) a -> k -> Type
 data MONADK t ext where

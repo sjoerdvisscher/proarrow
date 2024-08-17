@@ -51,6 +51,10 @@ instance (Functor f) => Adjunction (Star f) (Costar f) where
   unit = Costar (map id) :.: Star (map id)
   counit (Star f :.: Costar g) = g . f
 
+instance (Representable f) => Adjunction f (RepCostar f) where
+  unit @a = let fa = repMap @f @a id in RepCostar fa :.: tabulate fa
+  counit (f :.: RepCostar g) = g . index f
+
 instance (Functor f, Functor g, Adjunction (Star f) (Star g)) => Adjunction (Costar f) (Costar g) where
   unit :: forall a. (Ob a) => (Costar g :.: Costar f) a a
   unit = Costar id :.: Costar (counit (Star (map id) :.: Star id))

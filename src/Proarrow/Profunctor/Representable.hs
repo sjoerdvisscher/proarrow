@@ -6,7 +6,7 @@ import Data.Kind (Constraint)
 
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (obj)
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 infixl 8 %
 
@@ -25,7 +25,7 @@ dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r
 
 type RepStar :: (j +-> k) -> (j +-> k)
 data RepStar p a b where
-  RepStar :: (Ob b) => {getRepStar :: a ~> p % b} -> RepStar p a b
+  RepStar :: (Ob b) => {unRepStar :: a ~> p % b} -> RepStar p a b
 instance (Representable p) => Profunctor (RepStar p) where
   dimap f g (RepStar h) = RepStar (repMap @p g . h . f) \\ g
   r \\ RepStar f = r \\ f
@@ -37,7 +37,7 @@ instance (Representable p) => Representable (RepStar p) where
 
 type RepCostar :: (k +-> j) -> (j +-> k)
 data RepCostar p a b where
-  RepCostar :: (Ob a) => {getRepCostar :: p % a ~> b} -> RepCostar p a b
+  RepCostar :: (Ob a) => {unRepCostar :: p % a ~> b} -> RepCostar p a b
 instance (Representable p) => Profunctor (RepCostar p) where
   dimap f g (RepCostar h) = RepCostar (g . h . repMap @p f) \\ f
   r \\ RepCostar f = r \\ f

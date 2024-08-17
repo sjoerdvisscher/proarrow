@@ -100,7 +100,7 @@ obj1 = singleton (obj @p)
 asObj :: (Bicategory kk) => SPath (ps :: Path kk i j) -> Obj ps
 asObj SNil = obj
 asObj (SCons p SNil) = singleton p
-asObj (SCons p ps@SCons{}) = singleton p `o` asObj ps \\ p
+asObj (SCons p ps@SCons{}) = asObj ps `o` singleton p \\ p
 
 asSPath :: (Bicategory kk) => Obj (ps :: Path kk i j) -> SPath ps
 asSPath (Str p _ _) = p
@@ -136,16 +136,15 @@ concatFold
    . (Bicategory kk)
   => SPath as
   -> SPath bs
-  -> Fold as `O` Fold bs ~> Fold (as +++ bs)
+  -> Fold bs `O` Fold as ~> Fold (as +++ bs)
 concatFold as bs =
   let fbs = fold bs
-      h :: forall cs. (Ob0 kk k) => SPath cs -> (Fold cs `O` Fold bs) ~> Fold (cs +++ bs)
-      h SNil = leftUnitor fbs
-      -- h (SCons c cs) = (c `o` h cs) . associator c (fold cs) fbs
+      h :: forall cs. (Ob0 kk k) => SPath cs -> (Fold bs `O` Fold cs) ~> Fold (cs +++ bs)
+      h SNil = rightUnitor fbs
       h (SCons c SNil) = case bs of
-        SNil -> rightUnitor c
-        SCons{} -> c `o` fbs
-      h (SCons c cs@SCons{}) = (c `o` h cs) . associator c (fold cs) fbs
+        SNil -> leftUnitor c
+        SCons{} -> fbs `o` c
+      h (SCons c cs@SCons{}) = (h cs `o` c) . associatorInv fbs (fold cs) c
   in h as \\\ fbs
 
 splitFold
@@ -153,30 +152,26 @@ splitFold
    . (Bicategory kk)
   => SPath as
   -> SPath bs
-  -> Fold (as +++ bs) ~> Fold as `O` Fold bs
+  -> Fold (as +++ bs) ~> Fold bs `O` Fold as
 splitFold as bs =
   let fbs = fold bs
-      h :: forall cs. (Ob0 kk k) => SPath cs -> Fold (cs +++ bs) ~> Fold cs `O` Fold bs
-      h SNil = leftUnitorInv fbs
-      -- h (SCons c cs) = associatorInv c (fold cs) fbs . (c `o` h cs)
+      h :: forall cs. (Ob0 kk k) => SPath cs -> Fold (cs +++ bs) ~> Fold bs `O` Fold cs
+      h SNil = rightUnitorInv fbs
       h (SCons c SNil) = case bs of
-        SNil -> rightUnitorInv c
-        SCons{} -> c `o` fbs
-      h (SCons c cs@SCons{}) = associatorInv c (fold cs) fbs . (c `o` h cs)
+        SNil -> leftUnitorInv c
+        SCons{} -> fbs `o` c
+      h (SCons c cs@SCons{}) = associator fbs (fold cs) c . (h cs `o` c)
   in h as \\\ fbs
 
 type family Fold (as :: Path kk j k) :: kk j k
 type instance Fold (Nil :: Path kk j j) = (I :: kk j j)
-
--- type instance Fold (p ::: ps) = p `O` Fold ps
 type instance Fold (p ::: Nil) = p
-type instance Fold (p ::: (q ::: ps)) = p `O` Fold (q ::: ps)
+type instance Fold (p ::: (q ::: ps)) = Fold (q ::: ps) `O` p
 
 fold :: forall {kk} {i} {j} (as :: Path kk i j). (Bicategory kk) => SPath as -> Fold as ~> Fold as
 fold SNil = iObj
--- fold (SCons p ps) = p `o` fold ps
 fold (SCons p SNil) = p
-fold (SCons p fs@SCons{}) = p `o` fold fs
+fold (SCons p fs@SCons{}) = fold fs `o` p
 
 type Strictified :: CAT (Path kk j k)
 data Strictified ps qs where
@@ -214,14 +209,14 @@ elimI = Str (SCons iObj SNil) SNil iObj
 introO
   :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
    . (Ob0 kk i, Ob0 kk j, Ob0 kk k, Bicategory kk, Ob p, Ob q)
-  => (p ::: q ::: Nil) ~> (p `O` q ::: Nil)
-introO = let p = obj @p; q = obj @q; pq = p `o` q in Str (SCons p (SCons q SNil)) (SCons pq SNil) pq
+  => (p ::: q ::: Nil) ~> (q `O` p ::: Nil)
+introO = let p = obj @p; q = obj @q; pq = q `o` p in Str (SCons p (SCons q SNil)) (SCons pq SNil) pq
 
 elimO
   :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
    . (Ob0 kk i, Ob0 kk j, Ob0 kk k, Bicategory kk, Ob p, Ob q)
-  => (p `O` q ::: Nil) ~> (p ::: q ::: Nil)
-elimO = let p = obj @p; q = obj @q; pq = p `o` q in Str (SCons pq SNil) (SCons p (SCons q SNil)) pq
+  => (q `O` p ::: Nil) ~> (p ::: q ::: Nil)
+elimO = let p = obj @p; q = obj @q; pq = q `o` p in Str (SCons pq SNil) (SCons p (SCons q SNil)) pq
 
 -- | Bicategories.
 --
@@ -233,15 +228,15 @@ class (forall j k. (Ob0 kk j, Ob0 kk k) => CategoryOf (kk j k), CategoryOf s) =>
   type Ob0 kk (j :: k) :: Constraint
   type Ob0 kk j = Any j
   type I :: kk i i
-  type O (p :: kk i j) (q :: kk j k) :: kk i k
+  type O (p :: kk j k) (q :: kk i j) :: kk i k
 
   -- | The identity 1-cell (as represented by an identity 2-cell).
-  iObj :: Ob0 kk i => Obj (I :: kk i i)
+  iObj :: (Ob0 kk i) => Obj (I :: kk i i)
   default iObj :: (Ob0 kk i, Ob (I :: kk i i)) => Obj (I :: kk i i)
   iObj = id
 
   -- | Horizontal composition of 2-cells.
-  o :: (a :: kk i j) ~> b -> c ~> d -> (a `O` c) ~> (b `O` d)
+  o :: (a :: kk j k) ~> b -> c ~> d -> (a `O` c) ~> (b `O` d)
 
   -- | Observe constraints from a 2-cell value.
   (\\\) :: ((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) => r) -> (ps :: kk i j) ~> qs -> r
@@ -266,7 +261,7 @@ rightUnitorInvWith :: (Bicategory kk) => ((I :: kk i i) ~> c) -> a ~> b -> a ~> 
 rightUnitorInvWith c ab = ((tgt ab `o` c) . rightUnitorInv ab) \\\ ab
 
 appendObj
-  :: forall {kk} {i} {j} {k} (a :: kk i j) (b :: kk j k) r
+  :: forall {kk} {i} {j} {k} (a :: kk j k) (b :: kk i j) r
    . (Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b)
   => ((Ob (a `O` b)) => r)
   -> r
@@ -275,15 +270,15 @@ appendObj r = r \\\ (obj @a `o` obj @b)
 instance (Bicategory kk) => Bicategory (Path kk) where
   type Ob0 (Path kk) j = Ob0 kk j
   type I = Nil
-  type O ps qs = ps +++ qs
+  type O ps qs = qs +++ ps
   r \\\ Str ps qs _ = withIsPath ps $ withIsPath qs r
-  Str as bs ps `o` Str cs ds qs = Str (append as cs) (append bs ds) (concatFold bs ds . (ps `o` qs) . splitFold as cs)
-  leftUnitor p = p
-  leftUnitorInv p = p
-  rightUnitor f@(Str ps _ _) = withUnital ps f
-  rightUnitorInv f@(Str _ ps _) = withUnital ps f
-  associator p@Str{} q@Str{} r@Str{} = withAssoc p q r (p `o` (q `o` r))
-  associatorInv p@Str{} q@Str{} r@Str{} = withAssoc p q r (p `o` (q `o` r))
+  Str cs ds qs `o` Str as bs ps = Str (append as cs) (append bs ds) (concatFold bs ds . (qs `o` ps) . splitFold as cs)
+  leftUnitor f@(Str ps _ _) = withUnital ps f
+  leftUnitorInv f@(Str _ ps _) = withUnital ps f
+  rightUnitor p = p
+  rightUnitorInv p = p
+  associator p@Str{} q@Str{} r@Str{} = withAssoc r q p (p `o` (q `o` r))
+  associatorInv p@Str{} q@Str{} r@Str{} = withAssoc r q p (p `o` (q `o` r))
 
 type Monad :: forall {kk} {a}. kk a a -> Constraint
 class (Bicategory kk, Ob0 kk a, Ob t) => Monad (t :: kk a a) where
@@ -294,7 +289,7 @@ instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
   eta = iObj
   mu = iObj
 
-instance Monad s => Monad (s ::: Nil) where
+instance (Monad s) => Monad (s ::: Nil) where
   eta = Str SNil (obj @s >> SNil) eta
   mu = Str (obj @s >> obj @s >> SNil) (obj @s >> SNil) mu
 
@@ -307,7 +302,7 @@ instance (Bicategory kk, Ob0 kk a) => Comonad (Nil :: Path kk a a) where
   epsilon = iObj
   delta = iObj
 
-type Bimodule :: forall {kk} {a} {b}. kk a a -> kk b b -> kk a b -> Constraint
+type Bimodule :: forall {kk} {a} {b}. kk a a -> kk b b -> kk b a -> Constraint
 class (Monad s, Monad t, Ob p) => Bimodule s t p where
   leftAction :: s `O` p ~> p
   rightAction :: p `O` t ~> p
@@ -318,17 +313,17 @@ class (Monad s, Monad t, Ob p) => Bimodule s t p where
 
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d) => Adjunction (l :: kk c d) (r :: kk d c) where
-  unit :: I ~> l `O` r
-  counit :: r `O` l ~> I
+  unit :: I ~> r `O` l
+  counit :: l `O` r ~> I
 
 instance (Adjunction l r, Ob l, Ob r) => Monad (l ::: r ::: Nil) where
-  eta = Str SNil (SCons (obj @l) (SCons (obj @r) SNil)) (unit @l @r)
+  eta = Str SNil (obj @l >> obj @r >> SNil) (unit @l @r)
   mu =
-    let r = obj @r; l = obj @l; lr = SCons l (SCons r SNil)
-    in Str (append lr lr) lr (l `o` (leftUnitor r . (counit @l @r `o` r) . associatorInv r l r))
+    let r = obj @r; l = obj @l; lr = l >> r >> SNil
+    in Str (append lr lr) lr ((rightUnitor r . (r `o` counit @l @r) . associator r l r) `o` l)
 
 instance (Adjunction l r, Ob l, Ob r) => Comonad (r ::: l ::: Nil) where
-  epsilon = Str (SCons (obj @r) (SCons (obj @l) SNil)) SNil (counit @l @r)
+  epsilon = Str (obj @r >> obj @l >> SNil) SNil (counit @l @r)
   delta =
-    let r = obj @r; l = obj @l; rl = SCons r (SCons l SNil)
-    in Str rl (append rl rl) (r `o` (associator l r l . (unit @l @r `o` l) . leftUnitorInv l))
+    let r = obj @r; l = obj @l; rl = r >> l >> SNil
+    in Str rl (append rl rl) ((associatorInv l r l . (l `o` unit @l @r) . rightUnitorInv l) `o` r)

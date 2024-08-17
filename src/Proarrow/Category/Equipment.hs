@@ -19,18 +19,6 @@ infixl 5 ===
 class (Ob0 kk k) => Ob0' kk k
 instance (Ob0 kk k) => Ob0' kk k
 
--- |
--- The kind of a square @'(p, f) '(q, g)@.
---
--- > h--f--i
--- > |  v  |
--- > p--@--q
--- > |  v  |
--- > j--g--k
-type SQ' (hk :: CAT c) (vk :: CAT c) h i j k = PRO (hk h j, vk h i) (hk i k, vk j k)
-
-type SQ (hk :: CAT c) (vk :: CAT c) = forall {h} {i} {j} {k}. SQ' hk vk h i j k
-
 -- | A double category with companions.
 type HasCompanions :: forall {c}. CAT c -> CAT c -> Constraint
 class (Bicategory hk, Bicategory vk, forall (k :: c). (Ob0 vk k) => Ob0' hk k) => HasCompanions (hk :: CAT c) vk | hk -> vk where
@@ -44,32 +32,45 @@ class (Bicategory hk, Bicategory vk, forall (k :: c). (Ob0 vk k) => Ob0' hk k) =
   compToCompose :: Obj f -> Obj g -> Companion hk vk (f `O` g) ~> (Companion hk vk f `O` Companion hk vk g)
   compFromCompose :: Obj f -> Obj g -> (Companion hk vk f `O` Companion hk vk g) ~> Companion hk vk (f `O` g)
 
+-- |
+-- The kind of a square @'(p, f) '(q, g)@.
+--
+-- > h--f--i
+-- > |  v  |
+-- > p--@--q
+-- > |  v  |
+-- > j--g--k
+type SQ' (hk :: CAT c) (vk :: CAT c) h i j k = PRO (hk h j, vk h i) (hk i k, vk j k)
+
+type SQ (hk :: CAT c) (vk :: CAT c) = forall {h} {i} {j} {k}. SQ' hk vk h i j k
+
 type Sq :: forall {c} {hk :: CAT c} {vk :: CAT c}. SQ hk vk
 data Sq pf qg where
   Sq
     :: forall {hk} {vk} {h} {i} {j} {k} (p :: hk h j) (q :: hk i k) (f :: vk h i) (g :: vk j k)
-     . (DOb hk vk h, DOb hk vk i, DOb hk vk j, DOb hk vk k, Ob p, Ob q, Ob f, Ob g)
-    => (p `O` Companion hk vk g) ~> Companion hk vk f `O` q
+     . (Ob0 vk h, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob p, Ob q, Ob f, Ob g)
+    => (Companion hk vk g `O` p) ~> q `O` Companion hk vk f
     -> Sq '(p, f) '(q, g)
 
-instance (HasCompanions hk vk, DOb hk vk h, DOb hk vk i, DOb hk vk j, DOb hk vk k) => Profunctor (Sq :: SQ' hk vk h i j k) where
-  dimap (p :**: f) (q :**: g) (Sq sq) = Sq ((mapCompanion f `o` q) . sq . (p `o` mapCompanion g)) \\\ p \\\ q \\\ f \\\ g
+instance (HasCompanions hk vk, Ob0 vk h, Ob0 vk i, Ob0 vk j, Ob0 vk k) => Profunctor (Sq :: SQ' hk vk h i j k) where
+  dimap (p :**: f) (q :**: g) (Sq sq) = Sq ((q `o` mapCompanion f) . sq . (mapCompanion g `o` p)) \\\ p \\\ q \\\ f \\\ g
   r \\ Sq sq = r \\ sq
 
-type DOb hk vk k = (Ob0 hk k, Ob0 vk k)
-
 -- | The empty square for an object.
-object :: (HasCompanions hk vk, DOb hk vk k) => Sq '(I :: hk k k, I :: vk k k) '(I, I)
+object :: (HasCompanions hk vk, Ob0 vk k) => Sq '(I :: hk k k, I :: vk k k) '(I, I)
 object = hArr iObj
 
 -- | Make a square from a horizontal arrow
 hArr
   :: forall {hk} {vk} {j} {k} (p :: hk j k) q
-   . (HasCompanions hk vk, DOb hk vk j, DOb hk vk k)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
   => p ~> q
   -> Sq '(p, I :: vk j j) '(q, I :: vk k k)
 hArr n =
-  Sq (leftUnitorInvWith (compFromId @hk @vk) (tgt n) . n . rightUnitorWith (compToId @hk @vk) (src n)) \\ n \\ iObj @vk @j \\ iObj @vk @k
+  Sq (rightUnitorInvWith (compFromId @hk @vk) (tgt n) . n . leftUnitorWith (compToId @hk @vk) (src n))
+    \\ n
+    \\ iObj @vk @j
+    \\ iObj @vk @k
 
 -- | Horizontal composition
 (|||)
@@ -77,7 +78,7 @@ hArr n =
    . (HasCompanions hk vk)
   => Sq '(p :: hk h j, f :: vk h i) '(q, g)
   -> Sq '(q :: hk i k, d :: vk i l) '(r, e)
-  -> Sq '(p, f `O` d) '(r, g `O` e)
+  -> Sq '(p, d `O` f) '(r, e `O` g)
 Sq sqL ||| Sq sqR =
   ( let p = obj @p
         q = obj @q
@@ -90,14 +91,14 @@ Sq sqL ||| Sq sqR =
         ec = mapCompanion @hk e
         fc = mapCompanion @hk f
         gc = mapCompanion @hk g
-    in (f `o` d) // (g `o` e) // Sq $
-        (compFromCompose f d `o` r)
-          . associatorInv fc dc r
-          . (fc `o` sqR)
-          . associator fc q ec
-          . (sqL `o` ec)
-          . associatorInv p gc ec
-          . (p `o` compToCompose g e)
+    in (d `o` f) // (e `o` g) // Sq $
+        (r `o` compFromCompose d f)
+          . associator r dc fc
+          . (sqR `o` fc)
+          . associatorInv ec q fc
+          . (ec `o` sqL)
+          . associator ec gc p
+          . (compToCompose e g `o` p)
   )
     \\\ sqL
     \\\ sqR
@@ -105,10 +106,12 @@ Sq sqL ||| Sq sqR =
 -- | Make a square from a vertical arrow
 vArr
   :: forall {hk} {vk} {j} {k} (f :: vk j k) g
-   . (HasCompanions hk vk, DOb hk vk j, DOb hk vk k)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
   => f ~> g
   -> Sq '(I :: hk j j, f) '(I :: hk k k, g)
-vArr n = let n' = mapCompanion @hk @vk n in Sq (rightUnitorInv (tgt n') . n' . leftUnitor (src n')) \\ n \\ iObj @hk @j \\ iObj @hk @k
+vArr n =
+  let n' = mapCompanion @hk @vk n
+  in Sq (leftUnitorInv (tgt n') . n' . rightUnitor (src n')) \\ n \\ iObj @hk @j \\ iObj @hk @k
 
 -- | Vertical composition
 (===)
@@ -116,7 +119,7 @@ vArr n = let n' = mapCompanion @hk @vk n in Sq (rightUnitorInv (tgt n') . n' . l
    . (HasCompanions hk vk)
   => Sq '(p :: hk h j, f :: vk h i) '(q, g)
   -> Sq '(r :: hk j k, g :: vk j l) '(s, e)
-  -> Sq '(p `O` r, f) '(q `O` s, e)
+  -> Sq '(r `O` p, f) '(s `O` q, e)
 Sq sqL === Sq sqR =
   ( let p = obj @p
         q = obj @q
@@ -125,39 +128,39 @@ Sq sqL === Sq sqR =
         ec = mapCompanion @hk (obj @e)
         fc = mapCompanion @hk (obj @f)
         gc = mapCompanion @hk (obj @g)
-    in (p `o` r) // (q `o` s) // Sq $
-        associator fc q s
-          . (sqL `o` s)
-          . associatorInv p gc s
-          . (p `o` sqR)
-          . associator p r ec
+    in (r `o` p) // (s `o` q) // Sq $
+        associatorInv s q fc
+          . (s `o` sqL)
+          . associator s gc p
+          . (sqR `o` p)
+          . associatorInv ec r p
   )
     \\\ sqL
     \\\ sqR
 
 fromRight
   :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, DOb hk vk j, DOb hk vk k, Ob (f :: vk j k))
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(I :: hk j j, I :: vk j j) '(Companion hk vk f, f)
-fromRight = let comp = mapCompanion @hk @vk (obj @f) in Sq (compFromId `o` comp) \\ comp \\ iObj @hk @j \\ iObj @vk @j
+fromRight = let comp = mapCompanion @hk @vk (obj @f) in Sq (comp `o` compFromId) \\ comp \\ iObj @hk @j \\ iObj @vk @j
 
 toLeft
   :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, DOb hk vk j, DOb hk vk k, Ob (f :: vk j k))
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(Companion hk vk f, f) '(I :: hk k k, I :: vk k k)
-toLeft = let comp = mapCompanion @hk @vk (obj @f) in Sq (comp `o` compToId) \\ comp \\ iObj @hk @k \\ iObj @vk @k
+toLeft = let comp = mapCompanion @hk @vk (obj @f) in Sq (compToId `o` comp) \\ comp \\ iObj @hk @k \\ iObj @vk @k
 
-toRight
-  :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (Equipment hk vk, DOb hk vk j, DOb hk vk k, Ob f)
-  => Sq '(I :: hk j j, f) '(Conjoint hk vk f, I :: vk j j)
-toRight = let f = obj @f in Sq (comConUnit @hk @vk f . rightUnitorWith (compToId @hk @vk) iObj) \\\ mapConjoint @hk @vk f \\ iObj @hk @j \\ iObj @vk @j
+-- toRight
+--   :: forall {hk} {vk} {j} {k} (f :: vk j k)
+--    . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob f)
+--   => Sq '(I :: hk j j, f) '(Conjoint hk vk f, I :: vk j j)
+-- toRight = let f = obj @f in Sq (comConUnit @hk @vk _ . leftUnitorWith (compToId @hk @vk) iObj) \\\ mapConjoint @hk @vk f \\ iObj @hk @j \\ iObj @vk @j
 
-fromLeft
-  :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (Equipment hk vk, DOb hk vk j, DOb hk vk k, Ob (f :: vk j k))
-  => Sq '(Conjoint hk vk f, I :: vk k k) '(I :: hk k k, f)
-fromLeft = let f = obj @f in Sq (leftUnitorInvWith (compFromId @hk @vk) iObj . comConCounit @hk @vk f) \\\ mapConjoint @hk @vk f \\ iObj @hk @k \\ iObj @vk @k
+-- fromLeft
+--   :: forall {hk} {vk} {j} {k} (f :: vk j k)
+--    . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
+--   => Sq '(Conjoint hk vk f, I :: vk k k) '(I :: hk k k, f)
+-- fromLeft = let f = obj @f in Sq (leftUnitorInvWith (compFromId @hk @vk) iObj . comConCounit @hk @vk f) \\\ mapConjoint @hk @vk f \\ iObj @hk @k \\ iObj @vk @k
 
 class (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
 instance (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
@@ -168,9 +171,9 @@ class (HasCompanions hk vk) => Equipment hk vk where
   mapConjoint :: f ~> g -> Conjoint hk vk f ~> Conjoint hk vk g
 
   conjToId :: forall k. (Ob0 vk k) => Conjoint hk vk (I :: vk k k) ~> (I :: hk k k)
-  conjToId = comConCounit iObj . rightUnitorInvWith compFromId (mapConjoint iObj)
+  conjToId = comConCounit iObj . leftUnitorInvWith compFromId (mapConjoint iObj)
   conjFromId :: forall k. (Ob0 vk k) => (I :: hk k k) ~> Conjoint hk vk (I :: vk k k)
-  conjFromId = leftUnitorWith compToId (mapConjoint iObj) . comConUnit iObj
+  conjFromId = rightUnitorWith compToId (mapConjoint iObj) . comConUnit iObj
 
   conjToCompose :: Obj f -> Obj g -> Conjoint hk vk (f `O` g) ~> (Conjoint hk vk g `O` Conjoint hk vk f)
   conjToCompose f g =
@@ -184,15 +187,15 @@ class (HasCompanions hk vk) => Equipment hk vk where
       conG = mapConjoint @hk g
     in
       unStr
-        ( ( ( str (conFG >> comFG >> SNil) SNil (comConCounit fg)
-                . (singleton conFG `o` str (comF >> comG >> SNil) (comFG >> SNil) (compFromCompose f g))
-            )
-              `o` (singleton conG `o` singleton conF)
+        ( ( (singleton conG `o` singleton conF)
+              `o` ( str (conFG >> comFG >> SNil) SNil (comConCounit fg)
+                      . (str (comG >> comF >> SNil) (comFG >> SNil) (compFromCompose f g) `o` singleton conFG)
+                  )
           )
-            . ( singleton conFG
-                  `o` ( (singleton comF `o` str SNil (comG >> conG >> SNil) (comConUnit g) `o` singleton conF)
-                          . str SNil (comF >> conF >> SNil) (comConUnit f)
-                      )
+            . ( ( (singleton conG `o` str SNil (comF >> conF >> SNil) (comConUnit f) `o` singleton comG)
+                    . str SNil (comG >> conG >> SNil) (comConUnit g)
+                )
+                  `o` singleton conFG
               )
         )
         \\\ f
@@ -210,27 +213,27 @@ class (HasCompanions hk vk) => Equipment hk vk where
       conG = mapConjoint @hk g
     in
       unStr
-        ( ( ( str (conG >> comG >> SNil) SNil (comConCounit g)
-                . (singleton conG `o` str (conF >> comF >> SNil) SNil (comConCounit f) `o` singleton comG)
-            )
-              `o` singleton conFG
+        ( ( singleton conFG
+              `o` ( str (conF >> comF >> SNil) SNil (comConCounit f)
+                      . (singleton comF `o` str (conG >> comG >> SNil) SNil (comConCounit g) `o` singleton conF)
+                  )
           )
-            . ( (singleton conG `o` singleton conF)
-                  `o` ( (str (comFG >> SNil) (comF >> comG >> SNil) (compToCompose f g) `o` singleton conFG)
-                          . str SNil (comFG >> conFG >> SNil) (comConUnit fg)
-                      )
+            . ( ( (singleton conFG `o` str (comFG >> SNil) (comG >> comF >> SNil) (compToCompose f g))
+                    . str SNil (comFG >> conFG >> SNil) (comConUnit fg)
+                )
+                  `o` (singleton conG `o` singleton conF)
               )
         )
         \\\ f
         \\\ g
 
-  comConUnit :: Obj f -> I ~> Companion hk vk f `O` Conjoint hk vk f
+  comConUnit :: Obj f -> I ~> Conjoint hk vk f `O` Companion hk vk f
   default comConUnit
-    :: forall f. (((Ob f) => ComConAdjunction hk vk f)) => Obj f -> I ~> Companion hk vk f `O` Conjoint hk vk f
+    :: forall f. (((Ob f) => ComConAdjunction hk vk f)) => Obj f -> I ~> Conjoint hk vk f `O` Companion hk vk f
   comConUnit f = unit @(Companion hk vk f) @(Conjoint hk vk f) \\\ f
-  comConCounit :: Obj f -> Conjoint hk vk f `O` Companion hk vk f ~> I
+  comConCounit :: Obj f -> Companion hk vk f `O` Conjoint hk vk f ~> I
   default comConCounit
-    :: forall f. ((Ob f) => ComConAdjunction hk vk f) => Obj f -> Conjoint hk vk f `O` Companion hk vk f ~> I
+    :: forall f. ((Ob f) => ComConAdjunction hk vk f) => Obj f -> Companion hk vk f `O` Conjoint hk vk f ~> I
   comConCounit f = counit @(Companion hk vk f) @(Conjoint hk vk f) \\\ f
 
 companionFold
@@ -240,7 +243,7 @@ companionFold
   -> Companion hk vk (Fold fs) ~> Fold (Companion (Path hk) (Path vk) fs)
 companionFold SNil = compToId
 companionFold (SCons f SNil) = mapCompanion f
-companionFold (SCons f fs@SCons{}) = let cfs = mapCompanion @hk f `o` companionFold fs in (cfs . compToCompose f (fold fs)) \\\ cfs
+companionFold (SCons f fs@SCons{}) = let cfs = companionFold fs `o` mapCompanion @hk f in (cfs . compToCompose (fold fs) f) \\\ cfs
 
 foldCompanion
   :: forall {hk} {vk} {j} {k} (fs :: Path vk j k)
@@ -249,7 +252,7 @@ foldCompanion
   -> Fold (Companion (Path hk) (Path vk) fs) ~> Companion hk vk (Fold fs)
 foldCompanion SNil = compFromId
 foldCompanion (SCons f SNil) = mapCompanion f
-foldCompanion (SCons f fs@SCons{}) = let cfs = mapCompanion @hk f `o` foldCompanion fs in (compFromCompose f (fold fs) . cfs) \\\ cfs
+foldCompanion (SCons f fs@SCons{}) = let cfs = foldCompanion fs `o` mapCompanion @hk f in (compFromCompose (fold fs) f . cfs) \\\ cfs
 
 mapCompanionSPath
   :: forall hk {vk} {j} {k} (fs :: Path vk j k)
@@ -271,23 +274,23 @@ instance (HasCompanions hk vk) => HasCompanions (Path hk) (Path vk) where
   compToCompose (Str fs _ f) (Str gs _ g) =
     let cfs = mapCompanionSPath fs
         cgs = mapCompanionSPath gs
-        fgs = append fs gs
-    in Str (mapCompanionSPath fgs) (cfs `append` cgs) $
-        concatFold cfs cgs
+        fgs = append gs fs
+    in Str (mapCompanionSPath fgs) (cgs `append` cfs) $
+        concatFold cgs cfs
           . (companionFold fs `o` companionFold gs)
           . compToCompose f g
-          . mapCompanion (concatFold fs gs)
+          . mapCompanion (concatFold gs fs)
           . foldCompanion fgs
   compFromCompose (Str fs _ f) (Str gs _ g) =
     let cfs = mapCompanionSPath fs
         cgs = mapCompanionSPath gs
-        fgs = append fs gs
-    in Str (cfs `append` cgs) (mapCompanionSPath fgs) $
+        fgs = append gs fs
+    in Str (cgs `append` cfs) (mapCompanionSPath fgs) $
         companionFold fgs
-          . mapCompanion (splitFold fs gs)
+          . mapCompanion (splitFold gs fs)
           . compFromCompose f g
           . (foldCompanion fs `o` foldCompanion gs)
-          . splitFold cfs cgs
+          . splitFold cgs cfs
 
 mapConjointSPath
   :: forall hk {vk} {j} {k} (fs :: Path vk j k)
@@ -307,10 +310,10 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
         cfs = asObj (mapConjointSPath @hk fsp)
         cgs = asObj (mapConjointSPath @hk gsp)
         compN = mapCompanion n
-    in leftUnitorWith (comConCounit @(Path hk) fs) cgs
-        . associatorInv cfs (tgt compN) cgs
-        . (cfs `o` (compN `o` cgs))
-        . rightUnitorInvWith (comConUnit gs) cfs
+    in rightUnitorWith (comConCounit @(Path hk) fs) cgs
+        . associator cgs (tgt compN) cfs
+        . ((cgs `o` compN) `o` cfs)
+        . leftUnitorInvWith (comConUnit gs) cfs
 
   comConUnit fs' = case asSPath fs' of
     SNil -> id
@@ -321,7 +324,11 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
           rs = mapConjoint @(Path hk) fs
           r = mapConjoint @hk f
           r' = singleton r
-      in ((singleton l `o` (associator ls rs r' . (comConUnit @(Path hk) fs `o` r'))) . elimO . singleton (comConUnit f) . introI)
+      in ( ((associatorInv r' rs ls . (r' `o` comConUnit @(Path hk) fs)) `o` singleton l)
+            . elimO
+            . singleton (comConUnit f)
+            . introI
+         )
           \\\ l
           \\\ r
 
@@ -336,12 +343,12 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
           r = mapConjoint @hk f
           r' = singleton r
       in ( comConCounit fs
-            . ( ( rightUnitorWith (elimI . singleton (comConCounit f) . introO @(Conjoint hk vk f) @(Companion hk vk f)) rs
-                    . associator rs r' l'
-                )
-                  `o` ls
+            . ( ls
+                  `o` ( leftUnitorWith (elimI . singleton (comConCounit f) . introO @(Conjoint hk vk f) @(Companion hk vk f)) rs
+                          . associatorInv l' r' rs
+                      )
               )
-            . associatorInv (rs `o` r') l' ls
+            . associator ls l' (r' `o` rs)
          )
           \\\ rs
           \\\ l

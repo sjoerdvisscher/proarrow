@@ -12,9 +12,9 @@ import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Core (CAT, CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (\\))
 import Proarrow.Functor (Functor, map)
 
-type LeftKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lan j f)) => LeftKanExtension (j :: kk c d) (f :: kk c e) where
-  type Lan j f :: kk d e
+type LeftKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
+class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lan j f)) => LeftKanExtension (j :: kk d c) (f :: kk e c) where
+  type Lan j f :: kk e d
   lan :: f ~> j `O` Lan j f
   lanUniv :: (Ob g) => (f ~> j `O` g) -> Lan j f ~> g
 
@@ -27,9 +27,9 @@ rebaseLan ij = lanUniv @j ((ij `o` obj @(Lan i f)) . lan @i @f)
 dimapLan :: forall i j f g. (LeftKanExtension j f, LeftKanExtension i g) => (i ~> j) -> (f ~> g) -> (Lan j f ~> Lan i g)
 dimapLan ij fg = lanUniv @j ((ij `o` obj @(Lan i g)) . lan @i . fg) \\ ij
 
-type RightKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Ran j f)) => RightKanExtension (j :: kk c d) (f :: kk c e) where
-  type Ran j f :: kk d e
+type RightKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
+class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Ran j f)) => RightKanExtension (j :: kk d c) (f :: kk e c) where
+  type Ran j f :: kk e d
   ran :: j `O` Ran j f ~> f
   ranUniv :: (Ob g) => (j `O` g ~> f) -> g ~> Ran j f
 
@@ -43,9 +43,9 @@ dimapRan
   :: forall i j f g. (RightKanExtension j f, RightKanExtension i g) => (i ~> j) -> (f ~> g) -> (Ran j f ~> Ran i g)
 dimapRan ij fg = ranUniv @i (fg . ran @j . (ij `o` obj @(Ran j f))) \\ ij
 
-type LeftKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lift j f)) => LeftKanLift (j :: kk d c) (f :: kk e c) where
-  type Lift j f :: kk e d
+type LeftKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
+class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lift j f)) => LeftKanLift (j :: kk c d) (f :: kk c e) where
+  type Lift j f :: kk d e
   lift :: f ~> Lift j f `O` j
   liftUniv :: (Ob g) => (f ~> g `O` j) -> Lift j f ~> g
 
@@ -58,9 +58,9 @@ rebaseLift ij = liftUniv @j ((obj @(Lift i f) `o` ij) . lift @i @f)
 dimapLift :: forall i j f g. (LeftKanLift j f, LeftKanLift i g) => (i ~> j) -> (f ~> g) -> (Lift j f ~> Lift i g)
 dimapLift ij fg = liftUniv @j ((obj @(Lift i g) `o` ij) . lift @i . fg) \\ ij
 
-type RightKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Rift j f)) => RightKanLift (j :: kk d c) (f :: kk e c) where
-  type Rift j f :: kk e d
+type RightKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
+class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Rift j f)) => RightKanLift (j :: kk c d) (f :: kk c e) where
+  type Rift j f :: kk d e
   rift :: Rift j f `O` j ~> f
   riftUniv :: (Ob g) => (g `O` j ~> f) -> g ~> Rift j f
 
