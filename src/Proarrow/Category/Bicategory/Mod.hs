@@ -16,8 +16,8 @@ type family UNMOD (p :: MODK kk s t) :: Path kk (MONObj0 s) (MONObj0 t) where
 type Mod :: forall {kk} {s} {t}. CAT (MODK kk s t)
 data Mod p q where
   Mod
-    :: (s' ~ UN MON s ::: Nil, t' ~ UN MON t ::: Nil, Bimodule s' t' p, Bimodule s' t' q)
-    => p ~> q -> Mod (MOD p :: MODK kk s t) (MOD q)
+    :: (s' ~ s ::: Nil, t' ~ t ::: Nil, Bimodule s' t' p, Bimodule s' t' q)
+    => p ~> q -> Mod (MOD p :: MODK kk (MON s) (MON t)) (MOD q)
 instance (Bicategory kk, Ob0 kk (MONObj0 s), Ob0 kk (MONObj0 t)) => Profunctor (Mod :: CAT (MODK kk s t)) where
   dimap = dimapDefault
   r \\ Mod f = r \\ f

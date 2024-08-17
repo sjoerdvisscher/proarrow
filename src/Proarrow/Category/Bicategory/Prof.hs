@@ -2,7 +2,6 @@
 
 module Proarrow.Category.Bicategory.Prof where
 
-import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Adjunction qualified as A
@@ -17,7 +16,6 @@ import Proarrow.Core
   , CategoryOf (..)
   , Is
   , IsCategoryOf
-  , PRO
   , Profunctor (..)
   , Promonad (..)
   , UN
@@ -32,27 +30,19 @@ import Proarrow.Core
   )
 import Proarrow.Object (src, tgt)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..))
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Category.Bicategory.Sub (SUBCAT (..), IsOb, Sub (..))
 
-type data ProfCl = ProfC | ProfRepC | ProfCorepC
-
-type family ProfConstraint (cl :: ProfCl) :: PRO j k -> Constraint
-type instance ProfConstraint ProfC = Profunctor
-type instance ProfConstraint ProfRepC = Representable
-type instance ProfConstraint ProfCorepC = Corepresentable
-
-type data ProfK (cl :: ProfCl) j k = PK (j +-> k)
+type data PROFK j k = PK (j +-> k)
 type instance UN PK (PK p) = p
-type PROFK = ProfK ProfC
 
-type Prof :: CAT (ProfK cl j k)
+type Prof :: CAT (PROFK j k)
 data Prof p q where
-  Prof :: (Ob p, Ob q) => UN PK p :~> UN PK q -> Prof p q
+  Prof :: (Ob p, Ob q) => p :~> q -> Prof (PK p) (PK q)
 
 instance Profunctor Prof where
   dimap = dimapDefault
@@ -60,25 +50,12 @@ instance Profunctor Prof where
 instance Promonad Prof where
   id = Prof id
   Prof m . Prof n = Prof (m . n)
-instance CategoryOf (ProfK cl j k) where
+instance CategoryOf (PROFK j k) where
   type (~>) = Prof
-  type
-    Ob @(ProfK cl j k) p =
-      (Is PK p, Profunctor (UN PK p), ProfConstraint cl (UN PK p))
+  type Ob @(PROFK j k) p = (Is PK p, Profunctor (UN PK p))
 
-class (ProfConstraint cl (p :.: q)) => ComposeConstraint cl i j k (p :: PRO i j) (q :: PRO j k)
-instance (ProfConstraint cl (p :.: q)) => ComposeConstraint cl i j k (p :: PRO i j) (q :: PRO j k)
-
-class (ProfConstraint cl (Id :: CAT k)) => IdConstraint cl k
-instance (ProfConstraint cl (Id :: CAT k)) => IdConstraint cl k
-
-instance
-  ( forall i j k (p :: PRO i j) (q :: PRO j k). (ProfConstraint cl p, ProfConstraint cl q) => ComposeConstraint cl i j k p q
-  , forall k. (CategoryOf k) => IdConstraint cl k
-  )
-  => Bicategory (ProfK cl)
-  where
-  type Ob0 (ProfK cl) k = CategoryOf k
+instance Bicategory PROFK where
+  type Ob0 PROFK k = CategoryOf k
   type I = PK Id
   type p `O` q = PK (UN PK p :.: UN PK q)
   Prof m `o` Prof n = Prof $ \(p :.: q) -> m p :.: n q
@@ -90,24 +67,27 @@ instance
   associator Prof{} Prof{} Prof{} = Prof $ \((p :.: q) :.: r) -> p :.: (q :.: r)
   associatorInv Prof{} Prof{} Prof{} = Prof $ \(p :.: (q :.: r)) -> (p :.: q) :.: r
 
-instance HasCompanions PROFK (COK (ProfK ProfRepC)) where
-  type Companion PROFK (COK (ProfK ProfRepC)) p = PK (UN PK (UN CO p))
-  mapCompanion (Co (Prof n)) = Prof n
+data ProfRep
+type instance IsOb ProfRep p = Representable (UN PK p)
+
+instance HasCompanions PROFK (COK (SUBCAT ProfRep PROFK)) where
+  type Companion PROFK (COK (SUBCAT ProfRep PROFK)) p = UN SUB (UN CO p)
+  mapCompanion (Co (Sub (Prof n))) = Prof n
   compToId = Prof id
   compFromId = Prof id
   compToCompose (Co f) (Co g) = Prof id \\ f \\ g
   compFromCompose (Co f) (Co g) = Prof id \\ f \\ g
 
-instance Equipment PROFK (COK (ProfK ProfRepC)) where
-  type Conjoint PROFK (COK (ProfK ProfRepC)) p = PK (RepCostar (UN PK (UN CO p)))
-  mapConjoint (Co (Prof @p n)) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (tabulate @(UN PK p) @a (repMap @(UN PK p) @a id))))
+instance Equipment PROFK (COK (SUBCAT ProfRep PROFK)) where
+  type Conjoint PROFK (COK (SUBCAT ProfRep PROFK)) p = PK (RepCostar (UN PK (UN SUB (UN CO p))))
+  mapConjoint (Co (Sub (Prof @p n))) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (tabulate @p @a (repMap @p @a id))))
   conjToId = Prof (Id . unRepCostar)
   conjFromId = Prof \(Id f) -> RepCostar f \\ f
-  conjToCompose (Co Prof{}) (Co (Prof @g _)) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repMap @(UN PK g) (obj @b)
-  conjFromCompose (Co (Prof @f _)) (Co Prof{}) = Prof \(RepCostar f :.: RepCostar g) -> RepCostar (g . repMap @(UN PK f) f)
+  conjToCompose (Co (Sub Prof{})) (Co (Sub (Prof @g _))) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repMap @g (obj @b)
+  conjFromCompose (Co (Sub (Prof @f _))) (Co (Sub Prof{})) = Prof \(RepCostar f :.: RepCostar g) -> RepCostar (g . repMap @f f)
 
 instance (Promonad p) => Monad (PK p :: PROFK k k) where
-  eta = Prof (arr . getId)
+  eta = Prof (arr . unId)
   mu = Prof \(p :.: q) -> q . p
 
 instance (Procomonad p) => Comonad (PK p :: PROFK k k) where

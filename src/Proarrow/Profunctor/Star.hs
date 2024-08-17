@@ -9,7 +9,7 @@ import Prelude qualified as P
 
 type Star :: (k1 -> k2) -> PRO k2 k1
 data Star f a b where
-  Star :: (Ob b) => {getStar :: a ~> f b} -> Star f a b
+  Star :: (Ob b) => {unStar :: a ~> f b} -> Star f a b
 
 instance (Functor f) => Profunctor (Star f) where
   dimap = dimapRep
@@ -17,13 +17,13 @@ instance (Functor f) => Profunctor (Star f) where
 
 instance (Functor f) => Representable (Star f) where
   type Star f % a = f a
-  index = getStar
+  index = unStar
   tabulate = Star
   repMap = map
 
 instance (P.Monad m) => Promonad (Star (Prelude m)) where
   id = Star (Prelude . P.pure)
-  Star g . Star f = Star \a -> Prelude (getPrelude (f a) P.>>= (getPrelude . g))
+  Star g . Star f = Star \a -> Prelude (unPrelude (f a) P.>>= (unPrelude . g))
 
 composeStar :: (Functor f) => Star f :.: Star g :~> Star (Compose f g)
 composeStar (Star f :.: Star g) = Star (Compose . map g . f)

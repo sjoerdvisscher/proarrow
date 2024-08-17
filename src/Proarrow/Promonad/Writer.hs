@@ -10,7 +10,7 @@ import Proarrow.Object.BinaryProduct ()
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
 
-newtype Writer m a b = Writer {getWriter :: a -> (m, b)}
+newtype Writer m a b = Writer {unWriter :: a -> (m, b)}
 
 instance Profunctor (Writer m) where
   dimap l r (Writer f) = Writer (fmap r . f . l)

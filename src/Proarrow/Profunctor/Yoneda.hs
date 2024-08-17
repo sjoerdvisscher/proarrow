@@ -7,7 +7,7 @@ import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), (//)
 
 type Yoneda :: (j -> k -> Type) -> PRO j k
 data Yoneda p a b where
-  Yoneda :: (Ob a, Ob b) => {getYoneda :: Yo a b :~> p} -> Yoneda p a b
+  Yoneda :: (Ob a, Ob b) => {unYoneda :: Yo a b :~> p} -> Yoneda p a b
 
 instance (CategoryOf j, CategoryOf k) => Profunctor (Yoneda (p :: PRO j k)) where
   dimap l r (Yoneda k) = l // r // Yoneda \(Yo ca bd) -> k $ Yo (l . ca) (bd . r)

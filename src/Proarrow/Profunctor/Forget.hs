@@ -86,7 +86,7 @@ instance Functor Ap where
   map (Nat n) = Nat $ \case
     Pure a -> Pure a
     Eff fa -> Eff (n fa)
-    LiftA2 k x y -> LiftA2 k (getNat (map (Nat n)) x) (getNat (map (Nat n)) y)
+    LiftA2 k x y -> LiftA2 k (unNat (map (Nat n)) x) (unNat (map (Nat n)) y)
 
 instance (HasProducts k, Functor f) => Applicative (Ap (f :: k -> Type)) where
   pure a () = Pure a

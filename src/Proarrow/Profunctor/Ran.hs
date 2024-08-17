@@ -16,7 +16,7 @@ type j |> p = Ran (OP j) p
 
 type Ran :: OPPOSITE (PRO i j) -> PRO i k -> PRO j k
 data Ran j p a b where
-  Ran :: (Ob a, Ob b) => {getRan :: forall x. (Ob x) => j x a -> p x b} -> Ran (OP j) p a b
+  Ran :: (Ob a, Ob b) => {unRan :: forall x. (Ob x) => j x a -> p x b} -> Ran (OP j) p a b
 
 runRan :: (Profunctor j) => j x a -> Ran (OP j) p a b -> p x b
 runRan j (Ran k) = k j \\ j

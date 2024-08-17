@@ -5,8 +5,8 @@ import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), arr)
-import Proarrow.Object.BinaryCoproduct (COPROD (..), HasCoproducts, codiag, mkCoprod)
-import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), diag, mkProd, (&&&))
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasCoproducts, codiag)
+import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Object.Terminal (terminate)
 
@@ -27,8 +27,8 @@ instance (Monoid m, Cartesian k, Ob x) => P.Monoid (GenElt x (m :: k)) where
   mempty = GenElt (mempty . arr terminate)
 
 instance (HasCoproducts k, Ob a) => Monoid (COPR (a :: k)) where
-  mempty = mkCoprod initiate
-  mappend = mkCoprod codiag
+  mempty = Coprod initiate
+  mappend = Coprod codiag
 
 type Comonoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob c) => Comonoid (c :: k) where
@@ -36,5 +36,5 @@ class (Monoidal k, Ob c) => Comonoid (c :: k) where
   comult :: c ~> c ** c
 
 instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
-  counit = mkProd terminate
-  comult = mkProd diag
+  counit = Prod terminate
+  comult = Prod diag

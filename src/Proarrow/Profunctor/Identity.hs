@@ -6,7 +6,7 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type Id :: CAT k
-newtype Id a b = Id {getId :: a ~> b}
+newtype Id a b = Id {unId :: a ~> b}
 
 instance (CategoryOf k) => Profunctor (Id :: CAT k) where
   dimap l r (Id f) = Id (r . f . l)
@@ -18,13 +18,13 @@ instance (CategoryOf k) => Promonad (Id :: CAT k) where
 
 instance (CategoryOf k) => Representable (Id :: CAT k) where
   type Id % a = a
-  index = getId
+  index = unId
   tabulate = Id
   repMap = id
 
 instance (CategoryOf k) => Corepresentable (Id :: CAT k) where
   type Id %% a = a
-  coindex = getId
+  coindex = unId
   cotabulate = Id
   corepMap = id
 

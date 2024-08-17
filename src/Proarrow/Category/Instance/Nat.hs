@@ -24,7 +24,7 @@ type Nat :: CAT (j -> k)
 data Nat f g where
   Nat
     :: (Functor f, Functor g)
-    => {getNat :: f .~> g}
+    => {unNat :: f .~> g}
     -> Nat f g
 
 instance CategoryOf (k1 -> Type) where
@@ -120,8 +120,8 @@ instance (Functor w) => Profunctor (ComonoidAsCat w) where
   dimap f g (ComonoidAsCat h) = ComonoidAsCat (g . h . map f)
 
 instance (Comonoid w) => Promonad (ComonoidAsCat w) where
-  id = ComonoidAsCat (runIdentity . getNat counit)
-  ComonoidAsCat f . ComonoidAsCat g = ComonoidAsCat (f . map g . getCompose . getNat comult)
+  id = ComonoidAsCat (runIdentity . unNat counit)
+  ComonoidAsCat f . ComonoidAsCat g = ComonoidAsCat (f . map g . getCompose . unNat comult)
 
 instance CategoryOf (k1 -> k2 -> k3 -> Type) where
   type (~>) = Nat
@@ -159,7 +159,7 @@ type instance UN NT (NT f) = f
 data Nat' f g where
   Nat'
     :: (Functor f, Functor g)
-    => {getNat' :: f .~> g}
+    => {unNat' :: f .~> g}
     -> Nat' (NT f) (NT g)
 
 instance CategoryOf (NatK j k) where

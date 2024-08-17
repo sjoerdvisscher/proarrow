@@ -2,13 +2,13 @@
 
 module Proarrow.Category.Bicategory.Sub where
 
-import Data.Kind (Type)
+import Data.Kind (Type, Constraint)
 import Prelude (($))
 
 import Proarrow.Category.Bicategory (Bicategory (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
-class IsOb (tag :: Type) a
+type family IsOb (tag :: Type) (a :: k) :: Constraint
 
 type SUBCAT :: forall k. Type -> CAT k -> CAT k
 type data SUBCAT tag kk i j = SUB (kk i j)

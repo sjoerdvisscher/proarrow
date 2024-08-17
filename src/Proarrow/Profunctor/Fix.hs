@@ -18,13 +18,13 @@ instance (Profunctor p) => Profunctor (Fix p) where
   r \\ In p = r \\ p
 
 instance Functor Fix where
-  map n@Prof{} = Prof (In . getProf (getNat (map n) . map (map n)) . out)
+  map n@Prof{} = Prof (In . unProf (unNat (map n) . map (map n)) . out)
 
 cata :: (Profunctor p, Profunctor r) => (p :.: r :~> r) -> Fix p :~> r
-cata alg = getProf go where go = Prof alg . map go . Prof out
+cata alg = unProf go where go = Prof alg . map go . Prof out
 
 ana :: (Profunctor p, Profunctor r) => (r :~> p :.: r) -> r :~> Fix p
-ana coalg = getProf go where go = Prof In . map go . Prof coalg
+ana coalg = unProf go where go = Prof In . map go . Prof coalg
 
 data ListF x l = Nil | Cons x l
 instance Functor (ListF x) where

@@ -7,11 +7,11 @@ import Data.Kind (Constraint, Type)
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
-import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), UN, lmap, (//), (:~>))
+import Proarrow.Core (CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), lmap, (//), (:~>))
 import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
@@ -98,7 +98,7 @@ choose b = withRepCod @d @(L '()) $ withRepCod @d @(R '()) $ case b of
   (InjL Unit) -> fst @(d % L '()) @(d % R '())
   (InjR Unit) -> snd @(d % L '()) @(d % R '())
 
-newtype End d = End {getEnd :: forall a b. a ~> b -> d % '(OP a, b)}
+newtype End d = End {unEnd :: forall a b. a ~> b -> d % '(OP a, b)}
 
 type EndLimit :: PRO Type (OPPOSITE k, k) -> PRO Type ()
 data EndLimit d a b where
@@ -115,12 +115,12 @@ instance (Representable d) => Representable (EndLimit (d :: PRO Type (OPPOSITE k
 
 type Hom :: PRO () (OPPOSITE k, k)
 data Hom a b where
-  Hom :: (Ob ab) => UN OP (Fst ab) ~> Snd ab -> Hom '() ab
+  Hom :: a ~> b -> Hom '() '(OP a, b)
 instance (CategoryOf k) => Profunctor (Hom :: PRO () (OPPOSITE k, k)) where
   dimap Unit (Op l :**: r) (Hom f) = Hom (r . f . l) \\ l \\ r
   r \\ Hom f = r \\ f
 
 instance (CategoryOf k) => HasLimits (Hom :: PRO () (OPPOSITE k, k)) Type where
   type Limit Hom d = EndLimit d
-  limit (EndLimit @d f) = f // Rift \(Hom k) -> tabulate @d (\a -> getEnd (f a) k)
+  limit (EndLimit @d f) = f // Rift \(Hom k) -> tabulate @d (\a -> unEnd (f a) k)
   limitInv (Rift n) = EndLimit \a -> End \x -> index (n (Hom x)) a \\ x

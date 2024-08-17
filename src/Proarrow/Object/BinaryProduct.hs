@@ -100,10 +100,7 @@ type instance UN PR (PR k) = k
 
 type Prod :: CAT (PROD k)
 data Prod (a :: PROD k) b where
-  Prod :: (Ob a, Ob b) => UN PR a ~> UN PR b -> Prod a b
-
-mkProd :: (CategoryOf k) => (a :: k) ~> b -> Prod (PR a) (PR b)
-mkProd f = Prod f \\ f
+  Prod :: {unProd :: a ~> b} -> Prod (PR a) (PR b)
 
 instance (CategoryOf k) => Profunctor (Prod :: CAT (PROD k)) where
   dimap = dimapDefault
@@ -120,10 +117,10 @@ instance (HasTerminalObject k) => HasTerminalObject (PROD k) where
   terminate' (Prod a) = Prod (terminate' a)
 instance (HasBinaryProducts k) => HasBinaryProducts (PROD k) where
   type a && b = PR (UN PR a && UN PR b)
-  fst' (Prod a) (Prod b) = mkProd (fst' a b)
-  snd' (Prod a) (Prod b) = mkProd (snd' a b)
-  Prod f &&& Prod g = mkProd (f &&& g)
-  Prod f *** Prod g = mkProd (f *** g)
+  fst' (Prod a) (Prod b) = Prod (fst' a b)
+  snd' (Prod a) (Prod b) = Prod (snd' a b)
+  Prod f &&& Prod g = Prod (f &&& g)
+  Prod f *** Prod g = Prod (f *** g)
 
 instance (HasProducts k) => Monoidal (PROD k) where
   type Unit = TerminalObject
@@ -137,7 +134,7 @@ instance (HasProducts k) => Monoidal (PROD k) where
   associatorInv = associatorProdInv
 
 instance (HasProducts k) => SymMonoidal (PROD k) where
-  swap' (Prod a) (Prod b) = mkProd (swapProd a b)
+  swap' (Prod a) (Prod b) = Prod (swapProd a b)
 
 instance (HasProducts k) => MonoidalProfunctor (Prod :: CAT (PROD k)) where
   lift0 = id

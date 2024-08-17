@@ -19,7 +19,7 @@ import Proarrow.Core (CAT, CategoryOf (..), Kind, OB, PRO, Profunctor (..), Prom
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Monoid (Monoid)
 import Proarrow.Object (Obj, obj, src, tgt)
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), mkCoprod)
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
 import Proarrow.Object.BinaryProduct ()
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
 import Proarrow.Profunctor.Star (Star (..))
@@ -67,11 +67,11 @@ instance MonoidalAction Type (COPROD Type) where
 
 instance MonoidalAction (COPROD Type) Type where
   type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
-  f@Coprod{} `act` g = getCoprod (f `par` mkCoprod g)
-  unitor x = getCoprod (leftUnitor (Coprod x))
-  unitorInv x = getCoprod (leftUnitorInv (Coprod x))
-  multiplicator p@Coprod{} q@Coprod{} x = getCoprod (associatorInv p q (mkCoprod x))
-  multiplicatorInv p@Coprod{} q@Coprod{} x = getCoprod (associator p q (mkCoprod x))
+  f@Coprod{} `act` g = unCoprod (f `par` Coprod g)
+  unitor x = unCoprod (leftUnitor (Coprod x))
+  unitorInv x = unCoprod (leftUnitorInv (Coprod x))
+  multiplicator p@Coprod{} q@Coprod{} x = unCoprod (associatorInv p q (Coprod x))
+  multiplicatorInv p@Coprod{} q@Coprod{} x = unCoprod (associator p q (Coprod x))
 
 instance (MonoidalAction m k, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) k where
   type Act (p :: SUBCAT ob) (x :: k) = Act (UN SUB p) x
@@ -218,7 +218,7 @@ mkPrism sat bt = ex2prof (Optic (Coprod sat) (Coprod (tgt bt)) (Coprod (either i
 
 type Traversal s t a b = MixedOptic (Type -> Type) a b s t
 traversing :: (Traversable f) => Traversal (f a) (f b) a b
-traversing = ex2prof @((~>) @(Type -> Type)) (Optic Prelude id getPrelude)
+traversing = ex2prof @((~>) @(Type -> Type)) (Optic Prelude id unPrelude)
 
 class (Monad m) => Algebra m a where algebra :: m a -> a
 instance (Monad m) => Algebra m (m a) where algebra = (>>= id)
@@ -230,7 +230,7 @@ type AlgebraicLens m s t a b = MixedOptic (SUBCAT (Algebra m)) a b s t
 mkAlgebraicLens :: forall m s t a b. (Monad m) => (s -> a) -> (m s -> b -> t) -> AlgebraicLens m s t a b
 mkAlgebraicLens v u = ex2prof @((~>) @(SUBCAT (Algebra m))) (Optic (\s -> (return @m s, v s)) (Sub obj) (uncurry u))
 
-newtype Viewing a (b :: Type) s (t :: Type) = Viewing {getView :: s -> a}
+newtype Viewing a (b :: Type) s (t :: Type) = Viewing {unView :: s -> a}
 instance Profunctor (Viewing a b) where
   dimap l _ (Viewing f) = Viewing (f . l)
 instance Tambara (->) (Viewing a b) where
@@ -238,10 +238,10 @@ instance Tambara (->) (Viewing a b) where
 
 infixl 8 ^.
 (^.) :: s -> (Viewing a b a b -> Viewing a b s t) -> a
-(^.) s l = getView (l $ Viewing id) s
+(^.) s l = unView (l $ Viewing id) s
 
 data Previewing a (b :: COPROD Type) s (t :: COPROD Type) where
-  Previewing :: {getPreview :: s -> Maybe a} -> Previewing (COPR a) (COPR b) (COPR s) (COPR t)
+  Previewing :: {unPreview :: s -> Maybe a} -> Previewing (COPR a) (COPR b) (COPR s) (COPR t)
 instance Profunctor (Previewing a b) where
   dimap (Coprod l) Coprod{} (Previewing f) = Previewing (f . l)
   r \\ Previewing f = r \\ f
@@ -253,9 +253,9 @@ instance Tambara (->) (Previewing a b) where
 infixl 8 ?.
 (?.)
   :: s -> (Previewing (COPR a) (COPR b) (COPR a) (COPR b) -> Previewing (COPR a) (COPR b) (COPR s) (COPR t)) -> Maybe a
-(?.) s l = getPreview (l $ Previewing Just) s
+(?.) s l = unPreview (l $ Previewing Just) s
 
-newtype Setting a b s t = Setting {getSet :: (a -> b) -> (s -> t)}
+newtype Setting a b s t = Setting {unSet :: (a -> b) -> (s -> t)}
 instance Profunctor (Setting a b) where
   dimap l r (Setting f) = Setting (\u -> r . f u . l)
 instance Tambara (->) (Setting a b) where
@@ -265,13 +265,13 @@ instance Tambara (Coprod :: CAT (COPROD Type)) (Setting a b) where
 
 infixl 8 .~
 (.~) :: (Setting a b a b -> Setting a b s t) -> b -> s -> t
-(.~) l b = getSet (l $ Setting id) (const b)
+(.~) l b = unSet (l $ Setting id) (const b)
 
 type KlCat m = KLEISLI (Star (Prelude m))
 data Updating a b s t where
-  Update :: {getUpdate :: b -> s -> m t} -> Updating a (KL b :: KlCat m) s (KL t :: KlCat m)
+  Update :: {unUpdate :: b -> s -> m t} -> Updating a (KL b :: KlCat m) s (KL t :: KlCat m)
 instance (Monad m) => Profunctor (Updating a b :: PRO Type (KlCat m)) where
-  dimap l (Kleisli (Star r)) (Update u) = Update (\b x -> u b (l x) >>= getPrelude . r)
+  dimap l (Kleisli (Star r)) (Update u) = Update (\b x -> u b (l x) >>= unPrelude . r)
   r \\ Update u = r \\ u
 instance (Monad m) => Tambara (->) (Updating a b :: PRO Type (KlCat m)) where
   tambara f (Update u) = Update (\b (w, x) -> fmap (f w,) (u b x))
@@ -279,9 +279,9 @@ instance (Monad m) => Tambara (->) (Updating a b :: PRO Type (KlCat m)) where
 mupdate
   :: (Monad m)
   => (Updating a (KL b :: KlCat m) a (KL b :: KlCat m) -> Updating a (KL b :: KlCat m) s (KL t :: KlCat m)) -> b -> s -> m t
-mupdate f = getUpdate $ f (Update (\b _ -> return b))
+mupdate f = unUpdate $ f (Update (\b _ -> return b))
 
-newtype Replacing a b s t = Replace {getReplace :: (a -> b) -> (s -> t)}
+newtype Replacing a b s t = Replace {unReplace :: (a -> b) -> (s -> t)}
 instance Profunctor (Replacing a b) where
   dimap l r (Replace f) = Replace (\ab -> r . f ab . l)
 instance Tambara (->) (Replacing a b) where
@@ -293,10 +293,10 @@ instance Tambara (Nat :: CAT (Type -> Type)) (Replacing a b) where
 
 infixl 8 %~
 (%~) :: (Replacing a b a b -> Replacing a b s t) -> (a -> b) -> (s -> t)
-(%~) l = getReplace (l $ Replace id)
+(%~) l = unReplace (l $ Replace id)
 
 newtype Classifying m a b s t = Classifying
-  {getClassify :: (Monad m) => m s -> b -> t}
+  {unClassify :: (Monad m) => m s -> b -> t}
 instance (Monad m) => Profunctor (Classifying m a b) where
   dimap l r (Classifying f) = Classifying (\u -> r . f (fmap l u))
 instance (Monad m) => Tambara (Sub :: CAT (SUBCAT (Algebra m))) (Classifying m a b) where
@@ -304,4 +304,4 @@ instance (Monad m) => Tambara (Sub :: CAT (SUBCAT (Algebra m))) (Classifying m a
 
 infixl 8 .?
 (.?) :: (Monad m) => (Classifying m a b a b -> Classifying m a b s t) -> b -> m s -> t
-(.?) l b ms = getClassify (l $ Classifying (const id)) ms b
+(.?) l b ms = unClassify (l $ Classifying (const id)) ms b

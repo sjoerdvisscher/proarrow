@@ -21,7 +21,7 @@ newtype CONSTRAINT = CNSTRNT Constraint
 type instance UN CNSTRNT (CNSTRNT a) = a
 
 data (:-) a b where
-  Entails :: {getEntails :: forall r. (((a) => b) => r) -> r} -> CNSTRNT a :- CNSTRNT b
+  Entails :: {unEntails :: forall r. (((a) => b) => r) -> r} -> CNSTRNT a :- CNSTRNT b
 
 instance CategoryOf CONSTRAINT where
   type (~>) = (:-)

@@ -13,13 +13,13 @@ type instance UN OP (OP k) = k
 
 type Op :: PRO j k -> PRO (OPPOSITE k) (OPPOSITE j)
 data Op c a b where
-  Op :: {getOp :: c b a} -> Op c (OP a) (OP b)
+  Op :: {unOp :: c b a} -> Op c (OP a) (OP b)
 
 instance (Profunctor p) => Functor (Op p a) where
   map (Op f) (Op p) = Op (lmap f p)
 
 instance (Profunctor p) => Profunctor (Op p) where
-  dimap (Op l) (Op r) = Op . dimap r l . getOp
+  dimap (Op l) (Op r) = Op . dimap r l . unOp
   r \\ Op f = r \\ f
 
 -- | The opposite category of the category of `k`.

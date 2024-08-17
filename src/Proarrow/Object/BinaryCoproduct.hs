@@ -61,10 +61,7 @@ type instance UN COPR (COPR k) = k
 
 type Coprod :: CAT (COPROD k)
 data Coprod a b where
-  Coprod :: (Ob a, Ob b) => {getCoprod :: UN COPR a ~> UN COPR b} -> Coprod a b
-
-mkCoprod :: (CategoryOf k) => (a :: k) ~> b -> Coprod (COPR a) (COPR b)
-mkCoprod f = Coprod f \\ f
+  Coprod :: {unCoprod :: a ~> b} -> Coprod (COPR a) (COPR b)
 
 instance (CategoryOf k) => Profunctor (Coprod :: CAT (COPROD k)) where
   dimap = dimapDefault
@@ -79,16 +76,16 @@ instance (CategoryOf k) => CategoryOf (COPROD k) where
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)
-  Coprod f `par` Coprod g = mkCoprod (f +++ g)
-  leftUnitor (Coprod f) = mkCoprod (initiate' (tgt f) ||| f)
-  leftUnitorInv (Coprod f) = mkCoprod (rgt' (obj @InitialObject) (tgt f) . f)
-  rightUnitor (Coprod f) = mkCoprod (f ||| initiate' (tgt f))
-  rightUnitorInv (Coprod f) = mkCoprod (lft' (tgt f) (obj @InitialObject) . f)
-  associator (Coprod a) (Coprod b) (Coprod c) = mkCoprod ((a +++ lft' b c) ||| (rgt' a (b +++ c) . rgt' b c) \\ (a +++ b))
-  associatorInv (Coprod a) (Coprod b) (Coprod c) = mkCoprod ((lft' (a +++ b) c . lft' a b) ||| (rgt' a b +++ c) \\ (a +++ b))
+  Coprod f `par` Coprod g = Coprod (f +++ g)
+  leftUnitor (Coprod f) = Coprod (initiate' (tgt f) ||| f)
+  leftUnitorInv (Coprod f) = Coprod (rgt' (obj @InitialObject) (tgt f) . f)
+  rightUnitor (Coprod f) = Coprod (f ||| initiate' (tgt f))
+  rightUnitorInv (Coprod f) = Coprod (lft' (tgt f) (obj @InitialObject) . f)
+  associator (Coprod a) (Coprod b) (Coprod c) = Coprod ((a +++ lft' b c) ||| (rgt' a (b +++ c) . rgt' b c) \\ (a +++ b))
+  associatorInv (Coprod a) (Coprod b) (Coprod c) = Coprod ((lft' (a +++ b) c . lft' a b) ||| (rgt' a b +++ c) \\ (a +++ b))
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
-  swap' (Coprod a) (Coprod b) = mkCoprod (rgt' b a ||| lft' b a)
+  swap' (Coprod a) (Coprod b) = Coprod (rgt' b a ||| lft' b a)
 
 instance (HasCoproducts k) => MonoidalProfunctor (Coprod :: CAT (COPROD k)) where
   lift0 = id

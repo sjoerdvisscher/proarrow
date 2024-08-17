@@ -8,7 +8,7 @@ import Proarrow.Object.BinaryProduct ()
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
 
-newtype Reader r a b = Reader {getReader :: (r, a) -> b}
+newtype Reader r a b = Reader {unReader :: (r, a) -> b}
 
 instance Profunctor (Reader r) where
   dimap l r (Reader f) = Reader (r . f . fmap l)

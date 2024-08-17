@@ -8,7 +8,7 @@ type Prof :: CAT (PRO j k)
 data Prof p q where
   Prof
     :: (Profunctor p, Profunctor q)
-    => {getProf :: p :~> q}
+    => {unProf :: p :~> q}
     -> Prof p q
 
 -- | The category of profunctors and natural transformations between them.

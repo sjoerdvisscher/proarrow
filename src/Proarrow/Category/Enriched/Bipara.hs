@@ -1,7 +1,7 @@
 module Proarrow.Category.Enriched.Bipara where
 
 import Data.Kind (Type)
-import Prelude (($))
+import Prelude (($), type (~))
 
 import Proarrow.Category.Bicategory (Bicategory (I))
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
@@ -31,10 +31,10 @@ instance (Monoidal k, Ob a, Ob b) => Profunctor (Bipara (a :: k) b) where
 instance (Monoidal k) => ECategory (BIPARAK k) where
   type EOb a = (Is BIPARA a, Ob (UN BIPARA a))
 
-  eid :: forall {exta} (a :: BIPARAK k exta). (EOb a) => I ~> (a %~> a)
+  eid :: forall {exta} (a :: k) (a' :: BIPARAK k exta). (a' ~ BIPARA a, EOb a') => I ~> (a' %~> a')
   eid = Mon2 $ Prof $ \(DayUnit f g) ->
     f // g // Bipara $
-      let a = obj @(UN BIPARA a)
+      let a = obj @a
       in (g `par` a) . leftUnitorInv a . rightUnitor a . (a `par` f)
 
   ecomp = Mon2 $ Prof $ \(Day g (Bipara @c @d @aa p) (Bipara @e @f @bb @cc q) h) ->

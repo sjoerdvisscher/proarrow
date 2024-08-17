@@ -13,7 +13,7 @@ type p <| j = Rift (OP j) p
 
 type Rift :: OPPOSITE (PRO k i) -> PRO j i -> PRO j k
 data Rift j p a b where
-  Rift :: (Ob a, Ob b) => {getRift :: forall x. (Ob x) => j b x -> p a x} -> Rift (OP j) p a b
+  Rift :: (Ob a, Ob b) => {unRift :: forall x. (Ob x) => j b x -> p a x} -> Rift (OP j) p a b
 
 runRift :: (Profunctor j) => j b x -> Rift (OP j) p a b -> p a x
 runRift j (Rift k) = k j \\ j
@@ -28,12 +28,12 @@ instance (Profunctor j) => Functor (Rift (OP j)) where
 instance Functor Rift where
   map (Op (Prof n)) = Nat (Prof \(Rift k) -> Rift (k . n))
 
-newtype Precompose j p a b = Precompose {getPrecompose :: (p :.: j) a b}
+newtype Precompose j p a b = Precompose {unPrecompose :: (p :.: j) a b}
 instance (Profunctor j, Profunctor p) => Profunctor (Precompose j p) where
   dimap l r (Precompose pj) = Precompose (dimap l r pj)
   r \\ Precompose pj = r \\ pj
 instance (Profunctor j) => Functor (Precompose j) where
-  map f = f // Prof \(Precompose pj) -> Precompose (getProf (getNat (map f)) pj)
+  map f = f // Prof \(Precompose pj) -> Precompose (unProf (unNat (map f)) pj)
 
 instance (Profunctor j) => Adjunction (Star (Precompose j)) (Star (Rift (OP j))) where
   unit = unitFromStarUnit (Prof \p -> p // Rift \j -> Precompose (p :.: j))

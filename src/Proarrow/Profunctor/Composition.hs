@@ -23,7 +23,7 @@ instance Functor (:.:) where
   map (Prof n) = Nat (Prof \(p :.: q) -> n p :.: q)
 
 bimapComp :: (a ~> b) -> (c ~> d) -> a :.: c ~> b :.: d
-bimapComp f g = getNat (map f) . map g \\ f \\ g
+bimapComp f g = unNat (map f) . map g \\ f \\ g
 
 instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)

@@ -76,14 +76,14 @@ data Fin :: Nat -> Type where
 
 type Forget :: PRO Type Nat
 data Forget a b where
-  Forget :: (Ob b) => {getForget :: a -> Fin b} -> Forget a b
+  Forget :: (Ob b) => {unForget :: a -> Fin b} -> Forget a b
 
 instance Profunctor Forget where
   dimap = dimapRep
   r \\ Forget f = r \\ f
 instance Representable Forget where
   type Forget % n = Fin n
-  index = getForget
+  index = unForget
   tabulate = Forget
   repMap ZZ = id
   repMap (Y f) = Fs . repMap @Forget f
