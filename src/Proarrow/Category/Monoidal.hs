@@ -174,9 +174,9 @@ instance (SymMonoidal k) => SymMonoidal [k] where
       swap1Inv :: forall x xs. Obj (x :: k) -> SList (xs :: [k]) -> (xs ++ '[x]) ~> (x ': xs)
       swap1Inv = swap1Inv
 
+-- This is equal to a monoidal functor for Star
+-- and to an oplax monoidal functor for Costar
+type MonoidalProfunctor :: PRO j k -> Constraint
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k) where
   lift0 :: p Unit Unit
   lift2 :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
-
-class (Monoidal j, Monoidal k, Profunctor p) => OplaxMonoidalProfunctor (p :: PRO j k) where
-  unlift2 :: p (x1 ** y1) (x2 ** y2) -> (p x1 x2, p y1 y2)

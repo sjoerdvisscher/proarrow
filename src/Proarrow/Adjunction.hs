@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# HLINT ignore "Redundant map" #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
@@ -5,11 +6,15 @@
 module Proarrow.Adjunction where
 
 import Data.Kind (Constraint)
-import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>))
+import Prelude (($))
+
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), isObPar)
+import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..))
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Promonad (Procomonad (..))
 
@@ -22,19 +27,17 @@ class (Profunctor p, Profunctor q) => Adjunction (p :: PRO k j) (q :: PRO j k) w
 
 leftAdjunct
   :: forall l r a b
-   . (Adjunction (Star l) (Star r), Functor r)
-  => (Ob a)
-  => (l a ~> b)
-  -> (a ~> r b)
-leftAdjunct f = case unit @(Star l) @(Star r) @a of Star r :.: Star l -> map (f . l) . r
+   . (Adjunction l r, Representable l, Representable r, Ob a)
+  => (l % a ~> b)
+  -> r a b
+leftAdjunct f = case unit @l @r of r :.: l -> rmap (f . index l) r
 
 rightAdjunct
   :: forall l r a b
-   . (Adjunction (Star l) (Star r), Functor l)
-  => (Ob b)
-  => (a ~> r b)
-  -> (l a ~> b)
-rightAdjunct f = counit (Star (map id) :.: Star f) \\ f
+   . (Adjunction l r, Representable l, Representable r, Ob b)
+  => r a b
+  -> (l % a ~> b)
+rightAdjunct f = counit (tabulate @l (repMap @l @a id) :.: f) \\ f
 
 unitFromStarUnit
   :: forall l r a. (Functor l, Ob a) => (a ~> r (l a)) -> (Star r :.: Star l) a a
@@ -77,3 +80,12 @@ instance (Adjunction p q) => Promonad (q :.: p) where
 instance (Adjunction p q) => Procomonad (p :.: q) where
   extract = counit
   duplicate (p :.: q) = p // case unit of q' :.: p' -> (p :.: q') :.: (p' :.: q)
+
+instance
+  (MonoidalProfunctor r, Adjunction l r, Representable l, Representable r, Monoidal j, Monoidal k)
+  => MonoidalProfunctor (RepCostar l :: j +-> k)
+  where
+  lift0 = RepCostar (counit @l @r (tabulate (repMap @l @Unit id) :.: lift0))
+  lift2 (RepCostar @x1 fx) (RepCostar @y1 fy) =
+    (fx `par` fy) // isObPar @x1 @y1 $
+      RepCostar (rightAdjunct @l @r (lift2 (leftAdjunct @l @r @x1 fx) (leftAdjunct @l @r @y1 fy)))

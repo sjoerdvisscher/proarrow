@@ -110,7 +110,7 @@ instance (Corepresentable p) => A.Adjunction (StarCorep p) p where
 
 instance Equipment PROFK (COK (ProfK ProfCorepC)) where
   type Conjoint PROFK (COK (ProfK ProfCorepC)) p = PK (StarCorep (UN PK (UN CO p)))
-  mapConjoint (Co (Prof @p @q n)) = Prof \(StarCorep @b f) -> StarCorep (coindex (n (cotabulate @(UN PK p) @b (corepMap @(UN PK p) (obj @b)))) . f)
+  mapConjoint (Co (Prof @p n)) = Prof \(StarCorep @b f) -> StarCorep (coindex (n (cotabulate @(UN PK p) @b (corepMap @(UN PK p) (obj @b)))) . f)
   conjToId = Prof (Id . unStarCorep)
   conjFromId = Prof \(Id f) -> StarCorep f \\ f
   conjToCompose (Co (Prof @f _)) (Co Prof{}) = Prof \(StarCorep @b h) -> StarCorep h :.: StarCorep id \\ corepMap @(UN PK f) (obj @b)

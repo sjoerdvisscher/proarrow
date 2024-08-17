@@ -54,8 +54,8 @@ instance Closed Type where
   uncurry' _ _ = P.uncurry
   (^^^) = P.flip dimap
 
-instance Closed U.UNIT where
-  type U.U ~~> U.U = U.U
+instance Closed () where
+  type '() ~~> '() = '()
   curry' U.Unit U.Unit U.Unit = U.Unit
   uncurry' U.Unit U.Unit U.Unit = U.Unit
   U.Unit ^^^ U.Unit = U.Unit

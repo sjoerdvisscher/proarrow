@@ -7,7 +7,7 @@ import Data.Kind (Constraint)
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
-import Proarrow.Category.Instance.Unit (UNIT (..), Unit (..))
+import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>))
 import Proarrow.Object (Obj)
@@ -48,38 +48,38 @@ leftAdjointPreservesColimitsInv (l :.: f) =
     case unit @f @g of
       g :.: f' -> rmap (counit (f :.: g)) (case colimit @j @k @d l of Ran k -> k j) :.: f'
 
-type InitialLimit :: PRO VOID k -> PRO UNIT k
+type InitialLimit :: PRO VOID k -> PRO () k
 data InitialLimit d a b where
-  InitialLimit :: forall d a. InitialObject ~> a -> InitialLimit d U a
+  InitialLimit :: forall d a. InitialObject ~> a -> InitialLimit d '() a
 
 instance (HasInitialObject k) => Profunctor (InitialLimit (d :: PRO VOID k)) where
   dimap = dimapCorep
   r \\ InitialLimit f = r \\ f
 instance (HasInitialObject k) => Corepresentable (InitialLimit (d :: PRO VOID k)) where
-  type InitialLimit d %% U = InitialObject
+  type InitialLimit d %% '() = InitialObject
   coindex (InitialLimit f) = f
   cotabulate = InitialLimit
   corepMap Unit = id
-instance (HasInitialObject k) => HasColimits (Unweighted :: PRO VOID UNIT) k where
+instance (HasInitialObject k) => HasColimits (Unweighted :: PRO VOID ()) k where
   type Colimit Unweighted d = InitialLimit d
   colimit (InitialLimit f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . case o of {}
   colimitInv Ran{} = InitialLimit initiate
 
-type CoproductColimit :: PRO (COPRODUCT UNIT UNIT) k -> PRO UNIT k
+type CoproductColimit :: PRO (COPRODUCT () ()) k -> PRO () k
 data CoproductColimit d a b where
-  CoproductColimit :: forall d b. ((d %% L U) || (d %% R U)) ~> b -> CoproductColimit d U b
+  CoproductColimit :: forall d b. ((d %% L '()) || (d %% R '())) ~> b -> CoproductColimit d '() b
 
-instance (CategoryOf k) => Profunctor (CoproductColimit d :: PRO UNIT k) where
+instance (CategoryOf k) => Profunctor (CoproductColimit d :: PRO () k) where
   dimap Unit r (CoproductColimit f) = CoproductColimit (r . f) \\ r
   r \\ (CoproductColimit f) = r \\ f
 
-instance (HasBinaryCoproducts k, Corepresentable d) => Corepresentable (CoproductColimit d :: PRO UNIT k) where
-  type CoproductColimit d %% U = (d %% L U) || (d %% R U)
+instance (HasBinaryCoproducts k, Corepresentable d) => Corepresentable (CoproductColimit d :: PRO () k) where
+  type CoproductColimit d %% '() = (d %% L '()) || (d %% R '())
   coindex (CoproductColimit f) = f
   cotabulate = CoproductColimit
-  corepMap Unit = (+++) @_ @(d %% L U) @(d %% R U) (corepMap @d (InjL Unit)) (corepMap @d (InjR Unit))
+  corepMap Unit = (+++) @_ @(d %% L '()) @(d %% R '()) (corepMap @d (InjL Unit)) (corepMap @d (InjR Unit))
 
-instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: PRO (COPRODUCT UNIT UNIT) UNIT) k where
+instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: PRO (COPRODUCT () ()) ()) k where
   type Colimit Unweighted d = CoproductColimit d
   colimit (CoproductColimit @d f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . cochoose @_ @d o
   colimitInv (Ran k) =
@@ -88,10 +88,10 @@ instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: PRO (COPRODUCT UN
     in CoproductColimit $ coindex l ||| coindex r
 
 cochoose
-  :: forall k (d :: PRO (COPRODUCT UNIT UNIT) k) b
+  :: forall k (d :: PRO (COPRODUCT () ()) k) b
    . (HasBinaryCoproducts k, Corepresentable d)
   => Obj b
-  -> (d %% b) ~> ((d %% L U) || (d %% R U))
-cochoose b = withCorepCod @d @(L U) $ withCorepCod @d @(R U) $ case b of
-  (InjL Unit) -> lft @(d %% L U) @(d %% R U)
-  (InjR Unit) -> rgt @(d %% L U) @(d %% R U)
+  -> (d %% b) ~> ((d %% L '()) || (d %% R '()))
+cochoose b = withCorepCod @d @(L '()) $ withCorepCod @d @(R '()) $ case b of
+  (InjL Unit) -> lft @(d %% L '()) @(d %% R '())
+  (InjR Unit) -> rgt @(d %% L '()) @(d %% R '())

@@ -2,6 +2,8 @@
 
 module Proarrow.Category.Equipment.BiAsEquipment where
 
+import Prelude (type (~))
+
 import Proarrow.Category.Bicategory (Bicategory (..), Adjunction (..))
 import Proarrow.Category.Bicategory.Bidiscrete (Bidiscrete (..), DiscreteK (..))
 import Proarrow.Category.Equipment
@@ -27,6 +29,7 @@ instance (Bicategory kk) => Bicategory (WKK kk) where
   type Ob0 (WKK kk) k = Ob0 kk k
   type I = WK I
   type O a b = WK (UN WK a `O` UN WK b)
+  iObj = W iObj
   r \\\ W f = r \\\ f
   W f `o` W g = W (f `o` g)
   leftUnitor (W p) = W (leftUnitor p)
@@ -39,20 +42,20 @@ instance (Bicategory kk) => Bicategory (WKK kk) where
 -- | A bicategory as a proarrow equipment with only identity arrows vertically.
 instance (Bicategory kk) => HasCompanions (WKK kk) (DiscreteK (Ob0' kk)) where
   type Companion (WKK kk) (DiscreteK (Ob0' kk)) DK = WK I
-  mapCompanion Bidiscrete = id
-  compToId = W id
-  compFromId = W id
-  compToCompose Bidiscrete Bidiscrete = W (leftUnitorInv id)
-  compFromCompose Bidiscrete Bidiscrete = W (leftUnitor id)
+  mapCompanion Bidiscrete = iObj
+  compToId = W iObj
+  compFromId = W iObj
+  compToCompose Bidiscrete Bidiscrete = W (leftUnitorInv iObj)
+  compFromCompose Bidiscrete Bidiscrete = W (leftUnitor iObj)
 
-instance (Bicategory kk, i ~ (I :: kk j j), Ob i, Ob0 kk j) => Adjunction (WK i) (WK i) where
-  unit = W (leftUnitorInv id)
-  counit = W (leftUnitor id)
+instance (Bicategory kk, i ~ (I :: kk j j), Ob0 kk j) => Adjunction (WK i) (WK i) where
+  unit = W (leftUnitorInv iObj)
+  counit = W (leftUnitor iObj)
 
 instance (Bicategory kk) => Equipment (WKK kk) (DiscreteK (Ob0' kk)) where
   type Conjoint (WKK kk) (DiscreteK (Ob0' kk)) DK = WK I
-  mapConjoint Bidiscrete = id
-  conjToId = W id
-  conjFromId = W id
-  conjToCompose Bidiscrete Bidiscrete = W (leftUnitorInv id)
-  conjFromCompose Bidiscrete Bidiscrete = W (leftUnitor id)
+  mapConjoint Bidiscrete = iObj
+  conjToId = W iObj
+  conjFromId = W iObj
+  conjToCompose Bidiscrete Bidiscrete = W (leftUnitorInv iObj)
+  conjFromCompose Bidiscrete Bidiscrete = W (leftUnitor iObj)

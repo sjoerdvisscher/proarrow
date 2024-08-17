@@ -56,8 +56,8 @@ instance HasBinaryProducts Type where
   snd' _ _ = P.snd
   f &&& g = \a -> (f a, g a)
 
-instance HasBinaryProducts U.UNIT where
-  type U.U && U.U = U.U
+instance HasBinaryProducts () where
+  type '() && '() = '()
   fst' U.Unit U.Unit = U.Unit
   snd' U.Unit U.Unit = U.Unit
   U.Unit &&& U.Unit = U.Unit
@@ -161,7 +161,7 @@ instance MonoidalProfunctor (->) where
   lift0 = id
   lift2 = par
 
-instance Monoidal U.UNIT where
+instance Monoidal () where
   type Unit = TerminalObject
   type a ** b = a && b
   f `par` g = f *** g
@@ -172,7 +172,7 @@ instance Monoidal U.UNIT where
   associator = associatorProd
   associatorInv = associatorProdInv
 
-instance SymMonoidal U.UNIT where
+instance SymMonoidal () where
   swap' = swapProd
 
 instance MonoidalProfunctor U.Unit where

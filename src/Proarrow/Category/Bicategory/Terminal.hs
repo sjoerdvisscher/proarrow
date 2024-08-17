@@ -5,29 +5,29 @@ module Proarrow.Category.Bicategory.Terminal where
 import Data.Type.Equality (type (~), type (~~))
 
 import Proarrow.Category.Bicategory (Bicategory (..), Monad (..))
+import Proarrow.Category.Instance.Unit ()
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
-data TK = T0
-type TERMK :: CAT TK
+type TERMK :: CAT ()
 data TERMK j k where
-  T1 :: TERMK T0 T0
+  T1 :: TERMK '() '()
 
 type Terminal :: CAT (TERMK j k)
 data Terminal a b where
   Terminal :: Terminal T1 T1
 
-instance Profunctor (Terminal :: CAT (TERMK T0 T0)) where
+instance Profunctor (Terminal :: CAT (TERMK '() '())) where
   dimap = dimapDefault
   r \\ Terminal = r
-instance Promonad (Terminal :: CAT (TERMK T0 T0)) where
+instance Promonad (Terminal :: CAT (TERMK '() '())) where
   id = Terminal
   Terminal . Terminal = Terminal
-instance (j ~ T0, k ~ T0) => CategoryOf (TERMK j k) where
+instance (j ~ '(), k ~ '()) => CategoryOf (TERMK j k) where
   type (~>) = Terminal
   type Ob @(TERMK j k) p = (p ~~ T1)
 
 instance Bicategory TERMK where
-  type Ob0 TERMK k = (k ~ T0)
+  type Ob0 TERMK k = (k ~ '())
   type I = T1
   type O a b = T1
   r \\\ Terminal = r

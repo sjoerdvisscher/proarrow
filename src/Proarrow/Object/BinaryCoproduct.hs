@@ -44,8 +44,8 @@ instance HasBinaryCoproducts Type where
   rgt' _ _ = P.Right
   (|||) = P.either
 
-instance HasBinaryCoproducts U.UNIT where
-  type U.U || U.U = U.U
+instance HasBinaryCoproducts () where
+  type '() || '() = '()
   lft' U.Unit U.Unit = U.Unit
   rgt' U.Unit U.Unit = U.Unit
   U.Unit ||| U.Unit = U.Unit

@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Category.Instance.Unit where
 
 import Prelude (type (~))
@@ -6,16 +8,14 @@ import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dima
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
-type data UNIT = U
-
-type Unit :: CAT UNIT
+type Unit :: CAT ()
 data Unit a b where
-  Unit :: Unit U U
+  Unit :: Unit '() '()
 
 -- | The category with one object, the terminal category.
-instance CategoryOf UNIT where
+instance CategoryOf () where
   type (~>) = Unit
-  type Ob a = a ~ U
+  type Ob a = a ~ '()
 
 instance Promonad Unit where
   id = Unit
@@ -25,10 +25,10 @@ instance Profunctor Unit where
   dimap = dimapDefault
   r \\ Unit = r
 
-instance HasTerminalObject UNIT where
-  type TerminalObject = U
+instance HasTerminalObject () where
+  type TerminalObject = '()
   terminate' Unit = Unit
 
-instance HasInitialObject UNIT where
-  type InitialObject = U
+instance HasInitialObject () where
+  type InitialObject = '()
   initiate' Unit = Unit

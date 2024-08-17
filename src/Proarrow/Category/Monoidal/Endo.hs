@@ -31,7 +31,7 @@ instance (Bicategory kk, Ob0 kk k) => CategoryOf (ENDO kk k) where
   type Ob p = (Is E p, Ob (UN E p))
 
 -- | The monoidal subcategory of a bicategory for a single object.
-instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
+instance (Bicategory kk, Ob0 kk k, Ob (I :: kk k k)) => Monoidal (ENDO kk k) where
   type Unit = E I
   type E p ** E q = E (p `O` q)
   Endo f `par` Endo g = mkEndo (f `o` g)
@@ -42,18 +42,18 @@ instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
   associator (Endo p) (Endo q) (Endo r) = mkEndo (B.associator p q r)
   associatorInv (Endo p) (Endo q) (Endo r) = mkEndo (B.associatorInv p q r)
 
-instance (Bicategory kk, Ob0 kk k, forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanLift f g) => Closed (ENDO kk k) where
+instance (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanLift f g) => Closed (ENDO kk k) where
   type E f ~~> E g = E (Rift f g)
   curry' (Endo @g g) (Endo @j j) (Endo h) = Endo (riftUniv @j @_ @g h) \\ g \\ j \\ h
   uncurry' (Endo @j j) (Endo @f f) (Endo h) = Endo (rift @j @f . (h `o` j)) \\ j \\ f
   (^^^) (Endo f) (Endo g) = Endo (dimapRift g f) \\ f \\ g
 
 -- | Monads are monoids in the category of endo-1-cells.
-instance (Bicategory kk, Monad m) => Monoid (E m :: ENDO kk a) where
+instance (Bicategory kk, Ob (I :: kk a a), Monad m) => Monoid (E m :: ENDO kk a) where
   mempty = mkEndo eta
   mappend = mkEndo mu
 
 -- | Comonads are comonoids in the category of endo-1-cells.
-instance (Bicategory kk, Comonad c) => Comonoid (E c :: ENDO kk a) where
+instance (Bicategory kk, Ob (I :: kk a a), Comonad c) => Comonoid (E c :: ENDO kk a) where
   counit = mkEndo epsilon
   comult = mkEndo delta

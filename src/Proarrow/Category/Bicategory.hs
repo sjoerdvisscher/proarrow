@@ -1,10 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE FunctionalDependencies #-}
 
 module Proarrow.Category.Bicategory
   ( -- * Bicategories
     Bicategory (..)
-  , BicategoryConstraints
-  , IIsOb
   , appendObj
   , leftUnitorWith
   , leftUnitorInvWith
@@ -174,7 +173,7 @@ type instance Fold (p ::: Nil) = p
 type instance Fold (p ::: (q ::: ps)) = p `O` Fold (q ::: ps)
 
 fold :: forall {kk} {i} {j} (as :: Path kk i j). (Bicategory kk) => SPath as -> Fold as ~> Fold as
-fold SNil = id
+fold SNil = iObj
 -- fold (SCons p ps) = p `o` fold ps
 fold (SCons p SNil) = p
 fold (SCons p fs@SCons{}) = p `o` fold fs
@@ -207,10 +206,10 @@ instance (CategoryOf (kk j k), Bicategory kk) => CategoryOf (Path kk j k) where
   type Ob (ps :: Path kk j k) = (IsPath ps, Ob0 kk j, Ob0 kk k)
 
 introI :: forall {kk} {j}. (Ob0 kk j, Bicategory kk) => (Nil :: Path kk j j) ~> (I ::: Nil)
-introI = Str SNil (SCons obj SNil) obj
+introI = Str SNil (SCons iObj SNil) iObj
 
 elimI :: forall {kk} {j}. (Ob0 kk j, Bicategory kk) => (I ::: Nil) ~> (Nil :: Path kk j j)
-elimI = Str (SCons obj SNil) SNil obj
+elimI = Str (SCons iObj SNil) SNil iObj
 
 introO
   :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
@@ -224,27 +223,22 @@ elimO
   => (p `O` q ::: Nil) ~> (p ::: q ::: Nil)
 elimO = let p = obj @p; q = obj @q; pq = p `o` q in Str (SCons pq SNil) (SCons p (SCons q SNil)) pq
 
-class (Ob (I :: kk i i)) => IIsOb kk i
-instance (Ob (I :: kk i i)) => IIsOb kk i
-
-class
-  (forall j k. (Ob0 kk j, Ob0 kk k) => CategoryOf (kk j k), forall i. (Ob0 kk i) => IIsOb kk i) =>
-  BicategoryConstraints kk
-instance
-  (forall j k. (Ob0 kk j, Ob0 kk k) => CategoryOf (kk j k), forall i. (Ob0 kk i) => IIsOb kk i)
-  => BicategoryConstraints kk
-
 -- | Bicategories.
 --
 -- * 0-cells are kinds @i@, @j@, @k@... satisfying the @Ob0 kk@ constraint.
 -- * 1-cells are types of kind @kk j k@ for any 0-cells @j@ and @k@, satisfying the @Ob@ constraint.
 -- * 2-cells are values of type @p ~> q@, where @p@ and @q@ are 1-cells.
-type Bicategory :: CAT k -> Constraint
-class (BicategoryConstraints kk) => Bicategory kk where
+type Bicategory :: forall {s}. CAT s -> Constraint
+class (forall j k. (Ob0 kk j, Ob0 kk k) => CategoryOf (kk j k), CategoryOf s) => Bicategory (kk :: CAT s) where
   type Ob0 kk (j :: k) :: Constraint
   type Ob0 kk j = Any j
   type I :: kk i i
   type O (p :: kk i j) (q :: kk j k) :: kk i k
+
+  -- | The identity 1-cell (as represented by an identity 2-cell).
+  iObj :: Ob0 kk i => Obj (I :: kk i i)
+  default iObj :: (Ob0 kk i, Ob (I :: kk i i)) => Obj (I :: kk i i)
+  iObj = id
 
   -- | Horizontal composition of 2-cells.
   o :: (a :: kk i j) ~> b -> c ~> d -> (a `O` c) ~> (b `O` d)
@@ -296,40 +290,44 @@ class (Bicategory kk, Ob0 kk a, Ob t) => Monad (t :: kk a a) where
   eta :: I ~> t
   mu :: t `O` t ~> t
 
-instance (Bicategory (Path kk), Ob0 kk a) => Monad (Nil :: Path kk a a) where
-  eta = id
-  mu = id
+instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
+  eta = iObj
+  mu = iObj
+
+instance Monad s => Monad (s ::: Nil) where
+  eta = Str SNil (obj @s >> SNil) eta
+  mu = Str (obj @s >> obj @s >> SNil) (obj @s >> SNil) mu
 
 type Comonad :: forall {kk} {a}. kk a a -> Constraint
 class (Bicategory kk, Ob0 kk a, Ob t) => Comonad (t :: kk a a) where
   epsilon :: t ~> I
   delta :: t ~> t `O` t
 
-instance (Bicategory (Path kk), Ob0 kk a) => Comonad (Nil :: Path kk a a) where
-  epsilon = id
-  delta = id
+instance (Bicategory kk, Ob0 kk a) => Comonad (Nil :: Path kk a a) where
+  epsilon = iObj
+  delta = iObj
 
 type Bimodule :: forall {kk} {a} {b}. kk a a -> kk b b -> kk a b -> Constraint
-class (Monad s, Monad t) => Bimodule s t p where
+class (Monad s, Monad t, Ob p) => Bimodule s t p where
   leftAction :: s `O` p ~> p
   rightAction :: p `O` t ~> p
 
-instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
-  leftAction = mu
-  rightAction = mu
+-- instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
+--   leftAction = mu
+--   rightAction = mu
 
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where
+class (Bicategory kk, Ob0 kk c, Ob0 kk d) => Adjunction (l :: kk c d) (r :: kk d c) where
   unit :: I ~> l `O` r
   counit :: r `O` l ~> I
 
-instance (Adjunction l r) => Monad (l ::: r ::: Nil) where
+instance (Adjunction l r, Ob l, Ob r) => Monad (l ::: r ::: Nil) where
   eta = Str SNil (SCons (obj @l) (SCons (obj @r) SNil)) (unit @l @r)
   mu =
     let r = obj @r; l = obj @l; lr = SCons l (SCons r SNil)
     in Str (append lr lr) lr (l `o` (leftUnitor r . (counit @l @r `o` r) . associatorInv r l r))
 
-instance (Adjunction l r) => Comonad (r ::: l ::: Nil) where
+instance (Adjunction l r, Ob l, Ob r) => Comonad (r ::: l ::: Nil) where
   epsilon = Str (SCons (obj @r) (SCons (obj @l) SNil)) SNil (counit @l @r)
   delta =
     let r = obj @r; l = obj @l; rl = SCons r (SCons l SNil)

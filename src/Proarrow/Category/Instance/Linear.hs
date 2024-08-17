@@ -8,13 +8,13 @@ import Prelude (Either (..))
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type data LINEAR = L Type
 type instance UN L (L a) = a
@@ -55,17 +55,17 @@ instance Closed LINEAR where
   uncurry' Linear{} Linear{} (Linear f) = Linear \(a, b) -> f a b
   Linear f ^^^ Linear g = Linear \h x -> f (h (g x))
 
-type Forget :: PRO LINEAR Type
+type Forget :: LINEAR +-> Type
 data Forget a b where
-  Forget :: (a -> b) -> Forget (L a) b
+  Forget :: (a -> b) -> Forget a (L b)
 instance Profunctor Forget where
-  dimap (Linear f) g (Forget h) = Forget \x -> g (h (f x))
+  dimap = dimapRep
   r \\ Forget{} = r
-instance Corepresentable Forget where
-  type Forget %% a = UN L a
-  coindex (Forget f) = f
-  cotabulate = Forget
-  corepMap (Linear f) x = f x
+instance Representable Forget where
+  type Forget % a = UN L a
+  index (Forget f) = f
+  tabulate = Forget
+  repMap (Linear f) x = f x
 instance MonoidalProfunctor Forget where
   lift0 = Forget \() -> ()
   lift2 (Forget f) (Forget g) = Forget \(x, y) -> (f x, g y)
@@ -73,36 +73,33 @@ instance MonoidalProfunctor Forget where
 data Ur a where
   Ur :: a -> Ur a
 
-unur :: Ur a %1 -> a
-unur (Ur a) = a
-
 instance Functor Ur where
   map f (Ur a) = Ur (f a)
 
-type Free :: PRO Type LINEAR
+type Free :: Type +-> LINEAR
 data Free a b where
-  Free :: (Ur a %1 -> b) -> Free a (L b)
+  Free :: (a %1 -> Ur b) -> Free (L a) b
 instance Profunctor Free where
-  dimap f (Linear g) (Free h) = Free \(Ur x) -> g (h (Ur (f x)))
+  dimap = dimapRep
   r \\ Free{} = r
-instance Corepresentable Free where
-  type Free %% a = L (Ur a)
-  coindex (Free f) = Linear f
-  cotabulate (Linear f) = Free f
-  corepMap f = Linear \(Ur a) -> Ur (f a)
+instance Representable Free where
+  type Free % a = L (Ur a)
+  index (Free f) = Linear f
+  tabulate (Linear f) = Free f
+  repMap f = Linear \(Ur a) -> Ur (f a)
 instance MonoidalProfunctor Free where
-  lift0 = Free \(Ur ()) -> ()
-  lift2 (Free f) (Free g) = Free \(Ur (x, y)) -> (f (Ur x), g (Ur y))
+  lift0 = Free \() -> Ur ()
+  lift2 (Free f) (Free g) = Free \(x, y) -> case (f x, g y) of (Ur a, Ur b) -> Ur (a, b)
 
-unlift2Free :: Free %% (x ** y) ~> (Free %% x) ** (Free %% y)
+unlift2Free :: Free % (x ** y) ~> (Free % x) ** (Free % y)
 unlift2Free = Linear \(Ur (x, y)) -> (Ur x, Ur y)
 
-unlift2Forget :: (Ob x, Ob y) => Forget %% (x ** y) ~> (Forget %% x) ** (Forget %% y)
+unlift2Forget :: (Ob x, Ob y) => Forget % (x ** y) ~> (Forget % x) ** (Forget % y)
 unlift2Forget = id
 
 instance Adjunction Free Forget where
-  unit = Forget id :.: Free unur
-  counit (Free f :.: Forget g) a = g (f (Ur a))
+  unit = Forget Ur :.: Free \x -> x
+  counit (Free f :.: Forget g) = Linear \a -> case f a of Ur b -> g b
 
 instance HasBinaryCoproducts LINEAR where
   type L a || L b = L (Either a b)
