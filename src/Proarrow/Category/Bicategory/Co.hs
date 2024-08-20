@@ -1,11 +1,9 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
 module Proarrow.Category.Bicategory.Co where
 
 import Proarrow.Category.Bicategory
   ( Bicategory (..)
   , Comonad (..)
-  , Monad (..)
+  , Monad (..), Adjunction (..)
   )
 import Proarrow.Category.Bicategory.Kan
   ( LeftKanExtension (..)
@@ -47,6 +45,10 @@ instance (Bicategory kk) => Bicategory (COK kk) where
   rightUnitorInv (Co p) = Co (rightUnitor p)
   associator (Co p) (Co q) (Co r) = Co (associatorInv p q r)
   associatorInv (Co p) (Co q) (Co r) = Co (associator p q r)
+
+instance Adjunction f g => Adjunction (CO g) (CO f) where
+  unit = Co (counit @f @g)
+  counit = Co (unit @f @g)
 
 instance (Comonad m) => Monad (CO m) where
   eta = Co epsilon

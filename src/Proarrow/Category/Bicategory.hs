@@ -4,6 +4,8 @@
 module Proarrow.Category.Bicategory
   ( -- * Bicategories
     Bicategory (..)
+  , (==)
+  , (||)
   , appendObj
   , leftUnitorWith
   , leftUnitorInvWith
@@ -13,7 +15,6 @@ module Proarrow.Category.Bicategory
     -- * Paths
   , Path (..)
   , SPath (..)
-  , (>>)
   , IsPath (..)
   , withIsPath
   , asObj
@@ -52,7 +53,8 @@ import Prelude (($), type (~))
 
 infixr 5 :::
 infixl 5 +++
-infixr 5 >>
+infixl 8 ||
+infixl 7 ==
 
 -- | The type of 2-parameter kind constructors.
 type Path :: CAT k -> CAT k
@@ -71,9 +73,6 @@ type SPath :: Path kk j k -> Type
 data SPath ps where
   SNil :: (Ob0 kk k) => SPath (Nil :: Path kk k k)
   SCons :: forall {kk} {i} {j} {k} (p :: kk i j) (ps :: Path kk j k). (Ob0 kk i) => Obj p -> SPath ps -> SPath (p ::: ps)
-
-(>>) :: (Bicategory kk) => Obj (p :: kk j k) -> SPath ps -> SPath (p ::: ps)
-p >> ps = SCons p ps \\\ p
 
 type IsPath :: forall {kk} {j} {k}. Path kk j k -> Constraint
 class (Bicategory kk, Ob0 kk j, Ob0 kk k) => IsPath (ps :: Path kk j k) where
@@ -183,8 +182,8 @@ data Strictified ps qs where
     -> Fold ps ~> Fold qs
     -> Strictified ps qs
 
-str :: (Bicategory kk) => SPath (ps :: Path kk j k) -> SPath qs -> (Fold ps ~> Fold qs) -> Strictified ps qs
-str ps qs f = Str ps qs f \\\ f
+str :: (Bicategory kk) => Obj (ps :: Path kk j k) -> Obj qs -> (Fold ps ~> Fold qs) -> Strictified ps qs
+str ps qs f = Str (asSPath ps) (asSPath qs) f \\\ f
 
 unStr :: Strictified ps qs -> Fold ps ~> Fold qs
 unStr (Str _ _ f) = f
@@ -267,6 +266,12 @@ appendObj
   -> r
 appendObj r = r \\\ (obj @a `o` obj @b)
 
+(||) :: (Bicategory kk) => ((a :: kk i j) ~> b) -> (c ~> d) -> O a c ~> O b d
+(||) = o
+
+(==) :: (CategoryOf k) => ((a :: k) ~> b) -> (b ~> c) -> a ~> c
+f == g = g . f
+
 instance (Bicategory kk) => Bicategory (Path kk) where
   type Ob0 (Path kk) j = Ob0 kk j
   type I = Nil
@@ -290,8 +295,8 @@ instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
   mu = iObj
 
 instance (Monad s) => Monad (s ::: Nil) where
-  eta = Str SNil (obj @s >> SNil) eta
-  mu = Str (obj @s >> obj @s >> SNil) (obj @s >> SNil) mu
+  eta = str iObj (obj1 @s) eta
+  mu = str (obj1 @s || obj1 @s) (obj1 @s) mu
 
 type Comonad :: forall {kk} {a}. kk a a -> Constraint
 class (Bicategory kk, Ob0 kk a, Ob t) => Comonad (t :: kk a a) where
@@ -312,18 +317,14 @@ class (Monad s, Monad t, Ob p) => Bimodule s t p where
 --   rightAction = mu
 
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d) => Adjunction (l :: kk c d) (r :: kk d c) where
+class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where
   unit :: I ~> r `O` l
   counit :: l `O` r ~> I
 
-instance (Adjunction l r, Ob l, Ob r) => Monad (l ::: r ::: Nil) where
-  eta = Str SNil (obj @l >> obj @r >> SNil) (unit @l @r)
-  mu =
-    let r = obj @r; l = obj @l; lr = l >> r >> SNil
-    in Str (append lr lr) lr ((rightUnitor r . (r `o` counit @l @r) . associator r l r) `o` l)
+instance (Adjunction l r) => Monad (l ::: r ::: Nil) where
+  eta = str iObj (obj1 @r || obj1 @l) (unit @l @r)
+  mu = let r = obj1 @r; l = obj1 @l in r || str (l || r) iObj (counit @l @r) || l
 
-instance (Adjunction l r, Ob l, Ob r) => Comonad (r ::: l ::: Nil) where
-  epsilon = Str (obj @r >> obj @l >> SNil) SNil (counit @l @r)
-  delta =
-    let r = obj @r; l = obj @l; rl = r >> l >> SNil
-    in Str rl (append rl rl) ((associatorInv l r l . (l `o` unit @l @r) . rightUnitorInv l) `o` r)
+instance (Adjunction l r) => Comonad (r ::: l ::: Nil) where
+  epsilon = str (obj1 @l || obj1 @r) iObj (counit @l @r)
+  delta = let r = obj1 @r; l = obj1 @l in l || str iObj (r || l) (unit @l @r) || r

@@ -1,5 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
 module Proarrow.Category.Bicategory.Sub where
 
 import Data.Kind (Type, Constraint)

@@ -1,10 +1,6 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
-
 module Proarrow.Category.Equipment.BiAsEquipment where
 
-import Prelude (type (~))
-
-import Proarrow.Category.Bicategory (Bicategory (..), Adjunction (..))
+import Proarrow.Category.Bicategory (Bicategory (..))
 import Proarrow.Category.Bicategory.Bidiscrete (Bidiscrete (..), DiscreteK (..))
 import Proarrow.Category.Equipment
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN, CAT, Profunctor(..), Is, dimapDefault)
@@ -48,10 +44,6 @@ instance (Bicategory kk) => HasCompanions (WKK kk) (DiscreteK (Ob0' kk)) where
   compToCompose Bidiscrete Bidiscrete = W (leftUnitorInv iObj)
   compFromCompose Bidiscrete Bidiscrete = W (leftUnitor iObj)
 
-instance (Bicategory kk, i ~ (I :: kk j j), Ob0 kk j) => Adjunction (WK i) (WK i) where
-  unit = W (leftUnitorInv iObj)
-  counit = W (leftUnitor iObj)
-
 instance (Bicategory kk) => Equipment (WKK kk) (DiscreteK (Ob0' kk)) where
   type Conjoint (WKK kk) (DiscreteK (Ob0' kk)) DK = WK I
   mapConjoint Bidiscrete = iObj
@@ -59,3 +51,5 @@ instance (Bicategory kk) => Equipment (WKK kk) (DiscreteK (Ob0' kk)) where
   conjFromId = W iObj
   conjToCompose Bidiscrete Bidiscrete = W (leftUnitorInv iObj)
   conjFromCompose Bidiscrete Bidiscrete = W (leftUnitor iObj)
+  comConUnit Bidiscrete = W (leftUnitorInv iObj)
+  comConCounit Bidiscrete = W (leftUnitor iObj)

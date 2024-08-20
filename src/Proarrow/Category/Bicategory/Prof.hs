@@ -1,5 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
 module Proarrow.Category.Bicategory.Prof where
 
 import Prelude (($))

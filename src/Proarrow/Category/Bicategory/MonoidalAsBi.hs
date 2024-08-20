@@ -1,5 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
 module Proarrow.Category.Bicategory.MonoidalAsBi where
 
 import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))

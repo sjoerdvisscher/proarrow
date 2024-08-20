@@ -1,4 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FunctionalDependencies #-}
 
 module Proarrow.Category.Equipment where
@@ -7,10 +6,8 @@ import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Category.Bicategory
-import Proarrow.Category.Bicategory.Co (COK (CO), Co (..))
-import Proarrow.Category.Bicategory.Op (OPK (OP), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
-import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, obj, src, tgt, (//), (\\))
+import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), obj, src, tgt, (//), (\\))
 import Proarrow.Object (Obj)
 
 infixl 6 |||
@@ -150,17 +147,27 @@ toLeft
   => Sq '(Companion hk vk f, f) '(I :: hk k k, I :: vk k k)
 toLeft = let comp = mapCompanion @hk @vk (obj @f) in Sq (compToId `o` comp) \\ comp \\ iObj @hk @k \\ iObj @vk @k
 
--- toRight
---   :: forall {hk} {vk} {j} {k} (f :: vk j k)
---    . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob f)
---   => Sq '(I :: hk j j, f) '(Conjoint hk vk f, I :: vk j j)
--- toRight = let f = obj @f in Sq (comConUnit @hk @vk _ . leftUnitorWith (compToId @hk @vk) iObj) \\\ mapConjoint @hk @vk f \\ iObj @hk @j \\ iObj @vk @j
+toRight
+  :: forall {hk} {vk} {j} {k} (f :: vk j k)
+   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob f)
+  => Sq '(I :: hk j j, f) '(Conjoint hk vk f, I :: vk j j)
+toRight =
+  let f = obj @f
+  in Sq (comConUnit @hk @vk f . leftUnitorWith (compToId @hk @vk) iObj)
+      \\\ mapConjoint @hk @vk f
+      \\ iObj @hk @j
+      \\ iObj @vk @j
 
--- fromLeft
---   :: forall {hk} {vk} {j} {k} (f :: vk j k)
---    . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
---   => Sq '(Conjoint hk vk f, I :: vk k k) '(I :: hk k k, f)
--- fromLeft = let f = obj @f in Sq (leftUnitorInvWith (compFromId @hk @vk) iObj . comConCounit @hk @vk f) \\\ mapConjoint @hk @vk f \\ iObj @hk @k \\ iObj @vk @k
+fromLeft
+  :: forall {hk} {vk} {j} {k} (f :: vk j k)
+   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
+  => Sq '(Conjoint hk vk f, I :: vk k k) '(I :: hk k k, f)
+fromLeft =
+  let f = obj @f
+  in Sq (rightUnitorInvWith (compFromId @hk @vk) iObj . comConCounit @hk @vk f)
+      \\\ mapConjoint @hk @vk f
+      \\ iObj @hk @k
+      \\ iObj @vk @k
 
 class (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
 instance (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
@@ -177,55 +184,47 @@ class (HasCompanions hk vk) => Equipment hk vk where
 
   conjToCompose :: Obj f -> Obj g -> Conjoint hk vk (f `O` g) ~> (Conjoint hk vk g `O` Conjoint hk vk f)
   conjToCompose f g =
-    let
-      fg = f `o` g
-      comFG = mapCompanion @hk fg
-      comF = mapCompanion @hk f
-      comG = mapCompanion @hk g
-      conFG = mapConjoint @hk fg
-      conF = mapConjoint @hk f
-      conG = mapConjoint @hk g
-    in
-      unStr
-        ( ( (singleton conG `o` singleton conF)
-              `o` ( str (conFG >> comFG >> SNil) SNil (comConCounit fg)
-                      . (str (comG >> comF >> SNil) (comFG >> SNil) (compFromCompose f g) `o` singleton conFG)
-                  )
-          )
-            . ( ( (singleton conG `o` str SNil (comF >> conF >> SNil) (comConUnit f) `o` singleton comG)
-                    . str SNil (comG >> conG >> SNil) (comConUnit g)
-                )
-                  `o` singleton conFG
-              )
-        )
-        \\\ f
-        \\\ g
+    unStr
+      ( let
+          fg = f `o` g
+          comFG = singleton (mapCompanion @hk fg)
+          comF = singleton (mapCompanion @hk f)
+          comG = singleton (mapCompanion @hk g)
+          conFG = singleton (mapConjoint @hk fg)
+          conF = singleton (mapConjoint @hk f)
+          conG = singleton (mapConjoint @hk g)
+          counitFG = str (comFG || conFG) iObj (comConCounit fg)
+          compFG = str (comF || comG) comFG (compFromCompose f g)
+          unitF = str iObj (conF || comF) (comConUnit f)
+          unitG = str iObj (conG || comG) (comConUnit g)
+        in
+          (unitG == conG || unitF || comG) || conFG
+            == conG || conF || (compFG || conFG == counitFG)
+      )
+      \\\ f
+      \\\ g
 
   conjFromCompose :: Obj f -> Obj g -> (Conjoint hk vk g `O` Conjoint hk vk f) ~> Conjoint hk vk (f `O` g)
   conjFromCompose f g =
-    let
-      fg = f `o` g
-      comFG = mapCompanion @hk fg
-      comF = mapCompanion @hk f
-      comG = mapCompanion @hk g
-      conFG = mapConjoint @hk fg
-      conF = mapConjoint @hk f
-      conG = mapConjoint @hk g
-    in
-      unStr
-        ( ( singleton conFG
-              `o` ( str (conF >> comF >> SNil) SNil (comConCounit f)
-                      . (singleton comF `o` str (conG >> comG >> SNil) SNil (comConCounit g) `o` singleton conF)
-                  )
-          )
-            . ( ( (singleton conFG `o` str (comFG >> SNil) (comG >> comF >> SNil) (compToCompose f g))
-                    . str SNil (comFG >> conFG >> SNil) (comConUnit fg)
-                )
-                  `o` (singleton conG `o` singleton conF)
-              )
-        )
-        \\\ f
-        \\\ g
+    unStr
+      ( let
+          fg = f `o` g
+          comFG = singleton (mapCompanion @hk fg)
+          comF = singleton (mapCompanion @hk f)
+          comG = singleton (mapCompanion @hk g)
+          conFG = singleton (mapConjoint @hk fg)
+          conF = singleton (mapConjoint @hk f)
+          conG = singleton (mapConjoint @hk g)
+          counitF = str (comF || conF) iObj (comConCounit f)
+          counitG = str (comG || conG) iObj (comConCounit g)
+          compFG = str comFG (comF || comG) (compToCompose f g)
+          unitFG = str iObj (conFG || comFG) (comConUnit fg)
+        in
+          (unitFG == conFG || compFG) || conG || conF
+            == conFG || (comF || counitG || conF == counitF)
+      )
+      \\\ f
+      \\\ g
 
   comConUnit :: Obj f -> I ~> Conjoint hk vk f `O` Companion hk vk f
   default comConUnit
@@ -354,20 +353,108 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
           \\\ l
           \\\ r
 
-instance (Equipment hk vk) => HasCompanions (OPK hk) (COK vk) where
-  type Companion (OPK hk) (COK vk) f = OP (Conjoint hk vk (UN CO f))
-  mapCompanion (Co f) = Op (mapConjoint f)
-  compToId = Op conjToId
-  compFromId = Op conjFromId
-  compToCompose (Co f) (Co g) = Op (conjToCompose f g)
-  compFromCompose (Co f) (Co g) = Op (conjFromCompose f g)
+-- |
+-- The kind of a retro square @'(q, g) '(p, f)@.
+--
+-- > h--f--i
+-- > |  v  |
+-- > p--@--q
+-- > |  v  |
+-- > j--g--k
+type RetroSq :: forall {c} {hk :: CAT c} {vk :: CAT c} {h} {i} {j} {k}. PRO (hk i k, vk j k) (hk h j, vk h i)
+data RetroSq pf qg where
+  RetroSq
+    :: forall {hk} {vk} {h} {i} {j} {k} (p :: hk h j) (q :: hk i k) (f :: vk h i) (g :: vk j k)
+     . (Ob0 vk h, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob p, Ob q, Ob f, Ob g)
+    => (q `O` Companion hk vk f) ~> Companion hk vk g `O` p
+    -> RetroSq '(q, g) '(p, f)
 
-instance (Equipment hk vk) => Equipment (OPK hk) (COK vk) where
-  type Conjoint (OPK hk) (COK vk) f = OP (Companion hk vk (UN CO f))
-  mapConjoint (Co f) = Op (mapCompanion f)
-  conjToId = Op compToId
-  conjFromId = Op compFromId
-  conjToCompose (Co f) (Co g) = Op (compToCompose f g)
-  conjFromCompose (Co f) (Co g) = Op (compFromCompose f g)
-  comConUnit (Co f) = Op (comConUnit f)
-  comConCounit (Co f) = Op (comConCounit f)
+instance
+  (HasCompanions hk vk, Ob0 vk h, Ob0 vk i, Ob0 vk j, Ob0 vk k)
+  => Profunctor (RetroSq :: PRO (hk i k, vk j k) (hk h j, vk h i))
+  where
+  dimap (q :**: g) (p :**: f) (RetroSq sq) = RetroSq ((mapCompanion g `o` p) . sq . (q `o` mapCompanion f)) \\\ p \\\ q \\\ f \\\ g
+  r \\ RetroSq sq = r \\ sq
+
+adjVK
+  :: forall hk vk i j k f g v w x y
+   . (Adjunction x v, Adjunction y w, HasCompanions hk vk)
+  => RetroSq '(y :: hk i k, f :: vk j k) '(x, g)
+  -> Sq '(v, f) '(w, g)
+adjVK (RetroSq sq) =
+  let cf = mapCompanion @(Path hk) (obj1 @f)
+      cg = mapCompanion @(Path hk) (obj1 @g)
+      v = obj1 @v
+      w = obj1 @w
+      x = obj1 @x
+      y = obj1 @y
+      counit' = str (x || v) iObj (counit @x @v)
+      unit' = str iObj (w || y) (unit @y @w)
+      sq' = str (y || cg) (cf || x) sq
+  in Sq
+      ( unStr
+          ( unit' || cg || v
+              == w || sq' || v
+              == w || cf || counit'
+          )
+      )
+      \\\ sq
+
+adjHK
+  :: forall hk vk i j k e f g h v w
+   . (Adjunction h f, Adjunction e g, HasCompanions hk vk)
+  => RetroSq '(v :: hk i k, e :: vk j k) '(w, h)
+  -> Sq '(v, f) '(w, g)
+adjHK (RetroSq sq) =
+  let v = obj1 @v
+      w = obj1 @w
+      e = obj1 @e
+      f = obj1 @f
+      g = obj1 @g
+      h = obj1 @h
+      ce = mapCompanion @(Path hk) e
+      cf = mapCompanion @(Path hk) f
+      cg = mapCompanion @(Path hk) g
+      ch = mapCompanion @(Path hk) h
+      unit' = mapCompanion @(Path hk) (str iObj (g || e) (unit @e @g))
+      counit' = mapCompanion @(Path hk) (str (h || f) iObj (counit @h @f))
+      sq' = str (v || ch) (ce || w) sq
+  in Sq
+      ( unStr
+          ( cg || v || counit'
+              == cg || sq' || cf
+              == unit' || w || cf
+          )
+      )
+      \\\ sq
+
+adj4Sq
+  :: forall hk vk i j k e f g h v w x y
+   . (Adjunction v x, Adjunction w y, Adjunction h f, Adjunction e g, HasCompanions hk vk)
+  => Sq '(v :: hk k j, f :: vk k i) '(w, g)
+  -> Sq '(y, e) '(x, h)
+adj4Sq (Sq sq) =
+  let v = obj1 @v
+      w = obj1 @w
+      x = obj1 @x
+      y = obj1 @y
+      e = obj1 @e
+      f = obj1 @f
+      g = obj1 @g
+      h = obj1 @h
+      ce = mapCompanion @(Path hk) e
+      cf = mapCompanion @(Path hk) f
+      cg = mapCompanion @(Path hk) g
+      ch = mapCompanion @(Path hk) h
+      unitV = mapCompanion @(Path hk) (str iObj (f || h) (unit @h @f))
+      counitV = mapCompanion @(Path hk) (str (e || g) iObj (counit @e @g))
+      unitH = str iObj (x || v) (unit @v @x)
+      counitH = str (w || y) iObj (counit @w @y)
+      sq' = str (cg || v) (w || cf) sq
+  in Sq
+      ( unStr
+          ( (unitH == x || counitV || v) || ch || y
+              == x || ce || sq' || ch || y
+              == x || ce || (w || unitV || y == counitH)
+          )
+      )

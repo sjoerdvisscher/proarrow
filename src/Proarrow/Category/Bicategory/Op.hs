@@ -1,14 +1,15 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Category.Bicategory.Op where
 
 import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Bimodule (..), Comonad (..), Monad (..))
+import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan
   ( LeftKanExtension (..)
   , LeftKanLift (..)
   , RightKanExtension (..)
   , RightKanLift (..)
   )
+import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), RetroSq (..), Sq (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type OPK :: CAT k -> CAT k
@@ -43,6 +44,48 @@ instance (Bicategory kk) => Bicategory (OPK kk) where
   rightUnitorInv (Op p) = Op (leftUnitorInv p)
   associator (Op p) (Op q) (Op r) = Op (associatorInv r q p)
   associatorInv (Op p) (Op q) (Op r) = Op (associator r q p)
+
+instance (Equipment hk vk) => HasCompanions (OPK hk) (COK vk) where
+  type Companion (OPK hk) (COK vk) f = OP (Conjoint hk vk (UN CO f))
+  mapCompanion (Co f) = Op (mapConjoint f)
+  compToId = Op conjToId
+  compFromId = Op conjFromId
+  compToCompose (Co f) (Co g) = Op (conjToCompose f g)
+  compFromCompose (Co f) (Co g) = Op (conjFromCompose f g)
+
+instance (Equipment hk vk) => Equipment (OPK hk) (COK vk) where
+  type Conjoint (OPK hk) (COK vk) f = OP (Companion hk vk (UN CO f))
+  mapConjoint (Co f) = Op (mapCompanion f)
+  conjToId = Op compToId
+  conjFromId = Op compFromId
+  conjToCompose (Co f) (Co g) = Op (compToCompose f g)
+  conjFromCompose (Co f) (Co g) = Op (compFromCompose f g)
+  comConUnit (Co f) = Op (comConUnit f)
+  comConCounit (Co f) = Op (comConCounit f)
+
+instance (Equipment hk vk) => HasCompanions (COK hk) (OPK vk) where
+  type Companion (COK hk) (OPK vk) f = CO (Conjoint hk vk (UN OP f))
+  mapCompanion (Op f) = Co (mapConjoint f)
+  compToId = Co conjFromId
+  compFromId = Co conjToId
+  compToCompose (Op f) (Op g) = Co (conjFromCompose g f)
+  compFromCompose (Op f) (Op g) = Co (conjToCompose g f)
+
+instance (Equipment hk vk) => Equipment (COK hk) (OPK vk) where
+  type Conjoint (COK hk) (OPK vk) f = CO (Companion hk vk (UN OP f))
+  mapConjoint (Op f) = Co (mapCompanion f)
+  conjToId = Co compFromId
+  conjFromId = Co compToId
+  conjToCompose (Op f) (Op g) = Co (compFromCompose g f)
+  conjFromCompose (Op f) (Op g) = Co (compToCompose g f)
+  comConUnit (Op f) = Co (comConCounit f)
+  comConCounit (Op f) = Co (comConUnit f)
+
+flipSq :: Sq '(CO p, OP f) '(CO q, OP g) -> Sq '(OP q, CO g) '(OP p, CO f)
+flipSq (Sq (Co sq)) = Sq (Op sq)
+
+flipRetroSq :: RetroSq '(CO p, OP f) '(CO q, OP g) -> RetroSq '(OP q, CO g) '(OP p, CO f)
+flipRetroSq (RetroSq (Co sq)) = RetroSq (Op sq)
 
 instance (RightKanExtension j f) => RightKanLift (OP j) (OP f) where
   type Rift (OP j) (OP f) = OP (Ran j f)
