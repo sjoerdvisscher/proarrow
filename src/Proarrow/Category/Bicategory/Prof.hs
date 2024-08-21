@@ -3,12 +3,12 @@ module Proarrow.Category.Bicategory.Prof where
 import Prelude (($))
 
 import Proarrow.Adjunction qualified as A
-import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Bimodule (..), Comonad (..), Monad (..))
+import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Bimodule (..), Comonad (..), Monad (..), (==), (||))
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
-import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
+import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
 import Proarrow.Category.Instance.Prof ()
-import Proarrow.Category.Opposite (OPPOSITE (..))
+import Proarrow.Category.Opposite qualified as Op
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -34,6 +34,8 @@ import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..))
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 import Proarrow.Category.Bicategory.Sub (SUBCAT (..), IsOb, Sub (..))
+import Proarrow.Category.Bicategory.Product (PRODK(..), Prod (..))
+import Proarrow.Category.Bicategory.Op (OPK(..), Op (..))
 
 type data PROFK j k = PK (j +-> k)
 type instance UN PK (PK p) = p
@@ -68,16 +70,20 @@ instance Bicategory PROFK where
 data ProfRep
 type instance IsOb ProfRep p = Representable (UN PK p)
 
-instance HasCompanions PROFK (COK (SUBCAT ProfRep PROFK)) where
-  type Companion PROFK (COK (SUBCAT ProfRep PROFK)) p = UN SUB (UN CO p)
+type FUNK = COK (SUBCAT ProfRep PROFK)
+type FUN p = CO (SUB (PK p))
+type UNFUN p = UN PK (UN SUB (UN CO p))
+
+instance HasCompanions PROFK FUNK where
+  type Companion PROFK FUNK p = PK (UNFUN p)
   mapCompanion (Co (Sub (Prof n))) = Prof n
   compToId = Prof id
   compFromId = Prof id
   compToCompose (Co f) (Co g) = Prof id \\ f \\ g
   compFromCompose (Co f) (Co g) = Prof id \\ f \\ g
 
-instance Equipment PROFK (COK (SUBCAT ProfRep PROFK)) where
-  type Conjoint PROFK (COK (SUBCAT ProfRep PROFK)) p = PK (RepCostar (UN PK (UN SUB (UN CO p))))
+instance Equipment PROFK FUNK where
+  type Conjoint PROFK FUNK p = PK (RepCostar (UNFUN p))
   mapConjoint (Co (Sub (Prof @p n))) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (tabulate @p @a (repMap @p @a id))))
   conjToId = Prof (Id . unRepCostar)
   conjFromId = Prof \(Id f) -> RepCostar f \\ f
@@ -104,11 +110,29 @@ instance (A.Adjunction l r) => Adjunction (PK l :: PROFK c d) (PK r) where
   counit = Prof (Id . A.counit)
 
 instance (Profunctor f, Profunctor j) => RightKanExtension (PK j :: PROFK d c) (PK f :: PROFK e c) where
-  type Ran (PK j) (PK f) = PK (R.Ran (OP j) f)
+  type Ran (PK j) (PK f) = PK (R.Ran (Op.OP j) f)
   ran = Prof \(j :.: r) -> R.runRan j r
   ranUniv (Prof n) = Prof \g -> g // R.Ran \j -> n (j :.: g)
 
 instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK c d) (PK f :: PROFK c e) where
-  type Rift (PK j) (PK f) = PK (R.Rift (OP j) f)
+  type Rift (PK j) (PK f) = PK (R.Rift (Op.OP j) f)
   rift = Prof \(r :.: j) -> R.runRift j r
   riftUniv (Prof n) = Prof \g -> g // R.Rift \j -> n (g :.: j)
+
+type Hom :: forall {s}. forall (kk :: CAT s) -> forall {i} {j} {k} {l}. kk j i -> kk k l -> kk i k +-> kk j l
+data Hom kk p q a b where
+  Hom :: (Ob a, Ob b) => p `O` a ~> b `O` q -> Hom kk p q a b
+instance (Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob0 kk l, Ob p, Ob q) => Profunctor (Hom kk (p :: kk j i) (q :: kk k l)) where
+  dimap f g (Hom sq) = Hom (obj @p || f == sq == g || obj @q) \\ f \\ g
+  r \\ Hom{} = r
+
+hom2Map :: Bicategory kk => Prod (PROD (OP a) b) (PROD (OP c) d) -> Prof (PK (Hom kk c b)) (PK (Hom kk a d))
+hom2Map (Prod (Op m) n) = Prof (\(Hom @_ @a @b f) -> Hom (m || obj @a == f == obj @b || n) \\\ f) \\\ m \\\ n
+
+-- homSqMap
+--   :: forall hk vk h i j k h' i' j' k' p q f g p' q' f' g'. HasCompanions hk vk
+--   => Sq '(PROD (OP (p :: hk j h)) (p' :: hk h' j') :: PRODK (OPK hk) hk '(h, h') '(j, j'), PROD (CO (f :: vk h i)) (f' :: vk h' i') :: PRODK (COK vk) vk '(h, h') '(i, i')) '(PROD (OP q) q' :: PRODK (OPK hk) hk '(i, i') '(k, k'), PROD (CO g) g' :: PRODK (COK vk) vk '(j, j') '(k, k'))
+--   -> Sq '(PK (Hom hk _ _), FUN (Hom hk _ _)) '(PK (Hom hk _ _), FUN (Hom hk _ _))
+-- homSqMap (Sq (Prod (Op l) r)) = _ (l :: O p (Conjoint hk vk g) ~> O (Conjoint hk vk f) q) (r :: O (Companion hk vk g') p' ~> O q' (Companion hk vk f'))
+
+
