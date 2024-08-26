@@ -8,7 +8,7 @@ import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), 
 
 type family IsOb (tag :: Type) (a :: k) :: Constraint
 
-type SUBCAT :: forall k. Type -> CAT k -> CAT k
+type SUBCAT :: forall {k}. Type -> CAT k -> CAT k
 type data SUBCAT tag kk i j = SUB (kk i j)
 type instance UN SUB (SUB p) = p
 
