@@ -7,7 +7,7 @@ import Proarrow.Category.Bicategory (Bicategory (I))
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
 import Proarrow.Category.Enriched (Arr, ECategory (..), V, type (%~>))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), first, second)
+import Proarrow.Category.Monoidal (Monoidal (..), first, par, second)
 import Proarrow.Core (CategoryOf (..), Is, Kind, PRO, Profunctor (..), Promonad (..), UN, obj, (//))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
 

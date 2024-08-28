@@ -29,5 +29,5 @@ instance (CategoryOf k) => Corepresentable (Id :: CAT k) where
   corepMap = id
 
 instance (Monoidal k) => MonoidalProfunctor (Id :: CAT k) where
-  lift0 = Id id
-  lift2 (Id f) (Id g) = Id (f `par` g)
+  par0 = Id par0
+  Id f `par` Id g = Id (f `par` g)

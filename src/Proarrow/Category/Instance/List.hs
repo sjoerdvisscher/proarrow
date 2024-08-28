@@ -3,7 +3,7 @@
 
 module Proarrow.Category.Instance.List where
 
-import Proarrow.Category.Monoidal (Monoidal (..), type (++))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data LIST k = L [k]
@@ -37,13 +37,16 @@ instance (CategoryOf k) => Profunctor (List :: CAT (LIST k)) where
   r \\ Nil = r
   r \\ Cons f fs = r \\ f \\ fs
 
-instance (CategoryOf k) => Monoidal (LIST k) where
-  type Unit = L '[]
-  type p ** q = L (UN L p ++ UN L q)
+instance (CategoryOf k) => MonoidalProfunctor (List :: CAT (LIST k)) where
+  par0 = Nil
   Nil `par` Nil = Nil
   Nil `par` gs@Cons{} = gs
   Cons f fs `par` Nil = mkCons f (fs `par` Nil)
   Cons f fs `par` Cons g gs = mkCons f (fs `par` Cons g gs)
+
+instance (CategoryOf k) => Monoidal (LIST k) where
+  type Unit = L '[]
+  type p ** q = L (UN L p ++ UN L q)
   leftUnitor f = f . listId \\ f
   leftUnitorInv f = listId . f \\ f
   rightUnitor Nil = listId

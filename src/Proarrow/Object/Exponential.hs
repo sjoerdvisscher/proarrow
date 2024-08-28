@@ -40,7 +40,7 @@ comp =
       \\ (b2c `par` a2b)
 
 mkExponential :: forall {k} a b. (Closed k) => (a :: k) ~> b -> Unit ~> (a ~~> b)
-mkExponential ab = curry @_ @a (ab . leftUnitor (src ab)) \\ ab
+mkExponential ab = curry @_ @a (ab . leftUnitor (src ab)) \\ ab \\ (par0 :: (Unit :: k) ~> Unit)
 
 eval' :: (Closed k) => Obj a -> Obj b -> ((a :: k) ~~> b) ** a ~> b
 eval' a b = uncurry' a b (b ^^^ a)
@@ -87,4 +87,4 @@ ap
   :: forall {j} {k} y a x p
    . (Cartesian j, Closed k, MonoidalProfunctor (p :: PRO j k), Ob y)
   => p a (x ~~> y) -> p a x -> p a y
-ap pf px = let a = src pf in dimap (a &&& a) (eval' (tgt px) (obj @y)) (lift2 pf px)
+ap pf px = let a = src pf in dimap (a &&& a) (eval' (tgt px) (obj @y)) (pf `par` px)

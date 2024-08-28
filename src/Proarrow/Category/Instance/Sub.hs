@@ -26,10 +26,13 @@ instance (CategoryOf k) => CategoryOf (SUBCAT (ob :: OB k)) where
 class (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
 instance (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
 
+instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => MonoidalProfunctor (Sub :: CAT (SUBCAT (ob :: OB k))) where
+  par0 = Sub par0
+  Sub f `par` Sub g = Sub (f `par` g)
+
 instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => Monoidal (SUBCAT (ob :: OB k)) where
   type Unit = SUB Unit
   type a ** b = SUB (UN SUB a ** UN SUB b)
-  Sub f `par` Sub g = Sub (f `par` g)
   leftUnitor (Sub a) = Sub (leftUnitor a)
   leftUnitorInv (Sub a) = Sub (leftUnitorInv a)
   rightUnitor (Sub a) = Sub (rightUnitor a)
@@ -39,10 +42,3 @@ instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => M
 
 instance (SymMonoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SymMonoidal (SUBCAT (ob :: OB k)) where
   swap' (Sub a) (Sub b) = Sub (swap' a b)
-
-instance
-  (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b)
-  => MonoidalProfunctor (Sub :: CAT (SUBCAT (ob :: OB k)))
-  where
-  lift0 = id
-  lift2 = par

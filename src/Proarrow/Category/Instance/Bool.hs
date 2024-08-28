@@ -1,6 +1,6 @@
 module Proarrow.Category.Instance.Bool where
 
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
@@ -16,6 +16,7 @@ import Proarrow.Object.BinaryProduct
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (Monoid (..), Comonoid (..))
 
 data BOOL = FLS | TRU
 
@@ -61,10 +62,14 @@ instance HasBinaryProducts BOOL where
   fst' Fls Tru = Fls
   fst' Tru Fls = F2T
   fst' Tru Tru = Tru
+  fst' F2T Fls = F2T
+  fst' F2T Tru = F2T
   snd' Fls Fls = Fls
   snd' Fls Tru = F2T
   snd' Tru Fls = Fls
   snd' Tru Tru = Tru
+  snd' Fls F2T = F2T
+  snd' Tru F2T = F2T
   Fls &&& Fls = Fls
   Fls &&& F2T = Fls
   F2T &&& Fls = Fls
@@ -85,20 +90,27 @@ instance HasBinaryCoproducts BOOL where
   lft' Fls Tru = F2T
   lft' Tru Fls = Tru
   lft' Tru Tru = Tru
+  lft' F2T Fls = F2T
+  lft' F2T Tru = F2T
   rgt' Fls Fls = Fls
   rgt' Fls Tru = Tru
   rgt' Tru Fls = F2T
   rgt' Tru Tru = Tru
+  rgt' Fls F2T = F2T
+  rgt' Tru F2T = F2T
   Fls ||| Fls = Fls
   F2T ||| F2T = F2T
   F2T ||| Tru = Tru
   Tru ||| F2T = Tru
   Tru ||| Tru = Tru
 
+instance MonoidalProfunctor Booleans where
+  par0 = id
+  f `par` g = f *** g
+
 instance Monoidal BOOL where
   type Unit = TerminalObject
   type a ** b = a && b
-  f `par` g = f *** g
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
@@ -137,3 +149,15 @@ instance Closed BOOL where
   Tru ^^^ Fls = Tru
   Tru ^^^ F2T = Tru
   Tru ^^^ Tru = Tru
+
+instance Monoid TRU where
+  mempty = Tru
+  mappend = Tru
+
+instance Comonoid TRU where
+  counit = Tru
+  comult = Tru
+
+instance Comonoid FLS where
+  counit = F2T
+  comult = Fls

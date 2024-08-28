@@ -2,9 +2,9 @@
 
 module Proarrow.Category.Instance.Prof where
 
-import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), dimapDefault, (:~>))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, (:~>), type (+->))
 
-type Prof :: CAT (PRO j k)
+type Prof :: CAT (j +-> k)
 data Prof p q where
   Prof
     :: (Profunctor p, Profunctor q)
@@ -12,7 +12,7 @@ data Prof p q where
     -> Prof p q
 
 -- | The category of profunctors and natural transformations between them.
-instance CategoryOf (PRO j k) where
+instance CategoryOf (j +-> k) where
   type (~>) = Prof
   type Ob p = Profunctor p
 

@@ -55,8 +55,8 @@ instance (Functor f, Functor g) => Functor (Product f g) where
 
 instance HasBinaryProducts (k1 -> Type) where
   type f && g = Product f g
-  fst' Nat{} Nat{} = Nat \(Pair f _) -> f
-  snd' Nat{} Nat{} = Nat \(Pair _ g) -> g
+  fst' (Nat n) Nat{} = Nat \(Pair f _) -> n f
+  snd' Nat{} (Nat n) = Nat \(Pair _ g) -> n g
   Nat f &&& Nat g = Nat \a -> Pair (f a) (g a)
 
 instance (Functor f, Functor g) => Functor (Sum f g) where
@@ -65,8 +65,8 @@ instance (Functor f, Functor g) => Functor (Sum f g) where
 
 instance HasBinaryCoproducts (k1 -> Type) where
   type f || g = Sum f g
-  lft' Nat{} Nat{} = Nat InL
-  rgt' Nat{} Nat{} = Nat InR
+  lft' (Nat n) Nat{} = Nat (InL . n)
+  rgt' Nat{} (Nat n) = Nat (InR . n)
   Nat f ||| Nat g = Nat \case
     InL x -> f x
     InR y -> g y
@@ -83,20 +83,19 @@ instance (CategoryOf k1) => Closed (PROD (k1 -> Type)) where
   uncurry' (Prod Nat{}) (Prod Nat{}) (Prod (Nat n)) = Prod (Nat \(Pair f g) -> case n f of Exp k -> k id g)
   Prod (Nat m) ^^^ Prod (Nat n) = Prod (Nat \(Exp k) -> Exp \cd h -> m (k cd (n h)) \\ cd)
 
+instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
+  par0 = id
+  Nat n `par` Nat m = Nat (\(Compose fg) -> Compose (n (map m fg)))
+
 instance Monoidal (Type -> Type) where
   type Unit = Identity
   type f ** g = Compose f g
-  Nat n `par` Nat m = Nat (\(Compose fg) -> Compose (n (map m fg)))
   leftUnitor (Nat n) = Nat (n . runIdentity . getCompose)
   leftUnitorInv (Nat n) = Nat (Compose . Identity . n)
   rightUnitor (Nat n) = Nat (n . map runIdentity . getCompose)
   rightUnitorInv (Nat n) = Nat (Compose . map Identity . n)
   associator Nat{} Nat{} Nat{} = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv Nat{} Nat{} Nat{} = Nat (Compose . Compose . map getCompose . getCompose)
-
-instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
-  lift0 = id
-  lift2 = par
 
 data CatAsComonoid k a where
   CatAsComonoid :: forall {k} (c :: k) a. (Ob c) => (forall c'. c ~> c' -> a) -> CatAsComonoid k a

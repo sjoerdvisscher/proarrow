@@ -24,5 +24,5 @@ instance Procomonad (Writer m) where
   duplicate (Writer f) = Writer (\a -> (fst (f a), a)) :.: Writer f
 
 instance (Monoid m) => MonoidalProfunctor (Writer m) where
-  lift0 = id
-  lift2 (Writer f) (Writer g) = Writer \(a1, a2) -> case f a1 of (m1, b1) -> case g a2 of (m2, b2) -> (m1 <> m2, (b1, b2))
+  par0 = id
+  Writer f `par` Writer g = Writer \(a1, a2) -> case f a1 of (m1, b1) -> case g a2 of (m2, b2) -> (m1 <> m2, (b1, b2))

@@ -4,7 +4,7 @@ module Proarrow.Category.Instance.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal, swap')
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swap')
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -38,10 +38,13 @@ instance (Representable p, Representable q) => Representable (p :**: q) where
   tabulate (f :**: g) = tabulate f :**: tabulate g
   repMap (f :**: g) = repMap @p f :**: repMap @q g
 
+instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :**: q) where
+  par0 = par0 :**: par0
+  (f1 :**: f2) `par` (g1 :**: g2) = (f1 `par` g1) :**: (f2 `par` g2)
+
 instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   type Unit = '(Unit, Unit)
   type '(a1, a2) ** '(b1, b2) = '(a1 ** b1, a2 ** b2)
-  (f1 :**: f2) `par` (g1 :**: g2) = (f1 `par` g1) :**: (f2 `par` g2)
   leftUnitor (a1 :**: a2) = leftUnitor a1 :**: leftUnitor a2
   leftUnitorInv (a1 :**: a2) = leftUnitorInv a1 :**: leftUnitorInv a2
   rightUnitor (a1 :**: a2) = rightUnitor a1 :**: rightUnitor a2

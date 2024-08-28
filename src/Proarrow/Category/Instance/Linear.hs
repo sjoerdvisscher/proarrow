@@ -35,10 +35,13 @@ instance CategoryOf LINEAR where
   type (~>) = Linear
   type Ob (a :: LINEAR) = Is L a
 
+instance MonoidalProfunctor Linear where
+  par0 = id
+  Linear f `par` Linear g = Linear \(x, y) -> (f x, g y)
+
 instance Monoidal LINEAR where
   type Unit = L ()
   type L a ** L b = L (a, b)
-  Linear f `par` Linear g = Linear \(x, y) -> (f x, g y)
   leftUnitor (Linear f) = Linear \((), x) -> f x
   leftUnitorInv (Linear f) = Linear \x -> ((), f x)
   rightUnitor (Linear f) = Linear \(x, ()) -> f x
@@ -47,7 +50,7 @@ instance Monoidal LINEAR where
   associatorInv Linear{} Linear{} Linear{} = Linear \(x, (y, z)) -> ((x, y), z)
 
 instance SymMonoidal LINEAR where
-  swap' Linear{} Linear{} = Linear \(x, y) -> (y, x)
+  swap' (Linear f) (Linear g) = Linear \(x, y) -> (g y, f x)
 
 instance Closed LINEAR where
   type a ~~> b = L (UN L a %1 -> UN L b)
@@ -67,8 +70,8 @@ instance Representable Forget where
   tabulate = Forget
   repMap (Linear f) x = f x
 instance MonoidalProfunctor Forget where
-  lift0 = Forget \() -> ()
-  lift2 (Forget f) (Forget g) = Forget \(x, y) -> (f x, g y)
+  par0 = Forget \() -> ()
+  Forget f `par` Forget g = Forget \(x, y) -> (f x, g y)
 
 data Ur a where
   Ur :: a -> Ur a
@@ -88,8 +91,8 @@ instance Representable Free where
   tabulate (Linear f) = Free f
   repMap f = Linear \(Ur a) -> Ur (f a)
 instance MonoidalProfunctor Free where
-  lift0 = Free \() -> Ur ()
-  lift2 (Free f) (Free g) = Free \(x, y) -> case (f x, g y) of (Ur a, Ur b) -> Ur (a, b)
+  par0 = Free \() -> Ur ()
+  Free f `par` Free g = Free \(x, y) -> case (f x, g y) of (Ur a, Ur b) -> Ur (a, b)
 
 unlift2Free :: Free % (x ** y) ~> (Free % x) ** (Free % y)
 unlift2Free = Linear \(Ur (x, y)) -> (Ur x, Ur y)
@@ -103,8 +106,8 @@ instance Adjunction Free Forget where
 
 instance HasBinaryCoproducts LINEAR where
   type L a || L b = L (Either a b)
-  lft' Linear{} Linear{} = Linear Left
-  rgt' Linear{} Linear{} = Linear Right
+  lft' (Linear f) Linear{} = Linear \x -> Left (f x)
+  rgt' Linear{} (Linear g) = Linear \x -> Right (g x)
   Linear f ||| Linear g = Linear \case
     Left x -> f x
     Right y -> g y

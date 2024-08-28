@@ -22,6 +22,7 @@ instance (CategoryOf k) => CategoryOf (MonK k i j) where
 instance (M.Monoidal k) => Bicategory (MonK k) where
   type I = MK M.Unit
   type MK a `O` MK b = MK (b M.** a)
+  iObj = Mon2 M.par0
   Mon2 f `o` Mon2 g = Mon2 (g `M.par` f)
   r \\\ Mon2 f = r \\ f
   leftUnitor (Mon2 p) = Mon2 (M.rightUnitor p)

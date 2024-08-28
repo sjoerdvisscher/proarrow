@@ -12,8 +12,8 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :*: q) where
   r \\ (p :*: _) = r \\ p
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :*: q) where
-  lift0 = lift0 :*: lift0
-  lift2 (p1 :*: p2) (q1 :*: q2) = lift2 p1 q1 :*: lift2 p2 q2
+  par0 = par0 :*: par0
+  par (p1 :*: p2) (q1 :*: q2) = par p1 q1 :*: par p2 q2
 
 prod :: (r :~> p) -> (r :~> q) -> r :~> p :*: q
 prod l r p = l p :*: r p

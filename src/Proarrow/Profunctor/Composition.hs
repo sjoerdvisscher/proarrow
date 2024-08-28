@@ -40,8 +40,8 @@ instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) whe
   corepMap f = corepMap @q (corepMap @p f)
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
-  lift0 = lift0 :.: lift0
-  lift2 (p :.: q) (r :.: s) = lift2 p r :.: lift2 q s
+  par0 = par0 :.: par0
+  (p :.: q) `par` (r :.: s) = (p `par` r) :.: (q `par` s)
 
 -- | Horizontal composition
 o

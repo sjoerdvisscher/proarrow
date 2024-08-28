@@ -7,15 +7,16 @@
 module Proarrow.Category.Instance.Constraint where
 
 import Data.Kind (Constraint)
+import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Prelude (Maybe, Monoid, Semigroup)
 
 newtype CONSTRAINT = CNSTRNT Constraint
 type instance UN CNSTRNT (CNSTRNT a) = a
@@ -41,14 +42,17 @@ instance HasTerminalObject CONSTRAINT where
 
 instance HasBinaryProducts CONSTRAINT where
   type CNSTRNT l && CNSTRNT r = CNSTRNT (l, r)
-  fst' Entails{} Entails{} = Entails \r -> r
-  snd' Entails{} Entails{} = Entails \r -> r
+  fst' (Entails f) Entails{} = Entails \r -> f r
+  snd' Entails{} (Entails f) = Entails \r -> f r
   Entails f &&& Entails g = Entails \r -> f (g r)
+
+instance MonoidalProfunctor (:-) where
+  par0 = id
+  f `par` g = f *** g
 
 instance Monoidal CONSTRAINT where
   type Unit = TerminalObject
   type a ** b = a && b
-  f `par` g = f *** g
   leftUnitor = P.leftUnitorProd
   leftUnitorInv = P.leftUnitorProdInv
   rightUnitor = P.rightUnitorProd
@@ -57,7 +61,15 @@ instance Monoidal CONSTRAINT where
   associatorInv = P.associatorProdInv
 
 instance SymMonoidal CONSTRAINT where
-  swap' Entails{} Entails{} = Entails \r -> r
+  swap' (Entails f) (Entails g) = Entails \r -> f (g r)
+
+instance Monoid (CNSTRNT ()) where
+  mempty = id
+  mappend = Entails \r -> r
+
+instance Comonoid (CNSTRNT a) where
+  counit = Entails \r -> r
+  comult = Entails \r -> r
 
 class ((b) => c) => b :=> c
 instance ((b) => c) => b :=> c
@@ -75,8 +87,8 @@ instance Closed CONSTRAINT where
 
 -- I am solving the constraint ‘Eq a’ in a way that might turn out to loop at runtime.
 -- See § Undecidable instances and loopy superclasses.
--- eqIsSuperOrd :: CNSTRNT (Ord a) :- CNSTRNT (Eq a)
+-- eqIsSuperOrd :: CNSTRNT (P.Ord a) :- CNSTRNT (P.Eq a)
 -- eqIsSuperOrd = Entails \r -> r
 
-maybeLiftsSemigroup :: CNSTRNT (Semigroup a) :- CNSTRNT (Monoid (Maybe a))
+maybeLiftsSemigroup :: CNSTRNT (P.Semigroup a) :- CNSTRNT (Monoid (P.Maybe a))
 maybeLiftsSemigroup = Entails \r -> r

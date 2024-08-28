@@ -1,6 +1,6 @@
 module Proarrow.Category.Monoidal.Rev where
 
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data REV k = R k
@@ -22,10 +22,13 @@ instance (CategoryOf k) => CategoryOf (REV k) where
   type (~>) = Rev
   type Ob a = (Is R a, Ob (UN R a))
 
+instance (Monoidal k) => MonoidalProfunctor (Rev :: CAT (REV k)) where
+  par0 = Rev par0
+  Rev f `par` Rev g = Rev (g `par` f)
+
 instance (Monoidal k) => Monoidal (REV k) where
   type Unit = R Unit
   type (R a) ** (R b) = R (b ** a)
-  Rev f `par` Rev g = Rev (g `par` f)
   leftUnitor (Rev a) = Rev (rightUnitor a)
   leftUnitorInv (Rev a) = Rev (rightUnitorInv a)
   rightUnitor (Rev a) = Rev (leftUnitor a)

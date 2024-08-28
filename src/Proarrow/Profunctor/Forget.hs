@@ -60,10 +60,32 @@ class (forall a. (Super c a) => c (Free c a), Functor (Free c)) => HasFree (c ::
   lift :: (Super c a) => a ~> Free c a
   retract :: (c a) => Free c a ~> a
 
+data family EQ (a :: k)
+data instance EQ (a :: Type) = a :=: a -- deriving (Eq, Show)
+data instance EQ (a :: k1 -> Type) = forall x. Ob x => a x :==: a x
+data instance EQ (a :: k1 -> k2 -> Type) = forall x y. (Ob x, Ob y) => a x y :===: a x y
+
+data LawList (c :: Type -> Constraint) where
+  Done :: LawList c
+  Law0 :: EQ (Free c (Var c)) -> LawList c -> LawList c
+  Law1 :: (Free c (Var c) -> EQ (Free c (Var c))) -> LawList c -> LawList c
+  Law3 :: (Free c (Var c) -> Free c (Var c) -> Free c (Var c) -> EQ (Free c (Var c))) -> LawList c -> LawList c
+infix 4 :=:, :==:, :===:
+
+class Laws (c :: Type -> Constraint) where
+  type Var c :: Type
+  laws :: LawList c
+
+data VAR = X | Y | Z -- deriving (Eq, Show, Generic, CoArbitrary)
+
 instance HasFree Semigroup where
   type Free Semigroup = NonEmpty
   lift = (:| [])
   retract = sconcat
+
+instance Laws Semigroup where
+  type Var Semigroup = VAR
+  laws = Law3 (\x y z -> x <> (y <> z) :=: (x <> y) <> z) Done
 
 instance HasFree Monoid where
   type Super Monoid = Semigroup

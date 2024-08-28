@@ -16,8 +16,8 @@ instance (Monoidal k, Ob s) => Promonad (State (s :: k)) where
   State f . State g = State (f . g)
 
 instance (SymMonoidal k, Ob s) => MonoidalProfunctor (State (s :: k)) where
-  lift0 = id
-  lift2 (State @a1 @b1 f) (State @a2 @b2 g) =
+  par0 = State (obj @s `par` par0) \\ (par0 :: (Unit :: k) ~> Unit)
+  par (State @a1 @b1 f) (State @a2 @b2 g) =
     let s = obj @s; a1 = obj @a1; b1 = obj @b1; a2 = obj @a2; b2 = obj @b2
     in State
         ( (s `par` swap' b2 b1)

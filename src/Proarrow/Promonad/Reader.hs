@@ -22,5 +22,5 @@ instance (Monoid m) => Procomonad (Reader m) where
   duplicate (Reader f) = Reader id :.: Reader \(m1, (m2, a)) -> f (m1 <> m2, a)
 
 instance MonoidalProfunctor (Reader r) where
-  lift0 = id
-  lift2 (Reader f) (Reader g) = Reader \(r, (a, b)) -> (f (r, a), g (r, b))
+  par0 = id
+  Reader f `par` Reader g = Reader \(r, (a, b)) -> (f (r, a), g (r, b))

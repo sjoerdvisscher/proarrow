@@ -109,7 +109,7 @@ instance (MonoidalAction m c, MonoidalAction m' d) => MonoidalAction (PRO m m') 
   type Act (w :: PRO m m') (p :: PRO c d) = DayAct w p
   act (Prof n) (Prof m) = Prof \(DayAct f w p g) -> DayAct f (n w) (m p) g
   unitor Prof{} = Prof \(DayAct f (DayUnit a b) p g) -> dimap (unitor @m (src p) . act a (src p) . f) (g . act b (tgt p) . unitorInv @m' (tgt p)) p \\ p
-  unitorInv Prof{} = Prof \p -> DayAct (unitorInv @m (src p)) (DayUnit id id) p (unitor @m' (tgt p)) \\ p
+  unitorInv Prof{} = Prof \p -> DayAct (unitorInv @m (src p)) (DayUnit par0 par0) p (unitor @m' (tgt p)) \\ p
   multiplicator Prof{} Prof{} Prof{} = Prof \(DayAct f w (DayAct f' w' p g') g) ->
     let c1 = src w; c2 = src w'; d1 = tgt w; d2 = tgt w'
     in DayAct
@@ -164,7 +164,7 @@ instance (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d) => Tamb
   tambara w (Optic f w' g) =
     Optic
       (multiplicator (src w) (src w') (obj @a) . act (src w) f)
-      (lift2 w w')
+      (w `par` w')
       (act (tgt w) g . multiplicatorInv (tgt w) (tgt w') (obj @b))
 
 parallel :: Optic w a b s t -> Optic w' c d u v -> Optic (w :**: w') '(a, c) '(b, d) '(s, u) '(t, v)
@@ -206,7 +206,7 @@ prof2ex
    . (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d, Ob a, Ob b)
   => ProfOptic (w :: PRO m m') (a :: c) (b :: d) (s :: c) (t :: d)
   -> Optic w a b s t
-prof2ex p2p = p2p (Optic (unitorInv @m obj) lift0 (unitor @m' obj))
+prof2ex p2p = p2p (Optic (unitorInv @m obj) par0 (unitor @m' obj))
 
 type Lens s t a b = MixedOptic Type a b s t
 mkLens :: (s -> a) -> (s -> b -> t) -> Lens s t a b

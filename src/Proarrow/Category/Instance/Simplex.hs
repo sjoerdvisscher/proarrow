@@ -2,7 +2,7 @@ module Proarrow.Category.Instance.Simplex where
 
 import Data.Kind (Type, Constraint)
 
-import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, src, tgt)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -95,12 +95,15 @@ type family (a :: Nat) + (b :: Nat) :: Nat where
   Z + b = b
   S a + b = S (a + b)
 
-instance Monoidal Nat where
-  type Unit = Z
-  type a ** b = a + b
+instance MonoidalProfunctor Simplex where
+  par0 = ZZ
   ZZ `par` g = g
   Y f `par` g = Y (f `par` g)
   X f `par` g = X (f `par` g)
+
+instance Monoidal Nat where
+  type Unit = Z
+  type a ** b = a + b
   leftUnitor f = f
   leftUnitorInv f = f
   rightUnitor f = f . rightUnitor' (singNat' (src f))
@@ -141,7 +144,7 @@ instance (Monoid m) => Representable (Replicate m) where
   type Replicate m % S b = m ** (Replicate m % b)
   index (Replicate f) = f
   tabulate = Replicate
-  repMap ZZ = obj @Unit
+  repMap ZZ = par0
   repMap (Y f) = let g = repMap @(Replicate m) f in (mempty @m `par` g) . leftUnitorInv (src g)
   repMap (X (Y f)) = obj @m `par` repMap @(Replicate m) f
   repMap (X (X f)) =

@@ -3,6 +3,7 @@
 module Proarrow.Object.BinaryCoproduct where
 
 import Data.Kind (Type)
+import Prelude (type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -15,8 +16,8 @@ import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 
 class (CategoryOf k) => HasBinaryCoproducts k where
   type (a :: k) || (b :: k) :: k
-  lft' :: Obj (a :: k) -> Obj b -> a ~> (a || b)
-  rgt' :: Obj (a :: k) -> Obj b -> b ~> (a || b)
+  lft' :: (a :: k) ~> a' -> Obj b -> a ~> (a' || b)
+  rgt' :: Obj (a :: k) -> b ~> b' -> b ~> (a || b')
   (|||) :: (x :: k) ~> a -> y ~> a -> (x || y) ~> a
   (+++) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a || b ~> x || y
   l +++ r = (lft @x @y . l) ||| (rgt @x @y . r) \\ l \\ r
@@ -38,10 +39,19 @@ codiag = id ||| id
 
 type HasCoproducts k = (HasInitialObject k, HasBinaryCoproducts k)
 
+class (a ** b ~ a || b) => TensorIsCoproduct a b
+instance (a ** b ~ a || b) => TensorIsCoproduct a b
+class
+  (HasCoproducts k, Monoidal k, (Unit :: k) ~ InitialObject, forall (a :: k) (b :: k). TensorIsCoproduct a b) =>
+  Cocartesian k
+instance
+  (HasCoproducts k, Monoidal k, (Unit :: k) ~ InitialObject, forall (a :: k) (b :: k). TensorIsCoproduct a b)
+  => Cocartesian k
+
 instance HasBinaryCoproducts Type where
   type a || b = P.Either a b
-  lft' _ _ = P.Left
-  rgt' _ _ = P.Right
+  lft' f _ = P.Left . f
+  rgt' _ f = P.Right . f
   (|||) = P.either
 
 instance HasBinaryCoproducts () where
@@ -52,8 +62,8 @@ instance HasBinaryCoproducts () where
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (PRO j k) where
   type p || q = p :+: q
-  lft' Prof{} Prof{} = Prof InjL
-  rgt' Prof{} Prof{} = Prof InjR
+  lft' (Prof n) Prof{} = Prof (InjL . n)
+  rgt' Prof{} (Prof n) = Prof (InjR . n)
   Prof l ||| Prof r = Prof (coproduct l r)
 
 newtype COPROD k = COPR k
@@ -73,10 +83,13 @@ instance (CategoryOf k) => CategoryOf (COPROD k) where
   type (~>) = Coprod
   type Ob a = (Is COPR a, Ob (UN COPR a))
 
+instance (HasCoproducts k) => MonoidalProfunctor (Coprod :: CAT (COPROD k)) where
+  par0 = id
+  Coprod f `par` Coprod g = Coprod (f +++ g)
+
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)
-  Coprod f `par` Coprod g = Coprod (f +++ g)
   leftUnitor (Coprod f) = Coprod (initiate' (tgt f) ||| f)
   leftUnitorInv (Coprod f) = Coprod (rgt' (obj @InitialObject) (tgt f) . f)
   rightUnitor (Coprod f) = Coprod (f ||| initiate' (tgt f))
@@ -85,8 +98,4 @@ instance (HasCoproducts k) => Monoidal (COPROD k) where
   associatorInv (Coprod a) (Coprod b) (Coprod c) = Coprod ((lft' (a +++ b) c . lft' a b) ||| (rgt' a b +++ c) \\ (a +++ b))
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
-  swap' (Coprod a) (Coprod b) = Coprod (rgt' b a ||| lft' b a)
-
-instance (HasCoproducts k) => MonoidalProfunctor (Coprod :: CAT (COPROD k)) where
-  lift0 = id
-  lift2 = par
+  swap' (Coprod a) (Coprod b) = Coprod (rgt' (tgt b) a ||| lft' b (tgt a))

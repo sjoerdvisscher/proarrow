@@ -7,7 +7,7 @@ import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), isObPar)
-import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->), Obj)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
@@ -87,7 +87,7 @@ instance
   (MonoidalProfunctor r, Adjunction l r, Representable l, Representable r, Monoidal j, Monoidal k)
   => MonoidalProfunctor (RepCostar l :: j +-> k)
   where
-  lift0 = RepCostar (counit @l @r (tabulate (repMap @l @Unit id) :.: lift0))
-  lift2 (RepCostar @x1 fx) (RepCostar @y1 fy) =
+  par0 = RepCostar (counit @l @r (tabulate (repMap @l @Unit id) :.: par0)) \\ (par0 :: Obj (Unit :: k))
+  RepCostar @x1 fx `par` RepCostar @y1 fy =
     (fx `par` fy) // isObPar @x1 @y1 $
-      RepCostar (rightAdjunct @l @r (lift2 (leftAdjunct @l @r @x1 fx) (leftAdjunct @l @r @y1 fy)))
+      RepCostar (rightAdjunct @l @r (leftAdjunct @l @r @x1 fx `par` leftAdjunct @l @r @y1 fy))

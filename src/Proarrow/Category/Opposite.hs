@@ -1,6 +1,6 @@
 module Proarrow.Category.Opposite where
 
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor(..), SymMonoidal (..))
 import Proarrow.Core (CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, lmap)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -51,10 +51,13 @@ instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
   rgt' (Op a) (Op b) = Op (snd' a b)
   Op a ||| Op b = Op (a &&& b)
 
+instance MonoidalProfunctor p => MonoidalProfunctor (Op p) where
+  par0 = Op par0
+  Op l `par` Op r = Op (l `par` r)
+
 instance (Monoidal k) => Monoidal (OPPOSITE k) where
   type Unit = OP Unit
   type a ** b = OP (UN OP a ** UN OP b)
-  Op l `par` Op r = Op (l `par` r)
   leftUnitor (Op a) = Op (leftUnitorInv a)
   leftUnitorInv (Op a) = Op (leftUnitor a)
   rightUnitor (Op a) = Op (rightUnitorInv a)
