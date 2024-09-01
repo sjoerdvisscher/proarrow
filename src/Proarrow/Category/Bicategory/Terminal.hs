@@ -1,35 +1,31 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Category.Bicategory.Terminal where
 
 import Data.Type.Equality (type (~), type (~~))
 
 import Proarrow.Category.Bicategory (Bicategory (..), Monad (..))
-import Proarrow.Category.Instance.Unit ()
+import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
-type TERMK :: CAT ()
-data TERMK j k where
-  T1 :: TERMK '() '()
-
-type Terminal :: CAT (TERMK j k)
+type Terminal :: CAT (Unit j k)
 data Terminal a b where
-  Terminal :: Terminal T1 T1
+  Terminal :: Terminal 'Unit 'Unit
 
-instance Profunctor (Terminal :: CAT (TERMK '() '())) where
+instance Profunctor (Terminal :: CAT (Unit '() '())) where
   dimap = dimapDefault
   r \\ Terminal = r
-instance Promonad (Terminal :: CAT (TERMK '() '())) where
+instance Promonad (Terminal :: CAT (Unit '() '())) where
   id = Terminal
   Terminal . Terminal = Terminal
-instance (j ~ '(), k ~ '()) => CategoryOf (TERMK j k) where
+instance (j ~ '(), k ~ '()) => CategoryOf (Unit j k) where
   type (~>) = Terminal
-  type Ob @(TERMK j k) p = (p ~~ T1)
+  type Ob @(Unit j k) p = (p ~~ 'Unit)
 
-instance Bicategory TERMK where
-  type Ob0 TERMK k = (k ~ '())
-  type I = T1
-  type O a b = T1
+instance Bicategory Unit where
+  type Ob0 Unit k = (k ~ '())
+  type I = 'Unit
+  type O a b = 'Unit
   r \\\ Terminal = r
   Terminal `o` Terminal = Terminal
   leftUnitor Terminal = Terminal
@@ -39,6 +35,6 @@ instance Bicategory TERMK where
   associator Terminal Terminal Terminal = Terminal
   associatorInv Terminal Terminal Terminal = Terminal
 
-instance Monad T1 where
+instance Monad 'Unit where
   eta = Terminal
   mu = Terminal

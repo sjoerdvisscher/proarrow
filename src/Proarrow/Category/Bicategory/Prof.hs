@@ -1,5 +1,6 @@
 module Proarrow.Category.Bicategory.Prof where
 
+import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Adjunction qualified as A
@@ -9,16 +10,13 @@ import Proarrow.Category.Bicategory
   , Bimodule (..)
   , Comonad (..)
   , Monad (..)
-  , (==)
-  , (||)
   )
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
-import Proarrow.Category.Bicategory.Op (OPK (..), Op (..))
-import Proarrow.Category.Bicategory.Product (PRODK (..), Prod (..))
 import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..))
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
-import Proarrow.Category.Instance.Prof ()
+import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Prof (unProf)
 import Proarrow.Category.Opposite qualified as Op
 import Proarrow.Core
   ( CAT
@@ -37,6 +35,7 @@ import Proarrow.Core
   , (:~>)
   , type (+->)
   )
+import Proarrow.Functor (Functor (..))
 import Proarrow.Object (src, tgt)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
@@ -60,7 +59,7 @@ instance Promonad Prof where
   Prof m . Prof n = Prof (m . n)
 instance CategoryOf (PROFK j k) where
   type (~>) = Prof
-  type Ob @(PROFK j k) p = (Is PK p, Profunctor (UN PK p))
+  type Ob p = (Is PK p, Profunctor (UN PK p))
 
 instance Bicategory PROFK where
   type Ob0 PROFK k = CategoryOf k
@@ -127,40 +126,35 @@ instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK c d) (PK f 
   rift = Prof \(r :.: j) -> R.runRift j r
   riftUniv (Prof n) = Prof \g -> g // R.Rift \j -> n (g :.: j)
 
--- | Hom 2-functor
-type Hom :: forall {s}. forall (kk :: CAT s) -> forall {i} {j} {k} {l}. kk i j -> kk k l -> kk i k +-> kk j l
-data Hom kk p q a b where
-  Hom :: (Ob a, Ob b) => a `O` p ~> q `O` b -> Hom kk p q a b
+class
+  ( forall (s :: COK sk h i) (t :: tk j k). (Ob s, Ob t) => Profunctor (p s t)
+  , forall (s :: COK sk h i). (Ob s) => Functor (p s)
+  , Functor p
+  ) =>
+  IsFunctorial h i j k (p :: COK sk h i -> tk j k -> kk h j +-> kk i k)
+instance
+  ( forall (s :: COK sk h i) (t :: tk j k). (Ob s, Ob t) => Profunctor (p s t)
+  , forall (s :: COK sk h i). (Ob s) => Functor (p s)
+  , Functor p
+  )
+  => IsFunctorial h i j k (p :: COK sk h i -> tk j k -> kk h j +-> kk i k)
 
-instance (Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob0 kk l, Ob p, Ob q) => Profunctor (Hom kk (p :: kk j i) (q :: kk k l)) where
-  dimap f g (Hom sq) = Hom (f || obj @p == sq == obj @q || g) \\ f \\ g
-  r \\ Hom{} = r
+type LaxProfunctor :: forall {s} {t}. CAT s -> CAT t -> (t +-> s) -> Constraint
+class
+  ( Bicategory sk
+  , Bicategory tk
+  , forall h i j k. (Ob0 sk h, Ob0 sk i, Ob0 tk j, Ob0 tk k) => IsFunctorial h i j k (P sk tk kk)
+  , forall j k. (Ob0 sk j, Ob0 tk k) => CategoryOf (kk j k)
+  ) =>
+  LaxProfunctor (sk :: CAT s) (tk :: CAT t) (kk :: t +-> s)
+  where
+  data P sk tk kk :: forall {h} {i} {j} {k}. COK sk h i -> tk j k -> kk h j +-> kk i k
+  laxId :: (Ob0 sk k, Ob0 tk j) => (Id :: CAT (kk k j)) :~> P sk tk kk (CO (I :: sk k k)) (I :: tk j j)
+  laxComp :: P sk tk kk s0 t0 :.: P sk tk kk s1 t1 :~> P sk tk kk (s0 `O` s1) (t0 `O` t1)
 
-hom2Map :: (Bicategory kk) => PROD (OP a) b ~> PROD (OP c) d -> PK (Hom kk c b) ~> PK (Hom kk a d)
-hom2Map (Prod (Op m) n) = Prof (\(Hom @_ @a @b f) -> Hom (obj @a || m == f == n || obj @b) \\\ f) \\\ m \\\ n
+dimapLax :: (LaxProfunctor sk tk kk) => (s' ~> s) -> (t ~> t') -> P sk tk kk (CO s) t :~> P sk tk kk (CO s') t'
+dimapLax f g = (unProf (unNat (map (Co f))) . unProf (map g)) \\\ f \\\ g
 
-homId :: forall kk i. (Bicategory kk, Ob0 kk i) => PK (Id :: kk i i +-> kk i i) ~> PK (Hom kk I I)
-homId = (Prof \(Id f) -> Hom (leftUnitorInv (tgt f) . f . rightUnitor (src f)) \\ f) \\ iObj @kk @i
-
-homCompose
-  :: forall {kk} {i} {j} {k} {i'} {j'} {k'} p q p' q'
-   . ( Bicategory kk
-     , Ob (p :: kk j k)
-     , Ob (p' :: kk j' k')
-     , Ob (q :: kk i j)
-     , Ob (q' :: kk i' j')
-     , Ob0 kk i
-     , Ob0 kk j
-     , Ob0 kk k
-     , Ob0 kk i'
-     , Ob0 kk j'
-     , Ob0 kk k'
-     )
-  => PK (Hom kk p p') `O` PK (Hom kk q q') ~> PK (Hom kk (p `O` q) (p' `O` q'))
-homCompose =
-  let p = obj @p; p' = obj @p'; q = obj @q; q' = obj @q'
-  in (p `o` q) // (p' `o` q') // Prof \(Hom @_ @a @b l :.: Hom @_ @_ @c r) ->
-      let a = obj @a; b = obj @b; c = obj @c
-      in Hom (associatorInv p' q' c . (obj @p' `o` r) . associator p' b q . (l `o` obj @q) . associatorInv a p q) \\\ r \\\ l
-
--- class PseudoProfunctor (p :: kk1 j1 k1 -> kk2 j2 k2 ->
+instance (Monad m, Comonad c, LaxProfunctor sk tk kk) => Monad (PK (P sk tk kk (CO c) m)) where
+  eta = Prof (dimapLax epsilon eta . laxId)
+  mu = Prof (dimapLax delta mu . laxComp)
