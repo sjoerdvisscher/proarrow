@@ -17,6 +17,7 @@ type Functor :: forall {k1} {k2}. (k1 -> k2) -> Constraint
 class (CategoryOf k1, CategoryOf k2, forall a. (Ob a) => Ob' (f a)) => Functor (f :: k1 -> k2) where
   map :: a ~> b -> f a ~> f b
 
+-- Can't make an instance Functor (f :: Type -> Type) because that would overlap with instances of kind k -> Type
 newtype Prelude f a = Prelude {unPrelude :: f a}
 instance (P.Functor f) => Functor (Prelude f) where
   map f = Prelude . P.fmap f . unPrelude

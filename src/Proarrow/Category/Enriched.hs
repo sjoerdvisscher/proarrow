@@ -9,6 +9,9 @@ import Proarrow.Category.Bicategory (Bicategory (I, O), Monad (..))
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Promonad (..), UN)
 import Proarrow.Object.BinaryProduct ()
+import Proarrow.Poset (PosetOf(..), CPromonad(..), (\\), POS)
+import Proarrow.Poset qualified as Pos
+import Proarrow.Category.Instance.Constraint (CONSTRAINT(..), type (:-) (..))
 
 type family V (vk :: k -> Type) :: CAT k
 type family Arr (v :: CAT k) (a :: vk exta) (b :: vk extb) :: v exta extb
@@ -33,7 +36,24 @@ type instance Arr (MonK Type) (CK a) (CK b) = MK (a ~> b)
 instance (CategoryOf k) => ECategory (CATK k) where
   type EOb (a :: CATK k exta) = (Is CK a, Ob (UN CK a))
   eid = Mon2 $ \() -> id
-  ecomp = Mon2 $ \(f, g) -> g . f
+  ecomp = Mon2 $ \(f, g) -> f . g
+
+type POSK :: Kind -> () -> Kind
+data POSK k ext where
+  PK :: k -> POSK k i
+type instance UN PK (PK a) = a
+
+type instance V (POSK k) = MonK CONSTRAINT
+type instance Arr (MonK CONSTRAINT) a b = MK (CNSTRNT (UN PK a <= UN PK b))
+
+toEntails :: (a Pos.:- b) -> CNSTRNT a :- CNSTRNT b
+toEntails s = Entails $ \r -> r \\ s
+-- | A poset as a Constraint-enriched category
+instance (PosetOf k) => ECategory (POSK k) where
+  type EOb (a :: POSK k exta) = (Is PK a, COb (UN PK a))
+  eid @_ @a = Mon2 $ toEntails (cid @((<=) :: POS k) @(UN PK a))
+  ecomp @_ @a @_ @b @_ @c = Mon2 $ toEntails (ccomp @((<=) :: POS k) @(UN PK a) @(UN PK b) @(UN PK c))
+
 
 type MONADK :: forall {k} {kk} {a}. kk (a :: k) a -> k -> Type
 data MONADK t ext where

@@ -10,18 +10,20 @@ import Data.Kind (Constraint, Type)
 import Prelude (Either, Maybe (..), Monad (..), Traversable, const, either, fmap, fst, snd, uncurry, ($), type (~))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
-import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Nat (Nat (..), (!))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, OB, PRO, Profunctor (..), Promonad (..), UN, dimapDefault, (:~>))
 import Proarrow.Functor (Functor (..), Prelude (..))
-import Proarrow.Monoid (Monoid)
+import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
 import Proarrow.Object.BinaryProduct ()
+import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Yoneda (Yo (..))
 
@@ -129,16 +131,32 @@ instance (MonoidalAction m c, MonoidalAction m' d) => MonoidalAction (PRO m m') 
         \\ (c2 `act` e)
         \\ (d2 `act` e')
 
+memptyAct :: forall m c (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => n ~> Act a n
+memptyAct = act @m @c (mempty @a) (obj @n) . unitorInv @m obj
+
+mappendAct :: forall m c (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => Act a (Act a n) ~> Act a n
+mappendAct = let a = obj @a; n = obj @n in act @m @c (mappend @a) n . multiplicator a a n
+
 type ModuleObject :: forall {m} {c}. m -> c -> Constraint
 class (MonoidalAction m c, Monoid a, Ob n) => ModuleObject (a :: m) (n :: c) where
   action :: Act a n ~> n
 
-class (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d, Profunctor p) => Tambara (w :: PRO m m') (p :: PRO c d) where
-  tambara :: w x x' -> p a b -> p (x `Act` a) (x' `Act` b)
+class
+  (Monoid w, MonoidalAction m c, MonoidalAction m' d, Profunctor p, ModuleObject w p) =>
+  Tambara (w :: PRO m m') (p :: PRO c d)
+instance
+  (Monoid w, MonoidalAction m c, MonoidalAction m' d, Profunctor p, ModuleObject w p)
+  => Tambara (w :: PRO m m') (p :: PRO c d)
 
-instance (Profunctor p, Tambara w p, Monoid w) => ModuleObject w p where
-  action = Prof \(DayAct f w p g) -> dimap f g $ tambara w p
+instance (MonoidalAction m c) => ModuleObject (Id :: PRO m m) (Id :: PRO c c) where
+  action = Prof \(DayAct l (Id f) (Id g) r) -> Id (r . act f g . l)
 
+instance (MonoidalProfunctor w1, MonoidalProfunctor w2, Tambara w1 p1, Tambara w2 p2) => ModuleObject (w1 :.: w2) (p1 :.: p2) where
+  action = Prof \(DayAct l (w1 :.: w2) (p1 :.: p2) r) ->
+    unProf (action @w1) (DayAct l w1 p1 (tgt w1 `act` tgt p1))
+      :.: unProf (action @w2) (DayAct (src w2 `act` src p2) w2 p2 r)
+
+type Optic :: PRO m m' -> c -> d -> c -> d -> Type
 data Optic w a b s t where
   Optic
     :: forall {c} {d} a b s t m m' w (x :: m) (x' :: m')
@@ -148,24 +166,20 @@ data Optic w a b s t where
     -> (x' `Act` b) ~> t
     -> Optic (w :: PRO m m') a b s t
 
-opticAsDayAct :: (CategoryOf c, CategoryOf d) => Optic w (a :: c) (b :: d) :~> DayAct w (Yo a b)
+opticAsDayAct :: (CategoryOf c, CategoryOf d) => (Optic w a b :: PRO c d) :~> DayAct w (Yo a b)
 opticAsDayAct (Optic f w g) = DayAct f w (Yo id id) g
 
 dayActAsOptic
   :: (MonoidalAction m c, MonoidalAction m' d, Profunctor (w :: PRO m m'))
-  => DayAct w (Yo (a :: c) (b :: d)) :~> Optic w a b
+  => DayAct w (Yo a b :: PRO c d) :~> Optic w a b
 dayActAsOptic (DayAct f w (Yo l r) g) = Optic (act (src w) l . f) w (g . act (tgt w) r) \\ l \\ r
 
-instance (CategoryOf c, CategoryOf d) => Profunctor (Optic w (a :: c) (b :: d)) where
+instance (CategoryOf c, CategoryOf d) => Profunctor (Optic w a b :: PRO c d) where
   dimap l r (Optic f w g) = Optic (f . l) w (r . g)
   r \\ Optic f _ g = r \\ f \\ g
 
-instance (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d) => Tambara (w :: PRO m m') (Optic w (a :: c) (b :: d)) where
-  tambara w (Optic f w' g) =
-    Optic
-      (multiplicator (src w) (src w') (obj @a) . act (src w) f)
-      (w `par` w')
-      (act (tgt w) g . multiplicatorInv (tgt w) (tgt w') (obj @b))
+instance (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d) => ModuleObject (w :: PRO m m') (Optic w a b :: PRO c d) where
+  action = Prof dayActAsOptic . mappendAct @(PRO m m') @(PRO c d) . act (obj @w) (Prof opticAsDayAct)
 
 parallel :: Optic w a b s t -> Optic w' c d u v -> Optic (w :**: w') '(a, c) '(b, d) '(s, u) '(t, v)
 parallel (Optic f w g) (Optic h w' i) = Optic (f :**: h) (w :**: w') (g :**: i)
@@ -198,8 +212,8 @@ instance (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d) => Cate
 type ProfOptic w a b s t = forall p. (Tambara w p) => p a b -> p s t
 type MixedOptic m a b s t = ProfOptic ((~>) @m) a b s t
 
-ex2prof :: Optic w a b s t -> ProfOptic w a b s t
-ex2prof (Optic l w r) = dimap l r . tambara w
+ex2prof :: forall w a b s t. Optic w a b s t -> ProfOptic w a b s t
+ex2prof (Optic l w r) p = unProf (action @w) (DayAct l w p r) \\ w \\ p
 
 prof2ex
   :: forall {c} {d} m m' w a b s t
@@ -233,8 +247,8 @@ mkAlgebraicLens v u = ex2prof @((~>) @(SUBCAT (Algebra m))) (Optic (\s -> (retur
 newtype Viewing a (b :: Type) s (t :: Type) = Viewing {unView :: s -> a}
 instance Profunctor (Viewing a b) where
   dimap l _ (Viewing f) = Viewing (f . l)
-instance Tambara (->) (Viewing a b) where
-  tambara _ (Viewing f) = Viewing (f . snd)
+instance ModuleObject (->) (Viewing a b) where
+  action = Prof \(DayAct l _ (Viewing f) _) -> Viewing (f . snd . l)
 
 infixl 8 ^.
 (^.) :: s -> (Viewing a b a b -> Viewing a b s t) -> a
@@ -245,10 +259,10 @@ data Previewing a (b :: COPROD Type) s (t :: COPROD Type) where
 instance Profunctor (Previewing a b) where
   dimap (Coprod l) Coprod{} (Previewing f) = Previewing (f . l)
   r \\ Previewing f = r \\ f
-instance Tambara (Coprod :: CAT (COPROD Type)) (Previewing a b) where
-  tambara Coprod{} (Previewing f) = Previewing (either (const Nothing) f)
-instance Tambara (->) (Previewing a b) where
-  tambara _ (Previewing f) = Previewing (f . snd)
+instance ModuleObject (Coprod :: CAT (COPROD Type)) (Previewing a b) where
+  action = Prof \(DayAct (Coprod l) _ (Previewing f) Coprod{}) -> Previewing (either (const Nothing) f . l)
+instance ModuleObject (->) (Previewing a b) where
+  action = Prof \(DayAct (Coprod l) _ (Previewing f) Coprod{}) -> Previewing (f . snd . l)
 
 infixl 8 ?.
 (?.)
@@ -258,10 +272,10 @@ infixl 8 ?.
 newtype Setting a b s t = Setting {unSet :: (a -> b) -> (s -> t)}
 instance Profunctor (Setting a b) where
   dimap l r (Setting f) = Setting (\u -> r . f u . l)
-instance Tambara (->) (Setting a b) where
-  tambara w (Setting f) = Setting (\u (x, a) -> (w x, f u a))
-instance Tambara (Coprod :: CAT (COPROD Type)) (Setting a b) where
-  tambara (Coprod w) (Setting f) = Setting (bimap w . f)
+instance ModuleObject (->) (Setting a b) where
+  action = Prof \(DayAct l w (Setting f) r) -> Setting (\u -> r . bimap w (f u) . l)
+instance ModuleObject (Coprod :: CAT (COPROD Type)) (Setting a b) where
+  action = Prof \(DayAct l (Coprod w) (Setting f) r) -> Setting (\u -> r . bimap w (f u) . l)
 
 infixl 8 .~
 (.~) :: (Setting a b a b -> Setting a b s t) -> b -> s -> t
@@ -273,23 +287,26 @@ data Updating a b s t where
 instance (Monad m) => Profunctor (Updating a b :: PRO Type (KlCat m)) where
   dimap l (Kleisli (Star r)) (Update u) = Update (\b x -> u b (l x) >>= unPrelude . r)
   r \\ Update u = r \\ u
-instance (Monad m) => Tambara (->) (Updating a b :: PRO Type (KlCat m)) where
-  tambara f (Update u) = Update (\b (w, x) -> fmap (f w,) (u b x))
+instance (Monad m) => ModuleObject (->) (Updating a b :: PRO Type (KlCat m)) where
+  action = Prof \(DayAct l f (Update u) (Kleisli (Star r))) -> Update (\b a -> do let {(c, e) = l a; d = f c}; t <- u b e; unPrelude (r (d, t)))
 
 mupdate
   :: (Monad m)
-  => (Updating a (KL b :: KlCat m) a (KL b :: KlCat m) -> Updating a (KL b :: KlCat m) s (KL t :: KlCat m)) -> b -> s -> m t
+  => (Updating a (KL b :: KlCat m) a (KL b :: KlCat m) -> Updating a (KL b :: KlCat m) s (KL t :: KlCat m))
+  -> b
+  -> s
+  -> m t
 mupdate f = unUpdate $ f (Update (\b _ -> return b))
 
 newtype Replacing a b s t = Replace {unReplace :: (a -> b) -> (s -> t)}
 instance Profunctor (Replacing a b) where
   dimap l r (Replace f) = Replace (\ab -> r . f ab . l)
-instance Tambara (->) (Replacing a b) where
-  tambara w (Replace f) = Replace (bimap w . f)
-instance Tambara (Coprod :: CAT (COPROD Type)) (Replacing a b) where
-  tambara (Coprod w) (Replace f) = Replace (bimap w . f)
-instance Tambara (Nat :: CAT (Type -> Type)) (Replacing a b) where
-  tambara (Nat w) (Replace f) = Replace \ab -> map (f ab) . w
+instance ModuleObject (->) (Replacing a b) where
+  action = Prof \(DayAct l w (Replace f) r) -> Replace (\u -> r . bimap w (f u) . l)
+instance ModuleObject (Coprod :: CAT (COPROD Type)) (Replacing a b) where
+  action = Prof \(DayAct l (Coprod w) (Replace f) r) -> Replace (\u -> r . bimap w (f u) . l)
+instance ModuleObject (Nat :: CAT (Type -> Type)) (Replacing a b) where
+  action = Prof \(DayAct l w (Replace f) r) -> Replace (\g -> r . (w ! f g) . l)
 
 infixl 8 %~
 (%~) :: (Replacing a b a b -> Replacing a b s t) -> (a -> b) -> (s -> t)
@@ -299,8 +316,8 @@ newtype Classifying m a b s t = Classifying
   {unClassify :: (Monad m) => m s -> b -> t}
 instance (Monad m) => Profunctor (Classifying m a b) where
   dimap l r (Classifying f) = Classifying (\u -> r . f (fmap l u))
-instance (Monad m) => Tambara (Sub :: CAT (SUBCAT (Algebra m))) (Classifying m a b) where
-  tambara (Sub w) (Classifying f) = Classifying (\m b -> (algebra (fmap (w . fst) m), f (fmap snd m) b))
+instance (Monad m) => ModuleObject (Sub :: CAT (SUBCAT (Algebra m))) (Classifying m a b) where
+  action = Prof \(DayAct l (Sub w) (Classifying f) r) -> Classifying (\(fmap l -> m) b -> r (algebra (fmap (w . fst) m), f (fmap snd m) b))
 
 infixl 8 .?
 (.?) :: (Monad m) => (Classifying m a b a b -> Classifying m a b s t) -> b -> m s -> t

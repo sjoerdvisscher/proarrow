@@ -23,7 +23,6 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Identity (Id (..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -80,9 +79,9 @@ duoidal
   => (p :.: p') `Day` (q :.: q') ~> (p `Day` q) :.: (p' `Day` q')
 duoidal = Prof \(Day f (p :.: p') (q :.: q') g) -> let b = tgt p `par` tgt q in Day f p q b :.: Day b p' q' g
 
-instance (Monoidal k) => Monoid (Id :: PRO k k) where
-  mempty = Prof \(DayUnit f g) -> Id (g . f)
-  mappend = Prof \(Day f (Id p) (Id q) g) -> Id (g . (p `par` q) . f)
+instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
+  mempty = Prof \(DayUnit f g) -> dimap f g par0
+  mappend = Prof \(Day f p q g) -> dimap f g (p `par` q)
 
 -- instance Monoidal k => Comonoid (E (PK (DayUnit :: PRO k k))) where
 --   counit = Endo (Bi.Prof \(DayUnit f g) -> g . f)

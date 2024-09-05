@@ -27,6 +27,9 @@ data Nat f g where
     => {unNat :: f .~> g}
     -> Nat f g
 
+(!) :: Nat f g -> a ~> b -> f a ~> g b
+Nat f ! ab = f . map ab \\ ab
+
 instance CategoryOf (k1 -> Type) where
   type (~>) = Nat
   type Ob f = Functor f

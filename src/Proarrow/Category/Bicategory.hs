@@ -217,13 +217,17 @@ elimO
   => (q `O` p ::: Nil) ~> (p ::: q ::: Nil)
 elimO = let p = obj @p; q = obj @q; pq = q `o` p in Str (SCons pq SNil) (SCons p (SCons q SNil)) pq
 
+-- | A bicategory is locally "something" if each hom-category is "something".
+class (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
+instance (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
+
 -- | Bicategories.
 --
 -- * 0-cells are kinds @i@, @j@, @k@... satisfying the @Ob0 kk@ constraint.
 -- * 1-cells are types of kind @kk j k@ for any 0-cells @j@ and @k@, satisfying the @Ob@ constraint.
 -- * 2-cells are values of type @p ~> q@, where @p@ and @q@ are 1-cells.
 type Bicategory :: forall {s}. CAT s -> Constraint
-class (forall j k. (Ob0 kk j, Ob0 kk k) => CategoryOf (kk j k), CategoryOf s) => Bicategory (kk :: CAT s) where
+class (Locally CategoryOf kk, CategoryOf s) => Bicategory (kk :: CAT s) where
   type Ob0 kk (j :: k) :: Constraint
   type Ob0 kk j = Any j
   type I :: kk i i
