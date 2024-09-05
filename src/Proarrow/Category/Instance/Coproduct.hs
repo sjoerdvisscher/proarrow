@@ -3,6 +3,7 @@ module Proarrow.Category.Instance.Coproduct where
 import Data.Kind (Constraint)
 
 import Proarrow.Core (CAT, CategoryOf (..), IsCategoryOf, Profunctor (..), Promonad (..))
+import Proarrow.Preorder.ThinCategory (Thin (..))
 
 data COPRODUCT j k = L j | R k
 
@@ -36,3 +37,13 @@ instance (Profunctor c, Profunctor d) => Profunctor (c :++: d) where
   dimap (InjR _) (InjL _) f = case f of {}
   r \\ InjL f = r \\ f
   r \\ InjR f = r \\ f
+
+class HasArrowCoprod (a :: COPRODUCT j k) b where arrCoprod :: a ~> b
+instance (Thin j, HasArrow (a :: j) b, Ob a, Ob b) => HasArrowCoprod (L a) (L b) where arrCoprod = InjL (arr @j)
+instance (Thin k, HasArrow (a :: k) b, Ob a, Ob b) => HasArrowCoprod (R a) (R b) where arrCoprod = InjR (arr @k)
+
+instance (Thin j, Thin k) => Thin (COPRODUCT j k) where
+  type HasArrow a b = HasArrowCoprod a b
+  arr = arrCoprod
+  withArr (InjL f) r = withArr f r \\ f
+  withArr (InjR f) r = withArr f r \\ f

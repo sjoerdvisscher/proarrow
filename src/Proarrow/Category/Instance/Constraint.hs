@@ -17,6 +17,7 @@ import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Preorder.ThinCategory (Thin (..))
 
 newtype CONSTRAINT = CNSTRNT Constraint
 type instance UN CNSTRNT (CNSTRNT a) = a
@@ -35,6 +36,11 @@ instance Promonad (:-) where
 instance Profunctor (:-) where
   dimap = dimapDefault
   r \\ Entails{} = r
+
+instance Thin CONSTRAINT where
+  type HasArrow (CNSTRNT a) (CNSTRNT b) = a :=> b
+  arr = Entails \r -> r
+  withArr (Entails f) r = f r
 
 instance HasTerminalObject CONSTRAINT where
   type TerminalObject = CNSTRNT ()

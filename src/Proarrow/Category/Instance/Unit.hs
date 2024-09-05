@@ -7,6 +7,7 @@ import Prelude (type (~))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Preorder.ThinCategory (Thin (..))
 
 type Unit :: CAT ()
 data Unit a b where
@@ -24,6 +25,11 @@ instance Promonad Unit where
 instance Profunctor Unit where
   dimap = dimapDefault
   r \\ Unit = r
+
+instance Thin () where
+  type HasArrow '() '() = ()
+  arr = Unit
+  withArr Unit r = r
 
 instance HasTerminalObject () where
   type TerminalObject = '()

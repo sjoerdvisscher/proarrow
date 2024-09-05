@@ -2,6 +2,7 @@ module Proarrow.Category.Instance.Bool where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
@@ -16,7 +17,7 @@ import Proarrow.Object.BinaryProduct
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Monoid (..), Comonoid (..))
+import Proarrow.Preorder.ThinCategory (Thin (..))
 
 data BOOL = FLS | TRU
 
@@ -47,6 +48,18 @@ instance Profunctor Booleans where
   r \\ Fls = r
   r \\ F2T = r
   r \\ Tru = r
+
+class IsBoolArr (a :: BOOL) b where boolArr :: a ~> b
+instance IsBoolArr FLS FLS where boolArr = Fls
+instance IsBoolArr FLS TRU where boolArr = F2T
+instance IsBoolArr TRU TRU where boolArr = Tru
+
+instance Thin BOOL where
+  type HasArrow a b = IsBoolArr a b
+  arr = boolArr
+  withArr Fls r = r
+  withArr F2T r = r
+  withArr Tru r = r
 
 instance HasTerminalObject BOOL where
   type TerminalObject = TRU

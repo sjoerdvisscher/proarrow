@@ -47,7 +47,7 @@ where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Core (Any, CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, src, tgt)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, src, tgt)
 import Proarrow.Object (Obj, obj)
 import Prelude (($), type (~))
 
@@ -229,7 +229,7 @@ instance (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
 type Bicategory :: forall {s}. CAT s -> Constraint
 class (Locally CategoryOf kk, CategoryOf s) => Bicategory (kk :: CAT s) where
   type Ob0 kk (j :: k) :: Constraint
-  type Ob0 kk j = Any j
+  type Ob0 kk j = ()
   type I :: kk i i
   type O (p :: kk j k) (q :: kk i j) :: kk i k
 
