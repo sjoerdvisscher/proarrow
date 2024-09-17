@@ -7,12 +7,12 @@ import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), isObPar)
-import Proarrow.Core (CAT, CategoryOf (..), PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->), Obj)
+import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..))
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repObj)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Promonad (Procomonad (..))
 
@@ -22,6 +22,9 @@ type Adjunction :: forall {j} {k}. PRO k j -> PRO j k -> Constraint
 class (Profunctor p, Profunctor q) => Adjunction (p :: PRO k j) (q :: PRO j k) where
   unit :: (Ob a) => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)
+
+unit' :: forall p q a b. (Adjunction p q) => a ~> b -> (q :.: p) a b
+unit' f = rmap f (unit @p @q @a) \\ f
 
 leftAdjunct
   :: forall l r a b
@@ -37,13 +40,13 @@ rightAdjunct
   -> (l % a ~> b)
 rightAdjunct f = counit (tabulate @l (repMap @l @a id) :.: f) \\ f
 
-unitFromStarUnit
-  :: forall l r a. (Functor l, Ob a) => (a ~> r (l a)) -> (Star r :.: Star l) a a
-unitFromStarUnit f = Star f :.: Star id
+unitFromRepUnit
+  :: forall l r a. (Representable l, Representable r, Ob a) => (a ~> r % (l % a)) -> (r :.: l) a a
+unitFromRepUnit f = tabulate f :.: tabulate id \\ repObj @l @a
 
-counitFromStarCounit
-  :: (Functor l) => (forall c. (Ob c) => l (r c) ~> c) -> (Star l :.: Star r) a b -> (a ~> b)
-counitFromStarCounit f (Star l :.: Star r) = f . map r . l
+counitFromRepCounit
+  :: forall l r. (Representable l, Representable r) => (forall c. (Ob c) => l % (r % c) ~> c) -> (l :.: r) :~> (~>)
+counitFromRepCounit f (l :.: r) = f . repMap @l (index r) . index l \\ r
 
 instance (Functor f) => Adjunction (Star f) (Costar f) where
   unit = Costar (map id) :.: Star (map id)
@@ -68,8 +71,8 @@ instance (Adjunction l1 r1, Adjunction l2 r2) => Adjunction (l1 :.: l2) (r2 :.: 
   counit ((l1 :.: l2) :.: (r2 :.: r1)) = counit (rmap (counit (l2 :.: r2)) l1 :.: r1)
 
 instance Adjunction (Star ((,) a)) (Star ((->) a)) where
-  unit = unitFromStarUnit \a b -> (b, a)
-  counit = counitFromStarCounit \(a, f) -> f a
+  unit = unitFromRepUnit \a b -> (b, a)
+  counit = counitFromRepCounit \(a, f) -> f a
 
 instance (CategoryOf k) => Adjunction (Id :: CAT k) Id where
   unit = Id id :.: Id id

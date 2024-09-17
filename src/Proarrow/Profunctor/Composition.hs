@@ -6,7 +6,7 @@ import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepCod)
-import Proarrow.Profunctor.Representable (Representable (..), withRepCod)
+import Proarrow.Profunctor.Representable (Representable (..), withRepObj)
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
@@ -29,7 +29,7 @@ instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)
   index (p :.: q) = repMap @p (index q) . index p
   tabulate :: forall a b. (Ob b) => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
-  tabulate f = withRepCod @q @b (tabulate f :.: tabulate id)
+  tabulate f = withRepObj @q @b (tabulate f :.: tabulate id)
   repMap f = repMap @p (repMap @q f)
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where

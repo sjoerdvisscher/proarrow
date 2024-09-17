@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Rift where
 
-import Proarrow.Adjunction (Adjunction (..), counitFromStarCounit, unitFromStarUnit)
+import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
@@ -36,8 +36,8 @@ instance (Profunctor j) => Functor (Precompose j) where
   map f = f // Prof \(Precompose pj) -> Precompose (unProf (unNat (map f)) pj)
 
 instance (Profunctor j) => Adjunction (Star (Precompose j)) (Star (Rift (OP j))) where
-  unit = unitFromStarUnit (Prof \p -> p // Rift \j -> Precompose (p :.: j))
-  counit = counitFromStarCounit (Prof \(Precompose (r :.: j)) -> runRift j r)
+  unit = unitFromRepUnit (Prof \p -> p // Rift \j -> Precompose (p :.: j))
+  counit = counitFromRepCounit (Prof \(Precompose (r :.: j)) -> runRift j r)
 
 riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => (p <| j) <| i ~> p <| (i :.: j)
 riftCompose = Prof \k -> k // Rift \(i :.: j) -> runRift j (runRift i k)

@@ -6,7 +6,7 @@ module Proarrow.Category.Monoidal where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, Kind)
 
 -- This is equal to a monoidal functor for Star
 -- and to an oplax monoidal functor for Costar
@@ -15,6 +15,7 @@ class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k
   par0 :: p Unit Unit
   par :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
 
+type Monoidal :: Kind -> Constraint
 class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k)) => Monoidal k where
   type Unit :: k
   type (a :: k) ** (b :: k) :: k
@@ -102,7 +103,7 @@ type Strictified :: CAT [k]
 data Strictified as bs where
   Str :: (Ob as, Ob bs) => Fold as ~> Fold bs -> Strictified as bs
 
-singleton :: (CategoryOf k) => Obj (a :: k) -> Obj '[a]
+singleton :: (CategoryOf k) => (a :: k) ~> b -> '[a] ~> '[b]
 singleton a = Str a \\ a
 
 asObj :: (Monoidal k) => SList (as :: [k]) -> Obj as

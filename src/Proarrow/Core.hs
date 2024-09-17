@@ -28,7 +28,8 @@ class (Promonad ((~>) :: CAT k)) => CategoryOf k where
   type Ob (a :: k) :: Constraint
   type Ob a = Any a
 
-type IsCategoryOf k cat = (CategoryOf k, cat ~ (~>) @k, Promonad cat)
+class (Promonad cat, CategoryOf k, cat ~ (~>) @k) => Category (cat :: CAT k)
+instance (Promonad cat, CategoryOf k, cat ~ (~>) @k) => Category (cat :: CAT k)
 
 type p :~> q = forall a b. p a b -> q a b
 

@@ -16,7 +16,7 @@ import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepCod)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepObj)
 import Proarrow.Profunctor.Rift (Rift (..), type (<|))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 
@@ -94,7 +94,7 @@ choose
    . (HasBinaryProducts k, Representable d)
   => Obj b
   -> ((d % L '()) && (d % R '())) ~> (d % b)
-choose b = withRepCod @d @(L '()) $ withRepCod @d @(R '()) $ case b of
+choose b = withRepObj @d @(L '()) $ withRepObj @d @(R '()) $ case b of
   (InjL Unit) -> fst @(d % L '()) @(d % R '())
   (InjR Unit) -> snd @(d % L '()) @(d % R '())
 

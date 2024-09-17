@@ -5,7 +5,7 @@ module Proarrow.Profunctor.Representable where
 import Data.Kind (Constraint)
 
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Object (obj)
+import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 infixl 8 %
@@ -17,8 +17,11 @@ class (Profunctor p) => Representable (p :: j +-> k) where
   tabulate :: (Ob b) => (a ~> p % b) -> p a b
   repMap :: (a ~> b) -> p % a ~> p % b
 
-withRepCod :: forall p a r. (Representable p, Ob a) => ((Ob (p % a)) => r) -> r
-withRepCod r = r \\ repMap @p (obj @a)
+repObj :: forall p a. (Representable p, Ob a) => Obj (p % a)
+repObj = repMap @p (obj @a)
+
+withRepObj :: forall p a r. (Representable p, Ob a) => ((Ob (p % a)) => r) -> r
+withRepObj r = r \\ repObj @p @a
 
 dimapRep :: forall p a b c d. (Representable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r

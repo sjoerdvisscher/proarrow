@@ -20,9 +20,9 @@ import Proarrow.Category.Instance.Prof (unProf)
 import Proarrow.Category.Opposite qualified as Op
 import Proarrow.Core
   ( CAT
+  , Category
   , CategoryOf (..)
   , Is
-  , IsCategoryOf
   , Profunctor (..)
   , Promonad (..)
   , UN
@@ -106,7 +106,7 @@ instance (Procomonad p) => Comonad (PK p :: PROFK k k) where
   delta = Prof duplicate
 
 instance
-  (IsCategoryOf j cj, IsCategoryOf k ck, Profunctor p)
+  (Category (cj :: CAT j), Category (ck :: CAT k), Profunctor p)
   => Bimodule (PK ck) (PK cj) (PK p :: PROFK j k)
   where
   leftAction = Prof \(f :.: p) -> lmap f p
