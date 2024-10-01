@@ -11,10 +11,11 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, dimapDefault, src)
+import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, src, type (+->), Category)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
 
 infixl 5 &&
 infixl 5 &&&
@@ -98,18 +99,18 @@ swapProd a b = snd' (src a) b &&& fst' a (src b)
 newtype PROD k = PR k
 type instance UN PR (PR k) = k
 
-type Prod :: CAT (PROD k)
-data Prod (a :: PROD k) b where
-  Prod :: {unProd :: a ~> b} -> Prod (PR a) (PR b)
+type Prod :: j +-> k -> PROD j +-> PROD k
+data Prod p (a :: PROD k) b where
+  Prod :: {unProd :: p a b} -> Prod p (PR a) (PR b)
 
-instance (CategoryOf k) => Profunctor (Prod :: CAT (PROD k)) where
-  dimap = dimapDefault
+instance Profunctor p => Profunctor (Prod p) where
+  dimap (Prod l) (Prod r) (Prod p) = Prod (dimap l r p)
   r \\ Prod f = r \\ f
-instance (CategoryOf k) => Promonad (Prod :: CAT (PROD k)) where
+instance (Promonad p) => Promonad (Prod p) where
   id = Prod id
   Prod f . Prod g = Prod (f . g)
 instance (CategoryOf k) => CategoryOf (PROD k) where
-  type (~>) = Prod
+  type (~>) = Prod (~>)
   type Ob a = (Is PR a, Ob (UN PR a))
 
 instance (HasTerminalObject k) => HasTerminalObject (PROD k) where
@@ -121,8 +122,11 @@ instance (HasBinaryProducts k) => HasBinaryProducts (PROD k) where
   snd' (Prod a) (Prod b) = Prod (snd' a b)
   Prod f &&& Prod g = Prod (f &&& g)
   Prod f *** Prod g = Prod (f *** g)
+instance HasInitialObject k => HasInitialObject (PROD k) where
+  type InitialObject = PR InitialObject
+  initiate' (Prod a) = Prod (initiate' a)
 
-instance (HasProducts k) => MonoidalProfunctor (Prod :: CAT (PROD k)) where
+instance (HasProducts k, Category cat) => MonoidalProfunctor (Prod cat :: CAT (PROD k)) where
   par0 = id
   f `par` g = f *** g
 

@@ -23,6 +23,8 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Object.BinaryCoproduct (Distributive (..))
+import Proarrow.Profunctor.Coproduct ((:+:)(..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -73,6 +75,16 @@ instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
 
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (PRO j k) where
   swap' (Prof n) (Prof m) = Prof \(Day @_ @_ @_ @_ @c @d @e @f f p q g) -> Day (swap @c @e . f) (m q) (n p) (g . swap @f @d) \\ p \\ q
+
+instance (Monoidal j, Monoidal k) => Distributive (PRO j k) where
+  distL' (Prof na) (Prof nb) (Prof nc) = Prof \(Day l a bc r) -> case bc of
+    InjL b -> InjL (Day l (na a) (nb b) r)
+    InjR c -> InjR (Day l (na a) (nc c) r)
+  distR' (Prof na) (Prof nb) (Prof nc) = Prof \(Day l ab c r) -> case ab of
+    InjL a -> InjL (Day l (na a) (nc c) r)
+    InjR b -> InjR (Day l (nb b) (nc c) r)
+  distL0' Prof{} = Prof \(Day _ _ i _) -> case i of {}
+  distR0' Prof{} = Prof \(Day _ i _ _) -> case i of {}
 
 duoidal
   :: (Monoidal k, Profunctor (p :: PRO i k), Profunctor p', Profunctor q, Profunctor q')

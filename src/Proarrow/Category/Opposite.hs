@@ -1,8 +1,9 @@
 module Proarrow.Category.Opposite where
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor(..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, lmap)
 import Proarrow.Functor (Functor (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -40,18 +41,18 @@ instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
   initiate' (Op a) = Op (terminate' a)
 
 instance (HasBinaryCoproducts k) => HasBinaryProducts (OPPOSITE k) where
-  type OP a && OP b = OP (a || b)
+  type a && b = OP (UN OP a || UN OP b)
   fst' (Op a) (Op b) = Op (lft' a b)
   snd' (Op a) (Op b) = Op (rgt' a b)
   Op a &&& Op b = Op (a ||| b)
 
 instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
-  type OP a || OP b = OP (a && b)
+  type a || b = OP (UN OP a && UN OP b)
   lft' (Op a) (Op b) = Op (fst' a b)
   rgt' (Op a) (Op b) = Op (snd' a b)
   Op a ||| Op b = Op (a &&& b)
 
-instance MonoidalProfunctor p => MonoidalProfunctor (Op p) where
+instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where
   par0 = Op par0
   Op l `par` Op r = Op (l `par` r)
 
@@ -67,3 +68,11 @@ instance (Monoidal k) => Monoidal (OPPOSITE k) where
 
 instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
   swap' (Op a) (Op b) = Op (swap' b a)
+
+instance (Comonoid c) => Monoid (OP c) where
+  mempty = Op counit
+  mappend = Op comult
+
+instance (Monoid c) => Comonoid (OP c) where
+  counit = Op mempty
+  comult = Op mappend

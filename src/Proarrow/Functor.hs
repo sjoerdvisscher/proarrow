@@ -7,7 +7,7 @@ import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
-import Proarrow.Core (CategoryOf (..), Promonad (..))
+import Proarrow.Core (CategoryOf (..), Promonad (..), Profunctor, rmap)
 import Proarrow.Object (Ob')
 
 infixr 0 .~>
@@ -35,3 +35,7 @@ instance (CategoryOf k) => Functor (Const x :: k -> Type) where
 
 instance (Functor f, Functor g) => Functor (Compose f g) where
   map f = Compose . map (map f) . getCompose
+
+newtype FromProfunctor p a b = FromProfunctor {unFromProfunctor :: p a b}
+instance (Profunctor p) => Functor (FromProfunctor p a) where
+  map f = FromProfunctor . rmap f . unFromProfunctor

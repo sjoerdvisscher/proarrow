@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FunctionalDependencies #-}
 
 module Proarrow.Category.Equipment where
@@ -168,6 +169,13 @@ fromLeft =
       \\\ mapConjoint @hk @vk f
       \\ iObj @hk @k
       \\ iObj @vk @k
+
+flipCompanion
+  :: forall hk vk f p q. (Equipment hk vk, Ob p) => Obj f -> Companion hk vk f `O` p ~> q -> p ~> Conjoint hk vk f `O` q
+flipCompanion f n =
+  ((mapConjoint f `o` n) . associator (mapConjoint f) (mapCompanion f) (obj @p) . leftUnitorInvWith (comConUnit f) id)
+    \\\ n
+    \\\ f
 
 class (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
 instance (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f

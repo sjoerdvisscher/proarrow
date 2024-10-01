@@ -41,6 +41,8 @@ module Proarrow.Category.Bicategory
   , Monad (..)
   , Comonad (..)
   , Adjunction (..)
+  , leftAdjunct
+  , rightAdjunct
   , Bimodule (..)
   )
 where
@@ -219,6 +221,7 @@ elimO = let p = obj @p; q = obj @q; pq = q `o` p in Str (SCons pq SNil) (SCons p
 
 -- | A bicategory is locally "something" if each hom-category is "something".
 class (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
+
 instance (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
 
 -- | Bicategories.
@@ -324,6 +327,12 @@ type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where
   unit :: I ~> r `O` l
   counit :: l `O` r ~> I
+
+leftAdjunct :: forall l r a b. (Adjunction l r, Ob a) => l `O` a ~> b -> a ~> r `O` b
+leftAdjunct f = ((obj @r `o` f) . associator (obj @r) (obj @l) (obj @a) . leftUnitorInvWith (unit @l @r) id) \\\ f
+
+rightAdjunct :: forall l r a b. (Adjunction l r, Ob b) => a ~> r `O` b -> l `O` a ~> b
+rightAdjunct f = (leftUnitorWith (counit @l @r) id . associatorInv (obj @l) (obj @r) (obj @b) . (obj @l `o` f)) \\\ f
 
 instance (Adjunction l r) => Monad (l ::: r ::: Nil) where
   eta = str iObj (obj1 @r || obj1 @l) (unit @l @r)

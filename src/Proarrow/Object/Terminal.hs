@@ -5,12 +5,12 @@ import Data.Kind (Type)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..))
-import Proarrow.Object (Obj, obj)
+import Proarrow.Object (obj)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (CategoryOf k, Ob (TerminalObject :: k)) => HasTerminalObject k where
   type TerminalObject :: k
-  terminate' :: Obj (a :: k) -> a ~> TerminalObject
+  terminate' :: (a :: k) ~> a' -> a ~> TerminalObject
 
 terminate :: forall {k} a. (HasTerminalObject k, Ob (a :: k)) => a ~> TerminalObject
 terminate = terminate' (obj @a)

@@ -15,6 +15,9 @@ import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (Comonoid (..))
 
 type data LINEAR = L Type
 type instance UN L (L a) = a
@@ -79,6 +82,10 @@ data Ur a where
 instance Functor Ur where
   map f (Ur a) = Ur (f a)
 
+instance Comonoid (L (Ur a)) where
+  counit = Linear \(Ur _) -> ()
+  comult = Linear \(Ur a) -> (Ur a, Ur a)
+
 type Free :: Type +-> LINEAR
 data Free a b where
   Free :: (a %1 -> Ur b) -> Free (L a) b
@@ -115,3 +122,19 @@ instance HasBinaryCoproducts LINEAR where
 instance HasInitialObject LINEAR where
   type InitialObject = L Void
   initiate' Linear{} = Linear \case {}
+
+data Top where
+  Top :: a %1 -> Top
+
+data With a b where
+  With :: x %1 -> (x %1 -> a) -> (x %1 -> b) -> With a b
+
+instance HasTerminalObject LINEAR where
+  type TerminalObject = L Top
+  terminate' Linear{} = Linear Top
+
+instance HasBinaryProducts LINEAR where
+  type L a && L b = L (With a b)
+  fst' (Linear f) Linear{} = Linear \(With x xa _) -> f (xa x)
+  snd' Linear{} (Linear g) = Linear \(With x _ xb) -> g (xb x)
+  Linear f &&& Linear g = Linear \x -> With x f g

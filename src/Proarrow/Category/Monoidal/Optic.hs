@@ -259,7 +259,7 @@ data Previewing a (b :: COPROD Type) s (t :: COPROD Type) where
 instance Profunctor (Previewing a b) where
   dimap (Coprod l) Coprod{} (Previewing f) = Previewing (f . l)
   r \\ Previewing f = r \\ f
-instance ModuleObject (Coprod :: CAT (COPROD Type)) (Previewing a b) where
+instance ModuleObject (Coprod (->)) (Previewing a b) where
   action = Prof \(DayAct (Coprod l) _ (Previewing f) Coprod{}) -> Previewing (either (const Nothing) f . l)
 instance ModuleObject (->) (Previewing a b) where
   action = Prof \(DayAct (Coprod l) _ (Previewing f) Coprod{}) -> Previewing (f . snd . l)
@@ -274,7 +274,7 @@ instance Profunctor (Setting a b) where
   dimap l r (Setting f) = Setting (\u -> r . f u . l)
 instance ModuleObject (->) (Setting a b) where
   action = Prof \(DayAct l w (Setting f) r) -> Setting (\u -> r . bimap w (f u) . l)
-instance ModuleObject (Coprod :: CAT (COPROD Type)) (Setting a b) where
+instance ModuleObject (Coprod (->)) (Setting a b) where
   action = Prof \(DayAct l (Coprod w) (Setting f) r) -> Setting (\u -> r . bimap w (f u) . l)
 
 infixl 8 .~
@@ -303,7 +303,7 @@ instance Profunctor (Replacing a b) where
   dimap l r (Replace f) = Replace (\ab -> r . f ab . l)
 instance ModuleObject (->) (Replacing a b) where
   action = Prof \(DayAct l w (Replace f) r) -> Replace (\u -> r . bimap w (f u) . l)
-instance ModuleObject (Coprod :: CAT (COPROD Type)) (Replacing a b) where
+instance ModuleObject (Coprod (->)) (Replacing a b) where
   action = Prof \(DayAct l (Coprod w) (Replace f) r) -> Replace (\u -> r . bimap w (f u) . l)
 instance ModuleObject (Nat :: CAT (Type -> Type)) (Replacing a b) where
   action = Prof \(DayAct l w (Replace f) r) -> Replace (\g -> r . (w ! f g) . l)

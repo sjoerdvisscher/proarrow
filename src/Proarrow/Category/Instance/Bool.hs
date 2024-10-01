@@ -3,7 +3,7 @@ module Proarrow.Category.Instance.Bool where
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (Distributive (..), HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -64,58 +64,44 @@ instance Thin BOOL where
 instance HasTerminalObject BOOL where
   type TerminalObject = TRU
   terminate' Fls = F2T
+  terminate' F2T = F2T
   terminate' Tru = Tru
 
 instance HasBinaryProducts BOOL where
-  type TRU && TRU = TRU
-  type FLS && TRU = FLS
-  type TRU && FLS = FLS
-  type FLS && FLS = FLS
-  fst' Fls Fls = Fls
-  fst' Fls Tru = Fls
-  fst' Tru Fls = F2T
-  fst' Tru Tru = Tru
-  fst' F2T Fls = F2T
-  fst' F2T Tru = F2T
-  snd' Fls Fls = Fls
-  snd' Fls Tru = F2T
-  snd' Tru Fls = Fls
-  snd' Tru Tru = Tru
-  snd' Fls F2T = F2T
-  snd' Tru F2T = F2T
-  Fls &&& Fls = Fls
-  Fls &&& F2T = Fls
-  F2T &&& Fls = Fls
-  F2T &&& F2T = F2T
+  type TRU && b = b
+  type FLS && b = FLS
+  type a && TRU = a
+  type a && FLS = FLS
+  fst' Fls _ = Fls
+  fst' F2T _ = F2T
+  fst' Tru b = terminate' b
+  snd' _ Fls = Fls
+  snd' _ F2T = F2T
+  snd' a Tru = terminate' a
+  Fls &&& _ = Fls
+  F2T &&& b = b
   Tru &&& Tru = Tru
 
 instance HasInitialObject BOOL where
   type InitialObject = FLS
   initiate' Fls = Fls
+  initiate' F2T = F2T
   initiate' Tru = F2T
 
 instance HasBinaryCoproducts BOOL where
-  type FLS || FLS = FLS
-  type FLS || TRU = TRU
-  type TRU || FLS = TRU
-  type TRU || TRU = TRU
-  lft' Fls Fls = Fls
-  lft' Fls Tru = F2T
-  lft' Tru Fls = Tru
-  lft' Tru Tru = Tru
-  lft' F2T Fls = F2T
-  lft' F2T Tru = F2T
-  rgt' Fls Fls = Fls
-  rgt' Fls Tru = Tru
-  rgt' Tru Fls = F2T
-  rgt' Tru Tru = Tru
-  rgt' Fls F2T = F2T
-  rgt' Tru F2T = F2T
+  type FLS || b = b
+  type TRU || b = TRU
+  type a || FLS = a
+  type a || TRU = TRU
+  lft' Fls b = initiate' b
+  lft' F2T _ = F2T
+  lft' Tru _ = Tru
+  rgt' a Fls = initiate' a
+  rgt' _ Tru = Tru
+  rgt' _ F2T = F2T
   Fls ||| Fls = Fls
-  F2T ||| F2T = F2T
-  F2T ||| Tru = Tru
-  Tru ||| F2T = Tru
-  Tru ||| Tru = Tru
+  F2T ||| b = b
+  Tru ||| _ = Tru
 
 instance MonoidalProfunctor Booleans where
   par0 = id
@@ -134,34 +120,34 @@ instance Monoidal BOOL where
 instance SymMonoidal BOOL where
   swap' = swapProd
 
+instance Distributive BOOL where
+  distL' Fls _ _ = Fls
+  distL' F2T b c = initiate' (b +++ c)
+  distL' Tru b c = b +++ c
+  distR' _ _ Fls = Fls
+  distR' a b F2T = initiate' (a +++ b)
+  distR' a b Tru = a +++ b
+  distL0' _ = Fls
+  distR0' _ = Fls
+
 instance Closed BOOL where
-  type FLS ~~> FLS = TRU
-  type FLS ~~> TRU = TRU
+  type FLS ~~> b = TRU
+  type a ~~> TRU = TRU
   type TRU ~~> FLS = FLS
-  type TRU ~~> TRU = TRU
-  curry' Fls Fls Fls = F2T
-  curry' Fls Fls F2T = F2T
+  curry' Fls Fls _ = F2T
   curry' Fls Tru Fls = Fls
   curry' Fls Tru F2T = F2T
-  curry' Tru Fls Fls = Tru
-  curry' Tru Fls F2T = Tru
+  curry' Tru Fls _ = Tru
   curry' Tru Tru Tru = Tru
-  uncurry' Fls Fls F2T = Fls
-  uncurry' Fls Fls Tru = Fls
-  uncurry' Fls Tru F2T = F2T
-  uncurry' Fls Tru Tru = F2T
-  uncurry' Tru Fls Fls = Fls
-  uncurry' Tru Tru F2T = F2T
-  uncurry' Tru Tru Tru = Tru
-  Fls ^^^ Fls = Tru
-  Fls ^^^ F2T = F2T
+  uncurry' Fls c _ = initiate' c
+  uncurry' Tru Fls a = a
+  uncurry' Tru Tru a = a
+  _ ^^^ Fls = Tru
+  Tru ^^^ _ = Tru
   Fls ^^^ Tru = Fls
-  F2T ^^^ Fls = Tru
+  Fls ^^^ F2T = F2T
   F2T ^^^ F2T = F2T
   F2T ^^^ Tru = F2T
-  Tru ^^^ Fls = Tru
-  Tru ^^^ F2T = Tru
-  Tru ^^^ Tru = Tru
 
 instance Monoid TRU where
   mempty = Tru

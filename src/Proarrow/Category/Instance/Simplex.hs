@@ -1,6 +1,6 @@
 module Proarrow.Category.Instance.Simplex where
 
-import Data.Kind (Type, Constraint)
+import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, src, tgt)
@@ -8,6 +8,7 @@ import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+
 -- import Proarrow.Category.Bicategory qualified as B
 
 type data Nat = Z | S Nat
@@ -56,19 +57,15 @@ instance Profunctor Simplex where
 
 instance HasInitialObject Nat where
   type InitialObject = Z
-  initiate' a = go (singNat' a)
-    where
-      go :: SNat b -> Simplex Z b
-      go SZ = ZZ
-      go (SS n) = Y (go n)
+  initiate' ZZ = ZZ
+  initiate' (Y n) = Y (initiate' n)
+  initiate' (X n) = initiate' n
 
 instance HasTerminalObject Nat where
   type TerminalObject = S Z
-  terminate' a = go (singNat' a)
-    where
-      go :: SNat b -> Simplex b (S Z)
-      go SZ = Y ZZ
-      go (SS n) = X (go n)
+  terminate' ZZ = Y ZZ
+  terminate' (Y n) = terminate' n
+  terminate' (X n) = X (terminate' n)
 
 data Fin :: Nat -> Type where
   Fz :: Fin (S n)
@@ -151,7 +148,6 @@ instance (Monoid m) => Representable (Replicate m) where
     let g = repMap @(Replicate m) (X f)
         b = repMap @(Replicate m) (src f)
     in g . (mappend @m `par` b) . associatorInv (obj @m) (obj @m) b
-
 
 class IsSimplex s where
   bisimplex :: BiSimplex s s

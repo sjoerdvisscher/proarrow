@@ -6,10 +6,11 @@ import Data.Functor.Compose (Compose (..))
 import Data.Kind (Constraint, Type)
 import Prelude (($))
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Category.Bicategory (Bicategory (..), rightUnitorInvWith)
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
+import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), flipCompanion)
 import Proarrow.Category.Instance.Nat (Nat (..))
-import Proarrow.Core (CAT, CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (\\))
+import Proarrow.Core (CAT, CategoryOf (..), Ob, Obj, Profunctor (..), Promonad (..), obj, (\\))
 import Proarrow.Functor (Functor, map)
 
 type LeftKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
@@ -43,6 +44,21 @@ dimapRan
   :: forall i j f g. (RightKanExtension j f, RightKanExtension i g) => (i ~> j) -> (f ~> g) -> (Ran j f ~> Ran i g)
 dimapRan ij fg = ranUniv @i (fg . ran @j . (ij `o` obj @(Ran j f))) \\ ij
 
+composeRan
+  :: forall i j f
+   . (RightKanExtension j f, RightKanExtension i (Ran j f), RightKanExtension (j `O` i) f)
+  => Ran i (Ran j f) ~> Ran (j `O` i) f
+composeRan =
+  ranUniv @(j `O` i) @f
+    (ran @j @f . (obj @j `o` ran @i @(Ran j f)) . associator (obj @j) (obj @i) (obj @(Ran i (Ran j f))))
+
+ranAlongCompanion
+  :: forall hk vk j f
+   . (RightKanExtension (Companion hk vk j) f, Equipment hk vk)
+  => Obj j
+  -> Ran (Companion hk vk j) f ~> Conjoint hk vk j `O` f
+ranAlongCompanion j = flipCompanion @hk @vk @j @(Ran (Companion hk vk j) f) @f j (ran @(Companion hk vk j))
+
 type LeftKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lift j f)) => LeftKanLift (j :: kk c d) (f :: kk c e) where
   type Lift j f :: kk d e
@@ -57,6 +73,15 @@ rebaseLift ij = liftUniv @j ((obj @(Lift i f) `o` ij) . lift @i @f)
 
 dimapLift :: forall i j f g. (LeftKanLift j f, LeftKanLift i g) => (i ~> j) -> (f ~> g) -> (Lift j f ~> Lift i g)
 dimapLift ij fg = liftUniv @j ((obj @(Lift i g) `o` ij) . lift @i . fg) \\ ij
+
+liftAlongCompanion
+  :: forall hk vk j f
+   . (LeftKanLift (Companion hk vk j) f, Equipment hk vk)
+  => Obj j
+  -> Lift (Companion hk vk j) f ~> f `O` Conjoint hk vk j
+liftAlongCompanion j =
+  let f = obj @f; conJ = mapConjoint j; comJ = mapCompanion @hk j
+  in liftUniv @(Companion hk vk j) @f (associatorInv f conJ comJ . rightUnitorInvWith (comConUnit j) f) \\ (f `o` conJ)
 
 type RightKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Rift j f)) => RightKanLift (j :: kk c d) (f :: kk c e) where
