@@ -4,7 +4,7 @@ module Proarrow.Category.Monoidal.Endo where
 
 import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
-import Proarrow.Category.Bicategory.Kan (RightKanLift (..), dimapRift)
+import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), dimapRan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -45,11 +45,11 @@ instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
   associator (Endo p) (Endo q) (Endo r) = mkEndo (B.associator p q r)
   associatorInv (Endo p) (Endo q) (Endo r) = mkEndo (B.associatorInv p q r)
 
-instance (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanLift f g) => Closed (ENDO kk k) where
-  type E f ~~> E g = E (Rift f g)
-  curry' (Endo @g g) (Endo @j j) (Endo h) = Endo (riftUniv @j @_ @g h) \\ g \\ j \\ h
-  uncurry' (Endo @j j) (Endo @f f) (Endo h) = Endo (rift @j @f . (h `o` j)) \\ j \\ f
-  (^^^) (Endo f) (Endo g) = Endo (dimapRift g f) \\ f \\ g
+instance (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanExtension f g) => Closed (ENDO kk k) where
+  type E f ~~> E g = E (Ran f g)
+  curry' (Endo @g g) (Endo @j j) (Endo h) = Endo (ranUniv @j @_ @g h) \\ g \\ j \\ h
+  uncurry' (Endo @j j) (Endo @f f) (Endo h) = Endo (ran @j @f . (h `o` j)) \\ j \\ f
+  (^^^) (Endo f) (Endo g) = Endo (dimapRan g f) \\ f \\ g
 
 -- | Monads are monoids in the category of endo-1-cells.
 instance (Bicategory kk, Ob (I :: kk a a), Monad m) => Monoid (E m :: ENDO kk a) where

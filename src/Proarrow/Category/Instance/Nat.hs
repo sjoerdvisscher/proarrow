@@ -16,6 +16,7 @@ import Proarrow.Functor (Functor (..), type (.~>))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..))
+import Proarrow.Object.Coexponential (Coclosed (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -99,6 +100,24 @@ instance Monoidal (Type -> Type) where
   rightUnitorInv (Nat n) = Nat (Compose . map Identity . n)
   associator Nat{} Nat{} Nat{} = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv Nat{} Nat{} Nat{} = Nat (Compose . Compose . map getCompose . getCompose)
+
+newtype HaskRan j h a = Ran {runRan :: forall b. (a -> j b) -> h b}
+instance Functor (HaskRan j h) where
+  map f (Ran k) = Ran \j -> k (j . f)
+instance Closed (Type -> Type) where
+  type j ~~> h = HaskRan j h
+  curry' Nat{} Nat{} (Nat n) = Nat \fa -> Ran \ajb -> n (Compose (map ajb fa))
+  uncurry' Nat{} Nat{} (Nat n) = Nat \(Compose fja) -> runRan (n fja) id
+  (^^^) (Nat by) (Nat xa) = Nat \h -> Ran \x -> by (runRan h (xa . x))
+
+data HaskLan j f a where
+  Lan :: (j b -> a) -> f b -> HaskLan j f a
+instance Functor (HaskLan j f) where
+  map g (Lan k f) = Lan (g . k) f
+instance Coclosed (Type -> Type) where
+  type f <~~ j = HaskLan j f
+  coeval' Nat{} Nat{} = Nat (Compose . Lan id)
+  coevalUniv' Nat{} Nat{} (Nat n) = Nat \(Lan k f) -> map k (getCompose (n f))
 
 data CatAsComonoid k a where
   CatAsComonoid :: forall {k} (c :: k) a. (Ob c) => (forall c'. c ~> c' -> a) -> CatAsComonoid k a

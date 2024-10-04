@@ -5,13 +5,13 @@ import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
-import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), obj, (:~>))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryProduct (Cartesian)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
-type Star :: (k1 -> k2) -> PRO k2 k1
+type Star :: (k1 -> k2) -> k1 +-> k2
 data Star f a b where
   Star :: (Ob b) => {unStar :: a ~> f b} -> Star f a b
 

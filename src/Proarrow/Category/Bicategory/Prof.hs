@@ -116,15 +116,15 @@ instance (A.Adjunction l r) => Adjunction (PK l :: PROFK c d) (PK r) where
   unit = Prof \(Id f) -> lmap f A.unit \\ f
   counit = Prof (Id . A.counit)
 
-instance (Profunctor f, Profunctor j) => RightKanExtension (PK j :: PROFK d c) (PK f :: PROFK e c) where
+instance (Profunctor f, Profunctor j) => RightKanExtension (PK j :: PROFK c d) (PK f :: PROFK c e) where
   type Ran (PK j) (PK f) = PK (R.Ran (Op.OP j) f)
-  ran = Prof \(j :.: r) -> R.runRan j r
-  ranUniv (Prof n) = Prof \g -> g // R.Ran \j -> n (j :.: g)
+  ran = Prof \(r :.: j) -> R.runRan j r
+  ranUniv (Prof n) = Prof \g -> g // R.Ran \j -> n (g :.: j)
 
-instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK c d) (PK f :: PROFK c e) where
+instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK d c) (PK f :: PROFK e c) where
   type Rift (PK j) (PK f) = PK (R.Rift (Op.OP j) f)
-  rift = Prof \(r :.: j) -> R.runRift j r
-  riftUniv (Prof n) = Prof \g -> g // R.Rift \j -> n (g :.: j)
+  rift = Prof \(j :.: r) -> R.runRift j r
+  riftUniv (Prof n) = Prof \g -> g // R.Rift \j -> n (j :.: g)
 
 class
   ( forall (s :: COK sk h i) (t :: tk j k). (Ob s, Ob t) => Profunctor (p s t)

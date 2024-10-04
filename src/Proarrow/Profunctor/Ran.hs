@@ -2,33 +2,37 @@
 
 module Proarrow.Profunctor.Ran where
 
+import Prelude (type (~))
+
 import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), lmap, rmap, (//))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Star (Star (..))
 
+-- Note: Ran and Rift are swapped compared to the profunctors package.
+
 type j |> p = Ran (OP j) p
 
-type Ran :: OPPOSITE (PRO i j) -> PRO i k -> PRO j k
+type Ran :: OPPOSITE (i +-> j) -> i +-> k -> j +-> k
 data Ran j p a b where
-  Ran :: (Ob a, Ob b) => {unRan :: forall x. (Ob x) => j x a -> p x b} -> Ran (OP j) p a b
+  Ran :: (Ob a, Ob b) => {unRan :: forall x. (Ob x) => j b x -> p a x} -> Ran (OP j) p a b
 
-runRan :: (Profunctor j) => j x a -> Ran (OP j) p a b -> p x b
+runRan :: (Profunctor j) => j b x -> Ran (OP j) p a b -> p a x
 runRan j (Ran k) = k j \\ j
 
-flipRan :: (Functor j, Profunctor p) => Star j |> p ~> Costar j :.: p
-flipRan = Prof \(Ran k) -> Costar id :.: k (Star id)
+flipRan :: (Functor j, Profunctor p) => Costar j |> p ~> p :.: Star j
+flipRan = Prof \(Ran k) -> k (Costar id) :.: Star id
 
-flipRanInv :: (Functor j, Profunctor p) => Costar j :.: p ~> Star j |> p
-flipRanInv = Prof \(Costar f :.: p) -> p // Ran \(Star g) -> lmap (f . g) p
+flipRanInv :: (Functor j, Profunctor p) => p :.: Star j ~> Costar j |> p
+flipRanInv = Prof \(p :.: Star f) -> p // Ran \(Costar g) -> rmap (g . f) p
 
 instance (Profunctor p, Profunctor j) => Profunctor (Ran (OP j) p) where
-  dimap l r (Ran k) = l // r // Ran (rmap r . k . rmap l)
+  dimap l r (Ran k) = l // r // Ran (lmap l . k . lmap r)
   r \\ Ran{} = r
 
 instance (Profunctor j) => Functor (Ran (OP j)) where
@@ -37,12 +41,23 @@ instance (Profunctor j) => Functor (Ran (OP j)) where
 instance Functor Ran where
   map (Op (Prof n)) = Nat (Prof \(Ran k) -> Ran (k . n))
 
-instance (Profunctor j) => Adjunction (Star ((:.:) j)) (Star (Ran (OP j))) where
-  unit = unitFromRepUnit (Prof \p -> p // Ran (:.: p))
-  counit = counitFromRepCounit (Prof \(j :.: r) -> runRan j r)
+instance (p ~ j, Profunctor p) => Promonad (Ran (OP p) p) where
+  id = Ran id
+  Ran l . Ran r = Ran (r . l)
 
-ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (j :.: i) |> p
-ranCompose = Prof \k -> k // Ran \(j :.: i) -> runRan j (runRan i k)
+newtype Precompose j p a b = Precompose {unPrecompose :: (p :.: j) a b}
+instance (Profunctor j, Profunctor p) => Profunctor (Precompose j p) where
+  dimap l r (Precompose pj) = Precompose (dimap l r pj)
+  r \\ Precompose pj = r \\ pj
+instance (Profunctor j) => Functor (Precompose j) where
+  map f = f // Prof \(Precompose pj) -> Precompose (unProf (unNat (map f)) pj)
 
-ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (j :.: i) |> p ~> i |> (j |> p)
-ranComposeInv = Prof \k -> k // Ran \i -> Ran \j -> runRan (j :.: i) k
+instance (Profunctor j) => Adjunction (Star (Precompose j)) (Star (Ran (OP j))) where
+  unit = unitFromRepUnit (Prof \p -> p // Ran \j -> Precompose (p :.: j))
+  counit = counitFromRepCounit (Prof \(Precompose (r :.: j)) -> runRan j r)
+
+riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (i :.: j) |> p
+riftCompose = Prof \k -> k // Ran \(i :.: j) -> runRan j (runRan i k)
+
+riftComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (i :.: j) |> p ~> i |> (j |> p)
+riftComposeInv = Prof \k -> k // Ran \i -> Ran \j -> runRan (i :.: j) k

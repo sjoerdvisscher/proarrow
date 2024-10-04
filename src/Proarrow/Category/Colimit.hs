@@ -15,7 +15,6 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, withCorepCod)
-import Proarrow.Profunctor.Ran (Ran (..), type (|>))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 
 type Unweighted = TerminalProfunctor
@@ -27,26 +26,26 @@ instance (Corepresentable (Colimit j d)) => IsCorepresentableColimit j d
 type HasColimits :: forall {i} {a}. a +-> i -> Kind -> Constraint
 class (forall (d :: k +-> i). (Corepresentable d) => IsCorepresentableColimit j d) => HasColimits (j :: a +-> i) k where
   type Colimit (j :: a +-> i) (d :: k +-> i) :: k +-> a
-  colimit :: (Corepresentable (d :: k +-> i)) => Colimit j d :~> j |> d
-  colimitInv :: (Corepresentable (d :: k +-> i)) => j |> d :~> Colimit j d
+  colimit :: (Corepresentable (d :: k +-> i)) => j :.: Colimit j d :~> d
+  colimitUniv :: (Corepresentable (d :: k +-> i), Profunctor p) => (j :.: p :~> d) -> p :~> Colimit j d
 
 leftAdjointPreservesColimits
-  :: forall {k} {i} {a} f g (d :: k +-> i) (j :: a +-> i)
-   . (Adjunction f g, Corepresentable d, HasColimits j k)
-  => j |> (d :.: f) :~> Colimit j d :.: f
-leftAdjointPreservesColimits (Ran k) =
-  case unit @f @g of
+  :: forall {k} {k'} {i} {a} (f :: k' +-> k) g (d :: k +-> i) (j :: a +-> i)
+   . (Adjunction f g, Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
+  => Colimit j (d :.: f) :~> Colimit j d :.: f
+leftAdjointPreservesColimits colim =
+  colim // case unit @f @g of
     g :.: f ->
-      colimitInv @j @k @d (f // Ran \j -> case k j of d :.: f' -> rmap (counit (f' :.: g)) d) :.: f
+      colimitUniv @j @k @d
+        (\(j :.: (colim' :.: g')) -> case colimit @j @k' @(d :.: f) (j :.: colim') of d :.: f' -> rmap (counit (f' :.: g')) d)
+        (colim :.: g)
+        :.: f
 
 leftAdjointPreservesColimitsInv
-  :: forall {k} {i} {a} f g (d :: k +-> i) (j :: a +-> i)
-   . (Adjunction f g, Corepresentable d, HasColimits j k)
-  => Colimit j d :.: f :~> j |> (d :.: f)
-leftAdjointPreservesColimitsInv (l :.: f) =
-  l // f // Ran \j ->
-    case unit @f @g of
-      g :.: f' -> rmap (counit (f :.: g)) (case colimit @j @k @d l of Ran k -> k j) :.: f'
+  :: forall {k} {k'} {i} {a} (f :: k' +-> k) (d :: k +-> i) (j :: a +-> i)
+   . (Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
+  => Colimit j d :.: f :~> Colimit j (d :.: f)
+leftAdjointPreservesColimitsInv = colimitUniv @j @k' @(d :.: f) (\(j :.: (colim :.: f)) -> colimit (j :.: colim) :.: f)
 
 type InitialLimit :: k +-> VOID -> k +-> ()
 data InitialLimit d a b where
@@ -62,8 +61,8 @@ instance (HasInitialObject k) => Corepresentable (InitialLimit (d :: k +-> VOID)
   corepMap Unit = id
 instance (HasInitialObject k) => HasColimits (Unweighted :: () +-> VOID) k where
   type Colimit Unweighted d = InitialLimit d
-  colimit (InitialLimit f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . case o of {}
-  colimitInv Ran{} = InitialLimit initiate
+  colimit (TerminalProfunctor' o _ :.: InitialLimit f) = o // cotabulate $ f . case o of {}
+  colimitUniv _ p = p // InitialLimit initiate
 
 type CoproductColimit :: k +-> COPRODUCT () () -> k +-> ()
 data CoproductColimit d a b where
@@ -81,11 +80,12 @@ instance (HasBinaryCoproducts k, Corepresentable d) => Corepresentable (Coproduc
 
 instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: () +-> COPRODUCT () ()) k where
   type Colimit Unweighted d = CoproductColimit d
-  colimit (CoproductColimit @d f) = f // Ran \(TerminalProfunctor' o _) -> cotabulate $ f . cochoose @_ @d o
-  colimitInv (Ran k) =
-    let l = k (TerminalProfunctor' (InjL Unit) Unit)
-        r = k (TerminalProfunctor' (InjR Unit) Unit)
-    in CoproductColimit $ coindex l ||| coindex r
+  colimit (TerminalProfunctor' o _ :.: CoproductColimit @d f) = o // cotabulate $ f . cochoose @_ @d o
+  colimitUniv n p =
+    p
+      // let l = n (TerminalProfunctor' (InjL Unit) Unit :.: p)
+             r = n (TerminalProfunctor' (InjR Unit) Unit :.: p)
+         in CoproductColimit $ coindex l ||| coindex r
 
 cochoose
   :: forall k (d :: k +-> COPRODUCT () ()) b

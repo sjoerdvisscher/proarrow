@@ -177,6 +177,28 @@ flipCompanion f n =
     \\\ n
     \\\ f
 
+flipCompanionInv
+  :: forall hk vk f p q. (Equipment hk vk, Ob q) => Obj f -> p ~> Conjoint hk vk f `O` q -> Companion hk vk f `O` p ~> q
+flipCompanionInv f n =
+  (leftUnitorWith (comConCounit f) id . associatorInv (mapCompanion f) (mapConjoint f) (obj @q) . (mapCompanion f `o` n))
+    \\\ n
+    \\\ f
+
+flipConjoint
+  :: forall hk vk f p q. (Equipment hk vk, Ob p) => Obj f -> p `O` Conjoint hk vk f ~> q -> p ~> q `O` Companion hk vk f
+flipConjoint f n =
+  ( (n `o` mapCompanion f) . associatorInv (obj @p) (mapConjoint f) (mapCompanion f) . rightUnitorInvWith (comConUnit f) id
+  )
+    \\\ n
+    \\\ f
+
+flipConjointInv
+  :: forall hk vk f p q. (Equipment hk vk, Ob q) => Obj f -> p ~> q `O` Companion hk vk f -> p `O` Conjoint hk vk f ~> q
+flipConjointInv f n =
+  (rightUnitorWith (comConCounit f) id . associator (obj @q) (mapCompanion f) (mapConjoint f) . (n `o` mapConjoint f))
+    \\\ n
+    \\\ f
+
 class (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
 instance (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
 
@@ -242,6 +264,9 @@ class (HasCompanions hk vk) => Equipment hk vk where
   default comConCounit
     :: forall f. ((Ob f) => ComConAdjunction hk vk f) => Obj f -> Companion hk vk f `O` Conjoint hk vk f ~> I
   comConCounit f = counit @(Companion hk vk f) @(Conjoint hk vk f) \\\ f
+
+-- | P(f, g)
+type Cart (p :: hk b d) (f :: vk a b) (g :: vk c d) = Conjoint hk vk g `O` p `O` Companion hk vk f
 
 companionFold
   :: forall {hk} {vk} {j} {k} (fs :: Path vk j k)
