@@ -2,11 +2,15 @@ module Proarrow.Category.Equipment.Quintet where
 
 import Proarrow.Category.Bicategory (Bicategory (..))
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
-import Proarrow.Category.Equipment (HasCompanions (..))
+import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
+import Proarrow.Category.Equipment (HasCompanions (..), Sq (..), vArr)
+import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data QKK kk i j = QK (kk i j)
 type instance UN QK (QK p) = p
+
+type QuintetSq (f :: kk a b) (g :: kk a c) (h :: kk b d) (k :: kk c d) = Sq '(QK f, CO g) '(QK k, CO h)
 
 type Q2 :: CAT (QKK kk i j)
 data Q2 a b where
@@ -42,3 +46,12 @@ instance (Bicategory kk) => HasCompanions (QKK kk) (COK kk) where
   compFromId = Q2 iObj
   compToCompose (Co f) (Co g) = Q2 (f `o` g)
   compFromCompose (Co f) (Co g) = Q2 (f `o` g)
+
+-- | BiPara as a quintet construction.
+type BiParaSq (a :: k) b p q = QuintetSq (MK p :: MonK k '() '()) (MK b) (MK a) (MK q :: MonK k '() '())
+
+bipara :: (Ob p, Ob q, Ob a, Ob b) => a M.** p ~> q M.** b -> BiParaSq a b p q
+bipara n = Sq (Q2 (Mon2 n))
+
+reparam :: forall {k} (a :: k) (b :: k). (M.Monoidal k) => a ~> b -> BiParaSq a b M.Unit M.Unit
+reparam f = vArr (Co (Mon2 f))

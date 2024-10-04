@@ -21,10 +21,10 @@ type instance Arr (MonK (PRO k k)) (BIPARA a) (BIPARA b) = MK (Bipara a b)
 
 type Bipara :: k -> k -> k -> k -> Type
 data Bipara a b p q where
-  Bipara :: (Ob p, Ob q) => a ** p ~> q ** b -> Bipara a b p q
+  Bipara :: (Ob p, Ob q) => b ** p ~> q ** a -> Bipara a b p q
 
 instance (Monoidal k, Ob a, Ob b) => Profunctor (Bipara (a :: k) b) where
-  dimap f g (Bipara h) = Bipara (first @b g . h . second @a f) \\ f \\ g
+  dimap f g (Bipara h) = Bipara (first @a g . h . second @b f) \\ f \\ g
   r \\ Bipara{} = r
 
 -- | Bipara as a profunctor enriched category.

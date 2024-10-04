@@ -21,16 +21,16 @@ instance (CategoryOf k) => CategoryOf (MonK k i j) where
 -- | A monoidal category as a bicategory.
 instance (M.Monoidal k) => Bicategory (MonK k) where
   type I = MK M.Unit
-  type MK a `O` MK b = MK (b M.** a)
+  type MK a `O` MK b = MK (a M.** b)
   iObj = Mon2 M.par0
-  Mon2 f `o` Mon2 g = Mon2 (g `M.par` f)
+  Mon2 f `o` Mon2 g = Mon2 (f `M.par` g)
   r \\\ Mon2 f = r \\ f
-  leftUnitor (Mon2 p) = Mon2 (M.rightUnitor p)
-  leftUnitorInv (Mon2 p) = Mon2 (M.rightUnitorInv p)
-  rightUnitor (Mon2 p) = Mon2 (M.leftUnitor p)
-  rightUnitorInv (Mon2 p) = Mon2 (M.leftUnitorInv p)
-  associator (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associatorInv r q p)
-  associatorInv (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associator r q p)
+  leftUnitor (Mon2 p) = Mon2 (M.leftUnitor p)
+  leftUnitorInv (Mon2 p) = Mon2 (M.leftUnitorInv p)
+  rightUnitor (Mon2 p) = Mon2 (M.rightUnitor p)
+  rightUnitorInv (Mon2 p) = Mon2 (M.rightUnitorInv p)
+  associator (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associator p q r)
+  associatorInv (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associatorInv p q r)
 
 -- | Monoids in a monoidal category are monads when the monoidal category is seen as a bicategory.
 instance (Monoid m) => Monad (MK m) where
