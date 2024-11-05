@@ -6,7 +6,7 @@ import Prelude (type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swap')
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
-import Proarrow.Preorder.ThinCategory (Thin (..))
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type Fst :: (a, b) -> a
@@ -33,8 +33,8 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :**: q) where
   dimap (l1 :**: l2) (r1 :**: r2) (f1 :**: f2) = dimap l1 r1 f1 :**: dimap l2 r2 f2
   r \\ (f :**: g) = r \\ f \\ g
 
-instance (Thin k1, Thin k2) => Thin (k1, k2) where
-  type HasArrow '(a1, a2) '(b1, b2) = (HasArrow a1 b1, HasArrow a2 b2)
+instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :**: q) where
+  type HasArrow (p :**: q) '(a1, a2) '(b1, b2) = (HasArrow p a1 b1, HasArrow q a2 b2)
   arr = arr :**: arr
   withArr (f :**: g) r = withArr f (withArr g r)
 

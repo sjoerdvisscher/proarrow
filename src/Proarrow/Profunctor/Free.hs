@@ -12,7 +12,7 @@ import Prelude qualified as P
 
 import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..), SubP (..))
+import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core
   ( CAT
@@ -81,9 +81,9 @@ instance HasFree Semigroup where
   retract' (Star f) = sconcat . f
 
 instance HasFree (P.Monoid `On` Semigroup) where
-  type Free (P.Monoid `On` Semigroup) = SubP Semigroup (Star Maybe)
-  lift' (Sub f) = SubP (Star (Just . f))
-  retract' (SubP (Star f)) = Sub (fromMaybe P.mempty . f)
+  type Free (P.Monoid `On` Semigroup) = Sub (Star Maybe) :: CAT (SUBCAT Semigroup)
+  lift' (Sub f) = Sub (Star (Just . f))
+  retract' (Sub (Star f)) = Sub (fromMaybe P.mempty . f)
 
 -- type Ap :: (k -> Type) -> k -> Type
 -- data Ap f a where

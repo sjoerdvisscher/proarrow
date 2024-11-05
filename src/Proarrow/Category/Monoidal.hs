@@ -6,12 +6,12 @@ module Proarrow.Category.Monoidal where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, Kind)
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
 
 -- This is equal to a monoidal functor for Star
 -- and to an oplax monoidal functor for Costar
-type MonoidalProfunctor :: PRO j k -> Constraint
-class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: PRO j k) where
+type MonoidalProfunctor :: j +-> k -> Constraint
+class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: j +-> k) where
   par0 :: p Unit Unit
   par :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
 

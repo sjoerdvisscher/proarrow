@@ -15,6 +15,7 @@ import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repObj)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Category.Opposite (Op (..))
 
 type Adjunction :: forall {j} {k}. PRO k j -> PRO j k -> Constraint
 
@@ -77,6 +78,10 @@ instance Adjunction (Star ((,) a)) (Star ((->) a)) where
 instance (CategoryOf k) => Adjunction (Id :: CAT k) Id where
   unit = Id id :.: Id id
   counit (Id f :.: Id g) = g . f
+
+instance Adjunction q p => Adjunction (Op p) (Op q) where
+  unit = case unit @q @p of q :.: p -> Op p :.: Op q
+  counit (Op q :.: Op p) = Op (counit (p :.: q))
 
 instance (Adjunction p q) => Promonad (q :.: p) where
   id = unit

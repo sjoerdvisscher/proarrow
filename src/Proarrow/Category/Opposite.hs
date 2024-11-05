@@ -1,20 +1,22 @@
 module Proarrow.Category.Opposite where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, lmap)
+import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k
 
-type Op :: PRO j k -> PRO (OPPOSITE k) (OPPOSITE j)
-data Op c a b where
-  Op :: {unOp :: c b a} -> Op c (OP a) (OP b)
+type Op :: j +-> k -> OPPOSITE k +-> OPPOSITE j
+data Op p a b where
+  Op :: {unOp :: p b a} -> Op p (OP a) (OP b)
 
 instance (Profunctor p) => Functor (Op p a) where
   map (Op f) (Op p) = Op (lmap f p)
@@ -76,3 +78,15 @@ instance (Comonoid c) => Monoid (OP c) where
 instance (Monoid c) => Comonoid (OP c) where
   counit = Op mempty
   comult = Op mappend
+
+instance Representable p => Corepresentable (Op p) where
+  type Op p %% OP a = OP (p % a)
+  coindex (Op f) = Op (index f)
+  cotabulate (Op f) = Op (tabulate f)
+  corepMap (Op f) = Op (repMap @p f)
+
+instance Corepresentable p => Representable (Op p) where
+  type Op p % OP a = OP (p %% a)
+  index (Op f) = Op (coindex f)
+  tabulate (Op f) = Op (cotabulate f)
+  repMap (Op f) = Op (corepMap @p f)

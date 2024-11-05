@@ -10,7 +10,6 @@ import Proarrow.Category.Bicategory
   , withUnital
   , type (+++)
   )
-import Proarrow.Category.Equipment (DOUBLE, Double (..), Equipment (..))
 import Proarrow.Category.Instance.Simplex (Nat (..), Simplex (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (src, tgt)
@@ -22,6 +21,7 @@ type data ABK a b where
   L :: ABK A B
   R :: ABK B A
 
+type ADJK :: CAT AB
 type data ADJK i j = AK (Path ABK i j)
 type instance UN AK (AK ps) = ps
 
@@ -50,7 +50,7 @@ instance Promonad (Adj :: CAT (ADJK a b)) where
     where
       go :: forall ps'. SPath ps' -> Adj (AK ps') (AK ps')
       go SNil = AdjNil
-      go (SCons @rl _ ps) = rOrL @rl (go ps)
+      go (SCons @rl p ps) = rOrL @rl (go ps) \\ p
   AdjNil . f = f
   f . AdjNil = f
   AdjR f . AdjR g = AdjR (f . g)
@@ -68,7 +68,7 @@ instance CategoryOf (ADJK a b) where
 
 -- | The walking adjunction
 instance Bicategory ADJK where
-  type Ob0 ADJK a = ()
+  type Ob0 ADJK a = (IsRL a)
   type I = AK Nil
   type ps `O` qs = AK (UN AK ps +++ UN AK qs)
   r \\\ AdjNil = r
@@ -77,12 +77,15 @@ instance Bicategory ADJK where
   r \\\ AdjCup f = r \\\ f
   r \\\ AdjCap f = r \\\ f
   o :: forall {a} {b} (ps :: ADJK a b) qs rs ss. (ps ~> qs) -> (rs ~> ss) -> (ps `O` rs) ~> (qs `O` ss)
-  AdjNil `o` f = f \\ f
-  f `o` AdjNil = f -- withUnital @(UN AK ps) (withUnital @(UN AK qs) f) \\ f
-  AdjR f `o` g = AdjR (f `o` g)
-  AdjL f `o` g = AdjL (f `o` g)
-  AdjCup f `o` g = AdjCup (f `o` g)
-  AdjCap f `o` g = AdjCap (f `o` g)
+  o = o
+  -- AdjNil `o` f = f \\ f
+  -- f `o` AdjNil = f -- withUnital @(UN AK ps) (withUnital @(UN AK qs) f) \\ f
+  -- AdjR f `o` g = AdjR (f `o` g)
+  -- AdjL f `o` g = AdjL (f `o` g)
+  -- AdjCup f `o` g = AdjCup (f `o` g)
+  -- AdjCap f `o` g = AdjCap (f `o` g)
+  leftUnitor AdjNil = AdjNil
+  leftUnitor (AdjR f) = AdjR f
 
 type family RepLR (n :: Nat) :: Path ABK A A where
   RepLR Z = Nil
@@ -90,7 +93,7 @@ type family RepLR (n :: Nat) :: Path ABK A A where
 
 -- | Adj(A, A) is the walking monoid
 fromSimplex :: Simplex a b -> Adj (AK (RepLR a)) (AK (RepLR b))
-fromSimplex Z = AdjNil
+fromSimplex ZZ = AdjNil
 fromSimplex (Y n) = AdjCap (fromSimplex n)
 fromSimplex (X (Y n)) = AdjL (AdjR (fromSimplex n))
 fromSimplex (X (X n)) = fromSimplex (X n) . AdjL (AdjCup (AdjR (src (fromSimplex n))))
@@ -103,7 +106,7 @@ type family CountLR' (ps :: Path ABK B A) :: Nat where
   CountLR' (R ::: n) = CountLR n
 
 toSimplex :: Adj (AK a) (AK b) -> Simplex (CountLR a) (CountLR b)
-toSimplex AdjNil = Z
+toSimplex AdjNil = ZZ
 toSimplex (AdjCap f) = Y (toSimplex f)
 toSimplex (AdjL f) = go f id
   where
@@ -117,7 +120,7 @@ type family RepRL (n :: Nat) :: Path ABK B B where
 
 -- | Adj(B, B) is the walking comonoid
 fromSimplexOp :: Simplex b a -> Adj (AK (RepRL a)) (AK (RepRL b))
-fromSimplexOp Z = AdjNil
+fromSimplexOp ZZ = AdjNil
 fromSimplexOp (Y n) = AdjCup (fromSimplexOp n)
 fromSimplexOp (X (Y n)) = AdjR (AdjL (fromSimplexOp n))
 fromSimplexOp (X (X n)) = AdjR (AdjCap (AdjL (tgt (fromSimplexOp n)))) . fromSimplexOp (X n)
@@ -130,7 +133,7 @@ type family CountRL' (ps :: Path ABK A B) :: Nat where
   CountRL' (L ::: n) = CountRL n
 
 toSimplexOp :: Adj (AK a) (AK b) -> Simplex (CountRL b) (CountRL a)
-toSimplexOp AdjNil = Z
+toSimplexOp AdjNil = ZZ
 toSimplexOp (AdjCup f) = Y (toSimplexOp f)
 toSimplexOp (AdjR f) = go f id
   where

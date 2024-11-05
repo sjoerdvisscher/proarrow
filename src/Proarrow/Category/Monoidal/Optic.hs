@@ -316,7 +316,7 @@ newtype Classifying m a b s t = Classifying
   {unClassify :: (Monad m) => m s -> b -> t}
 instance (Monad m) => Profunctor (Classifying m a b) where
   dimap l r (Classifying f) = Classifying (\u -> r . f (fmap l u))
-instance (Monad m) => ModuleObject (Sub :: CAT (SUBCAT (Algebra m))) (Classifying m a b) where
+instance (Monad m) => ModuleObject (Sub (->) :: CAT (SUBCAT (Algebra m))) (Classifying m a b) where
   action = Prof \(DayAct l (Sub w) (Classifying f) r) -> Classifying (\(fmap l -> m) b -> r (algebra (fmap (w . fst) m), f (fmap snd m) b))
 
 infixl 8 .?

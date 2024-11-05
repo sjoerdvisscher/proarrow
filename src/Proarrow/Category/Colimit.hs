@@ -6,7 +6,7 @@ import Data.Function (($))
 import Data.Kind (Constraint)
 
 import Proarrow.Adjunction (Adjunction (..))
-import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT, L, R, pattern InjL, pattern InjR)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
@@ -61,7 +61,7 @@ instance (HasInitialObject k) => Corepresentable (InitialLimit (d :: k +-> VOID)
   corepMap Unit = id
 instance (HasInitialObject k) => HasColimits (Unweighted :: () +-> VOID) k where
   type Colimit Unweighted d = InitialLimit d
-  colimit (TerminalProfunctor' o _ :.: InitialLimit f) = o // cotabulate $ f . case o of {}
+  colimit = \case
   colimitUniv _ p = p // InitialLimit initiate
 
 type CoproductColimit :: k +-> COPRODUCT () () -> k +-> ()

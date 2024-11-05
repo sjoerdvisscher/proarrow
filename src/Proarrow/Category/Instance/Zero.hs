@@ -1,30 +1,30 @@
 module Proarrow.Category.Instance.Zero where
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Preorder.ThinCategory (Thin (..))
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 
-data VOID
+type data VOID
 
 type Zero :: CAT VOID
 data Zero a b
 
-class IsVoid (a :: VOID) where
-  voidArr :: Zero a b
+-- Stolen from the constraints package
+class Bottom where
+  no :: a
 
 -- | The category with no objects, the initial category.
 instance CategoryOf VOID where
   type (~>) = Zero
-  type Ob a = IsVoid a
+  type Ob a = Bottom
 
 instance Promonad Zero where
-  id = voidArr
+  id = no
   (.) = \case {}
 
 instance Profunctor Zero where
   dimap = dimapDefault
   _ \\ x = case x of {}
 
-instance Thin VOID where
-  type HasArrow a b = IsVoid a
-  arr = voidArr
+instance ThinProfunctor Zero where
+  arr = no
   withArr = \case {}

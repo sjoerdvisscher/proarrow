@@ -6,7 +6,7 @@ import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Adjunction (Adjunction (..))
-import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT, L, R, pattern InjL, pattern InjR)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
@@ -64,7 +64,7 @@ instance (HasTerminalObject k) => Representable (TerminalLimit (d :: VOID +-> k)
 
 instance (HasTerminalObject k) => HasLimits (Unweighted :: VOID +-> ()) k where
   type Limit Unweighted d = TerminalLimit d
-  limit (TerminalLimit _ :.: TerminalProfunctor' _ b) = case b of {}
+  limit = \case
   limitUniv _ p = p // TerminalLimit terminate
 
 type ProductLimit :: COPRODUCT () () +-> k -> () +-> k

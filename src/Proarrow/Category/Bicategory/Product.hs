@@ -2,7 +2,7 @@ module Proarrow.Category.Bicategory.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Bicategory (Bicategory (..), Adjunction (..))
+import Proarrow.Category.Bicategory (Bicategory (..), Adjunction (..), Monad (..), Comonad (..))
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
@@ -50,6 +50,14 @@ instance (Bicategory jj, Bicategory kk) => Bicategory (PRODK jj kk) where
 instance (Adjunction (PRODFST l) (PRODFST r), Adjunction (PRODSND l) (PRODSND r), Ob l, Ob r) => Adjunction l r where
   unit = Prod (unit @(PRODFST l) @(PRODFST r)) (unit @(PRODSND l) @(PRODSND r))
   counit = Prod (counit @(PRODFST l) @(PRODFST r)) (counit @(PRODSND l) @(PRODSND r))
+
+instance (Monad (PRODFST m), Monad (PRODSND m), Ob m) => Monad m where
+  eta = Prod eta eta
+  mu = Prod mu mu
+
+instance (Comonad (PRODFST m), Comonad (PRODSND m), Ob m) => Comonad m where
+  epsilon = Prod epsilon epsilon
+  delta = Prod delta delta
 
 instance (HasCompanions hj vj, HasCompanions hk vk) => HasCompanions (PRODK hj hk) (PRODK vj vk) where
   type Companion (PRODK hj hk) (PRODK vj vk) fg = PROD (Companion hj vj (PRODFST fg)) (Companion hk vk (PRODSND fg))

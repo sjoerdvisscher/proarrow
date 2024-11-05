@@ -83,8 +83,8 @@ instance (Monoidal j, Monoidal k) => Distributive (PRO j k) where
   distR' (Prof na) (Prof nb) (Prof nc) = Prof \(Day l ab c r) -> case ab of
     InjL a -> InjL (Day l (na a) (nc c) r)
     InjR b -> InjR (Day l (nb b) (nc c) r)
-  distL0' Prof{} = Prof \(Day _ _ i _) -> case i of {}
-  distR0' Prof{} = Prof \(Day _ i _ _) -> case i of {}
+  distL0' Prof{} = Prof \case
+  distR0' Prof{} = Prof \case
 
 duoidal
   :: (Monoidal k, Profunctor (p :: PRO i k), Profunctor p', Profunctor q, Profunctor q')

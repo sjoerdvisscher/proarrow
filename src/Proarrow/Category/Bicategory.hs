@@ -319,9 +319,9 @@ class (Monad s, Monad t, Ob p) => Bimodule s t p where
   leftAction :: s `O` p ~> p
   rightAction :: p `O` t ~> p
 
--- instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
---   leftAction = mu
---   rightAction = mu
+instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
+  leftAction = mu
+  rightAction = mu
 
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where

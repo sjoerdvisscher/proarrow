@@ -39,6 +39,9 @@ lanComonadDelta =
   let lpp = obj @(Lan p p)
   in lanUniv @p @p (associatorInv lpp lpp (obj @p) . (lpp `o` lan @p @p) . lan @p @p) \\ iObj @kk @d \\ (lpp `o` lpp)
 
+idLan :: forall f. (LeftKanExtension I f, Ob f) => f ~> Lan I f
+idLan = rightUnitor id . lan @I @f
+
 lanAlongCompanion
   :: forall hk vk j f
    . (LeftKanExtension (Companion hk vk j) f, Equipment hk vk)
@@ -84,6 +87,14 @@ ranMonadMu =
   let rpp = obj @(Ran p p)
   in ranUniv @p @p (ran @p @p . (rpp `o` ran @p @p) . associator rpp rpp (obj @p)) \\ iObj @kk @d \\ (rpp `o` rpp)
 
+composeRan :: forall i j f. (RightKanExtension j f, RightKanExtension i (Ran j f), RightKanExtension (i `O` j) f) => Ran i (Ran j f) ~> Ran (i `O` j) f
+composeRan =
+  ranUniv @(i `O` j) @f
+    (ran @j @f . (ran @i @(Ran j f) `o` obj @j) . associatorInv (obj @(Ran i (Ran j f))) (obj @i) (obj @j))
+
+idRan :: forall f. (RightKanExtension I f, Ob f) => f ~> Ran I f
+idRan = ranUniv @I @f (rightUnitor id)
+
 ranAlongConjoint
   :: forall hk vk j f
    . (RightKanExtension (Conjoint hk vk j) f, Equipment hk vk)
@@ -122,6 +133,9 @@ liftComonadDelta :: forall {kk} {c} {d} (p :: kk d c). (LeftKanLift p p) => Lift
 liftComonadDelta =
   let lpp = obj @(Lift p p)
   in liftUniv @p @p (associator (obj @p) lpp lpp . (lift @p @p `o` lpp) . lift @p @p) \\ iObj @kk @d \\ (lpp `o` lpp)
+
+idLift :: forall f. (LeftKanLift I f, Ob f) => f ~> Lift I f
+idLift = leftUnitor id . lift @I @f
 
 liftAlongConjoint
   :: forall hk vk j f
@@ -169,6 +183,9 @@ composeRift
 composeRift =
   riftUniv @(j `O` i) @f
     (rift @j @f . (obj @j `o` rift @i @(Rift j f)) . associator (obj @j) (obj @i) (obj @(Rift i (Rift j f))))
+
+idRift :: forall f. (RightKanLift I f, Ob f) => f ~> Rift I f
+idRift = riftUniv @I @f (leftUnitor id)
 
 riftAlongCompanion
   :: forall hk vk j f

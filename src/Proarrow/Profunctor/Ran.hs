@@ -56,8 +56,14 @@ instance (Profunctor j) => Adjunction (Star (Precompose j)) (Star (Ran (OP j))) 
   unit = unitFromRepUnit (Prof \p -> p // Ran \j -> Precompose (p :.: j))
   counit = counitFromRepCounit (Prof \(Precompose (r :.: j)) -> runRan j r)
 
-riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (i :.: j) |> p
-riftCompose = Prof \k -> k // Ran \(i :.: j) -> runRan j (runRan i k)
+ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (i :.: j) |> p
+ranCompose = Prof \k -> k // Ran \(i :.: j) -> runRan j (runRan i k)
 
-riftComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (i :.: j) |> p ~> i |> (j |> p)
-riftComposeInv = Prof \k -> k // Ran \i -> Ran \j -> runRan (i :.: j) k
+ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (i :.: j) |> p ~> i |> (j |> p)
+ranComposeInv = Prof \k -> k // Ran \i -> Ran \j -> runRan (i :.: j) k
+
+ranHom :: Profunctor p => p ~> (~>) |> p
+ranHom = Prof \p -> p // Ran \j -> rmap j p
+
+ranHomInv :: Profunctor p => (~>) |> p ~> p
+ranHomInv = Prof \(Ran k) -> k id

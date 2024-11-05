@@ -66,6 +66,12 @@ instance (CategoryOf j, CategoryOf k) => Closed (PROD (PRO j k)) where
   uncurry' (Prod Prof{}) (Prod Prof{}) (Prod (Prof n)) = Prod (Prof \(p :*: q) -> case n p of Exp f -> f id id q \\ q)
   Prod (Prof m) ^^^ Prod (Prof n) = Prod (Prof \(Exp f) -> Exp \ca bd p -> m (f ca bd (n p)))
 
+instance (Closed j, Closed k) => Closed (j, k) where
+  type '(a1, a2) ~~> '(b1, b2) = '(a1 ~~> b1, a2 ~~> b2)
+  curry' (a1 :**: a2) (b1 :**: b2) (f1 :**: f2) = curry' a1 b1 f1 :**: curry' a2 b2 f2
+  uncurry' (a1 :**: a2) (b1 :**: b2) (f1 :**: f2) = uncurry' a1 b1 f1 :**: uncurry' a2 b2 f2
+  (f1 :**: f2) ^^^ (g1 :**: g2) = (f1 ^^^ g1) :**: (f2 ^^^ g2)
+
 type ExponentialFunctor :: PRO k (OPPOSITE k, k)
 data ExponentialFunctor a b where
   ExponentialFunctor :: (Ob c, Ob d) => a ~> (c ~~> d) -> ExponentialFunctor a '(OP c, d)

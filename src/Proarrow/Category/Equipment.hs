@@ -173,31 +173,26 @@ fromLeft =
 flipCompanion
   :: forall hk vk f p q. (Equipment hk vk, Ob p) => Obj f -> Companion hk vk f `O` p ~> q -> p ~> Conjoint hk vk f `O` q
 flipCompanion f n =
-  ((mapConjoint f `o` n) . associator (mapConjoint f) (mapCompanion f) (obj @p) . leftUnitorInvWith (comConUnit f) id)
-    \\\ n
-    \\\ f
+  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+  in ((conF `o` n) . associator conF comF (obj @p) . leftUnitorInvWith (comConUnit f) id) \\\ n \\\ f
 
 flipCompanionInv
   :: forall hk vk f p q. (Equipment hk vk, Ob q) => Obj f -> p ~> Conjoint hk vk f `O` q -> Companion hk vk f `O` p ~> q
 flipCompanionInv f n =
-  (leftUnitorWith (comConCounit f) id . associatorInv (mapCompanion f) (mapConjoint f) (obj @q) . (mapCompanion f `o` n))
-    \\\ n
-    \\\ f
+  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+  in (leftUnitorWith (comConCounit f) id . associatorInv comF conF (obj @q) . (comF `o` n)) \\\ n \\\ f
 
 flipConjoint
   :: forall hk vk f p q. (Equipment hk vk, Ob p) => Obj f -> p `O` Conjoint hk vk f ~> q -> p ~> q `O` Companion hk vk f
 flipConjoint f n =
-  ( (n `o` mapCompanion f) . associatorInv (obj @p) (mapConjoint f) (mapCompanion f) . rightUnitorInvWith (comConUnit f) id
-  )
-    \\\ n
-    \\\ f
+  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+  in ((n `o` comF) . associatorInv (obj @p) conF comF . rightUnitorInvWith (comConUnit f) id) \\\ n \\\ f
 
 flipConjointInv
   :: forall hk vk f p q. (Equipment hk vk, Ob q) => Obj f -> p ~> q `O` Companion hk vk f -> p `O` Conjoint hk vk f ~> q
 flipConjointInv f n =
-  (rightUnitorWith (comConCounit f) id . associator (obj @q) (mapCompanion f) (mapConjoint f) . (n `o` mapConjoint f))
-    \\\ n
-    \\\ f
+  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+  in (rightUnitorWith (comConCounit f) id . associator (obj @q) comF conF . (n `o` conF)) \\\ n \\\ f
 
 class (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
 instance (Adjunction (Companion hk vk f) (Conjoint hk vk f)) => ComConAdjunction hk vk f
@@ -391,7 +386,7 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
 --
 -- > h--f--i
 -- > |  v  |
--- > p--@--q
+-- > p--§--q
 -- > |  v  |
 -- > j--g--k
 type RetroSq :: forall {c} {hk :: CAT c} {vk :: CAT c} {h} {i} {j} {k}. PRO (hk i k, vk j k) (hk h j, vk h i)

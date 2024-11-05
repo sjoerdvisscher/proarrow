@@ -1,0 +1,105 @@
+module Proarrow.Category.Instance.Collage where
+
+import Data.Kind (Constraint)
+
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Kind
+  , Obj
+  , Profunctor (..)
+  , Promonad (..)
+  , dimapDefault
+  , lmap
+  , rmap
+  , type (+->)
+  )
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Preorder.ThinCategory (Codiscrete, Thin, ThinProfunctor (..))
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+
+type COLLAGE :: forall {j} {k}. k +-> j -> Kind
+type data COLLAGE (p :: k +-> j) = L j | R k
+
+type Collage :: CAT (COLLAGE p)
+data Collage a b where
+  InL :: a ~> b -> Collage (L a :: COLLAGE p) (L b :: COLLAGE p)
+  InR :: a ~> b -> Collage (R a :: COLLAGE p) (R b :: COLLAGE p)
+  L2R :: p a b -> Collage (L a :: COLLAGE p) (R b :: COLLAGE p)
+
+type IsLR :: forall {p}. COLLAGE p -> Constraint
+class IsLR (a :: COLLAGE p) where
+  lrId :: Obj a
+instance (Ob a, Promonad ((~>) :: CAT k)) => IsLR (L a :: (COLLAGE (p :: j +-> k))) where
+  lrId = InL id
+instance (Ob a, Promonad ((~>) :: CAT j)) => IsLR (R a :: (COLLAGE (p :: j +-> k))) where
+  lrId = InR id
+
+instance (Profunctor p) => Profunctor (Collage :: CAT (COLLAGE p)) where
+  dimap = dimapDefault
+  r \\ InL f = r \\ f
+  r \\ InR f = r \\ f
+  r \\ L2R p = r \\ p
+
+instance (Profunctor p) => Promonad (Collage :: CAT (COLLAGE p)) where
+  id = lrId
+  InL g . InL f = InL (g . f)
+  InR g . L2R p = L2R (rmap g p)
+  L2R p . InL f = L2R (lmap f p)
+  InR g . InR f = InR (g . f)
+
+instance (Profunctor p) => CategoryOf (COLLAGE p) where
+  type (~>) = Collage
+  type Ob a = IsLR a
+
+instance (HasInitialObject j, CategoryOf k, Codiscrete p) => HasInitialObject (COLLAGE (p :: k +-> j)) where
+  type InitialObject = L InitialObject
+  initiate' (InL a) = InL (initiate' a)
+  initiate' (L2R p) = L2R arr \\ p
+  initiate' (InR b) = L2R arr \\ b
+
+instance (HasTerminalObject k, CategoryOf j, Codiscrete p) => HasTerminalObject (COLLAGE (p :: k +-> j)) where
+  type TerminalObject = R TerminalObject
+  terminate' (InL a) = L2R arr \\ a
+  terminate' (L2R p) = L2R arr \\ p
+  terminate' (InR b) = InR (terminate' b)
+
+class HasArrowCollage p (a :: COLLAGE p) b where arrCoprod :: a ~> b
+instance (Thin j, HasArrow (~>) (a :: j) b, Ob a, Ob b) => HasArrowCollage (p :: k +-> j) (L a) (L b) where
+  arrCoprod = InL arr
+instance (ThinProfunctor p, HasArrow p a b, Ob a, Ob b) => HasArrowCollage (p :: k +-> j) (L a) (R b) where
+  arrCoprod = L2R arr
+instance (Thin k, HasArrow (~>) (a :: k) b, Ob a, Ob b) => HasArrowCollage (p :: k +-> j) (R a) (R b) where
+  arrCoprod = InR arr
+
+instance (Thin j, Thin k, ThinProfunctor p) => ThinProfunctor (Collage :: CAT (COLLAGE (p :: k +-> j))) where
+  type HasArrow (Collage :: CAT (COLLAGE p)) a b = HasArrowCollage p a b
+  arr = arrCoprod
+  withArr (InL f) r = withArr f r \\ f
+  withArr (L2R p) r = withArr p r \\ p
+  withArr (InR f) r = withArr f r \\ f
+
+type InjL :: forall (p :: k +-> j) -> j +-> COLLAGE p
+data InjL p a b where
+  InjL :: (Ob b) => {unInL :: a ~> InjL p % b} -> InjL p a b
+instance (Profunctor p) => Profunctor (InjL p) where
+  dimap = dimapRep
+  r \\ InjL p = r \\ p
+instance (Profunctor p) => Representable (InjL p) where
+  type InjL p % a = L a
+  index (InjL f) = f
+  tabulate f = InjL f \\ f
+  repMap = InL
+
+type InjR :: forall (p :: k +-> j) -> k +-> COLLAGE p
+data InjR p a b where
+  InjR :: (Ob b) => {unInjR :: a ~> InjR p % b} -> InjR p a b
+instance (Profunctor p) => Profunctor (InjR p) where
+  dimap = dimapRep
+  r \\ InjR p = r \\ p
+instance (Profunctor p) => Representable (InjR p) where
+  type InjR p % a = R a
+  index (InjR f) = f
+  tabulate f = InjR f \\ f
+  repMap = InR

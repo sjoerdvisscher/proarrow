@@ -145,5 +145,5 @@ instance (CategoryOf j, CategoryOf k) => Distributive (PROD (PRO j k)) where
       InjL a -> InjL (na a :*: nc c)
       InjR b -> InjR (nb b :*: nc c)
     )
-  distL0' (Prod Prof{}) = Prod (Prof \(_ :*: i) -> case i of {})
-  distR0' (Prod Prof{}) = Prod (Prof \(i :*: _) -> case i of {})
+  distL0' (Prod Prof{}) = Prod (Prof \case)
+  distR0' (Prod Prof{}) = Prod (Prof \case)

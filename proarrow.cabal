@@ -41,8 +41,10 @@ library
         Proarrow.Category.Enriched.Bipara
         Proarrow.Category.Instance.Bool
         Proarrow.Category.Instance.Cat
+        Proarrow.Category.Instance.Collage
         Proarrow.Category.Instance.Constraint
         Proarrow.Category.Instance.Coproduct
+        Proarrow.Category.Instance.Fin
         Proarrow.Category.Instance.Free
         Proarrow.Category.Instance.Hask
         Proarrow.Category.Instance.Kleisli
@@ -100,12 +102,12 @@ library
         Proarrow.Profunctor.Wrapped
         Proarrow.Profunctor.Yoneda
         Proarrow.Promonad
-        Proarrow.Promonad.Collage
         Proarrow.Promonad.Reader
         Proarrow.Promonad.State
         Proarrow.Promonad.Writer
 
     default-extensions:
+        BangPatterns
         BlockArguments
         ConstraintKinds
         DataKinds
@@ -115,6 +117,7 @@ library
         EmptyDataDecls
         FlexibleContexts
         FlexibleInstances
+        FunctionalDependencies
         GADTs
         ImportQualifiedPost
         InstanceSigs
@@ -130,6 +133,7 @@ library
         ScopedTypeVariables
         StandaloneDeriving
         StandaloneKindSignatures
+        StrictData
         TupleSections
         TypeApplications
         TypeData
@@ -145,6 +149,7 @@ library
 
     build-depends:
         , base >=4.18 && <4.21
+        , reflection >=2.1 && <2.2
     hs-source-dirs:   src
     default-language: Haskell2010
     ghc-options: -Wall

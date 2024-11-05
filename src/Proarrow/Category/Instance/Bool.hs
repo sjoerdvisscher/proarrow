@@ -17,7 +17,7 @@ import Proarrow.Object.BinaryProduct
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Preorder.ThinCategory (Thin (..))
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 
 data BOOL = FLS | TRU
 
@@ -54,8 +54,8 @@ instance IsBoolArr FLS FLS where boolArr = Fls
 instance IsBoolArr FLS TRU where boolArr = F2T
 instance IsBoolArr TRU TRU where boolArr = Tru
 
-instance Thin BOOL where
-  type HasArrow a b = IsBoolArr a b
+instance ThinProfunctor Booleans where
+  type HasArrow Booleans a b = IsBoolArr a b
   arr = boolArr
   withArr Fls r = r
   withArr F2T r = r

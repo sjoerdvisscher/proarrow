@@ -1,8 +1,10 @@
 module Proarrow.Category.Bicategory.Prof where
 
-import Data.Kind (Constraint)
+import Data.Kind (Constraint, Type)
 import Prelude (($))
 
+import Data.Proxy (Proxy (..))
+import Data.Reflection (Reifies (..), reify)
 import Proarrow.Adjunction qualified as A
 import Proarrow.Category.Bicategory
   ( Adjunction (..)
@@ -14,7 +16,8 @@ import Proarrow.Category.Bicategory
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
 import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..))
-import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
+import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..), vArr)
+import Proarrow.Category.Instance.Collage (COLLAGE (..), Collage (..), InjL (..), InjR (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (unProf)
 import Proarrow.Category.Opposite qualified as Op
@@ -31,16 +34,17 @@ import Proarrow.Core
   , lmap
   , obj
   , rmap
+  , src
+  , tgt
   , (//)
   , (:~>)
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Object (src, tgt)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..))
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep)
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 
@@ -158,3 +162,58 @@ dimapLax f g = (unProf (unNat (map (Co f))) . unProf (map g)) \\\ f \\\ g
 instance (Monad m, Comonad c, LaxProfunctor sk tk kk) => Monad (PK (P sk tk kk (CO c) m)) where
   eta = Prof (dimapLax epsilon eta . laxId)
   mu = Prof (dimapLax delta mu . laxComp)
+
+type ProfSq p q f g = Sq '(PK p, FUN f) '(PK q, FUN g)
+
+-- | The collage is a cotabulator with this 2-cell.
+--
+-- > J-InjR-Col
+-- > |   v   |
+-- > p---@   |
+-- > |   v   |
+-- > K-InjL-Col
+isCotabulator :: (Profunctor p) => ProfSq p Collage (InjR p) (InjL p)
+isCotabulator = Sq $ Prof $ \(InjL f :.: p) -> f :.: InjR (L2R p) \\ p
+
+-- | Any 2-cell of shape p(a, b) -> e(f a, g b) factors through the cotabulator 2-cell.
+--
+-- > J--f--H    J-Inj1-CG--X--H
+-- > |  v  |    |   v   |  v  |
+-- > p--@  | == p---@   |  |  |
+-- > |  v  |    |   v   |  v  |
+-- > K--g--H    K-Inj2-CG--X--H
+type CotabulatorFactorizer :: Type -> forall (p :: j +-> k) -> (j +-> h) -> (k +-> h) -> COLLAGE p +-> h
+data CotabulatorFactorizer s p f g a b where
+  CF :: (Ob b) => a ~> CotabulatorFactorizer s p f g % b -> CotabulatorFactorizer s p f g a b
+
+instance
+  (Profunctor p, Representable f, Representable g, Reifies s (ProfSq p Id f g))
+  => Profunctor (CotabulatorFactorizer s p f g)
+  where
+  dimap = dimapRep
+  r \\ CF x = r \\ x
+instance
+  (Profunctor p, Representable f, Representable g, Reifies s (ProfSq p Id f g))
+  => Representable (CotabulatorFactorizer s p f g)
+  where
+  type CotabulatorFactorizer s p f g % R a = f % a
+  type CotabulatorFactorizer s p f g % L a = g % a
+  index (CF f) = f
+  tabulate f = CF f \\ f
+  repMap = \case
+    InL f -> repMap @g f
+    InR f -> repMap @f f
+    L2R p ->
+      p // case reflect ([] @s) of Sq (Prof n) -> case n (tabulate @g (repMap @g (src p)) :.: p) of Id g :.: f -> index f . g
+
+cotabulatorFactorize
+  :: forall p f g r
+   . (Profunctor p, Representable f, Representable g)
+  => ProfSq p Id f g
+  -> ( forall s
+        . (Reifies s (ProfSq p Id f g))
+       => ProfSq Id Id (CotabulatorFactorizer s p f g) (CotabulatorFactorizer s p f g)
+       -> r
+     )
+  -> r
+cotabulatorFactorize sq f = reify sq $ \(Proxy @s) -> f (vArr $ obj @(FUN (CotabulatorFactorizer s p f g)))

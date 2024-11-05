@@ -1,49 +1,20 @@
-module Proarrow.Category.Instance.Coproduct where
+module Proarrow.Category.Instance.Coproduct (COPRODUCT, L, R, (:++:), pattern InjL, pattern InjR) where
 
-import Data.Kind (Constraint)
+import Prelude (type (~))
 
-import Proarrow.Core (CAT, Category, CategoryOf (..), Profunctor (..), Promonad (..))
-import Proarrow.Preorder.ThinCategory (Thin (..))
+import Proarrow.Core (CAT, CategoryOf (..))
+import Proarrow.Profunctor.Initial (InitialProfunctor)
+import Proarrow.Category.Instance.Collage (COLLAGE(..), Collage(..))
 
-data COPRODUCT j k = L j | R k
+type COPRODUCT j k = COLLAGE (InitialProfunctor @j @k)
 
 type (:++:) :: CAT j -> CAT k -> CAT (COPRODUCT j k)
-data (c :++: d) a b where
-  InjL :: c a b -> (c :++: d) (L a) (L b)
-  InjR :: d a b -> (c :++: d) (R a) (R b)
+type (:++:) c d = Collage :: CAT (COPRODUCT j k)
 
-type IsCoproduct :: forall {j} {k}. COPRODUCT j k -> Constraint
-class IsCoproduct (a :: COPRODUCT j k) where
-  coproductId :: ((~>) :++: (~>)) a a
-instance (Ob a, Promonad ((~>) :: CAT k)) => IsCoproduct (L (a :: k)) where
-  coproductId = InjL id
-instance (Ob a, Promonad ((~>) :: CAT k)) => IsCoproduct (R (a :: k)) where
-  coproductId = InjR id
+pattern InjL :: () => (a' ~ L a, b' ~ L b) => a ~> b -> ((~>) :++: (~>)) a' b'
+pattern InjL f = InL f
 
-instance (CategoryOf j, CategoryOf k) => CategoryOf (COPRODUCT j k) where
-  type (~>) = (~>) :++: (~>)
-  type Ob a = IsCoproduct a
+pattern InjR :: () => (a' ~ R a, b' ~ R b) => a ~> b -> ((~>) :++: (~>)) a' b'
+pattern InjR f = InR f
 
--- | The coproduct category of the categories `c` and `d`.
-instance (Category c, Category d) => Promonad (c :++: d) where
-  id = coproductId
-  InjL f . InjL g = InjL (f . g)
-  InjR f . InjR g = InjR (f . g)
-
-instance (Profunctor c, Profunctor d) => Profunctor (c :++: d) where
-  dimap (InjL l) (InjL r) (InjL f) = InjL (dimap l r f)
-  dimap (InjR l) (InjR r) (InjR f) = InjR (dimap l r f)
-  dimap (InjL _) (InjR _) f = case f of {}
-  dimap (InjR _) (InjL _) f = case f of {}
-  r \\ InjL f = r \\ f
-  r \\ InjR f = r \\ f
-
-class HasArrowCoprod (a :: COPRODUCT j k) b where arrCoprod :: a ~> b
-instance (Thin j, HasArrow (a :: j) b, Ob a, Ob b) => HasArrowCoprod (L a) (L b) where arrCoprod = InjL (arr @j)
-instance (Thin k, HasArrow (a :: k) b, Ob a, Ob b) => HasArrowCoprod (R a) (R b) where arrCoprod = InjR (arr @k)
-
-instance (Thin j, Thin k) => Thin (COPRODUCT j k) where
-  type HasArrow a b = HasArrowCoprod a b
-  arr = arrCoprod
-  withArr (InjL f) r = withArr f r \\ f
-  withArr (InjR f) r = withArr f r \\ f
+{-# COMPLETE InjL, InjR #-}
