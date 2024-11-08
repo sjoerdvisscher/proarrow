@@ -16,10 +16,13 @@ import Proarrow.Category.Bicategory
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
 import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..))
+import Proarrow.Category.Colimit qualified as L
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..), vArr)
+import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Category.Instance.Collage (COLLAGE (..), Collage (..), InjL (..), InjR (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (unProf)
+import Proarrow.Category.Limit qualified as L
 import Proarrow.Category.Opposite qualified as Op
 import Proarrow.Core
   ( CAT
@@ -42,9 +45,10 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep)
+import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Representable (..), dimapRep, flipRep)
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 
@@ -81,25 +85,25 @@ instance Bicategory PROFK where
 data ProfRep
 type instance IsOb ProfRep p = Representable (UN PK p)
 
-type FUNK = COK (SUBCAT ProfRep PROFK)
-type FUN p = CO (SUB @ProfRep (PK p))
-type UNFUN p = UN PK (UN SUB (UN CO p))
+type FUNK = SUBCAT ProfRep PROFK
+type FUN p = SUB @ProfRep (PK p)
+type UNFUN p = UN PK (UN SUB p)
 
 instance HasCompanions PROFK FUNK where
   type Companion PROFK FUNK p = PK (UNFUN p)
-  mapCompanion (Co (Sub (Prof n))) = Prof n
+  mapCompanion (Sub (Prof n)) = Prof n
   compToId = Prof id
   compFromId = Prof id
-  compToCompose (Co f) (Co g) = Prof id \\ f \\ g
-  compFromCompose (Co f) (Co g) = Prof id \\ f \\ g
+  compToCompose f g = Prof id \\ f \\ g
+  compFromCompose f g = Prof id \\ f \\ g
 
 instance Equipment PROFK FUNK where
   type Conjoint PROFK FUNK p = PK (RepCostar (UNFUN p))
-  mapConjoint (Co (Sub (Prof @p n))) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (tabulate @p @a (repMap @p @a id))))
+  mapConjoint (Sub (Prof @p n)) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (tabulate @p @a (repMap @p @a id))))
   conjToId = Prof (Id . unRepCostar)
   conjFromId = Prof \(Id f) -> RepCostar f \\ f
-  conjToCompose (Co (Sub Prof{})) (Co (Sub (Prof @g _))) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repMap @g (obj @b)
-  conjFromCompose (Co (Sub (Prof @f _))) (Co (Sub Prof{})) = Prof \(RepCostar f :.: RepCostar g) -> RepCostar (g . repMap @f f)
+  conjToCompose (Sub Prof{}) (Sub (Prof @g _)) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repMap @g (obj @b)
+  conjFromCompose (Sub (Prof @f _)) (Sub Prof{}) = Prof \(RepCostar f :.: RepCostar g) -> RepCostar (g . repMap @f f)
 
 instance (Promonad p) => Monad (PK p :: PROFK k k) where
   eta = Prof (arr . unId)
@@ -129,6 +133,16 @@ instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK d c) (PK f 
   type Rift (PK j) (PK f) = PK (R.Rift (Op.OP j) f)
   rift = Prof \(j :.: r) -> R.runRift j r
   riftUniv (Prof n) = Prof \g -> g // R.Rift \j -> n (j :.: g)
+
+instance (L.HasLimits j k, Ob j) => HasLimits FUNK (PK j) k where
+  type Limit (PK j) d = FUN (L.Limit j (UNFUN d))
+  limit = Prof L.limit
+  limitUniv (Prof n) = Sub (Prof (L.limitUniv n))
+
+instance (L.HasColimits j k, Ob j) => HasColimits FUNK (PK j) k where
+  type Colimit (PK j) d = FUN (CorepStar (L.Colimit j (RepCostar (UNFUN d))))
+  colimit = Prof \(j :.: RepCostar p) -> L.colimit (j :.: cotabulate p)
+  colimitUniv (Prof n) = Sub (Prof (flipRep (L.colimitUniv n)))
 
 class
   ( forall (s :: COK sk h i) (t :: tk j k). (Ob s, Ob t) => Profunctor (p s t)
@@ -163,7 +177,7 @@ instance (Monad m, Comonad c, LaxProfunctor sk tk kk) => Monad (PK (P sk tk kk (
   eta = Prof (dimapLax epsilon eta . laxId)
   mu = Prof (dimapLax delta mu . laxComp)
 
-type ProfSq p q f g = Sq '(PK p, FUN f) '(PK q, FUN g)
+type ProfSq p q f g = Sq '(PK p, FUN g) '(PK q, FUN f)
 
 -- | The collage is a cotabulator with this 2-cell.
 --
