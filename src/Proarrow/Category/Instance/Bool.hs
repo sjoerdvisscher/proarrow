@@ -14,7 +14,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Exponential (Closed (..), StarAutonomous (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
@@ -148,6 +148,11 @@ instance Closed BOOL where
   Fls ^^^ F2T = F2T
   F2T ^^^ F2T = F2T
   F2T ^^^ Tru = F2T
+
+instance StarAutonomous BOOL where
+  type Bottom = FLS
+  doubleNeg' Fls = Fls
+  doubleNeg' Tru = Tru
 
 instance Monoid TRU where
   mempty = Tru

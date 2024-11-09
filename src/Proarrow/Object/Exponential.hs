@@ -92,5 +92,35 @@ instance (Cartesian k, Closed k) => CCC k
 ap
   :: forall {j} {k} y a x p
    . (Cartesian j, Closed k, MonoidalProfunctor (p :: PRO j k), Ob y)
-  => p a (x ~~> y) -> p a x -> p a y
+  => p a (x ~~> y)
+  -> p a x
+  -> p a y
 ap pf px = let a = src pf in dimap (a &&& a) (eval' (tgt px) (obj @y)) (pf `par` px)
+
+type Dual a = a ~~> Bottom
+class (Closed k) => StarAutonomous k where
+  type Bottom :: k
+  doubleNeg' :: Obj (a :: k) -> Dual (Dual a) ~> a
+
+doubleNeg :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
+doubleNeg = doubleNeg' (obj @a)
+
+instance StarAutonomous () where
+  type Bottom = '()
+  doubleNeg' U.Unit = U.Unit
+
+instance (StarAutonomous j, StarAutonomous k) => StarAutonomous (j, k) where
+  type Bottom = '(Bottom, Bottom)
+  doubleNeg' (a :**: b) = doubleNeg' a :**: doubleNeg' b
+
+class ((Bottom :: k) P.~ Unit, StarAutonomous k) => CompactClosed k where
+  distribDual' :: Obj (a :: k) -> Obj b -> Dual (a ** b) ~> Dual a ** Dual b
+  combineDual' :: Obj (a :: k) -> Obj b -> Dual a ** Dual b ~> Dual (a ** b)
+
+instance CompactClosed () where
+  distribDual' U.Unit U.Unit = U.Unit
+  combineDual' U.Unit U.Unit = U.Unit
+
+instance (CompactClosed j, CompactClosed k) => CompactClosed (j, k) where
+  distribDual' (a :**: b) (c :**: d) = distribDual' a c :**: distribDual' b d
+  combineDual' (a :**: b) (c :**: d) = combineDual' a c :**: combineDual' b d
