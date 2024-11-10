@@ -166,19 +166,19 @@ data Optic w a b s t where
     -> (x' `Act` b) ~> t
     -> Optic (w :: PRO m m') a b s t
 
+type IsOptic (w :: PRO m m') c d = (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d)
+
 opticAsDayAct :: (CategoryOf c, CategoryOf d) => (Optic w a b :: PRO c d) :~> DayAct w (Yo a b)
 opticAsDayAct (Optic f w g) = DayAct f w (Yo id id) g
 
-dayActAsOptic
-  :: (MonoidalAction m c, MonoidalAction m' d, Profunctor (w :: PRO m m'))
-  => DayAct w (Yo a b :: PRO c d) :~> Optic w a b
+dayActAsOptic :: (IsOptic w c d) => DayAct w (Yo a b :: PRO c d) :~> Optic w a b
 dayActAsOptic (DayAct f w (Yo l r) g) = Optic (act (src w) l . f) w (g . act (tgt w) r) \\ l \\ r
 
 instance (CategoryOf c, CategoryOf d) => Profunctor (Optic w a b :: PRO c d) where
   dimap l r (Optic f w g) = Optic (f . l) w (r . g)
   r \\ Optic f _ g = r \\ f \\ g
 
-instance (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d) => ModuleObject (w :: PRO m m') (Optic w a b :: PRO c d) where
+instance (IsOptic w c d) => ModuleObject (w :: PRO m m') (Optic w a b :: PRO c d) where
   action = Prof dayActAsOptic . mappendAct @(PRO m m') @(PRO c d) . act (obj @w) (Prof opticAsDayAct)
 
 parallel :: Optic w a b s t -> Optic w' c d u v -> Optic (w :**: w') '(a, c) '(b, d) '(s, u) '(t, v)
@@ -193,19 +193,13 @@ type OpticCat :: CAT (OPTIC w c d)
 data OpticCat ab st where
   OpticCat :: Optic w a b s t -> OpticCat (OPT a b :: OPTIC w c d) (OPT s t)
 
-instance
-  (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d)
-  => Profunctor (OpticCat :: CAT (OPTIC (w :: PRO m m') c d))
-  where
+instance (IsOptic w c d) => Profunctor (OpticCat :: CAT (OPTIC w c d)) where
   dimap = dimapDefault
   r \\ OpticCat (Optic f _ g) = r \\ f \\ g
-instance
-  (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d)
-  => Promonad (OpticCat :: CAT (OPTIC (w :: PRO m m') c d))
-  where
+instance (IsOptic w c d) => Promonad (OpticCat :: CAT (OPTIC w c d)) where
   id = OpticCat (prof2ex id)
   OpticCat l@Optic{} . OpticCat r@Optic{} = OpticCat $ prof2ex (ex2prof l . ex2prof r)
-instance (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d) => CategoryOf (OPTIC (w :: PRO m m') c d) where
+instance (IsOptic w c d) => CategoryOf (OPTIC w c d) where
   type (~>) = OpticCat
   type Ob a = (a ~ OPT (LCat a) (RCat a), Ob (LCat a), Ob (RCat a))
 
