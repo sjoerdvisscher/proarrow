@@ -26,11 +26,23 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k)) => Monoidal k where
   associator :: Obj (a :: k) -> Obj b -> Obj c -> (a ** b) ** c ~> a ** (b ** c)
   associatorInv :: Obj (a :: k) -> Obj b -> Obj c -> a ** (b ** c) ~> (a ** b) ** c
 
+unitObj :: Monoidal k => Obj (Unit :: k)
+unitObj = par0
+
 class (Monoidal k) => SymMonoidal k where
   swap' :: (a :: k) ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
 
 swap :: forall {k} a b. (SymMonoidal k, Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
 swap = swap' (obj @a) (obj @b)
+
+class (SymMonoidal k) => TracedMonoidalProfunctor (p :: k +-> k) where
+  trace' :: (x :: k) ~> x' -> y ~> y' -> u ~> u' -> p (x' ** u') (y ** u) -> p x y'
+
+trace :: forall p x y u. (TracedMonoidalProfunctor p, Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
+trace = trace' (obj @x) (obj @y) (obj @u)
+
+class (TracedMonoidalProfunctor ((~>) :: CAT k), Monoidal k) => TracedMonoidal k
+instance (TracedMonoidalProfunctor ((~>) :: CAT k), Monoidal k) => TracedMonoidal k
 
 isObPar :: forall {k} a b r. (Monoidal k, Ob (a :: k), Ob b) => ((Ob (a ** b)) => r) -> r
 isObPar r = r \\ (obj @a `par` obj @b)

@@ -152,6 +152,7 @@ instance Closed BOOL where
 instance StarAutonomous BOOL where
   type Bottom = FLS
   doubleNeg' Fls = Fls
+  doubleNeg' F2T = F2T
   doubleNeg' Tru = Tru
 
 instance Monoid TRU where
