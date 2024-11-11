@@ -11,6 +11,8 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Preorder (CProfunctor (..), CPromonad (..), PreorderOf (..), (\\))
 import Proarrow.Preorder.Constraint ()
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Preorder.Discrete (DISCRETE)
 
 newtype POCATK k = PC k
 type instance UN PC (PC k) = k
@@ -56,3 +58,6 @@ instance Monoidal (POCATK Constraint) where
   rightUnitorInv = P.rightUnitorProdInv
   associator = P.associatorProd
   associatorInv = P.associatorProdInv
+
+instance DaggerProfunctor (PoAsCat :: CAT (POCATK (DISCRETE k))) where
+  dagger PoAsCat = PoAsCat

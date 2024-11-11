@@ -5,6 +5,7 @@ import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
 
 newtype Wrapped p a b = Wrapped {unWrapped :: p a b}
 
@@ -19,6 +20,9 @@ instance (Promonad p) => Promonad (Wrapped p) where
 instance (MonoidalProfunctor p) => MonoidalProfunctor (Wrapped p) where
   par0 = Wrapped par0
   Wrapped l `par` Wrapped r = Wrapped (l `par` r)
+
+instance (DaggerProfunctor p) => DaggerProfunctor (Wrapped p) where
+  dagger = Wrapped . dagger . unWrapped
 
 instance (Comonoid c, Monoid m, MonoidalProfunctor p) => Monoid (Wrapped p c m) where
   mempty () = dimap counit mempty par0

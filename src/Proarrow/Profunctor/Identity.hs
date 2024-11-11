@@ -4,6 +4,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Category.Dagger (DaggerProfunctor (..), Dagger)
 
 type Id :: CAT k
 newtype Id a b = Id {unId :: a ~> b}
@@ -31,3 +32,6 @@ instance (CategoryOf k) => Corepresentable (Id :: CAT k) where
 instance (Monoidal k) => MonoidalProfunctor (Id :: CAT k) where
   par0 = Id par0
   Id f `par` Id g = Id (f `par` g)
+
+instance (Dagger k) => DaggerProfunctor (Id :: CAT k) where
+  dagger (Id p) = Id (dagger p)

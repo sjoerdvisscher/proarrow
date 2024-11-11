@@ -6,7 +6,7 @@ module Proarrow.Category.Monoidal where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->), tgt, src)
 
 -- This is equal to a monoidal functor for Star
 -- and to an oplax monoidal functor for Costar
@@ -54,11 +54,11 @@ second :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (c ** a) ~>
 second f = obj @c `par` f
 
 swapInner
-  :: (SymMonoidal k) => Obj (a :: k) -> Obj b -> Obj c -> Obj d -> ((a ** b) ** (c ** d)) ~> ((a ** c) ** (b ** d))
+  :: (SymMonoidal k) => (a :: k) ~> a' -> b ~> b' -> c ~> c' -> d ~> d' -> ((a ** b) ** (c ** d)) ~> ((a' ** c') ** (b' ** d'))
 swapInner a b c d =
-  associatorInv a c (b `par` d)
-    . (a `par` (associator c b d . (swap' b c `par` d) . associatorInv b c d))
-    . associator a b (c `par` d)
+  associatorInv (tgt a) (tgt c) (tgt b `par` tgt d)
+    . (a `par` (associator (tgt c) (tgt b) (tgt d) . (swap' b c `par` d) . associatorInv (src b) (src c) (src d)))
+    . associator (src a) (src b) (src c `par` src d)
 
 type family (as :: [k]) ++ (bs :: [k]) :: [k] where
   '[] ++ bs = bs

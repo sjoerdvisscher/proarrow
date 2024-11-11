@@ -3,9 +3,11 @@
 module Proarrow.Category.Instance.Mat where
 
 import Data.Kind (Type)
+import Data.Complex (Complex, conjugate)
 import Prelude (($), type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
@@ -132,8 +134,11 @@ withNat (Cons _ xs) r = withNat xs r
 mat :: (Ob (M m)) => Vec n (Vec m a) -> Mat (M m :: MatK a) (M n)
 mat m = withNat m (Mat m)
 
-dagger :: Mat a b -> Mat b a
-dagger (Mat m) = Mat (P.sequenceA m)
+instance {-# OVERLAPPABLE #-} (P.Num a) => DaggerProfunctor (Mat :: CAT (MatK a)) where
+  dagger (Mat m) = Mat (P.sequenceA m)
+
+instance {-# OVERLAPS #-} (P.RealFloat a) => DaggerProfunctor (Mat :: CAT (MatK (Complex a))) where
+  dagger (Mat m) = Mat (P.fmap (P.fmap conjugate) (P.sequenceA m))
 
 instance (P.Num a) => Profunctor (Mat :: CAT (MatK a)) where
   dimap = dimapDefault
@@ -200,8 +205,7 @@ instance (P.Num a) => StarAutonomous (MatK a) where
   doubleNeg' (Mat @n m) = withPlusZero @n $ Mat m
 
 instance (P.Num a) => CompactClosed (MatK a) where
-  distribDual' (Mat @m _) (Mat @n _) = withMultNat @n @m $ withPlusZero @m $ withPlusZero @n $ withPlusZero @(n * m) id
-  combineDual' (Mat @m _) (Mat @n _) = withMultNat @n @m $ withPlusZero @m $ withPlusZero @n $ withPlusZero @(n * m) id
+  distribDual' a@(Mat @m @n _) b@(Mat @m1 @n1 _) = withMultNat @n1 @n $ withPlusZero @m $ withPlusZero @m1 $ withPlusZero @(n1 * n) $ dagger a `par` dagger b
 
 instance (P.Num a) => TracedMonoidalProfunctor (Mat :: CAT (MatK a)) where
   trace' = compactClosedTrace'

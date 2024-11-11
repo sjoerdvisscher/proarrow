@@ -5,9 +5,10 @@ module Proarrow.Category.Instance.Product where
 import Prelude (type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swap')
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
 
 type Fst :: (a, b) -> a
 type family Fst a where
@@ -16,7 +17,7 @@ type Snd :: (a, b) -> b
 type family Snd a where
   Snd '(a, b) = b
 
-type (:**:) :: CAT k1 -> CAT k2 -> CAT (k1, k2)
+type (:**:) :: j1 +-> k1 -> j2 +-> k2 -> (j1, j2) +-> (k1, k2)
 data (c :**: d) a b where
   (:**:) :: c a1 b1 -> d a2 b2 -> (c :**: d) '(a1, a2) '(b1, b2)
 
@@ -32,6 +33,9 @@ instance (Promonad p, Promonad q) => Promonad (p :**: q) where
 instance (Profunctor p, Profunctor q) => Profunctor (p :**: q) where
   dimap (l1 :**: l2) (r1 :**: r2) (f1 :**: f2) = dimap l1 r1 f1 :**: dimap l2 r2 f2
   r \\ (f :**: g) = r \\ f \\ g
+
+instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :**: q) where
+  dagger (f :**: g) = dagger f :**: dagger g
 
 instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :**: q) where
   type HasArrow (p :**: q) '(a1, a2) '(b1, b2) = (HasArrow p a1 b1, HasArrow q a2 b2)

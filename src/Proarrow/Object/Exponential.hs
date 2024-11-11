@@ -14,7 +14,7 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , associator
   , leftUnitor
-  , unitObj
+  , unitObj, swapInner
   )
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, tgt, (//))
@@ -49,8 +49,8 @@ comp =
 mkExponential :: forall {k} a b. (Closed k) => (a :: k) ~> b -> Unit ~> (a ~~> b)
 mkExponential ab = curry @_ @a (ab . leftUnitor (src ab)) \\ ab \\ (par0 :: (Unit :: k) ~> Unit)
 
-eval' :: (Closed k) => Obj a -> Obj b -> ((a :: k) ~~> b) ** a ~> b
-eval' a b = uncurry' a b (b ^^^ a)
+eval' :: (Closed k) => a ~> a' -> b ~> b' -> ((a' :: k) ~~> b) ** a ~> b'
+eval' a b = let ab = b ^^^ tgt a in uncurry' (tgt a) (tgt b) (tgt ab) . (ab `par` a)
 
 eval :: forall {k} a b. (Closed k, Ob a, Ob b) => ((a :: k) ~~> b) ** a ~> b
 eval = eval' (obj @a) (obj @b)
@@ -106,11 +106,11 @@ ap pf px = let a = src pf in dimap (a &&& a) (eval' (tgt px) (obj @y)) (pf `par`
 
 type Dual a = a ~~> Bottom
 
-dualObj' :: forall {k} (a :: k). (StarAutonomous k) => Obj a -> Obj (Dual a)
-dualObj' a = obj @Bottom ^^^ a
+dual :: forall {k} (a :: k) a'. (StarAutonomous k) => a ~> a' -> Dual a' ~> Dual a
+dual a = obj @Bottom ^^^ a
 
 dualObj :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Obj (Dual a)
-dualObj = dualObj' (obj @a)
+dualObj = dual (obj @a)
 
 class (Closed k, Ob (Bottom :: k)) => StarAutonomous k where
   type Bottom :: k
@@ -118,6 +118,15 @@ class (Closed k, Ob (Bottom :: k)) => StarAutonomous k where
 
 doubleNeg :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
 doubleNeg = doubleNeg' (obj @a)
+
+doubleNegInv' :: (Closed k, SymMonoidal k) => (a :: k) ~> a' -> b ~> b' -> a ~> (a' ~~> b) ~~> b'
+doubleNegInv' a b = let a'b = (src b ^^^ tgt a) in curry' (src a) a'b (eval' (tgt a) b . swap' a a'b)
+
+dualityCounit' :: forall {k} a. (StarAutonomous k) => Obj a -> Dual a ** a ~> (Bottom :: k)
+dualityCounit' a = eval' a (obj @Bottom)
+
+dualityCounit :: forall {k} a. (SymMonoidal k, StarAutonomous k, Ob a) => Dual a ** a ~> (Bottom :: k)
+dualityCounit = dualityCounit' (obj @a)
 
 instance StarAutonomous () where
   type Bottom = '()
@@ -127,9 +136,12 @@ instance (StarAutonomous j, StarAutonomous k) => StarAutonomous (j, k) where
   type Bottom = '(Bottom, Bottom)
   doubleNeg' (a :**: b) = doubleNeg' a :**: doubleNeg' b
 
-class ((Bottom :: k) P.~ Unit, StarAutonomous k) => CompactClosed k where
-  distribDual' :: Obj (a :: k) -> Obj b -> Dual (a ** b) ~> Dual a ** Dual b
-  combineDual' :: Obj (a :: k) -> Obj b -> Dual a ** Dual b ~> Dual (a ** b)
+class ((Bottom :: k) P.~ Unit, StarAutonomous k, SymMonoidal k) => CompactClosed k where
+  distribDual' :: (a :: k) ~> a' -> b ~> b' -> Dual (a' ** b') ~> Dual a ** Dual b
+
+combineDual' :: (CompactClosed k) => (a :: k) ~> a' -> b ~> b' -> Dual a' ** Dual b' ~> Dual (a ** b)
+combineDual' a b = let dualA = dual (tgt a); dualB = dual (tgt b) in
+  curry' (dualA `par` dualB) (src a `par` src b) (leftUnitor unitObj . (eval' a unitObj `par` eval' b unitObj) . swapInner dualA dualB (src a) (src b))
 
 distribDual :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => Dual (a ** b) ~> Dual a ** Dual b
 distribDual = distribDual' (obj @a) (obj @b)
@@ -137,23 +149,17 @@ distribDual = distribDual' (obj @a) (obj @b)
 combineDual :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => Dual a ** Dual b ~> Dual (a ** b)
 combineDual = combineDual' (obj @a) (obj @b)
 
-ccUnit' :: forall {k} a. (SymMonoidal k, CompactClosed k) => Obj a -> (Unit :: k) ~> Dual a ** a
-ccUnit' a =
-  let dualA = dualObj' a
-  in (dualA `par` doubleNeg' a) . distribDual' a dualA . (unitObj ^^^ ccCounit' a) . mkExponential unitObj
+dualityUnit' :: forall {k} a. (CompactClosed k) => Obj a -> (Unit :: k) ~> a ** Dual a
+dualityUnit' a =
+  let dualA = dual a
+  in (doubleNeg' a `par` dualA) . distribDual' dualA a . (unitObj ^^^ dualityCounit' a) . mkExponential unitObj
 
-ccUnit :: forall {k} a. (SymMonoidal k, CompactClosed k, Ob a) => (Unit :: k) ~> Dual a ** a
-ccUnit = ccUnit' (obj @a)
-
-ccCounit' :: forall {k} a. (SymMonoidal k, CompactClosed k) => Obj a -> a ** Dual a ~> (Unit :: k)
-ccCounit' a = eval' a unitObj . swap' a (dualObj' a)
-
-ccCounit :: forall {k} a. (SymMonoidal k, CompactClosed k, Ob a) => a ** Dual a ~> (Unit :: k)
-ccCounit = ccCounit' (obj @a)
+dualityUnit :: forall {k} a. (CompactClosed k, Ob a) => (Unit :: k) ~> a ** Dual a
+dualityUnit = dualityUnit' (obj @a)
 
 compactClosedTrace'
   :: forall {k} x x' y y' u u'
-   . (SymMonoidal k, CompactClosed k)
+   . (CompactClosed k)
   => (x :: k) ~> x'
   -> y ~> y'
   -> u ~> u'
@@ -162,19 +168,17 @@ compactClosedTrace'
 compactClosedTrace' x y u f =
   let dualU = unitObj ^^^ u
   in rightUnitor y
-      . (src y `par` ccCounit @u)
-      . associator (src y) (src u) (tgt dualU)
-      . (f `par` tgt dualU)
-      . associatorInv (tgt x) (tgt u) (tgt dualU)
-      . (tgt x `par` ((doubleNeg' u `par` tgt dualU) . ccUnit @(Dual u)))
+      . (src y `par` (dualityCounit @(Dual u') . (doubleNegInv' u unitObj `par` src dualU)))
+      . associator (src y) (src u) (src dualU)
+      . (f `par` src dualU)
+      . associatorInv (tgt x) (tgt u) (src dualU)
+      . (tgt x `par` dualityUnit @u')
       . rightUnitorInv x
       \\ dualU
       \\ u
 
 instance CompactClosed () where
   distribDual' U.Unit U.Unit = U.Unit
-  combineDual' U.Unit U.Unit = U.Unit
 
 instance (CompactClosed j, CompactClosed k) => CompactClosed (j, k) where
   distribDual' (a :**: b) (c :**: d) = distribDual' a c :**: distribDual' b d
-  combineDual' (a :**: b) (c :**: d) = combineDual' a c :**: combineDual' b d

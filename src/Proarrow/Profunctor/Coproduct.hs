@@ -1,6 +1,7 @@
 module Proarrow.Profunctor.Coproduct where
 
 import Proarrow.Core (PRO, Profunctor (..), (:~>))
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
 
 type (:+:) :: PRO j k -> PRO j k -> PRO j k
 data (p :+: q) a b where
@@ -16,3 +17,7 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :+: q) where
 coproduct :: (p :~> r) -> (q :~> r) -> p :+: q :~> r
 coproduct l _ (InjL p) = l p
 coproduct _ r (InjR q) = r q
+
+instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :+: q) where
+  dagger (InjL p) = InjL (dagger p)
+  dagger (InjR q) = InjR (dagger q)
