@@ -113,15 +113,15 @@ instance Adjunction Free Forget where
 
 instance HasBinaryCoproducts LINEAR where
   type L a || L b = L (Either a b)
-  lft' (Linear f) Linear{} = Linear \x -> Left (f x)
-  rgt' Linear{} (Linear g) = Linear \x -> Right (g x)
+  lft = Linear Left
+  rgt = Linear Right
   Linear f ||| Linear g = Linear \case
     Left x -> f x
     Right y -> g y
 
 instance HasInitialObject LINEAR where
   type InitialObject = L Void
-  initiate' Linear{} = Linear \case {}
+  initiate = Linear \case {}
 
 data Top where
   Top :: a %1 -> Top
@@ -131,10 +131,10 @@ data With a b where
 
 instance HasTerminalObject LINEAR where
   type TerminalObject = L Top
-  terminate' Linear{} = Linear Top
+  terminate = Linear Top
 
 instance HasBinaryProducts LINEAR where
   type L a && L b = L (With a b)
-  fst' (Linear f) Linear{} = Linear \(With x xa _) -> f (xa x)
-  snd' Linear{} (Linear g) = Linear \(With x _ xb) -> g (xb x)
+  fst = Linear \(With x xa _) -> xa x
+  snd = Linear \(With x _ xb) -> xb x
   Linear f &&& Linear g = Linear \x -> With x f g

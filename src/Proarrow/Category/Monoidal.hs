@@ -53,12 +53,16 @@ first f = f `par` obj @c
 second :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (c ** a) ~> (c ** b)
 second f = obj @c `par` f
 
-swapInner
+swapInner'
   :: (SymMonoidal k) => (a :: k) ~> a' -> b ~> b' -> c ~> c' -> d ~> d' -> ((a ** b) ** (c ** d)) ~> ((a' ** c') ** (b' ** d'))
-swapInner a b c d =
+swapInner' a b c d =
   associatorInv (tgt a) (tgt c) (tgt b `par` tgt d)
     . (a `par` (associator (tgt c) (tgt b) (tgt d) . (swap' b c `par` d) . associatorInv (src b) (src c) (src d)))
     . associator (src a) (src b) (src c `par` src d)
+
+swapInner
+  :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((a ** c) ** (b ** d))
+swapInner = swapInner' (obj @a) (obj @b) (obj @c) (obj @d)
 
 type family (as :: [k]) ++ (bs :: [k]) :: [k] where
   '[] ++ bs = bs

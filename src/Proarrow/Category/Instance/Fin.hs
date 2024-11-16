@@ -1,7 +1,7 @@
 module Proarrow.Category.Instance.Fin where
 
 
-import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), dimapDefault, Promonad (..))
+import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), dimapDefault, Promonad (..), obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -24,6 +24,12 @@ data LTE a b where
   ZEQ :: LTE FZ FZ
   ZLT :: LTE FZ b -> LTE FZ (FS b)
   SLT :: LTE a b -> LTE (FS a) (FS b)
+
+absurdL :: (a :: FIN Z) ~> b
+absurdL @a = case obj @a of
+
+absurdR :: a ~> (b :: FIN Z)
+absurdR @_ @b = case obj @b of
 
 class IsFin (a :: FIN n) where
   finId :: Obj a
@@ -82,14 +88,14 @@ instance HasTerminalObject (FIN (S n)) => HasTerminalObject (FIN (S (S n))) wher
 
 instance HasBinaryCoproducts (FIN Z) where
   type a || b = a
-  lft' = \case
-  rgt' = \case
+  lft = absurdR
+  rgt = absurdR
   (|||) = \case
 
 instance HasBinaryCoproducts (FIN (S Z)) where
   type FZ || FZ = FZ
-  lft' ZEQ ZEQ = ZEQ
-  rgt' ZEQ ZEQ = ZEQ
+  lft @a @b = case (obj @a, obj @b) of (ZEQ, ZEQ) -> ZEQ
+  rgt @a @b = case (obj @a, obj @b) of (ZEQ, ZEQ) -> ZEQ
   ZEQ ||| ZEQ = ZEQ
 
 -- | Maximum
@@ -97,12 +103,14 @@ instance HasBinaryCoproducts (FIN (S n)) => HasBinaryCoproducts (FIN (S (S n))) 
   type FZ || b = b
   type a || FZ = a
   type FS a || FS b = FS (a || b)
+  lft @a @b = lft' (obj @a) (obj @b)
   lft' ZEQ ZEQ = ZEQ
   lft' ZEQ (SLT b) = ZLT (initiate' b)
   lft' a ZEQ = a
   lft' (ZLT a) (SLT b) = ZLT (lft' a b)
   lft' (SLT ab) (SLT b) = SLT (lft' ab b)
 
+  rgt @a @b = rgt' (obj @a) (obj @b)
   rgt' ZEQ ZEQ = ZEQ
   rgt' (SLT a) ZEQ = ZLT (initiate' a)
   rgt' ZEQ b = b
@@ -119,14 +127,14 @@ instance HasBinaryCoproducts (FIN (S n)) => HasBinaryCoproducts (FIN (S (S n))) 
 
 instance HasBinaryProducts (FIN Z) where
   type a && b = a
-  fst' = \case
-  snd' = \case
+  fst = absurdR
+  snd = absurdR
   (&&&) = \case
 
 instance HasBinaryProducts (FIN (S Z)) where
   type FZ && FZ = FZ
-  fst' ZEQ ZEQ = ZEQ
-  snd' ZEQ ZEQ = ZEQ
+  fst @a @b = case (obj @a, obj @b) of (ZEQ, ZEQ) -> ZEQ
+  snd @a @b = case (obj @a, obj @b) of (ZEQ, ZEQ) -> ZEQ
   ZEQ &&& ZEQ = ZEQ
 
 -- | Minimum
@@ -134,12 +142,14 @@ instance HasBinaryProducts (FIN (S n)) => HasBinaryProducts (FIN (S (S n))) wher
   type FZ && b = FZ
   type a && FZ = FZ
   type FS a && FS b = FS (a && b)
+  fst @a @b = fst' (obj @a) (obj @b)
   fst' ZEQ ZEQ = ZEQ
   fst' ZEQ (SLT _) = ZEQ
   fst' a ZEQ = initiate' a
   fst' (ZLT a) (SLT b) = ZLT (case fst' a b of ZEQ -> ZEQ; ZLT ab -> ZLT ab)
   fst' (SLT ab) (SLT b) = SLT (fst' ab b)
 
+  snd @a @b = snd' (obj @a) (obj @b)
   snd' ZEQ ZEQ = ZEQ
   snd' (SLT _) ZEQ = ZEQ
   snd' ZEQ b = initiate' b

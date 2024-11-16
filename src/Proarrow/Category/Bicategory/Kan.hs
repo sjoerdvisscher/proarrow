@@ -4,23 +4,28 @@ module Proarrow.Category.Bicategory.Kan where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Bicategory (Bicategory (..), rightUnitorInvWith, rightUnitorWith, leftUnitorWith, leftUnitorInvWith)
-import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
-import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), flipCompanion, flipConjoint, flipConjointInv, flipCompanionInv)
+import Proarrow.Category.Bicategory
+  ( Bicategory (..)
+  , leftUnitorInvWith
+  , leftUnitorWith
+  , rightUnitorInvWith
+  , rightUnitorWith
+  )
+import Proarrow.Category.Equipment
+  ( Equipment (..)
+  , HasCompanions (..)
+  , flipCompanion
+  , flipCompanionInv
+  , flipConjoint
+  , flipConjointInv
+  )
 import Proarrow.Core (CAT, CategoryOf (..), Ob, Obj, Profunctor (..), Promonad (..), obj, (\\))
-import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
-import Proarrow.Object.Exponential (Closed (..), curry, eval)
 
 type LeftKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lan j f)) => LeftKanExtension (j :: kk c d) (f :: kk c e) where
   type Lan j f :: kk d e
   lan :: f ~> Lan j f `O` j
   lanUniv :: (Ob g) => (f ~> g `O` j) -> Lan j f ~> g
-
-instance (Coclosed k, Ob (q <~~ p), Ob p, Ob q) => LeftKanExtension (MK (p :: k)) (MK (q :: k)) where
-  type Lan (MK p) (MK q) = MK (q <~~ p)
-  lan = Mon2 (coeval @q @p)
-  lanUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @q @p @g f)
 
 mapLan :: forall j f g. (LeftKanExtension j f, LeftKanExtension j g) => (f ~> g) -> Lan j f ~> Lan j g
 mapLan fg = lanUniv @j (lan @j . fg)
@@ -65,11 +70,6 @@ class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Ran j f)) =>
   ran :: Ran j f `O` j ~> f
   ranUniv :: (Ob g) => (g `O` j ~> f) -> g ~> Ran j f
 
-instance (Closed k, Ob (p ~~> q), Ob p, Ob q) => RightKanExtension (MK (p :: k)) (MK (q :: k)) where
-  type Ran (MK p) (MK q) = MK (p ~~> q)
-  ran = Mon2 (eval @p @q)
-  ranUniv @(MK g) (Mon2 f) = Mon2 (curry @g @p @q f)
-
 mapRan :: forall j f g. (RightKanExtension j f, RightKanExtension j g) => (f ~> g) -> Ran j f ~> Ran j g
 mapRan fg = ranUniv @j (fg . ran @j)
 
@@ -88,7 +88,10 @@ ranMonadMu =
   let rpp = obj @(Ran p p)
   in ranUniv @p @p (ran @p @p . (rpp `o` ran @p @p) . associator rpp rpp (obj @p)) \\ iObj @kk @d \\ (rpp `o` rpp)
 
-composeRan :: forall i j f. (RightKanExtension j f, RightKanExtension i (Ran j f), RightKanExtension (i `O` j) f) => Ran i (Ran j f) ~> Ran (i `O` j) f
+composeRan
+  :: forall i j f
+   . (RightKanExtension j f, RightKanExtension i (Ran j f), RightKanExtension (i `O` j) f)
+  => Ran i (Ran j f) ~> Ran (i `O` j) f
 composeRan =
   ranUniv @(i `O` j) @f
     (ran @j @f . (ran @i @(Ran j f) `o` obj @j) . associatorInv (obj @(Ran i (Ran j f))) (obj @i) (obj @j))

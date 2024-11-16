@@ -173,7 +173,7 @@ class
 dimapLax :: (LaxProfunctor sk tk kk) => (s' ~> s) -> (t ~> t') -> P sk tk kk (CO s) t :~> P sk tk kk (CO s') t'
 dimapLax f g = (unProf (unNat (map (Co f))) . unProf (map g)) \\\ f \\\ g
 
-instance (Monad m, Comonad c, LaxProfunctor sk tk kk) => Monad (PK (P sk tk kk (CO c) m)) where
+instance (Monad m, Comonad c, LaxProfunctor sk tk kk, Ob c, Ob m) => Monad (PK (P sk tk kk (CO c) m)) where
   eta = Prof (dimapLax epsilon eta . laxId)
   mu = Prof (dimapLax delta mu . laxComp)
 

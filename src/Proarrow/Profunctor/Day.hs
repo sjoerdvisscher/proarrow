@@ -4,7 +4,7 @@ module Proarrow.Profunctor.Day where
 
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner')
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -49,8 +49,8 @@ instance Functor Day where
 instance (SymMonoidal j, SymMonoidal k, MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (Day p q :: PRO j k) where
   par0 = Day (leftUnitorInv par0) par0 par0 (leftUnitor par0)
   Day f1 p1 q1 g1 `par` Day f2 p2 q2 g2 =
-    let f = swapInner (src p1) (src q1) (src p2) (src q2) . (f1 `par` f2)
-        g = (g1 `par` g2) . swapInner (tgt p1) (tgt p2) (tgt q1) (tgt q2)
+    let f = swapInner' (src p1) (src q1) (src p2) (src q2) . (f1 `par` f2)
+        g = (g1 `par` g2) . swapInner' (tgt p1) (tgt p2) (tgt q1) (tgt q2)
     in Day f (p1 `par` p2) (q1 `par` q2) g
 
 instance (Monoidal j, Monoidal k) => MonoidalProfunctor (Prof :: CAT (j +-> k)) where
@@ -125,8 +125,8 @@ multDayExp = Prof \(Day @_ @_ @_ @_ @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
             // p'
             // let c = obj @c; d = obj @d; e = obj @e; f = obj @f; c' = src p; d' = tgt p; e' = src p'; f' = tgt p'
                in Day
-                    (swapInner c e c' e' . (g `par` i) . l)
+                    (swapInner' c e c' e' . (g `par` i) . l)
                     (pq (c `par` c') (d `par` d') p)
                     (pq' (e `par` e') (f `par` f') p')
-                    (r . (h `par` j) . swapInner d d' f f')
+                    (r . (h `par` j) . swapInner' d d' f f')
       )

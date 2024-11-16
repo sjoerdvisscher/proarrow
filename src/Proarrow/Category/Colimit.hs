@@ -93,5 +93,5 @@ cochoose
   => Obj b
   -> (d %% b) ~> ((d %% L '()) || (d %% R '()))
 cochoose b = withCorepCod @d @(L '()) $ withCorepCod @d @(R '()) $ case b of
-  (InjL Unit) -> lft @(d %% L '()) @(d %% R '())
-  (InjR Unit) -> rgt @(d %% L '()) @(d %% R '())
+  (InjL Unit) -> lft @_ @(d %% L '()) @(d %% R '())
+  (InjR Unit) -> rgt @_ @(d %% L '()) @(d %% R '())

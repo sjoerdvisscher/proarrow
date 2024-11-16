@@ -95,8 +95,8 @@ choose
   => Obj b
   -> ((d % L '()) && (d % R '())) ~> (d % b)
 choose b = withRepObj @d @(L '()) $ withRepObj @d @(R '()) $ case b of
-  (InjL Unit) -> fst @(d % L '()) @(d % R '())
-  (InjR Unit) -> snd @(d % L '()) @(d % R '())
+  (InjL Unit) -> fst @_ @(d % L '()) @(d % R '())
+  (InjR Unit) -> snd @_ @(d % L '()) @(d % R '())
 
 newtype End d = End {unEnd :: forall a b. a ~> b -> d % '(OP a, b)}
 

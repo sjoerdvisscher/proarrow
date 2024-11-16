@@ -36,22 +36,22 @@ instance (Promonad c) => Promonad (Op c) where
 
 instance (HasInitialObject k) => HasTerminalObject (OPPOSITE k) where
   type TerminalObject = OP InitialObject
-  terminate' (Op a) = Op (initiate' a)
+  terminate = Op initiate
 
 instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
   type InitialObject = OP TerminalObject
-  initiate' (Op a) = Op (terminate' a)
+  initiate = Op terminate
 
 instance (HasBinaryCoproducts k) => HasBinaryProducts (OPPOSITE k) where
   type a && b = OP (UN OP a || UN OP b)
-  fst' (Op a) (Op b) = Op (lft' a b)
-  snd' (Op a) (Op b) = Op (rgt' a b)
+  fst @(OP a) @(OP b) = Op (lft @_ @a @b)
+  snd @(OP a) @(OP b) = Op (rgt @_ @a @b)
   Op a &&& Op b = Op (a ||| b)
 
 instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
   type a || b = OP (UN OP a && UN OP b)
-  lft' (Op a) (Op b) = Op (fst' a b)
-  rgt' (Op a) (Op b) = Op (snd' a b)
+  lft @(OP a) @(OP b) = Op (fst @_ @a @b)
+  rgt @(OP a) @(OP b) = Op (snd @_ @a @b)
   Op a ||| Op b = Op (a &&& b)
 
 instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where

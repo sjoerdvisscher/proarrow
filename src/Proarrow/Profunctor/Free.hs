@@ -13,10 +13,8 @@ import Prelude qualified as P
 import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core
   ( CAT
-  , Category
   , CategoryOf (..)
   , Kind
   , OB
@@ -31,14 +29,15 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), fst, snd, (&&&))
-import Proarrow.Object.Terminal (terminate)
+import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), fst, snd, (&&&), HasProducts, HasBinaryProducts (..))
+import Proarrow.Object.Terminal (terminate, El)
 import Proarrow.Profunctor.Forget (Forget)
 import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
-import Proarrow.Object (Ob')
+import Proarrow.Category.Instance.Nat (Nat(..))
+import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 
 type HasFree :: forall {k}. (k -> Constraint) -> Constraint
 class (CategoryOf k, Representable (Free ob), forall b. (Ob b) => ob (Free ob % b)) => HasFree (ob :: k -> Constraint) where
@@ -85,36 +84,36 @@ instance HasFree (P.Monoid `On` Semigroup) where
   lift' (Sub f) = Sub (Star (Just . f))
   retract' (Sub (Star f)) = Sub (fromMaybe P.mempty . f)
 
--- type Ap :: (k -> Type) -> k -> Type
--- data Ap f a where
---   Pure :: El a -> Ap f a
---   Eff :: f a -> Ap f a
---   LiftA2 :: (Ob a, Ob b) => (a && b ~> c) -> Ap f a -> Ap f b -> Ap f c
+type Ap :: (k -> Type) -> k -> Type
+data Ap f a where
+  Pure :: El a -> Ap f a
+  Eff :: f a -> Ap f a
+  LiftA2 :: (Ob a, Ob b) => (a && b ~> c) -> Ap f a -> Ap f b -> Ap f c
 
--- instance (CategoryOf k, Functor f) => Functor (Ap (f :: k -> Type)) where
---   map f (Pure a) = Pure (f . a)
---   map f (Eff x) = Eff (map f x)
---   map f (LiftA2 k x y) = LiftA2 (f . k) x y
+instance (CategoryOf k, Functor f) => Functor (Ap (f :: k -> Type)) where
+  map f (Pure a) = Pure (f . a)
+  map f (Eff x) = Eff (map f x)
+  map f (LiftA2 k x y) = LiftA2 (f . k) x y
 
--- instance Functor Ap where
---   map (Nat n) = Nat $ \case
---     Pure a -> Pure a
---     Eff fa -> Eff (n fa)
---     LiftA2 k x y -> LiftA2 k (unNat (map (Nat n)) x) (unNat (map (Nat n)) y)
+instance Functor Ap where
+  map (Nat n) = Nat $ \case
+    Pure a -> Pure a
+    Eff fa -> Eff (n fa)
+    LiftA2 k x y -> LiftA2 k (unNat (map (Nat n)) x) (unNat (map (Nat n)) y)
 
--- instance (HasProducts k, Functor f) => Applicative (Ap (f :: k -> Type)) where
---   pure a () = Pure a
---   liftA2 f (fa, fb) = LiftA2 f fa fb
+instance (HasProducts k, Functor f) => Applicative (Ap (f :: k -> Type)) where
+  pure a () = Pure a
+  liftA2 f (fa, fb) = LiftA2 f fa fb
 
--- retractAp :: (Applicative f) => Ap f a -> f a
--- retractAp (Pure a) = pure a ()
--- retractAp (Eff fa) = fa
--- retractAp (LiftA2 k x y) = liftA2 k (retractAp x, retractAp y)
+retractAp :: (Applicative f) => Ap f a -> f a
+retractAp (Pure a) = pure a ()
+retractAp (Eff fa) = fa
+retractAp (LiftA2 k x y) = liftA2 k (retractAp x, retractAp y)
 
--- instance (HasProducts k) => HasFree (Joker (Applicative :: (k -> Type) -> Constraint)) where
---   type Free (Joker Applicative) = Star Ap
---   lift (Nat f) = Star (Nat (Eff . f))
---   lower (Star (Nat f)) = Nat (retractAp . f)
+instance (HasProducts k) => HasFree (Applicative :: (k -> Type) -> Constraint) where
+  type Free Applicative = Star Ap
+  lift' (Nat f) = Star (Nat (Eff . f))
+  retract' (Star (Nat f)) = Nat (retractAp . f)
 
 data FreePromonad p a b where
   Unit :: (a ~> b) -> FreePromonad p a b
@@ -191,8 +190,8 @@ instance
     index @(FreeMonoid (~>)) @_ @b
       ( unProf
           (unProd mappend)
-          ( tabulate (fst @(FreeMonoid (~>) % b) @(FreeMonoid (~>) % b))
-              :*: tabulate (snd @(FreeMonoid (~>) % b) @(FreeMonoid (~>) % b))
+          ( tabulate (fst @_ @(FreeMonoid (~>) % b) @(FreeMonoid (~>) % b))
+              :*: tabulate (snd @_ @(FreeMonoid (~>) % b) @(FreeMonoid (~>) % b))
           )
       )
 instance (Profunctor p) => Profunctor (FreeMonoid p :: k +-> k) where

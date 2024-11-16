@@ -293,7 +293,7 @@ instance (Bicategory kk) => Bicategory (Path kk) where
   associatorInv p@Str{} q@Str{} r@Str{} = withAssoc r q p (p `o` (q `o` r))
 
 type Monad :: forall {kk} {a}. kk a a -> Constraint
-class (Bicategory kk, Ob0 kk a, Ob t) => Monad (t :: kk a a) where
+class (Bicategory kk, Ob0 kk a) => Monad (t :: kk a a) where
   eta :: I ~> t
   mu :: t `O` t ~> t
 
@@ -301,12 +301,12 @@ instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
   eta = iObj
   mu = iObj
 
-instance (Monad s) => Monad (s ::: Nil) where
+instance (Monad s, Ob s) => Monad (s ::: Nil) where
   eta = str iObj (obj1 @s) eta
   mu = str (obj1 @s || obj1 @s) (obj1 @s) mu
 
 type Comonad :: forall {kk} {a}. kk a a -> Constraint
-class (Bicategory kk, Ob0 kk a, Ob t) => Comonad (t :: kk a a) where
+class (Bicategory kk, Ob0 kk a) => Comonad (t :: kk a a) where
   epsilon :: t ~> I
   delta :: t ~> t `O` t
 
@@ -315,7 +315,7 @@ instance (Bicategory kk, Ob0 kk a) => Comonad (Nil :: Path kk a a) where
   delta = iObj
 
 type Bimodule :: forall {kk} {a} {b}. kk a a -> kk b b -> kk b a -> Constraint
-class (Monad s, Monad t, Ob p) => Bimodule s t p where
+class (Monad s, Monad t) => Bimodule s t p where
   leftAction :: s `O` p ~> p
   rightAction :: p `O` t ~> p
 
@@ -324,20 +324,20 @@ instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
   rightAction = mu
 
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where
+class (Bicategory kk, Ob0 kk c, Ob0 kk d) => Adjunction (l :: kk c d) (r :: kk d c) where
   unit :: I ~> r `O` l
   counit :: l `O` r ~> I
 
-leftAdjunct :: forall l r a b. (Adjunction l r, Ob a) => l `O` a ~> b -> a ~> r `O` b
+leftAdjunct :: forall l r a b. (Adjunction l r, Ob a, Ob r, Ob l) => l `O` a ~> b -> a ~> r `O` b
 leftAdjunct f = ((obj @r `o` f) . associator (obj @r) (obj @l) (obj @a) . leftUnitorInvWith (unit @l @r) id) \\\ f
 
-rightAdjunct :: forall l r a b. (Adjunction l r, Ob b) => a ~> r `O` b -> l `O` a ~> b
+rightAdjunct :: forall l r a b. (Adjunction l r, Ob b, Ob r, Ob l) => a ~> r `O` b -> l `O` a ~> b
 rightAdjunct f = (leftUnitorWith (counit @l @r) id . associatorInv (obj @l) (obj @r) (obj @b) . (obj @l `o` f)) \\\ f
 
-instance (Adjunction l r) => Monad (l ::: r ::: Nil) where
+instance (Adjunction l r, Ob r, Ob l) => Monad (l ::: r ::: Nil) where
   eta = str iObj (obj1 @r || obj1 @l) (unit @l @r)
   mu = let r = obj1 @r; l = obj1 @l in r || str (l || r) iObj (counit @l @r) || l
 
-instance (Adjunction l r) => Comonad (r ::: l ::: Nil) where
+instance (Adjunction l r, Ob r, Ob l) => Comonad (r ::: l ::: Nil) where
   epsilon = str (obj1 @l || obj1 @r) iObj (counit @l @r)
   delta = let r = obj1 @r; l = obj1 @l in l || str iObj (r || l) (unit @l @r) || r

@@ -7,7 +7,7 @@ import Data.Kind (Type)
 import Prelude (type (~))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Product ((:**:) (..), Fst, Snd)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -23,17 +23,17 @@ infixl 5 ***
 
 class (CategoryOf k) => HasBinaryProducts k where
   type (a :: k) && (b :: k) :: k
+  fst :: (Ob (a :: k), Ob b) => (a && b) ~> a
+  fst @a @b = fst' (obj @a) (obj @b)
   fst' :: (a :: k) ~> a' -> Obj b -> a && b ~> a'
+  fst' @a @_ @b a b = a . fst @k @a @b \\ a \\ b
   snd' :: Obj (a :: k) -> b ~> b' -> a && b ~> b'
+  snd' @a @b a b = b . snd @k @a @b \\ a \\ b
+  snd :: (Ob (a :: k), Ob b) => (a && b) ~> b
+  snd @a @b = snd' (obj @a) (obj @b)
   (&&&) :: (a :: k) ~> x -> a ~> y -> a ~> x && y
   (***) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a && b ~> x && y
-  l *** r = (l . fst @a @b) &&& (r . snd @a @b) \\ l \\ r
-
-fst :: forall {k} (a :: k) (b :: k). (HasBinaryProducts k, Ob a, Ob b) => (a && b) ~> a
-fst = fst' (obj @a) (obj @b)
-
-snd :: forall {k} (a :: k) (b :: k). (HasBinaryProducts k, Ob a, Ob b) => (a && b) ~> b
-snd = snd' (obj @a) (obj @b)
+  l *** r = (l . fst @k @a @b) &&& (r . snd @k @a @b) \\ l \\ r
 
 first :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryProducts k, Ob c) => a ~> b -> (a && c) ~> (b && c)
 first f = f *** obj @c
@@ -53,20 +53,20 @@ instance (HasProducts k, Monoidal k, (Unit :: k) ~ TerminalObject, forall (a :: 
 
 instance HasBinaryProducts Type where
   type a && b = (a, b)
-  fst' f _ = f . P.fst
-  snd' _ f = f . P.snd
+  fst = P.fst
+  snd = P.snd
   f &&& g = \a -> (f a, g a)
 
 instance HasBinaryProducts () where
   type '() && '() = '()
-  fst' U.Unit U.Unit = U.Unit
-  snd' U.Unit U.Unit = U.Unit
+  fst = U.Unit
+  snd = U.Unit
   U.Unit &&& U.Unit = U.Unit
 
 instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
-  type '(a1, a2) && '(b1, b2) = '(a1 && b1, a2 && b2)
-  fst' (a1 :**: a2) (b1 :**: b2) = fst' a1 b1 :**: fst' a2 b2
-  snd' (a1 :**: a2) (b1 :**: b2) = snd' a1 b1 :**: snd' a2 b2
+  type a && b = '(Fst a && Fst b, Snd a && Snd b)
+  fst @'(a1, a2) @'(b1, b2) = fst @_ @a1 @b1 :**: fst @_ @a2 @b2
+  snd @a @b = snd @_ @(Fst a) @(Fst b) :**: snd @_ @(Snd a) @(Snd b)
   (f1 :**: f2) &&& (g1 :**: g2) = (f1 &&& g1) :**: (f2 &&& g2)
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
@@ -115,16 +115,16 @@ instance (CategoryOf k) => CategoryOf (PROD k) where
 
 instance (HasTerminalObject k) => HasTerminalObject (PROD k) where
   type TerminalObject = PR TerminalObject
-  terminate' (Prod a) = Prod (terminate' a)
+  terminate = Prod terminate
 instance (HasBinaryProducts k) => HasBinaryProducts (PROD k) where
   type a && b = PR (UN PR a && UN PR b)
-  fst' (Prod a) (Prod b) = Prod (fst' a b)
-  snd' (Prod a) (Prod b) = Prod (snd' a b)
+  fst @(PR a) @(PR b) = Prod (fst @_ @a @b)
+  snd @(PR a) @(PR b) = Prod (snd @_ @a @b)
   Prod f &&& Prod g = Prod (f &&& g)
   Prod f *** Prod g = Prod (f *** g)
 instance HasInitialObject k => HasInitialObject (PROD k) where
   type InitialObject = PR InitialObject
-  initiate' (Prod a) = Prod (initiate' a)
+  initiate = Prod initiate
 
 instance (HasProducts k, Category cat) => MonoidalProfunctor (Prod cat :: CAT (PROD k)) where
   par0 = id

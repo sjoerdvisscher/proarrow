@@ -30,6 +30,7 @@ instance (P.Applicative f) => Applicative (Prelude f) where
 deriving via Prelude ((,) a) instance (P.Monoid a) => Applicative ((,) a)
 deriving via Prelude ((->) a) instance Applicative ((->) a)
 deriving via Prelude [] instance Applicative []
+deriving via Prelude P.Maybe instance Applicative P.Maybe
 
 type Alternative :: forall {j} {k}. (j -> k) -> Constraint
 class (HasCoproducts j, Applicative f) => Alternative (f :: j -> k) where

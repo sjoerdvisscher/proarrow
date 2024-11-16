@@ -14,7 +14,7 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , TracedMonoidalProfunctor (..)
   )
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Exponential (Closed (..), CompactClosed (..), StarAutonomous (..), compactClosedTrace')
@@ -152,19 +152,23 @@ instance (P.Num a) => CategoryOf (MatK a) where
 
 instance (P.Num a) => HasInitialObject (MatK a) where
   type InitialObject = M Z
-  initiate' Mat{} = Mat (P.pure Nil)
+  initiate = Mat (P.pure Nil)
 instance (P.Num a) => HasTerminalObject (MatK a) where
   type TerminalObject = M Z
-  terminate' Mat{} = Mat Nil
+  terminate = Mat Nil
 
 instance (P.Num a) => HasBinaryCoproducts (MatK a) where
   type M x || M y = M (x + y)
+  lft @m @n = lft' (obj @m) (obj @n)
   lft' (Mat m) (Mat n) = mat (append m (zero P.<$ n))
+  rgt @m @n = rgt' (obj @m) (obj @n)
   rgt' (Mat m) (Mat n) = mat (append (zero P.<$ m) n)
   Mat @m a ||| Mat @n b = withPlusNat @m @n (Mat (P.liftA2 append a b))
 instance (P.Num a) => HasBinaryProducts (MatK a) where
   type M x && M y = M (x + y)
+  fst @m @n = fst' (obj @m) (obj @n)
   fst' (Mat @m m) (Mat @n n) = withPlusNat @m @n (Mat (P.fmap (`append` (0 P.<$ n)) m))
+  snd @m @n = snd' (obj @m) (obj @n)
   snd' (Mat @m m) (Mat @n n) = withPlusNat @m @n (Mat (P.fmap (append (0 P.<$ m)) n))
   Mat a &&& Mat b = mat (append a b)
 
@@ -202,6 +206,7 @@ instance (P.Num a) => Closed (MatK a) where
 
 instance (P.Num a) => StarAutonomous (MatK a) where
   type Bottom = M (S Z)
+  bottomObj = id
   doubleNeg' (Mat @n m) = withPlusZero @n $ Mat m
 
 instance (P.Num a) => CompactClosed (MatK a) where

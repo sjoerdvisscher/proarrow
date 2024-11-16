@@ -132,6 +132,7 @@ instance (Profunctor p) => Profunctor (DoubleNeg p) where
   r \\ DoubleNeg p = r \\ p
 instance StarAutonomous KIND where
   type Bottom = K ()
+  bottomObj = id
   doubleNeg' (Cat @p) = Cat @(DoubleNeg p)
 
 type DistribDual :: j +-> j' -> k +-> k' -> DUAL (j', k') +-> (DUAL j, DUAL k)

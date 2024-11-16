@@ -52,11 +52,11 @@ instance (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: 
   (^^^) (Endo f) (Endo g) = Endo (dimapRan g f) \\ f \\ g
 
 -- | Monads are monoids in the category of endo-1-cells.
-instance (Bicategory kk, Ob (I :: kk a a), Monad m) => Monoid (E m :: ENDO kk a) where
+instance (Bicategory kk, Ob (I :: kk a a), Monad m, Ob m) => Monoid (E m :: ENDO kk a) where
   mempty = mkEndo eta
   mappend = mkEndo mu
 
 -- | Comonads are comonoids in the category of endo-1-cells.
-instance (Bicategory kk, Ob (I :: kk a a), Comonad c) => Comonoid (E c :: ENDO kk a) where
+instance (Bicategory kk, Ob (I :: kk a a), Comonad c, Ob c) => Comonoid (E c :: ENDO kk a) where
   counit = mkEndo epsilon
   comult = mkEndo delta

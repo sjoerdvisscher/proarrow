@@ -406,7 +406,7 @@ instance
 
 adjVK
   :: forall hk vk i j k f g v w x y
-   . (Adjunction x v, Adjunction y w, HasCompanions hk vk)
+   . (Adjunction x v, Adjunction y w, HasCompanions hk vk, Ob v, Ob w)
   => RetroSq '(y :: hk i k, g) '(x, f :: vk j k)
   -> Sq '(v, g) '(w, f)
 adjVK (RetroSq sq) =

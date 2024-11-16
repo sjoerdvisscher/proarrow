@@ -48,19 +48,19 @@ instance Profunctor (Nat :: CAT (k1 -> Type)) where
 
 instance (CategoryOf k1) => HasTerminalObject (k1 -> Type) where
   type TerminalObject = Const ()
-  terminate' Nat{} = Nat \_ -> Const ()
+  terminate = Nat \_ -> Const ()
 
 instance (CategoryOf k1) => HasInitialObject (k1 -> Type) where
   type InitialObject = Const Void
-  initiate' Nat{} = Nat \(Const v) -> absurd v
+  initiate = Nat \(Const v) -> absurd v
 
 instance (Functor f, Functor g) => Functor (Product f g) where
   map f (Pair x y) = Pair (map f x) (map f y)
 
 instance HasBinaryProducts (k1 -> Type) where
   type f && g = Product f g
-  fst' (Nat n) Nat{} = Nat \(Pair f _) -> n f
-  snd' Nat{} (Nat n) = Nat \(Pair _ g) -> n g
+  fst = Nat \(Pair f _) -> f
+  snd = Nat \(Pair _ g) -> g
   Nat f &&& Nat g = Nat \a -> Pair (f a) (g a)
 
 instance (Functor f, Functor g) => Functor (Sum f g) where
@@ -69,8 +69,8 @@ instance (Functor f, Functor g) => Functor (Sum f g) where
 
 instance HasBinaryCoproducts (k1 -> Type) where
   type f || g = Sum f g
-  lft' (Nat n) Nat{} = Nat (InL . n)
-  rgt' Nat{} (Nat n) = Nat (InR . n)
+  lft = Nat InL
+  rgt = Nat InR
   Nat f ||| Nat g = Nat \case
     InL x -> f x
     InR y -> g y

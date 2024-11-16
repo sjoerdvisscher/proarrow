@@ -1,7 +1,7 @@
 module Proarrow.Category.Instance.Bool where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (Distributive (..), HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
@@ -15,8 +15,8 @@ import Proarrow.Object.BinaryProduct
   , swapProd
   )
 import Proarrow.Object.Exponential (Closed (..), StarAutonomous (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Object.Initial (HasInitialObject (..), initiate)
+import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 
 data BOOL = FLS | TRU
@@ -63,42 +63,42 @@ instance ThinProfunctor Booleans where
 
 instance HasTerminalObject BOOL where
   type TerminalObject = TRU
-  terminate' Fls = F2T
-  terminate' F2T = F2T
-  terminate' Tru = Tru
+  terminate @a = case obj @a of
+    Fls -> F2T
+    Tru -> Tru
 
 instance HasBinaryProducts BOOL where
   type TRU && b = b
   type FLS && b = FLS
   type a && TRU = a
   type a && FLS = FLS
-  fst' Fls _ = Fls
-  fst' F2T _ = F2T
-  fst' Tru b = terminate' b
-  snd' _ Fls = Fls
-  snd' _ F2T = F2T
-  snd' a Tru = terminate' a
+  fst @a @b = case obj @a of
+    Fls -> Fls
+    Tru -> terminate @_ @b
+  snd @a @b = case obj @b of
+    Fls -> Fls
+    Tru -> terminate @_ @a
   Fls &&& _ = Fls
   F2T &&& b = b
   Tru &&& Tru = Tru
 
 instance HasInitialObject BOOL where
   type InitialObject = FLS
-  initiate' Fls = Fls
-  initiate' F2T = F2T
-  initiate' Tru = F2T
+  initiate @a = case obj @a of
+    Fls -> Fls
+    Tru -> F2T
 
 instance HasBinaryCoproducts BOOL where
   type FLS || b = b
   type TRU || b = TRU
   type a || FLS = a
   type a || TRU = TRU
-  lft' Fls b = initiate' b
-  lft' F2T _ = F2T
-  lft' Tru _ = Tru
-  rgt' a Fls = initiate' a
-  rgt' _ Tru = Tru
-  rgt' _ F2T = F2T
+  lft @a @b = case obj @a of
+    Fls -> initiate @_ @b
+    Tru -> Tru
+  rgt @a @b = case obj @b of
+    Fls -> initiate @_ @a
+    Tru -> Tru
   Fls ||| Fls = Fls
   F2T ||| b = b
   Tru ||| _ = Tru
@@ -151,6 +151,7 @@ instance Closed BOOL where
 
 instance StarAutonomous BOOL where
   type Bottom = FLS
+  bottomObj = Fls
   doubleNeg' Fls = Fls
   doubleNeg' F2T = F2T
   doubleNeg' Tru = Tru

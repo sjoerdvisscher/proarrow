@@ -37,8 +37,8 @@ instance ThinProfunctor Unit where
 
 instance HasTerminalObject () where
   type TerminalObject = '()
-  terminate' Unit = Unit
+  terminate = Unit
 
 instance HasInitialObject () where
   type InitialObject = '()
-  initiate' Unit = Unit
+  initiate = Unit
