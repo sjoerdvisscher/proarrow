@@ -1,0 +1,4670 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.PointedHask</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Type</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Prelude</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Maybe</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(~)</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>const</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>maybe</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(&gt;&gt;=)</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryProduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	><span class="hs-identifier"
+	  >HasBinaryProducts</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	><span class="hs-identifier"
+	  >HasTerminalObject</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Void</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Void</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>absurd</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryCoproduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	><span class="hs-identifier"
+	  >HasBinaryCoproducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Initial</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	><span class="hs-identifier"
+	  >HasInitialObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Functor.html"
+	><span class="hs-identifier"
+	  >Proarrow.Functor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier"
+	  >map</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Applicative.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal.Applicative</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Applicative.html#liftA2"
+	><span class="hs-identifier"
+	  >liftA2</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="POINTED"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	  ><span class="hs-identifier hs-var"
+	    >POINTED</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="P"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	  ><span class="hs-identifier hs-var"
+	    >P</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Type</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301150"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	  ><span class="hs-identifier hs-type"
+	    >P</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	  ><span class="hs-identifier hs-type"
+	    >P</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679301150"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301150"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#Pointed"
+	><span class="hs-identifier hs-type"
+	  >Pointed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	><span class="hs-identifier hs-type"
+	  >POINTED</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Pointed"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#Pointed"
+	  ><span class="hs-identifier hs-var"
+	    >Pointed</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301151"
+      ><span class="annot"
+	><a href="#local-6989586621679301151"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301152"
+      ><span class="annot"
+	><a href="#local-6989586621679301152"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301153"
+      ><span id="local-6989586621679301154"
+	><span id="P"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	      ><span class="hs-identifier hs-var"
+		>P</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><span class="hs-identifier hs-type"
+	    >Maybe</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301153"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><span class="hs-identifier hs-type"
+	    >Maybe</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301154"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#Pointed"
+	    ><span class="hs-identifier hs-type"
+	      >Pointed</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301153"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301154"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#Pointed"
+	><span class="hs-identifier hs-type"
+	  >Pointed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301167"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: POINTED) (a :: POINTED) (b :: POINTED) (d :: POINTED).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Pointed a b -&gt; Pointed c d
+</span
+	  ><a href="#local-6989586621679301167"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Pointed a b -&gt; Pointed c d
+Pointed c a -&gt; Pointed b d -&gt; Pointed a b -&gt; Pointed c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301169"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679301169"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301170"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: POINTED) (b :: POINTED) r.
+((Ob a, Ob b) =&gt; r) -&gt; Pointed a b -&gt; r
+</span
+	  ><a href="#local-6989586621679301170"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679301169"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#Pointed"
+	><span class="hs-identifier hs-type"
+	  >Pointed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301191"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: POINTED). Ob a =&gt; Pointed a a
+</span
+	  ><a href="#local-6989586621679301191"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (UN P a) -&gt; Maybe (UN P a))
+-&gt; Pointed (P (UN P a)) (P (UN P a))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (UN P a) -&gt; Maybe (UN P a)
+forall a. Ob a =&gt; a -&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301195"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301195"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301196"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: POINTED) (c :: POINTED) (a :: POINTED).
+Pointed b c -&gt; Pointed a b -&gt; Pointed a c
+</span
+	  ><a href="#local-6989586621679301196"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301204"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301204"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301195"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe b) -&gt; (Maybe a -&gt; Maybe a) -&gt; Maybe a -&gt; Maybe b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe a
+Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301204"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier hs-type"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	><span class="hs-identifier hs-type"
+	  >POINTED</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#Pointed"
+	><span class="hs-identifier hs-type"
+	  >Pointed</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301209"
+      ><span class="annot"
+	><a href="#local-6989586621679301209"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679301209"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>~</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301209"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="These"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#These"
+	  ><span class="hs-identifier hs-var"
+	    >These</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301006"
+      ><span class="annot"
+	><a href="#local-6989586621679301006"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301007"
+      ><span class="annot"
+	><a href="#local-6989586621679301007"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="This"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#This"
+	  ><span class="hs-identifier hs-var"
+	    >This</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301006"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >|</span
+      ><span
+      > </span
+      ><span id="That"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#That"
+	  ><span class="hs-identifier hs-var"
+	    >That</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301007"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >|</span
+      ><span
+      > </span
+      ><span id="These"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#These"
+	  ><span class="hs-identifier hs-var"
+	    >These</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301006"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301007"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301217"
+      ><span id="local-6989586621679301221"
+	><span id="local-6989586621679301226"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	      ><span class="hs-identifier hs-type"
+		>HasBinaryProducts</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	      ><span class="hs-identifier hs-type"
+		>POINTED</span
+		></a
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301229"
+      ><span id="local-6989586621679301230"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301229"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%26%26"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	      ><span class="hs-operator hs-var"
+		>&amp;&amp;</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301230"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#These"
+	><span class="hs-identifier hs-type"
+	  >These</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301229"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301230"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301237"
+      ><span class="annot"
+	><span class="annottext"
+	  >fst :: forall (a :: POINTED) (b :: POINTED). (Ob a, Ob b) =&gt; (a &amp;&amp; b) ~&gt; a
+</span
+	  ><a href="#local-6989586621679301237"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >fst</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (These (UN P a) (UN P b)) -&gt; Maybe (UN P a))
+-&gt; Pointed (P (These (UN P a) (UN P b))) (P (UN P a))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (These (UN P a) (UN P b))
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (UN P a)
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#This"
+	><span class="hs-identifier hs-type"
+	  >This</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301239"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN P a
+</span
+	  ><a href="#local-6989586621679301239"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P a -&gt; Maybe (UN P a)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P a
+</span
+	><a href="#local-6989586621679301239"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#That"
+	><span class="hs-identifier hs-type"
+	  >That</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (UN P a)
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#These"
+	><span class="hs-identifier hs-type"
+	  >These</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301240"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN P a
+</span
+	  ><a href="#local-6989586621679301240"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P a -&gt; Maybe (UN P a)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P a
+</span
+	><a href="#local-6989586621679301240"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301247"
+      ><span class="annot"
+	><span class="annottext"
+	  >snd :: forall (a :: POINTED) (b :: POINTED). (Ob a, Ob b) =&gt; (a &amp;&amp; b) ~&gt; b
+</span
+	  ><a href="#local-6989586621679301247"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >snd</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (These (UN P a) (UN P b)) -&gt; Maybe (UN P b))
+-&gt; Pointed (P (These (UN P a) (UN P b))) (P (UN P b))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (These (UN P a) (UN P b))
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (UN P b)
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#This"
+	><span class="hs-identifier hs-type"
+	  >This</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P a
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (UN P b)
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#That"
+	><span class="hs-identifier hs-type"
+	  >That</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301249"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN P b
+</span
+	  ><a href="#local-6989586621679301249"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P b -&gt; Maybe (UN P b)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P b
+</span
+	><a href="#local-6989586621679301249"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#These"
+	><span class="hs-identifier hs-type"
+	  >These</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P a
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301250"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN P b
+</span
+	  ><a href="#local-6989586621679301250"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P b -&gt; Maybe (UN P b)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P b
+</span
+	><a href="#local-6989586621679301250"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301253"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301253"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301254"
+      ><span class="annot"
+	><span class="annottext"
+	  >&amp;&amp;&amp; :: forall (a :: POINTED) (x :: POINTED) (y :: POINTED).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	  ><a href="#local-6989586621679301254"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >&amp;&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301260"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301260"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe (These b b)) -&gt; Pointed (P a) (P (These b b))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679301261"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a
+</span
+	  ><a href="#local-6989586621679301261"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301253"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a
+</span
+	><a href="#local-6989586621679301261"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301260"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a
+Maybe a
+</span
+	><a href="#local-6989586621679301261"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301262"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301262"
+	  ><span class="hs-identifier hs-var"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301263"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301263"
+	  ><span class="hs-identifier hs-var"
+	    >b'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>These b b -&gt; Maybe (These b b)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>b -&gt; b -&gt; These b b
+forall a b. a -&gt; b -&gt; These a b
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#These"
+	><span class="hs-identifier hs-var"
+	  >These</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301262"
+	><span class="hs-identifier hs-var"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301263"
+	><span class="hs-identifier hs-var"
+	  >b'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301264"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301264"
+	  ><span class="hs-identifier hs-var"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe b
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>These b b -&gt; Maybe (These b b)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>b -&gt; These b b
+forall a b. a -&gt; These a b
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#This"
+	><span class="hs-identifier hs-var"
+	  >This</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301264"
+	><span class="hs-identifier hs-var"
+	  >a'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe b
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301265"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301265"
+	  ><span class="hs-identifier hs-var"
+	    >b'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>These b b -&gt; Maybe (These b b)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>b -&gt; These b b
+forall a b. b -&gt; These a b
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#That"
+	><span class="hs-identifier hs-var"
+	  >That</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301265"
+	><span class="hs-identifier hs-var"
+	  >b'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe b
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe b
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (These b b)
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301273"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	  ><span class="hs-identifier hs-type"
+	    >HasTerminalObject</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	  ><span class="hs-identifier hs-type"
+	    >POINTED</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="TerminalObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	  ><span class="hs-identifier hs-var"
+	    >TerminalObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Void</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301280"
+      ><span class="annot"
+	><span class="annottext"
+	  >terminate :: forall (a :: POINTED). Ob a =&gt; a ~&gt; TerminalObject
+</span
+	  ><a href="#local-6989586621679301280"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >terminate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (UN P a) -&gt; Maybe Void) -&gt; Pointed (P (UN P a)) (P Void)
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe Void -&gt; Maybe (UN P a) -&gt; Maybe Void
+forall a b. a -&gt; b -&gt; a
+</span
+	><span class="hs-identifier hs-var"
+	>const</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe Void
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301286"
+      ><span id="local-6989586621679301291"
+	><span id="local-6989586621679301295"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	      ><span class="hs-identifier hs-type"
+		>HasBinaryCoproducts</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	      ><span class="hs-identifier hs-type"
+		>POINTED</span
+		></a
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301298"
+      ><span id="local-6989586621679301299"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301298"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%7C%7C"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-var"
+		>||</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301299"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679301298"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	><span class="hs-operator hs-type"
+	  >||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301299"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301314"
+      ><span class="annot"
+	><span class="annottext"
+	  >lft :: forall (a :: POINTED) (b :: POINTED). (Ob a, Ob b) =&gt; a ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679301314"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lft</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (UN P a) -&gt; Maybe (Either (UN P a) (UN P b)))
+-&gt; Pointed (P (UN P a)) (P (Either (UN P a) (UN P b)))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN P a ~&gt; Either (UN P a) (UN P b))
+-&gt; Maybe (UN P a) ~&gt; Maybe (Either (UN P a) (UN P b))
+forall a b. (a ~&gt; b) -&gt; Maybe a ~&gt; Maybe b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P a ~&gt; Either (UN P a) (UN P b)
+UN P a ~&gt; (UN P a || UN P b)
+forall k (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+a ~&gt; (a || b)
+forall a b. (Ob a, Ob b) =&gt; a ~&gt; (a || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#lft"
+	><span class="hs-identifier hs-var"
+	  >lft</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301328"
+      ><span class="annot"
+	><span class="annottext"
+	  >rgt :: forall (a :: POINTED) (b :: POINTED). (Ob a, Ob b) =&gt; b ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679301328"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rgt</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (UN P b) -&gt; Maybe (Either (UN P a) (UN P b)))
+-&gt; Pointed (P (UN P b)) (P (Either (UN P a) (UN P b)))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN P b ~&gt; Either (UN P a) (UN P b))
+-&gt; Maybe (UN P b) ~&gt; Maybe (Either (UN P a) (UN P b))
+forall a b. (a ~&gt; b) -&gt; Maybe a ~&gt; Maybe b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN P b ~&gt; Either (UN P a) (UN P b)
+UN P b ~&gt; (UN P a || UN P b)
+forall k (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+b ~&gt; (a || b)
+forall a b. (Ob a, Ob b) =&gt; b ~&gt; (a || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#rgt"
+	><span class="hs-identifier hs-var"
+	  >rgt</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301332"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301332"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301333"
+      ><span class="annot"
+	><span class="annottext"
+	  >||| :: forall (x :: POINTED) (a :: POINTED) (y :: POINTED).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	  ><a href="#local-6989586621679301333"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >|||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301344"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301344"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (Either a a) -&gt; Maybe b) -&gt; Pointed (P (Either a a)) (P b)
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (Either a a) -&gt; (Either a a -&gt; Maybe b) -&gt; Maybe b
+forall a b. Maybe a -&gt; (a -&gt; Maybe b) -&gt; Maybe b
+forall (m :: Type -&gt; Type) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span
+	><span class="hs-operator hs-var"
+	>&gt;&gt;=</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301332"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe b) -&gt; (a -&gt; Maybe a) -&gt; a -&gt; Maybe b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a -&gt; Maybe a
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; Maybe b) -&gt; (a ~&gt; Maybe b) -&gt; (a || a) ~&gt; Maybe b
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall x a y. (x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301344"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe b) -&gt; (a -&gt; Maybe a) -&gt; a -&gt; Maybe b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a -&gt; Maybe a
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301352"
+      ><span class="annot"
+	><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >HasInitialObject</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	  ><span class="hs-identifier hs-type"
+	    >POINTED</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="InitialObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-var"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Void</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301359"
+      ><span class="annot"
+	><span class="annottext"
+	  >initiate :: forall (a :: POINTED). Ob a =&gt; InitialObject ~&gt; a
+</span
+	  ><a href="#local-6989586621679301359"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >initiate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe Void -&gt; Maybe (UN P a)) -&gt; Pointed (P Void) (P (UN P a))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (UN P a)
+-&gt; (Void -&gt; Maybe (UN P a)) -&gt; Maybe Void -&gt; Maybe (UN P a)
+forall b a. b -&gt; (a -&gt; b) -&gt; Maybe a -&gt; b
+</span
+	><span class="hs-identifier hs-var"
+	>maybe</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (UN P a)
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Void -&gt; Maybe (UN P a)
+forall a. Void -&gt; a
+</span
+	><span class="hs-identifier hs-var"
+	>absurd</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier hs-type"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#Pointed"
+	><span class="hs-identifier hs-type"
+	  >Pointed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301375"
+      ><span class="annot"
+	><span class="annottext"
+	  >par0 :: Pointed Unit Unit
+</span
+	  ><a href="#local-6989586621679301375"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >par0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe () -&gt; Maybe ()) -&gt; Pointed (P ()) (P ())
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe () -&gt; Maybe ()
+forall a. Ob a =&gt; a -&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301379"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301379"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301380"
+      ><span class="annot"
+	><span class="annottext"
+	  >par :: forall (x1 :: POINTED) (x2 :: POINTED) (y1 :: POINTED)
+       (y2 :: POINTED).
+Pointed x1 x2 -&gt; Pointed y1 y2 -&gt; Pointed (x1 ** y1) (x2 ** y2)
+</span
+	  ><a href="#local-6989586621679301380"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`par`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301398"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301398"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (a, a) -&gt; Maybe (b, b)) -&gt; Pointed (P (a, a)) (P (b, b))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (a, a)
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b &amp;&amp; b) ~&gt; (b, b)) -&gt; (Maybe b &amp;&amp; Maybe b) ~&gt; Maybe (b, b)
+forall a b c.
+(Ob a, Ob b) =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (Maybe a &amp;&amp; Maybe b) ~&gt; Maybe c
+forall {j} {k} (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+(Applicative f, Ob a, Ob b) =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+</span
+	><a href="Proarrow.Category.Monoidal.Applicative.html#liftA2"
+	><span class="hs-identifier hs-var"
+	  >liftA2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b &amp;&amp; b) ~&gt; (b, b)
+(b, b) -&gt; (b, b)
+forall a. Ob a =&gt; a -&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301379"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301398"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679301399"
+      ><span class="annot"
+	><span class="annottext"
+	  >a
+</span
+	  ><a href="#local-6989586621679301399"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301400"
+      ><span class="annot"
+	><span class="annottext"
+	  >a
+</span
+	  ><a href="#local-6989586621679301400"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b &amp;&amp; b) ~&gt; (b, b)) -&gt; (Maybe b &amp;&amp; Maybe b) ~&gt; Maybe (b, b)
+forall a b c.
+(Ob a, Ob b) =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (Maybe a &amp;&amp; Maybe b) ~&gt; Maybe c
+forall {j} {k} (f :: j -&gt; k) (a :: j) (b :: j) (c :: j).
+(Applicative f, Ob a, Ob b) =&gt;
+((a &amp;&amp; b) ~&gt; c) -&gt; (f a &amp;&amp; f b) ~&gt; f c
+</span
+	><a href="Proarrow.Category.Monoidal.Applicative.html#liftA2"
+	><span class="hs-identifier hs-var"
+	  >liftA2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b &amp;&amp; b) ~&gt; (b, b)
+(b, b) -&gt; (b, b)
+forall a. Ob a =&gt; a -&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301379"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a -&gt; Maybe a
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a
+</span
+	><a href="#local-6989586621679301399"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301398"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a -&gt; Maybe a
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a
+</span
+	><a href="#local-6989586621679301400"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier hs-type"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#POINTED"
+	><span class="hs-identifier hs-type"
+	  >POINTED</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Unit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Unit"
+	  ><span class="hs-identifier hs-var"
+	    >Unit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301413"
+      ><span id="local-6989586621679301414"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301413"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%2A%2A"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-var"
+		>**</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	    ><span class="hs-identifier hs-type"
+	      >P</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679301414"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679301413"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679301414"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301415"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (a :: POINTED) (b :: POINTED). (a ~&gt; b) -&gt; (Unit ** a) ~&gt; b
+</span
+	  ><a href="#local-6989586621679301415"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301427"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301427"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe ((), a) -&gt; Maybe b) -&gt; Pointed (P ((), a)) (P b)
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301427"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe b)
+-&gt; (Maybe ((), a) -&gt; Maybe a) -&gt; Maybe ((), a) -&gt; Maybe b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((), a) ~&gt; a) -&gt; Maybe ((), a) ~&gt; Maybe a
+forall a b. (a ~&gt; b) -&gt; Maybe a ~&gt; Maybe b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((), a) ~&gt; a
+(() &amp;&amp; a) ~&gt; a
+forall k (a :: k) (b :: k).
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; b
+forall a b. (Ob a, Ob b) =&gt; (a &amp;&amp; b) ~&gt; b
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#snd"
+	><span class="hs-identifier hs-var"
+	  >snd</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301428"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (a :: POINTED) (b :: POINTED). (a ~&gt; b) -&gt; a ~&gt; (Unit ** b)
+</span
+	  ><a href="#local-6989586621679301428"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301434"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301434"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe ((), b)) -&gt; Pointed (P a) (P ((), b))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; ((), b)) -&gt; Maybe b ~&gt; Maybe ((), b)
+forall a b. (a ~&gt; b) -&gt; Maybe a ~&gt; Maybe b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe b -&gt; Maybe ((), b))
+-&gt; (Maybe a -&gt; Maybe b) -&gt; Maybe a -&gt; Maybe ((), b)
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301434"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301435"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (a :: POINTED) (b :: POINTED). (a ~&gt; b) -&gt; (a ** Unit) ~&gt; b
+</span
+	  ><a href="#local-6989586621679301435"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301446"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301446"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (a, ()) -&gt; Maybe b) -&gt; Pointed (P (a, ())) (P b)
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301446"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe b)
+-&gt; (Maybe (a, ()) -&gt; Maybe a) -&gt; Maybe (a, ()) -&gt; Maybe b
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a, ()) ~&gt; a) -&gt; Maybe (a, ()) ~&gt; Maybe a
+forall a b. (a ~&gt; b) -&gt; Maybe a ~&gt; Maybe b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a, ()) ~&gt; a
+(a &amp;&amp; ()) ~&gt; a
+forall k (a :: k) (b :: k).
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; a
+forall a b. (Ob a, Ob b) =&gt; (a &amp;&amp; b) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#fst"
+	><span class="hs-identifier hs-var"
+	  >fst</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301447"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (a :: POINTED) (b :: POINTED). (a ~&gt; b) -&gt; a ~&gt; (b ** Unit)
+</span
+	  ><a href="#local-6989586621679301447"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679301453"
+      ><span class="annot"
+	><span class="annottext"
+	  >Maybe a -&gt; Maybe b
+</span
+	  ><a href="#local-6989586621679301453"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe a -&gt; Maybe (b, ())) -&gt; Pointed (P a) (P (b, ()))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; (b, ())) -&gt; Maybe b ~&gt; Maybe (b, ())
+forall a b. (a ~&gt; b) -&gt; Maybe a ~&gt; Maybe b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >,</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe b -&gt; Maybe (b, ()))
+-&gt; (Maybe a -&gt; Maybe b) -&gt; Maybe a -&gt; Maybe (b, ())
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe a -&gt; Maybe b
+</span
+	><a href="#local-6989586621679301453"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301454"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall (a :: POINTED) (b :: POINTED) (c :: POINTED).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span
+	  ><a href="#local-6989586621679301454"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe ((b, b), b) -&gt; Maybe (b, (b, b)))
+-&gt; Pointed (P ((b, b), b)) (P (b, (b, b)))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe ((b, b), b)
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (b, (b, b))
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679301468"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301468"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301469"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301469"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301470"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301470"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b, (b, b)) -&gt; Maybe (b, (b, b))
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301468"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301469"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301470"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679301471"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall (a :: POINTED) (b :: POINTED) (c :: POINTED).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span
+	  ><a href="#local-6989586621679301471"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-type"
+	  >P</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Maybe (b, (b, b)) -&gt; Maybe ((b, b), b))
+-&gt; Pointed (P (b, (b, b))) (P ((b, b), b))
+forall a b. (Maybe a -&gt; Maybe b) -&gt; Pointed (P a) (P b)
+</span
+	><a href="Proarrow.Category.Instance.PointedHask.html#P"
+	><span class="hs-identifier hs-var"
+	  >P</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-glyph"
+      >case</span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (b, (b, b))
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe ((b, b), b)
+forall a. Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Nothing</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679301485"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301485"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679301486"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301486"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679301487"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679301487"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b, b), b) -&gt; Maybe ((b, b), b)
+forall a. a -&gt; Maybe a
+</span
+	><span class="hs-identifier hs-var"
+	>Just</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301485"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301486"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679301487"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>

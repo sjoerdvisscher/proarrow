@@ -319,6 +319,20 @@
 		></ul
 	      ></li
 	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:IsOptic"
+	      >IsOptic</a
+	      > (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	      >PRO</a
+	      > m m') c d = (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+	      >MonoidalProfunctor</a
+	      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
+	      >MonoidalAction</a
+	      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
+	      >MonoidalAction</a
+	      > m' d)</li
+	    ><li class="src short"
 	    ><a href="#v:opticAsDayAct"
 	      >opticAsDayAct</a
 	      > :: <span class="keyword"
@@ -343,15 +357,11 @@
 	      >dayActAsOptic</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > m c m' d (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	      > {m} {m'} (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 	      >PRO</a
-	      > m m') (a :: c) (b :: d). (<a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-	      >MonoidalAction</a
-	      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-	      >MonoidalAction</a
-	      > m' d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
-	      >Profunctor</a
-	      > w) =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:DayAct" title="Proarrow.Category.Monoidal.Optic"
+	      > m m') c d (a :: c) (b :: d). <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+	      >IsOptic</a
+	      > w c d =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:DayAct" title="Proarrow.Category.Monoidal.Optic"
 	      >DayAct</a
 	      > w (<a href="Proarrow-Profunctor-Yoneda.html#t:Yo" title="Proarrow.Profunctor.Yoneda"
 	      >Yo</a
@@ -365,11 +375,11 @@
 	      >parallel</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > {k1} {k2} {k3} {k4} {k5} {k6} (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	      > {k1} {j1} {k2} {k3} {k4} {j2} {k5} {k6} (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 	      >PRO</a
-	      > k1 k1) (a :: k2) (b :: k3) (s :: k2) (t :: k3) (w' :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	      > k1 j1) (a :: k2) (b :: k3) (s :: k2) (t :: k3) (w' :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 	      >PRO</a
-	      > k4 k4) (c :: k5) (d :: k6) (u :: k5) (v :: k6). <a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
+	      > k4 j2) (c :: k5) (d :: k6) (u :: k5) (v :: k6). <a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
 	      >Optic</a
 	      > w a b s t -&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
 	      >Optic</a
@@ -3220,9 +3230,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-308" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-302" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L308" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L302" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3306,9 +3316,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-319" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-313" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L319" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L313" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3367,17 +3377,13 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ModuleObject:ModuleObject:3"
 		      ></span
-		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
-		      >MonoidalProfunctor</a
-		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m' d) =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:ModuleObject" title="Proarrow.Category.Monoidal.Optic"
+		      > <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+		      >IsOptic</a
+		      > w c d =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:ModuleObject" title="Proarrow.Category.Monoidal.Optic"
 		      >ModuleObject</a
-		      > (w :: m' <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
-		      >+-&gt;</a
-		      > m) (<a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
+		      > (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > m m') (<a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
 		      >Optic</a
 		      > w a b :: c -&gt; d -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
@@ -3516,9 +3522,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-264" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-258" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L264" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L258" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3576,9 +3582,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-304" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-298" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L304" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L298" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3636,9 +3642,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-275" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-269" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L275" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L269" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3696,9 +3702,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-250" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-244" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L250" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L244" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3758,9 +3764,9 @@
 		      > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-290" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-284" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L290" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L284" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3824,9 +3830,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-262" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-256" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L262" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L256" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3888,9 +3894,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-306" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-300" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L306" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L300" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -3952,9 +3958,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-277" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-271" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L277" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L271" class="link"
 		    >Comments</a
 		    > <a href="#t:ModuleObject" class="selflink"
 		    >#</a
@@ -4295,17 +4301,13 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Optic:ModuleObject:2"
 		      ></span
-		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
-		      >MonoidalProfunctor</a
-		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m' d) =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:ModuleObject" title="Proarrow.Category.Monoidal.Optic"
+		      > <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+		      >IsOptic</a
+		      > w c d =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:ModuleObject" title="Proarrow.Category.Monoidal.Optic"
 		      >ModuleObject</a
-		      > (w :: m' <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
-		      >+-&gt;</a
-		      > m) (<a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
+		      > (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+		      >PRO</a
+		      > m m') (<a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
 		      >Optic</a
 		      > w a b :: c -&gt; d -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
@@ -4360,6 +4362,28 @@
 	  ></div
 	><div class="top"
 	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:IsOptic" class="def"
+	    >IsOptic</a
+	    > (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    >PRO</a
+	    > m m') c d = (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+	    >MonoidalProfunctor</a
+	    > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
+	    >MonoidalAction</a
+	    > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
+	    >MonoidalAction</a
+	    > m' d) <a href="src/Proarrow.Category.Monoidal.Optic.html#IsOptic" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L169" class="link"
+	    >Comments</a
+	    > <a href="#t:IsOptic" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
 	  ><a id="v:opticAsDayAct" class="def"
 	    >opticAsDayAct</a
 	    > :: <span class="keyword"
@@ -4380,7 +4404,7 @@
 	    >Yo</a
 	    > a b) <a href="src/Proarrow.Category.Monoidal.Optic.html#opticAsDayAct" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L170" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L172" class="link"
 	    >Comments</a
 	    > <a href="#v:opticAsDayAct" class="selflink"
 	    >#</a
@@ -4392,15 +4416,11 @@
 	    >dayActAsOptic</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > m c m' d (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    > {m} {m'} (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 	    >PRO</a
-	    > m m') (a :: c) (b :: d). (<a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-	    >MonoidalAction</a
-	    > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-	    >MonoidalAction</a
-	    > m' d, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
-	    >Profunctor</a
-	    > w) =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:DayAct" title="Proarrow.Category.Monoidal.Optic"
+	    > m m') c d (a :: c) (b :: d). <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+	    >IsOptic</a
+	    > w c d =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:DayAct" title="Proarrow.Category.Monoidal.Optic"
 	    >DayAct</a
 	    > w (<a href="Proarrow-Profunctor-Yoneda.html#t:Yo" title="Proarrow.Profunctor.Yoneda"
 	    >Yo</a
@@ -4422,11 +4442,11 @@
 	    >parallel</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k1} {k2} {k3} {k4} {k5} {k6} (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    > {k1} {j1} {k2} {k3} {k4} {j2} {k5} {k6} (w :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 	    >PRO</a
-	    > k1 k1) (a :: k2) (b :: k3) (s :: k2) (t :: k3) (w' :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	    > k1 j1) (a :: k2) (b :: k3) (s :: k2) (t :: k3) (w' :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
 	    >PRO</a
-	    > k4 k4) (c :: k5) (d :: k6) (u :: k5) (v :: k6). <a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
+	    > k4 j2) (c :: k5) (d :: k6) (u :: k5) (v :: k6). <a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
 	    >Optic</a
 	    > w a b s t -&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:Optic" title="Proarrow.Category.Monoidal.Optic"
 	    >Optic</a
@@ -4483,20 +4503,16 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:OPTIC:CategoryOf:1"
 		      ></span
-		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
-		      >MonoidalProfunctor</a
-		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m' d) =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      > <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+		      >IsOptic</a
+		      > w c d =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 		      >CategoryOf</a
 		      > (<a href="Proarrow-Category-Monoidal-Optic.html#t:OPTIC" title="Proarrow.Category.Monoidal.Optic"
 		      >OPTIC</a
 		      > w c d)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-208" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-202" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L208" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L202" class="link"
 		    >Comments</a
 		    > <a href="#t:OPTIC" class="selflink"
 		    >#</a
@@ -4567,13 +4583,9 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:OPTIC:Promonad:2"
 		      ></span
-		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
-		      >MonoidalProfunctor</a
-		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m' d) =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      > <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+		      >IsOptic</a
+		      > w c d =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
 		      > (<a href="Proarrow-Category-Monoidal-Optic.html#t:OpticCat" title="Proarrow.Category.Monoidal.Optic"
 		      >OpticCat</a
@@ -4584,9 +4596,9 @@
 		      > w c d -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-203" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-199" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L203" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L199" class="link"
 		    >Comments</a
 		    > <a href="#t:OPTIC" class="selflink"
 		    >#</a
@@ -4657,13 +4669,9 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:OPTIC:Profunctor:3"
 		      ></span
-		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
-		      >MonoidalProfunctor</a
-		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m' d) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      > <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+		      >IsOptic</a
+		      > w c d =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Monoidal-Optic.html#t:OpticCat" title="Proarrow.Category.Monoidal.Optic"
 		      >OpticCat</a
@@ -4674,9 +4682,9 @@
 		      > w c d -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-197" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-196" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L197" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L196" class="link"
 		    >Comments</a
 		    > <a href="#t:OPTIC" class="selflink"
 		    >#</a
@@ -4760,9 +4768,9 @@
 		      > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >(~&gt;)</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-209" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-203" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L209" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L203" class="link"
 		    >Comments</a
 		    > <a href="#t:OPTIC" class="selflink"
 		    >#</a
@@ -4808,9 +4816,9 @@
 		      > (a :: <a href="Proarrow-Category-Monoidal-Optic.html#t:OPTIC" title="Proarrow.Category.Monoidal.Optic"
 		      >OPTIC</a
 		      > w c d)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-210" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-204" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L210" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L204" class="link"
 		    >Comments</a
 		    > <a href="#t:OPTIC" class="selflink"
 		    >#</a
@@ -4993,13 +5001,9 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:OpticCat:Promonad:1"
 		      ></span
-		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
-		      >MonoidalProfunctor</a
-		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m' d) =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      > <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+		      >IsOptic</a
+		      > w c d =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
 		      > (<a href="Proarrow-Category-Monoidal-Optic.html#t:OpticCat" title="Proarrow.Category.Monoidal.Optic"
 		      >OpticCat</a
@@ -5010,9 +5014,9 @@
 		      > w c d -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-203" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-199" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L203" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L199" class="link"
 		    >Comments</a
 		    > <a href="#t:OpticCat" class="selflink"
 		    >#</a
@@ -5083,13 +5087,9 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:OpticCat:Profunctor:2"
 		      ></span
-		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
-		      >MonoidalProfunctor</a
-		      > w, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m c, <a href="Proarrow-Category-Monoidal-Optic.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Optic"
-		      >MonoidalAction</a
-		      > m' d) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      > <a href="Proarrow-Category-Monoidal-Optic.html#t:IsOptic" title="Proarrow.Category.Monoidal.Optic"
+		      >IsOptic</a
+		      > w c d =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Monoidal-Optic.html#t:OpticCat" title="Proarrow.Category.Monoidal.Optic"
 		      >OpticCat</a
@@ -5100,9 +5100,9 @@
 		      > w c d -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-197" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-196" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L197" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L196" class="link"
 		    >Comments</a
 		    > <a href="#t:OpticCat" class="selflink"
 		    >#</a
@@ -5196,7 +5196,7 @@
 	    >Tambara</a
 	    > w p =&gt; p a b -&gt; p s t <a href="src/Proarrow.Category.Monoidal.Optic.html#ProfOptic" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L212" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L206" class="link"
 	    >Comments</a
 	    > <a href="#t:ProfOptic" class="selflink"
 	    >#</a
@@ -5216,7 +5216,7 @@
 	    >CAT</a
 	    > m) a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#MixedOptic" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L213" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L207" class="link"
 	    >Comments</a
 	    > <a href="#t:MixedOptic" class="selflink"
 	    >#</a
@@ -5236,7 +5236,7 @@
 	    >ProfOptic</a
 	    > w a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#ex2prof" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L216" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L210" class="link"
 	    >Comments</a
 	    > <a href="#v:ex2prof" class="selflink"
 	    >#</a
@@ -5266,7 +5266,7 @@
 	    >Optic</a
 	    > w a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#prof2ex" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L223" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L217" class="link"
 	    >Comments</a
 	    > <a href="#v:prof2ex" class="selflink"
 	    >#</a
@@ -5284,7 +5284,7 @@
 	    >Type</a
 	    > a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#Lens" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L225" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L219" class="link"
 	    >Comments</a
 	    > <a href="#t:Lens" class="selflink"
 	    >#</a
@@ -5298,7 +5298,7 @@
 	    >Lens</a
 	    > s t a b <a href="src/Proarrow.Category.Monoidal.Optic.html#mkLens" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L227" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L221" class="link"
 	    >Comments</a
 	    > <a href="#v:mkLens" class="selflink"
 	    >#</a
@@ -5326,7 +5326,7 @@
 	    >COPR</a
 	    > t) <a href="src/Proarrow.Category.Monoidal.Optic.html#Prism" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L229" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L223" class="link"
 	    >Comments</a
 	    > <a href="#t:Prism" class="selflink"
 	    >#</a
@@ -5342,7 +5342,7 @@
 	    >Prism</a
 	    > s t a b <a href="src/Proarrow.Category.Monoidal.Optic.html#mkPrism" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L231" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L225" class="link"
 	    >Comments</a
 	    > <a href="#v:mkPrism" class="selflink"
 	    >#</a
@@ -5362,7 +5362,7 @@
 	    >Type</a
 	    >) a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#Traversal" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L233" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L227" class="link"
 	    >Comments</a
 	    > <a href="#t:Traversal" class="selflink"
 	    >#</a
@@ -5384,7 +5384,7 @@
 	    >Traversal</a
 	    > (f a) (f b) a b <a href="src/Proarrow.Category.Monoidal.Optic.html#traversing" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L235" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L229" class="link"
 	    >Comments</a
 	    > <a href="#v:traversing" class="selflink"
 	    >#</a
@@ -5406,7 +5406,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#Algebra" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L237" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L231" class="link"
 	    >Comments</a
 	    > <a href="#t:Algebra" class="selflink"
 	    >#</a
@@ -5419,7 +5419,7 @@
 	      >algebra</a
 	      > :: m a -&gt; a <a href="src/Proarrow.Category.Monoidal.Optic.html#algebra" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L237" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L231" class="link"
 	      >Comments</a
 	      > <a href="#v:algebra" class="selflink"
 	      >#</a
@@ -5442,9 +5442,9 @@
 		      > m =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:Algebra" title="Proarrow.Category.Monoidal.Optic"
 		      >Algebra</a
 		      > m ()</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-239" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-233" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L239" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L233" class="link"
 		    >Comments</a
 		    > <a href="#t:Algebra" class="selflink"
 		    >#</a
@@ -5469,7 +5469,7 @@
 			  >algebra</a
 			  > :: m () -&gt; () <a href="src/Proarrow.Category.Monoidal.Optic.html#algebra" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L237" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L231" class="link"
 			  >Comments</a
 			  > <a href="#v:algebra" class="selflink"
 			  >#</a
@@ -5488,9 +5488,9 @@
 		      > m =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:Algebra" title="Proarrow.Category.Monoidal.Optic"
 		      >Algebra</a
 		      > m (m a)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-238" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-232" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L238" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L232" class="link"
 		    >Comments</a
 		    > <a href="#t:Algebra" class="selflink"
 		    >#</a
@@ -5515,7 +5515,7 @@
 			  >algebra</a
 			  > :: m (m a) -&gt; m a <a href="src/Proarrow.Category.Monoidal.Optic.html#algebra" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L237" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L231" class="link"
 			  >Comments</a
 			  > <a href="#v:algebra" class="selflink"
 			  >#</a
@@ -5538,9 +5538,9 @@
 		      > m b) =&gt; <a href="Proarrow-Category-Monoidal-Optic.html#t:Algebra" title="Proarrow.Category.Monoidal.Optic"
 		      >Algebra</a
 		      > m (a, b)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-240" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-234" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L240" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L234" class="link"
 		    >Comments</a
 		    > <a href="#t:Algebra" class="selflink"
 		    >#</a
@@ -5565,7 +5565,7 @@
 			  >algebra</a
 			  > :: m (a, b) -&gt; (a, b) <a href="src/Proarrow.Category.Monoidal.Optic.html#algebra" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L237" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L231" class="link"
 			  >Comments</a
 			  > <a href="#v:algebra" class="selflink"
 			  >#</a
@@ -5596,7 +5596,7 @@
 	    >Algebra</a
 	    > m)) a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#AlgebraicLens" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L243" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L237" class="link"
 	    >Comments</a
 	    > <a href="#t:AlgebraicLens" class="selflink"
 	    >#</a
@@ -5614,7 +5614,7 @@
 	    >AlgebraicLens</a
 	    > m s t a b <a href="src/Proarrow.Category.Monoidal.Optic.html#mkAlgebraicLens" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L245" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L239" class="link"
 	    >Comments</a
 	    > <a href="#v:mkAlgebraicLens" class="selflink"
 	    >#</a
@@ -5628,7 +5628,7 @@
 	    >Viewing</a
 	    > a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#Viewing" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L247" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L241" class="link"
 	    >Comments</a
 	    > <a href="#t:Viewing" class="selflink"
 	    >#</a
@@ -5688,9 +5688,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-248" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-242" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L248" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L242" class="link"
 		    >Comments</a
 		    > <a href="#t:Viewing" class="selflink"
 		    >#</a
@@ -5764,9 +5764,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-250" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-244" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L250" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L244" class="link"
 		    >Comments</a
 		    > <a href="#t:Viewing" class="selflink"
 		    >#</a
@@ -5826,7 +5826,7 @@
 	    ></span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#%5E." class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L255" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L249" class="link"
 	    >Comments</a
 	    > <a href="#v:-94-." class="selflink"
 	    >#</a
@@ -5858,7 +5858,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#Previewing" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L257" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L251" class="link"
 	    >Comments</a
 	    > <a href="#t:Previewing" class="selflink"
 	    >#</a
@@ -5942,9 +5942,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-259" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-253" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L259" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L253" class="link"
 		    >Comments</a
 		    > <a href="#t:Previewing" class="selflink"
 		    >#</a
@@ -6050,9 +6050,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-264" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-258" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L264" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L258" class="link"
 		    >Comments</a
 		    > <a href="#t:Previewing" class="selflink"
 		    >#</a
@@ -6116,9 +6116,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-262" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-256" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L262" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L256" class="link"
 		    >Comments</a
 		    > <a href="#t:Previewing" class="selflink"
 		    >#</a
@@ -6198,7 +6198,7 @@
 	    ></span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#%3F." class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L270" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L264" class="link"
 	    >Comments</a
 	    > <a href="#v:-63-." class="selflink"
 	    >#</a
@@ -6212,7 +6212,7 @@
 	    >Setting</a
 	    > a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#Setting" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L272" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L266" class="link"
 	    >Comments</a
 	    > <a href="#t:Setting" class="selflink"
 	    >#</a
@@ -6272,9 +6272,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-273" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-267" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L273" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L267" class="link"
 		    >Comments</a
 		    > <a href="#t:Setting" class="selflink"
 		    >#</a
@@ -6348,9 +6348,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-275" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-269" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L275" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L269" class="link"
 		    >Comments</a
 		    > <a href="#t:Setting" class="selflink"
 		    >#</a
@@ -6410,9 +6410,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-277" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-271" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L277" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L271" class="link"
 		    >Comments</a
 		    > <a href="#t:Setting" class="selflink"
 		    >#</a
@@ -6474,7 +6474,7 @@
 	    ></span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#.~" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L282" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L276" class="link"
 	    >Comments</a
 	    > <a href="#v:.-126-" class="selflink"
 	    >#</a
@@ -6498,7 +6498,7 @@
 	    >Prelude</a
 	    > m)) <a href="src/Proarrow.Category.Monoidal.Optic.html#KlCat" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L284" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L278" class="link"
 	    >Comments</a
 	    > <a href="#t:KlCat" class="selflink"
 	    >#</a
@@ -6518,7 +6518,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#Updating" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L285" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L279" class="link"
 	    >Comments</a
 	    > <a href="#t:Updating" class="selflink"
 	    >#</a
@@ -6610,9 +6610,9 @@
 		      > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-287" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-281" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L287" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L281" class="link"
 		    >Comments</a
 		    > <a href="#t:Updating" class="selflink"
 		    >#</a
@@ -6698,9 +6698,9 @@
 		      > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-290" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-284" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L290" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L284" class="link"
 		    >Comments</a
 		    > <a href="#t:Updating" class="selflink"
 		    >#</a
@@ -6790,7 +6790,7 @@
 	    >Prelude</a
 	    > m)))) -&gt; b -&gt; s -&gt; m t <a href="src/Proarrow.Category.Monoidal.Optic.html#mupdate" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L299" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L293" class="link"
 	    >Comments</a
 	    > <a href="#v:mupdate" class="selflink"
 	    >#</a
@@ -6804,7 +6804,7 @@
 	    >Replacing</a
 	    > a b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#Replacing" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L301" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L295" class="link"
 	    >Comments</a
 	    > <a href="#t:Replacing" class="selflink"
 	    >#</a
@@ -6864,9 +6864,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-302" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-296" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L302" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L296" class="link"
 		    >Comments</a
 		    > <a href="#t:Replacing" class="selflink"
 		    >#</a
@@ -6952,9 +6952,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-308" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-302" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L308" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L302" class="link"
 		    >Comments</a
 		    > <a href="#t:Replacing" class="selflink"
 		    >#</a
@@ -7024,9 +7024,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-304" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-298" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L304" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L298" class="link"
 		    >Comments</a
 		    > <a href="#t:Replacing" class="selflink"
 		    >#</a
@@ -7086,9 +7086,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-306" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-300" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L306" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L300" class="link"
 		    >Comments</a
 		    > <a href="#t:Replacing" class="selflink"
 		    >#</a
@@ -7150,7 +7150,7 @@
 	    ></span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#%25~" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L313" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L307" class="link"
 	    >Comments</a
 	    > <a href="#v:-37--126-" class="selflink"
 	    >#</a
@@ -7168,7 +7168,7 @@
 	    >Type</a
 	    >) (a :: k) b s t <a href="src/Proarrow.Category.Monoidal.Optic.html#Classifying" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L315" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L309" class="link"
 	    >Comments</a
 	    > <a href="#t:Classifying" class="selflink"
 	    >#</a
@@ -7232,9 +7232,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-317" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-311" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L317" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L311" class="link"
 		    >Comments</a
 		    > <a href="#t:Classifying" class="selflink"
 		    >#</a
@@ -7322,9 +7322,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-319" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-313" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L319" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L313" class="link"
 		    >Comments</a
 		    > <a href="#t:Classifying" class="selflink"
 		    >#</a
@@ -7398,7 +7398,7 @@
 	    ></span
 	    > <a href="src/Proarrow.Category.Monoidal.Optic.html#.%3F" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L324" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Optic.hs#L318" class="link"
 	    >Comments</a
 	    > <a href="#v:.-63-" class="selflink"
 	    >#</a

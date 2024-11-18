@@ -1,0 +1,3966 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Equipment.Limit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Bicategory"
+	><span class="hs-identifier"
+	  >Bicategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Equipment</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.html#HasCompanions"
+	><span class="hs-identifier"
+	  >HasCompanions</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Obj"
+	><span class="hs-identifier"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier"
+	  >obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator"
+	  >(//)</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | weighted limits</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html#HasLimits"
+	><span class="hs-identifier hs-type"
+	  >HasLimits</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679282946"
+      ><span class="annot"
+	><a href="#local-6989586621679282946"
+	  ><span class="hs-identifier hs-type"
+	    >s</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283061"
+      ><span class="annot"
+	><a href="#local-6989586621679283061"
+	  ><span class="hs-identifier hs-type"
+	    >hk</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282946"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283062"
+      ><span class="annot"
+	><a href="#local-6989586621679283062"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282946"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283063"
+      ><span class="annot"
+	><a href="#local-6989586621679283063"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282946"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282946"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283061"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283063"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283062"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282946"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.html#HasCompanions"
+	><span class="hs-identifier hs-type"
+	  >HasCompanions</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282948"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282951"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282952"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="HasLimits"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#HasLimits"
+	  ><span class="hs-identifier hs-var"
+	    >HasLimits</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679282948"
+      ><span id="local-6989586621679282949"
+	><span id="local-6989586621679282950"
+	  ><span id="local-6989586621679282951"
+	    ><span class="annot"
+	      ><a href="#local-6989586621679282951"
+		><span class="hs-identifier hs-type"
+		  >vk</span
+		  ></a
+		></span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span id="local-6989586621679282952"
+	    ><span class="annot"
+	      ><a href="#local-6989586621679282952"
+		><span class="hs-identifier hs-type"
+		  >j</span
+		  ></a
+		></span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679282948"
+	      ><span class="hs-identifier hs-type"
+		>hk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679282949"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679282950"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span id="local-6989586621679282953"
+	    ><span class="annot"
+	      ><a href="#local-6989586621679282953"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Limit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#Limit"
+	  ><span class="hs-identifier hs-var"
+	    >Limit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679282952"
+      ><span class="annot"
+	><a href="#local-6989586621679282952"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282948"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282949"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282950"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span id="local-6989586621679282948"
+      ><span id="local-6989586621679282949"
+	><span id="local-6989586621679282950"
+	  ><span id="local-6989586621679282951"
+	    ><span id="local-6989586621679282953"
+	      ><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span id="local-6989586621679283066"
+		><span class="annot"
+		  ><a href="#local-6989586621679283066"
+		    ><span class="hs-identifier hs-type"
+		      >d</span
+		      ></a
+		    ></span
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679282951"
+		  ><span class="hs-identifier hs-type"
+		    >vk</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679282949"
+		  ><span class="hs-identifier hs-type"
+		    >i</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679282953"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679282951"
+		  ><span class="hs-identifier hs-type"
+		    >vk</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679282950"
+		  ><span class="hs-identifier hs-type"
+		    >a</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679282953"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span id="limitObj"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#limitObj"
+	  ><span class="hs-identifier hs-type"
+	    >limitObj</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283014"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-type"
+	    >Ob</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679283014"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282951"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282949"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282953"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Obj"
+	  ><span class="hs-identifier hs-type"
+	    >Obj</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#Limit"
+	  ><span class="hs-identifier hs-type"
+	    >Limit</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282952"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283014"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="limit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#limit"
+	  ><span class="hs-identifier hs-type"
+	    >limit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283038"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-type"
+	    >Ob</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679283038"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282951"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282949"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282953"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Companion"
+	  ><span class="hs-identifier hs-type"
+	    >Companion</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282948"
+	  ><span class="hs-identifier hs-type"
+	    >hk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282951"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#Limit"
+	  ><span class="hs-identifier hs-type"
+	    >Limit</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282952"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283038"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#O"
+	  ><span class="hs-operator hs-type"
+	    >`O`</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282952"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-type"
+	    >~&gt;</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Companion"
+	  ><span class="hs-identifier hs-type"
+	    >Companion</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282948"
+	  ><span class="hs-identifier hs-type"
+	    >hk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679282951"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283038"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span id="limitUniv"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#limitUniv"
+	  ><span class="hs-identifier hs-type"
+	    >limitUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283028"
+      ><span id="local-6989586621679283029"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283028"
+	    ><span class="hs-identifier hs-type"
+	      >d</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282951"
+	    ><span class="hs-identifier hs-type"
+	      >vk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282949"
+	    ><span class="hs-identifier hs-type"
+	      >i</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282953"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283029"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.html#Companion"
+	    ><span class="hs-identifier hs-type"
+	      >Companion</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282948"
+	    ><span class="hs-identifier hs-type"
+	      >hk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282951"
+	    ><span class="hs-identifier hs-type"
+	      >vk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283029"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#O"
+	    ><span class="hs-operator hs-type"
+	      >`O`</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282952"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.html#Companion"
+	    ><span class="hs-identifier hs-type"
+	      >Companion</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282948"
+	    ><span class="hs-identifier hs-type"
+	      >hk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282951"
+	    ><span class="hs-identifier hs-type"
+	      >vk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283028"
+	    ><span class="hs-identifier hs-type"
+	      >d</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283029"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.Limit.html#Limit"
+	    ><span class="hs-identifier hs-type"
+	      >Limit</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679282952"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283028"
+	    ><span class="hs-identifier hs-type"
+	      >d</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; i--d--k</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; j--@  |</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |</span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; a--l--k</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; i--d--k    a--p--k</span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |    |  |  |</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; j--@  | =&gt; |  @  |</span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |    |  |  |</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; a--p--k    a--l--k</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span class="hs-comment"
+      >-- rightAdjointPreservesLimits</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span class="hs-comment"
+      >--   :: forall {k} {k'} {i} {a} (f :: k' +-&gt; k) (g :: k +-&gt; k') (d :: i +-&gt; k) (j :: i +-&gt; a)</span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span class="hs-comment"
+      >--    . (Adjunction f g, Representable d, Representable g, HasLimits j k, HasLimits j k')</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span class="hs-comment"
+      >--   =&gt; Limit j (g :.: d) :~&gt; g :.: Limit j d</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span class="hs-comment"
+      >-- rightAdjointPreservesLimits lim =</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span class="hs-comment"
+      >--   lim // case unit @f @g of</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span class="hs-comment"
+      >--     g :.: f -&gt;</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span class="hs-comment"
+      >--       g</span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span class="hs-comment"
+      >--         :.: limitUniv @j @k @d</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span class="hs-comment"
+      >--           (\((f' :.: lim') :.: j) -&gt; case limit @j @k' @(g :.: d) (lim' :.: j) of g' :.: d -&gt; lmap (counit (f' :.: g')) d)</span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span class="hs-comment"
+      >--           (f :.: lim)</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; a--l'-k'----k'</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |     |</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  |  | /@\ |</span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  |  | v v |</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  |  k'f-g-k'</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  |  /   v |</span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  | /    | |</span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  @/     | |</span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  |      | |</span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; a--l---k--g-k'</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; i--d--k    a-l'f-k</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |    |  |  |</span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; j--@  | =&gt; |  @  |</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |    |  |  |</span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; a-l'f-k    a--l--k</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html#rightAdjointPreservesLimitsInv"
+	><span class="hs-identifier hs-type"
+	  >rightAdjointPreservesLimitsInv</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679282962"
+      ><span class="annot"
+	><a href="#local-6989586621679282962"
+	  ><span class="hs-identifier hs-type"
+	    >hk</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679282958"
+      ><span class="annot"
+	><a href="#local-6989586621679282958"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679282959"
+      ><span class="annot"
+	><a href="#local-6989586621679282959"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679282960"
+      ><span class="annot"
+	><a href="#local-6989586621679282960"
+	  ><span class="hs-identifier hs-type"
+	    >k'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679282961"
+      ><span class="annot"
+	><a href="#local-6989586621679282961"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679282963"
+      ><span class="annot"
+	><a href="#local-6989586621679282963"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679282965"
+      ><span class="annot"
+	><a href="#local-6989586621679282965"
+	  ><span class="hs-identifier hs-type"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282959"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282960"
+	><span class="hs-identifier hs-type"
+	  >k'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679282964"
+      ><span class="annot"
+	><a href="#local-6989586621679282964"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282961"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282959"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679282966"
+      ><span class="annot"
+	><a href="#local-6989586621679282966"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282962"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282961"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282963"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >   </span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282964"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282965"
+	><span class="hs-identifier hs-type"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html#HasLimits"
+	><span class="hs-identifier hs-type"
+	  >HasLimits</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282959"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html#HasLimits"
+	><span class="hs-identifier hs-type"
+	  >HasLimits</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282960"
+	><span class="hs-identifier hs-type"
+	  >k'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	><span class="hs-identifier hs-type"
+	  >Ob0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282961"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	><span class="hs-identifier hs-type"
+	  >Ob0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282959"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	><span class="hs-identifier hs-type"
+	  >Ob0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282960"
+	><span class="hs-identifier hs-type"
+	  >k'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#Ob0"
+	><span class="hs-identifier hs-type"
+	  >Ob0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282963"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282965"
+	><span class="hs-identifier hs-type"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#O"
+	><span class="hs-operator hs-type"
+	  >`O`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html#Limit"
+	><span class="hs-identifier hs-type"
+	  >Limit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282964"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html#Limit"
+	><span class="hs-identifier hs-type"
+	  >Limit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282965"
+	><span class="hs-identifier hs-type"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#O"
+	><span class="hs-operator hs-type"
+	  >`O`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282964"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span id="rightAdjointPreservesLimitsInv"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightAdjointPreservesLimitsInv :: forall {s} {hk :: s -&gt; s -&gt; Type} {vk :: s -&gt; s -&gt; Type} {k :: s}
+       {k' :: s} {i :: s} {a :: s} (g :: vk k k') (d :: vk i k)
+       (j :: hk i a).
+(Ob d, Ob g, HasLimits vk j k, HasLimits vk j k', Ob0 vk i,
+ Ob0 vk k, Ob0 vk k', Ob0 vk a) =&gt;
+O g (Limit j d) ~&gt; Limit j (O g d)
+</span
+	  ><a href="Proarrow.Category.Equipment.Limit.html#rightAdjointPreservesLimitsInv"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >rightAdjointPreservesLimitsInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >let</span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >    </span
+      ><span id="local-6989586621679283121"
+      ><span class="annot"
+	><span class="annottext"
+	  >d :: Obj d
+</span
+	  ><a href="#local-6989586621679283121"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >d</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: vk i k). (CategoryOf (vk i k), Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282964"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >    </span
+      ><span id="local-6989586621679283122"
+      ><span class="annot"
+	><span class="annottext"
+	  >g :: Obj g
+</span
+	  ><a href="#local-6989586621679283122"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: vk k k'). (CategoryOf (vk k k'), Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282965"
+	><span class="hs-identifier hs-type"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span
+      >    </span
+      ><span id="local-6989586621679283123"
+      ><span class="annot"
+	><span class="annottext"
+	  >cg :: Companion hk vk g ~&gt; Companion hk vk g
+</span
+	  ><a href="#local-6989586621679283123"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >cg</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {c} (hk :: CAT c) (vk :: CAT c) {j :: c} {k :: c}
+       (f :: vk j k) (g :: vk j k).
+HasCompanions hk vk =&gt;
+(f ~&gt; g) -&gt; Companion hk vk f ~&gt; Companion hk vk g
+forall (hk :: CAT s) (vk :: CAT s) {j :: s} {k :: s} (f :: vk j k)
+       (g :: vk j k).
+HasCompanions hk vk =&gt;
+(f ~&gt; g) -&gt; Companion hk vk f ~&gt; Companion hk vk g
+</span
+	><a href="Proarrow.Category.Equipment.html#mapCompanion"
+	><span class="hs-identifier hs-var"
+	  >mapCompanion</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282962"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+</span
+	><a href="#local-6989586621679283122"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >    </span
+      ><span id="local-6989586621679283125"
+      ><span class="annot"
+	><span class="annottext"
+	  >j :: Obj j
+</span
+	  ><a href="#local-6989586621679283125"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: hk i a). (CategoryOf (hk i a), Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >    </span
+      ><span id="local-6989586621679283126"
+      ><span class="annot"
+	><span class="annottext"
+	  >l :: Obj (Limit j d)
+</span
+	  ><a href="#local-6989586621679283126"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {s} {hk :: CAT s} {a :: s} {i :: s} (vk :: CAT s)
+       (j :: hk i a) (k :: s) (d :: vk i k).
+(HasLimits vk j k, Ob d) =&gt;
+Obj (Limit j d)
+forall (vk :: CAT s) (j :: hk i a) (k :: s) (d :: vk i k).
+(HasLimits vk j k, Ob d) =&gt;
+Obj (Limit j d)
+</span
+	><a href="Proarrow.Category.Equipment.Limit.html#limitObj"
+	><span class="hs-identifier hs-var"
+	  >limitObj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282959"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282964"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >in</span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+</span
+	><a href="#local-6989586621679283122"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g -&gt; Obj d -&gt; O g d ~&gt; O g d
+forall {i :: s} (j :: s) (k :: s) (a :: vk j k) (b :: vk j k)
+       (c :: vk i j) (d :: vk i j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall {s} (kk :: CAT s) {i :: s} (j :: s) (k :: s) (a :: kk j k)
+       (b :: kk j k) (c :: kk i j) (d :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj d
+</span
+	><a href="#local-6989586621679283121"
+	><span class="hs-identifier hs-var"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span
+      >      </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O g d ~&gt; O g d)
+-&gt; ((Ob (O g d), Ob (O g d)) =&gt; O g (Limit j d) ~&gt; Limit j (O g d))
+-&gt; O g (Limit j d) ~&gt; Limit j (O g d)
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+</span
+	><a href="#local-6989586621679283122"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g -&gt; Obj (Limit j d) -&gt; O g (Limit j d) ~&gt; O g (Limit j d)
+forall {i :: s} (j :: s) (k :: s) (a :: vk j k) (b :: vk j k)
+       (c :: vk i j) (d :: vk i j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall {s} (kk :: CAT s) {i :: s} (j :: s) (k :: s) (a :: kk j k)
+       (b :: kk j k) (c :: kk i j) (d :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj (Limit j d)
+</span
+	><a href="#local-6989586621679283126"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span
+      >      </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O g (Limit j d) ~&gt; O g (Limit j d))
+-&gt; ((Ob (O g (Limit j d)), Ob (O g (Limit j d))) =&gt;
+    O g (Limit j d) ~&gt; Limit j (O g d))
+-&gt; O g (Limit j d) ~&gt; Limit j (O g d)
+forall {k1} {k2} (p :: PRO k1 k2) (a :: k1) (b :: k2) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {s} {hk :: CAT s} {a :: s} {i :: s} (vk :: CAT s)
+       (j :: hk i a) (k :: s) (d :: vk i k) (p :: vk a k).
+(HasLimits vk j k, Ob d, Ob p) =&gt;
+(O (Companion hk vk p) j ~&gt; Companion hk vk d) -&gt; p ~&gt; Limit j d
+forall (vk :: CAT s) (j :: hk i a) (k :: s) (d :: vk i k)
+       (p :: vk a k).
+(HasLimits vk j k, Ob d, Ob p) =&gt;
+(O (Companion hk vk p) j ~&gt; Companion hk vk d) -&gt; p ~&gt; Limit j d
+</span
+	><a href="Proarrow.Category.Equipment.Limit.html#limitUniv"
+	><span class="hs-identifier hs-var"
+	  >limitUniv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282960"
+	><span class="hs-identifier hs-type"
+	  >k'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282965"
+	><span class="hs-identifier hs-type"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Bicategory.html#O"
+	><span class="hs-operator hs-type"
+	  >`O`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679282964"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span
+      >        </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+-&gt; Obj d
+-&gt; O (Companion hk vk g) (Companion hk vk d)
+   ~&gt; Companion hk vk (O g d)
+forall {j1 :: s} {k :: s} {j2 :: s} (f :: vk j1 k) (g :: vk j2 j1).
+Obj f
+-&gt; Obj g
+-&gt; O (Companion hk vk f) (Companion hk vk g)
+   ~&gt; Companion hk vk (O f g)
+forall {c} (hk :: CAT c) (vk :: CAT c) {j1 :: c} {k :: c} {j2 :: c}
+       (f :: vk j1 k) (g :: vk j2 j1).
+HasCompanions hk vk =&gt;
+Obj f
+-&gt; Obj g
+-&gt; O (Companion hk vk f) (Companion hk vk g)
+   ~&gt; Companion hk vk (O f g)
+</span
+	><a href="Proarrow.Category.Equipment.html#compFromCompose"
+	><span class="hs-identifier hs-var"
+	  >compFromCompose</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+</span
+	><a href="#local-6989586621679283122"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj d
+</span
+	><a href="#local-6989586621679283121"
+	><span class="hs-identifier hs-var"
+	  >d</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O (Companion hk vk g) (Companion hk vk d)
+ ~&gt; Companion hk vk (O g d))
+-&gt; (O (Companion hk vk (O g (Limit j d))) j
+    ~&gt; O (Companion hk vk g) (Companion hk vk d))
+-&gt; O (Companion hk vk (O g (Limit j d))) j
+   ~&gt; Companion hk vk (O g d)
+forall (b :: hk i k') (c :: hk i k') (a :: hk i k').
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Companion hk vk g ~&gt; Companion hk vk g
+</span
+	><a href="#local-6989586621679283123"
+	><span class="hs-identifier hs-var"
+	  >cg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Companion hk vk g ~&gt; Companion hk vk g)
+-&gt; (O (Companion hk vk (Limit j d)) j ~&gt; Companion hk vk d)
+-&gt; O (Companion hk vk g) (O (Companion hk vk (Limit j d)) j)
+   ~&gt; O (Companion hk vk g) (Companion hk vk d)
+forall {i :: s} (j :: s) (k :: s) (a :: hk j k) (b :: hk j k)
+       (c :: hk i j) (d :: hk i j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall {s} (kk :: CAT s) {i :: s} (j :: s) (k :: s) (a :: kk j k)
+       (b :: kk j k) (c :: kk i j) (d :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {s} {hk :: CAT s} {a :: s} {i :: s} (vk :: CAT s)
+       (j :: hk i a) (k :: s) (d :: vk i k).
+(HasLimits vk j k, Ob d) =&gt;
+O (Companion hk vk (Limit j d)) j ~&gt; Companion hk vk d
+forall (vk :: CAT s) (j :: hk i a) (k :: s) (d :: vk i k).
+(HasLimits vk j k, Ob d) =&gt;
+O (Companion hk vk (Limit j d)) j ~&gt; Companion hk vk d
+</span
+	><a href="Proarrow.Category.Equipment.Limit.html#limit"
+	><span class="hs-identifier hs-var"
+	  >limit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282958"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282966"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282959"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679282964"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O (Companion hk vk g) (O (Companion hk vk (Limit j d)) j)
+ ~&gt; O (Companion hk vk g) (Companion hk vk d))
+-&gt; (O (Companion hk vk (O g (Limit j d))) j
+    ~&gt; O (Companion hk vk g) (O (Companion hk vk (Limit j d)) j))
+-&gt; O (Companion hk vk (O g (Limit j d))) j
+   ~&gt; O (Companion hk vk g) (Companion hk vk d)
+forall (b :: hk i k') (c :: hk i k') (a :: hk i k').
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Companion hk vk g ~&gt; Companion hk vk g)
+-&gt; Obj (Companion hk vk (Limit j d))
+-&gt; Obj j
+-&gt; O (O (Companion hk vk g) (Companion hk vk (Limit j d))) j
+   ~&gt; O (Companion hk vk g) (O (Companion hk vk (Limit j d)) j)
+forall {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s) (a :: hk i2 j2)
+       (b :: hk j1 i2) (c :: hk i1 j1).
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+forall {s} (kk :: CAT s) {j1 :: s} {i1 :: s} (i2 :: s) (j2 :: s)
+       (a :: kk i2 j2) (b :: kk j1 i2) (c :: kk i1 j1).
+Bicategory kk =&gt;
+Obj a -&gt; Obj b -&gt; Obj c -&gt; O (O a b) c ~&gt; O a (O b c)
+</span
+	><a href="Proarrow.Category.Bicategory.html#associator"
+	><span class="hs-identifier hs-var"
+	  >associator</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Companion hk vk g ~&gt; Companion hk vk g
+</span
+	><a href="#local-6989586621679283123"
+	><span class="hs-identifier hs-var"
+	  >cg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj (Limit j d) -&gt; Obj (Companion hk vk (Limit j d))
+forall {j :: s} {k :: s} (f :: vk j k) (g :: vk j k).
+(f ~&gt; g) -&gt; Companion hk vk f ~&gt; Companion hk vk g
+forall {c} (hk :: CAT c) (vk :: CAT c) {j :: c} {k :: c}
+       (f :: vk j k) (g :: vk j k).
+HasCompanions hk vk =&gt;
+(f ~&gt; g) -&gt; Companion hk vk f ~&gt; Companion hk vk g
+</span
+	><a href="Proarrow.Category.Equipment.html#mapCompanion"
+	><span class="hs-identifier hs-var"
+	  >mapCompanion</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj (Limit j d)
+</span
+	><a href="#local-6989586621679283126"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj j
+</span
+	><a href="#local-6989586621679283125"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(O (O (Companion hk vk g) (Companion hk vk (Limit j d))) j
+ ~&gt; O (Companion hk vk g) (O (Companion hk vk (Limit j d)) j))
+-&gt; (O (Companion hk vk (O g (Limit j d))) j
+    ~&gt; O (O (Companion hk vk g) (Companion hk vk (Limit j d))) j)
+-&gt; O (Companion hk vk (O g (Limit j d))) j
+   ~&gt; O (Companion hk vk g) (O (Companion hk vk (Limit j d)) j)
+forall (b :: hk i k') (c :: hk i k') (a :: hk i k').
+(b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+-&gt; Obj (Limit j d)
+-&gt; Companion hk vk (O g (Limit j d))
+   ~&gt; O (Companion hk vk g) (Companion hk vk (Limit j d))
+forall {k1 :: s} {k2 :: s} {i :: s} (f :: vk k1 k2) (g :: vk i k1).
+Obj f
+-&gt; Obj g
+-&gt; Companion hk vk (O f g)
+   ~&gt; O (Companion hk vk f) (Companion hk vk g)
+forall {c} (hk :: CAT c) (vk :: CAT c) {k1 :: c} {k2 :: c} {i :: c}
+       (f :: vk k1 k2) (g :: vk i k1).
+HasCompanions hk vk =&gt;
+Obj f
+-&gt; Obj g
+-&gt; Companion hk vk (O f g)
+   ~&gt; O (Companion hk vk f) (Companion hk vk g)
+</span
+	><a href="Proarrow.Category.Equipment.html#compToCompose"
+	><span class="hs-identifier hs-var"
+	  >compToCompose</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj g
+</span
+	><a href="#local-6989586621679283122"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj (Limit j d)
+</span
+	><a href="#local-6989586621679283126"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Companion hk vk (O g (Limit j d))
+ ~&gt; O (Companion hk vk g) (Companion hk vk (Limit j d)))
+-&gt; Obj j
+-&gt; O (Companion hk vk (O g (Limit j d))) j
+   ~&gt; O (O (Companion hk vk g) (Companion hk vk (Limit j d))) j
+forall {i :: s} (j :: s) (k :: s) (a :: hk j k) (b :: hk j k)
+       (c :: hk i j) (d :: hk i j).
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+forall {s} (kk :: CAT s) {i :: s} (j :: s) (k :: s) (a :: kk j k)
+       (b :: kk j k) (c :: kk i j) (d :: kk i j).
+Bicategory kk =&gt;
+(a ~&gt; b) -&gt; (c ~&gt; d) -&gt; O a c ~&gt; O b d
+</span
+	><a href="Proarrow.Category.Bicategory.html#o"
+	><span class="hs-operator hs-var"
+	  >`o`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj j
+</span
+	><a href="#local-6989586621679283125"
+	><span class="hs-identifier hs-var"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-77"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; i-d-k-g-k'    a-l-g-k'</span
+      ><span
+      >
+</span
+      ><span id="line-78"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; | v | v |     | v v |</span
+      ><span
+      >
+</span
+      ><span id="line-79"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; j-@ | | |  =&gt; | \@/ |</span
+      ><span
+      >
+</span
+      ><span id="line-80"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; | v | v |     |  |  |</span
+      ><span
+      >
+</span
+      ><span id="line-81"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; a-l-k-g-k'    a--l'-k'</span
+      ><span
+      >
+</span
+      ><span id="line-82"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-83"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | weighted colimits</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-84"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.Limit.html#HasColimits"
+	><span class="hs-identifier hs-type"
+	  >HasColimits</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283051"
+      ><span class="annot"
+	><a href="#local-6989586621679283051"
+	  ><span class="hs-identifier hs-type"
+	    >s</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283166"
+      ><span class="annot"
+	><a href="#local-6989586621679283166"
+	  ><span class="hs-identifier hs-type"
+	    >hk</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283051"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283167"
+      ><span class="annot"
+	><a href="#local-6989586621679283167"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283051"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679283168"
+      ><span class="annot"
+	><a href="#local-6989586621679283168"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283051"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283051"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283166"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283167"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283168"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283051"
+	><span class="hs-identifier hs-type"
+	  >s</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-85"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Equipment.html#HasCompanions"
+	><span class="hs-identifier hs-type"
+	  >HasCompanions</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283052"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283055"
+	><span class="hs-identifier hs-type"
+	  >vk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283056"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="HasColimits"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#HasColimits"
+	  ><span class="hs-identifier hs-var"
+	    >HasColimits</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679283052"
+      ><span id="local-6989586621679283053"
+	><span id="local-6989586621679283054"
+	  ><span id="local-6989586621679283055"
+	    ><span class="annot"
+	      ><a href="#local-6989586621679283055"
+		><span class="hs-identifier hs-type"
+		  >vk</span
+		  ></a
+		></span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span id="local-6989586621679283056"
+	    ><span class="annot"
+	      ><a href="#local-6989586621679283056"
+		><span class="hs-identifier hs-type"
+		  >j</span
+		  ></a
+		></span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679283052"
+	      ><span class="hs-identifier hs-type"
+		>hk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679283053"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679283054"
+	      ><span class="hs-identifier hs-type"
+		>i</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span id="local-6989586621679283057"
+	    ><span class="annot"
+	      ><a href="#local-6989586621679283057"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-86"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Colimit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#Colimit"
+	  ><span class="hs-identifier hs-var"
+	    >Colimit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679283056"
+      ><span class="annot"
+	><a href="#local-6989586621679283056"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283052"
+	><span class="hs-identifier hs-type"
+	  >hk</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283053"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679283054"
+	><span class="hs-identifier hs-type"
+	  >i</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span id="local-6989586621679283052"
+      ><span id="local-6989586621679283053"
+	><span id="local-6989586621679283054"
+	  ><span id="local-6989586621679283055"
+	    ><span id="local-6989586621679283057"
+	      ><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span id="local-6989586621679283172"
+		><span class="annot"
+		  ><a href="#local-6989586621679283172"
+		    ><span class="hs-identifier hs-type"
+		      >d</span
+		      ></a
+		    ></span
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679283055"
+		  ><span class="hs-identifier hs-type"
+		    >vk</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679283054"
+		  ><span class="hs-identifier hs-type"
+		    >i</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679283057"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679283055"
+		  ><span class="hs-identifier hs-type"
+		    >vk</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679283053"
+		  ><span class="hs-identifier hs-type"
+		    >a</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679283057"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-87"
+      ></span
+      ><span
+      >  </span
+      ><span id="colimit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#colimit"
+	  ><span class="hs-identifier hs-type"
+	    >colimit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283174"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-type"
+	    >Ob</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679283174"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283055"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283054"
+	  ><span class="hs-identifier hs-type"
+	    >i</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283057"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Companion"
+	  ><span class="hs-identifier hs-type"
+	    >Companion</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283052"
+	  ><span class="hs-identifier hs-type"
+	    >hk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283055"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283174"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Bicategory.html#O"
+	  ><span class="hs-operator hs-type"
+	    >`O`</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283056"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-type"
+	    >~&gt;</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.html#Companion"
+	  ><span class="hs-identifier hs-type"
+	    >Companion</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283052"
+	  ><span class="hs-identifier hs-type"
+	    >hk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283055"
+	  ><span class="hs-identifier hs-type"
+	    >vk</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#Colimit"
+	  ><span class="hs-identifier hs-type"
+	    >Colimit</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283056"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679283174"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-88"
+      ></span
+      ><span
+      >  </span
+      ><span id="colimitUniv"
+      ><span class="annot"
+	><a href="Proarrow.Category.Equipment.Limit.html#colimitUniv"
+	  ><span class="hs-identifier hs-type"
+	    >colimitUniv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679283176"
+      ><span id="local-6989586621679283177"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283176"
+	    ><span class="hs-identifier hs-type"
+	      >d</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283055"
+	    ><span class="hs-identifier hs-type"
+	      >vk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283054"
+	    ><span class="hs-identifier hs-type"
+	      >i</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283057"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283177"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.html#Companion"
+	    ><span class="hs-identifier hs-type"
+	      >Companion</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283052"
+	    ><span class="hs-identifier hs-type"
+	      >hk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283055"
+	    ><span class="hs-identifier hs-type"
+	      >vk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283176"
+	    ><span class="hs-identifier hs-type"
+	      >d</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Bicategory.html#O"
+	    ><span class="hs-operator hs-type"
+	      >`O`</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283056"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.html#Companion"
+	    ><span class="hs-identifier hs-type"
+	      >Companion</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283052"
+	    ><span class="hs-identifier hs-type"
+	      >hk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283055"
+	    ><span class="hs-identifier hs-type"
+	      >vk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283177"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Equipment.Limit.html#Colimit"
+	    ><span class="hs-identifier hs-type"
+	      >Colimit</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283056"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283176"
+	    ><span class="hs-identifier hs-type"
+	      >d</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679283177"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-89"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-90"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; a--c--k</span
+      ><span
+      >
+</span
+      ><span id="line-91"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |</span
+      ><span
+      >
+</span
+      ><span id="line-92"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; j--@  |</span
+      ><span
+      >
+</span
+      ><span id="line-93"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; |  v  |</span
+      ><span
+      >
+</span
+      ><span id="line-94"
+      ></span
+      ><span class="hs-comment"
+      >-- &gt; i--d--k</span
+      ><span
+      >
+</span
+      ><span id="line-95"
+      ></span
+      ></pre
+    ></body
+  ></html
+>
