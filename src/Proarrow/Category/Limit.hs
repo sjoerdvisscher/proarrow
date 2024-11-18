@@ -27,11 +27,11 @@ type HasLimits :: forall {a} {i}. i +-> a -> Kind -> Constraint
 class (Profunctor j, forall (d :: i +-> k). (Representable d) => IsRepresentableLimit j d) => HasLimits (j :: i +-> a) k where
   type Limit (j :: i +-> a) (d :: i +-> k) :: a +-> k
   limit :: (Representable (d :: i +-> k)) => Limit j d :.: j :~> d
-  limitUniv :: (Representable (d :: i +-> k), Profunctor p) => p :.: j :~> d -> p :~> Limit j d
+  limitUniv :: (Representable (d :: i +-> k), Representable p) => p :.: j :~> d -> p :~> Limit j d
 
 rightAdjointPreservesLimits
   :: forall {k} {k'} {i} {a} (f :: k' +-> k) (g :: k +-> k') (d :: i +-> k) (j :: i +-> a)
-   . (Adjunction f g, Representable d, Representable g, HasLimits j k, HasLimits j k')
+   . (Adjunction f g, Representable d, Representable f, Representable g, HasLimits j k, HasLimits j k')
   => Limit j (g :.: d) :~> g :.: Limit j d
 rightAdjointPreservesLimits lim =
   lim // case unit @f @g of

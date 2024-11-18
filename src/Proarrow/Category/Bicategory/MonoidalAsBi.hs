@@ -7,11 +7,12 @@ import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtensio
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
 import Proarrow.Category.Monoidal (SymMonoidal)
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, obj)
 import Proarrow.Monoid qualified as M
 import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
 import Proarrow.Object.Exponential (Closed (..), curry, eval)
 import Proarrow.Object.Exponential qualified as M
+import Proarrow.Category.Equipment.Limit (HasLimits (..), HasColimits (..))
 
 type MonK :: Kind -> CAT ()
 newtype MonK k i j = MK k
@@ -69,6 +70,17 @@ instance (M.CompactClosed k) => Equipment (MonK k) (MonK k) where
   conjFromId = Mon2 (M.mkExponential M.unitObj)
   conjToCompose (Mon2 f) (Mon2 g) = Mon2 (M.distribDual' g f . (M.dual (g `M.swap'` f)))
   conjFromCompose (Mon2 f) (Mon2 g) = Mon2 ((M.dual (f `M.swap'` g)) . M.combineDual' g f)
+
+instance (Closed k, Ob j) => HasLimits (MonK k) (MK (j :: k)) '() where
+  type Limit (MK j) (MK d) = MK (j ~~> d)
+  limitObj @(MK d) = Mon2 (obj @d ^^^ obj @j)
+  limit @(MK d) = Mon2 (eval @j @d)
+  limitUniv @_ @(MK p) (Mon2 pj2d) = Mon2 (curry @p @j pj2d)
+
+instance (M.Monoidal k, Ob j) => HasColimits (MonK k) (MK (j :: k)) '() where
+  type Colimit (MK j) (MK d) = MK (d M.** j)
+  colimit @(MK d) = Mon2 (obj @d `M.par` obj @j)
+  colimitUniv (Mon2 f) = Mon2 f
 
 instance (Closed k, Ob (p ~~> q), Ob p, Ob q) => RightKanExtension (MK (p :: k)) (MK (q :: k)) where
   type Ran (MK p) (MK q) = MK (p ~~> q)

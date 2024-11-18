@@ -16,8 +16,8 @@ class (Profunctor p) => Corepresentable (p :: j +-> k) where
   cotabulate :: (Ob a) => (p %% a ~> b) -> p a b
   corepMap :: (a ~> b) -> p %% a ~> p %% b
 
-withCorepCod :: forall p a r. (Corepresentable p, Ob a) => ((Ob (p %% a)) => r) -> r
-withCorepCod r = r \\ corepMap @p (obj @a)
+withCorepObj :: forall p a r. (Corepresentable p, Ob a) => ((Ob (p %% a)) => r) -> r
+withCorepObj r = r \\ corepMap @p (obj @a)
 
 dimapCorep :: forall p a b c d. (Corepresentable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapCorep l r = cotabulate @p . dimap (corepMap @p l) r . coindex \\ l

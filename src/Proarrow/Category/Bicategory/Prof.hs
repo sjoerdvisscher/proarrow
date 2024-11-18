@@ -45,10 +45,9 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
-import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Representable (..), dimapRep, flipRep)
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep)
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 
@@ -136,13 +135,14 @@ instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK d c) (PK f 
 
 instance (L.HasLimits j k, Ob j) => HasLimits FUNK (PK j) k where
   type Limit (PK j) d = FUN (L.Limit j (UNFUN d))
+  limitObj = Sub (Prof id)
   limit = Prof L.limit
   limitUniv (Prof n) = Sub (Prof (L.limitUniv n))
 
 instance (L.HasColimits j k, Ob j) => HasColimits FUNK (PK j) k where
-  type Colimit (PK j) d = FUN (CorepStar (L.Colimit j (RepCostar (UNFUN d))))
-  colimit = Prof \(j :.: RepCostar p) -> L.colimit (j :.: cotabulate p)
-  colimitUniv (Prof n) = Sub (Prof (flipRep (L.colimitUniv n)))
+  type Colimit (PK j) d = FUN (L.Colimit j (UNFUN d))
+  colimit = Prof L.colimit
+  colimitUniv (Prof n) = Sub (Prof (L.colimitUniv n))
 
 class
   ( forall (s :: COK sk h i) (t :: tk j k). (Ob s, Ob t) => Profunctor (p s t)
