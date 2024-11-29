@@ -2,7 +2,6 @@
 
 module Proarrow.Object.BinaryCoproduct where
 
-import Data.Bifunctor (bimap)
 import Data.Kind (Type)
 import Prelude (type (~))
 import Prelude qualified as P
@@ -11,11 +10,10 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, type (+->))
-import Proarrow.Object (Obj, obj, src, tgt)
+import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
-import Proarrow.Profunctor.Product ((:*:)(..))
 
 infixl 4 ||
 infixl 4 |||
@@ -73,7 +71,7 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (PRO j k) where
   rgt = Prof InjR
   Prof l ||| Prof r = Prof (coproduct l r)
 
-instance HasBinaryCoproducts k => HasBinaryCoproducts (PROD k) where
+instance (HasBinaryCoproducts k) => HasBinaryCoproducts (PROD k) where
   type PR a || PR b = PR (a || b)
   lft @(PR a) @(PR b) = Prod (lft @_ @a @b)
   rgt @(PR a) @(PR b) = Prod (rgt @_ @a @b)
@@ -112,38 +110,3 @@ instance (HasCoproducts k) => Monoidal (COPROD k) where
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
   swap' (Coprod a) (Coprod b) = Coprod (rgt' (tgt b) a ||| lft' b (tgt a))
-
-class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
-instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
-
-class (Monoidal k, HasCoproducts k, DistributiveProfunctor ((~>) :: CAT k)) => Distributive k where
-  distL' :: (a :: k) ~> a' -> b ~> b' -> c ~> c' -> (a ** (b || c)) ~> (a' ** b' || a' ** c')
-  distR' :: (a :: k) ~> a' -> b ~> b' -> c ~> c' -> ((a || b) ** c) ~> (a' ** c' || b' ** c')
-  default distR' :: (SymMonoidal k) => (a :: k) ~> a' -> b ~> b' -> c ~> c' -> ((a || b) ** c) ~> (a' ** c' || b' ** c')
-  distR' fa fb fc = (swap' (tgt fc) (tgt fa) +++ swap' (tgt fc) (tgt fb))  . distL' fc fa fb . swap' (src fa +++ src fb) (src fc)
-  distL0' :: Obj (a :: k) -> (a ** InitialObject) ~> InitialObject
-  distR0' :: Obj (a :: k) -> (InitialObject ** a) ~> InitialObject
-
-instance Distributive Type where
-  distL' fa fb fc (a, e) = let a' = fa a in bimap ((a',) . fb) ((a',) . fc) e
-  distR' fa fb fc (e, c) = let c' = fc c in bimap ((,c') . fa) ((,c') . fb) e
-  distL0' _ = P.snd
-  distR0' _ = P.fst
-
-instance Distributive () where
-  distL' U.Unit U.Unit U.Unit = U.Unit
-  distR' U.Unit U.Unit U.Unit = U.Unit
-  distL0' U.Unit = U.Unit
-  distR0' U.Unit = U.Unit
-
-instance (CategoryOf j, CategoryOf k) => Distributive (PROD (PRO j k)) where
-  distL' (Prod (Prof na)) (Prod (Prof nb)) (Prod (Prof nc)) = Prod (Prof \(a :*: bc) -> case bc of
-      InjL b -> InjL (na a :*: nb b)
-      InjR c -> InjR (na a :*: nc c)
-    )
-  distR' (Prod (Prof na)) (Prod (Prof nb)) (Prod (Prof nc)) = Prod (Prof \(ab :*: c) -> case ab of
-      InjL a -> InjL (na a :*: nc c)
-      InjR b -> InjR (nb b :*: nc c)
-    )
-  distL0' (Prod Prof{}) = Prod (Prof \case)
-  distR0' (Prod Prof{}) = Prod (Prof \case)

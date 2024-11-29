@@ -3,7 +3,7 @@ module Proarrow.Category.Instance.Bool where
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.BinaryCoproduct (Distributive (..), HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -12,12 +12,13 @@ import Proarrow.Object.BinaryProduct
   , leftUnitorProdInv
   , rightUnitorProd
   , rightUnitorProdInv
-  , swapProd
+  , swapProd'
   )
 import Proarrow.Object.Exponential (Closed (..), StarAutonomous (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 
 data BOOL = FLS | TRU
 
@@ -118,17 +119,17 @@ instance Monoidal BOOL where
   associatorInv = associatorProdInv
 
 instance SymMonoidal BOOL where
-  swap' = swapProd
+  swap' = swapProd'
 
 instance Distributive BOOL where
-  distL' Fls _ _ = Fls
-  distL' F2T b c = initiate' (b +++ c)
-  distL' Tru b c = b +++ c
-  distR' _ _ Fls = Fls
-  distR' a b F2T = initiate' (a +++ b)
-  distR' a b Tru = a +++ b
-  distL0' _ = Fls
-  distR0' _ = Fls
+  distL @a @b @c = case obj @a of
+    Fls -> Fls
+    Tru -> obj @b +++ obj @c
+  distR @a @b @c = case obj @c of
+    Fls -> Fls
+    Tru -> obj @a +++ obj @b
+  distL0 = Fls
+  distR0 = Fls
 
 instance Closed BOOL where
   type FLS ~~> b = TRU

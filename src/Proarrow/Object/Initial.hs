@@ -10,6 +10,7 @@ import Proarrow.Object (obj)
 import Proarrow.Profunctor.Initial (InitialProfunctor)
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
+  {-# MINIMAL initiate | initiate' #-}
   type InitialObject :: k
   initiate :: (Ob (a :: k)) => InitialObject ~> a
   initiate @a = initiate' (obj @a)

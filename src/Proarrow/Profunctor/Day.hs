@@ -5,6 +5,7 @@ module Proarrow.Profunctor.Day where
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner')
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -23,8 +24,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Object.BinaryCoproduct (Distributive (..))
-import Proarrow.Profunctor.Coproduct ((:+:)(..))
+import Proarrow.Profunctor.Coproduct ((:+:) (..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -77,14 +77,14 @@ instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (PRO j k) where
   swap' (Prof n) (Prof m) = Prof \(Day @_ @_ @_ @_ @c @d @e @f f p q g) -> Day (swap @c @e . f) (m q) (n p) (g . swap @f @d) \\ p \\ q
 
 instance (Monoidal j, Monoidal k) => Distributive (PRO j k) where
-  distL' (Prof na) (Prof nb) (Prof nc) = Prof \(Day l a bc r) -> case bc of
-    InjL b -> InjL (Day l (na a) (nb b) r)
-    InjR c -> InjR (Day l (na a) (nc c) r)
-  distR' (Prof na) (Prof nb) (Prof nc) = Prof \(Day l ab c r) -> case ab of
-    InjL a -> InjL (Day l (na a) (nc c) r)
-    InjR b -> InjR (Day l (nb b) (nc c) r)
-  distL0' Prof{} = Prof \case
-  distR0' Prof{} = Prof \case
+  distL = Prof \(Day l a bc r) -> case bc of
+    InjL b -> InjL (Day l a b r)
+    InjR c -> InjR (Day l a c r)
+  distR = Prof \(Day l ab c r) -> case ab of
+    InjL a -> InjL (Day l a c r)
+    InjR b -> InjR (Day l b c r)
+  distL0 = Prof \case {}
+  distR0 = Prof \case {}
 
 duoidal
   :: (Monoidal k, Profunctor (p :: PRO i k), Profunctor p', Profunctor q, Profunctor q')
