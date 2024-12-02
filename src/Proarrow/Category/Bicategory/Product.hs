@@ -60,7 +60,7 @@ instance (Comonad (PRODFST m), Comonad (PRODSND m), Ob m) => Comonad m where
   delta = Prod delta delta
 
 instance (HasCompanions hj vj, HasCompanions hk vk) => HasCompanions (PRODK hj hk) (PRODK vj vk) where
-  type Companion (PRODK hj hk) (PRODK vj vk) fg = PROD (Companion hj vj (PRODFST fg)) (Companion hk vk (PRODSND fg))
+  type Companion (PRODK hj hk) fg = PROD (Companion hj (PRODFST fg)) (Companion hk (PRODSND fg))
   mapCompanion (Prod f g) = Prod (mapCompanion f) (mapCompanion g)
   compToId = Prod compToId compToId
   compFromId = Prod compFromId compFromId
@@ -68,7 +68,7 @@ instance (HasCompanions hj vj, HasCompanions hk vk) => HasCompanions (PRODK hj h
   compFromCompose (Prod fl fr) (Prod gl gr) = Prod (compFromCompose fl gl) (compFromCompose fr gr)
 
 instance (Equipment hj vj, Equipment hk vk) => Equipment (PRODK hj hk) (PRODK vj vk) where
-  type Conjoint (PRODK hj hk) (PRODK vj vk) fg = PROD (Conjoint hj vj (PRODFST fg)) (Conjoint hk vk (PRODSND fg))
+  type Conjoint (PRODK hj hk) fg = PROD (Conjoint hj (PRODFST fg)) (Conjoint hk (PRODSND fg))
   mapConjoint (Prod f g) = Prod (mapConjoint f) (mapConjoint g)
   conjToId = Prod conjToId conjToId
   conjFromId = Prod conjFromId conjFromId

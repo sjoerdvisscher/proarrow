@@ -17,7 +17,8 @@ import Proarrow.Category.Monoidal
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Exponential (Closed (..), CompactClosed (..), StarAutonomous (..), compactClosedTrace')
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace')
+import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
@@ -207,9 +208,10 @@ instance (P.Num a) => Closed (MatK a) where
 instance (P.Num a) => StarAutonomous (MatK a) where
   type Bottom = M (S Z)
   bottomObj = id
-  doubleNeg' (Mat @n m) = withPlusZero @n $ Mat m
+  doubleNeg @(M n) = withPlusZero @n id
 
 instance (P.Num a) => CompactClosed (MatK a) where
+  distribDual @m @n = distribDual' (obj @m) (obj @n)
   distribDual' a@(Mat @m @n _) b@(Mat @m1 @n1 _) = withMultNat @n1 @n $ withPlusZero @m $ withPlusZero @m1 $ withPlusZero @(n1 * n) $ dagger a `par` dagger b
 
 instance (P.Num a) => TracedMonoidalProfunctor (Mat :: CAT (MatK a)) where

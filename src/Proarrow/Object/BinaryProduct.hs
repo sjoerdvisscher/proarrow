@@ -76,8 +76,8 @@ instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) 
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
   type p && q = p :*: q
-  fst' (Prof n) Prof{} = Prof (n . fstP)
-  snd' Prof{} (Prof n) = Prof (n . sndP)
+  fst = Prof fstP
+  snd = Prof sndP
   Prof l &&& Prof r = Prof (prod l r)
 
 leftUnitorProd :: (HasProducts k) => (a :: k) ~> b -> TerminalObject && a ~> b

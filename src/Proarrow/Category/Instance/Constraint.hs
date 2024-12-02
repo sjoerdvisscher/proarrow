@@ -48,8 +48,8 @@ instance HasTerminalObject CONSTRAINT where
 
 instance HasBinaryProducts CONSTRAINT where
   type CNSTRNT l && CNSTRNT r = CNSTRNT (l, r)
-  fst' (Entails f) Entails{} = Entails \r -> f r
-  snd' Entails{} (Entails f) = Entails \r -> f r
+  fst = Entails \r -> r
+  snd = Entails \r -> r
   Entails f &&& Entails g = Entails \r -> f (g r)
 
 instance MonoidalProfunctor (:-) where

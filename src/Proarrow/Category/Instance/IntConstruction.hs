@@ -14,7 +14,8 @@ import Proarrow.Category.Monoidal
   , unitObj
   )
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Object.Exponential (Closed (..), CompactClosed (..), Dual, StarAutonomous (..))
+import Proarrow.Object.Dual (CompactClosed (..), Dual, StarAutonomous (..))
+import Proarrow.Object.Exponential (Closed (..))
 
 type data Int k = I k k
 
@@ -53,6 +54,6 @@ instance (SymMonoidal k, TracedMonoidal k) => Closed (Int k) where
 instance (SymMonoidal k, TracedMonoidal k) => StarAutonomous (Int k) where
   type Bottom = I Unit Unit
   bottomObj = unitObj
-  doubleNeg' (Int f) = Int (_ f)
+  doubleNeg = Int _
 instance (SymMonoidal k, TracedMonoidal k) => CompactClosed (Int k) where
   distribDual' (Int a) (Int b) = Int (_ (a `par` b))

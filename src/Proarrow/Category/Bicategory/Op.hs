@@ -46,7 +46,7 @@ instance (Bicategory kk) => Bicategory (OPK kk) where
   associatorInv (Op p) (Op q) (Op r) = Op (associator r q p)
 
 instance (Equipment hk vk) => HasCompanions (OPK hk) (COK vk) where
-  type Companion (OPK hk) (COK vk) f = OP (Conjoint hk vk (UN CO f))
+  type Companion (OPK hk) f = OP (Conjoint hk (UN CO f))
   mapCompanion (Co f) = Op (mapConjoint f)
   compToId = Op conjToId
   compFromId = Op conjFromId
@@ -54,7 +54,7 @@ instance (Equipment hk vk) => HasCompanions (OPK hk) (COK vk) where
   compFromCompose (Co f) (Co g) = Op (conjFromCompose f g)
 
 instance (Equipment hk vk) => Equipment (OPK hk) (COK vk) where
-  type Conjoint (OPK hk) (COK vk) f = OP (Companion hk vk (UN CO f))
+  type Conjoint (OPK hk) f = OP (Companion hk (UN CO f))
   mapConjoint (Co f) = Op (mapCompanion f)
   conjToId = Op compToId
   conjFromId = Op compFromId
@@ -64,7 +64,7 @@ instance (Equipment hk vk) => Equipment (OPK hk) (COK vk) where
   comConCounit (Co f) = Op (comConCounit f)
 
 instance (Equipment hk vk) => HasCompanions (COK hk) (OPK vk) where
-  type Companion (COK hk) (OPK vk) f = CO (Conjoint hk vk (UN OP f))
+  type Companion (COK hk) f = CO (Conjoint hk (UN OP f))
   mapCompanion (Op f) = Co (mapConjoint f)
   compToId = Co conjFromId
   compFromId = Co conjToId
@@ -72,7 +72,7 @@ instance (Equipment hk vk) => HasCompanions (COK hk) (OPK vk) where
   compFromCompose (Op f) (Op g) = Co (conjToCompose g f)
 
 instance (Equipment hk vk) => Equipment (COK hk) (OPK vk) where
-  type Conjoint (COK hk) (OPK vk) f = CO (Companion hk vk (UN OP f))
+  type Conjoint (COK hk) f = CO (Companion hk (UN OP f))
   mapConjoint (Op f) = Co (mapCompanion f)
   conjToId = Co compFromId
   conjFromId = Co compToId

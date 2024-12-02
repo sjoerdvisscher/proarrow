@@ -14,7 +14,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, RepCostar (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..))
@@ -72,9 +72,14 @@ instance Representable Forget where
   index (Forget f) = f
   tabulate = Forget
   repMap (Linear f) x = f x
+-- | Forget is a lax monoidal functor
 instance MonoidalProfunctor Forget where
   par0 = Forget \() -> ()
   Forget f `par` Forget g = Forget \(x, y) -> (f x, g y)
+-- | Forget is also a colax monoidal functor
+instance MonoidalProfunctor (RepCostar Forget) where
+  par0 = RepCostar id
+  RepCostar f `par` RepCostar g = RepCostar \(x, y) -> (f x, g y)
 
 data Ur a where
   Ur :: a -> Ur a
@@ -97,15 +102,14 @@ instance Representable Free where
   index (Free f) = Linear f
   tabulate (Linear f) = Free f
   repMap f = Linear \(Ur a) -> Ur (f a)
+-- | Free is a lax monoidal functor
 instance MonoidalProfunctor Free where
   par0 = Free \() -> Ur ()
   Free f `par` Free g = Free \(x, y) -> case (f x, g y) of (Ur a, Ur b) -> Ur (a, b)
-
-unlift2Free :: Free % (x ** y) ~> (Free % x) ** (Free % y)
-unlift2Free = Linear \(Ur (x, y)) -> (Ur x, Ur y)
-
-unlift2Forget :: (Ob x, Ob y) => Forget % (x ** y) ~> (Forget % x) ** (Forget % y)
-unlift2Forget = id
+-- | Free is also a colax monoidal functor
+instance MonoidalProfunctor (RepCostar Free) where
+  par0 = RepCostar (Linear (\(Ur _) -> ()))
+  RepCostar (Linear f) `par` RepCostar (Linear g) = RepCostar (Linear \(Ur (x, y)) -> (f (Ur x), g (Ur y)))
 
 instance Adjunction Free Forget where
   unit = Forget Ur :.: Free \x -> x

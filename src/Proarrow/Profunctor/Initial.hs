@@ -1,10 +1,14 @@
 module Proarrow.Profunctor.Initial where
 
-import Proarrow.Core (CategoryOf, PRO, Profunctor (..))
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
 
-type InitialProfunctor :: PRO j k
+type InitialProfunctor :: j +-> k
 data InitialProfunctor a b
 
-instance (CategoryOf j, CategoryOf k) => Profunctor (InitialProfunctor :: PRO j k) where
+instance (CategoryOf j, CategoryOf k) => Profunctor (InitialProfunctor :: j +-> k) where
   dimap _ _ = \case {}
   (\\) _ = \case {}
+
+instance (CategoryOf k) => DaggerProfunctor (InitialProfunctor :: k +-> k) where
+  dagger = \case {}

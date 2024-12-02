@@ -1,6 +1,7 @@
 module Proarrow.Preorder.ThinCategory where
 
 import Data.Kind (Constraint)
+import Prelude (type (~))
 
 import Proarrow.Core (CategoryOf(..), UN, Is, obj, Promonad (..), Profunctor (..), CAT, type (+->))
 import Proarrow.Preorder (CProfunctor (..), POS, cdimapDefault, CPromonad (..), PreorderOf(..), type (:-) (..), Dict (..))
@@ -18,8 +19,15 @@ instance (ThinProfunctor ((~>) :: CAT k)) => Thin k
 class HasArrow p a b => HasArrow' p a b
 instance HasArrow p a b => HasArrow' p a b
 
-class (ThinProfunctor p, forall a b. (Ob a, Ob b) => HasArrow' p a b) => Codiscrete p
-instance (ThinProfunctor p, forall a b. (Ob a, Ob b) => HasArrow' p a b) => Codiscrete p
+class (ThinProfunctor p) => Codiscrete p where
+  anyArr :: (Ob a, Ob b) => p a b
+  default anyArr :: (Ob a, Ob b, forall c d. (Ob c, Ob d) => HasArrow' p c d) => p a b
+  anyArr = arr
+
+class (ThinProfunctor p) => Discrete p where
+  withEq :: p a b -> (a ~ b => r) -> r
+  default withEq :: (forall c d. HasArrow' p c d => c ~ d) => p a b -> (a ~ b => r) -> r
+  withEq = withArr
 
 newtype THIN k = T k
 type instance UN T (T a) = a

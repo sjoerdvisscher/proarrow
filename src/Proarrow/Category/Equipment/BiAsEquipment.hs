@@ -1,6 +1,6 @@
 module Proarrow.Category.Equipment.BiAsEquipment where
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Category.Bicategory (Bicategory (..), Ob0')
 import Proarrow.Category.Bicategory.Bidiscrete (Bidiscrete (..), DiscreteK (..))
 import Proarrow.Category.Equipment
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN, CAT, Profunctor(..), Is, dimapDefault)
@@ -37,7 +37,7 @@ instance (Bicategory kk) => Bicategory (WKK kk) where
 
 -- | A bicategory as a proarrow equipment with only identity arrows vertically.
 instance (Bicategory kk) => HasCompanions (WKK kk) (DiscreteK (Ob0' kk)) where
-  type Companion (WKK kk) (DiscreteK (Ob0' kk)) DK = WK I
+  type Companion (WKK kk) DK = WK I
   mapCompanion Bidiscrete = iObj
   compToId = W iObj
   compFromId = W iObj
@@ -45,7 +45,7 @@ instance (Bicategory kk) => HasCompanions (WKK kk) (DiscreteK (Ob0' kk)) where
   compFromCompose Bidiscrete Bidiscrete = W (leftUnitor iObj)
 
 instance (Bicategory kk) => Equipment (WKK kk) (DiscreteK (Ob0' kk)) where
-  type Conjoint (WKK kk) (DiscreteK (Ob0' kk)) DK = WK I
+  type Conjoint (WKK kk) DK = WK I
   mapConjoint Bidiscrete = iObj
   conjToId = W iObj
   conjFromId = W iObj

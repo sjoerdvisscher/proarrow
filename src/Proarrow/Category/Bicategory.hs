@@ -11,6 +11,8 @@ module Proarrow.Category.Bicategory
   , leftUnitorInvWith
   , rightUnitorWith
   , rightUnitorInvWith
+  , Ob0'
+  , Ob'
 
     -- * Paths
   , Path (..)
@@ -57,6 +59,7 @@ infixr 5 :::
 infixl 5 +++
 infixl 8 ||
 infixl 7 ==
+infixl 1 \\\
 
 -- | The type of 2-parameter kind constructors.
 type Path :: CAT k -> CAT k
@@ -223,6 +226,12 @@ elimO = let p = obj @p; q = obj @q; pq = q `o` p in Str (SCons pq SNil) (SCons p
 class (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
 
 instance (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
+
+class Ob0 kk j => Ob0' kk j
+instance Ob0 kk j => Ob0' kk j
+
+class (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
+instance (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
 
 -- | Bicategories.
 --

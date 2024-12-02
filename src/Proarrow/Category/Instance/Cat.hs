@@ -16,7 +16,8 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Exponential (Closed (..), CompactClosed (..), StarAutonomous (..), compactClosedTrace')
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace')
+import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id)
@@ -51,18 +52,18 @@ instance HasTerminalObject KIND where
   type TerminalObject = K ()
   terminate' Cat = Cat @Terminate
 
-type FstCat :: i +-> j -> (i, k) +-> j
-data FstCat p a b where
-  FstCat :: (Ob c) => p a b -> FstCat p a '(b, c)
-instance (CategoryOf k, Profunctor (p :: i +-> j)) => Profunctor (FstCat p :: (i, k) +-> j) where
-  dimap l (r1 :**: r2) (FstCat p) = FstCat (dimap l r1 p) \\ r2
+type FstCat :: (j, k) +-> j
+data FstCat a b where
+  FstCat :: Ob c => a ~> b -> FstCat a '(b, c)
+instance (CategoryOf j, CategoryOf k) => Profunctor (FstCat :: (j, k) +-> j) where
+  dimap l (r1 :**: r2) (FstCat f) = FstCat (r1 . f . l) \\ r2
   r \\ FstCat f = r \\ f
 
-type SndCat :: i +-> k -> (j, i) +-> k
-data SndCat p a b where
-  SndCat :: (Ob b) => p a c -> SndCat p a '(b, c)
-instance (CategoryOf j, Profunctor (p :: i +-> k)) => Profunctor (SndCat p :: (j, i) +-> k) where
-  dimap l (r1 :**: r2) (SndCat p) = SndCat (dimap l r2 p) \\ r1
+type SndCat :: (j, k) +-> k
+data SndCat a b where
+  SndCat :: (Ob b) => a ~> c -> SndCat a '(b, c)
+instance (CategoryOf j, CategoryOf k) => Profunctor (SndCat :: (j, k) +-> k) where
+  dimap l (r1 :**: r2) (SndCat f) = SndCat (r2 . f . l) \\ r1
   r \\ SndCat f = r \\ f
 
 type (:&&&:) :: (k +-> i) -> (k +-> j) -> (k +-> (i, j))
@@ -74,8 +75,8 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :&&&: q) where
 
 instance HasBinaryProducts KIND where
   type l && r = K (UN K l, UN K r)
-  fst' (Cat @p) Cat = Cat @(FstCat p)
-  snd' Cat (Cat @p) = Cat @(SndCat p)
+  fst = Cat @FstCat
+  snd = Cat @SndCat
   Cat @p &&& Cat @q = Cat @(p :&&&: q)
 
 instance MonoidalProfunctor Cat where
@@ -124,16 +125,16 @@ instance Closed KIND where
 type DUAL k = ((), OPPOSITE k)
 type Dual a = '( '(), OP a)
 
-type DoubleNeg :: j +-> k -> DUAL (DUAL j) +-> k
-data DoubleNeg p a b where
-  DoubleNeg :: p a b -> DoubleNeg p a (Dual (Dual b))
-instance (Profunctor p) => Profunctor (DoubleNeg p) where
-  dimap l (Unit :**: Op (Unit :**: Op r)) (DoubleNeg p) = DoubleNeg (dimap l r p)
+type DoubleNeg :: DUAL (DUAL k) +-> k
+data DoubleNeg a b where
+  DoubleNeg :: a ~> b -> DoubleNeg a (Dual (Dual b))
+instance (CategoryOf k) => Profunctor (DoubleNeg :: DUAL (DUAL k) +-> k) where
+  dimap l (Unit :**: Op (Unit :**: Op r)) (DoubleNeg f) = DoubleNeg (r . f . l)
   r \\ DoubleNeg p = r \\ p
 instance StarAutonomous KIND where
   type Bottom = K ()
   bottomObj = id
-  doubleNeg' (Cat @p) = Cat @(DoubleNeg p)
+  doubleNeg = Cat @DoubleNeg
 
 type DistribDual :: j +-> j' -> k +-> k' -> DUAL (j', k') +-> (DUAL j, DUAL k)
 data DistribDual p q a b where

@@ -39,7 +39,7 @@ instance (Bicategory kk) => Bicategory (QKK kk) where
   associatorInv (Q2 p) (Q2 q) (Q2 r) = Q2 (associatorInv p q r)
 
 instance (Bicategory kk) => HasCompanions (QKK kk) kk where
-  type Companion (QKK kk) kk f = QK f
+  type Companion (QKK kk) f = QK f
   mapCompanion f = Q2 f
   compToId = Q2 iObj
   compFromId = Q2 iObj

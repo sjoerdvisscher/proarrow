@@ -12,6 +12,7 @@ import Proarrow.Monoid qualified as M
 import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
 import Proarrow.Object.Exponential (Closed (..), curry, eval)
 import Proarrow.Object.Exponential qualified as M
+import Proarrow.Object.Dual qualified as M
 import Proarrow.Category.Equipment.Limit (HasLimits (..), HasColimits (..))
 
 type MonK :: Kind -> CAT ()
@@ -52,7 +53,7 @@ instance (M.Comonoid m) => Comonad (MK m) where
   delta = Mon2 M.comult
 
 instance (M.Monoidal k) => HasCompanions (MonK k) (MonK k) where
-  type Companion (MonK k) (MonK k) (MK a) = MK a
+  type Companion (MonK k) (MK a) = MK a
   mapCompanion (Mon2 f) = Mon2 f
   compToId = Mon2 M.unitObj
   compFromId = Mon2 M.unitObj
@@ -60,16 +61,16 @@ instance (M.Monoidal k) => HasCompanions (MonK k) (MonK k) where
   compFromCompose (Mon2 f) (Mon2 g) = Mon2 (f `M.par` g)
 
 instance (M.CompactClosed k, Ob (a :: k), b ~ M.Dual a) => Adjunction (MK a) (MK b) where
-  unit = Mon2 (M.swap @a @b . M.dualityUnit @a) \\ M.dualObj @a
-  counit = Mon2 (M.dualityCounit @a . M.swap @a @b) \\ M.dualObj @a
+  unit = Mon2 (M.swap @a @b . M.dualityUnit @a) \\ M.dual @a
+  counit = Mon2 (M.dualityCounit @a . M.swap @a @b) \\ M.dual @a
 
 instance (M.CompactClosed k) => Equipment (MonK k) (MonK k) where
-  type Conjoint (MonK k) (MonK k) (MK a) = MK (M.Dual a)
-  mapConjoint (Mon2 f) = Mon2 (M.dual f)
-  conjToId = Mon2 (M.eval @M.Unit . M.rightUnitorInv (M.dualObj @M.Unit)) \\ M.unitObj @k
+  type Conjoint (MonK k) (MK a) = MK (M.Dual a)
+  mapConjoint (Mon2 f) = Mon2 (M.dual' f)
+  conjToId = Mon2 (M.eval @M.Unit . M.rightUnitorInv (M.dual @M.Unit)) \\ M.unitObj @k
   conjFromId = Mon2 (M.mkExponential M.unitObj)
-  conjToCompose (Mon2 f) (Mon2 g) = Mon2 (M.distribDual' g f . (M.dual (g `M.swap'` f)))
-  conjFromCompose (Mon2 f) (Mon2 g) = Mon2 ((M.dual (f `M.swap'` g)) . M.combineDual' g f)
+  conjToCompose (Mon2 f) (Mon2 g) = Mon2 (M.distribDual' g f . (M.dual' (g `M.swap'` f)))
+  conjFromCompose (Mon2 f) (Mon2 g) = Mon2 ((M.dual' (f `M.swap'` g)) . M.combineDual' g f)
 
 instance (Closed k, Ob j) => HasLimits (MonK k) (MK (j :: k)) '() where
   type Limit (MK j) (MK d) = MK (j ~~> d)

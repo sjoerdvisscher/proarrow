@@ -13,8 +13,8 @@ import Data.Kind (Type)
 
 import Proarrow.Core (CategoryOf (..), Obj, obj, src, tgt, (\\))
 
-class (Ob a) => Ob' a
-instance (Ob a) => Ob' a
+class (Ob a, CategoryOf k) => Ob' (a :: k)
+instance (Ob a, CategoryOf k) => Ob' (a :: k)
 type VacuusOb k = forall a. Ob' (a :: k)
 
 type ObjDict :: forall {k}. k -> Type
