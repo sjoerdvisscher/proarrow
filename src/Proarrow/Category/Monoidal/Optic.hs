@@ -18,7 +18,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, OB, PRO, Profunctor (..), Promonad (..), UN, dimapDefault, (:~>))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object (Obj, obj, src, tgt)
+import Proarrow.Object (obj, src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
 import Proarrow.Object.BinaryProduct ()
 import Proarrow.Profunctor.Composition ((:.:) (..))
@@ -30,10 +30,10 @@ import Proarrow.Profunctor.Yoneda (Yo (..))
 class (Monoidal m, CategoryOf k) => MonoidalAction m k where
   type Act (p :: m) (x :: k) :: k
   act :: (p :: m) ~> q -> (x :: k) ~> y -> Act p x ~> Act q y
-  unitor :: Obj (x :: k) -> Act (Unit :: m) x ~> x
-  unitorInv :: Obj (x :: k) -> x ~> Act (Unit :: m) x
-  multiplicator :: Obj (p :: m) -> Obj (q :: m) -> Obj (x :: k) -> Act p (Act q x) ~> Act (p ** q) x
-  multiplicatorInv :: Obj (p :: m) -> Obj (q :: m) -> Obj (x :: k) -> Act (p ** q) x ~> Act p (Act q x)
+  unitor :: Ob (x :: k) => Act (Unit :: m) x ~> x
+  unitorInv :: Ob (x :: k) => x ~> Act (Unit :: m) x
+  multiplicator :: (Ob (p :: m), Ob (q :: m), Ob (x :: k)) => Act p (Act q x) ~> Act (p ** q) x
+  multiplicatorInv :: (Ob (p :: m), Ob (q :: m), Ob (x :: k)) => Act (p ** q) x ~> Act p (Act q x)
 
 instance MonoidalAction Type Type where
   type Act p x = p ** x
@@ -54,54 +54,54 @@ instance MonoidalAction (COPROD Type) (COPROD Type) where
 instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
   type Act '(p, q) '(x, y) = '(Act p x, Act q y)
   act (p :**: q) (x :**: y) = act p x :**: act q y
-  unitor (x :**: y) = unitor @n x :**: unitor @m y
-  unitorInv (x :**: y) = unitorInv @n x :**: unitorInv @m y
-  multiplicator (p :**: q) (r :**: s) (x :**: y) = multiplicator p r x :**: multiplicator q s y
-  multiplicatorInv (p :**: q) (r :**: s) (x :**: y) = multiplicatorInv p r x :**: multiplicatorInv q s y
+  unitor = unitor @n :**: unitor @m
+  unitorInv = unitorInv @n :**: unitorInv @m
+  multiplicator @'(p, q) @'(r, s) @'(x, y) = multiplicator @n @j @p @r @x :**: multiplicator @m @k @q @s @y
+  multiplicatorInv @'(p, q) @'(r, s) @'(x, y) = multiplicatorInv @n @j @p @r @x :**: multiplicatorInv @m @k @q @s @y
 
 instance MonoidalAction Type (COPROD Type) where
   type Act (p :: Type) (COPR x :: COPROD Type) = COPR (p ** x)
   l `act` Coprod r = Coprod (l `par` r)
-  unitor (Coprod x) = Coprod (leftUnitor x)
-  unitorInv (Coprod x) = Coprod (leftUnitorInv x)
-  multiplicator p q (Coprod x) = Coprod (associatorInv p q x)
-  multiplicatorInv p q (Coprod x) = Coprod (associator p q x)
+  unitor = Coprod leftUnitor
+  unitorInv = Coprod leftUnitorInv
+  multiplicator = Coprod associatorInv
+  multiplicatorInv = Coprod associator
 
 instance MonoidalAction (COPROD Type) Type where
   type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
   f@Coprod{} `act` g = unCoprod (f `par` Coprod g)
-  unitor x = unCoprod (leftUnitor (Coprod x))
-  unitorInv x = unCoprod (leftUnitorInv (Coprod x))
-  multiplicator p@Coprod{} q@Coprod{} x = unCoprod (associatorInv p q (Coprod x))
-  multiplicatorInv p@Coprod{} q@Coprod{} x = unCoprod (associator p q (Coprod x))
+  unitor = unCoprod leftUnitor
+  unitorInv = unCoprod leftUnitorInv
+  multiplicator = unCoprod associatorInv
+  multiplicatorInv = unCoprod associator
 
 instance (MonoidalAction m k, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) k where
   type Act (p :: SUBCAT ob) (x :: k) = Act (UN SUB p) x
   act (Sub f) g = f `act` g
   unitor = unitor @m
   unitorInv = unitorInv @m
-  multiplicator (Sub p) (Sub q) = multiplicator p q
-  multiplicatorInv (Sub p) (Sub q) = multiplicatorInv p q
+  multiplicator @(SUB p) @(SUB q) @x = multiplicator @_ @_ @p @q @x
+  multiplicatorInv @(SUB p) @(SUB q) @x = multiplicatorInv @_ @_ @p @q @x
 
 instance MonoidalAction (Type -> Type) Type where
   type Act (p :: Type -> Type) (x :: Type) = p x
   act (Nat n) f = n . map f
-  unitor _ = runIdentity
-  unitorInv _ = Identity
-  multiplicator _ _ _ = Compose
-  multiplicatorInv _ _ _ = getCompose
+  unitor = runIdentity
+  unitorInv = Identity
+  multiplicator = Compose
+  multiplicatorInv = getCompose
 
 instance (Monad m) => MonoidalAction Type (KlCat m) where
   type Act (p :: Type) (KL x :: KlCat m) = KL (p ** x)
   l `act` Kleisli (Star r) = Kleisli (Star (\(p, a) -> map (l p,) (r a)))
-  unitor (Kleisli (Star f)) = Kleisli (Star (Prelude . return . unitor @Type (src f)))
-  unitorInv (Kleisli (Star f)) = Kleisli (Star (Prelude . return . unitorInv @Type (src f)))
-  multiplicator p q (Kleisli (Star f)) = Kleisli (Star (Prelude . return . multiplicator @Type p q (src f)))
-  multiplicatorInv p q (Kleisli (Star f)) = Kleisli (Star (Prelude . return . multiplicatorInv @Type p q (src f)))
+  unitor = Kleisli (Star (Prelude . return . unitor @Type))
+  unitorInv = Kleisli (Star (Prelude . return . unitorInv @Type))
+  multiplicator = Kleisli (Star (Prelude . return . multiplicator @Type))
+  multiplicatorInv = Kleisli (Star (Prelude . return . multiplicatorInv @Type))
 
 -- | "Day convolaction"
 data DayAct w p a b where
-  DayAct :: forall w p a b c d e f. a ~> Act c e -> w c d -> p e f -> Act d f ~> b -> DayAct w p a b
+  DayAct :: forall c d e f w p a b. a ~> Act c e -> w c d -> p e f -> Act d f ~> b -> DayAct w p a b
 
 instance (Profunctor w, Profunctor p) => Profunctor (DayAct (w :: PRO m m') (p :: PRO c d)) where
   dimap l r (DayAct f w p g) = DayAct (f . l) w p (r . g)
@@ -110,32 +110,34 @@ instance (Profunctor w, Profunctor p) => Profunctor (DayAct (w :: PRO m m') (p :
 instance (MonoidalAction m c, MonoidalAction m' d) => MonoidalAction (PRO m m') (PRO c d) where
   type Act (w :: PRO m m') (p :: PRO c d) = DayAct w p
   act (Prof n) (Prof m) = Prof \(DayAct f w p g) -> DayAct f (n w) (m p) g
-  unitor Prof{} = Prof \(DayAct f (DayUnit a b) p g) -> dimap (unitor @m (src p) . act a (src p) . f) (g . act b (tgt p) . unitorInv @m' (tgt p)) p \\ p
-  unitorInv Prof{} = Prof \p -> DayAct (unitorInv @m (src p)) (DayUnit par0 par0) p (unitor @m' (tgt p)) \\ p
-  multiplicator Prof{} Prof{} Prof{} = Prof \(DayAct f w (DayAct f' w' p g') g) ->
-    let c1 = src w; c2 = src w'; d1 = tgt w; d2 = tgt w'
+  unitor = Prof \(DayAct f (DayUnit a b) p g) -> dimap (unitor @m . act a (src p) . f) (g . act b (tgt p) . unitorInv @m') p \\ p
+  unitorInv = Prof \p -> DayAct (unitorInv @m) (DayUnit par0 par0) p (unitor @m') \\ p
+  multiplicator = Prof \(DayAct @c1 @d1 f w (DayAct @c2 @d2 @e2 @f2 f' w' p g') g) ->
+    let c1 = src w; d1 = tgt w
     in DayAct
-        (multiplicator c1 c2 (src p) . act c1 f' . f)
+        (multiplicator @_ @_ @c1 @c2 @e2 . act c1 f' . f)
         (Day id w w' id)
         p
-        (g . act d1 g' . multiplicatorInv d1 d2 (tgt p))
-        \\ (c1 `par` c2)
-        \\ (d1 `par` d2)
-  multiplicatorInv Prof{} Prof{} Prof{} = Prof \(DayAct f (Day f' w w' g') p g) ->
-    let c1 = src w; c2 = src w'; d1 = tgt w; d2 = tgt w'; e = src p; e' = tgt p
+        (g . act d1 g' . multiplicatorInv @_ @_ @d1 @d2 @f2)
+        \\ (src w `par` src w')
+        \\ (tgt w `par` tgt w')
+        \\ w \\ w' \\ p
+  multiplicatorInv = Prof \(DayAct @_ @_ @e1 @f1 f (Day @c2 @d2 @e2 @f2 f' w w' g') p g) ->
+    let e2 = src w'; f2 = tgt w'; e1 = src p; f1 = tgt p
     in DayAct
-        (multiplicatorInv c1 c2 e . act f' e . f)
+        (multiplicatorInv @_ @_ @c2 @e2 @e1 . act f' e1 . f)
         w
         (DayAct id w' p id)
-        (g . act g' e' . multiplicator d1 d2 e')
-        \\ (c2 `act` e)
-        \\ (d2 `act` e')
+        (g . act g' f1 . multiplicator @_ @_ @d2 @f2 @f1)
+        \\ (e2 `act` e1)
+        \\ (f2 `act` f1)
+        \\ w \\ w' \\ p
 
 memptyAct :: forall m c (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => n ~> Act a n
-memptyAct = act @m @c (mempty @a) (obj @n) . unitorInv @m obj
+memptyAct = act @m @c (mempty @a) (obj @n) . unitorInv @m
 
 mappendAct :: forall m c (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => Act a (Act a n) ~> Act a n
-mappendAct = let a = obj @a; n = obj @n in act @m @c (mappend @a) n . multiplicator a a n
+mappendAct = act @m @c (mappend @a) (obj @n) . multiplicator @m @c @a @a @n
 
 type ModuleObject :: forall {m} {c}. m -> c -> Constraint
 class (MonoidalAction m c, Monoid a, Ob n) => ModuleObject (a :: m) (n :: c) where
@@ -214,7 +216,7 @@ prof2ex
    . (MonoidalProfunctor w, MonoidalAction m c, MonoidalAction m' d, Ob a, Ob b)
   => ProfOptic (w :: PRO m m') (a :: c) (b :: d) (s :: c) (t :: d)
   -> Optic w a b s t
-prof2ex p2p = p2p (Optic (unitorInv @m obj) par0 (unitor @m' obj))
+prof2ex p2p = p2p (Optic (unitorInv @m) par0 (unitor @m'))
 
 type Lens s t a b = MixedOptic Type a b s t
 mkLens :: (s -> a) -> (s -> b -> t) -> Lens s t a b

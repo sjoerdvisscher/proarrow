@@ -22,6 +22,15 @@ class (HasCompanions hk vk, Ob j) => HasLimits vk (j :: hk i a) k where
 -- > |  v  |
 -- > a--l--k
 
+-- lift :: f ~> j `O` Lift j f
+
+-- > i--d--k
+-- > |  v  |
+-- > | /@\ |
+-- > | v v |
+-- > a-j-l-k
+
+
 -- > i--d--k    a--p--k
 -- > |  v  |    |  |  |
 -- > j--@  | => |  @  |
@@ -92,3 +101,11 @@ class (HasCompanions hk vk, Ob j) => HasColimits vk (j :: hk a i) k where
 -- > j--@  |
 -- > |  v  |
 -- > i--d--k
+
+-- lan :: f ~> Lan j f `O` j
+
+-- > a--c--k
+-- > |  v  |
+-- > | /@\ |
+-- > | v v |
+-- > i-j-d-k

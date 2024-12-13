@@ -10,7 +10,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), TracedMonoidalProfunctor (..))
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, src, type (+->))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -80,23 +80,23 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
   snd = Prof sndP
   Prof l &&& Prof r = Prof (prod l r)
 
-leftUnitorProd :: (HasProducts k) => (a :: k) ~> b -> TerminalObject && a ~> b
-leftUnitorProd f = f . snd' (obj @TerminalObject) (src f)
+leftUnitorProd :: forall {k} (a :: k). (HasProducts k, Ob a) => TerminalObject && a ~> a
+leftUnitorProd = snd @k @TerminalObject
 
-leftUnitorProdInv :: (HasProducts k) => (a :: k) ~> b -> a ~> TerminalObject && b
-leftUnitorProdInv f = terminate' (src f) &&& f
+leftUnitorProdInv :: forall {k} (a :: k). (HasProducts k, Ob a) => a ~> TerminalObject && a
+leftUnitorProdInv = terminate &&& id
 
-rightUnitorProd :: (HasProducts k) => (a :: k) ~> b -> a && TerminalObject ~> b
-rightUnitorProd f = f . fst' (src f) (obj @TerminalObject)
+rightUnitorProd :: forall {k} (a :: k). (HasProducts k, Ob a) => a && TerminalObject ~> a
+rightUnitorProd = fst @k @_ @TerminalObject
 
-rightUnitorProdInv :: (HasProducts k) => (a :: k) ~> b -> a ~> b && TerminalObject
-rightUnitorProdInv f = f &&& terminate' (src f)
+rightUnitorProdInv :: forall {k} (a :: k). (HasProducts k, Ob a) => a ~> a && TerminalObject
+rightUnitorProdInv = id &&& terminate
 
-associatorProd :: (HasProducts k) => Obj (a :: k) -> Obj b -> Obj c -> (a && b) && c ~> a && (b && c)
-associatorProd a b c = (fst' a b . fst' (a *** b) c) &&& (snd' a b *** c) \\ (a *** b)
+associatorProd :: forall {k} (a :: k) b c. (HasProducts k, Ob a, Ob b, Ob c) => (a && b) && c ~> a && (b && c)
+associatorProd = (fst @k @a @b . fst @k @(a && b) @c) &&& (snd @k @a @b *** obj @c) \\ (obj @a *** obj @b)
 
-associatorProdInv :: (HasProducts k) => Obj (a :: k) -> Obj b -> Obj c -> a && (b && c) ~> (a && b) && c
-associatorProdInv a b c = (a *** fst' b c) &&& (snd' b c . snd' a (b *** c)) \\ (a *** b)
+associatorProdInv :: forall {k} (a :: k) b c. (HasProducts k, Ob a, Ob b, Ob c) => a && (b && c) ~> (a && b) && c
+associatorProdInv = (obj @a *** fst @k @b @c) &&& (snd @k @b @c . snd @k @a @(b && c)) \\ (obj @b *** obj @c)
 
 swapProd' :: (HasBinaryProducts k) => (a :: k) ~> a' -> b ~> b' -> (a && b) ~> (b' && a')
 swapProd' a b = snd' (src a) b &&& fst' a (src b)
@@ -146,8 +146,8 @@ instance (HasProducts k) => Monoidal (PROD k) where
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
   rightUnitorInv = rightUnitorProdInv
-  associator = associatorProd
-  associatorInv = associatorProdInv
+  associator @(PR a) @(PR b) @(PR c) = Prod (associatorProd @a @b @c)
+  associatorInv @(PR a) @(PR b) @(PR c) = Prod (associatorProdInv @a @b @c)
 
 instance (HasProducts k) => SymMonoidal (PROD k) where
   swap' (Prod a) (Prod b) = Prod (swapProd' a b)
@@ -169,6 +169,9 @@ instance Monoidal Type where
 instance SymMonoidal Type where
   swap' = swapProd'
 
+instance TracedMonoidalProfunctor (->) where
+  trace f x = let (y, u) = f (x, u) in y
+
 instance MonoidalProfunctor U.Unit where
   par0 = id
   f `par` g = f *** g
@@ -185,3 +188,6 @@ instance Monoidal () where
 
 instance SymMonoidal () where
   swap' = swapProd'
+
+instance TracedMonoidalProfunctor U.Unit where
+  trace U.Unit = U.Unit

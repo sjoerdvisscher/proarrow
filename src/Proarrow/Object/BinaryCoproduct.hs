@@ -42,6 +42,12 @@ right f = obj @c +++ f
 codiag :: forall {k} (a :: k). (HasBinaryCoproducts k, Ob a) => (a || a) ~> a
 codiag = id ||| id
 
+swapCoprod' :: (HasBinaryCoproducts k) => (a :: k) ~> a' -> b ~> b' -> (a || b) ~> (b' || a')
+swapCoprod' a b = rgt' (tgt b) a ||| lft' b (tgt a)
+
+swapCoprod :: (HasBinaryCoproducts k, Ob a, Ob b) => (a :: k) || b ~> b || a
+swapCoprod @_ @a @b = swapCoprod' (obj @a) (obj @b)
+
 type HasCoproducts k = (HasInitialObject k, HasBinaryCoproducts k)
 
 class ((a ** b) ~ (a || b)) => TensorIsCoproduct a b
@@ -101,12 +107,12 @@ instance (HasCoproducts k, Category cat) => MonoidalProfunctor (Coprod cat :: CA
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)
-  leftUnitor (Coprod f) = Coprod (initiate ||| f) \\ f
-  leftUnitorInv (Coprod f) = Coprod (rgt @_ @InitialObject . f) \\ f
-  rightUnitor (Coprod f) = Coprod (f ||| initiate) \\ f
-  rightUnitorInv (Coprod f) = Coprod (lft @_ @_ @InitialObject . f) \\ f
-  associator (Coprod a) (Coprod b) (Coprod c) = Coprod ((a +++ lft' b c) ||| (rgt' a (b +++ c) . rgt' b c) \\ (a +++ b))
-  associatorInv (Coprod a) (Coprod b) (Coprod c) = Coprod ((lft' (a +++ b) c . lft' a b) ||| (rgt' a b +++ c) \\ (a +++ b))
+  leftUnitor = Coprod (initiate ||| id)
+  leftUnitorInv = Coprod (rgt @_ @InitialObject)
+  rightUnitor = Coprod (id ||| initiate)
+  rightUnitorInv = Coprod (lft @_ @_ @InitialObject)
+  associator @(COPR a) @(COPR b) @(COPR c) = Coprod ((obj @a +++ lft @k @b @c) ||| (rgt @k @a @(b || c) . rgt @k @b @c) \\ (obj @b +++ obj @c))
+  associatorInv @(COPR a) @(COPR b) @(COPR c) = Coprod ((lft @k @(a || b) @c . lft @k @a @b) ||| (rgt @k @a @b +++ obj @c) \\ (obj @a +++ obj @b))
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
   swap' (Coprod a) (Coprod b) = Coprod (rgt' (tgt b) a ||| lft' b (tgt a))

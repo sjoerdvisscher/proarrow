@@ -4,7 +4,12 @@ module Proarrow.Category.Instance.Cat where
 
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), TracedMonoidalProfunctor, trace')
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , TracedMonoidalProfunctor (..)
+  )
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Object.BinaryProduct
@@ -16,7 +21,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace')
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
@@ -54,7 +59,7 @@ instance HasTerminalObject KIND where
 
 type FstCat :: (j, k) +-> j
 data FstCat a b where
-  FstCat :: Ob c => a ~> b -> FstCat a '(b, c)
+  FstCat :: (Ob c) => a ~> b -> FstCat a '(b, c)
 instance (CategoryOf j, CategoryOf k) => Profunctor (FstCat :: (j, k) +-> j) where
   dimap l (r1 :**: r2) (FstCat f) = FstCat (r1 . f . l) \\ r2
   r \\ FstCat f = r \\ f
@@ -148,4 +153,4 @@ instance CompactClosed KIND where
   distribDual' (Cat @p) (Cat @q) = Cat @(DistribDual p q)
 
 instance TracedMonoidalProfunctor Cat where
-  trace' = compactClosedTrace'
+  trace = compactClosedTrace

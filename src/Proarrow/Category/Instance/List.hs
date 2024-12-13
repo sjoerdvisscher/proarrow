@@ -3,8 +3,11 @@
 
 module Proarrow.Category.Instance.List where
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), type (++))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Prelude (type (~))
+
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Strictified (type (++))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 
 type data LIST k = L [k]
 type instance UN L (L as) = as
@@ -19,7 +22,11 @@ data List as bs where
 mkCons :: (CategoryOf k) => (a :: k) ~> b -> L as ~> L bs -> L (a ': as) ~> L (b ': bs)
 mkCons f fs = Cons f fs \\ fs
 
-class IsList as where listId :: List (L as) (L as)
+class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
+instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
+
+class (as ~ as ++ '[], forall bs cs. (IsList bs, IsList cs) => Assoc as bs cs) => IsList as where
+  listId :: List (L as) (L as)
 instance IsList '[] where listId = Nil
 instance (CategoryOf k, Ob (a :: k), IsList as) => IsList (a ': as) where listId = Cons id id
 
@@ -47,13 +54,9 @@ instance (CategoryOf k) => MonoidalProfunctor (List :: CAT (LIST k)) where
 instance (CategoryOf k) => Monoidal (LIST k) where
   type Unit = L '[]
   type p ** q = L (UN L p ++ UN L q)
-  leftUnitor f = f . listId \\ f
-  leftUnitorInv f = listId . f \\ f
-  rightUnitor Nil = listId
-  rightUnitor (Cons f fs) = mkCons f (rightUnitor fs)
-  rightUnitorInv Nil = listId
-  rightUnitorInv (Cons f fs) = mkCons f (rightUnitorInv fs)
-  associator Nil bs cs = listId \\ bs `par` cs
-  associator (Cons f fs) bs cs = mkCons f (associator fs bs cs)
-  associatorInv Nil bs cs = listId \\ bs `par` cs
-  associatorInv (Cons f fs) bs cs = mkCons f (associatorInv fs bs cs)
+  leftUnitor = listId
+  leftUnitorInv = listId
+  rightUnitor = listId
+  rightUnitorInv = listId
+  associator @(L as) @(L bs) @(L cs) = listId \\ (obj @(L as) `par` obj @(L bs)) `par` obj @(L cs)
+  associatorInv @(L as) @(L bs) @(L cs) = listId \\ obj @(L as) `par` (obj @(L bs) `par` obj @(L cs))

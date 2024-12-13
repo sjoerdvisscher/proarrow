@@ -2,8 +2,10 @@ module Proarrow.Category.Instance.Simplex where
 
 import Data.Kind (Constraint, Type)
 
+import Prelude (type (~))
+
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, src, tgt)
+import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), dimapDefault, obj, src)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -16,7 +18,7 @@ data SNat :: Nat -> Type where
   SZ :: SNat Z
   SS :: SNat n -> SNat (S n)
 
-class IsNat (a :: Nat) where
+class (a + Z ~ a) => IsNat (a :: Nat) where
   singNat :: SNat a
 instance IsNat Z where singNat = SZ
 instance (IsNat a) => IsNat (S a) where singNat = SS singNat
@@ -101,20 +103,12 @@ instance MonoidalProfunctor Simplex where
 instance Monoidal Nat where
   type Unit = Z
   type a ** b = a + b
-  leftUnitor f = f
-  leftUnitorInv f = f
-  rightUnitor f = f . rightUnitor' (singNat' (src f))
-  rightUnitorInv f = rightUnitorInv' (singNat' (tgt f)) . f
-  associator a' b' = associator' (singNat' a') (singNat' b')
-  associatorInv a' b' = associatorInv' (singNat' a') (singNat' b')
-
-rightUnitor' :: SNat b -> Simplex (b + Z) b
-rightUnitor' SZ = ZZ
-rightUnitor' (SS n) = suc (rightUnitor' n)
-
-rightUnitorInv' :: SNat b -> Simplex b (b + Z)
-rightUnitorInv' SZ = ZZ
-rightUnitorInv' (SS n) = suc (rightUnitorInv' n)
+  leftUnitor = id
+  leftUnitorInv = id
+  rightUnitor = id
+  rightUnitorInv = id
+  associator @a @b @c = associator' (singNat @a) (singNat @b) (obj @c)
+  associatorInv @a @b @c = associatorInv' (singNat @a) (singNat @b) (obj @c)
 
 associator' :: SNat a -> SNat b -> Obj c -> Simplex ((a + b) + c) (a + (b + c))
 associator' SZ SZ c = c
@@ -142,12 +136,12 @@ instance (Monoid m) => Representable (Replicate m) where
   index (Replicate f) = f
   tabulate = Replicate
   repMap ZZ = par0
-  repMap (Y f) = let g = repMap @(Replicate m) f in (mempty @m `par` g) . leftUnitorInv (src g)
+  repMap (Y f) = let g = repMap @(Replicate m) f in (mempty @m `par` g) . leftUnitorInv \\ g
   repMap (X (Y f)) = obj @m `par` repMap @(Replicate m) f
-  repMap (X (X f)) =
+  repMap (X (X @x f)) =
     let g = repMap @(Replicate m) (X f)
         b = repMap @(Replicate m) (src f)
-    in g . (mappend @m `par` b) . associatorInv (obj @m) (obj @m) b
+    in g . (mappend @m `par` b) . associatorInv @_ @m @m @(Replicate m % x) \\ b
 
 class IsSimplex s where
   bisimplex :: BiSimplex s s

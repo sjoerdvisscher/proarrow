@@ -4,7 +4,7 @@ module Proarrow.Profunctor.Day where
 
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner')
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner', unitObj)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core
   ( CAT
@@ -34,7 +34,7 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (DayUnit :: PRO j k) where
   r \\ DayUnit f g = r \\ f \\ g
 
 data Day p q a b where
-  Day :: forall p q a b c d e f. a ~> c ** e -> p c d -> q e f -> d ** f ~> b -> Day p q a b
+  Day :: forall c d e f p q a b. a ~> c ** e -> p c d -> q e f -> d ** f ~> b -> Day p q a b
 
 instance (Profunctor p, Profunctor q) => Profunctor (Day p q) where
   dimap l r (Day f p q g) = Day (lmap l f) p q (rmap r g)
@@ -47,7 +47,7 @@ instance Functor Day where
   map (Prof n) = Nat (Prof \(Day f p q g) -> Day f (n p) q g)
 
 instance (SymMonoidal j, SymMonoidal k, MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (Day p q :: PRO j k) where
-  par0 = Day (leftUnitorInv par0) par0 par0 (leftUnitor par0)
+  par0 = Day leftUnitorInv par0 par0 leftUnitor \\ unitObj @j \\ unitObj @k
   Day f1 p1 q1 g1 `par` Day f2 p2 q2 g2 =
     let f = swapInner' (src p1) (src q1) (src p2) (src q2) . (f1 `par` f2)
         g = (g1 `par` g2) . swapInner' (tgt p1) (tgt p2) (tgt q1) (tgt q2)
@@ -60,21 +60,23 @@ instance (Monoidal j, Monoidal k) => MonoidalProfunctor (Prof :: CAT (j +-> k)) 
 instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
   type Unit = DayUnit
   type p ** q = Day p q
-  leftUnitor (Prof n) = Prof \(Day f (DayUnit h i) q g) -> n (dimap (leftUnitor (src q) . (h `par` src q) . f) (g . (i `par` tgt q) . leftUnitorInv (tgt q)) q)
-  leftUnitorInv (Prof n) = Prof \q -> Day (leftUnitorInv (src q)) (DayUnit par0 par0) (n q) (leftUnitor (tgt q))
-  rightUnitor (Prof n) = Prof \(Day f p (DayUnit h i) g) -> n (dimap (rightUnitor (src p) . (src p `par` h) . f) (g . (tgt p `par` i) . rightUnitorInv (tgt p)) p)
-  rightUnitorInv (Prof n) = Prof \p -> Day (rightUnitorInv (src p)) (n p) (DayUnit par0 par0) (rightUnitor (tgt p))
-  associator Prof{} Prof{} Prof{} = Prof \(Day f1 (Day f2 p2 q2 g2) q1 g1) ->
-    let f = associator (src p2) (src q2) (src q1) . (f2 `par` src q1) . f1
-        g = g1 . (g2 `par` tgt q1) . associatorInv (tgt p2) (tgt q2) (tgt q1)
-    in Day f p2 (Day (src q2 `par` src q1) q2 q1 (tgt q2 `par` tgt q1)) g
-  associatorInv Prof{} Prof{} Prof{} = Prof \(Day f1 p1 (Day f2 p2 q2 g2) g1) ->
-    let f = associatorInv (src p1) (src p2) (src q2) . (src p1 `par` f2) . f1
-        g = g1 . (tgt p1 `par` g2) . associator (tgt p1) (tgt p2) (tgt q2)
-    in Day f (Day (src p1 `par` src p2) p1 p2 (tgt p1 `par` tgt p2)) q2 g
+  leftUnitor = Prof \(Day f (DayUnit h i) q g) -> dimap (leftUnitor . (h `par` src q) . f) (g . (i `par` tgt q) . leftUnitorInv) q \\ q
+  leftUnitorInv = Prof \q -> Day leftUnitorInv (DayUnit par0 par0) q leftUnitor \\ q
+  rightUnitor = Prof \(Day f p (DayUnit h i) g) -> dimap (rightUnitor . (src p `par` h) . f) (g . (tgt p `par` i) . rightUnitorInv) p \\ p
+  rightUnitorInv = Prof \p -> Day rightUnitorInv p (DayUnit par0 par0) rightUnitor \\ p
+  associator = Prof \(Day @_ @_ @e1 @f1 f1 (Day @c2 @d2 @e2 @f2 f2 p2 q2 g2) q1 g1) -> Day
+    (associator @_ @c2 @e2 @e1 . (f2 `par` src q1) . f1)
+    p2 (Day (src q2 `par` src q1) q2 q1 (tgt q2 `par` tgt q1))
+    (g1 . (g2 `par` tgt q1) . associatorInv @_ @d2 @f2 @f1)
+    \\ p2 \\ q2 \\ q1
+  associatorInv = Prof \(Day @c1 @d1 f1 p1 (Day @c2 @d2 @e2 @f2 f2 p2 q2 g2) g1) -> Day
+    (associatorInv @_ @c1 @c2 @e2 . (src p1 `par` f2) . f1)
+    (Day (src p1 `par` src p2) p1 p2 (tgt p1 `par` tgt p2)) q2
+    (g1 . (tgt p1 `par` g2) . associator @_ @d1 @d2 @f2)
+    \\ p1 \\ p2 \\ q2
 
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (PRO j k) where
-  swap' (Prof n) (Prof m) = Prof \(Day @_ @_ @_ @_ @c @d @e @f f p q g) -> Day (swap @c @e . f) (m q) (n p) (g . swap @f @d) \\ p \\ q
+  swap' (Prof n) (Prof m) = Prof \(Day @c @d @e @f f p q g) -> Day (swap @c @e . f) (m q) (n p) (g . swap @f @d) \\ p \\ q
 
 instance (Monoidal j, Monoidal k) => Distributive (PRO j k) where
   distL = Prof \(Day l a bc r) -> case bc of
@@ -116,7 +118,7 @@ instance (Monoidal j, Monoidal k) => Closed (PRO j k) where
 multDayExp
   :: (SymMonoidal j, SymMonoidal k, Profunctor (p :: PRO j k), Profunctor q, Profunctor p', Profunctor q')
   => (p ~~> q) `Day` (p' ~~> q') ~> (p `Day` p') ~~> (q `Day` q')
-multDayExp = Prof \(Day @_ @_ @_ @_ @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
+multDayExp = Prof \(Day @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
   g
     // h
     // DayExp

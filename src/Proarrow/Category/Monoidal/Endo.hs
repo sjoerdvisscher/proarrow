@@ -6,7 +6,7 @@ import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), dimapRan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 
@@ -38,12 +38,12 @@ instance (Bicategory kk, Ob0 kk k) => MonoidalProfunctor (Endo :: CAT (ENDO kk k
 instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
   type Unit = E I
   type E p ** E q = E (p `O` q)
-  leftUnitor (Endo p) = mkEndo (B.leftUnitor p)
-  leftUnitorInv (Endo p) = mkEndo (B.leftUnitorInv p)
-  rightUnitor (Endo p) = mkEndo (B.rightUnitor p)
-  rightUnitorInv (Endo p) = mkEndo (B.rightUnitorInv p)
-  associator (Endo p) (Endo q) (Endo r) = mkEndo (B.associator p q r)
-  associatorInv (Endo p) (Endo q) (Endo r) = mkEndo (B.associatorInv p q r)
+  leftUnitor = mkEndo (B.leftUnitor id)
+  leftUnitorInv = mkEndo (B.leftUnitorInv id)
+  rightUnitor = mkEndo (B.rightUnitor id)
+  rightUnitorInv = mkEndo (B.rightUnitorInv id)
+  associator @(E p) @(E q) @(E r) = mkEndo (B.associator (obj @p) (obj @q) (obj @r))
+  associatorInv @(E p) @(E q) @(E r) = mkEndo (B.associatorInv (obj @p) (obj @q) (obj @r))
 
 instance (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanExtension f g) => Closed (ENDO kk k) where
   type E f ~~> E g = E (Ran f g)

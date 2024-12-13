@@ -21,13 +21,13 @@ instance (SymMonoidal k, Ob s) => MonoidalProfunctor (State (s :: k)) where
     let s = obj @s; a1 = obj @a1; b1 = obj @b1; a2 = obj @a2; b2 = obj @b2
     in State
         ( (s `par` swap' b2 b1)
-            . associator s b2 b1
+            . associator @_ @s @b2 @b1
             . (g `par` b1)
-            . associatorInv s a2 b1
+            . associatorInv @_ @s @a2 @b1
             . (s `par` swap' b1 a2)
-            . associator s b1 a2
+            . associator @_ @s @b1 @a2
             . (f `par` a2)
-            . associatorInv s a1 a2
+            . associatorInv @_ @s @a1 @a2
         )
         \\ (a1 `par` a2)
         \\ (b1 `par` b2)
