@@ -59,13 +59,13 @@ instance MonoidalProfunctor Pointed where
 instance Monoidal POINTED where
   type Unit = P ()
   type P a ** P b = P (a, b)
-  leftUnitor (P f) = P (f . map snd)
-  leftUnitorInv (P f) = P (map ((),) . f)
-  rightUnitor (P f) = P (f . map fst)
-  rightUnitorInv (P f) = P (map (,()) . f)
-  associator P{} P{} P{} = P (\case
+  leftUnitor = P (map snd)
+  leftUnitorInv = P (map ((),))
+  rightUnitor = P (map fst)
+  rightUnitorInv = P (map (,()))
+  associator = P (\case
     Nothing -> Nothing
     Just ((a, b), c) -> Just (a, (b, c)))
-  associatorInv P{} P{} P{} = P (\case
+  associatorInv = P (\case
     Nothing -> Nothing
     Just (a, (b, c)) -> Just ((a, b), c))

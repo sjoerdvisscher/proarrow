@@ -11,7 +11,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, tgt, (//))
-import Proarrow.Object (Obj, obj, src)
+import Proarrow.Object (Obj, obj)
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag)
 import Proarrow.Profunctor.Exponential ((:~>:) (..))
@@ -34,17 +34,17 @@ uncurry = uncurry' (obj @b) (obj @c)
 
 comp :: forall {k} (a :: k) b c. (Closed k, Ob a, Ob b, Ob c) => (b ~~> c) ** (a ~~> b) ~> a ~~> c
 comp =
-  let a = obj @a; b2c = obj @c ^^^ obj @b; a2b = obj @b ^^^ a
-  in curry @_ @a @c (eval @b @c . (b2c `par` eval @a @b) . associator b2c a2b a)
+  let a = obj @a; b = obj @b; b2c = obj @c ^^^ b; a2b = b ^^^ a
+  in curry @_ @a @c (eval @b @c . (b2c `par` eval @a @b) . associator @k @(b ~~> c) @(a ~~> b) @a)
       \\ a2b
       \\ b2c
       \\ (b2c `par` a2b)
 
 mkExponential :: forall {k} a b. (Closed k) => (a :: k) ~> b -> Unit ~> (a ~~> b)
-mkExponential ab = curry @_ @a (ab . leftUnitor (src ab)) \\ ab \\ (par0 :: (Unit :: k) ~> Unit)
+mkExponential ab = curry @_ @a (ab . leftUnitor) \\ ab \\ (par0 :: (Unit :: k) ~> Unit)
 
 lower :: forall {k} (a :: k) b. (Closed k, Ob a, Ob b) => (Unit ~> (a ~~> b)) -> a ~> b
-lower f = uncurry @Unit @a @b f . leftUnitorInv (obj @a)
+lower f = uncurry @Unit @a @b f . leftUnitorInv
 
 eval' :: (Closed k) => a ~> a' -> b ~> b' -> ((a' :: k) ~~> b) ** a ~> b'
 eval' a b = let ab = b ^^^ tgt a in uncurry' (tgt a) (tgt b) (tgt ab) . (ab `par` a)

@@ -35,12 +35,12 @@ instance (M.Monoidal k) => Bicategory (MonK k) where
   iObj = Mon2 M.par0
   Mon2 f `o` Mon2 g = Mon2 (f `M.par` g)
   r \\\ Mon2 f = r \\ f
-  leftUnitor (Mon2 p) = Mon2 (M.leftUnitor p)
-  leftUnitorInv (Mon2 p) = Mon2 (M.leftUnitorInv p)
-  rightUnitor (Mon2 p) = Mon2 (M.rightUnitor p)
-  rightUnitorInv (Mon2 p) = Mon2 (M.rightUnitorInv p)
-  associator (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associator p q r)
-  associatorInv (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associatorInv p q r)
+  leftUnitor (Mon2 p) = Mon2 (M.leftUnitor' p)
+  leftUnitorInv (Mon2 p) = Mon2 (M.leftUnitorInv' p)
+  rightUnitor (Mon2 p) = Mon2 (M.rightUnitor' p)
+  rightUnitorInv (Mon2 p) = Mon2 (M.rightUnitorInv' p)
+  associator (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associator' p q r)
+  associatorInv (Mon2 p) (Mon2 q) (Mon2 r) = Mon2 (M.associatorInv' p q r)
 
 -- | Monoids in a monoidal category are monads when the monoidal category is seen as a bicategory.
 instance (M.Monoid m) => Monad (MK m) where
@@ -67,7 +67,7 @@ instance (M.CompactClosed k, Ob (a :: k), b ~ M.Dual a) => Adjunction (MK a) (MK
 instance (M.CompactClosed k) => Equipment (MonK k) (MonK k) where
   type Conjoint (MonK k) (MK a) = MK (M.Dual a)
   mapConjoint (Mon2 f) = Mon2 (M.dual' f)
-  conjToId = Mon2 (M.eval @M.Unit . M.rightUnitorInv (M.dual @M.Unit)) \\ M.unitObj @k
+  conjToId = Mon2 (M.eval @M.Unit . M.rightUnitorInv @_ @(M.Dual M.Unit)) \\ M.unitObj @k \\ (M.unitObj @k ^^^ M.unitObj @k)
   conjFromId = Mon2 (M.mkExponential M.unitObj)
   conjToCompose (Mon2 f) (Mon2 g) = Mon2 (M.distribDual' g f . (M.dual' (g `M.swap'` f)))
   conjFromCompose (Mon2 f) (Mon2 g) = Mon2 ((M.dual' (f `M.swap'` g)) . M.combineDual' g f)

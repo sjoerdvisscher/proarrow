@@ -13,11 +13,11 @@ import Proarrow.Category.Monoidal
   , associator
   , leftUnitor
   , swapInner'
-  , unitObj
+  , unitObj, swapInner, leftUnitor'
   )
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), tgt)
 import Proarrow.Object (Obj, obj, src)
-import Proarrow.Object.Exponential (Closed (..), eval', mkExponential)
+import Proarrow.Object.Exponential (Closed (..), eval', mkExponential, curry, eval)
 
 type Dual a = a ~~> Bottom
 
@@ -68,10 +68,14 @@ combineDual' a b =
   in curry'
       (dualA `par` dualB)
       (src a `par` src b)
-      (leftUnitor unitObj . (eval' a unitObj `par` eval' b unitObj) . swapInner' dualA dualB (src a) (src b))
+      (leftUnitor' unitObj . (eval' a unitObj `par` eval' b unitObj) . swapInner' dualA dualB (src a) (src b))
 
 combineDual :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => Dual a ** Dual b ~> Dual (a ** b)
-combineDual = combineDual' (obj @a) (obj @b)
+combineDual = curry @_ @(a ** b) @Unit (leftUnitor . (eval @a @Unit `par` eval @b @Unit) . swapInner @(Dual a) @(Dual b) @a @b)
+  \\ unitObj @k
+  \\ (obj @a `par` obj @b)
+  \\ (dual @a `par` dual @b)
+  \\ dual @a \\ dual @b
 
 dualityUnit' :: forall {k} a. (CompactClosed k) => Obj a -> (Unit :: k) ~> a ** Dual a
 dualityUnit' a =
@@ -81,25 +85,17 @@ dualityUnit' a =
 dualityUnit :: forall {k} a. (CompactClosed k, Ob a) => (Unit :: k) ~> a ** Dual a
 dualityUnit = dualityUnit' (obj @a)
 
-compactClosedTrace'
-  :: forall {k} x x' y y' u u'
-   . (CompactClosed k)
-  => (x :: k) ~> x'
-  -> y ~> y'
-  -> u ~> u'
-  -> x' ** u' ~> y ** u
-  -> x ~> y'
-compactClosedTrace' x y u f =
-  let dualU = unitObj ^^^ u
-  in rightUnitor y
-      . (src y `par` (dualityCounit @(Dual u') . (doubleNegInv' u unitObj `par` src dualU)))
-      . associator (src y) (src u) (src dualU)
-      . (f `par` src dualU)
-      . associatorInv (tgt x) (tgt u) (src dualU)
-      . (tgt x `par` dualityUnit @u')
-      . rightUnitorInv x
+compactClosedTrace :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** u ~> y ** u -> x ~> y
+compactClosedTrace f =
+  let u = obj @u; y = obj @y; x = obj @x; dualU = dual @u
+  in rightUnitor
+      . (y `par` (dualityCounit' dualU . (doubleNegInv' u unitObj `par` dualU)))
+      . associator @k @y @u @(Dual u)
+      . (f `par` dualU)
+      . associatorInv @k @x @u @(Dual u)
+      . (x `par` dualityUnit @u)
+      . rightUnitorInv
       \\ dualU
-      \\ u
 
 instance CompactClosed () where
   distribDual = U.Unit

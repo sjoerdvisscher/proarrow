@@ -7,7 +7,16 @@ import Proarrow.Category.Bicategory (Bicategory (I))
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
 import Proarrow.Category.Enriched (Arr, ECategory (..), V, type (%~>))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), first, par, second)
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , associator'
+  , associatorInv'
+  , first
+  , leftUnitorInv'
+  , par
+  , rightUnitor'
+  , second
+  )
 import Proarrow.Core (CategoryOf (..), Is, Kind, PRO, Profunctor (..), Promonad (..), UN, obj, (//))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
 
@@ -35,15 +44,15 @@ instance (Monoidal k) => ECategory (BIPARAK k) where
   eid = Mon2 $ Prof $ \(DayUnit f g) ->
     f // g // Bipara $
       let a = obj @a
-      in (g `par` a) . leftUnitorInv a . rightUnitor a . (a `par` f)
+      in (g `par` a) . leftUnitorInv' a . rightUnitor' a . (a `par` f)
 
   ecomp = Mon2 $ Prof $ \(Day g (Bipara @c @d @aa p) (Bipara @e @f @bb @cc q) h) ->
     g // h // Bipara $
       let c = obj @c; d = obj @d; e = obj @e; f = obj @f; aa = obj @aa; bb = obj @bb; cc = obj @cc
       in (h `par` cc)
-          . associatorInv d f cc
+          . associatorInv' d f cc
           . (d `par` q)
-          . associator d bb e
+          . associator' d bb e
           . (p `par` e)
-          . associatorInv aa c e
+          . associatorInv' aa c e
           . (aa `par` g)

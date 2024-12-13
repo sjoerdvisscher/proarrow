@@ -45,15 +45,18 @@ instance MonoidalProfunctor Linear where
 instance Monoidal LINEAR where
   type Unit = L ()
   type L a ** L b = L (a, b)
-  leftUnitor (Linear f) = Linear \((), x) -> f x
-  leftUnitorInv (Linear f) = Linear \x -> ((), f x)
-  rightUnitor (Linear f) = Linear \(x, ()) -> f x
-  rightUnitorInv (Linear f) = Linear \x -> (f x, ())
-  associator Linear{} Linear{} Linear{} = Linear \((x, y), z) -> (x, (y, z))
-  associatorInv Linear{} Linear{} Linear{} = Linear \(x, (y, z)) -> ((x, y), z)
+  leftUnitor = Linear \((), x) -> x
+  leftUnitorInv = Linear \x -> ((), x)
+  rightUnitor = Linear \(x, ()) -> x
+  rightUnitorInv = Linear \x -> (x, ())
+  associator = Linear \((x, y), z) -> (x, (y, z))
+  associatorInv = Linear \(x, (y, z)) -> ((x, y), z)
 
 instance SymMonoidal LINEAR where
   swap' (Linear f) (Linear g) = Linear \(x, y) -> (g y, f x)
+
+-- instance TracedMonoidalProfunctor Linear where
+--   trace (Linear f) = Linear \x -> let !(y, u) = f (x, u) in y
 
 instance Closed LINEAR where
   type a ~~> b = L (UN L a %1 -> UN L b)

@@ -116,8 +116,8 @@ instance Monoidal BOOL where
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
   rightUnitorInv = rightUnitorProdInv
-  associator = associatorProd
-  associatorInv = associatorProdInv
+  associator @a @b @c = associatorProd @a @b @c
+  associatorInv @a @b @c = associatorProdInv @a @b @c
 
 instance SymMonoidal BOOL where
   swap' = swapProd'

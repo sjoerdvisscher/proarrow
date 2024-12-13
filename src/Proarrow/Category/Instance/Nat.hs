@@ -94,12 +94,12 @@ instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
 instance Monoidal (Type -> Type) where
   type Unit = Identity
   type f ** g = Compose f g
-  leftUnitor (Nat n) = Nat (n . runIdentity . getCompose)
-  leftUnitorInv (Nat n) = Nat (Compose . Identity . n)
-  rightUnitor (Nat n) = Nat (n . map runIdentity . getCompose)
-  rightUnitorInv (Nat n) = Nat (Compose . map Identity . n)
-  associator Nat{} Nat{} Nat{} = Nat (Compose . map Compose . getCompose . getCompose)
-  associatorInv Nat{} Nat{} Nat{} = Nat (Compose . Compose . map getCompose . getCompose)
+  leftUnitor = Nat (runIdentity . getCompose)
+  leftUnitorInv = Nat (Compose . Identity)
+  rightUnitor = Nat (map runIdentity . getCompose)
+  rightUnitorInv = Nat (Compose . map Identity)
+  associator = Nat (Compose . map Compose . getCompose . getCompose)
+  associatorInv = Nat (Compose . Compose . map getCompose . getCompose)
 
 newtype HaskRan j h a = Ran {runRan :: forall b. (a -> j b) -> h b}
 instance Functor (HaskRan j h) where

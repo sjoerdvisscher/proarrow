@@ -4,13 +4,13 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
-import Prelude (($))
+import Prelude (($), type (~))
 
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->), tgt, src)
 
 -- This is equal to a monoidal functor for Star
 -- and to an oplax monoidal functor for Costar
-type MonoidalProfunctor :: j +-> k -> Constraint
+type MonoidalProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: j +-> k) where
   par0 :: p Unit Unit
   par :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
@@ -19,12 +19,30 @@ type Monoidal :: Kind -> Constraint
 class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k)) => Monoidal k where
   type Unit :: k
   type (a :: k) ** (b :: k) :: k
-  leftUnitor :: (a :: k) ~> b -> Unit ** a ~> b
-  leftUnitorInv :: (a :: k) ~> b -> a ~> Unit ** b
-  rightUnitor :: (a :: k) ~> b -> a ** Unit ~> b
-  rightUnitorInv :: (a :: k) ~> b -> a ~> b ** Unit
-  associator :: Obj (a :: k) -> Obj b -> Obj c -> (a ** b) ** c ~> a ** (b ** c)
-  associatorInv :: Obj (a :: k) -> Obj b -> Obj c -> a ** (b ** c) ~> (a ** b) ** c
+  leftUnitor :: Ob (a :: k) => Unit ** a ~> a
+  leftUnitorInv :: Ob (a :: k) => a ~> Unit ** a
+  rightUnitor :: Ob (a :: k) => a ** Unit ~> a
+  rightUnitorInv :: Ob (a :: k) => a ~> a ** Unit
+  associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
+  associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
+
+leftUnitor' :: Monoidal k => (a :: k) ~> b -> Unit ** a ~> b
+leftUnitor' f = f . leftUnitor \\ f
+
+leftUnitorInv' :: Monoidal k => (a :: k) ~> b -> a ~> Unit ** b
+leftUnitorInv' f = leftUnitorInv . f \\ f
+
+rightUnitor' :: Monoidal k => (a :: k) ~> b -> a ** Unit ~> b
+rightUnitor' f = f . rightUnitor \\ f
+
+rightUnitorInv' :: Monoidal k => (a :: k) ~> b -> a ~> b ** Unit
+rightUnitorInv' f = rightUnitorInv . f \\ f
+
+associator' :: forall {k} a b c. Monoidal k => Obj (a :: k) -> Obj b -> Obj c -> (a ** b) ** c ~> a ** (b ** c)
+associator' a b c = associator @k @a @b @c \\ a \\ b \\ c
+
+associatorInv' :: forall {k} a b c. Monoidal k => Obj (a :: k) -> Obj b -> Obj c -> a ** (b ** c) ~> (a ** b) ** c
+associatorInv' a b c = associatorInv @k @a @b @c \\ a \\ b \\ c
 
 unitObj :: Monoidal k => Obj (Unit :: k)
 unitObj = par0
@@ -35,11 +53,13 @@ class (Monoidal k) => SymMonoidal k where
 swap :: forall {k} a b. (SymMonoidal k, Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
 swap = swap' (obj @a) (obj @b)
 
-class (SymMonoidal k) => TracedMonoidalProfunctor (p :: k +-> k) where
+type TracedMonoidalProfunctor :: forall {k}. k +-> k -> Constraint
+class (SymMonoidal k, Profunctor p) => TracedMonoidalProfunctor (p :: k +-> k) where
+  {-# MINIMAL trace | trace' #-}
+  trace :: forall u x y. (Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
+  trace = trace' (obj @x) (obj @y) (obj @u)
   trace' :: (x :: k) ~> x' -> y ~> y' -> u ~> u' -> p (x' ** u') (y ** u) -> p x y'
-
-trace :: forall p x y u. (TracedMonoidalProfunctor p, Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
-trace = trace' (obj @x) (obj @y) (obj @u)
+  trace' @_ @_ @_ @_ @u x y u p = trace @_ @u (dimap (x `par` u) (y `par` src u) p) \\ x \\ y \\ u
 
 class (TracedMonoidalProfunctor ((~>) :: CAT k), Monoidal k) => TracedMonoidal k
 instance (TracedMonoidalProfunctor ((~>) :: CAT k), Monoidal k) => TracedMonoidal k
@@ -56,9 +76,9 @@ second f = obj @c `par` f
 swapInner'
   :: (SymMonoidal k) => (a :: k) ~> a' -> b ~> b' -> c ~> c' -> d ~> d' -> ((a ** b) ** (c ** d)) ~> ((a' ** c') ** (b' ** d'))
 swapInner' a b c d =
-  associatorInv (tgt a) (tgt c) (tgt b `par` tgt d)
-    . (a `par` (associator (tgt c) (tgt b) (tgt d) . (swap' b c `par` d) . associatorInv (src b) (src c) (src d)))
-    . associator (src a) (src b) (src c `par` src d)
+  associatorInv' (tgt a) (tgt c) (tgt b `par` tgt d)
+    . (a `par` (associator' (tgt c) (tgt b) (tgt d) . (swap' b c `par` d) . associatorInv' (src b) (src c) (src d)))
+    . associator' (src a) (src b) (src c `par` src d)
 
 swapInner
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((a ** c) ** (b ** d))
@@ -72,8 +92,11 @@ data SList as where
   Nil :: SList '[]
   Cons :: (Ob a, Ob as) => Obj a -> SList as -> SList (a ': as)
 
+class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
+instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
+
 type IsList :: forall {k}. [k] -> Constraint
-class (CategoryOf k) => IsList (as :: [k]) where sList :: SList as
+class (CategoryOf k, as ~ as ++ '[], forall bs cs. (IsList bs, IsList cs) => Assoc as bs cs) => IsList (as :: [k]) where sList :: SList as
 instance (CategoryOf k) => IsList ('[] :: [k]) where sList = Nil
 instance (Ob a, Ob as) => IsList (a ': as) where sList = Cons (obj @a) (sList @as)
 
@@ -94,11 +117,11 @@ concatFold
 concatFold =
   let fbs = fold (sList @bs)
       h :: forall (cs :: [k]). SList cs -> (Fold cs ** Fold bs) ~> Fold (cs ++ bs)
-      h Nil = leftUnitor fbs
+      h Nil = leftUnitor \\ fbs
       h (Cons c Nil) = case sList @bs of
-        Nil -> rightUnitor c
+        Nil -> rightUnitor
         Cons{} -> c `par` fbs
-      h (Cons c cs@Cons{}) = (c `par` h cs) . associator c (fold cs) fbs
+      h (Cons c cs@Cons{}) = (c `par` h cs) . associator' c (fold cs) fbs
   in h (sList @as)
 
 splitFold
@@ -108,11 +131,11 @@ splitFold
 splitFold =
   let fbs = fold (sList @bs)
       h :: forall cs. SList cs -> Fold (cs ++ bs) ~> Fold cs ** Fold bs
-      h Nil = leftUnitorInv fbs
+      h Nil = leftUnitorInv \\ fbs
       h (Cons c Nil) = case sList @bs of
-        Nil -> rightUnitorInv c
+        Nil -> rightUnitorInv
         Cons{} -> c `par` fbs
-      h (Cons c cs@Cons{}) = associatorInv c (fold cs) fbs . (c `par` h cs)
+      h (Cons c cs@Cons{}) = associatorInv' c (fold cs) fbs . (c `par` h cs)
   in h (sList @as)
 
 type Strictified :: CAT [k]
@@ -150,36 +173,12 @@ instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
 instance (Monoidal k) => Monoidal [k] where
   type Unit = '[]
   type as ** bs = as ++ bs
-  leftUnitor a = a
-  leftUnitorInv a = a
-  rightUnitor :: forall (as :: [k]) bs. as ~> bs -> as ** Unit ~> bs
-  rightUnitor f = f . go (sList @as) \\ f
-    where
-      go :: forall (cs :: [k]). SList cs -> cs ** Unit ~> cs
-      go Nil = id
-      go (Cons _ Nil) = id
-      go (Cons a as@Cons{}) = singleton a `par` go as
-  rightUnitorInv :: forall (as :: [k]) bs. as ~> bs -> as ~> bs ** Unit
-  rightUnitorInv f = go (sList @bs) . f \\ f
-    where
-      go :: forall (cs :: [k]). SList cs -> cs ~> cs ** Unit
-      go Nil = id
-      go (Cons _ Nil) = id
-      go (Cons a as@Cons{}) = singleton a `par` go as
-  associator :: forall as bs cs. Obj (as :: [k]) -> Obj bs -> Obj cs -> (as ** bs) ** cs ~> as ** (bs ** cs)
-  associator as' bs' cs' = go (sList @as) \\ as'
-    where
-      go :: forall (as' :: [k]). SList as' -> (as' ** bs) ** cs ~> as' ** (bs ** cs)
-      go Nil = bs' `par` cs'
-      go (Cons a Nil) = singleton a `par` (bs' `par` cs')
-      go (Cons a as@Cons{}) = singleton a `par` go as
-  associatorInv :: forall as bs cs. Obj (as :: [k]) -> Obj bs -> Obj cs -> as ** (bs ** cs) ~> (as ** bs) ** cs
-  associatorInv as' bs' cs' = go (sList @as) \\ as'
-    where
-      go :: forall (as' :: [k]). SList as' -> as' ** (bs ** cs) ~> (as' ** bs) ** cs
-      go Nil = bs' `par` cs'
-      go (Cons a Nil) = singleton a `par` (bs' `par` cs')
-      go (Cons a as@Cons{}) = singleton a `par` go as
+  leftUnitor = id
+  leftUnitorInv = id
+  rightUnitor = id
+  rightUnitorInv = id
+  associator @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
+  associatorInv @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
 
 -- instance (SymMonoidal k) => SymMonoidal [k] where
 --   swap' :: forall (as :: [k]) (bs :: [k]). (SymMonoidal k) => Obj as -> Obj bs -> (as ** bs) ~> (bs ** as)

@@ -2,8 +2,8 @@
 
 module Proarrow.Category.Instance.Mat where
 
-import Data.Kind (Type)
 import Data.Complex (Complex, conjugate)
+import Data.Kind (Type)
 import Prelude (($), type (~))
 import Prelude qualified as P
 
@@ -17,7 +17,7 @@ import Proarrow.Category.Monoidal
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace')
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -65,7 +65,7 @@ data Mat :: CAT (MatK a) where
 apply :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
 apply m v = P.fmap (P.foldr (P.+) 0 . P.liftA2 (P.*) v) m
 
-class (P.Applicative (Vec n)) => IsNat (n :: Nat) where
+class (P.Applicative (Vec n), n + Z ~ n, n * Z ~ Z, n * S Z ~ n) => IsNat (n :: Nat) where
   matId :: (P.Num a) => Vec n (Vec n a)
   zero :: (P.Num a) => Vec n a
   append :: Vec n a -> Vec m a -> Vec (n + m) a
@@ -74,11 +74,8 @@ class (P.Applicative (Vec n)) => IsNat (n :: Nat) where
   unConcatMap :: (IsNat m) => (Vec m b -> a) -> Vec (n * m) b -> Vec n a
   withPlusNat :: (IsNat m) => ((IsNat (n + m)) => r) -> r
   withMultNat :: (IsNat m) => ((IsNat (n * m)) => r) -> r
-  withPlusZero :: ((n + Z ~ n) => r) -> r
-  withMultZero :: ((n * Z ~ Z) => r) -> r
   withPlusSucc :: (IsNat m) => ((n + (S m) ~ S (n + m)) => r) -> r
   withMultSucc :: (IsNat m) => ((n * (S m) ~ n + (n * m)) => r) -> r
-  withMultOne :: ((n ~ n * S Z) => r) -> r
   withPlusSym :: (IsNat m) => (((n + m) ~ (m + n)) => r) -> r
   withMultSym :: (IsNat m) => (((n * m) ~ (m * n)) => r) -> r
   withAssocPlus :: (IsNat m, IsNat o) => (((n + m) + o ~ n + (m + o)) => r) -> r
@@ -93,13 +90,10 @@ instance IsNat Z where
   unConcatMap _ Nil = Nil
   withPlusNat r = r
   withMultNat r = r
-  withPlusZero r = r
-  withMultZero r = r
   withPlusSucc r = r
   withMultSucc r = r
-  withMultOne r = r
-  withPlusSym @m r = withPlusZero @m r
-  withMultSym @m r = withMultZero @m r
+  withPlusSym r = r
+  withMultSym r = r
   withAssocPlus r = r
   withAssocMult r = r
   withDist r = r
@@ -112,8 +106,6 @@ instance (IsNat n) => IsNat (S n) where
   unConcatMap f mnm = case split mnm of (m, nm) -> f m `Cons` unConcatMap f nm
   withPlusNat @m r = withPlusNat @n @m r
   withMultNat @m r = withMultNat @n @m (withPlusNat @m @(n * m) r)
-  withPlusZero r = withPlusZero @n r
-  withMultZero r = withMultZero @n r
   withPlusSucc @m r = withPlusSucc @n @m r
   withMultSucc @m r =
     withMultNat @n @m $
@@ -121,7 +113,6 @@ instance (IsNat n) => IsNat (S n) where
         withPlusSym @n @m $
           withAssocPlus @m @n @(n * m) $
             withMultSucc @n @m r
-  withMultOne r = withMultOne @n r
   withPlusSym @m r = withPlusSucc @m @n $ withPlusSym @n @m r
   withMultSym @m r = withMultSucc @m @n $ withMultSym @n @m r
   withAssocPlus @m @o r = withAssocPlus @n @m @o r
@@ -184,12 +175,12 @@ instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
 instance (P.Num a) => Monoidal (MatK a) where
   type Unit = M (S Z)
   type M x ** M y = M (y * x)
-  leftUnitor (Mat @m m) = withMultOne @m (Mat m)
-  leftUnitorInv (Mat @_ @m m) = withMultOne @m (Mat m)
-  rightUnitor (Mat @m m) = withPlusZero @m (Mat m)
-  rightUnitorInv (Mat @_ @m m) = withPlusZero @m (Mat m)
-  associator b@(Mat @b _) c@(Mat @c _) d@(Mat @d _) = withAssocMult @d @c @b (b `par` (c `par` d))
-  associatorInv b@(Mat @b _) c@(Mat @c _) d@(Mat @d _) = withAssocMult @d @c @b (b `par` (c `par` d))
+  leftUnitor = id
+  leftUnitorInv = id
+  rightUnitor = id
+  rightUnitorInv = id
+  associator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
+  associatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
 
 instance (P.Num a) => SymMonoidal (MatK a) where
   Mat @gx @gy g `swap'` Mat @fx @fy f =
@@ -208,11 +199,11 @@ instance (P.Num a) => Closed (MatK a) where
 instance (P.Num a) => StarAutonomous (MatK a) where
   type Bottom = M (S Z)
   bottomObj = id
-  doubleNeg @(M n) = withPlusZero @n id
+  doubleNeg = id
 
 instance (P.Num a) => CompactClosed (MatK a) where
   distribDual @m @n = distribDual' (obj @m) (obj @n)
-  distribDual' a@(Mat @m @n _) b@(Mat @m1 @n1 _) = withMultNat @n1 @n $ withPlusZero @m $ withPlusZero @m1 $ withPlusZero @(n1 * n) $ dagger a `par` dagger b
+  distribDual' a@(Mat @_ @n _) b@(Mat @_ @n1 _) = withMultNat @n1 @n $ dagger a `par` dagger b
 
 instance (P.Num a) => TracedMonoidalProfunctor (Mat :: CAT (MatK a)) where
-  trace' = compactClosedTrace'
+  trace @x = compactClosedTrace @x

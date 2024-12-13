@@ -41,12 +41,12 @@ instance (MonoidalProfunctor p, ob Unit, forall a b. (ob a, ob b) => IsObMult ob
 instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => Monoidal (SUBCAT (ob :: OB k)) where
   type Unit = SUB Unit
   type a ** b = SUB (UN SUB a ** UN SUB b)
-  leftUnitor (Sub a) = Sub (leftUnitor a)
-  leftUnitorInv (Sub a) = Sub (leftUnitorInv a)
-  rightUnitor (Sub a) = Sub (rightUnitor a)
-  rightUnitorInv (Sub a) = Sub (rightUnitorInv a)
-  associator (Sub a) (Sub b) (Sub c) = Sub (associator a b c)
-  associatorInv (Sub a) (Sub b) (Sub c) = Sub (associatorInv a b c)
+  leftUnitor = Sub leftUnitor
+  leftUnitorInv = Sub leftUnitorInv
+  rightUnitor = Sub rightUnitor
+  rightUnitorInv = Sub rightUnitorInv
+  associator @(SUB a) @(SUB b) @(SUB c) = Sub (associator @_ @a @b @c)
+  associatorInv @(SUB a) @(SUB b) @(SUB c) = Sub (associatorInv @_ @a @b @c)
 
 instance (SymMonoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SymMonoidal (SUBCAT (ob :: OB k)) where
   swap' (Sub a) (Sub b) = Sub (swap' a b)
