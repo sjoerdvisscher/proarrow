@@ -1,0 +1,5216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Distributive.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal.Distributive</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Bifunctor</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>bimap</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Type</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Prelude</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Either</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>const</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Prelude</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>P</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Unit.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>U</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryCoproduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+	><span class="hs-identifier"
+	  >Coprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	><span class="hs-identifier"
+	  >HasBinaryCoproducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasCoproducts"
+	><span class="hs-identifier"
+	  >HasCoproducts</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryProduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PROD"
+	><span class="hs-identifier"
+	  >PROD</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#Prod"
+	><span class="hs-identifier"
+	  >Prod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Exponential</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#BiCCC"
+	><span class="hs-identifier"
+	  >BiCCC</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html"
+	><span class="hs-identifier"
+	  >Proarrow.Helper.CCC</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Initial</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	><span class="hs-identifier"
+	  >HasInitialObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier hs-type"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361160"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier hs-type"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+	><span class="hs-identifier hs-type"
+	  >Coprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361160"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="DistributiveProfunctor"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#DistributiveProfunctor"
+	  ><span class="hs-identifier hs-var"
+	    >DistributiveProfunctor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361160"
+      ><span class="annot"
+	><a href="#local-6989586621679361160"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361403"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >MonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361403"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>,</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >MonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+	  ><span class="hs-identifier hs-type"
+	    >Coprod</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361403"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#DistributiveProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >DistributiveProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361403"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span id="local-6989586621679361170"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#copar0"
+	  ><span class="hs-identifier hs-type"
+	    >copar0</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#DistributiveProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >DistributiveProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361170"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361170"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span id="copar0"
+      ><span class="annot"
+	><span class="annottext"
+	  >copar0 :: forall {j} {k} (p :: j +-&gt; k).
+DistributiveProfunctor p =&gt;
+p InitialObject InitialObject
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#copar0"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >copar0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Coprod p ('COPR InitialObject) ('COPR InitialObject)
+-&gt; p InitialObject InitialObject
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j).
+Coprod p ('COPR a) ('COPR b) -&gt; p a b
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#unCoprod"
+	><span class="hs-identifier hs-var"
+	  >unCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Coprod p Unit Unit
+Coprod p ('COPR InitialObject) ('COPR InitialObject)
+forall {j} {k} (p :: j +-&gt; k). MonoidalProfunctor p =&gt; p Unit Unit
+</span
+	><a href="Proarrow.Category.Monoidal.html#par0"
+	><span class="hs-identifier hs-var"
+	  >par0</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span id="local-6989586621679361187"
+      ><span id="local-6989586621679361188"
+	><span id="local-6989586621679361189"
+	  ><span id="local-6989586621679361190"
+	    ><span id="local-6989586621679361191"
+	      ><span class="annot"
+		><a href="Proarrow.Category.Monoidal.Distributive.html#copar"
+		  ><span class="hs-identifier hs-type"
+		    >copar</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Monoidal.Distributive.html#DistributiveProfunctor"
+		  ><span class="hs-identifier hs-type"
+		    >DistributiveProfunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361187"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361187"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361188"
+		  ><span class="hs-identifier hs-type"
+		    >a</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361189"
+		  ><span class="hs-identifier hs-type"
+		    >b</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>-&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361187"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361190"
+		  ><span class="hs-identifier hs-type"
+		    >c</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361191"
+		  ><span class="hs-identifier hs-type"
+		    >d</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>-&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361187"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679361188"
+		  ><span class="hs-identifier hs-type"
+		    >a</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+		  ><span class="hs-operator hs-type"
+		    >||</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361190"
+		  ><span class="hs-identifier hs-type"
+		    >c</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679361189"
+		  ><span class="hs-identifier hs-type"
+		    >b</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+		  ><span class="hs-operator hs-type"
+		    >||</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679361191"
+		  ><span class="hs-identifier hs-type"
+		    >d</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span id="copar"
+      ><span class="annot"
+	><span class="annottext"
+	  >copar :: forall {k} {k} (p :: k +-&gt; k) (a :: k) (b :: k) (c :: k) (d :: k).
+DistributiveProfunctor p =&gt;
+p a b -&gt; p c d -&gt; p (a || c) (b || d)
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#copar"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >copar</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361422"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679361422"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361423"
+      ><span class="annot"
+	><span class="annottext"
+	  >p c d
+</span
+	  ><a href="#local-6989586621679361423"
+	  ><span class="hs-identifier hs-var"
+	    >q</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Coprod p ('COPR (a || c)) ('COPR (b || d)) -&gt; p (a || c) (b || d)
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j).
+Coprod p ('COPR a) ('COPR b) -&gt; p a b
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#unCoprod"
+	><span class="hs-identifier hs-var"
+	  >unCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b -&gt; Coprod p ('COPR a) ('COPR b)
+forall {j} {k} (p :: j +-&gt; k) (a1 :: k) (b1 :: j).
+p a1 b1 -&gt; Coprod p ('COPR a1) ('COPR b1)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+	><span class="hs-identifier hs-var"
+	  >Coprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679361422"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Coprod p ('COPR a) ('COPR b)
+-&gt; Coprod p ('COPR c) ('COPR d)
+-&gt; Coprod p ('COPR a ** 'COPR c) ('COPR b ** 'COPR d)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall (x1 :: COPROD k) (x2 :: COPROD k) (y1 :: COPROD k)
+       (y2 :: COPROD k).
+Coprod p x1 x2 -&gt; Coprod p y1 y2 -&gt; Coprod p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p c d -&gt; Coprod p ('COPR c) ('COPR d)
+forall {j} {k} (p :: j +-&gt; k) (a1 :: k) (b1 :: j).
+p a1 b1 -&gt; Coprod p ('COPR a1) ('COPR b1)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+	><span class="hs-identifier hs-var"
+	  >Coprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p c d
+</span
+	><a href="#local-6989586621679361423"
+	><span class="hs-identifier hs-var"
+	  >q</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier hs-type"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361210"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasCoproducts"
+	><span class="hs-identifier hs-type"
+	  >HasCoproducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361210"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Distributive.html#DistributiveProfunctor"
+	><span class="hs-identifier hs-type"
+	  >DistributiveProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >(~&gt;)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361210"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="Distributive"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#Distributive"
+	  ><span class="hs-identifier hs-var"
+	    >Distributive</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361210"
+      ><span class="annot"
+	><a href="#local-6989586621679361210"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span id="distL"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#distL"
+	  ><span class="hs-identifier hs-type"
+	    >distL</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361215"
+      ><span id="local-6989586621679361217"
+	><span id="local-6989586621679361218"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361215"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361210"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361217"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361218"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361215"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361217"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-type"
+		>||</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361218"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361215"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361217"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-type"
+		>||</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361215"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361218"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span id="distR"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#distR"
+	  ><span class="hs-identifier hs-type"
+	    >distR</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361219"
+      ><span id="local-6989586621679361220"
+	><span id="local-6989586621679361221"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361219"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361210"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361220"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361221"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361219"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-type"
+		>||</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361220"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361221"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361219"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361221"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-type"
+		>||</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361220"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361221"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span id="distL0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#distL0"
+	  ><span class="hs-identifier hs-type"
+	    >distL0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361222"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-type"
+	    >Ob</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679361222"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361210"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679361222"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	  ><span class="hs-operator hs-type"
+	    >**</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-type"
+	    >~&gt;</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="distR0"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#distR0"
+	  ><span class="hs-identifier hs-type"
+	    >distR0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361223"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-type"
+	    >Ob</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679361223"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361210"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	  ><span class="hs-operator hs-type"
+	    >**</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361223"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-type"
+	    >~&gt;</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-type"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Distributive.html#Distributive"
+	><span class="hs-identifier hs-type"
+	  >Distributive</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Type</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361471"
+      ><span class="annot"
+	><span class="annottext"
+	  >distL :: forall a b c.
+(Ob a, Ob b, Ob c) =&gt;
+(a ** (b || c)) ~&gt; ((a ** b) || (a ** c))
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distL"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distL</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679361472"
+      ><span class="annot"
+	><span class="annottext"
+	  >a
+</span
+	  ><a href="#local-6989586621679361472"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361473"
+      ><span class="annot"
+	><span class="annottext"
+	  >Either b c
+</span
+	  ><a href="#local-6989586621679361473"
+	  ><span class="hs-identifier hs-var"
+	    >e</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b -&gt; (a, b))
+-&gt; (c -&gt; (a, c)) -&gt; Either b c -&gt; Either (a, b) (a, c)
+forall a b c d. (a -&gt; b) -&gt; (c -&gt; d) -&gt; Either a c -&gt; Either b d
+forall (p :: PRO Type Type) a b c d.
+Bifunctor p =&gt;
+(a -&gt; b) -&gt; (c -&gt; d) -&gt; p a c -&gt; p b d
+</span
+	><span class="hs-identifier hs-var"
+	>bimap</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a
+</span
+	><a href="#local-6989586621679361472"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a
+</span
+	><a href="#local-6989586621679361472"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Either b c
+</span
+	><a href="#local-6989586621679361473"
+	><span class="hs-identifier hs-var"
+	  >e</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361478"
+      ><span class="annot"
+	><span class="annottext"
+	  >distR :: forall a b c.
+(Ob a, Ob b, Ob c) =&gt;
+((a || b) ** c) ~&gt; ((a ** c) || (b ** c))
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distR"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distR</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679361479"
+      ><span class="annot"
+	><span class="annottext"
+	  >Either a b
+</span
+	  ><a href="#local-6989586621679361479"
+	  ><span class="hs-identifier hs-var"
+	    >e</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361480"
+      ><span class="annot"
+	><span class="annottext"
+	  >c
+</span
+	  ><a href="#local-6989586621679361480"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a -&gt; (a, c))
+-&gt; (b -&gt; (b, c)) -&gt; Either a b -&gt; Either (a, c) (b, c)
+forall a b c d. (a -&gt; b) -&gt; (c -&gt; d) -&gt; Either a c -&gt; Either b d
+forall (p :: PRO Type Type) a b c d.
+Bifunctor p =&gt;
+(a -&gt; b) -&gt; (c -&gt; d) -&gt; p a c -&gt; p b d
+</span
+	><span class="hs-identifier hs-var"
+	>bimap</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >,</span
+      ><span class="annot"
+      ><span class="annottext"
+	>c
+</span
+	><a href="#local-6989586621679361480"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >,</span
+      ><span class="annot"
+      ><span class="annottext"
+	>c
+</span
+	><a href="#local-6989586621679361480"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Either a b
+</span
+	><a href="#local-6989586621679361479"
+	><span class="hs-identifier hs-var"
+	  >e</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361482"
+      ><span class="annot"
+	><span class="annottext"
+	  >distL0 :: forall a. Ob a =&gt; (a ** InitialObject) ~&gt; InitialObject
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distL0"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distL0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** InitialObject) ~&gt; InitialObject
+(a, Void) -&gt; Void
+forall a b. (a, b) -&gt; b
+</span
+	><span class="hs-identifier hs-var"
+	>P.snd</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361485"
+      ><span class="annot"
+	><span class="annottext"
+	  >distR0 :: forall a. Ob a =&gt; (InitialObject ** a) ~&gt; InitialObject
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distR0"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distR0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(InitialObject ** a) ~&gt; InitialObject
+(Void, a) -&gt; Void
+forall a b. (a, b) -&gt; a
+</span
+	><span class="hs-identifier hs-var"
+	>P.fst</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Distributive.html#Distributive"
+	><span class="hs-identifier hs-type"
+	  >Distributive</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361526"
+      ><span class="annot"
+	><span class="annottext"
+	  >distL :: forall (a :: ()) (b :: ()) (c :: ()).
+(Ob a, Ob b, Ob c) =&gt;
+(a ** (b || c)) ~&gt; ((a ** b) || (a ** c))
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distL"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distL</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** (b || c)) ~&gt; ((a ** b) || (a ** c))
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361537"
+      ><span class="annot"
+	><span class="annottext"
+	  >distR :: forall (a :: ()) (b :: ()) (c :: ()).
+(Ob a, Ob b, Ob c) =&gt;
+((a || b) ** c) ~&gt; ((a ** c) || (b ** c))
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distR"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distR</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a || b) ** c) ~&gt; ((a ** c) || (b ** c))
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361541"
+      ><span class="annot"
+	><span class="annottext"
+	  >distL0 :: forall (a :: ()). Ob a =&gt; (a ** InitialObject) ~&gt; InitialObject
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distL0"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distL0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** InitialObject) ~&gt; InitialObject
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361545"
+      ><span class="annot"
+	><span class="annottext"
+	  >distR0 :: forall (a :: ()). Ob a =&gt; (InitialObject ** a) ~&gt; InitialObject
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distR0"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distR0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(InitialObject ** a) ~&gt; InitialObject
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361288"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Object.Exponential.html#BiCCC"
+	  ><span class="hs-identifier hs-type"
+	    >BiCCC</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361288"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Distributive.html#Distributive"
+	  ><span class="hs-identifier hs-type"
+	    >Distributive</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Object.BinaryProduct.html#PROD"
+	  ><span class="hs-identifier hs-type"
+	    >PROD</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679361288"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361728"
+      ><span class="annot"
+	><span class="annottext"
+	  >distL :: forall (a :: PROD k) (b :: PROD k) (c :: PROD k).
+(Ob a, Ob b, Ob c) =&gt;
+(a ** (b || c)) ~&gt; ((a ** b) || (a ** c))
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distL"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distL</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361729"
+      ><span class="annot"
+	><a href="#local-6989586621679361729"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361730"
+      ><span class="annot"
+	><a href="#local-6989586621679361730"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361731"
+      ><span class="annot"
+	><a href="#local-6989586621679361731"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'PR a &amp;&amp; (UN 'PR b || UN 'PR c))
+ ~&gt; ((UN 'PR a &amp;&amp; UN 'PR b) || (UN 'PR a &amp;&amp; UN 'PR c)))
+-&gt; Prod
+     (~&gt;)
+     ('PR (UN 'PR a &amp;&amp; (UN 'PR b || UN 'PR c)))
+     ('PR ((UN 'PR a &amp;&amp; UN 'PR b) || (UN 'PR a &amp;&amp; UN 'PR c)))
+forall {j} {k} (p :: j +-&gt; k) (a1 :: k) (b1 :: j).
+p a1 b1 -&gt; Prod p ('PR a1) ('PR b1)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#Prod"
+	><span class="hs-identifier hs-var"
+	  >Prod</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >      </span
+      ><span class="hs-special"
+      >(</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+forall (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+</span
+	><a href="Proarrow.Helper.CCC.html#toCCC"
+	><span class="hs-identifier hs-var"
+	  >toCCC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361729"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361730"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2B"
+	><span class="hs-operator hs-type"
+	  >+</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361731"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361729"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361730"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2B"
+	><span class="hs-operator hs-type"
+	  >+</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361729"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361731"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >          </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x (TermF &amp;&amp; ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c)))) =&gt;
+  x ~&gt; ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+ -&gt; (TermF &amp;&amp; ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    ~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+        + ('F (UN 'PR a) * 'F (UN 'PR c))))
+-&gt; TermF
+   ~&gt; (('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c)))
+       ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+            + ('F (UN 'PR a) * 'F (UN 'PR c))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679361735"
+      ><span class="annot"
+	><span class="annottext"
+	  >(TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+~&gt; 'F (UN 'PR a)
+</span
+	  ><a href="#local-6989586621679361735"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-type"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361737"
+      ><span class="annot"
+	><span class="annottext"
+	  >(TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+~&gt; ('F (UN 'PR b) + 'F (UN 'PR c))
+</span
+	  ><a href="#local-6989586621679361737"
+	  ><span class="hs-identifier hs-var"
+	    >bc</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+ ~&gt; ('F (UN 'PR b)
+     ~~&gt; ('F (UN 'PR a)
+          --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+               + ('F (UN 'PR a) * 'F (UN 'PR c))))))
+-&gt; ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    ~&gt; ('F (UN 'PR c)
+        ~~&gt; ('F (UN 'PR a)
+             --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+                  + ('F (UN 'PR a) * 'F (UN 'PR c))))))
+-&gt; (TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   ~&gt; (('F (UN 'PR b) || 'F (UN 'PR c))
+       ~~&gt; ('F (UN 'PR a)
+            --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+                 + ('F (UN 'PR a) * 'F (UN 'PR c)))))
+forall {k} (a :: k) (b :: k) (c :: k) (i :: k).
+(HasBinaryCoproducts k, CCC k, Ob a, Ob b, Ob c) =&gt;
+(i ~&gt; (a ~~&gt; c)) -&gt; (i ~&gt; (b ~~&gt; c)) -&gt; i ~&gt; ((a || b) ~~&gt; c)
+</span
+	><a href="Proarrow.Helper.CCC.html#either"
+	><span class="hs-identifier hs-var"
+	  >either</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     &amp;&amp; 'F (UN 'PR b)) =&gt;
+  x ~&gt; 'F (UN 'PR b))
+ -&gt; ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     &amp;&amp; 'F (UN 'PR b))
+    ~&gt; ('F (UN 'PR a)
+        --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+             + ('F (UN 'PR a) * 'F (UN 'PR c)))))
+-&gt; (TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   ~&gt; ('F (UN 'PR b)
+       ~~&gt; ('F (UN 'PR a)
+            --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+                 + ('F (UN 'PR a) * 'F (UN 'PR c)))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361739"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   &amp;&amp; 'F (UN 'PR b)) =&gt;
+x ~&gt; 'F (UN 'PR b)
+</span
+	  ><a href="#local-6989586621679361739"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+      * 'F (UN 'PR b))
+     &amp;&amp; 'F (UN 'PR a)) =&gt;
+  x ~&gt; 'F (UN 'PR a))
+ -&gt; (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+      * 'F (UN 'PR b))
+     &amp;&amp; 'F (UN 'PR a))
+    ~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+        + ('F (UN 'PR a) * 'F (UN 'PR c))))
+-&gt; ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    * 'F (UN 'PR b))
+   ~&gt; ('F (UN 'PR a)
+       ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+            + ('F (UN 'PR a) * 'F (UN 'PR c))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361740"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    * 'F (UN 'PR b))
+   &amp;&amp; 'F (UN 'PR a)) =&gt;
+x ~&gt; 'F (UN 'PR a)
+</span
+	  ><a href="#local-6989586621679361740"
+	  ><span class="hs-identifier hs-var"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   * 'F (UN 'PR b))
+  * 'F (UN 'PR a))
+ ~&gt; ('F (UN 'PR a) * 'F (UN 'PR b)))
+-&gt; (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     * 'F (UN 'PR b))
+    * 'F (UN 'PR a))
+   ~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+       || ('F (UN 'PR a) * 'F (UN 'PR c)))
+forall {k} (a :: k) (b :: k) (i :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(i ~&gt; a) -&gt; i ~&gt; (a || b)
+</span
+	><a href="Proarrow.Helper.CCC.html#left"
+	><span class="hs-identifier hs-var"
+	  >left</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+  * 'F (UN 'PR b))
+ * 'F (UN 'PR a))
+~&gt; 'F (UN 'PR a)
+forall (x :: FK k).
+Cast
+  x
+  (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    * 'F (UN 'PR b))
+   &amp;&amp; 'F (UN 'PR a)) =&gt;
+x ~&gt; 'F (UN 'PR a)
+</span
+	><a href="#local-6989586621679361740"
+	><span class="hs-identifier hs-var"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   * 'F (UN 'PR b))
+  * 'F (UN 'PR a))
+ ~&gt; 'F (UN 'PR a))
+-&gt; ((((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+      * 'F (UN 'PR b))
+     * 'F (UN 'PR a))
+    ~&gt; 'F (UN 'PR b))
+-&gt; (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     * 'F (UN 'PR b))
+    * 'F (UN 'PR a))
+   ~&gt; ('F (UN 'PR a) &amp;&amp; 'F (UN 'PR b))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob a, Ob b) =&gt;
+(i ~&gt; a) -&gt; (i ~&gt; b) -&gt; i ~&gt; (a &amp;&amp; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-var"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+  * 'F (UN 'PR b))
+ * 'F (UN 'PR a))
+~&gt; 'F (UN 'PR b)
+forall (x :: FK k).
+Cast
+  x
+  ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   &amp;&amp; 'F (UN 'PR b)) =&gt;
+x ~&gt; 'F (UN 'PR b)
+</span
+	><a href="#local-6989586621679361739"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     &amp;&amp; 'F (UN 'PR c)) =&gt;
+  x ~&gt; 'F (UN 'PR c))
+ -&gt; ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     &amp;&amp; 'F (UN 'PR c))
+    ~&gt; ('F (UN 'PR a)
+        --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+             + ('F (UN 'PR a) * 'F (UN 'PR c)))))
+-&gt; (TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   ~&gt; ('F (UN 'PR c)
+       ~~&gt; ('F (UN 'PR a)
+            --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+                 + ('F (UN 'PR a) * 'F (UN 'PR c)))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361742"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   &amp;&amp; 'F (UN 'PR c)) =&gt;
+x ~&gt; 'F (UN 'PR c)
+</span
+	  ><a href="#local-6989586621679361742"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+      * 'F (UN 'PR c))
+     &amp;&amp; 'F (UN 'PR a)) =&gt;
+  x ~&gt; 'F (UN 'PR a))
+ -&gt; (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+      * 'F (UN 'PR c))
+     &amp;&amp; 'F (UN 'PR a))
+    ~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+        + ('F (UN 'PR a) * 'F (UN 'PR c))))
+-&gt; ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    * 'F (UN 'PR c))
+   ~&gt; ('F (UN 'PR a)
+       ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+            + ('F (UN 'PR a) * 'F (UN 'PR c))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361743"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    * 'F (UN 'PR c))
+   &amp;&amp; 'F (UN 'PR a)) =&gt;
+x ~&gt; 'F (UN 'PR a)
+</span
+	  ><a href="#local-6989586621679361743"
+	  ><span class="hs-identifier hs-var"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   * 'F (UN 'PR c))
+  * 'F (UN 'PR a))
+ ~&gt; ('F (UN 'PR a) * 'F (UN 'PR c)))
+-&gt; (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     * 'F (UN 'PR c))
+    * 'F (UN 'PR a))
+   ~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+       || ('F (UN 'PR a) * 'F (UN 'PR c)))
+forall {k} (a :: k) (b :: k) (i :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(i ~&gt; b) -&gt; i ~&gt; (a || b)
+</span
+	><a href="Proarrow.Helper.CCC.html#right"
+	><span class="hs-identifier hs-var"
+	  >right</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+  * 'F (UN 'PR c))
+ * 'F (UN 'PR a))
+~&gt; 'F (UN 'PR a)
+forall (x :: FK k).
+Cast
+  x
+  (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    * 'F (UN 'PR c))
+   &amp;&amp; 'F (UN 'PR a)) =&gt;
+x ~&gt; 'F (UN 'PR a)
+</span
+	><a href="#local-6989586621679361743"
+	><span class="hs-identifier hs-var"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   * 'F (UN 'PR c))
+  * 'F (UN 'PR a))
+ ~&gt; 'F (UN 'PR a))
+-&gt; ((((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+      * 'F (UN 'PR c))
+     * 'F (UN 'PR a))
+    ~&gt; 'F (UN 'PR c))
+-&gt; (((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+     * 'F (UN 'PR c))
+    * 'F (UN 'PR a))
+   ~&gt; ('F (UN 'PR a) &amp;&amp; 'F (UN 'PR c))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob a, Ob b) =&gt;
+(i ~&gt; a) -&gt; (i ~&gt; b) -&gt; i ~&gt; (a &amp;&amp; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-var"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+  * 'F (UN 'PR c))
+ * 'F (UN 'PR a))
+~&gt; 'F (UN 'PR c)
+forall (x :: FK k).
+Cast
+  x
+  ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   &amp;&amp; 'F (UN 'PR c)) =&gt;
+x ~&gt; 'F (UN 'PR c)
+</span
+	><a href="#local-6989586621679361742"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+ ~&gt; (('F (UN 'PR b) + 'F (UN 'PR c))
+     ~~&gt; ('F (UN 'PR a)
+          --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+               + ('F (UN 'PR a) * 'F (UN 'PR c))))))
+-&gt; ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    ~&gt; ('F (UN 'PR b) + 'F (UN 'PR c)))
+-&gt; (TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   ~&gt; ('F (UN 'PR a)
+       --&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+            + ('F (UN 'PR a) * 'F (UN 'PR c))))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob b) =&gt;
+(i ~&gt; (a ~~&gt; b)) -&gt; (i ~&gt; a) -&gt; i ~&gt; b
+</span
+	><a href="Proarrow.Helper.CCC.html#%24"
+	><span class="hs-operator hs-var"
+	  >$</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+~&gt; ('F (UN 'PR b) + 'F (UN 'PR c))
+</span
+	><a href="#local-6989586621679361737"
+	><span class="hs-identifier hs-var"
+	  >bc</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+ ~&gt; ('F (UN 'PR a)
+     ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+          + ('F (UN 'PR a) * 'F (UN 'PR c)))))
+-&gt; ((TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+    ~&gt; 'F (UN 'PR a))
+-&gt; (TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+   ~&gt; (('F (UN 'PR a) * 'F (UN 'PR b))
+       + ('F (UN 'PR a) * 'F (UN 'PR c)))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob b) =&gt;
+(i ~&gt; (a ~~&gt; b)) -&gt; (i ~&gt; a) -&gt; i ~&gt; b
+</span
+	><a href="Proarrow.Helper.CCC.html#%24"
+	><span class="hs-operator hs-var"
+	  >$</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF * ('F (UN 'PR a) * ('F (UN 'PR b) + 'F (UN 'PR c))))
+~&gt; 'F (UN 'PR a)
+</span
+	><a href="#local-6989586621679361735"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >      </span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361863"
+      ><span class="annot"
+	><span class="annottext"
+	  >distR :: forall (a :: PROD k) (b :: PROD k) (c :: PROD k).
+(Ob a, Ob b, Ob c) =&gt;
+((a || b) ** c) ~&gt; ((a ** c) || (b ** c))
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distR"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distR</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361864"
+      ><span class="annot"
+	><a href="#local-6989586621679361864"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361865"
+      ><span class="annot"
+	><a href="#local-6989586621679361865"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361866"
+      ><span class="annot"
+	><a href="#local-6989586621679361866"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((UN 'PR a || UN 'PR b) &amp;&amp; UN 'PR c)
+ ~&gt; ((UN 'PR a &amp;&amp; UN 'PR c) || (UN 'PR b &amp;&amp; UN 'PR c)))
+-&gt; Prod
+     (~&gt;)
+     ('PR ((UN 'PR a || UN 'PR b) &amp;&amp; UN 'PR c))
+     ('PR ((UN 'PR a &amp;&amp; UN 'PR c) || (UN 'PR b &amp;&amp; UN 'PR c)))
+forall {j} {k} (p :: j +-&gt; k) (a1 :: k) (b1 :: j).
+p a1 b1 -&gt; Prod p ('PR a1) ('PR b1)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#Prod"
+	><span class="hs-identifier hs-var"
+	  >Prod</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >      </span
+      ><span class="hs-special"
+      >(</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+forall (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+</span
+	><a href="Proarrow.Helper.CCC.html#toCCC"
+	><span class="hs-identifier hs-var"
+	  >toCCC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361864"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2B"
+	><span class="hs-operator hs-type"
+	  >+</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361865"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361866"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361864"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361866"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2B"
+	><span class="hs-operator hs-type"
+	  >+</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361865"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361866"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >          </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x (TermF &amp;&amp; (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c))) =&gt;
+  x ~&gt; (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+ -&gt; (TermF &amp;&amp; (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    ~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+        + ('F (UN 'PR b) * 'F (UN 'PR c))))
+-&gt; TermF
+   ~&gt; ((('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c))
+       ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+            + ('F (UN 'PR b) * 'F (UN 'PR c))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679361867"
+      ><span class="annot"
+	><span class="annottext"
+	  >(TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+~&gt; ('F (UN 'PR a) + 'F (UN 'PR b))
+</span
+	  ><a href="#local-6989586621679361867"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-type"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361868"
+      ><span class="annot"
+	><span class="annottext"
+	  >(TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+~&gt; 'F (UN 'PR c)
+</span
+	  ><a href="#local-6989586621679361868"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+ ~&gt; ('F (UN 'PR a)
+     ~~&gt; ('F (UN 'PR c)
+          --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+               + ('F (UN 'PR b) * 'F (UN 'PR c))))))
+-&gt; ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    ~&gt; ('F (UN 'PR b)
+        ~~&gt; ('F (UN 'PR c)
+             --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+                  + ('F (UN 'PR b) * 'F (UN 'PR c))))))
+-&gt; (TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   ~&gt; (('F (UN 'PR a) || 'F (UN 'PR b))
+       ~~&gt; ('F (UN 'PR c)
+            --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+                 + ('F (UN 'PR b) * 'F (UN 'PR c)))))
+forall {k} (a :: k) (b :: k) (c :: k) (i :: k).
+(HasBinaryCoproducts k, CCC k, Ob a, Ob b, Ob c) =&gt;
+(i ~&gt; (a ~~&gt; c)) -&gt; (i ~&gt; (b ~~&gt; c)) -&gt; i ~&gt; ((a || b) ~~&gt; c)
+</span
+	><a href="Proarrow.Helper.CCC.html#either"
+	><span class="hs-identifier hs-var"
+	  >either</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     &amp;&amp; 'F (UN 'PR a)) =&gt;
+  x ~&gt; 'F (UN 'PR a))
+ -&gt; ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     &amp;&amp; 'F (UN 'PR a))
+    ~&gt; ('F (UN 'PR c)
+        --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+             + ('F (UN 'PR b) * 'F (UN 'PR c)))))
+-&gt; (TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   ~&gt; ('F (UN 'PR a)
+       ~~&gt; ('F (UN 'PR c)
+            --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+                 + ('F (UN 'PR b) * 'F (UN 'PR c)))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361869"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   &amp;&amp; 'F (UN 'PR a)) =&gt;
+x ~&gt; 'F (UN 'PR a)
+</span
+	  ><a href="#local-6989586621679361869"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+      * 'F (UN 'PR a))
+     &amp;&amp; 'F (UN 'PR c)) =&gt;
+  x ~&gt; 'F (UN 'PR c))
+ -&gt; (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+      * 'F (UN 'PR a))
+     &amp;&amp; 'F (UN 'PR c))
+    ~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+        + ('F (UN 'PR b) * 'F (UN 'PR c))))
+-&gt; ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    * 'F (UN 'PR a))
+   ~&gt; ('F (UN 'PR c)
+       ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+            + ('F (UN 'PR b) * 'F (UN 'PR c))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361870"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    * 'F (UN 'PR a))
+   &amp;&amp; 'F (UN 'PR c)) =&gt;
+x ~&gt; 'F (UN 'PR c)
+</span
+	  ><a href="#local-6989586621679361870"
+	  ><span class="hs-identifier hs-var"
+	    >c'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   * 'F (UN 'PR a))
+  * 'F (UN 'PR c))
+ ~&gt; ('F (UN 'PR a) * 'F (UN 'PR c)))
+-&gt; (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     * 'F (UN 'PR a))
+    * 'F (UN 'PR c))
+   ~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+       || ('F (UN 'PR b) * 'F (UN 'PR c)))
+forall {k} (a :: k) (b :: k) (i :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(i ~&gt; a) -&gt; i ~&gt; (a || b)
+</span
+	><a href="Proarrow.Helper.CCC.html#left"
+	><span class="hs-identifier hs-var"
+	  >left</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+  * 'F (UN 'PR a))
+ * 'F (UN 'PR c))
+~&gt; 'F (UN 'PR a)
+forall (x :: FK k).
+Cast
+  x
+  ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   &amp;&amp; 'F (UN 'PR a)) =&gt;
+x ~&gt; 'F (UN 'PR a)
+</span
+	><a href="#local-6989586621679361869"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   * 'F (UN 'PR a))
+  * 'F (UN 'PR c))
+ ~&gt; 'F (UN 'PR a))
+-&gt; ((((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+      * 'F (UN 'PR a))
+     * 'F (UN 'PR c))
+    ~&gt; 'F (UN 'PR c))
+-&gt; (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     * 'F (UN 'PR a))
+    * 'F (UN 'PR c))
+   ~&gt; ('F (UN 'PR a) &amp;&amp; 'F (UN 'PR c))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob a, Ob b) =&gt;
+(i ~&gt; a) -&gt; (i ~&gt; b) -&gt; i ~&gt; (a &amp;&amp; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-var"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+  * 'F (UN 'PR a))
+ * 'F (UN 'PR c))
+~&gt; 'F (UN 'PR c)
+forall (x :: FK k).
+Cast
+  x
+  (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    * 'F (UN 'PR a))
+   &amp;&amp; 'F (UN 'PR c)) =&gt;
+x ~&gt; 'F (UN 'PR c)
+</span
+	><a href="#local-6989586621679361870"
+	><span class="hs-identifier hs-var"
+	  >c'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     &amp;&amp; 'F (UN 'PR b)) =&gt;
+  x ~&gt; 'F (UN 'PR b))
+ -&gt; ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     &amp;&amp; 'F (UN 'PR b))
+    ~&gt; ('F (UN 'PR c)
+        --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+             + ('F (UN 'PR b) * 'F (UN 'PR c)))))
+-&gt; (TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   ~&gt; ('F (UN 'PR b)
+       ~~&gt; ('F (UN 'PR c)
+            --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+                 + ('F (UN 'PR b) * 'F (UN 'PR c)))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361871"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   &amp;&amp; 'F (UN 'PR b)) =&gt;
+x ~&gt; 'F (UN 'PR b)
+</span
+	  ><a href="#local-6989586621679361871"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast
+    x
+    (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+      * 'F (UN 'PR b))
+     &amp;&amp; 'F (UN 'PR c)) =&gt;
+  x ~&gt; 'F (UN 'PR c))
+ -&gt; (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+      * 'F (UN 'PR b))
+     &amp;&amp; 'F (UN 'PR c))
+    ~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+        + ('F (UN 'PR b) * 'F (UN 'PR c))))
+-&gt; ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    * 'F (UN 'PR b))
+   ~&gt; ('F (UN 'PR c)
+       ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+            + ('F (UN 'PR b) * 'F (UN 'PR c))))
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361872"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall (x :: FK k).
+Cast
+  x
+  (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    * 'F (UN 'PR b))
+   &amp;&amp; 'F (UN 'PR c)) =&gt;
+x ~&gt; 'F (UN 'PR c)
+</span
+	  ><a href="#local-6989586621679361872"
+	  ><span class="hs-identifier hs-var"
+	    >c'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   * 'F (UN 'PR b))
+  * 'F (UN 'PR c))
+ ~&gt; ('F (UN 'PR b) * 'F (UN 'PR c)))
+-&gt; (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     * 'F (UN 'PR b))
+    * 'F (UN 'PR c))
+   ~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+       || ('F (UN 'PR b) * 'F (UN 'PR c)))
+forall {k} (a :: k) (b :: k) (i :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(i ~&gt; b) -&gt; i ~&gt; (a || b)
+</span
+	><a href="Proarrow.Helper.CCC.html#right"
+	><span class="hs-identifier hs-var"
+	  >right</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+  * 'F (UN 'PR b))
+ * 'F (UN 'PR c))
+~&gt; 'F (UN 'PR b)
+forall (x :: FK k).
+Cast
+  x
+  ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   &amp;&amp; 'F (UN 'PR b)) =&gt;
+x ~&gt; 'F (UN 'PR b)
+</span
+	><a href="#local-6989586621679361871"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   * 'F (UN 'PR b))
+  * 'F (UN 'PR c))
+ ~&gt; 'F (UN 'PR b))
+-&gt; ((((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+      * 'F (UN 'PR b))
+     * 'F (UN 'PR c))
+    ~&gt; 'F (UN 'PR c))
+-&gt; (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+     * 'F (UN 'PR b))
+    * 'F (UN 'PR c))
+   ~&gt; ('F (UN 'PR b) &amp;&amp; 'F (UN 'PR c))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob a, Ob b) =&gt;
+(i ~&gt; a) -&gt; (i ~&gt; b) -&gt; i ~&gt; (a &amp;&amp; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-var"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+  * 'F (UN 'PR b))
+ * 'F (UN 'PR c))
+~&gt; 'F (UN 'PR c)
+forall (x :: FK k).
+Cast
+  x
+  (((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    * 'F (UN 'PR b))
+   &amp;&amp; 'F (UN 'PR c)) =&gt;
+x ~&gt; 'F (UN 'PR c)
+</span
+	><a href="#local-6989586621679361872"
+	><span class="hs-identifier hs-var"
+	  >c'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+ ~&gt; (('F (UN 'PR a) + 'F (UN 'PR b))
+     ~~&gt; ('F (UN 'PR c)
+          --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+               + ('F (UN 'PR b) * 'F (UN 'PR c))))))
+-&gt; ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    ~&gt; ('F (UN 'PR a) + 'F (UN 'PR b)))
+-&gt; (TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   ~&gt; ('F (UN 'PR c)
+       --&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+            + ('F (UN 'PR b) * 'F (UN 'PR c))))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob b) =&gt;
+(i ~&gt; (a ~~&gt; b)) -&gt; (i ~&gt; a) -&gt; i ~&gt; b
+</span
+	><a href="Proarrow.Helper.CCC.html#%24"
+	><span class="hs-operator hs-var"
+	  >$</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+~&gt; ('F (UN 'PR a) + 'F (UN 'PR b))
+</span
+	><a href="#local-6989586621679361867"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+ ~&gt; ('F (UN 'PR c)
+     ~~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+          + ('F (UN 'PR b) * 'F (UN 'PR c)))))
+-&gt; ((TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+    ~&gt; 'F (UN 'PR c))
+-&gt; (TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+   ~&gt; (('F (UN 'PR a) * 'F (UN 'PR c))
+       + ('F (UN 'PR b) * 'F (UN 'PR c)))
+forall {k} (i :: k) (a :: k) (b :: k).
+(CCC k, Ob b) =&gt;
+(i ~&gt; (a ~~&gt; b)) -&gt; (i ~&gt; a) -&gt; i ~&gt; b
+</span
+	><a href="Proarrow.Helper.CCC.html#%24"
+	><span class="hs-operator hs-var"
+	  >$</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF * (('F (UN 'PR a) + 'F (UN 'PR b)) * 'F (UN 'PR c)))
+~&gt; 'F (UN 'PR c)
+</span
+	><a href="#local-6989586621679361868"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span
+      >      </span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361908"
+      ><span class="annot"
+	><span class="annottext"
+	  >distL0 :: forall (a :: PROD k). Ob a =&gt; (a ** InitialObject) ~&gt; InitialObject
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distL0"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distL0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361909"
+      ><span class="annot"
+	><a href="#local-6989586621679361909"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'PR a &amp;&amp; InitialObject) ~&gt; InitialObject)
+-&gt; Prod (~&gt;) ('PR (UN 'PR a &amp;&amp; InitialObject)) ('PR InitialObject)
+forall {j} {k} (p :: j +-&gt; k) (a1 :: k) (b1 :: j).
+p a1 b1 -&gt; Prod p ('PR a1) ('PR b1)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#Prod"
+	><span class="hs-identifier hs-var"
+	  >Prod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+forall (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+</span
+	><a href="Proarrow.Helper.CCC.html#toCCC"
+	><span class="hs-identifier hs-var"
+	  >toCCC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361909"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#InitF"
+	><span class="hs-identifier hs-type"
+	  >InitF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#InitF"
+	><span class="hs-identifier hs-type"
+	  >InitF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast x (TermF &amp;&amp; ('F (UN 'PR a) * InitF)) =&gt;
+  x ~&gt; ('F (UN 'PR a) * InitF))
+ -&gt; (TermF &amp;&amp; ('F (UN 'PR a) * InitF)) ~&gt; InitF)
+-&gt; TermF ~&gt; (('F (UN 'PR a) * InitF) ~~&gt; InitF)
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF * ('F (UN 'PR a) * InitF)) ~&gt; 'F (UN 'PR a)
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-type"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361910"
+      ><span class="annot"
+	><span class="annottext"
+	  >(TermF * ('F (UN 'PR a) * InitF)) ~&gt; InitF
+</span
+	  ><a href="#local-6989586621679361910"
+	  ><span class="hs-identifier hs-var"
+	    >v</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF &amp;&amp; ('F (UN 'PR a) * InitF)) ~&gt; InitF
+(TermF * ('F (UN 'PR a) * InitF)) ~&gt; InitF
+</span
+	><a href="#local-6989586621679361910"
+	><span class="hs-identifier hs-var"
+	  >v</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679361945"
+      ><span class="annot"
+	><span class="annottext"
+	  >distR0 :: forall (a :: PROD k). Ob a =&gt; (InitialObject ** a) ~&gt; InitialObject
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#distR0"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distR0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#PR"
+	><span class="hs-identifier hs-type"
+	  >PR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361946"
+      ><span class="annot"
+	><a href="#local-6989586621679361946"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((InitialObject &amp;&amp; UN 'PR a) ~&gt; InitialObject)
+-&gt; Prod (~&gt;) ('PR (InitialObject &amp;&amp; UN 'PR a)) ('PR InitialObject)
+forall {j} {k} (p :: j +-&gt; k) (a1 :: k) (b1 :: j).
+p a1 b1 -&gt; Prod p ('PR a1) ('PR b1)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#Prod"
+	><span class="hs-identifier hs-var"
+	  >Prod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+forall (a :: FK k) (b :: FK k).
+(BiCCC k, Ob a, Ob b) =&gt;
+(TermF ~&gt; (a --&gt; b)) -&gt; FromFree a ~&gt; FromFree b
+</span
+	><a href="Proarrow.Helper.CCC.html#toCCC"
+	><span class="hs-identifier hs-var"
+	  >toCCC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#InitF"
+	><span class="hs-identifier hs-type"
+	  >InitF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%2A"
+	><span class="hs-operator hs-type"
+	  >*</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#F"
+	><span class="hs-identifier hs-type"
+	  >F</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679361946"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#InitF"
+	><span class="hs-identifier hs-type"
+	  >InitF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((forall (x :: FK k).
+  Cast x (TermF &amp;&amp; (InitF * 'F (UN 'PR a))) =&gt;
+  x ~&gt; (InitF * 'F (UN 'PR a)))
+ -&gt; (TermF &amp;&amp; (InitF * 'F (UN 'PR a))) ~&gt; InitF)
+-&gt; TermF ~&gt; ((InitF * 'F (UN 'PR a)) ~~&gt; InitF)
+forall {k} (a :: k) (b :: k) (i :: k).
+(CCC k, Ob i, Ob a, Ob b) =&gt;
+((forall (x :: k). Cast x (i &amp;&amp; a) =&gt; x ~&gt; a) -&gt; (i &amp;&amp; a) ~&gt; b)
+-&gt; i ~&gt; (a ~~&gt; b)
+</span
+	><a href="Proarrow.Helper.CCC.html#lam"
+	><span class="hs-identifier hs-var"
+	  >lam</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679361947"
+      ><span class="annot"
+	><span class="annottext"
+	  >(TermF * (InitF * 'F (UN 'PR a))) ~&gt; InitF
+</span
+	  ><a href="#local-6989586621679361947"
+	  ><span class="hs-identifier hs-var"
+	    >v</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Helper.CCC.html#%3A%26"
+	><span class="hs-operator hs-type"
+	  >:&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF * (InitF * 'F (UN 'PR a))) ~&gt; 'F (UN 'PR a)
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(TermF &amp;&amp; (InitF * 'F (UN 'PR a))) ~&gt; InitF
+(TermF * (InitF * 'F (UN 'PR a))) ~&gt; InitF
+</span
+	><a href="#local-6989586621679361947"
+	><span class="hs-identifier hs-var"
+	  >v</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span id="local-6989586621679361377"
+      ><span id="local-6989586621679361378"
+	><span id="local-6989586621679361379"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.Distributive.html#travList"
+	      ><span class="hs-identifier hs-type"
+		>travList</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.Distributive.html#DistributiveProfunctor"
+	      ><span class="hs-identifier hs-type"
+		>DistributiveProfunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361377"
+	      ><span class="hs-identifier hs-type"
+		>p</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361377"
+	      ><span class="hs-identifier hs-type"
+		>p</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361378"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361379"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361377"
+	      ><span class="hs-identifier hs-type"
+		>p</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >[</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361378"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >]</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >[</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679361379"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >]</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span id="travList"
+      ><span class="annot"
+	><span class="annottext"
+	  >travList :: forall (p :: PRO Type Type) a b.
+DistributiveProfunctor p =&gt;
+p a b -&gt; p [a] [b]
+</span
+	  ><a href="Proarrow.Category.Monoidal.Distributive.html#travList"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >travList</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361958"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679361958"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p [a] [b]
+</span
+	><a href="#local-6989586621679361959"
+	><span class="hs-identifier hs-var"
+	  >go</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >    </span
+      ><span id="local-6989586621679361959"
+      ><span class="annot"
+	><span class="annottext"
+	  >go :: p [a] [b]
+</span
+	  ><a href="#local-6989586621679361959"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >go</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >      </span
+      ><span class="annot"
+      ><span class="annottext"
+	>([a] ~&gt; Either () (a, [a]))
+-&gt; (Either () (b, [b]) ~&gt; [b])
+-&gt; p (Either () (a, [a])) (Either () (b, [b]))
+-&gt; p [a] [b]
+forall c a b d. (c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k) (d :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >        </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679361961"
+      ><span class="annot"
+	><span class="annottext"
+	  >[a]
+</span
+	  ><a href="#local-6989586621679361961"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>[a]
+</span
+	><a href="#local-6989586621679361961"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >[</span
+      ><span class="hs-special"
+      >]</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>() -&gt; Either () (a, [a])
+forall a b. a -&gt; Either a b
+</span
+	><span class="hs-identifier hs-var"
+	>Left</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679361962"
+      ><span class="annot"
+	><span class="annottext"
+	  >a
+</span
+	  ><a href="#local-6989586621679361962"
+	  ><span class="hs-identifier hs-var"
+	    >x</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-glyph hs-type"
+	>:</span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679361963"
+      ><span class="annot"
+	><span class="annottext"
+	  >[a]
+</span
+	  ><a href="#local-6989586621679361963"
+	  ><span class="hs-identifier hs-var"
+	    >xs</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a, [a]) -&gt; Either () (a, [a])
+forall a b. b -&gt; Either a b
+</span
+	><span class="hs-identifier hs-var"
+	>Right</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a
+</span
+	><a href="#local-6989586621679361962"
+	><span class="hs-identifier hs-var"
+	  >x</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>[a]
+</span
+	><a href="#local-6989586621679361963"
+	><span class="hs-identifier hs-var"
+	  >xs</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >        </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>[b] -&gt; () -&gt; [b]
+forall a b. a -&gt; b -&gt; a
+</span
+	><span class="hs-identifier hs-var"
+	>const</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >[</span
+      ><span class="hs-special"
+      >]</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(() ~&gt; [b]) -&gt; ((b, [b]) ~&gt; [b]) -&gt; (() || (b, [b])) ~&gt; [b]
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall x a y. (x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >|||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679361965"
+      ><span class="annot"
+	><span class="annottext"
+	  >b
+</span
+	  ><a href="#local-6989586621679361965"
+	  ><span class="hs-identifier hs-var"
+	    >x</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679361966"
+      ><span class="annot"
+	><span class="annottext"
+	  >[b]
+</span
+	  ><a href="#local-6989586621679361966"
+	  ><span class="hs-identifier hs-var"
+	    >xs</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b
+</span
+	><a href="#local-6989586621679361965"
+	><span class="hs-identifier hs-var"
+	  >x</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b -&gt; [b] -&gt; [b]
+forall a. a -&gt; [a] -&gt; [a]
+</span
+	><span class="hs-glyph hs-var"
+	>:</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>[b]
+</span
+	><a href="#local-6989586621679361966"
+	><span class="hs-identifier hs-var"
+	  >xs</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >        </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p () ()
+p Unit Unit
+forall {j} {k} (p :: j +-&gt; k). MonoidalProfunctor p =&gt; p Unit Unit
+</span
+	><a href="Proarrow.Category.Monoidal.html#par0"
+	><span class="hs-identifier hs-var"
+	  >par0</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p () ()
+-&gt; p (a, [a]) (b, [b]) -&gt; p (() || (a, [a])) (() || (b, [b]))
+forall {k} {k} (p :: k +-&gt; k) (a :: k) (b :: k) (c :: k) (d :: k).
+DistributiveProfunctor p =&gt;
+p a b -&gt; p c d -&gt; p (a || c) (b || d)
+</span
+	><a href="Proarrow.Category.Monoidal.Distributive.html#copar"
+	><span class="hs-operator hs-var"
+	  >`copar`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679361958"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b -&gt; p [a] [b] -&gt; p (a ** [a]) (b ** [b])
+forall x1 x2 y1 y2. p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p [a] [b]
+</span
+	><a href="#local-6989586621679361959"
+	><span class="hs-identifier hs-var"
+	  >go</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>
