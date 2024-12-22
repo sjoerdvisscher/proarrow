@@ -48,9 +48,9 @@ instance
   iObj = Sub iObj
   Sub m `o` Sub n = Sub $ m `o` n
   r \\\ Sub f = r \\\ f
-  leftUnitor (Sub p) = Sub (leftUnitor p) \\\ p
-  leftUnitorInv (Sub p) = Sub (leftUnitorInv p) \\\ p
-  rightUnitor (Sub p) = Sub (rightUnitor p) \\\ p
-  rightUnitorInv (Sub p) = Sub (rightUnitorInv p) \\\ p
-  associator (Sub p) (Sub q) (Sub r) = Sub (associator p q r)
-  associatorInv (Sub p) (Sub q) (Sub r) = Sub (associatorInv p q r)
+  leftUnitor = Sub leftUnitor
+  leftUnitorInv = Sub leftUnitorInv
+  rightUnitor = Sub rightUnitor
+  rightUnitorInv = Sub rightUnitorInv
+  associator @(SUB p) @(SUB q) @(SUB r) = Sub $ associator @kk @p @q @r
+  associatorInv @(SUB p) @(SUB q) @(SUB r) = Sub $ associatorInv @kk @p @q @r

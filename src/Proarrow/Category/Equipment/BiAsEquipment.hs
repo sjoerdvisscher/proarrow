@@ -1,9 +1,9 @@
 module Proarrow.Category.Equipment.BiAsEquipment where
 
-import Proarrow.Category.Bicategory (Bicategory (..), Ob0')
+import Proarrow.Category.Bicategory (Bicategory (..), Ob0', leftUnitor', leftUnitorInv')
 import Proarrow.Category.Bicategory.Bidiscrete (Bidiscrete (..), DiscreteK (..))
 import Proarrow.Category.Equipment
-import Proarrow.Core (CategoryOf (..), Promonad (..), UN, CAT, Profunctor(..), Is, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data WKK kk i j = WK (kk i j)
 type instance UN WK (WK p) = p
@@ -28,12 +28,12 @@ instance (Bicategory kk) => Bicategory (WKK kk) where
   iObj = W iObj
   r \\\ W f = r \\\ f
   W f `o` W g = W (f `o` g)
-  leftUnitor (W p) = W (leftUnitor p)
-  leftUnitorInv (W p) = W (leftUnitorInv p)
-  rightUnitor (W p) = W (rightUnitor p)
-  rightUnitorInv (W p) = W (rightUnitorInv p)
-  associator (W p) (W q) (W r) = W (associator p q r)
-  associatorInv (W p) (W q) (W r) = W (associatorInv p q r)
+  leftUnitor = W leftUnitor
+  leftUnitorInv = W leftUnitorInv
+  rightUnitor = W rightUnitor
+  rightUnitorInv = W rightUnitorInv
+  associator @(WK p) @(WK q) @(WK r) = W (associator @kk @p @q @r)
+  associatorInv @(WK p) @(WK q) @(WK r) = W (associatorInv @kk @p @q @r)
 
 -- | A bicategory as a proarrow equipment with only identity arrows vertically.
 instance (Bicategory kk) => HasCompanions (WKK kk) (DiscreteK (Ob0' kk)) where
@@ -41,15 +41,15 @@ instance (Bicategory kk) => HasCompanions (WKK kk) (DiscreteK (Ob0' kk)) where
   mapCompanion Bidiscrete = iObj
   compToId = W iObj
   compFromId = W iObj
-  compToCompose Bidiscrete Bidiscrete = W (leftUnitorInv iObj)
-  compFromCompose Bidiscrete Bidiscrete = W (leftUnitor iObj)
+  compToCompose Bidiscrete Bidiscrete = W (leftUnitorInv' iObj)
+  compFromCompose Bidiscrete Bidiscrete = W (leftUnitor' iObj)
 
 instance (Bicategory kk) => Equipment (WKK kk) (DiscreteK (Ob0' kk)) where
   type Conjoint (WKK kk) DK = WK I
   mapConjoint Bidiscrete = iObj
   conjToId = W iObj
   conjFromId = W iObj
-  conjToCompose Bidiscrete Bidiscrete = W (leftUnitorInv iObj)
-  conjFromCompose Bidiscrete Bidiscrete = W (leftUnitor iObj)
-  comConUnit Bidiscrete = W (leftUnitorInv iObj)
-  comConCounit Bidiscrete = W (leftUnitor iObj)
+  conjToCompose Bidiscrete Bidiscrete = W (leftUnitorInv' iObj)
+  conjFromCompose Bidiscrete Bidiscrete = W (leftUnitor' iObj)
+  comConUnit Bidiscrete = W (leftUnitorInv' iObj)
+  comConCounit Bidiscrete = W (leftUnitor' iObj)

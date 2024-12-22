@@ -4,7 +4,7 @@ module Proarrow.Category.Equipment.Limit where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Category.Bicategory (Bicategory (..), associator')
 import Proarrow.Category.Equipment (HasCompanions (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Promonad (..), obj, (//))
 
@@ -81,7 +81,7 @@ rightAdjointPreservesLimitsInv =
     (g `o` d)
       // (g `o` l)
       // limitUniv @vk @j @k' @(g `O` d)
-        (compFromCompose g d . (cg `o` limit @vk @j @k @d) . associator cg (mapCompanion l) j . (compToCompose g l `o` j))
+        (compFromCompose g d . (cg `o` limit @vk @j @k @d) . associator' cg (mapCompanion l) j . (compToCompose g l `o` j))
 
 -- > i-d-k-g-k'    a-l-g-k'
 -- > | v | v |     | v v |

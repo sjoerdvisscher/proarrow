@@ -74,12 +74,12 @@ instance Bicategory PROFK where
   type p `O` q = PK (UN PK p :.: UN PK q)
   Prof m `o` Prof n = Prof $ \(p :.: q) -> m p :.: n q
   r \\\ Prof{} = r
-  leftUnitor (Prof n) = Prof $ \(Id h :.: q) -> n (lmap h q)
-  leftUnitorInv (Prof n) = Prof $ \p -> Id (src p) :.: n p
-  rightUnitor (Prof n) = Prof $ \(p :.: Id h) -> n (rmap h p)
-  rightUnitorInv (Prof n) = Prof $ \p -> n p :.: Id (tgt p)
-  associator Prof{} Prof{} Prof{} = Prof $ \((p :.: q) :.: r) -> p :.: (q :.: r)
-  associatorInv Prof{} Prof{} Prof{} = Prof $ \(p :.: (q :.: r)) -> (p :.: q) :.: r
+  leftUnitor = Prof $ \(Id h :.: q) -> lmap h q
+  leftUnitorInv = Prof $ \p -> Id (src p) :.: p
+  rightUnitor = Prof $ \(p :.: Id h) -> rmap h p
+  rightUnitorInv = Prof $ \p -> p :.: Id (tgt p)
+  associator = Prof $ \((p :.: q) :.: r) -> p :.: (q :.: r)
+  associatorInv = Prof $ \(p :.: (q :.: r)) -> (p :.: q) :.: r
 
 data ProfRep
 type instance IsOb ProfRep p = Representable (UN PK p)

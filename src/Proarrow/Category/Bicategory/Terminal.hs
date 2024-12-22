@@ -28,12 +28,12 @@ instance Bicategory Unit where
   type O a b = 'Unit
   r \\\ Terminal = r
   Terminal `o` Terminal = Terminal
-  leftUnitor Terminal = Terminal
-  leftUnitorInv Terminal = Terminal
-  rightUnitor Terminal = Terminal
-  rightUnitorInv Terminal = Terminal
-  associator Terminal Terminal Terminal = Terminal
-  associatorInv Terminal Terminal Terminal = Terminal
+  leftUnitor = Terminal
+  leftUnitorInv = Terminal
+  rightUnitor = Terminal
+  rightUnitorInv = Terminal
+  associator = Terminal
+  associatorInv = Terminal
 
 instance Monad 'Unit where
   eta = Terminal

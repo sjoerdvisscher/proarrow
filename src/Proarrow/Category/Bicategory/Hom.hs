@@ -5,9 +5,8 @@ import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Prof (LaxProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Object (obj, src, tgt)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 
@@ -51,14 +50,9 @@ instance (Bicategory kk) => LaxProfunctor kk kk (HK kk) where
        . (Ob a, Ob b, Ob s, Ob t, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k)
       => a `O` s ~> t `O` b
       -> P kk kk (HK kk) (CO s) t (HomK a) (HomK b)
-  laxId (Id (HomW f) :: Id (a :: HK kk i j) b) = Hom (leftUnitorInv (tgt f) . f . rightUnitor (src f)) \\ f \\ iObj @kk @i \\ iObj @kk @j
+  laxId (Id (HomW f) :: Id (a :: HK kk i j) b) = Hom (leftUnitorInv . f . rightUnitor) \\ f \\ iObj @kk @i \\ iObj @kk @j
   laxComp (Hom @a @b @s @t n :.: Hom @_ @c @s' @t' m) =
     let s = obj @s; t = obj @t; s' = obj @s'; t' = obj @t'
-    in Hom
-        ( let a = obj @a; b = obj @b; c = obj @c
-          in associatorInv a s s' == n || s' == associator t b s' == t || m == associatorInv t t' c
-        )
+    in Hom (associatorInv @_ @a @s @s' == n || s' == associator @_ @t @b @s' == t || m == associatorInv @_ @t @t' @c)
         \\\ (s || s')
         \\\ (t || t')
-        \\\ n
-        \\\ m
