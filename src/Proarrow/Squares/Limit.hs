@@ -49,7 +49,7 @@ limitUniv (Sq (Str _ _ n)) = vArr (L.limitUniv @vk @j @k @d @p n) \\\ n
 
 -- | Preservation of limits by right adjoints
 --
--- Let @l@ be the @j@-weighted limit of @d and @l'@ be the @j@-weighted limit of @g ∘ d@.
+-- Let @l@ be the @j@-weighted limit of @d@ and @l'@ be the @j@-weighted limit of @g ∘ d@.
 -- Then we provide the following square:
 --
 -- > A--l'-K'

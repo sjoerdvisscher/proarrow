@@ -1,0 +1,5313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Lifted</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+	><span class="hs-identifier"
+	  >LIFTED</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFTEDF"
+	><span class="hs-identifier"
+	  >LIFTEDF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >pattern</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LiftF"
+	><span class="hs-identifier"
+	  >LiftF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html"
+	><span class="hs-identifier"
+	  >Proarrow.Adjunction</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html#Adjunction"
+	><span class="hs-identifier"
+	  >Adjunction</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Adjunction.html#unit%27"
+	><span class="hs-identifier"
+	  >unit'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Functor.html"
+	><span class="hs-identifier"
+	  >Proarrow.Functor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Functor.html#Functor"
+	><span class="hs-identifier"
+	  >Functor</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-keyword"
+      >pattern</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.html#Obj"
+	><span class="hs-identifier"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryCoproduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+	><span class="hs-identifier"
+	  >Coprod</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	><span class="hs-identifier"
+	  >HasBinaryCoproducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#codiag"
+	><span class="hs-identifier"
+	  >codiag</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#copar"
+	><span class="hs-identifier"
+	  >copar</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryProduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#Cartesian"
+	><span class="hs-identifier"
+	  >Cartesian</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	><span class="hs-identifier"
+	  >HasBinaryProducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#diag"
+	><span class="hs-identifier"
+	  >diag</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Initial</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	><span class="hs-identifier"
+	  >HasInitialObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	><span class="hs-identifier"
+	  >HasTerminalObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Composition</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator"
+	  >(:.:)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Costar.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Costar</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Costar.html#Costar"
+	><span class="hs-identifier"
+	  >Costar</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Star.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Star</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Star.html#Star"
+	><span class="hs-identifier"
+	  >Star</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span class="hs-keyword"
+      >newtype</span
+      ><span
+      > </span
+      ><span id="LIFTED"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+	  ><span class="hs-identifier hs-var"
+	    >LIFTED</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679396466"
+      ><span class="annot"
+	><a href="#local-6989586621679396466"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396467"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2B-%3E"
+	><span class="hs-operator hs-type"
+	  >+-&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396468"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span id="local-6989586621679396467"
+      ><span id="local-6989586621679396468"
+	><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="hs-identifier"
+	  >q</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="hs-identifier"
+	  >k</span
+	  ><span
+	  > </span
+	  ><span class="hs-operator"
+	  >+-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="hs-identifier"
+	  >j</span
+	  ></span
+	></span
+      ><span id="local-6989586621679396467"
+      ><span id="local-6989586621679396468"
+	></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="LIFT"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	  ><span class="hs-identifier hs-var"
+	    >LIFT</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396467"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396469"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	  ><span class="hs-identifier hs-type"
+	    >LIFT</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	  ><span class="hs-identifier hs-type"
+	    >LIFT</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679396469"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396469"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | A category lifted by an adjunction.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Lift"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	  ><span class="hs-identifier hs-var"
+	    >Lift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396470"
+      ><span class="annot"
+	><a href="#local-6989586621679396470"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396471"
+      ><span class="annot"
+	><a href="#local-6989586621679396471"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396208"
+      ><span id="local-6989586621679396209"
+	><span id="local-6989586621679396472"
+	  ><span id="local-6989586621679396473"
+	    ><span id="Lift"
+	      ><span class="annot"
+		><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+		  ><span class="hs-identifier hs-var"
+		    >Lift</span
+		    ></a
+		  ></span
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >::</span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396208"
+		><span class="hs-identifier hs-type"
+		  >q</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+		><span class="hs-operator hs-type"
+		  >:.:</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396209"
+		><span class="hs-identifier hs-type"
+		  >p</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396472"
+		><span class="hs-identifier hs-type"
+		  >a</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396473"
+		><span class="hs-identifier hs-type"
+		  >b</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >-&gt;</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+		><span class="hs-identifier hs-type"
+		  >Lift</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+		><span class="hs-identifier hs-type"
+		  >LIFT</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396472"
+		><span class="hs-identifier hs-type"
+		  >a</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >::</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+		><span class="hs-identifier hs-type"
+		  >LIFTED</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396209"
+		><span class="hs-identifier hs-type"
+		  >p</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396208"
+		><span class="hs-identifier hs-type"
+		  >q</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+		><span class="hs-identifier hs-type"
+		  >LIFT</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679396473"
+		><span class="hs-identifier hs-type"
+		  >b</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396158"
+      ><span id="local-6989586621679396159"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Adjunction.html#Adjunction"
+	    ><span class="hs-identifier hs-type"
+	      >Adjunction</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396158"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396159"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Profunctor"
+	    ><span class="hs-identifier hs-type"
+	      >Profunctor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	    ><span class="hs-identifier hs-type"
+	      >Lift</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CAT"
+	    ><span class="hs-identifier hs-type"
+	      >CAT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+	    ><span class="hs-identifier hs-type"
+	      >LIFTED</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396158"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396159"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396492"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: LIFTED p q) (a :: LIFTED p q) (b :: LIFTED p q)
+       (d :: LIFTED p q).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Lift a b -&gt; Lift c d
+</span
+	  ><a href="#local-6989586621679396492"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Lift a b -&gt; Lift c d
+Lift c a -&gt; Lift b d -&gt; Lift a b -&gt; Lift c d
+forall {k} (p :: PRO k k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396495"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679396495"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396496"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: LIFTED p q) (b :: LIFTED p q) r.
+((Ob a, Ob b) =&gt; r) -&gt; Lift a b -&gt; r
+</span
+	  ><a href="#local-6989586621679396496"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396502"
+      ><span class="annot"
+	><span class="annottext"
+	  >(:.:) q p a b
+</span
+	  ><a href="#local-6989586621679396502"
+	  ><span class="hs-identifier hs-var"
+	    >pq</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679396495"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; (:.:) q p a b -&gt; r
+forall (a :: j) (b :: j) r.
+((Ob a, Ob b) =&gt; r) -&gt; (:.:) q p a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p a b
+</span
+	><a href="#local-6989586621679396502"
+	><span class="hs-identifier hs-var"
+	  >pq</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396162"
+      ><span id="local-6989586621679396163"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Adjunction.html#Adjunction"
+	    ><span class="hs-identifier hs-type"
+	      >Adjunction</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396162"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396163"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Promonad"
+	    ><span class="hs-identifier hs-type"
+	      >Promonad</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	    ><span class="hs-identifier hs-type"
+	      >Lift</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CAT"
+	    ><span class="hs-identifier hs-type"
+	      >CAT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+	    ><span class="hs-identifier hs-type"
+	      >LIFTED</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396162"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396163"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396528"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: LIFTED p q). Ob a =&gt; Lift a a
+</span
+	  ><a href="#local-6989586621679396528"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (UN 'LIFT a) (UN 'LIFT a)
+-&gt; Lift ('LIFT (UN 'LIFT a)) ('LIFT (UN 'LIFT a))
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (UN 'LIFT a) (UN 'LIFT a)
+forall (a :: j). Ob a =&gt; (:.:) q p a a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396532"
+      ><span class="annot"
+	><span class="annottext"
+	  >(:.:) q p a b
+</span
+	  ><a href="#local-6989586621679396532"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396533"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: LIFTED p q) (c :: LIFTED p q) (a :: LIFTED p q).
+Lift b c -&gt; Lift a b -&gt; Lift a c
+</span
+	  ><a href="#local-6989586621679396533"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396541"
+      ><span class="annot"
+	><span class="annottext"
+	  >(:.:) q p a b
+</span
+	  ><a href="#local-6989586621679396541"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p a b
+</span
+	><a href="#local-6989586621679396532"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p a b -&gt; (:.:) q p a a -&gt; (:.:) q p a b
+forall (b :: j) (c :: j) (a :: j).
+(:.:) q p b c -&gt; (:.:) q p a b -&gt; (:.:) q p a c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p a a
+(:.:) q p a b
+</span
+	><a href="#local-6989586621679396541"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396542"
+      ><span id="local-6989586621679396543"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Adjunction.html#Adjunction"
+	    ><span class="hs-identifier hs-type"
+	      >Adjunction</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396542"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396543"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+	    ><span class="hs-identifier hs-type"
+	      >LIFTED</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396542"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396543"
+	    ><span class="hs-identifier hs-type"
+	      >q</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396549"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679396549"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+	  ><span class="hs-identifier hs-type"
+	    >LIFTED</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679396542"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679396543"
+	  ><span class="hs-identifier hs-type"
+	    >q</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier hs-type"
+	  >Is</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396549"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396549"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396236"
+      ><span id="local-6989586621679396237"
+	><span id="local-6989586621679396238"
+	  ><span id="local-6989586621679396239"
+	    ><span id="local-6989586621679396560"
+	      ><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Adjunction.html#Adjunction"
+		  ><span class="hs-identifier hs-type"
+		    >Adjunction</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396238"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396236"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396237"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396239"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396237"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396236"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+		  ><span class="hs-identifier hs-type"
+		    >HasTerminalObject</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396236"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+		  ><span class="hs-identifier hs-type"
+		    >HasTerminalObject</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+		  ><span class="hs-identifier hs-type"
+		    >LIFTED</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396238"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396239"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="TerminalObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	  ><span class="hs-identifier hs-var"
+	    >TerminalObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	><span class="hs-identifier hs-type"
+	  >TerminalObject</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396577"
+      ><span class="annot"
+	><span class="annottext"
+	  >terminate :: forall (a :: LIFTED p q). Ob a =&gt; a ~&gt; TerminalObject
+</span
+	  ><a href="#local-6989586621679396577"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >terminate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (UN 'LIFT a) TerminalObject
+-&gt; Lift ('LIFT (UN 'LIFT a)) ('LIFT TerminalObject)
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'LIFT a ~&gt; TerminalObject)
+-&gt; (:.:) q p (UN 'LIFT a) TerminalObject
+forall {i} {j} (p :: i +-&gt; j) (q :: j +-&gt; i) (a :: i) (b :: i).
+Adjunction p q =&gt;
+(a ~&gt; b) -&gt; (:.:) q p a b
+</span
+	><a href="Proarrow.Adjunction.html#unit%27"
+	><span class="hs-identifier hs-var"
+	  >unit'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'LIFT a ~&gt; TerminalObject
+forall (a :: j). Ob a =&gt; a ~&gt; TerminalObject
+forall k (a :: k).
+(HasTerminalObject k, Ob a) =&gt;
+a ~&gt; TerminalObject
+</span
+	><a href="Proarrow.Object.Terminal.html#terminate"
+	><span class="hs-identifier hs-var"
+	  >terminate</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396279"
+      ><span id="local-6989586621679396280"
+	><span id="local-6989586621679396281"
+	  ><span id="local-6989586621679396282"
+	    ><span id="local-6989586621679396590"
+	      ><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Adjunction.html#Adjunction"
+		  ><span class="hs-identifier hs-type"
+		    >Adjunction</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396281"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396279"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396280"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396282"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396280"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396279"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+		  ><span class="hs-identifier hs-type"
+		    >MonoidalProfunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396281"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+		  ><span class="hs-identifier hs-type"
+		    >MonoidalProfunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396282"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryProduct.html#Cartesian"
+		  ><span class="hs-identifier hs-type"
+		    >Cartesian</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396279"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		>
+</span
+		><span id="line-39"
+		></span
+		><span
+		>  </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+		  ><span class="hs-identifier hs-type"
+		    >HasBinaryProducts</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+		  ><span class="hs-identifier hs-type"
+		    >LIFTED</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396281"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396282"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396602"
+      ><span id="local-6989586621679396603"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	    ><span class="hs-identifier hs-type"
+	      >LIFT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396602"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%26%26"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	      ><span class="hs-operator hs-var"
+		>&amp;&amp;</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	    ><span class="hs-identifier hs-type"
+	      >LIFT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396603"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396602"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	><span class="hs-operator hs-type"
+	  >&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396603"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396619"
+      ><span class="annot"
+	><span class="annottext"
+	  >withObProd :: forall (a :: LIFTED p q) (b :: LIFTED p q) r.
+(Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679396619"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withObProd</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396621"
+      ><span class="annot"
+	><a href="#local-6989586621679396621"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396622"
+      ><span class="annot"
+	><a href="#local-6989586621679396622"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#withObProd"
+	><span class="hs-identifier hs-var"
+	  >withObProd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396279"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396621"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396622"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396644"
+      ><span class="annot"
+	><span class="annottext"
+	  >fst :: forall (a :: LIFTED p q) (b :: LIFTED p q).
+(Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; a
+</span
+	  ><a href="#local-6989586621679396644"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >fst</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396646"
+      ><span class="annot"
+	><a href="#local-6989586621679396646"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396647"
+      ><span class="annot"
+	><a href="#local-6989586621679396647"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (UN 'LIFT a &amp;&amp; UN 'LIFT b) (UN 'LIFT a)
+-&gt; Lift ('LIFT (UN 'LIFT a &amp;&amp; UN 'LIFT b)) ('LIFT (UN 'LIFT a))
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'LIFT a &amp;&amp; UN 'LIFT b) ~&gt; UN 'LIFT a)
+-&gt; (:.:) q p (UN 'LIFT a &amp;&amp; UN 'LIFT b) (UN 'LIFT a)
+forall {i} {j} (p :: i +-&gt; j) (q :: j +-&gt; i) (a :: i) (b :: i).
+Adjunction p q =&gt;
+(a ~&gt; b) -&gt; (:.:) q p a b
+</span
+	><a href="Proarrow.Adjunction.html#unit%27"
+	><span class="hs-identifier hs-var"
+	  >unit'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#fst"
+	><span class="hs-identifier hs-var"
+	  >fst</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396279"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396646"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396647"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396664"
+      ><span class="annot"
+	><span class="annottext"
+	  >snd :: forall (a :: LIFTED p q) (b :: LIFTED p q).
+(Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; b
+</span
+	  ><a href="#local-6989586621679396664"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >snd</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396666"
+      ><span class="annot"
+	><a href="#local-6989586621679396666"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396667"
+      ><span class="annot"
+	><a href="#local-6989586621679396667"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (UN 'LIFT a &amp;&amp; UN 'LIFT b) (UN 'LIFT b)
+-&gt; Lift ('LIFT (UN 'LIFT a &amp;&amp; UN 'LIFT b)) ('LIFT (UN 'LIFT b))
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'LIFT a &amp;&amp; UN 'LIFT b) ~&gt; UN 'LIFT b)
+-&gt; (:.:) q p (UN 'LIFT a &amp;&amp; UN 'LIFT b) (UN 'LIFT b)
+forall {i} {j} (p :: i +-&gt; j) (q :: j +-&gt; i) (a :: i) (b :: i).
+Adjunction p q =&gt;
+(a ~&gt; b) -&gt; (:.:) q p a b
+</span
+	><a href="Proarrow.Adjunction.html#unit%27"
+	><span class="hs-identifier hs-var"
+	  >unit'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; b
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#snd"
+	><span class="hs-identifier hs-var"
+	  >snd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396279"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396666"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396667"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679396670"
+      ><span class="annot"
+	><span class="annottext"
+	  >q a b
+</span
+	  ><a href="#local-6989586621679396670"
+	  ><span class="hs-identifier hs-var"
+	    >ql</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396672"
+      ><span class="annot"
+	><span class="annottext"
+	  >p b b
+</span
+	  ><a href="#local-6989586621679396672"
+	  ><span class="hs-identifier hs-var"
+	    >pl</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396673"
+      ><span class="annot"
+	><span class="annottext"
+	  >&amp;&amp;&amp; :: forall (a :: LIFTED p q) (x :: LIFTED p q) (y :: LIFTED p q).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	  ><a href="#local-6989586621679396673"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >&amp;&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679396680"
+      ><span class="annot"
+	><span class="annottext"
+	  >q a b
+</span
+	  ><a href="#local-6989586621679396680"
+	  ><span class="hs-identifier hs-var"
+	    >qr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396681"
+      ><span class="annot"
+	><span class="annottext"
+	  >p b b
+</span
+	  ><a href="#local-6989586621679396681"
+	  ><span class="hs-identifier hs-var"
+	    >pr</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p a (b &amp;&amp; b) -&gt; Lift ('LIFT a) ('LIFT (b &amp;&amp; b))
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; (a &amp;&amp; a)) -&gt; q (a &amp;&amp; a) (b ** b) -&gt; q a (b ** b)
+forall {j} {k} (p :: PRO j k) (c :: j) (a :: j) (b :: k).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a &amp;&amp; a)
+forall {k} (a :: k). (HasBinaryProducts k, Ob a) =&gt; a ~&gt; (a &amp;&amp; a)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#diag"
+	><span class="hs-identifier hs-var"
+	  >diag</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a b
+</span
+	><a href="#local-6989586621679396670"
+	><span class="hs-identifier hs-var"
+	  >ql</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a b -&gt; q a b -&gt; q (a ** a) (b ** b)
+forall (x1 :: j) (x2 :: k) (y1 :: j) (y2 :: k).
+q x1 x2 -&gt; q y1 y2 -&gt; q (x1 ** y1) (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a b
+q a b
+</span
+	><a href="#local-6989586621679396680"
+	><span class="hs-identifier hs-var"
+	  >qr</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a (b ** b) -&gt; p (b ** b) (b &amp;&amp; b) -&gt; (:.:) q p a (b &amp;&amp; b)
+forall {j} {k} {i} (p :: j +-&gt; k) (a :: k) (b :: j) (q :: i +-&gt; j)
+       (c :: i).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b
+</span
+	><a href="#local-6989586621679396672"
+	><span class="hs-identifier hs-var"
+	  >pl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b -&gt; p b b -&gt; p (b ** b) (b ** b)
+forall (x1 :: k) (x2 :: j) (y1 :: k) (y2 :: j).
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b
+</span
+	><a href="#local-6989586621679396681"
+	><span class="hs-identifier hs-var"
+	  >pr</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; Lift ('LIFT a) ('LIFT (b &amp;&amp; b)))
+-&gt; q a b -&gt; Lift ('LIFT a) ('LIFT (b &amp;&amp; b))
+forall (a :: j) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; q a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a b
+</span
+	><a href="#local-6989586621679396670"
+	><span class="hs-identifier hs-var"
+	  >ql</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396332"
+      ><span id="local-6989586621679396333"
+	><span id="local-6989586621679396334"
+	  ><span id="local-6989586621679396335"
+	    ><span id="local-6989586621679396702"
+	      ><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Adjunction.html#Adjunction"
+		  ><span class="hs-identifier hs-type"
+		    >Adjunction</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396334"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396332"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396333"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396335"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396333"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396332"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.Initial.html#HasInitialObject"
+		  ><span class="hs-identifier hs-type"
+		    >HasInitialObject</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396332"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.Initial.html#HasInitialObject"
+		  ><span class="hs-identifier hs-type"
+		    >HasInitialObject</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+		  ><span class="hs-identifier hs-type"
+		    >LIFTED</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396334"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396335"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="InitialObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-var"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#InitialObject"
+	><span class="hs-identifier hs-type"
+	  >InitialObject</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396719"
+      ><span class="annot"
+	><span class="annottext"
+	  >initiate :: forall (a :: LIFTED p q). Ob a =&gt; InitialObject ~&gt; a
+</span
+	  ><a href="#local-6989586621679396719"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >initiate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p InitialObject (UN 'LIFT a)
+-&gt; Lift ('LIFT InitialObject) ('LIFT (UN 'LIFT a))
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(InitialObject ~&gt; UN 'LIFT a)
+-&gt; (:.:) q p InitialObject (UN 'LIFT a)
+forall {i} {j} (p :: i +-&gt; j) (q :: j +-&gt; i) (a :: i) (b :: i).
+Adjunction p q =&gt;
+(a ~&gt; b) -&gt; (:.:) q p a b
+</span
+	><a href="Proarrow.Adjunction.html#unit%27"
+	><span class="hs-identifier hs-var"
+	  >unit'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>InitialObject ~&gt; UN 'LIFT a
+forall (a :: j). Ob a =&gt; InitialObject ~&gt; a
+forall k (a :: k). (HasInitialObject k, Ob a) =&gt; InitialObject ~&gt; a
+</span
+	><a href="Proarrow.Object.Initial.html#initiate"
+	><span class="hs-identifier hs-var"
+	  >initiate</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396360"
+      ><span id="local-6989586621679396361"
+	><span id="local-6989586621679396362"
+	  ><span id="local-6989586621679396363"
+	    ><span id="local-6989586621679396732"
+	      ><span class="hs-special"
+		>(</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Adjunction.html#Adjunction"
+		  ><span class="hs-identifier hs-type"
+		    >Adjunction</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396362"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396360"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396361"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="#local-6989586621679396363"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-glyph"
+		>::</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396361"
+		  ><span class="hs-identifier hs-type"
+		    >k</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Core.html#%2B-%3E"
+		  ><span class="hs-operator hs-type"
+		    >+-&gt;</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396360"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		>
+</span
+		><span id="line-53"
+		></span
+		><span
+		>  </span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+		  ><span class="hs-identifier hs-type"
+		    >MonoidalProfunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+		  ><span class="hs-identifier hs-type"
+		    >Coprod</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396362"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		>
+</span
+		><span id="line-54"
+		></span
+		><span
+		>  </span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+		  ><span class="hs-identifier hs-type"
+		    >MonoidalProfunctor</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryCoproduct.html#Coprod"
+		  ><span class="hs-identifier hs-type"
+		    >Coprod</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396363"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		><span
+		>
+</span
+		><span id="line-55"
+		></span
+		><span
+		>  </span
+		><span class="hs-special"
+		>,</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+		  ><span class="hs-identifier hs-type"
+		    >HasBinaryCoproducts</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396360"
+		  ><span class="hs-identifier hs-type"
+		    >j</span
+		    ></a
+		  ></span
+		><span
+		>
+</span
+		><span id="line-56"
+		></span
+		><span
+		>  </span
+		><span class="hs-special"
+		>)</span
+		><span
+		>
+</span
+		><span id="line-57"
+		></span
+		><span
+		>  </span
+		><span class="hs-glyph"
+		>=&gt;</span
+		><span
+		> </span
+		><span class="annot"
+		><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+		  ><span class="hs-identifier hs-type"
+		    >HasBinaryCoproducts</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="hs-special"
+		>(</span
+		><span class="annot"
+		><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+		  ><span class="hs-identifier hs-type"
+		    >LIFTED</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396362"
+		  ><span class="hs-identifier hs-type"
+		    >p</span
+		    ></a
+		  ></span
+		><span
+		> </span
+		><span class="annot"
+		><a href="#local-6989586621679396363"
+		  ><span class="hs-identifier hs-type"
+		    >q</span
+		    ></a
+		  ></span
+		><span class="hs-special"
+		>)</span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396737"
+      ><span id="local-6989586621679396738"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	    ><span class="hs-identifier hs-type"
+	      >LIFT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396737"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%7C%7C"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-var"
+		>||</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	    ><span class="hs-identifier hs-type"
+	      >LIFT</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396738"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396737"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	><span class="hs-operator hs-type"
+	  >||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396738"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396754"
+      ><span class="annot"
+	><span class="annottext"
+	  >withObCoprod :: forall (a :: LIFTED p q) (b :: LIFTED p q) r.
+(Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679396754"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withObCoprod</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396756"
+      ><span class="annot"
+	><a href="#local-6989586621679396756"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396757"
+      ><span class="annot"
+	><a href="#local-6989586621679396757"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#withObCoprod"
+	><span class="hs-identifier hs-var"
+	  >withObCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396360"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396756"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396757"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396779"
+      ><span class="annot"
+	><span class="annottext"
+	  >lft :: forall (a :: LIFTED p q) (b :: LIFTED p q).
+(Ob a, Ob b) =&gt;
+a ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679396779"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lft</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396781"
+      ><span class="annot"
+	><a href="#local-6989586621679396781"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396782"
+      ><span class="annot"
+	><a href="#local-6989586621679396782"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (UN 'LIFT a) (UN 'LIFT a || UN 'LIFT b)
+-&gt; Lift ('LIFT (UN 'LIFT a)) ('LIFT (UN 'LIFT a || UN 'LIFT b))
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'LIFT a ~&gt; (UN 'LIFT a || UN 'LIFT b))
+-&gt; (:.:) q p (UN 'LIFT a) (UN 'LIFT a || UN 'LIFT b)
+forall {i} {j} (p :: i +-&gt; j) (q :: j +-&gt; i) (a :: i) (b :: i).
+Adjunction p q =&gt;
+(a ~&gt; b) -&gt; (:.:) q p a b
+</span
+	><a href="Proarrow.Adjunction.html#unit%27"
+	><span class="hs-identifier hs-var"
+	  >unit'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+a ~&gt; (a || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#lft"
+	><span class="hs-identifier hs-var"
+	  >lft</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396360"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396781"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396782"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679396799"
+      ><span class="annot"
+	><span class="annottext"
+	  >rgt :: forall (a :: LIFTED p q) (b :: LIFTED p q).
+(Ob a, Ob b) =&gt;
+b ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679396799"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rgt</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396801"
+      ><span class="annot"
+	><a href="#local-6989586621679396801"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	><span class="hs-identifier hs-type"
+	  >LIFT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396802"
+      ><span class="annot"
+	><a href="#local-6989586621679396802"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (UN 'LIFT b) (UN 'LIFT a || UN 'LIFT b)
+-&gt; Lift ('LIFT (UN 'LIFT b)) ('LIFT (UN 'LIFT a || UN 'LIFT b))
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'LIFT b ~&gt; (UN 'LIFT a || UN 'LIFT b))
+-&gt; (:.:) q p (UN 'LIFT b) (UN 'LIFT a || UN 'LIFT b)
+forall {i} {j} (p :: i +-&gt; j) (q :: j +-&gt; i) (a :: i) (b :: i).
+Adjunction p q =&gt;
+(a ~&gt; b) -&gt; (:.:) q p a b
+</span
+	><a href="Proarrow.Adjunction.html#unit%27"
+	><span class="hs-identifier hs-var"
+	  >unit'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+b ~&gt; (a || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#rgt"
+	><span class="hs-identifier hs-var"
+	  >rgt</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396360"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396801"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679396802"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679396805"
+      ><span class="annot"
+	><span class="annottext"
+	  >q a b
+</span
+	  ><a href="#local-6989586621679396805"
+	  ><span class="hs-identifier hs-var"
+	    >ql</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396806"
+      ><span class="annot"
+	><span class="annottext"
+	  >p b b
+</span
+	  ><a href="#local-6989586621679396806"
+	  ><span class="hs-identifier hs-var"
+	    >pl</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396807"
+      ><span class="annot"
+	><span class="annottext"
+	  >||| :: forall (x :: LIFTED p q) (a :: LIFTED p q) (y :: LIFTED p q).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	  ><a href="#local-6989586621679396807"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >|||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679396814"
+      ><span class="annot"
+	><span class="annottext"
+	  >q a b
+</span
+	  ><a href="#local-6989586621679396814"
+	  ><span class="hs-identifier hs-var"
+	    >qr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396815"
+      ><span class="annot"
+	><span class="annottext"
+	  >p b b
+</span
+	  ><a href="#local-6989586621679396815"
+	  ><span class="hs-identifier hs-var"
+	    >pr</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) q p (a || a) b -&gt; Lift ('LIFT (a || a)) ('LIFT b)
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a b
+</span
+	><a href="#local-6989586621679396805"
+	><span class="hs-identifier hs-var"
+	  >ql</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a b -&gt; q a b -&gt; q (a || a) (b || b)
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) (c :: k2)
+       (d :: k1).
+MonoidalProfunctor (Coprod p) =&gt;
+p a b -&gt; p c d -&gt; p (a || c) (b || d)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#copar"
+	><span class="hs-operator hs-var"
+	  >`copar`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>q a b
+</span
+	><a href="#local-6989586621679396814"
+	><span class="hs-identifier hs-var"
+	  >qr</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>q (a || a) (b || b) -&gt; p (b || b) b -&gt; (:.:) q p (a || a) b
+forall {j} {k} {i} (p :: j +-&gt; k) (a :: k) (b :: j) (q :: i +-&gt; j)
+       (c :: i).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b || b) ~&gt; b) -&gt; p (b || b) (b || b) -&gt; p (b || b) b
+forall {j} {k} (p :: PRO j k) (b :: k) (d :: k) (a :: j).
+Profunctor p =&gt;
+(b ~&gt; d) -&gt; p a b -&gt; p a d
+</span
+	><a href="Proarrow.Core.html#rmap"
+	><span class="hs-identifier hs-var"
+	  >rmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b || b) ~&gt; b
+forall {k} (a :: k). (HasBinaryCoproducts k, Ob a) =&gt; (a || a) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#codiag"
+	><span class="hs-identifier hs-var"
+	  >codiag</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b
+</span
+	><a href="#local-6989586621679396806"
+	><span class="hs-identifier hs-var"
+	  >pl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b -&gt; p b b -&gt; p (b || b) (b || b)
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) (c :: k2)
+       (d :: k1).
+MonoidalProfunctor (Coprod p) =&gt;
+p a b -&gt; p c d -&gt; p (a || c) (b || d)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#copar"
+	><span class="hs-operator hs-var"
+	  >`copar`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b
+p b b
+</span
+	><a href="#local-6989586621679396815"
+	><span class="hs-identifier hs-var"
+	  >pr</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob b, Ob b) =&gt; Lift ('LIFT (a || a)) ('LIFT b))
+-&gt; p b b -&gt; Lift ('LIFT (a || a)) ('LIFT b)
+forall (a :: k) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p b b
+</span
+	><a href="#local-6989586621679396806"
+	><span class="hs-identifier hs-var"
+	  >pl</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Categories lifted by a functor: @f a ~&gt; f b@.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="LIFTEDF"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Lifted.html#LIFTEDF"
+	  ><span class="hs-identifier hs-var"
+	    >LIFTEDF</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679396824"
+      ><span id="local-6989586621679396825"
+	><span id="local-6989586621679396826"
+	  ><span class="annot"
+	    ><a href="#local-6989586621679396826"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396824"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679396825"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LIFTED"
+	><span class="hs-identifier hs-type"
+	  >LIFTED</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Star.html#Star"
+	><span class="hs-identifier hs-type"
+	  >Star</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396826"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Costar.html#Costar"
+	><span class="hs-identifier hs-type"
+	  >Costar</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396826"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span id="local-6989586621679396398"
+      ><span id="local-6989586621679396403"
+	><span id="local-6989586621679396404"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#unlift"
+	      ><span class="hs-identifier hs-type"
+		>unlift</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Functor.html#Functor"
+	      ><span class="hs-identifier hs-type"
+		>Functor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396398"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	      ><span class="hs-identifier hs-type"
+		>Lift</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	      ><span class="hs-identifier hs-type"
+		>LIFT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396403"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#LIFTEDF"
+	      ><span class="hs-identifier hs-type"
+		>LIFTEDF</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396398"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	      ><span class="hs-identifier hs-type"
+		>LIFT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396404"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396398"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396403"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396398"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396404"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Obj"
+	      ><span class="hs-identifier hs-type"
+		>Obj</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396403"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Obj"
+	      ><span class="hs-identifier hs-type"
+		>Obj</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396404"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span id="unlift"
+      ><span class="annot"
+	><span class="annottext"
+	  >unlift :: forall {k} {k} {k} {p :: k +-&gt; k} {q :: k +-&gt; k} (f :: k -&gt; k)
+       (a :: k) (b :: k).
+Functor f =&gt;
+Lift ('LIFT a) ('LIFT b) -&gt; (f a ~&gt; f b, Obj a, Obj b)
+</span
+	  ><a href="Proarrow.Category.Instance.Lifted.html#unlift"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >unlift</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-type"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Costar.html#Costar"
+	><span class="hs-identifier hs-type"
+	  >Costar</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396842"
+      ><span class="annot"
+	><span class="annottext"
+	  >f a ~&gt; b
+</span
+	  ><a href="#local-6989586621679396842"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Star.html#Star"
+	><span class="hs-identifier hs-type"
+	  >Star</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396851"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; f b
+</span
+	  ><a href="#local-6989586621679396851"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; f b
+b ~&gt; f b
+</span
+	><a href="#local-6989586621679396851"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; f b) -&gt; (f a ~&gt; b) -&gt; f a ~&gt; f b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f a ~&gt; b
+f a ~&gt; b
+</span
+	><a href="#local-6989586621679396842"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj a
+forall k (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Object.html#Obj"
+	><span class="hs-identifier hs-var"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj b
+forall k (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Object.html#Obj"
+	><span class="hs-identifier hs-var"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span class="hs-keyword"
+      >pattern</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LiftF"
+	><span class="hs-identifier hs-type"
+	  >LiftF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679396119"
+      ><span id="local-6989586621679396426"
+	><span id="local-6989586621679396427"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Functor.html#Functor"
+	      ><span class="hs-identifier hs-type"
+		>Functor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396119"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396426"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396427"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396119"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396426"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396119"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396427"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	      ><span class="hs-identifier hs-type"
+		>Lift</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	      ><span class="hs-identifier hs-type"
+		>LIFT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396426"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#LIFTEDF"
+	      ><span class="hs-identifier hs-type"
+		>LIFTEDF</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396119"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Lifted.html#LIFT"
+	      ><span class="hs-identifier hs-type"
+		>LIFT</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679396427"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span class="hs-keyword"
+      >pattern</span
+      ><span
+      > </span
+      ><span id="LiftF"
+      ><span id="%24mLiftF"
+	><span id="%24bLiftF"
+	  ><span class="annot"
+	    ><span class="annottext"
+	      >$mLiftF :: forall {r} {j1} {j2} {k} {p :: j1 +-&gt; k} {q :: k +-&gt; j1}
+       {f :: j1 -&gt; j2} {a :: j1} {b :: j1}.
+Functor f =&gt;
+Lift ('LIFT a) ('LIFT b)
+-&gt; ((Ob a, Ob b) =&gt; (f a ~&gt; f b) -&gt; r) -&gt; ((# #) -&gt; r) -&gt; r
+$bLiftF :: forall {j1} {j2} {k} {p :: j1 +-&gt; k} {q :: k +-&gt; j1}
+       (f :: j1 -&gt; j2) (a :: j1) (b :: j1).
+(Functor f, Ob a, Ob b) =&gt;
+(f a ~&gt; f b) -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	      ><a href="Proarrow.Category.Instance.Lifted.html#LiftF"
+	      ><span class="hs-identifier hs-var hs-var hs-var"
+		>LiftF</span
+		></a
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679396854"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >&lt;-</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#unlift"
+	><span class="hs-identifier hs-type"
+	  >unlift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679396854"
+      ><span class="annot"
+	><a href="#local-6989586621679396854"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.html#Obj"
+	><span class="hs-identifier hs-type"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.html#Obj"
+	><span class="hs-identifier hs-type"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LiftF"
+	><span class="hs-identifier hs-var"
+	  >LiftF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679396863"
+      ><span class="annot"
+	><span class="annottext"
+	  >f a ~&gt; f b
+</span
+	  ><a href="#local-6989586621679396863"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(:.:) (Costar f) (Star f) a b -&gt; Lift ('LIFT a) ('LIFT b)
+forall {j} {i} {k} {p :: i +-&gt; k} {q :: k +-&gt; i} (q :: j +-&gt; i)
+       (p :: i +-&gt; j) (a :: i) (b :: i).
+(:.:) q p a b -&gt; Lift ('LIFT a) ('LIFT b)
+</span
+	><a href="Proarrow.Category.Instance.Lifted.html#Lift"
+	><span class="hs-identifier hs-var"
+	  >Lift</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(f a ~&gt; f b) -&gt; Costar f a (f b)
+forall {j} {k} (a :: j) (f :: j -&gt; k) (b :: k).
+Ob a =&gt;
+(f a ~&gt; b) -&gt; Costar f a b
+</span
+	><a href="Proarrow.Profunctor.Costar.html#Costar"
+	><span class="hs-identifier hs-var"
+	  >Costar</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f a ~&gt; f b
+</span
+	><a href="#local-6989586621679396863"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Costar f a (f b) -&gt; Star f (f b) b -&gt; (:.:) (Costar f) (Star f) a b
+forall {j} {k} {i} (p :: j +-&gt; k) (a :: k) (b :: j) (q :: i +-&gt; j)
+       (c :: i).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(f b ~&gt; f b) -&gt; Star f (f b) b
+forall {k1} {k2} (b :: k1) (a :: k2) (f :: k1 -&gt; k2).
+Ob b =&gt;
+(a ~&gt; f b) -&gt; Star f a b
+</span
+	><a href="Proarrow.Profunctor.Star.html#Star"
+	><span class="hs-identifier hs-var"
+	  >Star</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f b ~&gt; f b
+forall (a :: j2). Ob a =&gt; a ~&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span class="hs-pragma"
+      >{-# COMPLETE</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Lifted.html#LiftF"
+	><span class="hs-pragma hs-type"
+	  >LiftF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-pragma"
+      >#-}</span
+      ></pre
+    ></body
+  ></html
+>

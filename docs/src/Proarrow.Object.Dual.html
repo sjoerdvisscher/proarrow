@@ -1,0 +1,8539 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Product.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Product</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator"
+	  >(:**:)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Unit.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>U</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >(</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#SymMonoidal"
+	><span class="hs-identifier"
+	  >SymMonoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#associator"
+	><span class="hs-identifier"
+	  >associator</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#leftUnitorWith"
+	><span class="hs-identifier"
+	  >leftUnitorWith</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#rightUnitorInvWith"
+	><span class="hs-identifier"
+	  >rightUnitorInvWith</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#rightUnitorWith"
+	><span class="hs-identifier"
+	  >rightUnitorWith</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#swap"
+	><span class="hs-identifier"
+	  >swap</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Obj"
+	><span class="hs-identifier"
+	  >Obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier"
+	  >obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Exponential</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#Closed"
+	><span class="hs-identifier"
+	  >Closed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365272"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="ObDual"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#ObDual"
+	  ><span class="hs-identifier hs-var"
+	    >ObDual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365271"
+      ><span id="local-6989586621679365272"
+	><span class="annot"
+	  ><a href="#local-6989586621679365272"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679365271"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365499"
+      ><span id="local-6989586621679365500"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#Dual"
+	    ><span class="hs-identifier hs-type"
+	      >Dual</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365499"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#ObDual"
+	    ><span class="hs-identifier hs-type"
+	      >ObDual</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365499"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365500"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#SymMonoidal"
+	><span class="hs-identifier hs-type"
+	  >SymMonoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365278"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#Closed"
+	><span class="hs-identifier hs-type"
+	  >Closed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365278"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365282"
+      ><span class="annot"
+	><a href="#local-6989586621679365282"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365278"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365282"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#ObDual"
+	><span class="hs-identifier hs-type"
+	  >ObDual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365282"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365278"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="StarAutonomous"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	  ><span class="hs-identifier hs-var"
+	    >StarAutonomous</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365278"
+      ><span class="annot"
+	><a href="#local-6989586621679365278"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Dual"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#Dual"
+	  ><span class="hs-identifier hs-var"
+	    >Dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365510"
+      ><span class="annot"
+	><a href="#local-6989586621679365510"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365278"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365278"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span id="dual"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#dual"
+	  ><span class="hs-identifier hs-type"
+	    >dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365294"
+      ><span id="local-6989586621679365295"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365294"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365278"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365295"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#Dual"
+	    ><span class="hs-identifier hs-type"
+	      >Dual</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365295"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#Dual"
+	    ><span class="hs-identifier hs-type"
+	      >Dual</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365294"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >  </span
+      ><span id="dualInv"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#dualInv"
+	  ><span class="hs-identifier hs-type"
+	    >dualInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365302"
+      ><span id="local-6989586621679365303"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365302"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365278"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365303"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#Dual"
+	    ><span class="hs-identifier hs-type"
+	      >Dual</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365302"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#Dual"
+	    ><span class="hs-identifier hs-type"
+	      >Dual</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365303"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365303"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365302"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span id="linDist"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#linDist"
+	  ><span class="hs-identifier hs-type"
+	    >linDist</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365340"
+      ><span id="local-6989586621679365341"
+	><span id="local-6989586621679365342"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365340"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365278"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365341"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365342"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365340"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365341"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.Dual.html#Dual"
+	      ><span class="hs-identifier hs-type"
+		>Dual</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365342"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365340"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.Dual.html#Dual"
+	      ><span class="hs-identifier hs-type"
+		>Dual</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365341"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365342"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="linDistInv"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#linDistInv"
+	  ><span class="hs-identifier hs-type"
+	    >linDistInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365311"
+      ><span id="local-6989586621679365312"
+	><span id="local-6989586621679365313"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365311"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365278"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365312"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365313"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365311"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.Dual.html#Dual"
+	      ><span class="hs-identifier hs-type"
+		>Dual</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365312"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365313"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365311"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-type"
+		>**</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365312"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#~%3E"
+	      ><span class="hs-operator hs-type"
+		>~&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.Dual.html#Dual"
+	      ><span class="hs-identifier hs-type"
+		>Dual</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679365313"
+	      ><span class="hs-identifier hs-type"
+		>c</span
+		></a
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#dualObj"
+	><span class="hs-identifier hs-type"
+	  >dualObj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365284"
+      ><span class="annot"
+	><a href="#local-6989586621679365284"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365285"
+      ><span class="annot"
+	><a href="#local-6989586621679365285"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365284"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365284"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365285"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Obj"
+	><span class="hs-identifier hs-type"
+	  >Obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365285"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span id="dualObj"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualObj :: forall {k} (a :: k). (StarAutonomous k, Ob a) =&gt; Obj (Dual a)
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualObj"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >dualObj</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; Dual a ~&gt; Dual a
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+forall k (a :: k) (b :: k).
+StarAutonomous k =&gt;
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	><a href="Proarrow.Object.Dual.html#dual"
+	><span class="hs-identifier hs-var"
+	  >dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365285"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#doubleNeg"
+	><span class="hs-identifier hs-type"
+	  >doubleNeg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365298"
+      ><span class="annot"
+	><a href="#local-6989586621679365298"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365299"
+      ><span class="annot"
+	><a href="#local-6989586621679365299"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365298"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365298"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365299"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365299"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365299"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span id="doubleNeg"
+      ><span class="annot"
+	><span class="annottext"
+	  >doubleNeg :: forall {k} (a :: k). (StarAutonomous k, Ob a) =&gt; Dual (Dual a) ~&gt; a
+</span
+	  ><a href="Proarrow.Object.Dual.html#doubleNeg"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >doubleNeg</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(StarAutonomous k, Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+</span
+	><a href="Proarrow.Object.Dual.html#dualInv"
+	><span class="hs-identifier hs-var"
+	  >dualInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365298"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365299"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (StarAutonomous k, Ob a) =&gt; a ~&gt; Dual (Dual a)
+forall {k} (a :: k). (StarAutonomous k, Ob a) =&gt; a ~&gt; Dual (Dual a)
+</span
+	><a href="Proarrow.Object.Dual.html#doubleNegInv"
+	><span class="hs-identifier hs-var"
+	  >doubleNegInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365299"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#doubleNegInv"
+	><span class="hs-identifier hs-type"
+	  >doubleNegInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365305"
+      ><span class="annot"
+	><a href="#local-6989586621679365305"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365304"
+      ><span class="annot"
+	><a href="#local-6989586621679365304"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365305"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365305"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span id="doubleNegInv"
+      ><span class="annot"
+	><span class="annottext"
+	  >doubleNegInv :: forall {k} (a :: k). (StarAutonomous k, Ob a) =&gt; a ~&gt; Dual (Dual a)
+</span
+	  ><a href="Proarrow.Object.Dual.html#doubleNegInv"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >doubleNegInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	><a href="Proarrow.Object.Dual.html#linDistInv"
+	><span class="hs-identifier hs-var"
+	  >linDistInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365305"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** Dual a) ~&gt; (Dual a ** a))
+-&gt; Dual (Dual a ** a) ~&gt; Dual (a ** Dual a)
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+forall k (a :: k) (b :: k).
+StarAutonomous k =&gt;
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	><a href="Proarrow.Object.Dual.html#dual"
+	><span class="hs-identifier hs-var"
+	  >dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(SymMonoidal k, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+</span
+	><a href="Proarrow.Category.Monoidal.html#swap"
+	><span class="hs-identifier hs-var"
+	  >swap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365305"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual (Dual a ** a) ~&gt; Dual (a ** Dual a))
+-&gt; (Unit ~&gt; Dual (Dual a ** a)) -&gt; Unit ~&gt; Dual (a ** Dual a)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+Unit ~&gt; Dual (Dual a ** a)
+forall {k} (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+Unit ~&gt; Dual (Dual a ** a)
+</span
+	><a href="Proarrow.Object.Dual.html#dualityUnitSA"
+	><span class="hs-identifier hs-var"
+	  >dualityUnitSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Unit ** a) ~&gt; Dual (Dual a))
+-&gt; (a ~&gt; (Unit ** a)) -&gt; a ~&gt; Dual (Dual a)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k). (Monoidal k, Ob a) =&gt; a ~&gt; (Unit ** a)
+</span
+	><a href="Proarrow.Category.Monoidal.html#leftUnitorInv"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365305"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365304"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="ExpSA"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#ExpSA"
+	  ><span class="hs-identifier hs-var"
+	    >ExpSA</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365569"
+      ><span class="annot"
+	><a href="#local-6989586621679365569"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365570"
+      ><span class="annot"
+	><a href="#local-6989586621679365570"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365569"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365570"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#currySA"
+	><span class="hs-identifier hs-type"
+	  >currySA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365325"
+      ><span class="annot"
+	><a href="#local-6989586621679365325"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365326"
+      ><span class="annot"
+	><a href="#local-6989586621679365326"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365325"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365327"
+      ><span class="annot"
+	><a href="#local-6989586621679365327"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365328"
+      ><span class="annot"
+	><a href="#local-6989586621679365328"
+	  ><span class="hs-identifier hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365325"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365326"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365327"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365326"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365327"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365328"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365326"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#ExpSA"
+	><span class="hs-identifier hs-type"
+	  >ExpSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365327"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365328"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span id="currySA"
+      ><span class="annot"
+	><span class="annottext"
+	  >currySA :: forall {k} (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b) =&gt;
+((a ** b) ~&gt; c) -&gt; a ~&gt; ExpSA b c
+</span
+	  ><a href="Proarrow.Object.Dual.html#currySA"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >currySA</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365586"
+      ><span class="annot"
+	><span class="annottext"
+	  >(a ** b) ~&gt; c
+</span
+	  ><a href="#local-6989586621679365586"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	><a href="Proarrow.Object.Dual.html#linDist"
+	><span class="hs-identifier hs-var"
+	  >linDist</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365325"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365326"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365327"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365328"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (StarAutonomous k, Ob a) =&gt; a ~&gt; Dual (Dual a)
+forall {k} (a :: k). (StarAutonomous k, Ob a) =&gt; a ~&gt; Dual (Dual a)
+</span
+	><a href="Proarrow.Object.Dual.html#doubleNegInv"
+	><span class="hs-identifier hs-var"
+	  >doubleNegInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365328"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; Dual (Dual c))
+-&gt; ((a ** b) ~&gt; c) -&gt; (a ** b) ~&gt; Dual (Dual c)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+</span
+	><a href="#local-6989586621679365586"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (a ** b), Ob c) =&gt; a ~&gt; Dual (b ** Dual c))
+-&gt; ((a ** b) ~&gt; c) -&gt; a ~&gt; Dual (b ** Dual c)
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; c
+</span
+	><a href="#local-6989586621679365586"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#uncurrySA"
+	><span class="hs-identifier hs-type"
+	  >uncurrySA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365349"
+      ><span class="annot"
+	><a href="#local-6989586621679365349"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365352"
+      ><span class="annot"
+	><a href="#local-6989586621679365352"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365349"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365350"
+      ><span class="annot"
+	><a href="#local-6989586621679365350"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365351"
+      ><span class="annot"
+	><a href="#local-6989586621679365351"
+	  ><span class="hs-identifier hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365349"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365350"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365351"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365352"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#ExpSA"
+	><span class="hs-identifier hs-type"
+	  >ExpSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365350"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365351"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365352"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365350"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365351"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span id="uncurrySA"
+      ><span class="annot"
+	><span class="annottext"
+	  >uncurrySA :: forall {k} (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob b, Ob c) =&gt;
+(a ~&gt; ExpSA b c) -&gt; (a ** b) ~&gt; c
+</span
+	  ><a href="Proarrow.Object.Dual.html#uncurrySA"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >uncurrySA</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365611"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; ExpSA b c
+</span
+	  ><a href="#local-6989586621679365611"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (StarAutonomous k, Ob a) =&gt; Dual (Dual a) ~&gt; a
+forall {k} (a :: k). (StarAutonomous k, Ob a) =&gt; Dual (Dual a) ~&gt; a
+</span
+	><a href="Proarrow.Object.Dual.html#doubleNeg"
+	><span class="hs-identifier hs-var"
+	  >doubleNeg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365351"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual (Dual c) ~&gt; c)
+-&gt; ((a ** b) ~&gt; Dual (Dual c)) -&gt; (a ** b) ~&gt; c
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	><a href="Proarrow.Object.Dual.html#linDistInv"
+	><span class="hs-identifier hs-var"
+	  >linDistInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365349"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365352"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365350"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365351"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; ExpSA b c
+</span
+	><a href="#local-6989586621679365611"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob (ExpSA b c)) =&gt; (a ** b) ~&gt; c)
+-&gt; (a ~&gt; ExpSA b c) -&gt; (a ** b) ~&gt; c
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; ExpSA b c
+</span
+	><a href="#local-6989586621679365611"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#expSA"
+	><span class="hs-identifier hs-type"
+	  >expSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365357"
+      ><span class="annot"
+	><a href="#local-6989586621679365357"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365361"
+      ><span class="annot"
+	><a href="#local-6989586621679365361"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365357"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365358"
+      ><span class="annot"
+	><a href="#local-6989586621679365358"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365360"
+      ><span class="annot"
+	><a href="#local-6989586621679365360"
+	  ><span class="hs-identifier hs-type"
+	    >x</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365359"
+      ><span class="annot"
+	><a href="#local-6989586621679365359"
+	  ><span class="hs-identifier hs-type"
+	    >y</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365357"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365358"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365359"
+	><span class="hs-identifier hs-type"
+	  >y</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365360"
+	><span class="hs-identifier hs-type"
+	  >x</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365361"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#ExpSA"
+	><span class="hs-identifier hs-type"
+	  >ExpSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365361"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365358"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#ExpSA"
+	><span class="hs-identifier hs-type"
+	  >ExpSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365360"
+	><span class="hs-identifier hs-type"
+	  >x</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365359"
+	><span class="hs-identifier hs-type"
+	  >y</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span id="expSA"
+      ><span class="annot"
+	><span class="annottext"
+	  >expSA :: forall {k} (a :: k) (b :: k) (x :: k) (y :: k).
+StarAutonomous k =&gt;
+(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; ExpSA a b ~&gt; ExpSA x y
+</span
+	  ><a href="Proarrow.Object.Dual.html#expSA"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >expSA</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365630"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; y
+</span
+	  ><a href="#local-6989586621679365630"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365631"
+      ><span class="annot"
+	><span class="annottext"
+	  >x ~&gt; a
+</span
+	  ><a href="#local-6989586621679365631"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((x ** Dual y) ~&gt; (a ** Dual b))
+-&gt; Dual (a ** Dual b) ~&gt; Dual (x ** Dual y)
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+forall k (a :: k) (b :: k).
+StarAutonomous k =&gt;
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	><a href="Proarrow.Object.Dual.html#dual"
+	><span class="hs-identifier hs-var"
+	  >dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>x ~&gt; a
+</span
+	><a href="#local-6989586621679365631"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x ~&gt; a) -&gt; (Dual y ~&gt; Dual b) -&gt; (x ** Dual y) ~&gt; (a ** Dual b)
+forall (x1 :: k) (x2 :: k) (y1 :: k) (y2 :: k).
+(x1 ~&gt; x2) -&gt; (y1 ~&gt; y2) -&gt; (x1 ** y1) ~&gt; (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; y) -&gt; Dual y ~&gt; Dual b
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+forall k (a :: k) (b :: k).
+StarAutonomous k =&gt;
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	><a href="Proarrow.Object.Dual.html#dual"
+	><span class="hs-identifier hs-var"
+	  >dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; y
+</span
+	><a href="#local-6989586621679365630"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#dualityUnitSA"
+	><span class="hs-identifier hs-type"
+	  >dualityUnitSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365323"
+      ><span class="annot"
+	><a href="#local-6989586621679365323"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365322"
+      ><span class="annot"
+	><a href="#local-6989586621679365322"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365323"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365323"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365322"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365322"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365322"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span id="dualityUnitSA"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualityUnitSA :: forall {k} (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+Unit ~&gt; Dual (Dual a ** a)
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualityUnitSA"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >dualityUnitSA</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	><a href="Proarrow.Object.Dual.html#linDist"
+	><span class="hs-identifier hs-var"
+	  >linDist</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365323"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365322"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365322"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Unit ** Dual a) ~&gt; Dual a
+forall (a :: k). Ob a =&gt; (Unit ** a) ~&gt; a
+forall k (a :: k). (Monoidal k, Ob a) =&gt; (Unit ** a) ~&gt; a
+</span
+	><a href="Proarrow.Category.Monoidal.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >leftUnitor</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#dualityCounitSA"
+	><span class="hs-identifier hs-type"
+	  >dualityCounitSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365374"
+      ><span class="annot"
+	><a href="#local-6989586621679365374"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365375"
+      ><span class="annot"
+	><a href="#local-6989586621679365375"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365374"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365374"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365375"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365375"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365375"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span id="dualityCounitSA"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualityCounitSA :: forall {k} (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+(Dual a ** a) ~&gt; Dual Unit
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualityCounitSA"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >dualityCounitSA</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	><a href="Proarrow.Object.Dual.html#linDistInv"
+	><span class="hs-identifier hs-var"
+	  >linDistInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365374"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365375"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365375"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** Unit) ~&gt; a) -&gt; Dual a ~&gt; Dual (a ** Unit)
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+forall k (a :: k) (b :: k).
+StarAutonomous k =&gt;
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	><a href="Proarrow.Object.Dual.html#dual"
+	><span class="hs-identifier hs-var"
+	  >dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k). (Monoidal k, Ob a) =&gt; (a ** Unit) ~&gt; a
+</span
+	><a href="Proarrow.Category.Monoidal.html#rightUnitor"
+	><span class="hs-identifier hs-var"
+	  >rightUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365374"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365375"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Dual"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#Dual"
+	  ><span class="hs-identifier hs-var"
+	    >Dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365684"
+      ><span class="annot"
+	><span class="annottext"
+	  >dual :: forall (a :: ()) (b :: ()). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	  ><a href="Proarrow.Object.Dual.html#dual"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+Unit a b
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dual b ~&gt; Dual a
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365694"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualInv :: forall (a :: ()) (b :: ()).
+(Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualInv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dualInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dual a ~&gt; Dual b
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; a
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365706"
+      ><span class="annot"
+	><span class="annottext"
+	  >linDist :: forall (a :: ()) (b :: ()) (c :: ()).
+(Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	  ><a href="Proarrow.Object.Dual.html#linDist"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >linDist</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; Dual c
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; Dual (b ** c)
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365718"
+      ><span class="annot"
+	><span class="annottext"
+	  >linDistInv :: forall (a :: ()) (b :: ()) (c :: ()).
+(Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	  ><a href="Proarrow.Object.Dual.html#linDistInv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >linDistInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; Dual (b ** c)
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** b) ~&gt; Dual c
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365402"
+      ><span id="local-6989586621679365403"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	    ><span class="hs-identifier hs-type"
+	      >StarAutonomous</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365402"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	    ><span class="hs-identifier hs-type"
+	      >StarAutonomous</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365403"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	    ><span class="hs-identifier hs-type"
+	      >StarAutonomous</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365402"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365403"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Dual"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#Dual"
+	  ><span class="hs-identifier hs-var"
+	    >Dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365753"
+      ><span id="local-6989586621679365754"
+	><span class="hs-special"
+	  >'</span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365753"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365754"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365753"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365754"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365755"
+      ><span class="annot"
+	><span class="annottext"
+	  >dual :: forall (a :: (j, k)) (b :: (j, k)). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	  ><a href="Proarrow.Object.Dual.html#dual"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365760"
+      ><span class="annot"
+	><span class="annottext"
+	  >a1 ~&gt; b1
+</span
+	  ><a href="#local-6989586621679365760"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-type"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365762"
+      ><span class="annot"
+	><span class="annottext"
+	  >a2 ~&gt; b2
+</span
+	  ><a href="#local-6989586621679365762"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a1 ~&gt; b1) -&gt; Dual b1 ~&gt; Dual a1
+forall (a :: j) (b :: j). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+forall k (a :: k) (b :: k).
+StarAutonomous k =&gt;
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	><a href="Proarrow.Object.Dual.html#dual"
+	><span class="hs-identifier hs-var"
+	  >dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a1 ~&gt; b1
+</span
+	><a href="#local-6989586621679365760"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual b1 ~&gt; Dual a1)
+-&gt; (Dual b2 ~&gt; Dual a2)
+-&gt; (:**:) (~&gt;) (~&gt;) '(Dual b1, Dual b2) '(Dual a1, Dual a2)
+forall {j1} {k1} {j2} {k2} (c :: j1 +-&gt; k1) (a1 :: k1) (b1 :: j1)
+       (d :: j2 +-&gt; k2) (a2 :: k2) (b2 :: j2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span
+	><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-var"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a2 ~&gt; b2) -&gt; Dual b2 ~&gt; Dual a2
+forall (a :: k) (b :: k). (a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+forall k (a :: k) (b :: k).
+StarAutonomous k =&gt;
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	><a href="Proarrow.Object.Dual.html#dual"
+	><span class="hs-identifier hs-var"
+	  >dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a2 ~&gt; b2
+</span
+	><a href="#local-6989586621679365762"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365779"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualInv :: forall (a :: (j, k)) (b :: (j, k)).
+(Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualInv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dualInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365792"
+      ><span class="annot"
+	><span class="annottext"
+	  >a1 ~&gt; b1
+</span
+	  ><a href="#local-6989586621679365792"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-type"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365793"
+      ><span class="annot"
+	><span class="annottext"
+	  >a2 ~&gt; b2
+</span
+	  ><a href="#local-6989586621679365793"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual (Fst a) ~&gt; Dual (Fst b)) -&gt; Fst b ~&gt; Fst a
+forall (a :: j) (b :: j).
+(Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+forall k (a :: k) (b :: k).
+(StarAutonomous k, Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+</span
+	><a href="Proarrow.Object.Dual.html#dualInv"
+	><span class="hs-identifier hs-var"
+	  >dualInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a1 ~&gt; b1
+Dual (Fst a) ~&gt; Dual (Fst b)
+</span
+	><a href="#local-6989586621679365792"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fst b ~&gt; Fst a)
+-&gt; (Snd b ~&gt; Snd a)
+-&gt; (:**:) (~&gt;) (~&gt;) '(Fst b, Snd b) '(Fst a, Snd a)
+forall {j1} {k1} {j2} {k2} (c :: j1 +-&gt; k1) (a1 :: k1) (b1 :: j1)
+       (d :: j2 +-&gt; k2) (a2 :: k2) (b2 :: j2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span
+	><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-var"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual (Snd a) ~&gt; Dual (Snd b)) -&gt; Snd b ~&gt; Snd a
+forall (a :: k) (b :: k).
+(Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+forall k (a :: k) (b :: k).
+(StarAutonomous k, Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+</span
+	><a href="Proarrow.Object.Dual.html#dualInv"
+	><span class="hs-identifier hs-var"
+	  >dualInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a2 ~&gt; b2
+Dual (Snd a) ~&gt; Dual (Snd b)
+</span
+	><a href="#local-6989586621679365793"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365818"
+      ><span class="annot"
+	><span class="annottext"
+	  >linDist :: forall (a :: (j, k)) (b :: (j, k)) (c :: (j, k)).
+(Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	  ><a href="Proarrow.Object.Dual.html#linDist"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >linDist</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365819"
+      ><span class="annot"
+	><a href="#local-6989586621679365819"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a1</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365820"
+      ><span class="annot"
+	><a href="#local-6989586621679365820"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a2</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365821"
+      ><span class="annot"
+	><a href="#local-6989586621679365821"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b1</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365822"
+      ><span class="annot"
+	><a href="#local-6989586621679365822"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b2</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365823"
+      ><span class="annot"
+	><a href="#local-6989586621679365823"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c1</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365824"
+      ><span class="annot"
+	><a href="#local-6989586621679365824"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c2</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365839"
+      ><span class="annot"
+	><span class="annottext"
+	  >a1 ~&gt; b1
+</span
+	  ><a href="#local-6989586621679365839"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-type"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365840"
+      ><span class="annot"
+	><span class="annottext"
+	  >a2 ~&gt; b2
+</span
+	  ><a href="#local-6989586621679365840"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	><a href="Proarrow.Object.Dual.html#linDist"
+	><span class="hs-identifier hs-var"
+	  >linDist</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365402"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365819"
+	><span class="hs-identifier hs-type"
+	  >a1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365821"
+	><span class="hs-identifier hs-type"
+	  >b1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365823"
+	><span class="hs-identifier hs-type"
+	  >c1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a1 ~&gt; b1
+(Fst a ** Fst b) ~&gt; Dual (Fst c)
+</span
+	><a href="#local-6989586621679365839"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fst a ~&gt; Dual (Fst b ** Fst c))
+-&gt; (Snd a ~&gt; Dual (Snd b ** Snd c))
+-&gt; (:**:)
+     (~&gt;)
+     (~&gt;)
+     '(Fst a, Snd a)
+     '(Dual (Fst b ** Fst c), Dual (Snd b ** Snd c))
+forall {j1} {k1} {j2} {k2} (c :: j1 +-&gt; k1) (a1 :: k1) (b1 :: j1)
+       (d :: j2 +-&gt; k2) (a2 :: k2) (b2 :: j2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span
+	><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-var"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	><a href="Proarrow.Object.Dual.html#linDist"
+	><span class="hs-identifier hs-var"
+	  >linDist</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365403"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365820"
+	><span class="hs-identifier hs-type"
+	  >a2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365822"
+	><span class="hs-identifier hs-type"
+	  >b2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365824"
+	><span class="hs-identifier hs-type"
+	  >c2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a2 ~&gt; b2
+(Snd a ** Snd b) ~&gt; Dual (Snd c)
+</span
+	><a href="#local-6989586621679365840"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679365865"
+      ><span class="annot"
+	><span class="annottext"
+	  >linDistInv :: forall (a :: (j, k)) (b :: (j, k)) (c :: (j, k)).
+(Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	  ><a href="Proarrow.Object.Dual.html#linDistInv"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >linDistInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365866"
+      ><span class="annot"
+	><a href="#local-6989586621679365866"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a1</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365867"
+      ><span class="annot"
+	><a href="#local-6989586621679365867"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a2</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365868"
+      ><span class="annot"
+	><a href="#local-6989586621679365868"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b1</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365869"
+      ><span class="annot"
+	><a href="#local-6989586621679365869"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b2</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365870"
+      ><span class="annot"
+	><a href="#local-6989586621679365870"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c1</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365871"
+      ><span class="annot"
+	><a href="#local-6989586621679365871"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c2</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365888"
+      ><span class="annot"
+	><span class="annottext"
+	  >a1 ~&gt; b1
+</span
+	  ><a href="#local-6989586621679365888"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-type"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365889"
+      ><span class="annot"
+	><span class="annottext"
+	  >a2 ~&gt; b2
+</span
+	  ><a href="#local-6989586621679365889"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	><a href="Proarrow.Object.Dual.html#linDistInv"
+	><span class="hs-identifier hs-var"
+	  >linDistInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365402"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365866"
+	><span class="hs-identifier hs-type"
+	  >a1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365868"
+	><span class="hs-identifier hs-type"
+	  >b1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365870"
+	><span class="hs-identifier hs-type"
+	  >c1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a1 ~&gt; b1
+Fst a ~&gt; Dual (Fst b ** Fst c)
+</span
+	><a href="#local-6989586621679365888"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Fst a ** Fst b) ~&gt; Dual (Fst c))
+-&gt; ((Snd a ** Snd b) ~&gt; Dual (Snd c))
+-&gt; (:**:)
+     (~&gt;)
+     (~&gt;)
+     '(Fst a ** Fst b, Snd a ** Snd b)
+     '(Dual (Fst c), Dual (Snd c))
+forall {j1} {k1} {j2} {k2} (c :: j1 +-&gt; k1) (a1 :: k1) (b1 :: j1)
+       (d :: j2 +-&gt; k2) (a2 :: k2) (b2 :: j2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span
+	><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-var"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	><a href="Proarrow.Object.Dual.html#linDistInv"
+	><span class="hs-identifier hs-var"
+	  >linDistInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365403"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365867"
+	><span class="hs-identifier hs-type"
+	  >a2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365869"
+	><span class="hs-identifier hs-type"
+	  >b2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365871"
+	><span class="hs-identifier hs-type"
+	  >c2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a2 ~&gt; b2
+Snd a ~&gt; Dual (Snd b ** Snd c)
+</span
+	><a href="#local-6989586621679365889"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier hs-type"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365441"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#SymMonoidal"
+	><span class="hs-identifier hs-type"
+	  >SymMonoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365441"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="CompactClosed"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#CompactClosed"
+	  ><span class="hs-identifier hs-var"
+	    >CompactClosed</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365441"
+      ><span class="annot"
+	><a href="#local-6989586621679365441"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span
+      >  </span
+      ><span id="distribDual"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#distribDual"
+	  ><span class="hs-identifier hs-type"
+	    >distribDual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365447"
+      ><span class="annot"
+	><a href="#local-6989586621679365447"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365441"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365448"
+      ><span class="annot"
+	><a href="#local-6989586621679365448"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365447"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365448"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365447"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365448"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365447"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365448"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span
+      >  </span
+      ><span id="dualUnit"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#dualUnit"
+	  ><span class="hs-identifier hs-type"
+	    >dualUnit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365441"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#dualityUnit"
+	><span class="hs-identifier hs-type"
+	  >dualityUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365443"
+      ><span class="annot"
+	><a href="#local-6989586621679365443"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365444"
+      ><span class="annot"
+	><a href="#local-6989586621679365444"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365443"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	><span class="hs-identifier hs-type"
+	  >CompactClosed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365443"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span id="dualityUnit"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualityUnit :: forall {k} (a :: k).
+(CompactClosed k, Ob a) =&gt;
+Unit ~&gt; (a ** Dual a)
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualityUnit"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >dualityUnit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (StarAutonomous k, Ob a) =&gt; Dual (Dual a) ~&gt; a
+forall {k} (a :: k). (StarAutonomous k, Ob a) =&gt; Dual (Dual a) ~&gt; a
+</span
+	><a href="Proarrow.Object.Dual.html#doubleNeg"
+	><span class="hs-identifier hs-var"
+	  >doubleNeg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual (Dual a) ~&gt; a)
+-&gt; (Dual a ~&gt; Dual a) -&gt; (Dual (Dual a) ** Dual a) ~&gt; (a ** Dual a)
+forall (x1 :: k) (x2 :: k) (y1 :: k) (y2 :: k).
+(x1 ~&gt; x2) -&gt; (y1 ~&gt; y2) -&gt; (x1 ** y1) ~&gt; (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Dual (Dual a) ** Dual a) ~&gt; (a ** Dual a))
+-&gt; (Unit ~&gt; (Dual (Dual a) ** Dual a)) -&gt; Unit ~&gt; (a ** Dual a)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(CompactClosed k, Ob a, Ob b) =&gt;
+Dual (a ** b) ~&gt; (Dual a ** Dual b)
+</span
+	><a href="Proarrow.Object.Dual.html#distribDual"
+	><span class="hs-identifier hs-var"
+	  >distribDual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365443"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual (Dual a ** a) ~&gt; (Dual (Dual a) ** Dual a))
+-&gt; (Unit ~&gt; Dual (Dual a ** a))
+-&gt; Unit ~&gt; (Dual (Dual a) ** Dual a)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+Unit ~&gt; Dual (Dual a ** a)
+forall {k} (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+Unit ~&gt; Dual (Dual a ** a)
+</span
+	><a href="Proarrow.Object.Dual.html#dualityUnitSA"
+	><span class="hs-identifier hs-var"
+	  >dualityUnitSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365444"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-77"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#dualityCounit"
+	><span class="hs-identifier hs-type"
+	  >dualityCounit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365449"
+      ><span class="annot"
+	><a href="#local-6989586621679365449"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365450"
+      ><span class="annot"
+	><a href="#local-6989586621679365450"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365449"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	><span class="hs-identifier hs-type"
+	  >CompactClosed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365449"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365450"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365450"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365450"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-78"
+      ></span
+      ><span id="dualityCounit"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualityCounit :: forall {k} (a :: k).
+(CompactClosed k, Ob a) =&gt;
+(Dual a ** a) ~&gt; Unit
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualityCounit"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >dualityCounit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dual Unit ~&gt; Unit
+forall k. CompactClosed k =&gt; Dual Unit ~&gt; Unit
+</span
+	><a href="Proarrow.Object.Dual.html#dualUnit"
+	><span class="hs-identifier hs-var"
+	  >dualUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual Unit ~&gt; Unit)
+-&gt; ((Dual a ** a) ~&gt; Dual Unit) -&gt; (Dual a ** a) ~&gt; Unit
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+(Dual a ** a) ~&gt; Dual Unit
+forall {k} (a :: k).
+(StarAutonomous k, Ob a) =&gt;
+(Dual a ** a) ~&gt; Dual Unit
+</span
+	><a href="Proarrow.Object.Dual.html#dualityCounitSA"
+	><span class="hs-identifier hs-var"
+	  >dualityCounitSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365450"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-79"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-80"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#dualUnitInv"
+	><span class="hs-identifier hs-type"
+	  >dualUnitInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365453"
+      ><span class="annot"
+	><a href="#local-6989586621679365453"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	><span class="hs-identifier hs-type"
+	  >CompactClosed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365453"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365453"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-81"
+      ></span
+      ><span id="dualUnitInv"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualUnitInv :: forall {k}. CompactClosed k =&gt; Unit ~&gt; Dual Unit
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualUnitInv"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >dualUnitInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k). (Monoidal k, Ob a) =&gt; (Unit ** a) ~&gt; a
+</span
+	><a href="Proarrow.Category.Monoidal.html#leftUnitor"
+	><span class="hs-identifier hs-var"
+	  >leftUnitor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365453"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Unit ** Dual Unit) ~&gt; Dual Unit)
+-&gt; (Unit ~&gt; (Unit ** Dual Unit)) -&gt; Unit ~&gt; Dual Unit
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CompactClosed k, Ob a) =&gt; Unit ~&gt; (a ** Dual a)
+forall {k} (a :: k).
+(CompactClosed k, Ob a) =&gt;
+Unit ~&gt; (a ** Dual a)
+</span
+	><a href="Proarrow.Object.Dual.html#dualityUnit"
+	><span class="hs-identifier hs-var"
+	  >dualityUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Unit"
+	><span class="hs-identifier hs-type"
+	  >Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-82"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-83"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#combineDual"
+	><span class="hs-identifier hs-type"
+	  >combineDual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365455"
+      ><span class="annot"
+	><a href="#local-6989586621679365455"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365456"
+      ><span class="annot"
+	><a href="#local-6989586621679365456"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679365457"
+      ><span class="annot"
+	><a href="#local-6989586621679365457"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	><span class="hs-identifier hs-type"
+	  >CompactClosed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365455"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365455"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365457"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365457"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365457"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-84"
+      ></span
+      ><span id="combineDual"
+      ><span class="annot"
+	><span class="annottext"
+	  >combineDual :: forall {k} (a :: k) (b :: k).
+(CompactClosed k, Ob a, Ob b) =&gt;
+(Dual a ** Dual b) ~&gt; Dual (a ** b)
+</span
+	  ><a href="Proarrow.Object.Dual.html#combineDual"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >combineDual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-85"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	><a href="Proarrow.Object.Dual.html#linDist"
+	><span class="hs-identifier hs-var"
+	  >linDist</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365455"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365457"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-86"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** Dual a) ~&gt; Unit) -&gt; ((a ** Dual a) ** Dual b) ~&gt; Dual b
+forall {k} (a :: k) (b :: k).
+(Monoidal k, Ob a) =&gt;
+(b ~&gt; Unit) -&gt; (b ** a) ~&gt; a
+</span
+	><a href="Proarrow.Category.Monoidal.html#leftUnitorWith"
+	><span class="hs-identifier hs-var"
+	  >leftUnitorWith</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CompactClosed k, Ob a) =&gt; (Dual a ** a) ~&gt; Unit
+forall {k} (a :: k).
+(CompactClosed k, Ob a) =&gt;
+(Dual a ** a) ~&gt; Unit
+</span
+	><a href="Proarrow.Object.Dual.html#dualityCounit"
+	><span class="hs-identifier hs-var"
+	  >dualityCounit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Dual a ** a) ~&gt; Unit)
+-&gt; ((a ** Dual a) ~&gt; (Dual a ** a)) -&gt; (a ** Dual a) ~&gt; Unit
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(SymMonoidal k, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+</span
+	><a href="Proarrow.Category.Monoidal.html#swap"
+	><span class="hs-identifier hs-var"
+	  >swap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365455"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-87"
+      ></span
+      ><span
+      >        </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((a ** Dual a) ** Dual b) ~&gt; Dual b)
+-&gt; (((Dual a ** Dual b) ** a) ~&gt; ((a ** Dual a) ** Dual b))
+-&gt; ((Dual a ** Dual b) ** a) ~&gt; Dual b
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(Monoidal k, Ob a, Ob b, Ob c) =&gt;
+(a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span
+	><a href="Proarrow.Category.Monoidal.html#associatorInv"
+	><span class="hs-identifier hs-var"
+	  >associatorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365455"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365457"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-88"
+      ></span
+      ><span
+      >        </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** (Dual a ** Dual b)) ~&gt; ((a ** Dual a) ** Dual b))
+-&gt; (((Dual a ** Dual b) ** a) ~&gt; (a ** (Dual a ** Dual b)))
+-&gt; ((Dual a ** Dual b) ** a) ~&gt; ((a ** Dual a) ** Dual b)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(SymMonoidal k, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+</span
+	><a href="Proarrow.Category.Monoidal.html#swap"
+	><span class="hs-identifier hs-var"
+	  >swap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365455"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365457"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-89"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-90"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (Dual a ** Dual b), Ob (Dual a ** Dual b)) =&gt;
+ (Dual a ** Dual b) ~&gt; Dual (a ** b))
+-&gt; ((Dual a ** Dual b) ~&gt; (Dual a ** Dual b))
+-&gt; (Dual a ** Dual b) ~&gt; Dual (a ** b)
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: PRO j k) (a :: j) (b :: k) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365456"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj (Dual a)
+-&gt; (Dual b ~&gt; Dual b) -&gt; (Dual a ** Dual b) ~&gt; (Dual a ** Dual b)
+forall (x1 :: k) (x2 :: k) (y1 :: k) (y2 :: k).
+(x1 ~&gt; x2) -&gt; (y1 ~&gt; y2) -&gt; (x1 ** y1) ~&gt; (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365457"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-91"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-92"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#compactClosedTrace"
+	><span class="hs-identifier hs-type"
+	  >compactClosedTrace</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679365467"
+      ><span class="annot"
+	><a href="#local-6989586621679365467"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365470"
+      ><span class="annot"
+	><a href="#local-6989586621679365470"
+	  ><span class="hs-identifier hs-type"
+	    >u</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679365468"
+      ><span class="annot"
+	><a href="#local-6989586621679365468"
+	  ><span class="hs-identifier hs-type"
+	    >x</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365467"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365469"
+      ><span class="annot"
+	><a href="#local-6989586621679365469"
+	  ><span class="hs-identifier hs-type"
+	    >y</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	><span class="hs-identifier hs-type"
+	  >CompactClosed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365467"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365468"
+	><span class="hs-identifier hs-type"
+	  >x</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365469"
+	><span class="hs-identifier hs-type"
+	  >y</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365468"
+	><span class="hs-identifier hs-type"
+	  >x</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365469"
+	><span class="hs-identifier hs-type"
+	  >y</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365468"
+	><span class="hs-identifier hs-type"
+	  >x</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365469"
+	><span class="hs-identifier hs-type"
+	  >y</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-93"
+      ></span
+      ><span id="compactClosedTrace"
+      ><span class="annot"
+	><span class="annottext"
+	  >compactClosedTrace :: forall {k} (u :: k) (x :: k) (y :: k).
+(CompactClosed k, Ob x, Ob y, Ob u) =&gt;
+((x ** u) ~&gt; (y ** u)) -&gt; x ~&gt; y
+</span
+	  ><a href="Proarrow.Object.Dual.html#compactClosedTrace"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >compactClosedTrace</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679366040"
+      ><span class="annot"
+	><span class="annottext"
+	  >(x ** u) ~&gt; (y ** u)
+</span
+	  ><a href="#local-6989586621679366040"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-94"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((u ** Dual u) ~&gt; Unit) -&gt; (y ** (u ** Dual u)) ~&gt; y
+forall {k} (a :: k) (b :: k).
+(Monoidal k, Ob a) =&gt;
+(b ~&gt; Unit) -&gt; (a ** b) ~&gt; a
+</span
+	><a href="Proarrow.Category.Monoidal.html#rightUnitorWith"
+	><span class="hs-identifier hs-var"
+	  >rightUnitorWith</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CompactClosed k, Ob a) =&gt; (Dual a ** a) ~&gt; Unit
+forall {k} (a :: k).
+(CompactClosed k, Ob a) =&gt;
+(Dual a ** a) ~&gt; Unit
+</span
+	><a href="Proarrow.Object.Dual.html#dualityCounit"
+	><span class="hs-identifier hs-var"
+	  >dualityCounit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Dual u ** u) ~&gt; Unit)
+-&gt; ((u ** Dual u) ~&gt; (Dual u ** u)) -&gt; (u ** Dual u) ~&gt; Unit
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(SymMonoidal k, Ob a, Ob b) =&gt;
+(a ** b) ~&gt; (b ** a)
+</span
+	><a href="Proarrow.Category.Monoidal.html#swap"
+	><span class="hs-identifier hs-var"
+	  >swap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365467"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-95"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((y ** (u ** Dual u)) ~&gt; y)
+-&gt; (x ~&gt; (y ** (u ** Dual u))) -&gt; x ~&gt; y
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(Monoidal k, Ob a, Ob b, Ob c) =&gt;
+((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span
+	><a href="Proarrow.Category.Monoidal.html#associator"
+	><span class="hs-identifier hs-var"
+	  >associator</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365467"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365469"
+	><span class="hs-identifier hs-type"
+	  >y</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-96"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((y ** u) ** Dual u) ~&gt; (y ** (u ** Dual u)))
+-&gt; (x ~&gt; ((y ** u) ** Dual u)) -&gt; x ~&gt; (y ** (u ** Dual u))
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(x ** u) ~&gt; (y ** u)
+</span
+	><a href="#local-6989586621679366040"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((x ** u) ~&gt; (y ** u))
+-&gt; (Dual u ~&gt; Dual u)
+-&gt; ((x ** u) ** Dual u) ~&gt; ((y ** u) ** Dual u)
+forall (x1 :: k) (x2 :: k) (y1 :: k) (y2 :: k).
+(x1 ~&gt; x2) -&gt; (y1 ~&gt; y2) -&gt; (x1 ** y1) ~&gt; (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-97"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((x ** u) ** Dual u) ~&gt; ((y ** u) ** Dual u))
+-&gt; (x ~&gt; ((x ** u) ** Dual u)) -&gt; x ~&gt; ((y ** u) ** Dual u)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) (c :: k).
+(Monoidal k, Ob a, Ob b, Ob c) =&gt;
+(a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span
+	><a href="Proarrow.Category.Monoidal.html#associatorInv"
+	><span class="hs-identifier hs-var"
+	  >associatorInv</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365467"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365468"
+	><span class="hs-identifier hs-type"
+	  >x</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#Dual"
+	><span class="hs-identifier hs-type"
+	  >Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-98"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((x ** (u ** Dual u)) ~&gt; ((x ** u) ** Dual u))
+-&gt; (x ~&gt; (x ** (u ** Dual u))) -&gt; x ~&gt; ((x ** u) ** Dual u)
+forall (b :: k) (c :: k) (a :: k). (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Unit ~&gt; (u ** Dual u)) -&gt; x ~&gt; (x ** (u ** Dual u))
+forall {k} (a :: k) (b :: k).
+(Monoidal k, Ob a) =&gt;
+(Unit ~&gt; b) -&gt; a ~&gt; (a ** b)
+</span
+	><a href="Proarrow.Category.Monoidal.html#rightUnitorInvWith"
+	><span class="hs-identifier hs-var"
+	  >rightUnitorInvWith</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: k). (CompactClosed k, Ob a) =&gt; Unit ~&gt; (a ** Dual a)
+forall {k} (a :: k).
+(CompactClosed k, Ob a) =&gt;
+Unit ~&gt; (a ** Dual a)
+</span
+	><a href="Proarrow.Object.Dual.html#dualityUnit"
+	><span class="hs-identifier hs-var"
+	  >dualityUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365470"
+	><span class="hs-identifier hs-type"
+	  >u</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-99"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-100"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	><span class="hs-identifier hs-type"
+	  >CompactClosed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-101"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679366055"
+      ><span class="annot"
+	><span class="annottext"
+	  >distribDual :: forall (a :: ()) (b :: ()).
+(Ob a, Ob b) =&gt;
+Dual (a ** b) ~&gt; (Dual a ** Dual b)
+</span
+	  ><a href="Proarrow.Object.Dual.html#distribDual"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distribDual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dual (a ** b) ~&gt; (Dual a ** Dual b)
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-102"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679366056"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualUnit :: Dual Unit ~&gt; Unit
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualUnit"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dualUnit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dual Unit ~&gt; Unit
+Unit '() '()
+</span
+	><a href="Proarrow.Category.Instance.Unit.html#Unit"
+	><span class="hs-identifier hs-var"
+	  >U.Unit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-103"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-104"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679365488"
+      ><span id="local-6989586621679365489"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	    ><span class="hs-identifier hs-type"
+	      >CompactClosed</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365488"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	    ><span class="hs-identifier hs-type"
+	      >CompactClosed</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365489"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Dual.html#CompactClosed"
+	    ><span class="hs-identifier hs-type"
+	      >CompactClosed</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365488"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679365489"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-105"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679366092"
+      ><span class="annot"
+	><span class="annottext"
+	  >distribDual :: forall (a :: (j, k)) (b :: (j, k)).
+(Ob a, Ob b) =&gt;
+Dual (a ** b) ~&gt; (Dual a ** Dual b)
+</span
+	  ><a href="Proarrow.Object.Dual.html#distribDual"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >distribDual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679366093"
+      ><span class="annot"
+	><a href="#local-6989586621679366093"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679366094"
+      ><span class="annot"
+	><a href="#local-6989586621679366094"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679366095"
+      ><span class="annot"
+	><a href="#local-6989586621679366095"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679366096"
+      ><span class="annot"
+	><a href="#local-6989586621679366096"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(CompactClosed k, Ob a, Ob b) =&gt;
+Dual (a ** b) ~&gt; (Dual a ** Dual b)
+</span
+	><a href="Proarrow.Object.Dual.html#distribDual"
+	><span class="hs-identifier hs-var"
+	  >distribDual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365488"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679366093"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679366095"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual (Fst a ** Fst b) ~&gt; (Dual (Fst a) ** Dual (Fst b)))
+-&gt; (Dual (Snd a ** Snd b) ~&gt; (Dual (Snd a) ** Dual (Snd b)))
+-&gt; (:**:)
+     (~&gt;)
+     (~&gt;)
+     '(Dual (Fst a ** Fst b), Dual (Snd a ** Snd b))
+     '(Dual (Fst a) ** Dual (Fst b), Dual (Snd a) ** Dual (Snd b))
+forall {j1} {k1} {j2} {k2} (c :: j1 +-&gt; k1) (a1 :: k1) (b1 :: j1)
+       (d :: j2 +-&gt; k2) (a2 :: k2) (b2 :: j2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span
+	><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-var"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(CompactClosed k, Ob a, Ob b) =&gt;
+Dual (a ** b) ~&gt; (Dual a ** Dual b)
+</span
+	><a href="Proarrow.Object.Dual.html#distribDual"
+	><span class="hs-identifier hs-var"
+	  >distribDual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679365489"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679366094"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679366096"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-106"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679366099"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualUnit :: Dual Unit ~&gt; Unit
+</span
+	  ><a href="Proarrow.Object.Dual.html#dualUnit"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dualUnit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dual Unit ~&gt; Unit
+forall k. CompactClosed k =&gt; Dual Unit ~&gt; Unit
+</span
+	><a href="Proarrow.Object.Dual.html#dualUnit"
+	><span class="hs-identifier hs-var"
+	  >dualUnit</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Dual Unit ~&gt; Unit)
+-&gt; (Dual Unit ~&gt; Unit)
+-&gt; (:**:) (~&gt;) (~&gt;) '(Dual Unit, Dual Unit) '(Unit, Unit)
+forall {j1} {k1} {j2} {k2} (c :: j1 +-&gt; k1) (a1 :: k1) (b1 :: j1)
+       (d :: j2 +-&gt; k2) (a2 :: k2) (b2 :: j2).
+c a1 b1 -&gt; d a2 b2 -&gt; (:**:) c d '(a1, a2) '(b1, b2)
+</span
+	><a href="Proarrow.Category.Instance.Product.html#%3A%2A%2A%3A"
+	><span class="hs-operator hs-var"
+	  >:**:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Dual Unit ~&gt; Unit
+forall k. CompactClosed k =&gt; Dual Unit ~&gt; Unit
+</span
+	><a href="Proarrow.Object.Dual.html#dualUnit"
+	><span class="hs-identifier hs-var"
+	  >dualUnit</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-107"
+      ></span
+      ></pre
+    ></body
+  ></html
+>

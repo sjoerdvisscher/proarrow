@@ -1,0 +1,1449 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Squares.Limit</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Squares.Limit.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Squares.Limit</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><a href="#v:limit"
+	      >limit</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk i a) (d :: vk i k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a), <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2))</li
+	    ><li class="src short"
+	    ><a href="#v:limitUniv"
+	      >limitUniv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk i a) (d :: vk i k2) (p :: vk a k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > p) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a), p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) -&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a, p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2))</li
+	    ><li class="src short"
+	    ><a href="#v:rightAdjointPreservesLimits"
+	      >rightAdjointPreservesLimits</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (f :: vk k' k2) (g :: vk k2 k') (d :: vk i k2) (j :: hk i a). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	      >Adjunction</a
+	      > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	      >HasCompanions</a
+	      > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > g, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > g d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k')) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k')))</li
+	    ><li class="src short"
+	    ><a href="#v:rightAdjointPreservesLimitsInv"
+	      >rightAdjointPreservesLimitsInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (g :: vk k2 k') (d :: vk i k2) (j :: hk i a). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	      >HasCompanions</a
+	      > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > g, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k'))) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > g d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k'))</li
+	    ><li class="src short"
+	    ><a href="#v:colimit"
+	      >colimit</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk a i) (d :: vk i k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasColimits</a
+	      > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk i i), d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	      >Colimit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2))</li
+	    ><li class="src short"
+	    ><a href="#v:colimitUniv"
+	      >colimitUniv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk a i) (d :: vk i k2) (p :: vk a k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasColimits</a
+	      > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > p) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk i i), d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) -&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	      >Colimit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2))</li
+	    ><li class="src short"
+	    ><a href="#v:leftAdjointPreservesColimits"
+	      >leftAdjointPreservesColimits</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (f :: vk k2 k') (g :: vk k' k2) (d :: vk i k2) (j :: hk a i). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	      >Adjunction</a
+	      > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	      >HasCompanions</a
+	      > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > g, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasColimits</a
+	      > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasColimits</a
+	      > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	      >Colimit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k'))) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	      >Colimit</a
+	      > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > f d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k'))</li
+	    ><li class="src short"
+	    ><a href="#v:leftAdjointPreservesColimitsInv"
+	      >leftAdjointPreservesColimitsInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (f :: vk k2 k') (d :: vk i k2) (j :: hk a i). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	      >HasCompanions</a
+	      > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasColimits</a
+	      > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasColimits</a
+	      > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	      >Colimit</a
+	      > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > f d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k')) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	      >Colimit</a
+	      > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k' k')))</li
+	    ><li class="src short"
+	    ><a href="#v:unit"
+	      >unit</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k1} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {j :: k1} {k2 :: k1} (f :: vk j k2) (g :: vk k2 j). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	      >Adjunction</a
+	      > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	      >HasCompanions</a
+	      > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > g, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk j j, '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk j j) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk j j, f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk j j)))</li
+	    ><li class="src short"
+	    ><a href="#v:counit"
+	      >counit</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k1} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {j :: k1} {k2 :: k1} (f :: vk j k2) (g :: vk k2 j). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	      >Adjunction</a
+	      > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	      >HasCompanions</a
+	      > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > g, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > vk k2) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2))) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk k2 k2, '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k2 k2)</li
+	    ></ul
+	  ></details
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><a id="v:limit" class="def"
+	    >limit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk i a) (d :: vk i k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a), <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) <a href="src/Proarrow.Squares.Limit.html#limit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L25" class="link"
+	    >Comments</a
+	    > <a href="#v:limit" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The projection out of the <code
+	      >j</code
+	      >-weighted limit <code
+	      >l</code
+	      > of <code
+	      >d</code
+	      >.</p
+	    ><pre
+	    >A--l--K
+|  v  |
+j--@  |
+|  v  |
+I--d--K</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:limitUniv" class="def"
+	    >limitUniv</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk i a) (d :: vk i k2) (p :: vk a k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > p) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a), p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) -&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a, p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) <a href="src/Proarrow.Squares.Limit.html#limitUniv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L48" class="link"
+	    >Comments</a
+	    > <a href="#v:limitUniv" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The universal property of the limit.</p
+	    ><p
+	    >The dotted inner square is the input square, the outer square is the output square.</p
+	    ><pre
+	    >A-+--p--+-K
+| :  v  : |
+| j--@  : |
+| :  v  : |
+| I..d..K |
+A----l----K</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:rightAdjointPreservesLimits" class="def"
+	    >rightAdjointPreservesLimits</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (f :: vk k' k2) (g :: vk k2 k') (d :: vk i k2) (j :: hk i a). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	    >Adjunction</a
+	    > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	    >HasCompanions</a
+	    > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > g, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	    >O</a
+	    > g d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k')) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k'))) <a href="src/Proarrow.Squares.Limit.html#rightAdjointPreservesLimits" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L92" class="link"
+	    >Comments</a
+	    > <a href="#v:rightAdjointPreservesLimits" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Preservation of limits by right adjoints</p
+	    ><p
+	    >Let <code
+	      >l</code
+	      > be the <code
+	      >j</code
+	      >-weighted limit of <code
+	      >d</code
+	      > and <code
+	      >l'</code
+	      > be the <code
+	      >j</code
+	      >-weighted limit of <code
+	      >g &#8728; d</code
+	      >.
+ Then we provide the following square:</p
+	    ><pre
+	    >A--l'-K'
+|  v  |
+|  @  |
+| / \ |
+| v v |
+A-l-g-K'</pre
+	    ><p
+	    >With this implementation:</p
+	    ><pre
+	    >+-----l'--+---------+
+|     v   |   /@\   |
+|     |   |  v   v  |
++-+---l'--+-f-+-+-g-+
+| :   v   | v : | v |
+| j---@   | | : | | |
+| :  / \  | | : | | |
+| : v   v | v : | | |
+| +-d-+-g-+-f-+ | | |
+| : | | v   v : | | |
+| : v |  \@/  : | | |
+| +.d.+.......+ | v |
++-------l-------+-g-+</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:rightAdjointPreservesLimitsInv" class="def"
+	    >rightAdjointPreservesLimitsInv</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (g :: vk k2 k') (d :: vk i k2) (j :: hk i a). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	    >HasCompanions</a
+	    > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > g, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k'))) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	    >O</a
+	    > g d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k')) <a href="src/Proarrow.Squares.Limit.html#rightAdjointPreservesLimitsInv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L128" class="link"
+	    >Comments</a
+	    > <a href="#v:rightAdjointPreservesLimitsInv" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The inverse works for any arrow:</p
+	    ><p
+	    >The required square</p
+	    ><pre
+	    >A-l-g-K'
+| v v |
+| \@/ |
+|  |  |
+A--l'-K'</pre
+	    ><p
+	    >is implemented as</p
+	    ><pre
+	    >A-+-l-+-g-+-K'
+| : v | v : |
+| j-@ | | : |
+| : v | v : |
+| +.d.+.g.+ |
+A-----l'----K'</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:colimit" class="def"
+	    >colimit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk a i) (d :: vk i k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasColimits</a
+	    > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk i i), d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	    >Colimit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) <a href="src/Proarrow.Squares.Limit.html#colimit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L150" class="link"
+	    >Comments</a
+	    > <a href="#v:colimit" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The projection into the <code
+	      >j</code
+	      >-weighted colimit <code
+	      >c</code
+	      > of <code
+	      >d</code
+	      >.</p
+	    ><pre
+	    >I--d--K
+|  v  |
+j--@  |
+|  v  |
+A--l--K</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:colimitUniv" class="def"
+	    >colimitUniv</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {a :: k1} {i :: k1} {k2 :: k1} (j :: hk a i) (d :: vk i k2) (p :: vk a k2). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasColimits</a
+	    > vk j k2, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > p) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '(j '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk i i), d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) -&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	    >Colimit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, p '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2)) <a href="src/Proarrow.Squares.Limit.html#colimitUniv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L173" class="link"
+	    >Comments</a
+	    > <a href="#v:colimitUniv" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The universal property of the colimit.</p
+	    ><p
+	    >The dotted inner square is the input square, the outer square is the output square.</p
+	    ><pre
+	    >A----c----K
+| I..d..K |
+| :  v  : |
+| j--@  : |
+| :  v  : |
+A-+--p--+-K</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:leftAdjointPreservesColimits" class="def"
+	    >leftAdjointPreservesColimits</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (f :: vk k2 k') (g :: vk k' k2) (d :: vk i k2) (j :: hk a i). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	    >Adjunction</a
+	    > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	    >HasCompanions</a
+	    > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > g, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasColimits</a
+	    > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasColimits</a
+	    > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	    >Colimit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k'))) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	    >Colimit</a
+	    > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	    >O</a
+	    > f d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k')) <a href="src/Proarrow.Squares.Limit.html#leftAdjointPreservesColimits" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L217" class="link"
+	    >Comments</a
+	    > <a href="#v:leftAdjointPreservesColimits" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Preservation of colimits by left adjoints</p
+	    ><p
+	    >Let <code
+	      >c</code
+	      > be the <code
+	      >j</code
+	      >-weighted colimit of <code
+	      >d</code
+	      > and <code
+	      >c'</code
+	      > be the <code
+	      >j</code
+	      >-weighted colimit of <code
+	      >g &#8728; d</code
+	      >.
+ Then we provide the following square:</p
+	    ><pre
+	    >A-c-f-K'
+| v v |
+| \ / |
+|  @  |
+|  v  |
+A--c'-K'</pre
+	    ><p
+	    >With this implementation:</p
+	    ><pre
+	    >+-------c-------+-f-+
+| +.d.+.......+ | v |
+| : v |  /@\  : | | |
+| : | | v   v : | | |
+| +-d-+-f-+-g-+ | | |
+| : v   v | v : | | |
+| :  \ /  | | : | | |
+| j---@   | | : | | |
+| :   v   | v : | v |
++-+---c'--+-g-+-+-f-+
+|     |   |  v   v  |
+|     v   |   \@/   |
++-----c'--+---------+</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:leftAdjointPreservesColimitsInv" class="def"
+	    >leftAdjointPreservesColimitsInv</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {k2 :: k1} {k' :: k1} {i :: k1} {a :: k1} (f :: vk k2 k') (d :: vk i k2) (j :: hk a i). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	    >HasCompanions</a
+	    > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > f, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasColimits</a
+	    > vk j k2, <a href="Proarrow-Category-Equipment-Limit.html#t:HasColimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasColimits</a
+	    > vk j k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k', <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk a) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk a a, <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	    >Colimit</a
+	    > j (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	    >O</a
+	    > f d) '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k')) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k' k', <a href="Proarrow-Category-Equipment-Limit.html#t:Colimit" title="Proarrow.Category.Equipment.Limit"
+	    >Colimit</a
+	    > j d '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k' k'))) <a href="src/Proarrow.Squares.Limit.html#leftAdjointPreservesColimitsInv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L253" class="link"
+	    >Comments</a
+	    > <a href="#v:leftAdjointPreservesColimitsInv" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The inverse works for any arrow:</p
+	    ><p
+	    >The required square</p
+	    ><pre
+	    >A--c'-K'
+|  |  |
+| /@\ |
+| v v |
+A-c-g-K'</pre
+	    ><p
+	    >is implemented as</p
+	    ><pre
+	    >A-----c'----K'
+| +.d.+.f.+ |
+| : v | v : |
+| j-@ | | : |
+| : v | v : |
+A-+-c-+-f-+-K'</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:unit" class="def"
+	    >unit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k1} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {j :: k1} {k2 :: k1} (f :: vk j k2) (g :: vk k2 j). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	    >Adjunction</a
+	    > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	    >HasCompanions</a
+	    > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > g, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk j j, '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk j j) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk j j, f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk j j))) <a href="src/Proarrow.Squares.Limit.html#unit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L268" class="link"
+	    >Comments</a
+	    > <a href="#v:unit" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:counit" class="def"
+	    >counit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k1} {hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k1} {vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {j :: k1} {k2 :: k1} (f :: vk j k2) (g :: vk k2 j). (<a href="Proarrow-Category-Bicategory.html#t:Adjunction" title="Proarrow.Category.Bicategory"
+	    >Adjunction</a
+	    > f g, <a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	    >HasCompanions</a
+	    > hk vk, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > g, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > vk k2) =&gt; <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, g '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (f '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2))) '('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk k2 k2, '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k2 k2) <a href="src/Proarrow.Squares.Limit.html#counit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares/Limit.hs#L274" class="link"
+	    >Comments</a
+	    > <a href="#v:counit" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

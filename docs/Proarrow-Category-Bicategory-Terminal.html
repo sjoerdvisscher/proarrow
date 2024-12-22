@@ -453,28 +453,6 @@
 		  ><p class="caption"
 		    >Methods</p
 		    ><p class="src"
-		    ><a href="#v:iObj"
-		      >iObj</a
-		      > :: <span class="keyword"
-		      >forall</span
-		      > (i :: ()). <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
-		      >Ob0</a
-		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
-		      >Unit</a
-		      > i =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		      >Obj</a
-		      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
-		      >I</a
-		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
-		      >Unit</a
-		      > i i) <a href="src/Proarrow.Category.Bicategory.html#iObj" class="link"
-		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L240" class="link"
-		      >Comments</a
-		      > <a href="#v:iObj" class="selflink"
-		      >#</a
-		      ></p
-		    ><p class="src"
 		    ><a href="#v:o"
 		      >o</a
 		      > :: <span class="keyword"
@@ -499,9 +477,45 @@
 		      >O</a
 		      > b d <a href="src/Proarrow.Category.Bicategory.html#o" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L245" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L68" class="link"
 		      >Comments</a
 		      > <a href="#v:o" class="selflink"
+		      >#</a
+		      ></p
+		    ><p class="src"
+		    ><a href="#v:withOb2"
+		      >withOb2</a
+		      > :: <span class="keyword"
+		      >forall</span
+		      > {i :: ()} {j :: ()} {k :: ()} (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > i j) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > b, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > k) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		      >O</a
+		      > a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Bicategory.html#withOb2" class="link"
+		      >Source</a
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L71" class="link"
+		      >Comments</a
+		      > <a href="#v:withOb2" class="selflink"
 		      >#</a
 		      ></p
 		    ><p class="src"
@@ -529,7 +543,7 @@
 		      >~&gt;</a
 		      > qs) -&gt; r <a href="src/Proarrow.Category.Bicategory.html#%5C%5C%5C" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L248" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L78" class="link"
 		      >Comments</a
 		      > <a href="#v:-92--92--92-" class="selflink"
 		      >#</a
@@ -539,13 +553,19 @@
 		      >leftUnitor</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > (i :: ()) (j :: ()) (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > {i :: ()} {j :: ()} (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > i j). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-		      >~&gt;</a
-		      > b) -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		      > i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
 		      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 		      >I</a
@@ -553,9 +573,9 @@
 		      >Unit</a
 		      > j j) a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >~&gt;</a
-		      > b <a href="src/Proarrow.Category.Bicategory.html#leftUnitor" class="link"
+		      > a <a href="src/Proarrow.Category.Bicategory.html#leftUnitor" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L250" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L80" class="link"
 		      >Comments</a
 		      > <a href="#v:leftUnitor" class="selflink"
 		      >#</a
@@ -565,13 +585,19 @@
 		      >leftUnitorInv</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > (i :: ()) (j :: ()) (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > {i :: ()} {j :: ()} (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > i j). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-		      >~&gt;</a
-		      > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      > i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >~&gt;</a
 		      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
@@ -579,9 +605,9 @@
 		      >I</a
 		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > j j) b <a href="src/Proarrow.Category.Bicategory.html#leftUnitorInv" class="link"
+		      > j j) a <a href="src/Proarrow.Category.Bicategory.html#leftUnitorInv" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L251" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L81" class="link"
 		      >Comments</a
 		      > <a href="#v:leftUnitorInv" class="selflink"
 		      >#</a
@@ -591,13 +617,19 @@
 		      >rightUnitor</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > (i :: ()) (j :: ()) (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > {i :: ()} {j :: ()} (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > i j). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-		      >~&gt;</a
-		      > b) -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		      > i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
 		      > a (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 		      >I</a
@@ -605,9 +637,9 @@
 		      >Unit</a
 		      > i i) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >~&gt;</a
-		      > b <a href="src/Proarrow.Category.Bicategory.html#rightUnitor" class="link"
+		      > a <a href="src/Proarrow.Category.Bicategory.html#rightUnitor" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L252" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L82" class="link"
 		      >Comments</a
 		      > <a href="#v:rightUnitor" class="selflink"
 		      >#</a
@@ -617,23 +649,29 @@
 		      >rightUnitorInv</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > (i :: ()) (j :: ()) (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > {i :: ()} {j :: ()} (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > i j). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-		      >~&gt;</a
-		      > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      > i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >~&gt;</a
 		      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
-		      > b (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		      > a (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 		      >I</a
 		      > :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
 		      > i i) <a href="src/Proarrow.Category.Bicategory.html#rightUnitorInv" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L253" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L83" class="link"
 		      >Comments</a
 		      > <a href="#v:rightUnitorInv" class="selflink"
 		      >#</a
@@ -643,19 +681,35 @@
 		      >associator</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > {j1 :: ()} {i1 :: ()} (i2 :: ()) (j2 :: ()) (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > {h :: ()} {i :: ()} {j :: ()} {k :: ()} (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i2 j2) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > j k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > j1 i2) (c :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > i j) (c :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i1 j1). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		      >Obj</a
-		      > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		      >Obj</a
-		      > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		      >Obj</a
-		      > c -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		      > h i). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > h, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
 		      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
@@ -667,7 +721,7 @@
 		      >O</a
 		      > b c) <a href="src/Proarrow.Category.Bicategory.html#associator" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L254" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L84" class="link"
 		      >Comments</a
 		      > <a href="#v:associator" class="selflink"
 		      >#</a
@@ -677,19 +731,35 @@
 		      >associatorInv</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > {j1 :: ()} {i1 :: ()} (i2 :: ()) (j2 :: ()) (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > {h :: ()} {i :: ()} {j :: ()} {k :: ()} (a :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i2 j2) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > j k) (b :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > j1 i2) (c :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      > i j) (c :: <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
 		      >Unit</a
-		      > i1 j1). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		      >Obj</a
-		      > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		      >Obj</a
-		      > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		      >Obj</a
-		      > c -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		      > h i). (<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > h, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > i, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
 		      > a (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 		      >O</a
@@ -701,7 +771,7 @@
 		      >O</a
 		      > a b) c <a href="src/Proarrow.Category.Bicategory.html#associatorInv" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L255" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L88" class="link"
 		      >Comments</a
 		      > <a href="#v:associatorInv" class="selflink"
 		      >#</a
@@ -720,9 +790,9 @@
 		  > '<a href="Proarrow-Category-Instance-Unit.html#v:Unit" title="Proarrow.Category.Instance.Unit"
 		  >Unit</a
 		  ></span
-		> <a href="src/Proarrow.Category.Bicategory.Terminal.html#line-38" class="link"
+		> <a href="src/Proarrow.Category.Bicategory.Terminal.html#line-39" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Terminal.hs#L38" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Terminal.hs#L39" class="link"
 		>Comments</a
 		> <a href="#v:-36-fMonadUnitUnit-40--41-Unit" class="selflink"
 		>#</a
@@ -753,7 +823,7 @@
 		      >Unit</a
 		      > <a href="src/Proarrow.Category.Bicategory.html#eta" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L297" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L137" class="link"
 		      >Comments</a
 		      > <a href="#v:eta" class="selflink"
 		      >#</a
@@ -773,7 +843,7 @@
 		      >Unit</a
 		      > <a href="src/Proarrow.Category.Bicategory.html#mu" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L298" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L138" class="link"
 		      >Comments</a
 		      > <a href="#v:mu" class="selflink"
 		      >#</a

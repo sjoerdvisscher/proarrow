@@ -1,0 +1,1763 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Category.Instance.Lifted</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Category.Instance.Lifted.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Category.Instance.Lifted</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >newtype</span
+	      > <a href="#t:LIFTED"
+	      >LIFTED</a
+	      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (q :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > j) = <a href="#v:LIFT"
+	      >LIFT</a
+	      > j</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:Lift"
+	      >Lift</a
+	      > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	      >LIFTED</a
+	      > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	      >LIFTED</a
+	      > p1 q1) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:Lift"
+		  >Lift</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {j} {i} {k} {p1 :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k} {q1 :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > i} (q :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > i) (p :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > j) (a1 :: i) (b1 :: i). (q <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
+		  > p) a1 b1 -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+		  >Lift</a
+		  > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		  >LIFT</a
+		  > a1 :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		  >LIFTED</a
+		  > p q) ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		  >LIFT</a
+		  > b1 :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		  >LIFTED</a
+		  > p1 q1)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:LIFTEDF"
+	      >LIFTEDF</a
+	      > (f :: j -&gt; k) = <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	      >LIFTED</a
+	      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > f) (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	      >Costar</a
+	      > f)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >pattern</span
+	      > <a href="#v:LiftF"
+	      >LiftF</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {j1} {j2} {k} {p} {q} (f :: j1 -&gt; j2) (a :: j1) (b :: j1). <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	      >Functor</a
+	      > f =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (f a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > f b) -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+	      >Lift</a
+	      > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+	      >LIFT</a
+	      > a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	      >LIFTED</a
+	      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > f) (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	      >Costar</a
+	      > f)) ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+	      >LIFT</a
+	      > b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	      >LIFTED</a
+	      > p q)</li
+	    ></ul
+	  ></details
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >newtype</span
+	    > <a id="t:LIFTED" class="def"
+	    >LIFTED</a
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (q :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j) <a href="src/Proarrow.Category.Instance.Lifted.html#LIFTED" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L16" class="link"
+	    >Comments</a
+	    > <a href="#t:LIFTED" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:LIFT" class="def"
+		  >LIFT</a
+		  > j</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:LIFTED"
+	    >Instances</h4
+	    ><details id="i:LIFTED" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:CategoryOf:1"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:CategoryOf:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-LIFTED:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-LIFTED:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+				  >Proarrow.Category.Instance.Lifted</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+				  >Lift</a
+				  > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+				  >LIFTED</a
+				  > p q -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+				  >LIFTED</a
+				  > p q -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:HasBinaryCoproducts:2"
+		      ></span
+		      > (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:Coprod" title="Proarrow.Object.BinaryCoproduct"
+		      >Coprod</a
+		      > p), <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:Coprod" title="Proarrow.Object.BinaryCoproduct"
+		      >Coprod</a
+		      > q), <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+		      >HasBinaryCoproducts</a
+		      > j) =&gt; <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+		      >HasBinaryCoproducts</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-52" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L52" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:HasBinaryCoproducts:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObCoprod"
+			  >withObCoprod</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.BinaryCoproduct.html#withObCoprod" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:withObCoprod" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lft"
+			  >lft</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="src/Proarrow.Object.BinaryCoproduct.html#lft" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:lft" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rgt"
+			  >rgt</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="src/Proarrow.Object.BinaryCoproduct.html#rgt" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:rgt" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-124--124--124-"
+			  >(|||)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (y :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (y <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (x <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > y) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:-124--124--124-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-43--43--43-"
+			  >(+++)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (x :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (y :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > y) <a href="src/Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:-43--43--43-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:HasBinaryProducts:3"
+		      ></span
+		      > (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > q, <a href="Proarrow-Object-BinaryProduct.html#t:Cartesian" title="Proarrow.Object.BinaryProduct"
+		      >Cartesian</a
+		      > j) =&gt; <a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
+		      >HasBinaryProducts</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-38" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L38" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:HasBinaryProducts:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObProd"
+			  >withObProd</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.BinaryProduct.html#withObProd" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L32" class="link"
+			  >Comments</a
+			  > <a href="#v:withObProd" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:fst"
+			  >fst</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.BinaryProduct.html#fst" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L33" class="link"
+			  >Comments</a
+			  > <a href="#v:fst" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:snd"
+			  >snd</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.BinaryProduct.html#snd" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L34" class="link"
+			  >Comments</a
+			  > <a href="#v:snd" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-38--38--38-"
+			  >(&amp;&amp;&amp;)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (x :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (y :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > y) <a href="src/Proarrow.Object.BinaryProduct.html#%26%26%26" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:-38--38--38-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-42--42--42-"
+			  >(***)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (x :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (y :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > y) <a href="src/Proarrow.Object.BinaryProduct.html#%2A%2A%2A" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-42--42--42-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:HasInitialObject:4"
+		      ></span
+		      > (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q, <a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
+		      >HasInitialObject</a
+		      > j) =&gt; <a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
+		      >HasInitialObject</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-47" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L47" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:HasInitialObject:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:InitialObjectLIFTED:InitialObject:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				>InitialObject</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:InitialObjectLIFTED:InitialObject:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+				  >Proarrow.Category.Instance.Lifted</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				  >InitialObject</a
+				  > = '<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+				  >LIFT</a
+				  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				  >InitialObject</a
+				  > :: j) :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+				  >LIFTED</a
+				  > p q</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:initiate"
+			  >initiate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Initial.html#initiate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Initial.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:initiate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:initiate-39-"
+			  >initiate'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a' :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (a' <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Initial.html#initiate%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Initial.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:initiate-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:HasTerminalObject:5"
+		      ></span
+		      > (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q, <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > j) =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:HasTerminalObject:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:TerminalObjectLIFTED:TerminalObject:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				>TerminalObject</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:TerminalObjectLIFTED:TerminalObject:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+				  >Proarrow.Category.Instance.Lifted</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > = '<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+				  >LIFT</a
+				  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > :: j) :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+				  >LIFTED</a
+				  > p q</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:terminate"
+			  >terminate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			  >TerminalObject</a
+			  > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:terminate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:terminate-39-"
+			  >terminate'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (a' :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			  >TerminalObject</a
+			  > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:terminate-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:Profunctor:6"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+		      >Lift</a
+		      > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-23" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L23" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:Profunctor:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (d :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a b -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:Promonad:7"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+		      >Lift</a
+		      > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:Promonad:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:id"
+			  >id</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a a <a href="src/Proarrow.Core.html#id" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L56" class="link"
+			  >Comments</a
+			  > <a href="#v:id" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:."
+			  >(.)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (c :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > b c -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a b -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a c <a href="src/Proarrow.Core.html#." class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L57" class="link"
+			  >Comments</a
+			  > <a href="#v:." class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:UN:8"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		      >LIFT</a
+		      > :: j1 -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q) ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		      >LIFT</a
+		      > j2 :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-17" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L17" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:UN:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> :: j1 -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> j2 :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) = j2</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:-126--62-:9"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-30" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L30" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:-126--62-:9"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			>(~&gt;)</a
+			> = <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			>Lift</a
+			> :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:InitialObject:10"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+		      >InitialObject</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-48" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L48" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:InitialObject:10"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			>InitialObject</a
+			> = '<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			>InitialObject</a
+			> :: j) :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:TerminalObject:11"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+		      >TerminalObject</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-34" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L34" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:TerminalObject:11"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			>TerminalObject</a
+			> = '<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			>TerminalObject</a
+			> :: j) :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:Ob:12"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-31" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L31" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:Ob:12"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			>Ob</a
+			> (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) = (<a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
+			>Is</a
+			> ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> :: j -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			>Ob</a
+			> (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> :: j -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) a))</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:-124--124-:13"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		      >LIFT</a
+		      > a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+		      >||</a
+		      > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		      >LIFT</a
+		      > b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-59" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L59" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:-124--124-:13"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			>||</a
+			> ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) = '<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			>||</a
+			> b) :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:LIFTED:-38--38-:14"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		      >LIFT</a
+		      > a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+		      >&amp;&amp;</a
+		      > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		      >LIFT</a
+		      > b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-41" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L41" class="link"
+		    >Comments</a
+		    > <a href="#t:LIFTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:LIFTED:-38--38-:14"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			>&amp;&amp;</a
+			> ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q) = '<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+			>LIFT</a
+			> (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			>&amp;&amp;</a
+			> b) :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			>LIFTED</a
+			> p q</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Lift" class="def"
+	    >Lift</a
+	    > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	    >LIFTED</a
+	    > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	    >LIFTED</a
+	    > p1 q1) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Instance.Lifted.html#Lift" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L20" class="link"
+	    >Comments</a
+	    > <a href="#t:Lift" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >A category lifted by an adjunction.</p
+	    ></div
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Lift" class="def"
+		  >Lift</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {j} {i} {k} {p1 :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k} {q1 :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > i} (q :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > i) (p :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > j) (a1 :: i) (b1 :: i). (q <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
+		  > p) a1 b1 -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+		  >Lift</a
+		  > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		  >LIFT</a
+		  > a1 :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		  >LIFTED</a
+		  > p q) ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+		  >LIFT</a
+		  > b1 :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		  >LIFTED</a
+		  > p1 q1)</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Lift"
+	    >Instances</h4
+	    ><details id="i:Lift" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Lift:Profunctor:1"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+		      >Lift</a
+		      > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-23" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L23" class="link"
+		    >Comments</a
+		    > <a href="#t:Lift" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Lift:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (d :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a b -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Lift:Promonad:2"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p q =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+		      >Lift</a
+		      > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+		      >LIFTED</a
+		      > p q -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:Lift" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Lift:Promonad:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
+			>Proarrow.Category.Instance.Lifted</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:id"
+			  >id</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a a <a href="src/Proarrow.Core.html#id" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L56" class="link"
+			  >Comments</a
+			  > <a href="#v:id" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:."
+			  >(.)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (c :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q) (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+			  >LIFTED</a
+			  > p q). <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > b c -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a b -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+			  >Lift</a
+			  > a c <a href="src/Proarrow.Core.html#." class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L57" class="link"
+			  >Comments</a
+			  > <a href="#v:." class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:LIFTEDF" class="def"
+	    >LIFTEDF</a
+	    > (f :: j -&gt; k) = <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	    >LIFTED</a
+	    > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > f) (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	    >Costar</a
+	    > f) <a href="src/Proarrow.Category.Instance.Lifted.html#LIFTEDF" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L66" class="link"
+	    >Comments</a
+	    > <a href="#t:LIFTEDF" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Categories lifted by a functor: <code
+	      >f a ~&gt; f b</code
+	      >.</p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >pattern</span
+	    > <a id="v:LiftF" class="def"
+	    >LiftF</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {j1} {j2} {k} {p} {q} (f :: j1 -&gt; j2) (a :: j1) (b :: j1). <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > f =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (f a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > f b) -&gt; <a href="Proarrow-Category-Instance-Lifted.html#t:Lift" title="Proarrow.Category.Instance.Lifted"
+	    >Lift</a
+	    > ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+	    >LIFT</a
+	    > a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	    >LIFTED</a
+	    > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > f) (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	    >Costar</a
+	    > f)) ('<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
+	    >LIFT</a
+	    > b :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
+	    >LIFTED</a
+	    > p q) <a href="src/Proarrow.Category.Instance.Lifted.html#LiftF" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Lifted.hs#L72" class="link"
+	    >Comments</a
+	    > <a href="#v:LiftF" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

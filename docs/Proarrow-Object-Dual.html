@@ -1,0 +1,2675 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Object.Dual</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Object.Dual.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Object.Dual</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a) =&gt; <a id="t:ObDual" class="def"
+	    >ObDual</a
+	    > (a :: k) <a href="src/Proarrow.Object.Dual.html#ObDual" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L20" class="link"
+	    >Comments</a
+	    > <a href="#t:ObDual" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ObDual"
+	    >Instances</h4
+	    ><details id="i:ObDual" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ObDual:ObDual:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+		      >Dual</a
+		      > a) =&gt; <a href="Proarrow-Object-Dual.html#t:ObDual" title="Proarrow.Object.Dual"
+		      >ObDual</a
+		      > (a :: k)</span
+		    > <a href="src/Proarrow.Object.Dual.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:ObDual" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ObDual:ObDual:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Dual.html"
+			>Proarrow.Object.Dual</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+	    >SymMonoidal</a
+	    > k, <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	    >Closed</a
+	    > k, <span class="keyword"
+	    >forall</span
+	    > (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a =&gt; <a href="Proarrow-Object-Dual.html#t:ObDual" title="Proarrow.Object.Dual"
+	    >ObDual</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k)) =&gt; <a id="t:StarAutonomous" class="def"
+	    >StarAutonomous</a
+	    > k <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Object.Dual.html#StarAutonomous" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L23" class="link"
+	    >Comments</a
+	    > <a href="#t:StarAutonomous" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:Dual" class="def"
+	      >Dual</a
+	      > (a :: k) :: k <a href="src/Proarrow.Object.Dual.html#Dual" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:Dual" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:dual" class="def"
+	      >dual</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L23" class="link"
+	      >Comments</a
+	      > <a href="#v:dual" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:dualInv" class="def"
+	      >dualInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L23" class="link"
+	      >Comments</a
+	      > <a href="#v:dualInv" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:linDist" class="def"
+	      >linDist</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L23" class="link"
+	      >Comments</a
+	      > <a href="#v:linDist" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:linDistInv" class="def"
+	      >linDistInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L23" class="link"
+	      >Comments</a
+	      > <a href="#v:linDistInv" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:StarAutonomous"
+	    >Instances</h4
+	    ><details id="i:StarAutonomous" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:1"
+		      ></span
+		      > <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+		      >BOOL</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Bool.html#line-159" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L159" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Bool.html"
+			>Proarrow.Category.Instance.Bool</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:DualBOOLTRU:Dual:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				>Dual</a
+				> '<a href="Proarrow-Category-Instance-Bool.html#v:TRU" title="Proarrow.Category.Instance.Bool"
+				>TRU</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:DualBOOLTRU:Dual:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Bool.html"
+				  >Proarrow.Category.Instance.Bool</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				  >Dual</a
+				  > '<a href="Proarrow-Category-Instance-Bool.html#v:TRU" title="Proarrow.Category.Instance.Bool"
+				  >TRU</a
+				  > = '<a href="Proarrow-Category-Instance-Bool.html#v:FLS" title="Proarrow.Category.Instance.Bool"
+				  >FLS</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:DualBOOLFLS:Dual:2"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				>Dual</a
+				> '<a href="Proarrow-Category-Instance-Bool.html#v:FLS" title="Proarrow.Category.Instance.Bool"
+				>FLS</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:DualBOOLFLS:Dual:2"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Bool.html"
+				  >Proarrow.Category.Instance.Bool</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				  >Dual</a
+				  > '<a href="Proarrow-Category-Instance-Bool.html#v:FLS" title="Proarrow.Category.Instance.Bool"
+				  >FLS</a
+				  > = '<a href="Proarrow-Category-Instance-Bool.html#v:TRU" title="Proarrow.Category.Instance.Bool"
+				  >TRU</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:2"
+		      ></span
+		      > <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+		      >KIND</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Cat.html#line-230" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L230" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Cat.html"
+			>Proarrow.Category.Instance.Cat</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:DualKINDK:Dual:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				>Dual</a
+				> ('<a href="Proarrow-Category-Instance-Cat.html#v:K" title="Proarrow.Category.Instance.Cat"
+				>K</a
+				> a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+				>KIND</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:DualKINDK:Dual:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Cat.html"
+				  >Proarrow.Category.Instance.Cat</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				  >Dual</a
+				  > ('<a href="Proarrow-Category-Instance-Cat.html#v:K" title="Proarrow.Category.Instance.Cat"
+				  >K</a
+				  > a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+				  >KIND</a
+				  >) = '<a href="Proarrow-Category-Instance-Cat.html#v:K" title="Proarrow.Category.Instance.Cat"
+				  >K</a
+				  > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+				  >OPPOSITE</a
+				  > a)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:3"
+		      ></span
+		      > <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+		      >LINEAR</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Linear.html#line-209" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L209" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Linear.html"
+			>Proarrow.Category.Instance.Linear</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:DualLINEARL:Dual:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				>Dual</a
+				> ('<a href="Proarrow-Category-Instance-Linear.html#v:L" title="Proarrow.Category.Instance.Linear"
+				>L</a
+				> a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+				>LINEAR</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:DualLINEARL:Dual:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Linear.html"
+				  >Proarrow.Category.Instance.Linear</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				  >Dual</a
+				  > ('<a href="Proarrow-Category-Instance-Linear.html#v:L" title="Proarrow.Category.Instance.Linear"
+				  >L</a
+				  > a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+				  >LINEAR</a
+				  >) = '<a href="Proarrow-Category-Instance-Linear.html#v:L" title="Proarrow.Category.Instance.Linear"
+				  >L</a
+				  > (<a href="Proarrow-Category-Instance-Linear.html#t:Not" title="Proarrow.Category.Instance.Linear"
+				  >Not</a
+				  > a)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:4"
+		      ></span
+		      > <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > ()</span
+		    > <a href="src/Proarrow.Object.Dual.html#line-56" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L56" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Dual.html"
+			>Proarrow.Object.Dual</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:DualUnit-40--41-:Dual:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				>Dual</a
+				> '()</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:DualUnit-40--41-:Dual:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Object-Dual.html"
+				  >Proarrow.Object.Dual</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+				  >Dual</a
+				  > '() = '()</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()) (c :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()) (c :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:5"
+		      ></span
+		      > (<a href="Proarrow-Category-Monoidal.html#t:TracedMonoidal" title="Proarrow.Category.Monoidal"
+		      >TracedMonoidal</a
+		      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+		      >Unit</a
+		      > :: k)) =&gt; <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > (<a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+		      >INT</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Instance.IntConstruction.html#line-105" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L105" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-IntConstruction.html"
+			>Proarrow.Category.Instance.IntConstruction</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) (c :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) (c :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:6"
+		      ></span
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Num" title="Prelude"
+		      >Num</a
+		      > a =&gt; <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > (<a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+		      >MatK</a
+		      > a)</span
+		    > <a href="src/Proarrow.Category.Instance.Mat.html#line-202" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L202" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Mat.html"
+			>Proarrow.Category.Instance.Mat</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a0 :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) (b :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a). (a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a0 <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a0 :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) (b :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a0, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a0 <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a0 :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) (b :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) (c :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a0, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a0 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a0 :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) (b :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) (c :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a0, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a0 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:7"
+		      ></span
+		      > <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+		      >Cont</a
+		      > r))</span
+		    > <a href="src/Proarrow.Promonad.Cont.html#line-20" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L20" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Promonad-Cont.html"
+			>Proarrow.Promonad.Cont</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) (c :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) (c :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StarAutonomous:StarAutonomous:8"
+		      ></span
+		      > (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > j, <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > k) =&gt; <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+		      >StarAutonomous</a
+		      > (j, k)</span
+		    > <a href="src/Proarrow.Object.Dual.html#line-63" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L63" class="link"
+		    >Comments</a
+		    > <a href="#t:StarAutonomous" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StarAutonomous:StarAutonomous:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Dual.html"
+			>Proarrow.Object.Dual</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dual"
+			  >dual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (j, k)) (b :: (j, k)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:dual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualInv"
+			  >dualInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (j, k)) (b :: (j, k)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) -&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:dualInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDist"
+			  >linDist</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (j, k)) (b :: (j, k)) (c :: (j, k)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:linDist" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:linDistInv"
+			  >linDistInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (j, k)) (b :: (j, k)) (c :: (j, k)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:linDistInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dualObj" class="def"
+	    >dualObj</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k). (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	    >Obj</a
+	    > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a) <a href="src/Proarrow.Object.Dual.html#dualObj" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L31" class="link"
+	    >Comments</a
+	    > <a href="#v:dualObj" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:doubleNeg" class="def"
+	    >doubleNeg</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k). (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a <a href="src/Proarrow.Object.Dual.html#doubleNeg" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L34" class="link"
+	    >Comments</a
+	    > <a href="#v:doubleNeg" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:doubleNegInv" class="def"
+	    >doubleNegInv</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k). (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a) <a href="src/Proarrow.Object.Dual.html#doubleNegInv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L37" class="link"
+	    >Comments</a
+	    > <a href="#v:doubleNegInv" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:ExpSA" class="def"
+	    >ExpSA</a
+	    > (a :: k) (b :: k) = <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > b) <a href="src/Proarrow.Object.Dual.html#ExpSA" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L39" class="link"
+	    >Comments</a
+	    > <a href="#t:ExpSA" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:currySA" class="def"
+	    >currySA</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:ExpSA" title="Proarrow.Object.Dual"
+	    >ExpSA</a
+	    > b c <a href="src/Proarrow.Object.Dual.html#currySA" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L42" class="link"
+	    >Comments</a
+	    > <a href="#v:currySA" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:uncurrySA" class="def"
+	    >uncurrySA</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:ExpSA" title="Proarrow.Object.Dual"
+	    >ExpSA</a
+	    > b c) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > c <a href="src/Proarrow.Object.Dual.html#uncurrySA" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L45" class="link"
+	    >Comments</a
+	    > <a href="#v:uncurrySA" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:expSA" class="def"
+	    >expSA</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (x :: k) (y :: k). <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k =&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > y) -&gt; (x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a) -&gt; <a href="Proarrow-Object-Dual.html#t:ExpSA" title="Proarrow.Object.Dual"
+	    >ExpSA</a
+	    > a b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:ExpSA" title="Proarrow.Object.Dual"
+	    >ExpSA</a
+	    > x y <a href="src/Proarrow.Object.Dual.html#expSA" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L48" class="link"
+	    >Comments</a
+	    > <a href="#v:expSA" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dualityUnitSA" class="def"
+	    >dualityUnitSA</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k). (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > a) <a href="src/Proarrow.Object.Dual.html#dualityUnitSA" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L51" class="link"
+	    >Comments</a
+	    > <a href="#v:dualityUnitSA" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dualityCounitSA" class="def"
+	    >dualityCounitSA</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k). (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="src/Proarrow.Object.Dual.html#dualityCounitSA" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L54" class="link"
+	    >Comments</a
+	    > <a href="#v:dualityCounitSA" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
+	    >StarAutonomous</a
+	    > k, <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+	    >SymMonoidal</a
+	    > k) =&gt; <a id="t:CompactClosed" class="def"
+	    >CompactClosed</a
+	    > k <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Object.Dual.html#CompactClosed" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L70" class="link"
+	    >Comments</a
+	    > <a href="#t:CompactClosed" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:distribDual" class="def"
+	      >distribDual</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > b) <a href="src/Proarrow.Object.Dual.html#distribDual" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L70" class="link"
+	      >Comments</a
+	      > <a href="#v:distribDual" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:dualUnit" class="def"
+	      >dualUnit</a
+	      > :: <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	      >Dual</a
+	      > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: k) <a href="src/Proarrow.Object.Dual.html#dualUnit" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L70" class="link"
+	      >Comments</a
+	      > <a href="#v:dualUnit" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:CompactClosed"
+	    >Instances</h4
+	    ><details id="i:CompactClosed" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CompactClosed:CompactClosed:1"
+		      ></span
+		      > <a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+		      >CompactClosed</a
+		      > <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+		      >KIND</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Cat.html#line-251" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L251" class="link"
+		    >Comments</a
+		    > <a href="#t:CompactClosed" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CompactClosed:CompactClosed:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Cat.html"
+			>Proarrow.Category.Instance.Cat</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:distribDual"
+			  >distribDual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) <a href="src/Proarrow.Object.Dual.html#distribDual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L71" class="link"
+			  >Comments</a
+			  > <a href="#v:distribDual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualUnit"
+			  >dualUnit</a
+			  > :: <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
+			  >KIND</a
+			  >) <a href="src/Proarrow.Object.Dual.html#dualUnit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L72" class="link"
+			  >Comments</a
+			  > <a href="#v:dualUnit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CompactClosed:CompactClosed:2"
+		      ></span
+		      > <a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+		      >CompactClosed</a
+		      > ()</span
+		    > <a href="src/Proarrow.Object.Dual.html#line-100" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L100" class="link"
+		    >Comments</a
+		    > <a href="#t:CompactClosed" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CompactClosed:CompactClosed:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Dual.html"
+			>Proarrow.Object.Dual</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:distribDual"
+			  >distribDual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) <a href="src/Proarrow.Object.Dual.html#distribDual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L71" class="link"
+			  >Comments</a
+			  > <a href="#v:distribDual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualUnit"
+			  >dualUnit</a
+			  > :: <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: ()) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: ()) <a href="src/Proarrow.Object.Dual.html#dualUnit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L72" class="link"
+			  >Comments</a
+			  > <a href="#v:dualUnit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CompactClosed:CompactClosed:3"
+		      ></span
+		      > (<a href="Proarrow-Category-Monoidal.html#t:TracedMonoidal" title="Proarrow.Category.Monoidal"
+		      >TracedMonoidal</a
+		      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+		      >Unit</a
+		      > :: k)) =&gt; <a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+		      >CompactClosed</a
+		      > (<a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+		      >INT</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Instance.IntConstruction.html#line-112" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L112" class="link"
+		    >Comments</a
+		    > <a href="#t:CompactClosed" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CompactClosed:CompactClosed:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-IntConstruction.html"
+			>Proarrow.Category.Instance.IntConstruction</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:distribDual"
+			  >distribDual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) <a href="src/Proarrow.Object.Dual.html#distribDual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L71" class="link"
+			  >Comments</a
+			  > <a href="#v:distribDual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualUnit"
+			  >dualUnit</a
+			  > :: <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-IntConstruction.html#t:INT" title="Proarrow.Category.Instance.IntConstruction"
+			  >INT</a
+			  > k) <a href="src/Proarrow.Object.Dual.html#dualUnit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L72" class="link"
+			  >Comments</a
+			  > <a href="#v:dualUnit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CompactClosed:CompactClosed:4"
+		      ></span
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Num" title="Prelude"
+		      >Num</a
+		      > a =&gt; <a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+		      >CompactClosed</a
+		      > (<a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+		      >MatK</a
+		      > a)</span
+		    > <a href="src/Proarrow.Category.Instance.Mat.html#line-209" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L209" class="link"
+		    >Comments</a
+		    > <a href="#t:CompactClosed" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CompactClosed:CompactClosed:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Mat.html"
+			>Proarrow.Category.Instance.Mat</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:distribDual"
+			  >distribDual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a0 :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) (b :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a0, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (a0 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a0 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) <a href="src/Proarrow.Object.Dual.html#distribDual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L71" class="link"
+			  >Comments</a
+			  > <a href="#v:distribDual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualUnit"
+			  >dualUnit</a
+			  > :: <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
+			  >MatK</a
+			  > a) <a href="src/Proarrow.Object.Dual.html#dualUnit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L72" class="link"
+			  >Comments</a
+			  > <a href="#v:dualUnit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CompactClosed:CompactClosed:5"
+		      ></span
+		      > (<a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+		      >CompactClosed</a
+		      > j, <a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+		      >CompactClosed</a
+		      > k) =&gt; <a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+		      >CompactClosed</a
+		      > (j, k)</span
+		    > <a href="src/Proarrow.Object.Dual.html#line-104" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L104" class="link"
+		    >Comments</a
+		    > <a href="#t:CompactClosed" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CompactClosed:CompactClosed:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Dual.html"
+			>Proarrow.Object.Dual</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:distribDual"
+			  >distribDual</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (j, k)) (b :: (j, k)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > b) <a href="src/Proarrow.Object.Dual.html#distribDual" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L71" class="link"
+			  >Comments</a
+			  > <a href="#v:distribDual" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:dualUnit"
+			  >dualUnit</a
+			  > :: <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+			  >Dual</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: (j, k)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: (j, k)) <a href="src/Proarrow.Object.Dual.html#dualUnit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L72" class="link"
+			  >Comments</a
+			  > <a href="#v:dualUnit" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dualityUnit" class="def"
+	    >dualityUnit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k). (<a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+	    >CompactClosed</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a) <a href="src/Proarrow.Object.Dual.html#dualityUnit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L75" class="link"
+	    >Comments</a
+	    > <a href="#v:dualityUnit" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dualityCounit" class="def"
+	    >dualityCounit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k). (<a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+	    >CompactClosed</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="src/Proarrow.Object.Dual.html#dualityCounit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L78" class="link"
+	    >Comments</a
+	    > <a href="#v:dualityCounit" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dualUnitInv" class="def"
+	    >dualUnitInv</a
+	    > :: <a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+	    >CompactClosed</a
+	    > k =&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="src/Proarrow.Object.Dual.html#dualUnitInv" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L81" class="link"
+	    >Comments</a
+	    > <a href="#v:dualUnitInv" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:combineDual" class="def"
+	    >combineDual</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k). (<a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+	    >CompactClosed</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (<a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Object-Dual.html#t:Dual" title="Proarrow.Object.Dual"
+	    >Dual</a
+	    > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > b) <a href="src/Proarrow.Object.Dual.html#combineDual" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L84" class="link"
+	    >Comments</a
+	    > <a href="#v:combineDual" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:compactClosedTrace" class="def"
+	    >compactClosedTrace</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (u :: k) (x :: k) (y :: k). (<a href="Proarrow-Object-Dual.html#t:CompactClosed" title="Proarrow.Object.Dual"
+	    >CompactClosed</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > x, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > y, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > u) =&gt; ((x <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > u) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (y <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > u)) -&gt; x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > y <a href="src/Proarrow.Object.Dual.html#compactClosedTrace" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L93" class="link"
+	    >Comments</a
+	    > <a href="#v:compactClosedTrace" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

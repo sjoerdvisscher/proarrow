@@ -1,0 +1,2525 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html"
+	><span class="hs-identifier"
+	  >Proarrow.Promonad.Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Type</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#KLEISLI"
+	><span class="hs-identifier"
+	  >KLEISLI</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Action.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal.Action</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Action.html#Strong"
+	><span class="hs-identifier"
+	  >Strong</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Dual</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#ExpSA"
+	><span class="hs-identifier"
+	  >ExpSA</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	><span class="hs-identifier"
+	  >StarAutonomous</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#currySA"
+	><span class="hs-identifier"
+	  >currySA</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#expSA"
+	><span class="hs-identifier"
+	  >expSA</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#uncurrySA"
+	><span class="hs-identifier"
+	  >uncurrySA</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Exponential</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#Closed"
+	><span class="hs-identifier"
+	  >Closed</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#curry"
+	><span class="hs-identifier"
+	  >curry</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Exponential.html#uncurry"
+	><span class="hs-identifier"
+	  >uncurry</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >newtype</span
+      ><span
+      > </span
+      ><span id="Cont"
+      ><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-var"
+	    >Cont</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409011"
+      ><span class="annot"
+	><a href="#local-6989586621679409011"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409012"
+      ><span class="annot"
+	><a href="#local-6989586621679409012"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409013"
+      ><span class="annot"
+	><a href="#local-6989586621679409013"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="Cont"
+      ><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-var"
+	    >Cont</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="runCont"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall r a b. Cont r a b -&gt; (b -&gt; r) -&gt; a -&gt; r
+</span
+	  ><a href="Proarrow.Promonad.Cont.html#runCont"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >runCont</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679409013"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679409011"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679409012"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679409011"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409034"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Profunctor"
+	  ><span class="hs-identifier hs-type"
+	    >Profunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-type"
+	    >Cont</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679409034"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409237"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall c a b d. (c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Cont r a b -&gt; Cont r c d
+</span
+	  ><a href="#local-6989586621679409237"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409239"
+      ><span class="annot"
+	><span class="annottext"
+	  >c ~&gt; a
+</span
+	  ><a href="#local-6989586621679409239"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409240"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; d
+</span
+	  ><a href="#local-6989586621679409240"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409241"
+      ><span class="annot"
+	><span class="annottext"
+	  >(b -&gt; r) -&gt; a -&gt; r
+</span
+	  ><a href="#local-6989586621679409241"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((d -&gt; r) -&gt; c -&gt; r) -&gt; Cont r c d
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; r) -&gt; (c ~&gt; a) -&gt; c ~&gt; r
+forall b c a. (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; a
+</span
+	><a href="#local-6989586621679409239"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a -&gt; r) -&gt; c -&gt; r) -&gt; ((d -&gt; r) -&gt; a -&gt; r) -&gt; (d -&gt; r) -&gt; c -&gt; r
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b -&gt; r) -&gt; a -&gt; r
+</span
+	><a href="#local-6989586621679409241"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b -&gt; r) -&gt; a -&gt; r) -&gt; ((d -&gt; r) -&gt; b -&gt; r) -&gt; (d -&gt; r) -&gt; a -&gt; r
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(d ~&gt; r) -&gt; (b ~&gt; d) -&gt; b ~&gt; r
+forall b c a. (b ~&gt; c) -&gt; (a ~&gt; b) -&gt; a ~&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; d
+</span
+	><a href="#local-6989586621679409240"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409248"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679409248"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409249"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall a b r. ((Ob a, Ob b) =&gt; r) -&gt; Cont r a b -&gt; r
+</span
+	  ><a href="#local-6989586621679409249"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cont r a b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679409248"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409053"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Promonad"
+	  ><span class="hs-identifier hs-type"
+	    >Promonad</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-type"
+	    >Cont</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679409053"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409261"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall a. Ob a =&gt; Cont r a a
+</span
+	  ><a href="#local-6989586621679409261"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a a
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a -&gt; r) -&gt; a -&gt; r
+forall a. Ob a =&gt; a -&gt; a
+forall {k} (p :: PRO k k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409264"
+      ><span class="annot"
+	><span class="annottext"
+	  >(c -&gt; r) -&gt; b -&gt; r
+</span
+	  ><a href="#local-6989586621679409264"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409265"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall b c a. Cont r b c -&gt; Cont r a b -&gt; Cont r a c
+</span
+	  ><a href="Proarrow.Core.html#."
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409266"
+      ><span class="annot"
+	><span class="annottext"
+	  >(b -&gt; r) -&gt; a -&gt; r
+</span
+	  ><a href="#local-6989586621679409266"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((c -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a c
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b -&gt; r) -&gt; a -&gt; r
+</span
+	><a href="#local-6989586621679409266"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b -&gt; r) -&gt; a -&gt; r) -&gt; ((c -&gt; r) -&gt; b -&gt; r) -&gt; (c -&gt; r) -&gt; a -&gt; r
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c -&gt; r) -&gt; b -&gt; r
+</span
+	><a href="#local-6989586621679409264"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409071"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.Action.html#Strong"
+	  ><span class="hs-identifier hs-type"
+	    >Strong</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><span class="hs-identifier hs-type"
+	  >Type</span
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-type"
+	    >Cont</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679409071"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409290"
+      ><span class="annot"
+	><span class="annottext"
+	  >act :: forall a b x y.
+(a ~&gt; b) -&gt; Cont r x y -&gt; Cont r (Act a x) (Act b y)
+</span
+	  ><a href="#local-6989586621679409290"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >act</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409292"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679409292"
+	  ><span class="hs-identifier hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409293"
+      ><span class="annot"
+	><span class="annottext"
+	  >(y -&gt; r) -&gt; x -&gt; r
+</span
+	  ><a href="#local-6989586621679409293"
+	  ><span class="hs-identifier hs-var"
+	    >yrxy</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((b, y) -&gt; r) -&gt; (a, x) -&gt; r) -&gt; Cont r (a, x) (b, y)
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409294"
+      ><span class="annot"
+	><span class="annottext"
+	  >(b, y) -&gt; r
+</span
+	  ><a href="#local-6989586621679409294"
+	  ><span class="hs-identifier hs-var"
+	    >byr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; (x ~~&gt; r)) -&gt; (a ** x) ~&gt; r
+forall {k} (a :: k) (b :: k) (c :: k).
+(Closed k, Ob b, Ob c) =&gt;
+(a ~&gt; (b ~~&gt; c)) -&gt; (a ** b) ~&gt; c
+</span
+	><a href="Proarrow.Object.Exponential.html#uncurry"
+	><span class="hs-identifier hs-var"
+	  >uncurry</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(y -&gt; r) -&gt; x -&gt; r
+</span
+	><a href="#local-6989586621679409293"
+	><span class="hs-identifier hs-var"
+	  >yrxy</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((y -&gt; r) -&gt; x -&gt; r) -&gt; (a -&gt; y -&gt; r) -&gt; a -&gt; x -&gt; r
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((b ** y) ~&gt; r) -&gt; b ~&gt; (y ~~&gt; r)
+forall {k} (a :: k) (b :: k) (c :: k).
+(Closed k, Ob a, Ob b) =&gt;
+((a ** b) ~&gt; c) -&gt; a ~&gt; (b ~~&gt; c)
+</span
+	><a href="Proarrow.Object.Exponential.html#curry"
+	><span class="hs-identifier hs-var"
+	  >curry</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ** y) ~&gt; r
+(b, y) -&gt; r
+</span
+	><a href="#local-6989586621679409294"
+	><span class="hs-identifier hs-var"
+	  >byr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b -&gt; (y -&gt; r)) -&gt; (a -&gt; b) -&gt; a -&gt; y -&gt; r
+forall b c a. (b -&gt; c) -&gt; (a -&gt; b) -&gt; a -&gt; c
+forall {k} (p :: PRO k k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+a -&gt; b
+</span
+	><a href="#local-6989586621679409292"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409143"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#StarAutonomous"
+	  ><span class="hs-identifier hs-type"
+	    >StarAutonomous</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Kleisli.html#KLEISLI"
+	  ><span class="hs-identifier hs-type"
+	    >KLEISLI</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-type"
+	    >Cont</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679409143"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Dual"
+      ><span class="annot"
+	><a href="Proarrow.Object.Dual.html#Dual"
+	  ><span class="hs-identifier hs-var"
+	    >Dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409340"
+      ><span class="hs-glyph"
+	>@</span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Kleisli.html#KLEISLI"
+	  ><span class="hs-identifier hs-type"
+	    >KLEISLI</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-type"
+	    >Cont</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679409143"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Kleisli.html#KL"
+	  ><span class="hs-identifier hs-type"
+	    >KL</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679409340"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#KL"
+	><span class="hs-identifier hs-type"
+	  >KL</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679409340"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679409143"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409341"
+      ><span class="annot"
+	><span class="annottext"
+	  >dual :: forall (a :: KLEISLI (Cont r)) (b :: KLEISLI (Cont r)).
+(a ~&gt; b) -&gt; Dual b ~&gt; Dual a
+</span
+	  ><a href="#local-6989586621679409341"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dual</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409346"
+      ><span class="annot"
+	><span class="annottext"
+	  >(b1 -&gt; r) -&gt; a1 -&gt; r
+</span
+	  ><a href="#local-6989586621679409346"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cont r (b1 -&gt; r) (a1 -&gt; r)
+-&gt; Kleisli ('KL (b1 -&gt; r)) ('KL (a1 -&gt; r))
+forall {k} (p :: CAT k) (a1 :: k) (b1 :: k).
+p a1 b1 -&gt; Kleisli ('KL a1) ('KL b1)
+</span
+	><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-var"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((a1 -&gt; r) -&gt; r) -&gt; (b1 -&gt; r) -&gt; r) -&gt; Cont r (b1 -&gt; r) (a1 -&gt; r)
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409347"
+      ><span class="annot"
+	><span class="annottext"
+	  >(a1 -&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679409347"
+	  ><span class="hs-identifier hs-var"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409348"
+      ><span class="annot"
+	><span class="annottext"
+	  >b1 -&gt; r
+</span
+	  ><a href="#local-6989586621679409348"
+	  ><span class="hs-identifier hs-var"
+	    >br</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a1 -&gt; r) -&gt; r
+</span
+	><a href="#local-6989586621679409347"
+	><span class="hs-identifier hs-var"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b1 -&gt; r) -&gt; a1 -&gt; r
+</span
+	><a href="#local-6989586621679409346"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b1 -&gt; r
+</span
+	><a href="#local-6989586621679409348"
+	><span class="hs-identifier hs-var"
+	  >br</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409357"
+      ><span class="annot"
+	><span class="annottext"
+	  >dualInv :: forall (a :: KLEISLI (Cont r)) (b :: KLEISLI (Cont r)).
+(Ob a, Ob b) =&gt;
+(Dual a ~&gt; Dual b) -&gt; b ~&gt; a
+</span
+	  ><a href="#local-6989586621679409357"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dualInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409365"
+      ><span class="annot"
+	><span class="annottext"
+	  >((UN 'KL b -&gt; r) -&gt; r) -&gt; (UN 'KL a -&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679409365"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cont r (UN 'KL b) (UN 'KL a)
+-&gt; Kleisli ('KL (UN 'KL b)) ('KL (UN 'KL a))
+forall {k} (p :: CAT k) (a1 :: k) (b1 :: k).
+p a1 b1 -&gt; Kleisli ('KL a1) ('KL b1)
+</span
+	><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-var"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'KL a -&gt; r) -&gt; UN 'KL b -&gt; r) -&gt; Cont r (UN 'KL b) (UN 'KL a)
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409366"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL a -&gt; r
+</span
+	  ><a href="#local-6989586621679409366"
+	  ><span class="hs-identifier hs-var"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409367"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL b
+</span
+	  ><a href="#local-6989586621679409367"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'KL b -&gt; r) -&gt; r) -&gt; (UN 'KL a -&gt; r) -&gt; r
+</span
+	><a href="#local-6989586621679409365"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409368"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL b -&gt; r
+</span
+	  ><a href="#local-6989586621679409368"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL b -&gt; r
+</span
+	><a href="#local-6989586621679409368"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL b
+</span
+	><a href="#local-6989586621679409367"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL a -&gt; r
+</span
+	><a href="#local-6989586621679409366"
+	><span class="hs-identifier hs-var"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409381"
+      ><span class="annot"
+	><span class="annottext"
+	  >linDist :: forall (a :: KLEISLI (Cont r)) (b :: KLEISLI (Cont r))
+       (c :: KLEISLI (Cont r)).
+(Ob a, Ob b, Ob c) =&gt;
+((a ** b) ~&gt; Dual c) -&gt; a ~&gt; Dual (b ** c)
+</span
+	  ><a href="#local-6989586621679409381"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >linDist</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409389"
+      ><span class="annot"
+	><span class="annottext"
+	  >((UN 'KL c -&gt; r) -&gt; r) -&gt; (UN 'KL a, UN 'KL b) -&gt; r
+</span
+	  ><a href="#local-6989586621679409389"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cont r (UN 'KL a) ((UN 'KL b, UN 'KL c) -&gt; r)
+-&gt; Kleisli ('KL (UN 'KL a)) ('KL ((UN 'KL b, UN 'KL c) -&gt; r))
+forall {k} (p :: CAT k) (a1 :: k) (b1 :: k).
+p a1 b1 -&gt; Kleisli ('KL a1) ('KL b1)
+</span
+	><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-var"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((((UN 'KL b, UN 'KL c) -&gt; r) -&gt; r) -&gt; UN 'KL a -&gt; r)
+-&gt; Cont r (UN 'KL a) ((UN 'KL b, UN 'KL c) -&gt; r)
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409390"
+      ><span class="annot"
+	><span class="annottext"
+	  >((UN 'KL b, UN 'KL c) -&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679409390"
+	  ><span class="hs-identifier hs-var"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409391"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL a
+</span
+	  ><a href="#local-6989586621679409391"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'KL b, UN 'KL c) -&gt; r) -&gt; r
+</span
+	><a href="#local-6989586621679409390"
+	><span class="hs-identifier hs-var"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679409392"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL b
+</span
+	  ><a href="#local-6989586621679409392"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409393"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL c
+</span
+	  ><a href="#local-6989586621679409393"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN 'KL c -&gt; r) -&gt; r) -&gt; (UN 'KL a, UN 'KL b) -&gt; r
+</span
+	><a href="#local-6989586621679409389"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409394"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL c -&gt; r
+</span
+	  ><a href="#local-6989586621679409394"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL c -&gt; r
+</span
+	><a href="#local-6989586621679409394"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL c
+</span
+	><a href="#local-6989586621679409393"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL a
+</span
+	><a href="#local-6989586621679409391"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL b
+</span
+	><a href="#local-6989586621679409392"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409407"
+      ><span class="annot"
+	><span class="annottext"
+	  >linDistInv :: forall (a :: KLEISLI (Cont r)) (b :: KLEISLI (Cont r))
+       (c :: KLEISLI (Cont r)).
+(Ob a, Ob b, Ob c) =&gt;
+(a ~&gt; Dual (b ** c)) -&gt; (a ** b) ~&gt; Dual c
+</span
+	  ><a href="#local-6989586621679409407"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >linDistInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-type"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679409415"
+      ><span class="annot"
+	><span class="annottext"
+	  >(((UN 'KL b, UN 'KL c) -&gt; r) -&gt; r) -&gt; UN 'KL a -&gt; r
+</span
+	  ><a href="#local-6989586621679409415"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Cont r (UN 'KL a, UN 'KL b) (UN 'KL c -&gt; r)
+-&gt; Kleisli ('KL (UN 'KL a, UN 'KL b)) ('KL (UN 'KL c -&gt; r))
+forall {k} (p :: CAT k) (a1 :: k) (b1 :: k).
+p a1 b1 -&gt; Kleisli ('KL a1) ('KL b1)
+</span
+	><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-var"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((UN 'KL c -&gt; r) -&gt; r) -&gt; (UN 'KL a, UN 'KL b) -&gt; r)
+-&gt; Cont r (UN 'KL a, UN 'KL b) (UN 'KL c -&gt; r)
+forall r a b. ((b -&gt; r) -&gt; a -&gt; r) -&gt; Cont r a b
+</span
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	><span class="hs-identifier hs-var"
+	  >Cont</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409416"
+      ><span class="annot"
+	><span class="annottext"
+	  >(UN 'KL c -&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679409416"
+	  ><span class="hs-identifier hs-var"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679409417"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL a
+</span
+	  ><a href="#local-6989586621679409417"
+	  ><span class="hs-identifier hs-var"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409418"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL b
+</span
+	  ><a href="#local-6989586621679409418"
+	  ><span class="hs-identifier hs-var"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'KL c -&gt; r) -&gt; r
+</span
+	><a href="#local-6989586621679409416"
+	><span class="hs-identifier hs-var"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409419"
+      ><span class="annot"
+	><span class="annottext"
+	  >UN 'KL c
+</span
+	  ><a href="#local-6989586621679409419"
+	  ><span class="hs-identifier hs-var"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(((UN 'KL b, UN 'KL c) -&gt; r) -&gt; r) -&gt; UN 'KL a -&gt; r
+</span
+	><a href="#local-6989586621679409415"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679409420"
+      ><span class="annot"
+	><span class="annottext"
+	  >(UN 'KL b, UN 'KL c) -&gt; r
+</span
+	  ><a href="#local-6989586621679409420"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN 'KL b, UN 'KL c) -&gt; r
+</span
+	><a href="#local-6989586621679409420"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL b
+</span
+	><a href="#local-6989586621679409418"
+	><span class="hs-identifier hs-var"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL c
+</span
+	><a href="#local-6989586621679409419"
+	><span class="hs-identifier hs-var"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN 'KL a
+</span
+	><a href="#local-6989586621679409417"
+	><span class="hs-identifier hs-var"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409421"
+      ><span class="annot"
+	><a href="Proarrow.Object.Exponential.html#Closed"
+	  ><span class="hs-identifier hs-type"
+	    >Closed</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Kleisli.html#KLEISLI"
+	  ><span class="hs-identifier hs-type"
+	    >KLEISLI</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Promonad.Cont.html#Cont"
+	  ><span class="hs-identifier hs-type"
+	    >Cont</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679409421"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679409447"
+      ><span id="local-6989586621679409448"
+	><span class="annot"
+	  ><a href="#local-6989586621679409447"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="~~%3E"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.Exponential.html#~~%3E"
+	      ><span class="hs-operator hs-var"
+		>~~&gt;</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679409448"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Dual.html#ExpSA"
+	><span class="hs-identifier hs-type"
+	  >ExpSA</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679409447"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679409448"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409449"
+      ><span class="annot"
+	><span class="annottext"
+	  >curry' :: forall (a :: KLEISLI (Cont r)) (b :: KLEISLI (Cont r))
+       (c :: KLEISLI (Cont r)).
+Obj a -&gt; Obj b -&gt; ((a ** b) ~&gt; c) -&gt; a ~&gt; (b ~~&gt; c)
+</span
+	  ><a href="#local-6989586621679409449"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >curry'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** b) ~&gt; c) -&gt; a ~&gt; (b ~~&gt; c)
+(('KL b1 ** 'KL b1) ~&gt; c) -&gt; 'KL b1 ~&gt; ExpSA ('KL b1) c
+forall {k} (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob a, Ob b) =&gt;
+((a ** b) ~&gt; c) -&gt; a ~&gt; ExpSA b c
+</span
+	><a href="Proarrow.Object.Dual.html#currySA"
+	><span class="hs-identifier hs-var"
+	  >currySA</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409468"
+      ><span class="annot"
+	><span class="annottext"
+	  >uncurry' :: forall (b :: KLEISLI (Cont r)) (c :: KLEISLI (Cont r))
+       (a :: KLEISLI (Cont r)).
+Obj b -&gt; Obj c -&gt; (a ~&gt; (b ~~&gt; c)) -&gt; (a ** b) ~&gt; c
+</span
+	  ><a href="#local-6989586621679409468"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >uncurry'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Kleisli.html#Kleisli"
+	><span class="hs-identifier hs-type"
+	  >Kleisli</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; (b ~~&gt; c)) -&gt; (a ** b) ~&gt; c
+(a ~&gt; ExpSA ('KL b1) ('KL b1)) -&gt; (a ** 'KL b1) ~&gt; 'KL b1
+forall {k} (a :: k) (b :: k) (c :: k).
+(StarAutonomous k, Ob b, Ob c) =&gt;
+(a ~&gt; ExpSA b c) -&gt; (a ** b) ~&gt; c
+</span
+	><a href="Proarrow.Object.Dual.html#uncurrySA"
+	><span class="hs-identifier hs-var"
+	  >uncurrySA</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679409488"
+      ><span class="annot"
+	><span class="annottext"
+	  >^^^ :: forall (b :: KLEISLI (Cont r)) (y :: KLEISLI (Cont r))
+       (x :: KLEISLI (Cont r)) (a :: KLEISLI (Cont r)).
+(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; (a ~~&gt; b) ~&gt; (x ~~&gt; y)
+</span
+	  ><a href="#local-6989586621679409488"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >(^^^)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; (a ~~&gt; b) ~&gt; (x ~~&gt; y)
+(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; ExpSA a b ~&gt; ExpSA x y
+forall {k} (a :: k) (b :: k) (x :: k) (y :: k).
+StarAutonomous k =&gt;
+(b ~&gt; y) -&gt; (x ~&gt; a) -&gt; ExpSA a b ~&gt; ExpSA x y
+</span
+	><a href="Proarrow.Object.Dual.html#expSA"
+	><span class="hs-identifier hs-var"
+	  >expSA</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ></pre
+    ></body
+  ></html
+>

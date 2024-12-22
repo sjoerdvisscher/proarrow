@@ -1,0 +1,2913 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Helper.CCC</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Helper.CCC.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Helper.CCC</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><a href="#v:toCCC"
+	      >toCCC</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	      >BiCCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; ((<a href="Proarrow-Helper-CCC.html#t:TermF" title="Proarrow.Helper.CCC"
+	      >TermF</a
+	      > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Helper-CCC.html#t:-45--45--62-" title="Proarrow.Helper.CCC"
+	      >--&gt;</a
+	      > b)) -&gt; FromFree a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > FromFree b</li
+	    ><li class="src short"
+	    ><a href="#v:lam"
+	      >lam</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (i :: k). (<a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	      >CCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > i, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; ((<span class="keyword"
+	      >forall</span
+	      > (x :: k). Cast x (i <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > a) =&gt; x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a) -&gt; (i <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	      >~~&gt;</a
+	      > b)</li
+	    ><li class="src short"
+	    ><a href="#v:-36-"
+	      >($)</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (i :: k) (a :: k) (b :: k). (<a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	      >CCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	      >~~&gt;</a
+	      > b)) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b</li
+	    ><li class="src short"
+	    ><a href="#v:lift"
+	      >lift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k) (i :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	      >BiCCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (FromFree a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > FromFree b) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >pattern</span
+	      > <a href="#v::-38-"
+	      >(:&amp;)</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (i :: k) (a :: k) (b :: k). (<a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	      >CCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > b)</li
+	    ><li class="src short"
+	    ><a href="#v:left"
+	      >left</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (i :: k). (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	      >HasBinaryCoproducts</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > b)</li
+	    ><li class="src short"
+	    ><a href="#v:right"
+	      >right</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (i :: k). (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	      >HasBinaryCoproducts</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > b)</li
+	    ><li class="src short"
+	    ><a href="#v:either"
+	      >either</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (c :: k) (i :: k). (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	      >HasBinaryCoproducts</a
+	      > k, <a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	      >CCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	      >~~&gt;</a
+	      > c)) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	      >~~&gt;</a
+	      > c)) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > b) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	      >~~&gt;</a
+	      > c)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:FreeCCC"
+	      >FreeCCC</a
+	      > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	      >FK</a
+	      > k)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > <a href="#t:InitF"
+	      >InitF</a
+	      > :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > <a href="#t:TermF"
+	      >TermF</a
+	      > :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > (a :: k) <a href="#t:-42-"
+	      >*</a
+	      > (b :: k) :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > (a :: k) <a href="#t:-43-"
+	      >+</a
+	      > (b :: k) :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > (a :: k) <a href="#t:-45--45--62-"
+	      >--&gt;</a
+	      > (b :: k) :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:FK"
+	      >FK</a
+	      > k = <a href="#v:F"
+	      >F</a
+	      > k</li
+	    ></ul
+	  ></details
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><a id="v:toCCC" class="def"
+	    >toCCC</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	    >BiCCC</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; ((<a href="Proarrow-Helper-CCC.html#t:TermF" title="Proarrow.Helper.CCC"
+	    >TermF</a
+	    > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Helper-CCC.html#t:-45--45--62-" title="Proarrow.Helper.CCC"
+	    >--&gt;</a
+	    > b)) -&gt; FromFree a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > FromFree b <a href="src/Proarrow.Helper.CCC.html#toCCC" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L260" class="link"
+	    >Comments</a
+	    > <a href="#v:toCCC" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Adapted from Phil Freeman: <a href="https://blog.functorial.com/posts/2017-10-08-HOAS-CCCs.html"
+	      >https://blog.functorial.com/posts/2017-10-08-HOAS-CCCs.html</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:lam" class="def"
+	    >lam</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (i :: k). (<a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	    >CCC</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > i, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; ((<span class="keyword"
+	    >forall</span
+	    > (x :: k). Cast x (i <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	    >&amp;&amp;</a
+	    > a) =&gt; x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a) -&gt; (i <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	    >&amp;&amp;</a
+	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	    >~~&gt;</a
+	    > b) <a href="src/Proarrow.Helper.CCC.html#lam" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L43" class="link"
+	    >Comments</a
+	    > <a href="#v:lam" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:-36-" class="def"
+	    >($)</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (i :: k) (a :: k) (b :: k). (<a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	    >CCC</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	    >~~&gt;</a
+	    > b)) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b <a href="src/Proarrow.Helper.CCC.html#%24" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L49" class="link"
+	    >Comments</a
+	    > <a href="#v:-36-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:lift" class="def"
+	    >lift</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k) (i :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	    >BiCCC</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (FromFree a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > FromFree b) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b <a href="src/Proarrow.Helper.CCC.html#lift" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L52" class="link"
+	    >Comments</a
+	    > <a href="#v:lift" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >pattern</span
+	    > <a id="v::-38-" class="def"
+	    >(:&amp;)</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (i :: k) (a :: k) (b :: k). (<a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	    >CCC</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	    >&amp;&amp;</a
+	    > b) <a href="src/Proarrow.Helper.CCC.html#%3A%26" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L61" class="link"
+	    >Comments</a
+	    > <a href="#v::-38-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:left" class="def"
+	    >left</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (i :: k). (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	    >HasBinaryCoproducts</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	    >||</a
+	    > b) <a href="src/Proarrow.Helper.CCC.html#left" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L68" class="link"
+	    >Comments</a
+	    > <a href="#v:left" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:right" class="def"
+	    >right</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (i :: k). (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	    >HasBinaryCoproducts</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	    >||</a
+	    > b) <a href="src/Proarrow.Helper.CCC.html#right" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L71" class="link"
+	    >Comments</a
+	    > <a href="#v:right" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:either" class="def"
+	    >either</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (c :: k) (i :: k). (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	    >HasBinaryCoproducts</a
+	    > k, <a href="Proarrow-Object-Exponential.html#t:CCC" title="Proarrow.Object.Exponential"
+	    >CCC</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > c) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	    >~~&gt;</a
+	    > c)) -&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	    >~~&gt;</a
+	    > c)) -&gt; i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	    >||</a
+	    > b) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	    >~~&gt;</a
+	    > c) <a href="src/Proarrow.Helper.CCC.html#either" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L79" class="link"
+	    >Comments</a
+	    > <a href="#v:either" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:FreeCCC" class="def"
+	    >FreeCCC</a
+	    > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+	    >FK</a
+	    > k) <a href="src/Proarrow.Helper.CCC.html#FreeCCC" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L95" class="link"
+	    >Comments</a
+	    > <a href="#t:FreeCCC" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FreeCCC"
+	    >Instances</h4
+	    ><details id="i:FreeCCC" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeCCC:Promonad:1"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+		      >FreeCCC</a
+		      > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-173" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L173" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeCCC" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeCCC:Promonad:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:id"
+			  >id</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a a <a href="src/Proarrow.Core.html#id" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L56" class="link"
+			  >Comments</a
+			  > <a href="#v:id" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:."
+			  >(.)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > b c -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a c <a href="src/Proarrow.Core.html#." class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L57" class="link"
+			  >Comments</a
+			  > <a href="#v:." class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeCCC:MonoidalProfunctor:2"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+		      >FreeCCC</a
+		      > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-216" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L216" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeCCC" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeCCC:MonoidalProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:par0"
+			  >par0</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:par0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:par"
+			  >par</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x1 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (x2 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y1 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y2 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > x1 x2 -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > y1 y2 -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > (x1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y1) (x2 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:par" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeCCC:Profunctor:3"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+		      >FreeCCC</a
+		      > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-157" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L157" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeCCC" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeCCC:Profunctor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (d :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FreeCCC:Show:4"
+		      ></span
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Show" title="Prelude"
+		      >Show</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+		      >FreeCCC</a
+		      > a b)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-111" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L111" class="link"
+		    >Comments</a
+		    > <a href="#t:FreeCCC" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FreeCCC:Show:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:showsPrec"
+			  >showsPrec</a
+			  > :: <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Int.html#t:Int" title="Data.Int"
+			  >Int</a
+			  > -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:ShowS" title="Prelude"
+			  >ShowS</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Prelude.hs#L" class="link"
+			  >Comments</a
+			  > <a href="#v:showsPrec" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:show"
+			  >show</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-String.html#t:String" title="Data.String"
+			  >String</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Prelude.hs#L" class="link"
+			  >Comments</a
+			  > <a href="#v:show" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:showList"
+			  >showList</a
+			  > :: [<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b] -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:ShowS" title="Prelude"
+			  >ShowS</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Prelude.hs#L" class="link"
+			  >Comments</a
+			  > <a href="#v:showList" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > <a id="t:InitF" class="def"
+	    >InitF</a
+	    > :: k <a href="src/Proarrow.Helper.CCC.html#InitF" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L89" class="link"
+	    >Comments</a
+	    > <a href="#t:InitF" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > <a id="t:TermF" class="def"
+	    >TermF</a
+	    > :: k <a href="src/Proarrow.Helper.CCC.html#TermF" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L90" class="link"
+	    >Comments</a
+	    > <a href="#t:TermF" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > (a :: k) <a id="t:-42-" class="def"
+	    >*</a
+	    > (b :: k) :: k <a href="src/Proarrow.Helper.CCC.html#%2A" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L92" class="link"
+	    >Comments</a
+	    > <a href="#t:-42-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > (a :: k) <a id="t:-43-" class="def"
+	    >+</a
+	    > (b :: k) :: k <a href="src/Proarrow.Helper.CCC.html#%2B" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L91" class="link"
+	    >Comments</a
+	    > <a href="#t:-43-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > (a :: k) <a id="t:-45--45--62-" class="def"
+	    >--&gt;</a
+	    > (b :: k) :: k <span class="fixity"
+	    >infixr 2</span
+	    ><span class="rightedge"
+	    ></span
+	    > <a href="src/Proarrow.Helper.CCC.html#--%3E" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L93" class="link"
+	    >Comments</a
+	    > <a href="#t:-45--45--62-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:FK" class="def"
+	    >FK</a
+	    > k <a href="src/Proarrow.Helper.CCC.html#FK" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L84" class="link"
+	    >Comments</a
+	    > <a href="#t:FK" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:F" class="def"
+		  >F</a
+		  > k</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FK"
+	    >Instances</h4
+	    ><details id="i:FK" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:Monoidal:1"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-219" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L219" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:Monoidal:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:UnitFK:Unit:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+				>Unit</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:UnitFK:Unit:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Helper-CCC.html"
+				  >Proarrow.Helper.CCC</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+				  >Unit</a
+				  > = <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+				  >FK</a
+				  > k</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withOb2"
+			  >withOb2</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.html#withOb2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:withOb2" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:leftUnitor"
+			  >leftUnitor</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Category.Monoidal.html#leftUnitor" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L22" class="link"
+			  >Comments</a
+			  > <a href="#v:leftUnitor" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:leftUnitorInv"
+			  >leftUnitorInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > a) <a href="src/Proarrow.Category.Monoidal.html#leftUnitorInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L23" class="link"
+			  >Comments</a
+			  > <a href="#v:leftUnitorInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rightUnitor"
+			  >rightUnitor</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Category.Monoidal.html#rightUnitor" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L24" class="link"
+			  >Comments</a
+			  > <a href="#v:rightUnitor" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rightUnitorInv"
+			  >rightUnitorInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k)) <a href="src/Proarrow.Category.Monoidal.html#rightUnitorInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:rightUnitorInv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:associator"
+			  >associator</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) <a href="src/Proarrow.Category.Monoidal.html#associator" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:associator" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:associatorInv"
+			  >associatorInv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="src/Proarrow.Category.Monoidal.html#associatorInv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:associatorInv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:SymMonoidal:2"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+		      >SymMonoidal</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-229" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L229" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:SymMonoidal:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:swap"
+			  >swap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > a) <a href="src/Proarrow.Category.Monoidal.html#swap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L66" class="link"
+			  >Comments</a
+			  > <a href="#v:swap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:CategoryOf:3"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-193" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L193" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:CategoryOf:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--62-FK:-126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+				>(~&gt;)</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--62-FK:-126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Helper-CCC.html"
+				  >Proarrow.Helper.CCC</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+				  >(~&gt;)</a
+				  > = <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+				  >FreeCCC</a
+				  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+				  >FK</a
+				  > k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+				  >FK</a
+				  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  ></div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:HasBinaryCoproducts:4"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+		      >HasBinaryCoproducts</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-202" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L202" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:HasBinaryCoproducts:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObCoprod"
+			  >withObCoprod</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.BinaryCoproduct.html#withObCoprod" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:withObCoprod" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lft"
+			  >lft</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="src/Proarrow.Object.BinaryCoproduct.html#lft" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:lft" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rgt"
+			  >rgt</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="src/Proarrow.Object.BinaryCoproduct.html#rgt" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:rgt" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-124--124--124-"
+			  >(|||)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (y <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (x <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > y) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:-124--124--124-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-43--43--43-"
+			  >(+++)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (x :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > y) <a href="src/Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:-43--43--43-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:HasBinaryProducts:5"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
+		      >HasBinaryProducts</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-209" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L209" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:HasBinaryProducts:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObProd"
+			  >withObProd</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.BinaryProduct.html#withObProd" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L32" class="link"
+			  >Comments</a
+			  > <a href="#v:withObProd" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:fst"
+			  >fst</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.BinaryProduct.html#fst" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L33" class="link"
+			  >Comments</a
+			  > <a href="#v:fst" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:snd"
+			  >snd</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.BinaryProduct.html#snd" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L34" class="link"
+			  >Comments</a
+			  > <a href="#v:snd" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-38--38--38-"
+			  >(&amp;&amp;&amp;)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (x :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > y) <a href="src/Proarrow.Object.BinaryProduct.html#%26%26%26" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:-38--38--38-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-42--42--42-"
+			  >(***)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (x :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > y) <a href="src/Proarrow.Object.BinaryProduct.html#%2A%2A%2A" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:-42--42--42-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:Closed:6"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+		      >Closed</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-231" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L231" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:Closed:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:curry-39-"
+			  >curry'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > b -&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > c) <a href="src/Proarrow.Object.Exponential.html#curry%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:curry-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:uncurry-39-"
+			  >uncurry'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > c -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c <a href="src/Proarrow.Object.Exponential.html#uncurry%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:uncurry-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-94--94--94-"
+			  >(^^^)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (x :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > y) <a href="src/Proarrow.Object.Exponential.html#%5E%5E%5E" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L32" class="link"
+			  >Comments</a
+			  > <a href="#v:-94--94--94-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:HasInitialObject:7"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
+		      >HasInitialObject</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-196" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L196" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:HasInitialObject:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:InitialObjectFK:InitialObject:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				>InitialObject</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:InitialObjectFK:InitialObject:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Helper-CCC.html"
+				  >Proarrow.Helper.CCC</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				  >InitialObject</a
+				  > = <a href="Proarrow-Helper-CCC.html#t:InitF" title="Proarrow.Helper.CCC"
+				  >InitF</a
+				  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+				  >FK</a
+				  > k</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:initiate"
+			  >initiate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Initial.html#initiate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Initial.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:initiate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:initiate-39-"
+			  >initiate'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a' :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (a' <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Initial.html#initiate%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Initial.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:initiate-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:HasTerminalObject:8"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-199" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L199" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:HasTerminalObject:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:TerminalObjectFK:TerminalObject:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				>TerminalObject</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:TerminalObjectFK:TerminalObject:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Helper-CCC.html"
+				  >Proarrow.Helper.CCC</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > = <a href="Proarrow-Helper-CCC.html#t:TermF" title="Proarrow.Helper.CCC"
+				  >TermF</a
+				  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+				  >FK</a
+				  > k</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:terminate"
+			  >terminate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			  >TerminalObject</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:terminate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:terminate-39-"
+			  >terminate'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a' :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			  >TerminalObject</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:terminate-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:Promonad:9"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+		      >FreeCCC</a
+		      > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-173" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L173" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:Promonad:9"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:id"
+			  >id</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a a <a href="src/Proarrow.Core.html#id" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L56" class="link"
+			  >Comments</a
+			  > <a href="#v:id" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:."
+			  >(.)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > b c -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a c <a href="src/Proarrow.Core.html#." class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L57" class="link"
+			  >Comments</a
+			  > <a href="#v:." class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:MonoidalProfunctor:10"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+		      >FreeCCC</a
+		      > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-216" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L216" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:MonoidalProfunctor:10"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:par0"
+			  >par0</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:par0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:par"
+			  >par</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x1 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (x2 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y1 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (y2 :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > x1 x2 -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > y1 y2 -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > (x1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y1) (x2 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:par" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:Profunctor:11"
+		      ></span
+		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+		      >FreeCCC</a
+		      > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-157" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L157" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:Profunctor:11"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (d :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			  >FK</a
+			  > k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			  >FreeCCC</a
+			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:UN:12"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Helper-CCC.html#v:F" title="Proarrow.Helper.CCC"
+		      >F</a
+		      > :: j -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > j) ('<a href="Proarrow-Helper-CCC.html#v:F" title="Proarrow.Helper.CCC"
+		      >F</a
+		      > a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > j)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-85" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L85" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:UN:12"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Helper-CCC.html#v:F" title="Proarrow.Helper.CCC"
+			>F</a
+			> :: j -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> j) ('<a href="Proarrow-Helper-CCC.html#v:F" title="Proarrow.Helper.CCC"
+			>F</a
+			> a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> j) = a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:Unit:13"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+		      >Unit</a
+		      ></span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-220" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L220" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:Unit:13"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			>Unit</a
+			> = <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			>TerminalObject</a
+			> :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:-126--62-:14"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      ></span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-194" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L194" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:-126--62-:14"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			>(~&gt;)</a
+			> = <a href="Proarrow-Helper-CCC.html#t:FreeCCC" title="Proarrow.Helper.CCC"
+			>FreeCCC</a
+			> :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k -&gt; <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:InitialObject:15"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+		      >InitialObject</a
+		      ></span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-197" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L197" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:InitialObject:15"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			>InitialObject</a
+			> = <a href="Proarrow-Helper-CCC.html#t:InitF" title="Proarrow.Helper.CCC"
+			>InitF</a
+			> :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:TerminalObject:16"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+		      >TerminalObject</a
+		      ></span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-200" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L200" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:TerminalObject:16"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			>TerminalObject</a
+			> = <a href="Proarrow-Helper-CCC.html#t:TermF" title="Proarrow.Helper.CCC"
+			>TermF</a
+			> :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:Ob:17"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-195" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L195" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:Ob:17"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			>Ob</a
+			> (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k)</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:-42--42-:18"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		      >**</a
+		      > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-221" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L221" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:-42--42-:18"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			>**</a
+			> (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) = a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			>&amp;&amp;</a
+			> b</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:-124--124-:19"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+		      >||</a
+		      > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-203" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L203" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:-124--124-:19"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			>||</a
+			> (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) = a <a href="Proarrow-Helper-CCC.html#t:-43-" title="Proarrow.Helper.CCC"
+			>+</a
+			> b</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:-38--38-:20"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+		      >&amp;&amp;</a
+		      > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-210" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L210" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:-38--38-:20"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			>&amp;&amp;</a
+			> (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) = a <a href="Proarrow-Helper-CCC.html#t:-42-" title="Proarrow.Helper.CCC"
+			>*</a
+			> b</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:-126--126--62-:21"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+		      >~~&gt;</a
+		      > (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Helper.CCC.html#line-232" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Helper/CCC.hs#L232" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:-126--126--62-:21"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Helper-CCC.html"
+			>Proarrow.Helper.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			>~~&gt;</a
+			> (b :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
+			>FK</a
+			> k) = a <a href="Proarrow-Helper-CCC.html#t:-45--45--62-" title="Proarrow.Helper.CCC"
+			>--&gt;</a
+			> b</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

@@ -70,7 +70,7 @@
 	    >CAT</a
 	    > j) (k :: j) <a href="src/Proarrow.Category.Monoidal.Endo.html#ENDO" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L13" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L14" class="link"
 	    >Comments</a
 	    > <a href="#t:ENDO" class="selflink"
 	    >#</a
@@ -105,14 +105,18 @@
 		      >Bicategory</a
 		      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
 		      >Ob0</a
-		      > kk k) =&gt; <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      > kk k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		      >I</a
+		      > :: kk k k)) =&gt; <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
 		      >Monoidal</a
 		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-38" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-39" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L38" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L39" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -177,17 +181,39 @@
 		      ><p class="caption"
 			>Methods</p
 			><p class="src"
-			><a href="#v:leftUnitor"
-			  >leftUnitor</a
+			><a href="#v:withOb2"
+			  >withOb2</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
 			  > kk k) (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > b) -&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  > kk k) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.html#withOb2" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:withOb2" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:leftUnitor"
+			  >leftUnitor</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
 			  >Unit</a
 			  > :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
@@ -195,7 +221,7 @@
 			  >**</a
 			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > b <a href="src/Proarrow.Category.Monoidal.html#leftUnitor" class="link"
+			  > a <a href="src/Proarrow.Category.Monoidal.html#leftUnitor" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L22" class="link"
 			  >Comments</a
@@ -209,11 +235,9 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k) (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
-			  >ENDO</a
-			  > kk k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > kk k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
 			  >Unit</a
@@ -221,7 +245,7 @@
 			  >ENDO</a
 			  > kk k) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
-			  > b) <a href="src/Proarrow.Category.Monoidal.html#leftUnitorInv" class="link"
+			  > a) <a href="src/Proarrow.Category.Monoidal.html#leftUnitorInv" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L23" class="link"
 			  >Comments</a
@@ -235,11 +259,9 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k) (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
-			  >ENDO</a
-			  > kk k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > b) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  > kk k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
 			  >Unit</a
@@ -247,7 +269,7 @@
 			  >ENDO</a
 			  > kk k)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > b <a href="src/Proarrow.Category.Monoidal.html#rightUnitor" class="link"
+			  > a <a href="src/Proarrow.Category.Monoidal.html#rightUnitor" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L24" class="link"
 			  >Comments</a
@@ -261,13 +283,11 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k) (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
-			  >ENDO</a
-			  > kk k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > kk k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
 			  >Unit</a
@@ -291,13 +311,13 @@
 			  >ENDO</a
 			  > kk k) (c :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > c -&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  > kk k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
@@ -325,13 +345,13 @@
 			  >ENDO</a
 			  > kk k) (c :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > c -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  > kk k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
@@ -366,9 +386,9 @@
 		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-29" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-30" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L29" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L30" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -437,7 +457,115 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Closed:3"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Coclosed:3"
+		      ></span
+		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+		      >Bicategory</a
+		      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+		      >Ob0</a
+		      > kk k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		      >I</a
+		      > :: kk k k), <span class="keyword"
+		      >forall</span
+		      > (f :: kk k k) (g :: kk k k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > g) =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+		      >LeftKanExtension</a
+		      > f g) =&gt; <a href="Proarrow-Object-Coexponential.html#t:Coclosed" title="Proarrow.Object.Coexponential"
+		      >Coclosed</a
+		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+		      >ENDO</a
+		      > kk k)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-60" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L60" class="link"
+		    >Comments</a
+		    > <a href="#t:ENDO" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:ENDO:Coclosed:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Endo.html"
+			>Proarrow.Category.Monoidal.Endo</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:coeval-39-"
+			  >coeval'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k) (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
+			  >&lt;~~</a
+			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="src/Proarrow.Object.Coexponential.html#coeval%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L11" class="link"
+			  >Comments</a
+			  > <a href="#v:coeval-39-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:coevalUniv-39-"
+			  >coevalUniv'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k) (c :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k) (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+			  >Obj</a
+			  > c -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b)) -&gt; (a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
+			  >&lt;~~</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L12" class="link"
+			  >Comments</a
+			  > <a href="#v:coevalUniv-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Closed:4"
 		      ></span
 		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
 		      >Bicategory</a
@@ -460,9 +588,9 @@
 		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-48" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-51" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L48" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L51" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -472,7 +600,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:Closed:3"
+		  ><details id="i:id:ENDO:Closed:4"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -507,7 +635,7 @@
 			  >~~&gt;</a
 			  > c) <a href="src/Proarrow.Object.Exponential.html#curry%27" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L31" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L30" class="link"
 			  >Comments</a
 			  > <a href="#v:curry-39-" class="selflink"
 			  >#</a
@@ -537,7 +665,7 @@
 			  >~&gt;</a
 			  > c <a href="src/Proarrow.Object.Exponential.html#uncurry%27" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L32" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L31" class="link"
 			  >Comments</a
 			  > <a href="#v:uncurry-39-" class="selflink"
 			  >#</a
@@ -567,7 +695,7 @@
 			  >~~&gt;</a
 			  > y) <a href="src/Proarrow.Object.Exponential.html#%5E%5E%5E" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L33" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L32" class="link"
 			  >Comments</a
 			  > <a href="#v:-94--94--94-" class="selflink"
 			  >#</a
@@ -579,7 +707,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Promonad:4"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Promonad:5"
 		      ></span
 		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
 		      >Bicategory</a
@@ -596,9 +724,9 @@
 		      > kk k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-26" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-27" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L26" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L27" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -608,7 +736,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:Promonad:4"
+		  ><details id="i:id:ENDO:Promonad:5"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -667,13 +795,17 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:MonoidalProfunctor:5"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:MonoidalProfunctor:6"
 		      ></span
 		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
 		      >Bicategory</a
 		      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
 		      >Ob0</a
-		      > kk k) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      > kk k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		      >I</a
+		      > :: kk k k)) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
 		      >MonoidalProfunctor</a
 		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:Endo" title="Proarrow.Category.Monoidal.Endo"
 		      >Endo</a
@@ -684,9 +816,9 @@
 		      > kk k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-33" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-34" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L33" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L34" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -696,7 +828,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:MonoidalProfunctor:5"
+		  ><details id="i:id:ENDO:MonoidalProfunctor:6"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -721,7 +853,7 @@
 			  >ENDO</a
 			  > kk k) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:par0" class="selflink"
 			  >#</a
@@ -751,7 +883,7 @@
 			  >**</a
 			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
 			  >Comments</a
 			  > <a href="#v:par" class="selflink"
 			  >#</a
@@ -763,7 +895,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Profunctor:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Profunctor:7"
 		      ></span
 		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
 		      >Bicategory</a
@@ -780,9 +912,9 @@
 		      > kk k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-23" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-24" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L23" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L24" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -792,7 +924,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:Profunctor:6"
+		  ><details id="i:id:ENDO:Profunctor:7"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -859,7 +991,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Comonoid:7"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Comonoid:8"
 		      ></span
 		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
 		      >Bicategory</a
@@ -878,9 +1010,9 @@
 		      > c :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk a)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-60" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-73" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L60" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L73" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -892,7 +1024,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:Comonoid:7"
+		  ><details id="i:id:ENDO:Comonoid:8"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -915,7 +1047,7 @@
 			  >ENDO</a
 			  > kk a) <a href="src/Proarrow.Monoid.html#counit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L48" class="link"
 			  >Comments</a
 			  > <a href="#v:counit" class="selflink"
 			  >#</a
@@ -935,7 +1067,7 @@
 			  >E</a
 			  > c) <a href="src/Proarrow.Monoid.html#comult" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L49" class="link"
 			  >Comments</a
 			  > <a href="#v:comult" class="selflink"
 			  >#</a
@@ -947,7 +1079,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Monoid:8"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Monoid:9"
 		      ></span
 		      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
 		      >Bicategory</a
@@ -966,9 +1098,9 @@
 		      > m :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk a)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-55" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-68" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L55" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L68" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -980,7 +1112,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:Monoid:8"
+		  ><details id="i:id:ENDO:Monoid:9"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1003,7 +1135,7 @@
 			  >E</a
 			  > m <a href="src/Proarrow.Monoid.html#mempty" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:mempty" class="selflink"
 			  >#</a
@@ -1023,7 +1155,7 @@
 			  >E</a
 			  > m <a href="src/Proarrow.Monoid.html#mappend" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Monoid.hs#L19" class="link"
 			  >Comments</a
 			  > <a href="#v:mappend" class="selflink"
 			  >#</a
@@ -1035,7 +1167,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:UN:9"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:UN:10"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1050,9 +1182,9 @@
 		      > p :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-14" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-15" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L14" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L15" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -1062,7 +1194,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:UN:9"
+		  ><details id="i:id:ENDO:UN:10"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1089,16 +1221,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Unit:10"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Unit:11"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
 		      >Unit</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-39" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-40" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L39" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L40" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -1108,7 +1240,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:Unit:10"
+		  ><details id="i:id:ENDO:Unit:11"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1131,16 +1263,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:-126--62-:11"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:-126--62-:12"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >(~&gt;)</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-30" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-31" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L30" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L31" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -1150,7 +1282,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:-126--62-:11"
+		  ><details id="i:id:ENDO:-126--62-:12"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1177,7 +1309,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Ob:12"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:Ob:13"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1186,9 +1318,9 @@
 		      > (p :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-31" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-32" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L31" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L32" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -1198,7 +1330,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:Ob:12"
+		  ><details id="i:id:ENDO:Ob:13"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1233,7 +1365,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:-42--42-:13"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:-42--42-:14"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1248,9 +1380,9 @@
 		      > q :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-40" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-41" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L40" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L41" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -1260,7 +1392,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:-42--42-:13"
+		  ><details id="i:id:ENDO:-42--42-:14"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1291,7 +1423,65 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:-126--126--62-:14"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:-60--126--126-:15"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > ('<a href="Proarrow-Category-Monoidal-Endo.html#t:E" title="Proarrow.Category.Monoidal.Endo"
+		      >E</a
+		      > f :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+		      >ENDO</a
+		      > kk k) <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
+		      >&lt;~~</a
+		      > ('<a href="Proarrow-Category-Monoidal-Endo.html#t:E" title="Proarrow.Category.Monoidal.Endo"
+		      >E</a
+		      > g :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+		      >ENDO</a
+		      > kk k)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-63" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L63" class="link"
+		    >Comments</a
+		    > <a href="#t:ENDO" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:ENDO:-60--126--126-:15"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Endo.html"
+			>Proarrow.Category.Monoidal.Endo</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> ('<a href="Proarrow-Category-Monoidal-Endo.html#t:E" title="Proarrow.Category.Monoidal.Endo"
+			>E</a
+			> f :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			>ENDO</a
+			> kk k) <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
+			>&lt;~~</a
+			> ('<a href="Proarrow-Category-Monoidal-Endo.html#t:E" title="Proarrow.Category.Monoidal.Endo"
+			>E</a
+			> g :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			>ENDO</a
+			> kk k) = '<a href="Proarrow-Category-Monoidal-Endo.html#t:E" title="Proarrow.Category.Monoidal.Endo"
+			>E</a
+			> (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+			>Lan</a
+			> g f)</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ENDO:-126--126--62-:16"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1306,9 +1496,9 @@
 		      > g :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-49" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-54" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L49" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L54" class="link"
 		    >Comments</a
 		    > <a href="#t:ENDO" class="selflink"
 		    >#</a
@@ -1318,7 +1508,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ENDO:-126--126--62-:14"
+		  ><details id="i:id:ENDO:-126--126--62-:16"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1364,7 +1554,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Endo.html#Endo" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L17" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L18" class="link"
 	    >Comments</a
 	    > <a href="#t:Endo" class="selflink"
 	    >#</a
@@ -1422,9 +1612,9 @@
 		      > kk k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-26" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-27" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L26" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L27" class="link"
 		    >Comments</a
 		    > <a href="#t:Endo" class="selflink"
 		    >#</a
@@ -1499,7 +1689,11 @@
 		      >Bicategory</a
 		      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
 		      >Ob0</a
-		      > kk k) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      > kk k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		      >I</a
+		      > :: kk k k)) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
 		      >MonoidalProfunctor</a
 		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:Endo" title="Proarrow.Category.Monoidal.Endo"
 		      >Endo</a
@@ -1510,9 +1704,9 @@
 		      > kk k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-33" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-34" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L33" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L34" class="link"
 		    >Comments</a
 		    > <a href="#t:Endo" class="selflink"
 		    >#</a
@@ -1547,7 +1741,7 @@
 			  >ENDO</a
 			  > kk k) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:par0" class="selflink"
 			  >#</a
@@ -1577,7 +1771,7 @@
 			  >**</a
 			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
 			  >Comments</a
 			  > <a href="#v:par" class="selflink"
 			  >#</a
@@ -1606,9 +1800,9 @@
 		      > kk k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-23" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-24" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L23" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L24" class="link"
 		    >Comments</a
 		    > <a href="#t:Endo" class="selflink"
 		    >#</a
@@ -1706,7 +1900,7 @@
 	    >E</a
 	    > q) <a href="src/Proarrow.Category.Monoidal.Endo.html#mkEndo" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L21" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Endo.hs#L22" class="link"
 	    >Comments</a
 	    > <a href="#v:mkEndo" class="selflink"
 	    >#</a
