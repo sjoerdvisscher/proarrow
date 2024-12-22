@@ -1,0 +1,832 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Category.Bicategory.Relative</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Category.Bicategory.Relative.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Category.Bicategory.Relative</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > t) =&gt; <a href="#t:Monad"
+	      >Monad</a
+	      > (j :: kk e a) (t :: kk a e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:unit"
+		  >unit</a
+		  > :: (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		  >I</a
+		  > :: kk a a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j t</li
+		><li
+		><a href="#v:mult"
+		  >mult</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > t j) t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > t</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > t) =&gt; <a href="#t:Algebra"
+	      >Algebra</a
+	      > (j :: kk e a) (t :: kk a e) (car :: kk d e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:act"
+		  >act</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > t j) car <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > car</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk b, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > t) =&gt; <a href="#t:Opalgebra"
+	      >Opalgebra</a
+	      > (j :: kk e a) (t :: kk a e) (car :: kk a b) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:opact"
+		  >opact</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > car j) t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > car</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e) =&gt; <a href="#t:Adjunction"
+	      >Adjunction</a
+	      > (j :: kk e a) (l :: kk a c) (r :: kk c e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:eta"
+		  >eta</a
+		  > :: (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		  >I</a
+		  > :: kk a a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j r) l</li
+		><li
+		><a href="#v:epsilon"
+		  >epsilon</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > l j) r <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		  >I</a
+		  > :: kk c c)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > t) =&gt; <a href="#t:Comonad"
+	      >Comonad</a
+	      > (j :: kk e a) (t :: kk a e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:counit"
+		  >counit</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		  >I</a
+		  > :: kk a a)</li
+		><li
+		><a href="#v:comult"
+		  >comult</a
+		  > :: t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > t j) t</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > t) =&gt; <a href="#t:Coalgebra"
+	      >Coalgebra</a
+	      > (j :: kk e a) (t :: kk a e) (car :: kk d e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:coact"
+		  >coact</a
+		  > :: car <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > t j) car</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk b, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > t) =&gt; <a href="#t:Coopalgebra"
+	      >Coopalgebra</a
+	      > (j :: kk e a) (t :: kk a e) (car :: kk a b) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:coopact"
+		  >coopact</a
+		  > :: car <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > car j) t</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e) =&gt; <a href="#t:Coadjunction"
+	      >Coadjunction</a
+	      > (j :: kk e a) (l :: kk a c) (r :: kk c e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:coeta"
+		  >coeta</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j r) l <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		  >I</a
+		  > :: kk a a)</li
+		><li
+		><a href="#v:coepsilon"
+		  >coepsilon</a
+		  > :: (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+		  >I</a
+		  > :: kk c c) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > l j) r</li
+		></ul
+	      ></li
+	    ></ul
+	  ></details
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > t) =&gt; <a id="t:Monad" class="def"
+	    >Monad</a
+	    > (j :: kk e a) (t :: kk a e) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Monad" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L12" class="link"
+	    >Comments</a
+	    > <a href="#t:Monad" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >A <code
+	      >j</code
+	      >-relative monad <code
+	      >t</code
+	      >. Note that <code
+	      >j</code
+	      > is the opposite of the usual convention.
+ See <code
+	      ><a href="Proarrow-Squares.html#v:Relative" title="Proarrow.Squares"
+		>Relative</a
+		></code
+	      > how to use this with a conjoint and a companion to get the regular definition.</p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:unit" class="def"
+	      >unit</a
+	      > :: (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk a a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > j t <a href="src/Proarrow.Category.Bicategory.Relative.html#unit" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L12" class="link"
+	      >Comments</a
+	      > <a href="#v:unit" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:mult" class="def"
+	      >mult</a
+	      > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > t j) t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > t <a href="src/Proarrow.Category.Bicategory.Relative.html#mult" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L12" class="link"
+	      >Comments</a
+	      > <a href="#v:mult" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > t) =&gt; <a id="t:Algebra" class="def"
+	    >Algebra</a
+	    > (j :: kk e a) (t :: kk a e) (car :: kk d e) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Algebra" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L17" class="link"
+	    >Comments</a
+	    > <a href="#t:Algebra" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:act" class="def"
+	      >act</a
+	      > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > t j) car <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > car <a href="src/Proarrow.Category.Bicategory.Relative.html#act" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L17" class="link"
+	      >Comments</a
+	      > <a href="#v:act" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk b, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > t) =&gt; <a id="t:Opalgebra" class="def"
+	    >Opalgebra</a
+	    > (j :: kk e a) (t :: kk a e) (car :: kk a b) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Opalgebra" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L21" class="link"
+	    >Comments</a
+	    > <a href="#t:Opalgebra" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:opact" class="def"
+	      >opact</a
+	      > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > car j) t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > car <a href="src/Proarrow.Category.Bicategory.Relative.html#opact" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L21" class="link"
+	      >Comments</a
+	      > <a href="#v:opact" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e) =&gt; <a id="t:Adjunction" class="def"
+	    >Adjunction</a
+	    > (j :: kk e a) (l :: kk a c) (r :: kk c e) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Adjunction" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L25" class="link"
+	    >Comments</a
+	    > <a href="#t:Adjunction" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:eta" class="def"
+	      >eta</a
+	      > :: (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk a a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > j r) l <a href="src/Proarrow.Category.Bicategory.Relative.html#eta" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L25" class="link"
+	      >Comments</a
+	      > <a href="#v:eta" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:epsilon" class="def"
+	      >epsilon</a
+	      > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > l j) r <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk c c) <a href="src/Proarrow.Category.Bicategory.Relative.html#epsilon" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L25" class="link"
+	      >Comments</a
+	      > <a href="#v:epsilon" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > t) =&gt; <a id="t:Comonad" class="def"
+	    >Comonad</a
+	    > (j :: kk e a) (t :: kk a e) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Comonad" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L30" class="link"
+	    >Comments</a
+	    > <a href="#t:Comonad" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:counit" class="def"
+	      >counit</a
+	      > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > j t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk a a) <a href="src/Proarrow.Category.Bicategory.Relative.html#counit" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L30" class="link"
+	      >Comments</a
+	      > <a href="#v:counit" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:comult" class="def"
+	      >comult</a
+	      > :: t <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > t j) t <a href="src/Proarrow.Category.Bicategory.Relative.html#comult" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L30" class="link"
+	      >Comments</a
+	      > <a href="#v:comult" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > t) =&gt; <a id="t:Coalgebra" class="def"
+	    >Coalgebra</a
+	    > (j :: kk e a) (t :: kk a e) (car :: kk d e) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Coalgebra" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L35" class="link"
+	    >Comments</a
+	    > <a href="#t:Coalgebra" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:coact" class="def"
+	      >coact</a
+	      > :: car <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > t j) car <a href="src/Proarrow.Category.Bicategory.Relative.html#coact" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L35" class="link"
+	      >Comments</a
+	      > <a href="#v:coact" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk b, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > t) =&gt; <a id="t:Coopalgebra" class="def"
+	    >Coopalgebra</a
+	    > (j :: kk e a) (t :: kk a e) (car :: kk a b) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Coopalgebra" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L39" class="link"
+	    >Comments</a
+	    > <a href="#t:Coopalgebra" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:coopact" class="def"
+	      >coopact</a
+	      > :: car <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > car j) t <a href="src/Proarrow.Category.Bicategory.Relative.html#coopact" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L39" class="link"
+	      >Comments</a
+	      > <a href="#v:coopact" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	    >Bicategory</a
+	    > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk a, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	    >Ob0</a
+	    > kk e) =&gt; <a id="t:Coadjunction" class="def"
+	    >Coadjunction</a
+	    > (j :: kk e a) (l :: kk a c) (r :: kk c e) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Bicategory.Relative.html#Coadjunction" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L43" class="link"
+	    >Comments</a
+	    > <a href="#t:Coadjunction" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:coeta" class="def"
+	      >coeta</a
+	      > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > j r) l <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk a a) <a href="src/Proarrow.Category.Bicategory.Relative.html#coeta" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L43" class="link"
+	      >Comments</a
+	      > <a href="#v:coeta" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:coepsilon" class="def"
+	      >coepsilon</a
+	      > :: (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk c c) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > l j) r <a href="src/Proarrow.Category.Bicategory.Relative.html#coepsilon" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Relative.hs#L43" class="link"
+	      >Comments</a
+	      > <a href="#v:coepsilon" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>
