@@ -66,9 +66,9 @@
 	    >data</span
 	    > <a id="t:InitialProfunctor" class="def"
 	    >InitialProfunctor</a
-	    > (a :: j) (b :: k) <a href="src/Proarrow.Profunctor.Initial.html#InitialProfunctor" class="link"
+	    > (a :: k) (b :: j) <a href="src/Proarrow.Profunctor.Initial.html#InitialProfunctor" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Initial.hs#L6" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Initial.hs#L7" class="link"
 	    >Comments</a
 	    > <a href="#t:InitialProfunctor" class="selflink"
 	    >#</a
@@ -93,12 +93,12 @@
 		      >Profunctor</a
 		      > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
 		      >InitialProfunctor</a
-		      > :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Initial.html#line-8" class="link"
+		    > <a href="src/Proarrow.Profunctor.Initial.html#line-9" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Initial.hs#L8" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Initial.hs#L9" class="link"
 		    >Comments</a
 		    > <a href="#t:InitialProfunctor" class="selflink"
 		    >#</a
@@ -123,7 +123,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: j) (a :: j) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (c :: k) (a :: k) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -143,7 +143,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: j) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: k) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -163,7 +163,63 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:HasLimits:2"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:DaggerProfunctor:2"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Category-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Dagger"
+		      >DaggerProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+		      >InitialProfunctor</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Initial.html#line-13" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Initial.hs#L13" class="link"
+		    >Comments</a
+		    > <a href="#t:InitialProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:InitialProfunctor:DaggerProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Initial.html"
+			>Proarrow.Profunctor.Initial</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dagger"
+			  >dagger</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). <a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			  >InitialProfunctor</a
+			  > a b -&gt; <a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			  >InitialProfunctor</a
+			  > b a <a href="src/Proarrow.Category.Dagger.html#dagger" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Dagger.hs#L6" class="link"
+			  >Comments</a
+			  > <a href="#v:dagger" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:HasLimits:3"
 		      ></span
 		      > <a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
 		      >HasBinaryProducts</a
@@ -188,7 +244,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:InitialProfunctor:HasLimits:2"
+		  ><details id="i:id:InitialProfunctor:HasLimits:3"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -283,7 +339,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:HasColimits:3"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:HasColimits:4"
 		      ></span
 		      > <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
 		      >HasBinaryCoproducts</a
@@ -308,7 +364,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:InitialProfunctor:HasColimits:3"
+		  ><details id="i:id:InitialProfunctor:HasColimits:4"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -403,7 +459,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:DaggerProfunctor:4"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:DaggerProfunctor:5"
 		      ></span
 		      > (<a href="Proarrow-Category-Dagger.html#t:Dagger" title="Proarrow.Category.Dagger"
 		      >Dagger</a
@@ -440,7 +496,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:InitialProfunctor:DaggerProfunctor:4"
+		  ><details id="i:id:InitialProfunctor:DaggerProfunctor:5"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -493,7 +549,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:Colimit:5"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:Colimit:6"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -522,7 +578,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:InitialProfunctor:Colimit:5"
+		  ><details id="i:id:InitialProfunctor:Colimit:6"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -553,7 +609,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:Limit:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:InitialProfunctor:Limit:7"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -582,7 +638,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:InitialProfunctor:Limit:6"
+		  ><details id="i:id:InitialProfunctor:Limit:7"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
