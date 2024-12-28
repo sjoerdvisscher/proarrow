@@ -20,6 +20,7 @@ import Proarrow.Object.Coexponential (Coclosed (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -100,6 +101,15 @@ instance Monoidal (Type -> Type) where
   rightUnitorInv = Nat (Compose . map Identity)
   associator = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv = Nat (Compose . Compose . map getCompose . getCompose)
+
+instance Strong ((Nat :: CAT (Type -> Type))) (->) where
+  act (Nat n) f = n . map f
+instance MonoidalAction (Type -> Type) Type where
+  type Act (p :: Type -> Type) (x :: Type) = p x
+  unitor = runIdentity
+  unitorInv = Identity
+  multiplicator = Compose
+  multiplicatorInv = getCompose
 
 newtype HaskRan j h a = Ran {runRan :: forall b. (a -> j b) -> h b}
 instance Functor (HaskRan j h) where

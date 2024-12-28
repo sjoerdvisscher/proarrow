@@ -10,7 +10,13 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), TracedMonoidalProfunctor (..))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , TracedMonoidalProfunctor (..)
+  )
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, src, type (+->))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -169,6 +175,15 @@ instance Monoidal Type where
 instance SymMonoidal Type where
   swap' = swapProd'
 
+instance Strong (->) (->) where
+  act = par
+instance MonoidalAction Type Type where
+  type Act p x = p ** x
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator = associatorInv
+  multiplicatorInv = associator
+
 instance TracedMonoidalProfunctor (->) where
   trace f x = let (y, u) = f (x, u) in y
 
@@ -189,5 +204,26 @@ instance Monoidal () where
 instance SymMonoidal () where
   swap' = swapProd'
 
+instance Strong U.Unit U.Unit where
+  act = par
+instance MonoidalAction () () where
+  type Act p x = p ** x
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator = associatorInv
+  multiplicatorInv = associator
+
 instance TracedMonoidalProfunctor U.Unit where
   trace U.Unit = U.Unit
+
+class (Act a b ~ a && b) => ActIsProd a b
+instance (Act a b ~ a && b) => ActIsProd a b
+class (Strong ((~>) :: CAT k) p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
+instance (Strong ((~>) :: CAT k) p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
+
+first' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (a && c) (b && c)
+first' p = dimap (swapProd @_ @a @c) (swapProd @_ @c @b) (second' @_ @c p) \\ p
+
+second' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (c && a) (c && b)
+second' p = act @((~>) :: CAT k) (obj @c) p
+

@@ -4,11 +4,12 @@ module Proarrow.Category.Instance.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swap')
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Codiscrete, anyArr, Discrete (..))
-import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swap')
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Preorder.ThinCategory (Codiscrete, Discrete (..), ThinProfunctor (..), anyArr)
+import Proarrow.Profunctor.Representable (Representable (..))
 
 type Fst :: (a, b) -> a
 type family Fst a where
@@ -70,3 +71,12 @@ instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
 
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j, k) where
   swap' (a1 :**: a2) (b1 :**: b2) = swap' a1 b1 :**: swap' a2 b2
+
+instance (Strong v p, Strong w q) => Strong (v :**: w) (p :**: q) where
+  act (p :**: q) (x :**: y) = act p x :**: act q y
+instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
+  type Act '(p, q) '(x, y) = '(Act p x, Act q y)
+  unitor = unitor @n :**: unitor @m
+  unitorInv = unitorInv @n :**: unitorInv @m
+  multiplicator @'(p, q) @'(r, s) @'(x, y) = multiplicator @n @j @p @r @x :**: multiplicator @m @k @q @s @y
+  multiplicatorInv @'(p, q) @'(r, s) @'(x, y) = multiplicatorInv @n @j @p @r @x :**: multiplicatorInv @m @k @q @s @y

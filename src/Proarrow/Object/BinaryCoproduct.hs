@@ -9,6 +9,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
@@ -116,3 +117,41 @@ instance (HasCoproducts k) => Monoidal (COPROD k) where
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
   swap' (Coprod a) (Coprod b) = Coprod (rgt' (tgt b) a ||| lft' b (tgt a))
+
+instance Strong (Coprod (->)) (Coprod (->)) where
+  act = par
+instance MonoidalAction (COPROD Type) (COPROD Type) where
+  type Act p x = p ** x
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator = associatorInv
+  multiplicatorInv = associator
+
+instance Strong (->) (Coprod (->)) where
+  l `act` Coprod r = Coprod (l `par` r)
+instance MonoidalAction Type (COPROD Type) where
+  type Act (p :: Type) (COPR x :: COPROD Type) = COPR (p ** x)
+  unitor = Coprod leftUnitor
+  unitorInv = Coprod leftUnitorInv
+  multiplicator = Coprod associatorInv
+  multiplicatorInv = Coprod associator
+
+instance Strong (Coprod (->)) (->) where
+  f@Coprod{} `act` g = unCoprod (f `par` Coprod g)
+instance MonoidalAction (COPROD Type) Type where
+  type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
+  unitor = unCoprod leftUnitor
+  unitorInv = unCoprod leftUnitorInv
+  multiplicator = unCoprod associatorInv
+  multiplicatorInv = unCoprod associator
+
+class (Act a b ~ (a || b)) => ActIsCoprod a b
+instance (Act a b ~ (a || b)) => ActIsCoprod a b
+class (Strong ((~>) :: CAT k) p, HasCoproducts k, forall (a :: k) (b :: k). ActIsCoprod a b) => StrongCoprod (p :: CAT k)
+instance (Strong ((~>) :: CAT k) p, HasCoproducts k, forall (a :: k) (b :: k). ActIsCoprod a b) => StrongCoprod (p :: CAT k)
+
+left' :: forall {k} (p :: CAT k) c a b. (StrongCoprod p, Ob c) => p a b -> p (a || c) (b || c)
+left' p = dimap (swapCoprod @_ @a @c) (swapCoprod @_ @c @b) (right' @_ @c p) \\ p
+
+right' :: forall {k} (p :: CAT k) c a b. (StrongCoprod p, Ob c) => p a b -> p (c || a) (c || b)
+right' p = act @((~>) :: CAT k) (obj @c) p

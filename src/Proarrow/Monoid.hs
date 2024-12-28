@@ -1,10 +1,13 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Monoid where
 
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Core (CategoryOf (..), Promonad (..), arr)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Core (CategoryOf (..), Promonad (..), arr, obj)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasCoproducts, codiag)
 import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Object.Initial (initiate)
@@ -38,3 +41,13 @@ class (Monoidal k, Ob c) => Comonoid (c :: k) where
 instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
   counit = Prod terminate
   comult = Prod diag
+
+memptyAct :: forall m c (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => n ~> Act a n
+memptyAct = act (mempty @a) (obj @n) . unitorInv @m
+
+mappendAct :: forall m c (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => Act a (Act a n) ~> Act a n
+mappendAct = act (mappend @a) (obj @n) . multiplicator @m @c @a @a @n
+
+type ModuleObject :: forall {m} {c}. m -> c -> Constraint
+class (MonoidalAction m c, Monoid a, Ob n) => ModuleObject (a :: m) (n :: c) where
+  action :: Act a n ~> n

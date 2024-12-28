@@ -4,11 +4,10 @@
 
 module Proarrow.Category.Instance.Kleisli where
 
-import Data.Kind (Constraint)
-
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Distributive (distL)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core
@@ -23,20 +22,21 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), codiag, swapCoprod)
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), codiag)
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
-  , HasProducts
   , PROD (..)
   , Prod (..)
+  , StrongProd
   , associatorProd
   , associatorProdInv
   , diag
+  , first'
   , leftUnitorProd
   , leftUnitorProdInv
   , rightUnitorProd
   , rightUnitorProdInv
-  , swapProd
+  , second'
   )
 import Proarrow.Object.Exponential (BiCCC)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -84,33 +84,13 @@ instance (Promonad p) => Adjunction (KleisliFree p) (KleisliForget p) where
   unit = KleisliForget id :.: KleisliFree id
   counit (KleisliFree p :.: KleisliForget q) = Kleisli (q . p)
 
-type Strong :: forall {k}. CAT k -> Constraint
-class (HasBinaryProducts k, Profunctor p) => Strong (p :: k +-> k) where
-  first :: (Ob c) => p a b -> p (a && c) (b && c)
-  second :: (Ob c) => p a b -> p (c && a) (c && b)
-  second @c @a @b p = dimap (swapProd @_ @c @a) (swapProd @_ @b @c) (first @_ @c p) \\ p
-
-instance (Costrong p) => Strong (Op p) where
-  first @(OP c) (Op p) = Op (left @_ @c p)
-  second @(OP c) (Op p) = Op (right @_ @c p)
-
-type Costrong :: forall {k}. CAT k -> Constraint
-class (HasBinaryCoproducts k, Profunctor p) => Costrong (p :: k +-> k) where
-  left :: (Ob c) => p a b -> p (a || c) (b || c)
-  right :: (Ob c) => p a b -> p (c || a) (c || b)
-  right @c @a @b p = dimap (swapCoprod @_ @c @a) (swapCoprod @_ @b @c) (left @_ @c p) \\ p
-
-instance (Strong p) => Costrong (Op p) where
-  left @(OP c) (Op p) = Op (first @_ @c p)
-  right @(OP c) (Op p) = Op (second @_ @c p)
-
 -- | This is not monoidal but premonoidal, i.e. no sliding.
 -- So with `par f g` the effects of f happen before the effects of g.
-instance (HasProducts k, Promonad p, Strong p) => MonoidalProfunctor (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
+instance (Promonad p, StrongProd p) => MonoidalProfunctor (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
   par0 = Kleisli id
-  Kleisli @_ @_ @b1 f `par` Kleisli @_ @a2 @_ g = Kleisli (second @_ @b1 g . first @_ @a2 f) \\ f \\ g
+  Kleisli @_ @_ @b1 f `par` Kleisli @_ @a2 @_ g = Kleisli (second' @_ @b1 g . first' @_ @a2 f) \\ f \\ g
 
-instance (HasProducts k, Promonad p, Strong p) => Monoidal (KLEISLI (p :: k +-> k)) where
+instance (Promonad p, StrongProd p) => Monoidal (KLEISLI (p :: k +-> k)) where
   type Unit @(KLEISLI (p :: k +-> k)) = KL (TerminalObject :: k)
   type a ** b = KL (UN KL a && UN KL b)
   leftUnitor = arr leftUnitorProd
@@ -119,6 +99,15 @@ instance (HasProducts k, Promonad p, Strong p) => Monoidal (KLEISLI (p :: k +-> 
   rightUnitorInv = arr rightUnitorProdInv
   associator @(KL a) @(KL b) @(KL c) = arr (associatorProd @a @b @c)
   associatorInv @(KL a) @(KL b) @(KL c) = arr (associatorProdInv @a @b @c)
+
+instance (Strong w p, Strong ((~>) :: CAT k) p, Promonad p, Monoidal k) => Strong (w :: k +-> k) (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
+  act f (Kleisli p) = Kleisli (act f p)
+instance (Strong ((~>) :: CAT k) p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p :: k +-> k)) where
+  type Act y (KL x) = KL (Act y x)
+  unitor = arr (unitor @k)
+  unitorInv = arr (unitorInv @k)
+  multiplicator @a @b @(KL c) = arr (multiplicator @k @k @a @b @c)
+  multiplicatorInv @a @b @(KL c) = arr (multiplicatorInv @k @k @a @b @c)
 
 type DUAL (a :: KLEISLI p) = KL (OP (UN KL a)) :: KLEISLI (Op p)
 type UNDUAL (a :: KLEISLI (Op p)) = KL (UN OP (UN KL a)) :: KLEISLI p

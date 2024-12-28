@@ -1,15 +1,19 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Profunctor.Star where
 
 import Data.Functor.Compose (Compose (..))
+import Data.Kind (Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Applicative (Applicative (..))
+import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Category.Monoidal.Applicative (Applicative (..), Alternative (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
-import Proarrow.Object.BinaryProduct (Cartesian)
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), StrongProd)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Object.BinaryCoproduct (Cocartesian, COPROD(..), Coprod (..), HasBinaryCoproducts (..))
 
 type Star :: (k1 -> k2) -> k1 +-> k2
 data Star f a b where
@@ -36,6 +40,20 @@ instance (Applicative f, Cartesian j, Cartesian k) => MonoidalProfunctor (Star (
   par0 = Star (pure id)
   Star @a f `par` Star @b g = let ab = obj @a `par` obj @b in Star (liftA2 @f @a @b ab . (f `par` g)) \\ ab
 
--- instance (Alternative f, Cartesian k, Cocartesian j) => MonoidalProfunctor (Star (f :: j -> k)) where
---   par0 = Star empty
---   Star @a f `par` Star @b g = let ab = obj @a `par` obj @b in Star (alt @f @a @b ab . (f `par` g)) \\ ab
+-- Hmm, another wrapper required...
+type CoprodDom :: j +-> k -> COPROD j +-> k
+data CoprodDom p a b where
+  Co :: {unCo :: p a b} -> CoprodDom p a (COPR b)
+instance Profunctor p => Profunctor (CoprodDom p) where
+  dimap l (Coprod r) (Co p) = Co (dimap l r p)
+  r \\ Co p = r \\ p
+
+instance (Alternative f, Cartesian k, Cocartesian j) => MonoidalProfunctor (CoprodDom (Star (f :: j -> k))) where
+  par0 = Co (Star empty)
+  Co (Star @a f) `par` Co (Star @b g) = let ab = obj @a +++ obj @b in Co (Star (alt @f @a @b ab . (f `par` g))) \\ ab
+
+instance (Functor (f :: Type -> Type)) => Strong (->) (Star f) where
+  act f (Star k) = Star (\(a, x) -> map (f a,) (k x))
+
+strength :: forall f a b. (Functor f, StrongProd (Star f), Ob a, Ob b) => a && f b ~> f (a && b)
+strength = unStar (act (obj @a) (Star (obj @(f b))))
