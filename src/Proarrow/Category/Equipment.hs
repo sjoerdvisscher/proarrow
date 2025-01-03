@@ -245,11 +245,11 @@ vId = vArr id
 
 -- | Horizontal composition
 --
--- > l--d--h     h--f--i     l-fod-i
+-- > l--d--h     h--f--i     l-f∘d-i
 -- > |  v  |     |  v  |     |  v  |
 -- > p--@--q ||| q--@--r  =  p--@--r
 -- > |  v  |     |  v  |     |  v  |
--- > m--e--j     j--g--k     m-goe-k
+-- > m--e--j     j--g--k     m-g∘e-k
 (|||)
   :: forall {hk} {vk} {h} {l} {m} (p :: hk m l) q r (d :: vk l h) e f g
    . (HasCompanions hk vk)
@@ -295,7 +295,7 @@ Sq sqL ||| Sq sqR =
 -- >
 -- >  h--e--i
 -- >  |  v  |
--- > rop-@-soq
+-- > r∘p-@-s∘q
 -- >  |  v  |
 -- >  j--g--k
 (===)

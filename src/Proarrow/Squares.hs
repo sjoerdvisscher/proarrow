@@ -3,10 +3,10 @@
 module Proarrow.Squares where
 
 import Proarrow.Category.Bicategory (Bicategory (..), Ob')
-import Proarrow.Category.Bicategory.Strictified (Path (..), singleton, type (+++))
+import Proarrow.Category.Bicategory.Strictified (Path (..), SPath (..), Strictified (..), singleton, type (+++))
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
 import Proarrow.Category.Equipment qualified as E
-import Proarrow.Core (CategoryOf (..), Promonad ((.)))
+import Proarrow.Core (CategoryOf (..), Promonad ((.)), obj, Obj, (\\))
 
 infixl 6 |||
 infixl 5 ===
@@ -34,7 +34,6 @@ hArr
   => p ~> q
   -> Sq '(p ::: Nil, Nil :: Path vk k k) '(q ::: Nil, Nil :: Path vk j j)
 hArr = E.hArr . singleton
-
 
 -- | A horizontal identity square.
 --
@@ -103,6 +102,12 @@ vId
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(Nil :: Path hk j j, f ::: Nil) '(Nil :: Path hk k k, f ::: Nil)
 vId = E.vId
+
+vId'
+  :: forall {hk} {vk} {j} {k} (f :: vk j k)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
+  => Obj f -> Sq '(Nil :: Path hk j j, f ::: Nil) '(Nil :: Path hk k k, f ::: Nil)
+vId' f = vId \\ f
 
 -- | Horizontal composition
 --
@@ -214,3 +219,57 @@ fromRight = E.fromRight
 -- fromLeft2 =
 --   fromLeft
 --     === fromLeft ||| vId
+
+-- > k--I--k
+-- > |  v  |
+-- > |  @  |
+-- > |     |
+-- > k-----k
+vUnitor :: forall hk vk k. (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, I ::: Nil) '(Nil :: Path hk k k, Nil :: Path vk k k)
+vUnitor = Sq (Str (SCons (mapCompanion @hk iObj) SNil) SNil compToId) \\\ iObj @vk @k
+
+-- > k-----k
+-- > |     |
+-- > |  @  |
+-- > |  v  |
+-- > k--I--k
+vUnitorInv :: forall hk vk k. (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, Nil :: Path vk k k) '(Nil :: Path hk k k, I ::: Nil)
+vUnitorInv = Sq (Str SNil (SCons (mapCompanion @hk iObj) SNil) compFromId) \\\ iObj @vk @k
+
+-- > i-f-g-k
+-- > | v v |
+-- > | \@/ |
+-- > |  v  |
+-- > i-gof-k
+vCombine
+  :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
+   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob0 hk i, Ob0 hk j, Ob0 hk k, Ob f, Ob g)
+  => Sq '(Nil :: Path hk i i, f ::: g ::: Nil) '(Nil, g `O` f ::: Nil)
+vCombine =
+  let f = obj @f; g = obj @g
+  in Sq
+      ( Str
+          (SCons (mapCompanion @hk f) (SCons (mapCompanion @hk g) SNil))
+          (SCons (mapCompanion @hk (g `o` f)) SNil)
+          (compFromCompose g f)
+      )
+      \\\ (g `o` f)
+
+-- > i-gof-k
+-- > |  v  |
+-- > | /@\ |
+-- > | v v |
+-- > i-f-g-k
+vSplit
+  :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
+   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob0 hk i, Ob0 hk j, Ob0 hk k, Ob f, Ob g)
+  => Sq '(Nil :: Path hk i i, g `O` f ::: Nil) '(Nil, f ::: g ::: Nil)
+vSplit =
+  let f = obj @f; g = obj @g
+  in Sq
+      ( Str
+          (SCons (mapCompanion @hk (g `o` f)) SNil)
+          (SCons (mapCompanion @hk f) (SCons (mapCompanion @hk g) SNil))
+          (compToCompose g f)
+      )
+      \\\ (g `o` f)

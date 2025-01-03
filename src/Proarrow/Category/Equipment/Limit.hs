@@ -16,55 +16,7 @@ class (HasCompanions hk vk, Ob j) => HasLimits vk (j :: hk i a) k where
   limit :: (Ob (d :: vk i k)) => Companion hk (Limit j d) `O` j ~> Companion hk d
   limitUniv :: (Ob (d :: vk i k), Ob p) => Companion hk p `O` j ~> Companion hk d -> p ~> Limit j d
 
--- > i--d--k
--- > |  v  |
--- > j--@  |
--- > |  v  |
--- > a--l--k
-
 -- lift :: f ~> j `O` Lift j f
-
--- > i--d--k
--- > |  v  |
--- > | /@\ |
--- > | v v |
--- > a-j-l-k
-
-
--- > i--d--k    a--p--k
--- > |  v  |    |  |  |
--- > j--@  | => |  @  |
--- > |  v  |    |  |  |
--- > a--p--k    a--l--k
-
--- rightAdjointPreservesLimits
---   :: forall {k} {k'} {i} {a} (f :: k' +-> k) (g :: k +-> k') (d :: i +-> k) (j :: i +-> a)
---    . (Adjunction f g, Representable d, Representable g, HasLimits j k, HasLimits j k')
---   => Limit j (g :.: d) :~> g :.: Limit j d
--- rightAdjointPreservesLimits lim =
---   lim // case unit @f @g of
---     g :.: f ->
---       g
---         :.: limitUniv @j @k @d
---           (\((f' :.: lim') :.: j) -> case limit @j @k' @(g :.: d) (lim' :.: j) of g' :.: d -> lmap (counit (f' :.: g')) d)
---           (f :.: lim)
-
--- > a--l'-k'----k'
--- > |  v  |     |
--- > |  |  | /@\ |
--- > |  |  | v v |
--- > |  |  k'f-g-k'
--- > |  |  /   v |
--- > |  | /    | |
--- > |  @/     | |
--- > |  |      | |
--- > a--l---k--g-k'
-
--- > i--d--k    a-l'f-k
--- > |  v  |    |  |  |
--- > j--@  | => |  @  |
--- > |  v  |    |  |  |
--- > a-l'f-k    a--l--k
 
 rightAdjointPreservesLimitsInv
   :: forall {hk} {vk} {k} {k'} {i} {a} (g :: vk k k') (d :: vk i k) (j :: hk i a)
@@ -82,12 +34,6 @@ rightAdjointPreservesLimitsInv =
       // (g `o` l)
       // limitUniv @vk @j @k' @(g `O` d)
         (compFromCompose g d . (cg `o` limit @vk @j @k @d) . associator' cg (mapCompanion l) j . (compToCompose g l `o` j))
-
--- > i-d-k-g-k'    a-l-g-k'
--- > | v | v |     | v v |
--- > j-@ | | |  => | \@/ |
--- > | v | v |     |  |  |
--- > a-l-k-g-k'    a--l'-k'
 
 -- | weighted colimits
 type HasColimits :: forall {s} {hk :: CAT s} {a :: s} {i :: s}. CAT s -> hk a i -> s -> Constraint
