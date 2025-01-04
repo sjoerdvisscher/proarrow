@@ -141,6 +141,7 @@ instance (L.HasLimits j k, Ob j) => HasLimits FUNK (PK j) k where
 
 instance (L.HasColimits j k, Ob j) => HasColimits FUNK (PK j) k where
   type Colimit (PK j) d = FUN (L.Colimit j (UNFUN d))
+  colimitObj = Sub (Prof id)
   colimit = Prof L.colimit
   colimitUniv (Prof n) = Sub (Prof (L.colimitUniv n))
 

@@ -80,6 +80,7 @@ instance (Closed k, Ob j) => HasLimits (MonK k) (MK (j :: k)) '() where
 
 instance (M.Monoidal k, Ob j) => HasColimits (MonK k) (MK (j :: k)) '() where
   type Colimit (MK j) (MK d) = MK (d M.** j)
+  colimitObj @(MK d) = Mon2 (obj @d `M.par` obj @j)
   colimit @(MK d) = Mon2 (obj @d `M.par` obj @j)
   colimitUniv (Mon2 f) = Mon2 f
 

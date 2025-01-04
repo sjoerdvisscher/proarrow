@@ -13,21 +13,21 @@ infixl 5 ===
 
 -- | The empty square for an object.
 --
--- > k-----k
+-- > K-----K
 -- > |     |
 -- > |     |
 -- > |     |
--- > k-----k
+-- > K-----K
 object :: (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, Nil :: Path vk k k) '(Nil, Nil)
 object = E.object
 
 -- | Make a square from a horizontal proarrow
 --
--- > k-----k
+-- > K-----K
 -- > |     |
 -- > p--@--q
 -- > |     |
--- > j-----j
+-- > J-----J
 hArr
   :: forall {hk} {vk} {j} {k} (p :: hk j k) q
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
@@ -37,11 +37,11 @@ hArr = E.hArr . singleton
 
 -- | A horizontal identity square.
 --
--- > j-----j
+-- > J-----J
 -- > |     |
 -- > p-----p
 -- > |     |
--- > k-----k
+-- > K-----K
 hId
   :: (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (p :: hk k j)) => Sq '(p ::: Nil, Nil :: Path vk j j) '(p ::: Nil, Nil)
 hId = E.hId
@@ -50,11 +50,11 @@ hId = E.hId
 --
 -- Requires a type application: @compId \@f@
 --
--- > k-----k
+-- > K-----K
 -- > |     |
 -- > f>--->f
 -- > |     |
--- > j-----j
+-- > J-----J
 compId
   :: forall {hk} {vk} {j} {k} f
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob0 hk j, Ob0 hk k, Ob (f :: vk j k))
@@ -65,11 +65,11 @@ compId = E.compId @(f ::: Nil)
 --
 -- Requires a type application: @conjId \@f@
 --
--- > j-----j
+-- > J-----J
 -- > |     |
 -- > f>--->f
 -- > |     |
--- > k-----k
+-- > K-----K
 conjId
   :: forall {hk} {vk} {j} {k} f
    . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
@@ -78,11 +78,11 @@ conjId = E.conjId @(f ::: Nil)
 
 -- | Make a square from a vertical arrow
 --
--- > j--f--k
+-- > J--f--K
 -- > |  v  |
 -- > |  @  |
 -- > |  v  |
--- > j--g--k
+-- > J--g--K
 vArr
   :: forall {hk} {vk} {j} {k} (f :: vk j k) g
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
@@ -92,11 +92,11 @@ vArr = E.vArr . singleton
 
 -- | A vertical identity square.
 --
--- > j--f--k
+-- > J--f--K
 -- > |  v  |
 -- > |  |  |
 -- > |  v  |
--- > j--f--k
+-- > J--f--K
 vId
   :: forall {hk} {vk} {j} {k} (f :: vk j k)
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
@@ -111,11 +111,11 @@ vId' f = vId \\ f
 
 -- | Horizontal composition
 --
--- > l--d--h     h--f--i     l-d+f-i
+-- > L--d--H     H--f--I     L-d+f-I
 -- > |  v  |     |  v  |     |  v  |
 -- > p--@--q ||| q--@--r  =  p--@--r
 -- > |  v  |     |  v  |     |  v  |
--- > m--e--j     j--g--k     m-e+g-k
+-- > M--e--J     J--g--K     M-e+g-K
 (|||)
   :: forall {hk} {vk} {h} {l} {m} (ps :: Path hk m l) qs rs (ds :: Path vk l h) es fs gs
    . (HasCompanions hk vk)
@@ -126,25 +126,25 @@ vId' f = vId \\ f
 
 -- | Vertical composition
 --
--- >  h--e--i
+-- >  H--e--I
 -- >  |  v  |
 -- >  r--@--s
 -- >  |  v  |
--- >  j--f--k
+-- >  J--f--K
 -- >    ===
--- >  j--f--k
+-- >  J--f--K
 -- >  |  v  |
 -- >  p--@--q
 -- >  |  v  |
--- >  l--g--m
+-- >  L--g--M
 -- >
 -- >    v v
 -- >
--- >  h--e--i
+-- >  H--e--I
 -- >  |  v  |
 -- > p+r-@-q+s
 -- >  |  v  |
--- >  j--g--k
+-- >  J--g--K
 (===)
   :: forall {hk} {vk} {h} {i} {j} {l} (ps :: Path hk l j) qs rs ss (es :: Path vk h i) fs gs
    . (HasCompanions hk vk)
@@ -155,11 +155,11 @@ vId' f = vId \\ f
 
 -- | Bend a vertical arrow in the companion direction.
 --
--- > j--f--k
+-- > J--f--K
 -- > |  v  |
 -- > |  \->f
 -- > |     |
--- > j-----j
+-- > J-----J
 toRight
   :: forall {hk} {vk} {j} {k} f
    . (HasCompanions hk vk, Ob' (f :: vk j k))
@@ -168,11 +168,11 @@ toRight = E.toRight
 
 -- | Bend a vertical arrow in the conjoint direction.
 --
--- > j--f--k
+-- > J--f--K
 -- > |  v  |
 -- > f<-/  |
 -- > |     |
--- > k-----k
+-- > K-----K
 toLeft
   :: forall {hk} {vk} {j} {k} (f :: vk j k)
    . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
@@ -181,11 +181,11 @@ toLeft = E.toLeft
 
 -- | Bend a companion proarrow back to a vertical arrow.
 --
--- > k-----k
+-- > K-----K
 -- > |     |
 -- > f>-\  |
 -- > |  v  |
--- > j--f--k
+-- > J--f--K
 fromLeft
   :: forall {hk} {vk} {j} {k} f
    . (HasCompanions hk vk, Ob' (f :: vk j k))
@@ -194,24 +194,24 @@ fromLeft = E.fromLeft
 
 -- | Bend a conjoint proarrow back to a vertical arrow.
 --
--- > j-----j
+-- > J-----J
 -- > |     |
 -- > |  /-<f
 -- > |  v  |
--- > j--f--k
+-- > J--f--K
 fromRight
   :: forall {hk} {vk} {j} {k} (f :: vk j k)
    . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob f)
   => Sq '(Nil, Nil) '(Conjoint hk f ::: Nil, f ::: Nil)
 fromRight = E.fromRight
 
--- -- > k--------k
+-- -- > K--------K
 -- -- > |        |
 -- -- > g>----\  |
 -- -- > |     |  |
 -- -- > f>-\  |  |
 -- -- > |  v  v  |
--- -- > i--f--g--k
+-- -- > I--f--g--K
 -- fromLeft2
 --   :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
 --    . (Equipment hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob f, Ob g)
@@ -220,27 +220,27 @@ fromRight = E.fromRight
 --   fromLeft
 --     === fromLeft ||| vId
 
--- > k--I--k
+-- > K--I--K
 -- > |  v  |
 -- > |  @  |
 -- > |     |
--- > k-----k
+-- > K-----K
 vUnitor :: forall hk vk k. (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, I ::: Nil) '(Nil :: Path hk k k, Nil :: Path vk k k)
 vUnitor = Sq (Str (SCons (mapCompanion @hk iObj) SNil) SNil compToId) \\\ iObj @vk @k
 
--- > k-----k
+-- > K-----K
 -- > |     |
 -- > |  @  |
 -- > |  v  |
--- > k--I--k
+-- > K--I--K
 vUnitorInv :: forall hk vk k. (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, Nil :: Path vk k k) '(Nil :: Path hk k k, I ::: Nil)
 vUnitorInv = Sq (Str SNil (SCons (mapCompanion @hk iObj) SNil) compFromId) \\\ iObj @vk @k
 
--- > i-f-g-k
+-- > I-f-g-K
 -- > | v v |
 -- > | \@/ |
 -- > |  v  |
--- > i-gof-k
+-- > I-gof-K
 vCombine
   :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
    . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob0 hk i, Ob0 hk j, Ob0 hk k, Ob f, Ob g)
@@ -255,11 +255,11 @@ vCombine =
       )
       \\\ (g `o` f)
 
--- > i-gof-k
+-- > I-gof-K
 -- > |  v  |
 -- > | /@\ |
 -- > | v v |
--- > i-f-g-k
+-- > I-f-g-K
 vSplit
   :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
    . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob0 hk i, Ob0 hk j, Ob0 hk k, Ob f, Ob g)
