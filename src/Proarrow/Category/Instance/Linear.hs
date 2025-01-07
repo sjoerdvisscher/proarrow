@@ -2,29 +2,33 @@
 
 module Proarrow.Category.Instance.Linear where
 
+import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Kind (Type)
 import Data.Void (Void)
-import Prelude (Either (..))
+import Prelude (Either (..), undefined)
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.Dual (StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, RepCostar (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep)
+import System.IO.Unsafe (unsafeDupablePerformIO)
+import Unsafe.Coerce (unsafeCoerce)
 
-type data LINEAR = L Type
+data LINEAR = L Type
 type instance UN L (L a) = a
 
 type Linear :: CAT LINEAR
 data Linear a b where
-  Linear :: (a %1 -> b) -> Linear (L a) (L b)
+  Linear :: {unLinear :: a %1 -> b} -> Linear (L a) (L b)
 
 instance Profunctor Linear where
   dimap = dimapDefault
@@ -75,10 +79,12 @@ instance Representable Forget where
   index (Forget f) = f
   tabulate = Forget
   repMap (Linear f) x = f x
+
 -- | Forget is a lax monoidal functor
 instance MonoidalProfunctor Forget where
   par0 = Forget \() -> ()
   Forget f `par` Forget g = Forget \(x, y) -> (f x, g y)
+
 -- | Forget is also a colax monoidal functor
 instance MonoidalProfunctor (RepCostar Forget) where
   par0 = RepCostar id
@@ -86,6 +92,12 @@ instance MonoidalProfunctor (RepCostar Forget) where
 
 data Ur a where
   Ur :: a -> Ur a
+
+counitUr :: Ur a %1 -> a
+counitUr (Ur a) = a
+
+dupUr :: Ur a %1 -> Ur (Ur a)
+dupUr (Ur a) = Ur (Ur a)
 
 instance Functor Ur where
   map f (Ur a) = Ur (f a)
@@ -105,10 +117,12 @@ instance Representable Free where
   index (Free f) = Linear f
   tabulate (Linear f) = Free f
   repMap f = Linear \(Ur a) -> Ur (f a)
+
 -- | Free is a lax monoidal functor
 instance MonoidalProfunctor Free where
   par0 = Free \() -> Ur ()
   Free f `par` Free g = Free \(x, y) -> case (f x, g y) of (Ur a, Ur b) -> Ur (a, b)
+
 -- | Free is also a colax monoidal functor
 instance MonoidalProfunctor (RepCostar Free) where
   par0 = RepCostar (Linear (\(Ur _) -> ()))
@@ -136,6 +150,9 @@ data Top where
 data With a b where
   With :: x %1 -> (x %1 -> a) -> (x %1 -> b) -> With a b
 
+urWith :: Ur (With a b) %1 -> (Ur a, Ur b)
+urWith (Ur (With x f g)) = (Ur (f x), Ur (g x))
+
 instance HasTerminalObject LINEAR where
   type TerminalObject = L Top
   terminate = Linear Top
@@ -145,3 +162,66 @@ instance HasBinaryProducts LINEAR where
   fst = Linear \(With x xa _) -> xa x
   snd = Linear \(With x _ xb) -> xb x
   Linear f &&& Linear g = Linear \x -> With x f g
+
+type Not a = a %1 -> ()
+
+not :: (Not b %1 -> Not a) %1 -> a %1 -> b
+not nbna a = dn \nb -> nbna nb a
+
+not' :: (a %1 -> b) %1 -> Not b %1 -> Not a
+not' ab nb a = nb (ab a)
+
+newtype Par a b = Par (Not (Not a, Not b))
+
+toPar :: (a, b) %1 -> Par a b
+toPar (a, b) = Par \(na, nb) -> case (na a, nb b) of ((), ()) -> ()
+
+pairFst :: (a, b `Par` c) %1 -> (a, b) `Par` c
+pairFst (a, Par f) = Par \(nab, nc) -> f (\b -> nab (a, b), nc)
+
+pairSnd :: (a `Par` b, c) %1 -> a `Par` (b, c)
+pairSnd (Par f, c) = Par \(na, nbc) -> f (na, \b -> nbc (b, c))
+
+parAppL :: (a `Par` b) %1 -> Not a %1 -> b
+parAppL (Par f) na = dn \nb -> f (na, nb)
+
+parAppR :: (a `Par` b) %1 -> Not b %1 -> a
+parAppR (Par f) nb = dn \na -> f (na, nb)
+
+newtype Quest a = Quest (Not (Ur (Not a)))
+
+notQuest :: Not (Quest a) %1 -> Ur (Not a)
+notQuest nqa = dn \nuna -> nqa (Quest nuna)
+
+unitQuest :: a %1 -> Quest a
+unitQuest a = Quest \(Ur na) -> na a
+
+multQuest :: Quest (Quest a) %1 -> Quest a
+multQuest (Quest f) = Quest \(Ur na) -> f (Ur (\(Quest nuna) -> nuna (Ur na)))
+
+questPar :: Par (Quest a) (Quest b) %1 -> Quest (Either a b)
+questPar (Par f) = Quest (\(Ur g) -> f (\(Quest nuna) -> nuna (Ur (\a -> g (Left a))), \(Quest nunb) -> nunb (Ur (\b -> g (Right b)))))
+
+instance StarAutonomous LINEAR where
+  type Bottom = L ()
+  bottomObj = id
+  doubleNeg = Linear dn
+
+-- | Double negation is possible with linear functions, though using `unsafeDupablePerformIO`.
+-- Derived from https://gist.github.com/ant-arctica/7563282c57d9d1ce0c4520c543187932
+-- TODO: only tested in GHCi, might get ruined by optimizations
+dn :: Not (Not a) %1 -> a
+dn nna =
+  let ref = unsafeDupablePerformIO (newIORef undefined)
+  in case nna (unsafeLinear (fill ref)) of () -> unsafeDupablePerformIO (readIORef ref)
+  where
+    fill ref x = unsafeDupablePerformIO (writeIORef ref x)
+
+unsafeLinear :: (a -> b) %1 -> (a %1 -> b)
+unsafeLinear = unsafeCoerce unsafeCoerce
+
+unit :: L () ~> L (Par a (Not a))
+unit = Linear \() -> Par \(na, nna) -> nna na
+
+counit :: L (Not a, a) ~> L ()
+counit = Linear \(na, a) -> na a
