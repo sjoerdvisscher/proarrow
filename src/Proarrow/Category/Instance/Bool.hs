@@ -1,6 +1,7 @@
 module Proarrow.Category.Instance.Bool where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -14,12 +15,11 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProdInv
   , swapProd'
   )
-import Proarrow.Object.Dual (StarAutonomous (..))
+import Proarrow.Object.Dual (ExpSA, StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
-import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 
 data BOOL = FLS | TRU
 
@@ -29,7 +29,7 @@ data Booleans a b where
   F2T :: Booleans FLS TRU
   Tru :: Booleans TRU TRU
 
-class IsBool (b :: BOOL) where boolId :: b ~> b
+class (IsBool (Dual b)) => IsBool (b :: BOOL) where boolId :: b ~> b
 instance IsBool FLS where boolId = Fls
 instance IsBool TRU where boolId = Tru
 
@@ -133,9 +133,7 @@ instance Distributive BOOL where
   distR0 = Fls
 
 instance Closed BOOL where
-  type FLS ~~> b = TRU
-  type a ~~> TRU = TRU
-  type TRU ~~> FLS = FLS
+  type a ~~> b = ExpSA a b
   curry' Fls Fls _ = F2T
   curry' Fls Tru Fls = Fls
   curry' Fls Tru F2T = F2T
@@ -152,11 +150,26 @@ instance Closed BOOL where
   F2T ^^^ Tru = F2T
 
 instance StarAutonomous BOOL where
-  type Bottom = FLS
-  bottomObj = Fls
-  doubleNeg @a = case obj @a of
-    Fls -> Fls
-    Tru -> Tru
+  type Dual FLS = TRU
+  type Dual TRU = FLS
+  dual Fls = Tru
+  dual F2T = F2T
+  dual Tru = Fls
+  dualInv @a @b f = case (obj @a, obj @b, f) of
+    (Fls, Fls, Tru) -> Fls
+    (Tru, Fls, F2T) -> F2T
+    (Tru, Tru, Fls) -> Tru
+    (Fls, Tru, f') -> case f' of {}
+  linDist @a @b f = case (obj @a, obj @b) of
+    (Fls, Fls) -> F2T
+    (Tru, Fls) -> Tru
+    (_, Tru) -> f
+  linDistInv @_ @b @c f = case (obj @b, obj @c) of
+    (Fls, Fls) -> F2T
+    (Fls, Tru) -> Fls
+    (Tru, _) -> f
+
+-- BOOL is not CompactClosed
 
 instance Monoid TRU where
   mempty = Tru

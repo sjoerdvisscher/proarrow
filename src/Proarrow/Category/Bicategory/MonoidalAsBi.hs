@@ -3,17 +3,21 @@ module Proarrow.Category.Bicategory.MonoidalAsBi where
 import Prelude (type (~))
 
 import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Comonad (..), Monad (..))
-import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), RightKanLift (..), LeftKanLift (..))
+import Proarrow.Category.Bicategory.Kan
+  ( LeftKanExtension (..)
+  , LeftKanLift (..)
+  , RightKanExtension (..)
+  , RightKanLift (..)
+  )
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
+import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Category.Monoidal (SymMonoidal)
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, obj)
 import Proarrow.Monoid qualified as M
 import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
-import Proarrow.Object.Exponential (Closed (..), curry, eval)
-import Proarrow.Object.Exponential qualified as M
 import Proarrow.Object.Dual qualified as M
-import Proarrow.Category.Equipment.Limit (HasLimits (..), HasColimits (..))
+import Proarrow.Object.Exponential (Closed (..), curry, eval)
 
 type MonK :: Kind -> CAT ()
 newtype MonK k i j = MK k
@@ -60,17 +64,17 @@ instance (M.Monoidal k) => HasCompanions (MonK k) (MonK k) where
   compToCompose (Mon2 f) (Mon2 g) = Mon2 (f `M.par` g)
   compFromCompose (Mon2 f) (Mon2 g) = Mon2 (f `M.par` g)
 
-instance (M.CompactClosed k, Ob (a :: k), b ~ M.Dual a) => Adjunction (MK a) (MK b) where
-  unit = Mon2 (M.swap @a @b . M.dualityUnit @a) \\ M.dual @a
-  counit = Mon2 (M.dualityCounit @a . M.swap @a @b) \\ M.dual @a
+instance (M.CompactClosed k, Ob (a :: k), b ~ M.Dual a, Ob b) => Adjunction (MK a) (MK b) where
+  unit = Mon2 (M.swap @a @b . M.dualityUnit @a)
+  counit = Mon2 (M.dualityCounit @a . M.swap @a @b)
 
 instance (M.CompactClosed k) => Equipment (MonK k) (MonK k) where
   type Conjoint (MonK k) (MK a) = MK (M.Dual a)
-  mapConjoint (Mon2 f) = Mon2 (M.dual' f)
-  conjToId = Mon2 (M.eval @M.Unit . M.rightUnitorInv @_ @(M.Dual M.Unit)) \\ M.unitObj @k \\ (M.unitObj @k ^^^ M.unitObj @k)
-  conjFromId = Mon2 (M.mkExponential M.unitObj)
-  conjToCompose (Mon2 f) (Mon2 g) = Mon2 (M.distribDual' g f . (M.dual' (g `M.swap'` f)))
-  conjFromCompose (Mon2 f) (Mon2 g) = Mon2 ((M.dual' (f `M.swap'` g)) . M.combineDual' g f)
+  mapConjoint (Mon2 f) = Mon2 (M.dual f)
+  conjToId = Mon2 M.dualUnit
+  conjFromId = Mon2 M.dualUnitInv
+  conjToCompose (Mon2 @a f) (Mon2 @b g) = Mon2 (M.distribDual @k @b @a . (M.dual (g `M.swap'` f))) \\ f \\ g
+  conjFromCompose (Mon2 @a f) (Mon2 @b g) = Mon2 ((M.dual (f `M.swap'` g)) . M.combineDual @b @a) \\ f \\ g
 
 instance (Closed k, Ob j) => HasLimits (MonK k) (MK (j :: k)) '() where
   type Limit (MK j) (MK d) = MK (j ~~> d)

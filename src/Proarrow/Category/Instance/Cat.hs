@@ -9,8 +9,9 @@ import Proarrow.Category.Monoidal
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
   , TracedMonoidalProfunctor (..)
+  , swap
   )
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
@@ -21,7 +22,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace)
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), combineDual, compactClosedTrace)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
@@ -127,30 +128,29 @@ instance Closed KIND where
   uncurry' Cat Cat (Cat @p) = Cat @(Uncurry p)
   Cat @p ^^^ Cat @q = Cat @(p :**: Op q)
 
-type DUAL k = ((), OPPOSITE k)
-type Dual a = '( '(), OP a)
-
-type DoubleNeg :: DUAL (DUAL k) +-> k
-data DoubleNeg a b where
-  DoubleNeg :: a ~> b -> DoubleNeg a (Dual (Dual b))
-instance (CategoryOf k) => Profunctor (DoubleNeg :: DUAL (DUAL k) +-> k) where
-  dimap l (Unit :**: Op (Unit :**: Op r)) (DoubleNeg f) = DoubleNeg (r . f . l)
-  r \\ DoubleNeg p = r \\ p
 instance StarAutonomous KIND where
-  type Bottom = K ()
-  bottomObj = id
-  doubleNeg = Cat @DoubleNeg
+  type Dual (K a) = K (OPPOSITE a)
+  dual (Cat @p) = Cat @(Op p)
+  dualInv (Cat @p) = Cat @(UnOp p)
+  linDist (Cat @p) = combineDual . swap . Cat @(Curry p)
+  linDistInv (Cat @p) = Cat @(Uncurry (Swap (~>) (~>) :.: DistribDual :.: p))
 
-type DistribDual :: j +-> j' -> k +-> k' -> DUAL (j', k') +-> (DUAL j, DUAL k)
-data DistribDual p q a b where
-  DistribDual :: p c a -> q d b -> DistribDual p q '(Dual a, Dual b) (Dual '(c, d))
-instance (Profunctor p, Profunctor q) => Profunctor (DistribDual p q) where
-  dimap ((Unit :**: Op l1) :**: (Unit :**: Op l2)) (Unit :**: (Op (r1 :**: r2))) (DistribDual f g) =
-    DistribDual (dimap r1 l1 f) (dimap r2 l2 g)
+type DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)
+data DistribDual a b where
+  DistribDual :: c ~> a -> d ~> b -> DistribDual '(OP a, OP b) (OP '(c, d))
+instance (CategoryOf j, CategoryOf k) => Profunctor (DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)) where
+  dimap (Op l1 :**: Op l2) (Op (r1 :**: r2)) (DistribDual f g) = DistribDual (l1 . f . r1) (l2 . g . r2)
   r \\ DistribDual f g = r \\ f \\ g
 
+type DualUnit :: OPPOSITE () +-> ()
+data DualUnit a b where
+  DualUnit :: DualUnit '() (OP '())
+instance Profunctor (DualUnit :: OPPOSITE () +-> ()) where
+  dimap Unit (Op Unit) DualUnit = DualUnit
+  r \\ DualUnit = r
 instance CompactClosed KIND where
-  distribDual' (Cat @p) (Cat @q) = Cat @(DistribDual p q)
+  distribDual = Cat @DistribDual
+  dualUnit = Cat @DualUnit
 
 instance TracedMonoidalProfunctor Cat where
   trace = compactClosedTrace

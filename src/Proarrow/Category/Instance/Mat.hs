@@ -17,7 +17,15 @@ import Proarrow.Category.Monoidal
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedTrace)
+import Proarrow.Object.Dual
+  ( CompactClosed (..)
+  , ExpSA
+  , StarAutonomous (..)
+  , compactClosedTrace
+  , currySA
+  , expSA
+  , uncurrySA
+  )
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -191,19 +199,21 @@ instance (P.Num a) => SymMonoidal (MatK a) where
             concatMap (\grow -> P.fmap (\frow -> concatMap (\a -> P.fmap (a P.*) frow) grow) f) g
 
 instance (P.Num a) => Closed (MatK a) where
-  type M x ~~> M y = M (y * x)
-  curry' (Mat @x _) (Mat @y _) (Mat @_ @z m) = withMultNat @z @y $ Mat (concatMap id (P.fmap (unConcatMap @y @x id) m))
-  uncurry' (Mat @y _) (Mat @z _) (Mat @x m) = withMultNat @y @x $ Mat (P.fmap (concatMap id) (unConcatMap @z @y id m))
-  f@Mat{} ^^^ g@Mat{} = case dagger g `par` f of Mat h -> Mat h
+  type x ~~> y = ExpSA x y
+  curry' (Mat @x _) (Mat @y _) = currySA @(M x) @(M y)
+  uncurry' (Mat @y _) (Mat @z _) = uncurrySA @_ @(M y) @(M z)
+  (^^^) = expSA
 
 instance (P.Num a) => StarAutonomous (MatK a) where
-  type Bottom = M (S Z)
-  bottomObj = id
-  doubleNeg = id
+  type Dual n = n
+  dual = dagger
+  dualInv = dagger
+  linDist @(M x) @(M y) @(M z) (Mat m) = withMultNat @z @y $ Mat (concatMap id (P.fmap (unConcatMap @y @x id) m))
+  linDistInv @(M x) @(M y) @(M z) (Mat m) = withMultNat @y @x $ Mat (P.fmap (concatMap id) (unConcatMap @z @y id m))
 
 instance (P.Num a) => CompactClosed (MatK a) where
-  distribDual @m @n = distribDual' (obj @m) (obj @n)
-  distribDual' a@(Mat @_ @n _) b@(Mat @_ @n1 _) = withMultNat @n1 @n $ dagger a `par` dagger b
+  distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ dagger (obj @m) `par` dagger (obj @n)
+  dualUnit = id
 
 instance (P.Num a) => TracedMonoidalProfunctor (Mat :: CAT (MatK a)) where
   trace @x = compactClosedTrace @x

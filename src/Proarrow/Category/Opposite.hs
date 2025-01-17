@@ -8,8 +8,8 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k
@@ -79,14 +79,21 @@ instance (Monoid c) => Comonoid (OP c) where
   counit = Op mempty
   comult = Op mappend
 
-instance Representable p => Corepresentable (Op p) where
+instance (Representable p) => Corepresentable (Op p) where
   type Op p %% OP a = OP (p % a)
   coindex (Op f) = Op (index f)
   cotabulate (Op f) = Op (tabulate f)
   corepMap (Op f) = Op (repMap @p f)
 
-instance Corepresentable p => Representable (Op p) where
+instance (Corepresentable p) => Representable (Op p) where
   type Op p % OP a = OP (p %% a)
   index (Op f) = Op (coindex f)
   tabulate (Op f) = Op (cotabulate f)
   repMap (Op f) = Op (corepMap @p f)
+
+type UnOp :: OPPOSITE k +-> OPPOSITE j -> j +-> k
+data UnOp p a b where
+  UnOp :: {unUnOp :: p (OP b) (OP a)} -> UnOp p a b
+instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +-> k) where
+  dimap l r = UnOp . dimap (Op r) (Op l) . unUnOp
+  r \\ UnOp f = r \\ f

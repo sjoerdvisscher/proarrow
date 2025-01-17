@@ -42,6 +42,18 @@ associator' a b c = associator @k @a @b @c \\ a \\ b \\ c
 associatorInv' :: forall {k} a b c. (Monoidal k) => Obj (a :: k) -> Obj b -> Obj c -> a ** (b ** c) ~> (a ** b) ** c
 associatorInv' a b c = associatorInv @k @a @b @c \\ a \\ b \\ c
 
+leftUnitorWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => b ~> Unit -> b ** a ~> a
+leftUnitorWith f = leftUnitor . (f `par` obj @a)
+
+leftUnitorInvWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => Unit ~> b -> a ~> b ** a
+leftUnitorInvWith f = (f `par` obj @a) . leftUnitorInv
+
+rightUnitorWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => b ~> Unit -> a ** b ~> a
+rightUnitorWith f = rightUnitor . (obj @a `par` f)
+
+rightUnitorInvWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => Unit ~> b -> a ~> a ** b
+rightUnitorInvWith f = (obj @a `par` f) . rightUnitorInv
+
 unitObj :: (Monoidal k) => Obj (Unit :: k)
 unitObj = par0
 

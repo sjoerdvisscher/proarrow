@@ -203,9 +203,11 @@ questPar :: Par (Quest a) (Quest b) %1 -> Quest (Either a b)
 questPar (Par f) = Quest (\(Ur g) -> f (\(Quest nuna) -> nuna (Ur (\a -> g (Left a))), \(Quest nunb) -> nunb (Ur (\b -> g (Right b)))))
 
 instance StarAutonomous LINEAR where
-  type Bottom = L ()
-  bottomObj = id
-  doubleNeg = Linear dn
+  type Dual (L a) = L (Not a)
+  dual (Linear f) = Linear (\nb a -> nb (f a))
+  dualInv (Linear f) = Linear (\b -> dn (\na -> f na b))
+  linDist (Linear f) = Linear (\a (b, c) -> f (a, b) c)
+  linDistInv (Linear f) = Linear (\(a, b) c -> f a (b, c))
 
 -- | Double negation is possible with linear functions, though using `unsafeDupablePerformIO`.
 -- Derived from https://gist.github.com/ant-arctica/7563282c57d9d1ce0c4520c543187932
