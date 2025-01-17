@@ -24,6 +24,9 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k)) => Monoidal k where
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
   associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
 
+obj2 :: forall {k} a b. (Monoidal k, Ob (a :: k), Ob b) => Obj (a ** b)
+obj2 = obj @a `par` obj @b
+
 leftUnitor' :: (Monoidal k) => (a :: k) ~> b -> Unit ** a ~> b
 leftUnitor' f = f . leftUnitor \\ f
 
@@ -71,8 +74,8 @@ class (SymMonoidal k, Profunctor p) => TracedMonoidalProfunctor (p :: k +-> k) w
   trace' :: (x :: k) ~> x' -> y ~> y' -> u ~> u' -> p (x' ** u') (y ** u) -> p x y'
   trace' @_ @_ @_ @_ @u x y u p = trace @_ @u (dimap (x `par` u) (y `par` src u) p) \\ x \\ y \\ u
 
-class (TracedMonoidalProfunctor ((~>) :: CAT k), Monoidal k) => TracedMonoidal k
-instance (TracedMonoidalProfunctor ((~>) :: CAT k), Monoidal k) => TracedMonoidal k
+class (TracedMonoidalProfunctor ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
+instance (TracedMonoidalProfunctor ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
 
 isObPar :: forall {k} a b r. (Monoidal k, Ob (a :: k), Ob b) => ((Ob (a ** b)) => r) -> r
 isObPar r = r \\ (obj @a `par` obj @b)
@@ -98,3 +101,15 @@ swapInner' a b c d =
 swapInner
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((a ** c) ** (b ** d))
 swapInner = swapInner' (obj @a) (obj @b) (obj @c) (obj @d)
+
+swapFst
+  :: forall {k} (a :: k) b c d. (SymMonoidal k, Ob a, Ob b, Ob c, Ob d) => (a ** b) ** (c ** d) ~> (c ** b) ** (a ** d)
+swapFst = (swap @b @c `par` obj2 @a @d) . swapInner @b @a @c @d . (swap @a @b `par` obj2 @c @d)
+
+swapSnd
+  :: forall {k} a (b :: k) c d. (SymMonoidal k, Ob a, Ob b, Ob c, Ob d) => (a ** b) ** (c ** d) ~> (a ** d) ** (c ** b)
+swapSnd = (obj2 @a @d `par` swap @b @c) . swapInner @a @b @d @c . (obj2 @a @b `par` swap @c @d)
+
+swapOuter
+  :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((d ** b) ** (c ** a))
+swapOuter = (obj2 @d @b `par` swap @a @c) . swapFst @a @b @d @c . (obj2 @a @b `par` swap @c @d)

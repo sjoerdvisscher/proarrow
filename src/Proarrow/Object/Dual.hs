@@ -38,12 +38,6 @@ doubleNegInv = linDistInv @k @Unit @a @(Dual a) (dual (swap @a @(Dual a)) . dual
 
 type ExpSA a b = Dual (a ** Dual b)
 
-dualityUnitSA :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Unit ~> Dual (Dual a ** a)
-dualityUnitSA = linDist @k @_ @(Dual a) @a leftUnitor
-
-dualityCounitSA :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual a ** a ~> Dual Unit
-dualityCounitSA = linDistInv @k @(Dual a) @a @Unit (dual (rightUnitor @k @a))
-
 currySA :: forall {k} (a :: k) b c. (StarAutonomous k, Ob a, Ob b) => a ** b ~> c -> a ~> ExpSA b c
 currySA f = linDist @k @a @b @(Dual c) (doubleNegInv @c . f) \\ f
 
@@ -52,6 +46,12 @@ uncurrySA f = doubleNeg @c . linDistInv @k @a @b @(Dual c) f \\ f
 
 expSA :: forall {k} (a :: k) b x y. (StarAutonomous k) => b ~> y -> x ~> a -> ExpSA a b ~> ExpSA x y
 expSA f g = dual (g `par` dual f)
+
+dualityUnitSA :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Unit ~> Dual (Dual a ** a)
+dualityUnitSA = linDist @k @_ @(Dual a) @a leftUnitor
+
+dualityCounitSA :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual a ** a ~> Dual Unit
+dualityCounitSA = linDistInv @k @(Dual a) @a @Unit (dual (rightUnitor @k @a))
 
 instance StarAutonomous () where
   type Dual '() = '()
