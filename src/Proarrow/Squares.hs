@@ -3,10 +3,23 @@
 module Proarrow.Squares where
 
 import Proarrow.Category.Bicategory (Bicategory (..), Ob')
-import Proarrow.Category.Bicategory.Strictified (Path (..), SPath (..), Strictified (..), singleton, type (+++))
+import Proarrow.Category.Bicategory.Strictified
+  ( Fold
+  , IsPath (..)
+  , Path (..)
+  , SPath (..)
+  , Strictified (..)
+  , asObj
+  , companionFold
+  , fold
+  , foldCompanion
+  , mapCompanionSPath
+  , singleton
+  , type (+++)
+  )
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
 import Proarrow.Category.Equipment qualified as E
-import Proarrow.Core (CategoryOf (..), Promonad ((.)), obj, Obj, (\\))
+import Proarrow.Core (CategoryOf (..), Obj, Promonad ((.)), (\\))
 
 infixl 6 |||
 infixl 5 ===
@@ -57,7 +70,7 @@ hId = E.hId
 -- > J-----J
 compId
   :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob0 hk j, Ob0 hk k, Ob (f :: vk j k))
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(Companion hk f ::: Nil, Nil :: Path vk k k) '(Companion hk f ::: Nil, Nil :: Path vk j j)
 compId = E.compId @(f ::: Nil)
 
@@ -106,7 +119,8 @@ vId = E.vId
 vId'
   :: forall {hk} {vk} {j} {k} (f :: vk j k)
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
-  => Obj f -> Sq '(Nil :: Path hk j j, f ::: Nil) '(Nil :: Path hk k k, f ::: Nil)
+  => Obj f
+  -> Sq '(Nil :: Path hk j j, f ::: Nil) '(Nil :: Path hk k k, f ::: Nil)
 vId' f = vId \\ f
 
 -- | Horizontal composition
@@ -205,36 +219,27 @@ fromRight
   => Sq '(Nil, Nil) '(Conjoint hk f ::: Nil, f ::: Nil)
 fromRight = E.fromRight
 
--- -- > K--------K
--- -- > |        |
--- -- > g>----\  |
--- -- > |     |  |
--- -- > f>-\  |  |
--- -- > |  v  v  |
--- -- > I--f--g--K
--- fromLeft2
---   :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
---    . (Equipment hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob f, Ob g)
---   => Sq '(Companion hk f ::: Companion hk g ::: Nil, Nil) '(Nil, f ::: g ::: Nil)
--- fromLeft2 =
---   fromLeft
---     === fromLeft ||| vId
-
 -- > K--I--K
 -- > |  v  |
 -- > |  @  |
 -- > |     |
 -- > K-----K
-vUnitor :: forall hk vk k. (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, I ::: Nil) '(Nil :: Path hk k k, Nil :: Path vk k k)
-vUnitor = Sq (Str (SCons (mapCompanion @hk iObj) SNil) SNil compToId) \\\ iObj @vk @k
+vUnitor
+  :: forall hk vk k
+   . (HasCompanions hk vk, Ob0 vk k)
+  => Sq '(Nil :: Path hk k k, I ::: Nil) '(Nil :: Path hk k k, Nil :: Path vk k k)
+vUnitor = vSplitAll
 
 -- > K-----K
 -- > |     |
 -- > |  @  |
 -- > |  v  |
 -- > K--I--K
-vUnitorInv :: forall hk vk k. (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, Nil :: Path vk k k) '(Nil :: Path hk k k, I ::: Nil)
-vUnitorInv = Sq (Str SNil (SCons (mapCompanion @hk iObj) SNil) compFromId) \\\ iObj @vk @k
+vUnitorInv
+  :: forall hk vk k
+   . (HasCompanions hk vk, Ob0 vk k)
+  => Sq '(Nil :: Path hk k k, Nil :: Path vk k k) '(Nil :: Path hk k k, I ::: Nil)
+vUnitorInv = vCombineAll
 
 -- > I-f-g-K
 -- > | v v |
@@ -243,17 +248,9 @@ vUnitorInv = Sq (Str SNil (SCons (mapCompanion @hk iObj) SNil) compFromId) \\\ i
 -- > I-gof-K
 vCombine
   :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
-   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob0 hk i, Ob0 hk j, Ob0 hk k, Ob f, Ob g)
+   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob f, Ob g)
   => Sq '(Nil :: Path hk i i, f ::: g ::: Nil) '(Nil, g `O` f ::: Nil)
-vCombine =
-  let f = obj @f; g = obj @g
-  in Sq
-      ( Str
-          (SCons (mapCompanion @hk f) (SCons (mapCompanion @hk g) SNil))
-          (SCons (mapCompanion @hk (g `o` f)) SNil)
-          (compFromCompose g f)
-      )
-      \\\ (g `o` f)
+vCombine = vCombineAll
 
 -- > I-gof-K
 -- > |  v  |
@@ -262,14 +259,62 @@ vCombine =
 -- > I-f-g-K
 vSplit
   :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
-   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob0 hk i, Ob0 hk j, Ob0 hk k, Ob f, Ob g)
+   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob f, Ob g)
   => Sq '(Nil :: Path hk i i, g `O` f ::: Nil) '(Nil, f ::: g ::: Nil)
-vSplit =
-  let f = obj @f; g = obj @g
-  in Sq
-      ( Str
-          (SCons (mapCompanion @hk (g `o` f)) SNil)
-          (SCons (mapCompanion @hk f) (SCons (mapCompanion @hk g) SNil))
-          (compToCompose g f)
-      )
-      \\\ (g `o` f)
+vSplit = vSplitAll
+
+-- | Combine a whole bunch of vertical arrows into one composed arrow.
+--
+-- > J-p..-K
+-- > | vvv |
+-- > | \@/ |
+-- > |  v  |
+-- > J--f--K
+vCombineAll
+  :: forall {hk} {vk} {j} {k} (ps :: Path vk j k)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
+  => Sq '(Nil :: Path hk j j, ps) '(Nil :: Path hk k k, Fold ps ::: Nil)
+vCombineAll =
+  let ps = singPath @ps; fps = fold ps
+  in Sq (Str (mapCompanionSPath ps) (SCons (mapCompanion fps) SNil) (foldCompanion ps)) \\ fps
+
+-- | Split one composed arrow into a whole bunch of vertical arrows.
+--
+-- > J--f--K
+-- > |  v  |
+-- > | /@\ |
+-- > | vvv |
+-- > J-p..-K
+vSplitAll
+  :: forall {hk} {vk} {j} {k} (ps :: Path vk j k)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
+  => Sq '(Nil :: Path hk j j, Fold ps ::: Nil) '(Nil :: Path hk k k, ps)
+vSplitAll =
+  let ps = singPath @ps; fps = fold ps; cps = mapCompanionSPath @hk ps
+  in Sq (Str (SCons (mapCompanion fps) SNil) cps (companionFold ps)) \\ fps \\ asObj cps
+
+-- | Combine a whole bunch of horizontal proarrows into one composed proarrow.
+--
+-- > K-----K
+-- > p--\  |
+-- > :--@--f
+-- > :--/  |
+-- > J-----J
+hCombineAll
+  :: forall {hk} {vk} {j} {k} (ps :: Path hk j k)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
+  => Sq '(ps, Nil :: Path vk k k) '(Fold ps ::: Nil, Nil)
+hCombineAll = let ps = singPath @ps; fps = fold ps in Sq (Str ps (SCons fps SNil) fps) \\\ fps
+
+-- | Split one composed proarrow into a whole bunch of horizontal proarrows.
+--
+-- > K-----K
+-- > |  /--p
+-- > f--@--:
+-- > |  \--:
+-- > J-----J
+hSplitAll
+  :: forall {hk} {vk} {j} {k} (ps :: Path hk j k)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
+  => Sq '(Fold ps ::: Nil, Nil :: Path vk k k) '(ps, Nil)
+hSplitAll = let ps = singPath @ps; fps = fold ps in Sq (Str (SCons fps SNil) ps fps) \\\ fps
