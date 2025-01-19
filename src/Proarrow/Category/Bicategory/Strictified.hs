@@ -11,8 +11,13 @@ import Proarrow.Category.Bicategory
   , Monad (..)
   , associator'
   , associatorInv'
+  , leftUnitorInvWith
+  , leftUnitorWith
+  , rightUnitorWith
+  , (==)
   , (||)
   )
+import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), RetroSq (..), Sq (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, src, tgt)
 import Proarrow.Object (Obj, obj)
 import Prelude (($), type (~))
@@ -187,6 +192,207 @@ instance (Bicategory kk) => Bicategory (Path kk) where
   rightUnitorInv = id
   associator @p @q @r = obj @p `o` obj @q `o` obj @r
   associatorInv @p @q @r = obj @p `o` obj @q `o` obj @r
+
+companionFold
+  :: forall {hk} {vk} {j} {k} (fs :: Path vk j k)
+   . (HasCompanions hk vk)
+  => SPath fs
+  -> Companion hk (Fold fs) ~> Fold (Companion (Path hk) fs)
+companionFold SNil = compToId
+companionFold (SCons f SNil) = mapCompanion f
+companionFold (SCons f fs@SCons{}) = let cfs = companionFold fs `o` mapCompanion @hk f in (cfs . compToCompose (fold fs) f) \\\ cfs
+
+foldCompanion
+  :: forall {hk} {vk} {j} {k} (fs :: Path vk j k)
+   . (HasCompanions hk vk)
+  => SPath fs
+  -> Fold (Companion (Path hk) fs) ~> Companion hk (Fold fs)
+foldCompanion SNil = compFromId
+foldCompanion (SCons f SNil) = mapCompanion f
+foldCompanion (SCons f fs@SCons{}) = let cfs = foldCompanion fs `o` mapCompanion @hk f in (compFromCompose (fold fs) f . cfs) \\\ cfs
+
+mapCompanionSPath
+  :: forall hk {vk} {j} {k} (fs :: Path vk j k)
+   . (HasCompanions hk vk)
+  => SPath fs
+  -> SPath (Companion (Path hk) fs)
+mapCompanionSPath SNil = SNil
+mapCompanionSPath (SCons f fs) = SCons (mapCompanion f) (mapCompanionSPath fs)
+
+instance (HasCompanions hk vk) => HasCompanions (Path hk) (Path vk) where
+  type Companion (Path hk) Nil = Nil
+  type Companion (Path hk) (p ::: ps) = Companion hk p ::: Companion (Path hk) ps
+
+  mapCompanion (Str fs gs n) =
+    Str (mapCompanionSPath @hk fs) (mapCompanionSPath @hk gs) $ companionFold gs . mapCompanion @hk @vk n . foldCompanion fs
+
+  compToId = Str SNil SNil iObj
+  compFromId = Str SNil SNil iObj
+  compToCompose (Str fs _ f) (Str gs _ g) =
+    let cfs = mapCompanionSPath fs
+        cgs = mapCompanionSPath gs
+        fgs = append gs fs
+    in Str (mapCompanionSPath fgs) (cgs `append` cfs) $
+        concatFold cgs cfs
+          . (companionFold fs `o` companionFold gs)
+          . compToCompose f g
+          . mapCompanion (splitFold gs fs)
+          . foldCompanion fgs
+  compFromCompose (Str fs _ f) (Str gs _ g) =
+    let cfs = mapCompanionSPath fs
+        cgs = mapCompanionSPath gs
+        fgs = append gs fs
+    in Str (cgs `append` cfs) (mapCompanionSPath fgs) $
+        companionFold fgs
+          . mapCompanion (concatFold gs fs)
+          . compFromCompose f g
+          . (foldCompanion fs `o` foldCompanion gs)
+          . splitFold cgs cfs
+
+mapConjointSPath
+  :: forall hk {vk} {j} {k} (fs :: Path vk j k)
+   . (Equipment hk vk)
+  => SPath fs
+  -> SPath (Conjoint (Path hk) fs)
+mapConjointSPath SNil = SNil
+mapConjointSPath (SCons f fs) = let fc = mapConjoint @hk f in mapConjointSPath fs `append` SCons fc SNil \\\ fc
+
+instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
+  type Conjoint (Path hk) Nil = Nil
+  type Conjoint (Path hk) (p ::: ps) = Conjoint (Path hk) ps +++ (Conjoint hk p ::: Nil)
+
+  mapConjoint n@(Str fsp gsp _) =
+    let fs = src n
+        gs = tgt n
+        cfs = asObj (mapConjointSPath @hk fsp)
+        cgs = asObj (mapConjointSPath @hk gsp)
+        compN = mapCompanion n
+    in rightUnitorWith (comConCounit @(Path hk) gs) cfs
+        . associator' cfs (tgt compN) cgs
+        . ((cfs `o` compN) `o` cgs)
+        . leftUnitorInvWith (comConUnit fs) cgs
+
+  comConUnit fs' = case asSPath fs' of
+    SNil -> id
+    SCons f sfs ->
+      let fs = asObj sfs
+          ls = mapCompanion @(Path hk) fs
+          l = mapCompanion @hk f
+          rs = mapConjoint @(Path hk) fs
+          r = mapConjoint @hk f
+          r' = singleton r
+      in ( ((associatorInv' r' rs ls . (r' `o` comConUnit fs)) `o` singleton l)
+            . elimO
+            . singleton (comConUnit f)
+            . introI
+         )
+          \\\ l
+          \\\ r
+
+  comConCounit fs' = case asSPath fs' of
+    SNil -> id
+    SCons @f f sfs ->
+      let fs = asObj sfs
+          ls = mapCompanion @(Path hk) fs
+          l = mapCompanion @hk f
+          l' = singleton l
+          rs = mapConjoint @(Path hk) fs
+          r = mapConjoint @hk f
+          r' = singleton r
+      in ( comConCounit fs
+            . ( ls
+                  `o` ( leftUnitorWith (elimI . singleton (comConCounit f) . introO @(Conjoint hk f) @(Companion hk f)) rs
+                          . associatorInv' l' r' rs
+                      )
+              )
+            . associator' ls l' (r' `o` rs)
+         )
+          \\\ rs
+          \\\ l
+          \\\ r
+
+adjVK
+  :: forall hk vk i j k f g v w x y
+   . (Adjunction x v, Adjunction y w, HasCompanions hk vk, Ob v, Ob w)
+  => RetroSq '(y :: hk i k, g) '(x, f :: vk j k)
+  -> Sq '(v, g) '(w, f)
+adjVK (RetroSq sq) =
+  let cf = mapCompanion @(Path hk) (obj1 @f)
+      cg = mapCompanion @(Path hk) (obj1 @g)
+      v = obj1 @v
+      w = obj1 @w
+      x = obj1 @x
+      y = obj1 @y
+      counit' = str (x || v) iObj (counit @x @v)
+      unit' = str iObj (w || y) (unit @y @w)
+      sq' = str (y || cg) (cf || x) sq
+  in Sq
+      ( unStr
+          ( unit' || cg || v
+              == w || sq' || v
+              == w || cf || counit'
+          )
+      )
+      \\\ sq
+
+adjHK
+  :: forall hk vk i j k e f g h v w
+   . (Adjunction f h, Adjunction g e, HasCompanions hk vk, Ob f, Ob g)
+  => RetroSq '(v :: hk i k, h) '(w, e :: vk j k)
+  -> Sq '(v, g) '(w, f)
+adjHK (RetroSq sq) =
+  let v = obj1 @v
+      w = obj1 @w
+      e = obj1 @e
+      f = obj1 @f
+      g = obj1 @g
+      h = obj1 @h
+      ce = mapCompanion @(Path hk) e
+      cf = mapCompanion @(Path hk) f
+      cg = mapCompanion @(Path hk) g
+      ch = mapCompanion @(Path hk) h
+      counit' = mapCompanion @(Path hk) (str (g || e) iObj (counit @g @e))
+      unit' = mapCompanion @(Path hk) (str iObj (h || f) (unit @f @h))
+      sq' = str (v || ch) (ce || w) sq
+  in Sq
+      ( unStr
+          ( cg || v || unit'
+              == cg || sq' || cf
+              == counit' || w || cf
+          )
+      )
+      \\\ sq
+
+-- adj4Sq
+--   :: forall hk vk i j k e f g h v w x y
+--    . (Adjunction v x, Adjunction w y, Adjunction h f, Adjunction e g, HasCompanions hk vk)
+--   => Sq '(v :: hk k j, g) '(w, f :: vk k i)
+--   -> Sq '(y, h) '(x, e)
+-- adj4Sq (Sq sq) =
+--   let v = obj1 @v
+--       w = obj1 @w
+--       x = obj1 @x
+--       y = obj1 @y
+--       e = obj1 @e
+--       f = obj1 @f
+--       g = obj1 @g
+--       h = obj1 @h
+--       ce = mapCompanion @(Path hk) e
+--       cf = mapCompanion @(Path hk) f
+--       cg = mapCompanion @(Path hk) g
+--       ch = mapCompanion @(Path hk) h
+--       unitV = mapCompanion @(Path hk) (str iObj (f || h) (unit @h @f))
+--       counitV = mapCompanion @(Path hk) (str (e || g) iObj (counit @e @g))
+--       unitH = str iObj (x || v) (unit @v @x)
+--       counitH = str (w || y) iObj (counit @w @y)
+--       sq' = str (cg || v) (w || cf) sq
+--   in Sq
+--       ( unStr
+--           ( (unitH == x || counitV || v) || ch || y
+--               == x || ce || sq' || ch || y
+--               == x || ce || (w || unitV || y == counitH)
+--           )
+--       )
 
 instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
   eta = iObj
