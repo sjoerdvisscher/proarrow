@@ -10,6 +10,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k
@@ -97,3 +98,12 @@ data UnOp p a b where
 instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +-> k) where
   dimap l r = UnOp . dimap (Op r) (Op l) . unUnOp
   r \\ UnOp f = r \\ f
+
+instance Strong w p => Strong (Op w) (Op p) where
+  act (Op w) (Op p) = Op (act w p)
+instance MonoidalAction m k => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
+  type Act (OP a) (OP b) = OP (Act a b)
+  unitor = Op (unitorInv @m)
+  unitorInv = Op (unitor @m)
+  multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @m @k @a @b @x)
+  multiplicatorInv @(OP a) @(OP b) @(OP x) = Op (multiplicator @m @k @a @b @x)
