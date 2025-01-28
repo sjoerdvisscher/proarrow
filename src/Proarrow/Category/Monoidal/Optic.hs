@@ -12,8 +12,9 @@ import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.Nat (Nat (..), (!))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Strong (..), MonoidalAction (..), composeActs, decomposeActs)
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, swap)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
+import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Object (src, tgt)
@@ -39,16 +40,19 @@ instance (CategoryOf c, CategoryOf d) => Profunctor (Optic w a b :: PRO c d) whe
 
 instance (IsOptic w c d) => Strong (w :: PRO m m') (Optic w a b :: PRO c d) where
   act :: forall (a1 :: m) (b1 :: m') (s :: c) (t :: d). w a1 b1 -> Optic w a b s t -> Optic w a b (Act a1 s) (Act b1 t)
-  act w (Optic @x @x' f w' g) = Optic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g)) \\ w \\ w'
+  act w (Optic @x @x' f w' g) =
+    Optic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
+      \\ w
+      \\ w'
 
 parallel :: Optic w a b s t -> Optic w' c d u v -> Optic (w :**: w') '(a, c) '(b, d) '(s, u) '(t, v)
 parallel (Optic f w g) (Optic h w' i) = Optic (f :**: h) (w :**: w') (g :**: i)
 
 type data OPTIC (w :: PRO m m') (c :: Kind) (d :: Kind) = OPT c d
-type family LCat (p :: OPTIC w c d) where
-  LCat (OPT c d) = c
-type family RCat (p :: OPTIC w c d) where
-  RCat (OPT c d) = d
+type family OptL (p :: OPTIC w c d) where
+  OptL (OPT c d) = c
+type family OptR (p :: OPTIC w c d) where
+  OptR (OPT c d) = d
 type OpticCat :: CAT (OPTIC w c d)
 data OpticCat ab st where
   OpticCat :: Optic w a b s t -> OpticCat (OPT a b :: OPTIC w c d) (OPT s t)
@@ -61,7 +65,7 @@ instance (IsOptic w c d) => Promonad (OpticCat :: CAT (OPTIC w c d)) where
   OpticCat l@Optic{} . OpticCat r@Optic{} = OpticCat $ prof2ex (ex2prof l . ex2prof r)
 instance (IsOptic w c d) => CategoryOf (OPTIC w c d) where
   type (~>) = OpticCat
-  type Ob a = (a ~ OPT (LCat a) (RCat a), Ob (LCat a), Ob (RCat a))
+  type Ob a = (a ~ OPT (OptL a) (OptR a), Ob (OptL a), Ob (OptR a))
 
 type ProfOptic w a b s t = forall p. (Strong w p) => p a b -> p s t
 type MixedOptic m a b s t = ProfOptic ((~>) @m) a b s t
@@ -176,3 +180,29 @@ instance (Monad m) => Strong (Sub (->) :: CAT (SUBCAT (Algebra m))) (Classifying
 infixl 8 .?
 (.?) :: (Monad m) => (Classifying m a b a b -> Classifying m a b s t) -> b -> m s -> t
 (.?) l b ms = unClassify (l $ Classifying (const id)) ms b
+
+-- Charts, a kind of dual to optics.
+type IsChart (w :: PRO m m') c d = (IsOptic w c d, SymMonoidal m')
+
+type data CHART (w :: PRO m m') (c :: Kind) (d :: Kind) = CHA c (OPPOSITE d)
+type family ChaL (p :: CHART w c d) where
+  ChaL (CHA c d) = c
+type family ChaR (p :: CHART w c d) where
+  ChaR (CHA c d) = d
+type ChartCat :: CAT (CHART w c d)
+data ChartCat ab st where
+  ChartCat :: Optic w a t s b -> ChartCat (CHA a (OP b) :: CHART w c d) (CHA s (OP t))
+
+instance (IsChart w c d) => Profunctor (ChartCat :: CAT (CHART w c d)) where
+  dimap = dimapDefault
+  r \\ ChartCat (Optic f _ g) = r \\ f \\ g
+instance (IsChart w c d) => Promonad (ChartCat :: CAT (CHART (w :: PRO m m') c d)) where
+  id = ChartCat (prof2ex id)
+  ChartCat (Optic @x @x' @_ @t ll lw lr) . ChartCat (Optic @y @y' @a rl rw rr) =
+    ChartCat $
+      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @x' @y' `act` obj @t))
+        \\ lw
+        \\ rw
+instance (IsChart w c d) => CategoryOf (CHART w c d) where
+  type (~>) = ChartCat
+  type Ob a = (a ~ CHA (ChaL a) (ChaR a), Ob (ChaL a), Ob (ChaR a))
