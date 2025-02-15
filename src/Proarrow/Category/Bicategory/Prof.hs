@@ -15,13 +15,30 @@ import Proarrow.Category.Bicategory
   )
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
+import Proarrow.Category.Bicategory.Limit qualified as Bi
 import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..))
 import Proarrow.Category.Colimit qualified as L
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..), vArr)
-import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
-import Proarrow.Category.Instance.Collage (COLLAGE (..), Collage (..), InjL (..), InjR (..))
+import Proarrow.Category.Equipment.Limit
+  ( Coproduct
+  , HasBinaryCoproducts (..)
+  , HasBinaryProducts (..)
+  , HasColimits (..)
+  , HasInitialObject (..)
+  , HasLimits (..)
+  , HasTerminalObject (..)
+  , InitialObject
+  , Product
+  , TerminalObject
+  )
+import Proarrow.Category.Instance.Cat qualified as C
+import Proarrow.Category.Instance.Collage qualified as Col
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (unProf)
+import Proarrow.Category.Instance.Unit qualified as U
+import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Limit qualified as L
 import Proarrow.Category.Opposite qualified as Op
 import Proarrow.Core
@@ -187,8 +204,8 @@ type ProfSq p q f g = Sq '(PK p, FUN g) '(PK q, FUN f)
 -- > p---@   |
 -- > |   v   |
 -- > K-InjL-Col
-isCotabulator :: (Profunctor p) => ProfSq p Collage (InjR p) (InjL p)
-isCotabulator = Sq $ Prof $ \(InjL f :.: p) -> f :.: InjR (L2R p) \\ p
+isCotabulator :: (Profunctor p) => ProfSq p Col.Collage (Col.InjR p) (Col.InjL p)
+isCotabulator = Sq $ Prof $ \(Col.InjL f :.: p) -> f :.: Col.InjR (Col.L2R p) \\ p
 
 -- | Any 2-cell of shape p(a, b) -> e(f a, g b) factors through the cotabulator 2-cell.
 --
@@ -197,7 +214,7 @@ isCotabulator = Sq $ Prof $ \(InjL f :.: p) -> f :.: InjR (L2R p) \\ p
 -- > p--@  | == p---@   |  |  |
 -- > |  v  |    |   v   |  v  |
 -- > K--g--H    K-Inj2-CG--X--H
-type CotabulatorFactorizer :: Type -> forall (p :: j +-> k) -> (j +-> h) -> (k +-> h) -> COLLAGE p +-> h
+type CotabulatorFactorizer :: Type -> forall (p :: j +-> k) -> (j +-> h) -> (k +-> h) -> Col.COLLAGE p +-> h
 data CotabulatorFactorizer s p f g a b where
   CF :: (Ob b) => a ~> CotabulatorFactorizer s p f g % b -> CotabulatorFactorizer s p f g a b
 
@@ -211,14 +228,14 @@ instance
   (Profunctor p, Representable f, Representable g, Reifies s (ProfSq p Id f g))
   => Representable (CotabulatorFactorizer s p f g)
   where
-  type CotabulatorFactorizer s p f g % R a = f % a
-  type CotabulatorFactorizer s p f g % L a = g % a
+  type CotabulatorFactorizer s p f g % Col.R a = f % a
+  type CotabulatorFactorizer s p f g % Col.L a = g % a
   index (CF f) = f
   tabulate f = CF f \\ f
   repMap = \case
-    InL f -> repMap @g f
-    InR f -> repMap @f f
-    L2R p ->
+    Col.InL f -> repMap @g f
+    Col.InR f -> repMap @f f
+    Col.L2R p ->
       p // case reflect ([] @s) of Sq (Prof n) -> case n (tabulate @g (repMap @g (src p)) :.: p) of Id g :.: f -> index f . g
 
 cotabulatorFactorize
@@ -232,3 +249,75 @@ cotabulatorFactorize
      )
   -> r
 cotabulatorFactorize sq f = reify sq $ \(Proxy @s) -> f (vArr $ obj @(FUN (CotabulatorFactorizer s p f g)))
+
+type instance Bi.TerminalObject FUNK = ()
+instance Bi.HasTerminalObject FUNK where
+  type Terminate FUNK j = FUN C.Terminate
+  terminate = Sub (Prof id)
+  termUniv @_ @_ @g = Sub (Prof \f -> tabulate U.Unit \\ f \\ repMap @(UNFUN g) (tgt f))
+
+type instance Bi.Product FUNK a b = (a, b)
+instance Bi.HasBinaryProducts FUNK where
+  type Fst FUNK a b = FUN (C.FstCat)
+  type Snd FUNK a b = FUN (C.SndCat)
+  fstObj = Sub (Prof id)
+  sndObj = Sub (Prof id)
+  type f &&& g = FUN (UNFUN f C.:&&&: UNFUN g)
+  prodObj = Sub (Prof id)
+  prodUniv @_ @_ @_ @_ @k (Sub (Prof n)) (Sub (Prof m)) =
+    Sub
+      ( Prof
+          ( \h ->
+              h // repMap @(UNFUN k) (tgt h) // case n (C.FstCat id :.: h) of
+                C.FstCat f :.: (index -> k :**: _) ->
+                  case m (C.SndCat id :.: h) of
+                    C.SndCat g :.: (index -> _ :**: k') ->
+                      tabulate ((k . f) :**: (k' . g))
+          )
+      )
+
+type instance TerminalObject PROFK FUNK = ()
+instance HasTerminalObject PROFK FUNK where
+  type Terminate PROFK FUNK j = FUN C.Terminate
+  terminate = Sub (Prof id)
+  termUniv = Sq (Prof \(C.Terminate :.: f) -> (Id U.Unit :.: C.Terminate) \\ f)
+
+type instance InitialObject PROFK FUNK = VOID
+instance HasInitialObject PROFK FUNK where
+  type Initiate PROFK FUNK j = FUN C.Initiate
+  initiate = Sub (Prof id)
+  initUniv = Sq (Prof \case {})
+
+type instance Product PROFK FUNK a b = (a, b)
+instance HasBinaryProducts PROFK FUNK where
+  type Fst PROFK FUNK a b = FUN (C.FstCat)
+  type Snd PROFK FUNK a b = FUN (C.SndCat)
+  fstObj = Sub (Prof id)
+  sndObj = Sub (Prof id)
+  type ProdV PROFK FUNK (SUB (PK f)) (SUB (PK g)) = SUB (PK (f C.:&&&: g))
+  type ProdH PROFK FUNK (PK p) (PK q) = PK (p :**: q)
+  prodObj = Sub (Prof id)
+  prodUniv (Sq (Prof n)) (Sq (Prof m)) =
+    Sq
+      ( Prof
+          (\((f' C.:&&&: g') :.: p) -> case (n (f' :.: p), m (g' :.: p)) of (a :.: f, b :.: g) -> (a :**: b) :.: (f C.:&&&: g))
+      )
+
+type instance Coproduct PROFK FUNK a b = COPRODUCT a b
+instance HasBinaryCoproducts PROFK FUNK where
+  type Lft PROFK FUNK a b = FUN (C.LftCat)
+  type Rgt PROFK FUNK a b = FUN (C.RgtCat)
+  lftObj = Sub (Prof id)
+  rgtObj = Sub (Prof id)
+  type CoprodV PROFK FUNK (SUB (PK f)) (SUB (PK g)) = SUB (PK (f C.:|||: g))
+  type CoprodH PROFK FUNK (PK p) (PK q) = PK (p :++: q)
+  coprodObj = Sub (Prof id)
+  coprodUniv (Sq (Prof n)) (Sq (Prof m)) =
+    Sq
+      ( Prof
+          ( \(x :.: y) ->
+              case x of
+                C.InjLP f' -> case y of InjL p -> case n (f' :.: p) of p' :.: f -> p' :.: C.InjLP f
+                C.InjRP g' -> case y of InjR q -> case m (g' :.: q) of p' :.: g -> p' :.: C.InjRP g
+          )
+      )

@@ -1,27 +1,43 @@
-{-# OPTIONS_GHC -Wno-orphans #-}
-module Proarrow.Category.Instance.Coproduct (COPRODUCT, COLLAGE(..), (:++:), pattern InjL, pattern InjR) where
+module Proarrow.Category.Instance.Coproduct where
 
-import Prelude (type (~))
+import Data.Kind (Constraint)
 
-import Proarrow.Core (CAT, CategoryOf (..))
-import Proarrow.Profunctor.Initial (InitialProfunctor)
-import Proarrow.Category.Instance.Collage (COLLAGE(..), Collage(..))
-import Proarrow.Category.Dagger (DaggerProfunctor (..), Dagger)
+import Proarrow.Core (CategoryOf (..), type (+->), Profunctor, Promonad)
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow (Profunctor(..))
+import Proarrow.Promonad (Promonad(..))
 
-type COPRODUCT j k = COLLAGE (InitialProfunctor @j @k)
+type data COPRODUCT j k = L j | R k
 
-type (:++:) :: CAT j -> CAT k -> CAT (COPRODUCT j k)
-type (:++:) c d = Collage :: CAT (COPRODUCT j k)
+type (:++:) :: (j1 +-> k1) -> (j2 +-> k2) -> COPRODUCT j1 j2 +-> COPRODUCT k1 k2
+data (:++:) p q a b where
+  InjL :: p a b -> (p :++: q) (L a) (L b)
+  InjR :: q a b -> (p :++: q) (R a) (R b)
 
-pattern InjL :: () => (a' ~ L a, b' ~ L b) => a ~> b -> ((~>) :++: (~>)) a' b'
-pattern InjL f = InL f
+type IsLR :: forall {j} {k}. COPRODUCT j k -> Constraint
+class IsLR (a :: COPRODUCT j k) where
+  lrId :: (Promonad p, Promonad q) => (p :++: q) a a
+instance (Ob a) => IsLR (L a :: COPRODUCT j k) where
+  lrId = InjL id
+instance (Ob a) => IsLR (R a :: COPRODUCT j k) where
+  lrId = InjR id
 
-pattern InjR :: () => (a' ~ R a, b' ~ R b) => a ~> b -> ((~>) :++: (~>)) a' b'
-pattern InjR f = InR f
+instance (Profunctor p, Profunctor q) => Profunctor (p :++: q) where
+  dimap (InjL f) (InjL g) (InjL p) = InjL (dimap f g p)
+  dimap (InjR f) (InjR g) (InjR q) = InjR (dimap f g q)
+  dimap InjL{} InjR{} p = case p of
+  dimap InjR{} InjL{} q = case q of
+  r \\ InjL p = r \\ p
+  r \\ InjR q = r \\ q
+instance (Promonad p, Promonad q) => Promonad (p :++: q) where
+  id = lrId
+  InjL p . InjL q = InjL (p . q)
+  InjR q . InjR r = InjR (q . r)
+instance (CategoryOf j, CategoryOf k) => CategoryOf (COPRODUCT j k) where
+  type (~>) @(COPRODUCT j k) = (~>) @j :++: (~>) @k
+  type Ob (a :: COPRODUCT j k) = IsLR a
 
-{-# COMPLETE InjL, InjR #-}
-
-instance (Dagger j, Dagger k) => DaggerProfunctor ((~>) :++: (~>) :: CAT (COPRODUCT j k)) where
+instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :++: q) where
   dagger = \case
-    InL f -> InL (dagger f)
-    InR f -> InR (dagger f)
+    InjL f -> InjL (dagger f)
+    InjR f -> InjR (dagger f)

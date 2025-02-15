@@ -2,8 +2,13 @@
 
 module Proarrow.Category.Instance.Cat where
 
+import Data.Void (Void)
+import GHC.Base (Any)
+
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
+import Proarrow.Category.Instance.Zero (VOID, no)
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
@@ -12,7 +17,8 @@ import Proarrow.Category.Monoidal
   , swap
   )
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -24,9 +30,11 @@ import Proarrow.Object.BinaryProduct
   )
 import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), combineDual, compactClosedTrace)
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id)
+import Proarrow.Profunctor.Representable (Representable (..))
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
@@ -54,9 +62,30 @@ data Terminate a b where
 instance (CategoryOf k) => Profunctor (Terminate :: k +-> ()) where
   dimap Unit r Terminate = Terminate \\ r
   r \\ Terminate = r
+instance (CategoryOf k) => Representable (Terminate :: k +-> ()) where
+  type Terminate % a = '()
+  tabulate Unit = Terminate
+  index Terminate = Unit
+  repMap _ = Unit
 instance HasTerminalObject KIND where
   type TerminalObject = K ()
-  terminate' Cat = Cat @Terminate
+  terminate = Cat @Terminate
+
+type Initiate :: VOID +-> k
+data Initiate a b where
+  Initiate :: (Ob a, Ob b) => Void -> Initiate a b
+instance (CategoryOf k) => Profunctor (Initiate :: VOID +-> k) where
+  dimap _ _ = \case {}
+  (\\) _ = \case {}
+instance (CategoryOf k) => Representable (Initiate :: VOID +-> k) where
+  type Initiate % a = Any
+  tabulate = no
+  index = \case {}
+  repMap = \case {}
+
+instance HasInitialObject KIND where
+  type InitialObject = K VOID
+  initiate = Cat @Initiate
 
 type FstCat :: (j, k) +-> j
 data FstCat a b where
@@ -64,6 +93,11 @@ data FstCat a b where
 instance (CategoryOf j, CategoryOf k) => Profunctor (FstCat :: (j, k) +-> j) where
   dimap l (r1 :**: r2) (FstCat f) = FstCat (r1 . f . l) \\ r2
   r \\ FstCat f = r \\ f
+instance (CategoryOf j, CategoryOf k) => Representable (FstCat :: (j, k) +-> j) where
+  type FstCat % '(a, b) = a
+  tabulate = FstCat
+  index (FstCat f) = f
+  repMap (f :**: _) = f
 
 type SndCat :: (j, k) +-> k
 data SndCat a b where
@@ -71,6 +105,11 @@ data SndCat a b where
 instance (CategoryOf j, CategoryOf k) => Profunctor (SndCat :: (j, k) +-> k) where
   dimap l (r1 :**: r2) (SndCat f) = SndCat (r2 . f . l) \\ r1
   r \\ SndCat f = r \\ f
+instance (CategoryOf j, CategoryOf k) => Representable (SndCat :: (j, k) +-> k) where
+  type SndCat % '(a, b) = b
+  tabulate = SndCat
+  index (SndCat f) = f
+  repMap (_ :**: f) = f
 
 type (:&&&:) :: (k +-> i) -> (k +-> j) -> (k +-> (i, j))
 data (p :&&&: q) a b where
@@ -78,12 +117,69 @@ data (p :&&&: q) a b where
 instance (Profunctor p, Profunctor q) => Profunctor (p :&&&: q) where
   dimap (l1 :**: l2) r (p :&&&: q) = dimap l1 r p :&&&: dimap l2 r q
   r \\ (p :&&&: q) = r \\ p \\ q
+instance (Representable p, Representable q) => Representable (p :&&&: q) where
+  type (p :&&&: q) % a = '(p % a, q % a)
+  tabulate (p :**: q) = tabulate p :&&&: tabulate q
+  index (p :&&&: q) = index p :**: index q
+  repMap f = repMap @p f :**: repMap @q f
 
 instance HasBinaryProducts KIND where
   type l && r = K (UN K l, UN K r)
   fst = Cat @FstCat
   snd = Cat @SndCat
   Cat @p &&& Cat @q = Cat @(p :&&&: q)
+
+type LftCat :: j +-> COPRODUCT j k
+data LftCat a b where
+  LftCat :: a ~> b -> LftCat (L a) b
+instance (CategoryOf j, CategoryOf k) => Profunctor (LftCat :: j +-> COPRODUCT j k) where
+  dimap (InjL l) r (LftCat f) = LftCat (r . f . l)
+  dimap (InjR _) _ f = case f of {}
+  r \\ LftCat f = r \\ f
+instance (CategoryOf j, CategoryOf k) => Representable (LftCat :: j +-> COPRODUCT j k) where
+  type LftCat % a = L a
+  tabulate (InjL f) = LftCat f
+  index (LftCat f) = InjL f
+  repMap = InjL
+
+type RgtCat :: k +-> COPRODUCT j k
+data RgtCat a b where
+  RgtCat :: a ~> b -> RgtCat (R a) b
+instance (CategoryOf j, CategoryOf k) => Profunctor (RgtCat :: k +-> COPRODUCT j k) where
+  dimap (InjR l) r (RgtCat f) = RgtCat (r . f . l)
+  dimap (InjL _) _ f = case f of {}
+  r \\ RgtCat f = r \\ f
+instance (CategoryOf j, CategoryOf k) => Representable (RgtCat :: k +-> COPRODUCT j k) where
+  type RgtCat % a = R a
+  tabulate (InjR f) = RgtCat f
+  index (RgtCat f) = InjR f
+  repMap = InjR
+
+type (:|||:) :: (i +-> k) -> (j +-> k) -> (COPRODUCT i j +-> k)
+data (p :|||: q) a b where
+  InjLP :: p a b -> (p :|||: q) a (L b)
+  InjRP :: q a b -> (p :|||: q) a (R b)
+instance (Profunctor p, Profunctor q) => Profunctor (p :|||: q) where
+  dimap l (InjL r) (InjLP p) = InjLP (dimap l r p)
+  dimap l (InjR r) (InjRP p) = InjRP (dimap l r p)
+  r \\ InjLP p = r \\ p
+  r \\ InjRP q = r \\ q
+instance (Representable p, Representable q) => Representable (p :|||: q) where
+  type (p :|||: q) % L a = p % a
+  type (p :|||: q) % R a = q % a
+  tabulate @b f = case obj @b of
+    InjL l -> InjLP (tabulate @p f) \\ l
+    InjR r -> InjRP (tabulate @q f) \\ r
+  index (InjLP p) = index p
+  index (InjRP q) = index q
+  repMap (InjL f) = repMap @p f
+  repMap (InjR f) = repMap @q f
+
+instance HasBinaryCoproducts KIND where
+  type K l || K r = K (COPRODUCT l r)
+  lft = Cat @LftCat
+  rgt = Cat @RgtCat
+  Cat @p ||| Cat @q = Cat @(p :|||: q)
 
 instance MonoidalProfunctor Cat where
   par0 = id
