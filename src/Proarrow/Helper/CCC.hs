@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Helper.CCC (toCCC, lam, ($), lift, pattern (:&), left, right, either, FreeCCC, InitF, TermF, type (*), type (+), FK(..)) where
+module Proarrow.Helper.CCC (toCCC, lam, ($), lift, pattern (:&), left, right, either, FreeCCC, InitF, TermF, type (*), type (+), type (-->), FK(..)) where
 
 import Data.Kind (Constraint)
 import Prelude (type (~))
@@ -45,11 +45,14 @@ lam f = curry @i @a @b (f snd_)
 ($) :: forall {k} i a b. (CCC k, Ob b) => (i :: k) ~> (a ~~> b) -> i ~> a -> i ~> b
 ($) f a = eval @a @b . (f &&& a) \\ a
 
-lift :: forall {k} (i :: k) a b. (CCC k) => a ~> b -> i ~> a -> i ~> b
-lift = (.)
+lift :: forall {k} (a :: FK k) b i. (BiCCC k, Ob a, Ob b) => FromFree a ~> FromFree b -> i ~> a -> i ~> b
+lift f = lift' (L f)
+
+lift' :: forall {k} (i :: k) a b. (CCC k) => a ~> b -> i ~> a -> i ~> b
+lift' = (.)
 
 fstSnd :: forall {k} (i :: k) a b. (CCC k, Ob a, Ob b) => i ~> a && b -> (i ~> a, i ~> b)
-fstSnd f = (lift (fst @k @a @b) f, lift (snd @k @a @b) f)
+fstSnd f = (lift' (fst @k @a @b) f, lift' (snd @k @a @b) f)
 
 pattern (:&) :: forall {k} i a b. (CCC k, Ob (a :: k), Ob b) => (i ~> a) -> (i ~> b) -> i ~> a && b
 pattern x :& y <- (fstSnd @i @a @b -> (x, y))
@@ -100,6 +103,7 @@ data FreeCCC :: CAT (FK k) where
   Curry :: (Ob a, Ob b) => FreeCCC (a * b) c -> FreeCCC a (b --> c)
   Uncurry :: (Ob b, Ob c) => FreeCCC a (b --> c) -> FreeCCC (a * b) c
   Ex :: FreeCCC b y -> FreeCCC x a -> FreeCCC (a --> b) (x --> y)
+  L :: (Ob a, Ob b) => FromFree a ~> FromFree b -> FreeCCC a b
 
 instance P.Show (FreeCCC a b) where
   show Id = "id"
@@ -115,6 +119,7 @@ instance P.Show (FreeCCC a b) where
   show (Curry f) = "(" P.++ "curry " P.++ P.show f P.++ ")"
   show (Uncurry f) = "(" P.++ "uncurry " P.++ P.show f P.++ ")"
   show (Ex f g) = "(" P.++ "ex " P.++ P.show f P.++ " " P.++ P.show g P.++ ")"
+  show (L _) = "<arrow>"
 
 type family FromFree (t :: FK k) :: k where
   FromFree (F a) = a
@@ -161,6 +166,7 @@ instance (BiCCC k) => Profunctor (FreeCCC :: CAT (FK k)) where
   r \\ Curry f = r \\ f
   r \\ Uncurry f = r \\ f
   r \\ Ex f g = r \\ f \\ g
+  r \\ L f = r \\ f
 instance (BiCCC k) => Promonad (FreeCCC :: CAT (FK k)) where
   id = fkId
   Id . r = r
@@ -239,6 +245,7 @@ fromFree (Prd f g) = (fromFree f &&& fromFree g) \\ f \\ g
 fromFree (Curry @a @b f) = curry' (fromFreeObj @a) (fromFreeObj @b) (fromFree f) \\ f
 fromFree (Uncurry @b @c f) = uncurry' (fromFreeObj @b) (fromFreeObj @c) (fromFree f) \\ f
 fromFree (Ex f g) = fromFree f ^^^ fromFree g \\ f \\ g
+fromFree (L f) = f
 
 -- | Adapted from Phil Freeman: https://blog.functorial.com/posts/2017-10-08-HOAS-CCCs.html
 toCCC :: forall {k} a b. (BiCCC k) => (Ob (a :: FK k), Ob b) => (TermF ~> (a --> b)) -> FromFree a ~> FromFree b

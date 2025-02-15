@@ -28,7 +28,7 @@ instance (MonoidalProfunctor p) => MonoidalProfunctor (Rev p) where
 
 instance (Monoidal k) => Monoidal (REV k) where
   type Unit = R Unit
-  type (R a) ** (R b) = R (b ** a)
+  type R a ** R b = R (b ** a)
   leftUnitor = Rev rightUnitor
   leftUnitorInv = Rev rightUnitorInv
   rightUnitor = Rev leftUnitor

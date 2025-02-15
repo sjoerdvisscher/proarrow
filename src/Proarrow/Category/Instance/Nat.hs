@@ -102,7 +102,7 @@ instance Monoidal (Type -> Type) where
   associator = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv = Nat (Compose . Compose . map getCompose . getCompose)
 
-instance Strong ((Nat :: CAT (Type -> Type))) (->) where
+instance Strong (Type -> Type) (->) where
   act (Nat n) f = n . map f
 instance MonoidalAction (Type -> Type) Type where
   type Act (p :: Type -> Type) (x :: Type) = p x

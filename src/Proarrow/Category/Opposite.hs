@@ -99,7 +99,7 @@ instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +
   dimap l r = UnOp . dimap (Op r) (Op l) . unUnOp
   r \\ UnOp f = r \\ f
 
-instance Strong w p => Strong (Op w) (Op p) where
+instance Strong k p => Strong (OPPOSITE k) (Op p) where
   act (Op w) (Op p) = Op (act w p)
 instance MonoidalAction m k => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   type Act (OP a) (OP b) = OP (Act a b)

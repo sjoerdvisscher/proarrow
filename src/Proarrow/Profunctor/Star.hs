@@ -52,7 +52,7 @@ instance (Alternative f, Cartesian k, Cocartesian j) => MonoidalProfunctor (Copr
   par0 = Co (Star empty)
   Co (Star @a f) `par` Co (Star @b g) = let ab = obj @a +++ obj @b in Co (Star (alt @f @a @b ab . (f `par` g))) \\ ab
 
-instance (Functor (f :: Type -> Type)) => Strong (->) (Star f) where
+instance (Functor (f :: Type -> Type)) => Strong Type (Star f) where
   act f (Star k) = Star (\(a, x) -> map (f a,) (k x))
 
 strength :: forall f a b. (Functor f, StrongProd (Star f), Ob a, Ob b) => a && f b ~> f (a && b)

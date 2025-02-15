@@ -1,26 +1,54 @@
 module Proarrow.Promonad.Reader where
 
-import Prelude (Monoid (..), fmap, snd, (<>))
-
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (Profunctor (..), Promonad (..))
-import Proarrow.Object.BinaryProduct ()
+import Proarrow.Adjunction (Adjunction (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), leftUnitorInvWith, obj2)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Helper.CCC
+  ( FK (F)
+  , lam
+  , lift
+  , toCCC
+  , pattern (:&)
+  , type (*)
+  )
+import Proarrow.Monoid (Monoid (..))
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), associatorProdInv)
+import Proarrow.Object.Exponential (BiCCC)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Promonad.Writer (Writer (..))
 
-newtype Reader r a b = Reader {unReader :: (r, a) -> b}
+data Reader r a b where
+  Reader :: (Ob a, Ob b) => (r && a) ~> b -> Reader r a b
 
-instance Profunctor (Reader r) where
-  dimap l r (Reader f) = Reader (r . f . fmap l)
+instance (BiCCC k, Ob r) => Profunctor (Reader r :: k +-> k) where
+  dimap l r (Reader f) = Reader (r . f . (obj @r *** l)) \\ r \\ l
+  r \\ Reader f = r \\ f
 
-instance Promonad (Reader r) where
-  id = Reader snd
-  Reader g . Reader f = Reader \(r, a) -> g (r, f (r, a))
+instance (BiCCC k, Ob r) => Promonad (Reader r :: k +-> k) where
+  id = Reader (snd @k @r)
+  Reader @b @c g . Reader @a f = Reader (toCCC @(F r * F a) @(F c) (lam \(r :& a) -> lift @(F r * F b) g (r :& lift f (r :& a))))
 
-instance (Monoid m) => Procomonad (Reader m) where
-  extract (Reader f) a = f (mempty, a)
-  duplicate (Reader f) = Reader id :.: Reader \(m1, (m2, a)) -> f (m1 <> m2, a)
+instance (Monoid m, BiCCC k) => Procomonad (Reader m :: k +-> k) where
+  extract (Reader f) = f . leftUnitorInvWith (mempty @m)
+  duplicate (Reader @a f) = Reader id :.: Reader (f . ((mappend :: m && m ~> m) *** obj @a) . associatorProdInv @m @m @a) \\ f
 
-instance MonoidalProfunctor (Reader r) where
+instance (BiCCC k, Ob r) => MonoidalProfunctor (Reader r :: k +-> k) where
   par0 = id
-  Reader f `par` Reader g = Reader \(r, (a, b)) -> (f (r, a), g (r, b))
+  Reader @x1 @x2 f `par` Reader @y1 @y2 g =
+    Reader
+      ( ( toCCC @(F r * (F x1 * F y1)) @(F x2 * F y2)
+            ( lam \(r :& (x :& y)) ->
+                let f' = lift @(F r * F x1) f
+                    g' = lift @(F r * F y1) g
+                in f' (r :& x) :& g' (r :& y)
+            )
+        )
+          . (obj @r *** (obj2 @x1 @y1 :: x1 ** y1 ~> x1 && y1))
+      )
+      \\ obj2 @x1 @y1
+      \\ obj2 @x2 @y2
+
+instance (BiCCC k, Ob r) => Adjunction (Writer r :: k +-> k) (Reader r) where
+  unit @a = Reader id :.: Writer id \\ (obj @r *** obj @a)
+  counit (Writer f :.: Reader g) = g . f

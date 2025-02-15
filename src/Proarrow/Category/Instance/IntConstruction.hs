@@ -34,6 +34,9 @@ data IntConstruction a b where
 toInt :: forall {k} (a :: k) b. (TracedMonoidal k, Ob (Unit :: k)) => (a ~> b) -> I a Unit ~> I b Unit
 toInt f = Int (swap @b @Unit . (f `par` obj @Unit)) \\ f
 
+isoToInt :: forall {k} (a :: k) b. (TracedMonoidal k) => (a ~> b) -> (b ~> a) -> I a a ~> I b b
+isoToInt f g = Int (swap @b @a . (f `par` g)) \\ f \\ g
+
 fromInt :: forall {k} (a :: k) b m. (TracedMonoidal k) => (I a m ~> I b m) -> a ~> b
 fromInt (Int f) = trace @(~>) @m @a @b (swap @m @b . f)
 

@@ -227,3 +227,24 @@ unit = Linear \() -> Par \(na, nna) -> nna na
 
 counit :: L (Not a, a) ~> L ()
 counit = Linear \(na, a) -> na a
+
+
+type p !~> q = forall a b. p a b %1 -> q a b
+
+type NegComp :: (j +-> k) -> (i +-> j) -> (i +-> k)
+data NegComp p q a c where
+  NegComp :: (forall b. Par (p a b) (q b c)) %1 -> NegComp p q a c
+
+newtype Neg p a b = Neg (Not (p b a))
+
+getNeg :: Neg p a b %1 -> Not (p b a)
+getNeg (Neg f) = f
+
+conv1 :: NegComp p q !~> Neg (Neg q :.: Neg p)
+conv1 (NegComp e) = Neg \(Neg nq :.: Neg np) -> case e of Par e' -> e' (np, nq)
+
+conv2 :: Neg (Neg q :.: Neg p) !~> NegComp p q
+conv2 (Neg f) = NegComp (Par (\(np, nq) -> f (Neg nq :.: Neg np)))
+
+asCocat :: (Neg p :.: Neg p !~> Neg p) -> p !~> NegComp p p
+asCocat comp p = NegComp (Par \(np1, np2) -> getNeg (comp (Neg np2 :.: Neg np1)) p)

@@ -175,7 +175,7 @@ instance Monoidal Type where
 instance SymMonoidal Type where
   swap' = swapProd'
 
-instance Strong (->) (->) where
+instance Strong Type (->) where
   act = par
 instance MonoidalAction Type Type where
   type Act p x = p ** x
@@ -204,7 +204,7 @@ instance Monoidal () where
 instance SymMonoidal () where
   swap' = swapProd'
 
-instance Strong U.Unit U.Unit where
+instance Strong () U.Unit where
   act = par
 instance MonoidalAction () () where
   type Act p x = p ** x
@@ -218,12 +218,12 @@ instance TracedMonoidalProfunctor U.Unit where
 
 class (Act a b ~ a && b) => ActIsProd a b
 instance (Act a b ~ a && b) => ActIsProd a b
-class (Strong ((~>) :: CAT k) p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
-instance (Strong ((~>) :: CAT k) p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
+class (Strong k p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
+instance (Strong k p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
 
 first' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (a && c) (b && c)
 first' p = dimap (swapProd @_ @a @c) (swapProd @_ @c @b) (second' @_ @c p) \\ p
 
 second' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (c && a) (c && b)
-second' p = act @((~>) :: CAT k) (obj @c) p
+second' p = act (obj @c) p
 

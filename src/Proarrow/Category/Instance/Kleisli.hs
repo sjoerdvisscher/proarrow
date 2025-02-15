@@ -6,7 +6,7 @@ module Proarrow.Category.Instance.Kleisli where
 
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Adjunction qualified as Adj
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Distributive (distL)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
@@ -20,6 +20,7 @@ import Proarrow.Core
   , dimapDefault
   , lmap
   , rmap
+  , tgt
   , type (+->)
   )
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), codiag)
@@ -37,6 +38,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   , second'
+  , swapProd'
   )
 import Proarrow.Object.Exponential (BiCCC)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -99,10 +101,12 @@ instance (Promonad p, StrongProd p) => Monoidal (KLEISLI (p :: k +-> k)) where
   rightUnitorInv = arr rightUnitorProdInv
   associator @(KL a) @(KL b) @(KL c) = arr (associatorProd @a @b @c)
   associatorInv @(KL a) @(KL b) @(KL c) = arr (associatorProdInv @a @b @c)
+instance (Promonad p, StrongProd p) => SymMonoidal (KLEISLI (p :: k +-> k)) where
+  swap' l@(Kleisli pl) r@(Kleisli pr) = arr (swapProd' (tgt pl) (tgt pr)) . (l `par` r)
 
-instance (Strong w p, Strong ((~>) :: CAT k) p, Promonad p, Monoidal k) => Strong (w :: k +-> k) (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
+instance (Strong k p, Promonad p, Monoidal k) => Strong k (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
   act f (Kleisli p) = Kleisli (act f p)
-instance (Strong ((~>) :: CAT k) p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p :: k +-> k)) where
+instance (Strong k p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p :: k +-> k)) where
   type Act y (KL x) = KL (Act y x)
   unitor = arr (unitor @k)
   unitorInv = arr (unitorInv @k)

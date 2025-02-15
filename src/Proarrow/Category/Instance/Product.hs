@@ -72,7 +72,7 @@ instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j, k) where
   swap' (a1 :**: a2) (b1 :**: b2) = swap' a1 b1 :**: swap' a2 b2
 
-instance (Strong v p, Strong w q) => Strong (v :**: w) (p :**: q) where
+instance (Strong m p, Strong m' q) => Strong (m, m') (p :**: q) where
   act (p :**: q) (x :**: y) = act p x :**: act q y
 instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
   type Act '(p, q) '(x, y) = '(Act p x, Act q y)
