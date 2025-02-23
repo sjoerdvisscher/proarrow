@@ -4,10 +4,11 @@ module Proarrow.Category.Monoidal.Endo where
 
 import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
-import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), dimapRan)
+import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapRan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object.Coexponential (Coclosed (..))
 import Proarrow.Object.Exponential (Closed (..))
 
 type data ENDO (kk :: CAT j) (k :: j) = E (kk k k)
@@ -45,11 +46,22 @@ instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
   associator @(E p) @(E q) @(E r) = mkEndo (B.associator @kk @p @q @r)
   associatorInv @(E p) @(E q) @(E r) = mkEndo (B.associatorInv @kk @p @q @r)
 
-instance (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanExtension f g) => Closed (ENDO kk k) where
+instance
+  (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => RightKanExtension f g)
+  => Closed (ENDO kk k)
+  where
   type E f ~~> E g = E (Ran f g)
   curry' (Endo @g g) (Endo @j j) (Endo h) = Endo (ranUniv @j @_ @g h) \\ g \\ j \\ h
   uncurry' (Endo @j j) (Endo @f f) (Endo h) = Endo (ran @j @f . (h `o` j)) \\ j \\ f
   (^^^) (Endo f) (Endo g) = Endo (dimapRan g f) \\ f \\ g
+
+instance
+  (Bicategory kk, Ob0 kk k, Ob (I :: kk k k), forall (f :: kk k k) (g :: kk k k). (Ob f, Ob g) => LeftKanExtension f g)
+  => Coclosed (ENDO kk k)
+  where
+  type E f <~~ E g = E (Lan g f)
+  coeval' (Endo @g g) (Endo @j j) = Endo (lan @j @g) \\ g \\ j
+  coevalUniv' (Endo @j j) (Endo @f f) (Endo h) = Endo (lanUniv @j @_ @f h) \\ j \\ f \\ h
 
 -- | Monads are monoids in the category of endo-1-cells.
 instance (Bicategory kk, Ob (I :: kk a a), Monad m, Ob m) => Monoid (E m :: ENDO kk a) where

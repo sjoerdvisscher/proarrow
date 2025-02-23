@@ -6,7 +6,7 @@ import Data.Kind (Constraint)
 import Prelude (type (~))
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -17,7 +17,9 @@ import Proarrow.Object.BinaryProduct
   , leftUnitorProd
   , leftUnitorProdInv
   , rightUnitorProd
-  , rightUnitorProdInv, swapProd
+  , rightUnitorProdInv
+  , swapProd
+  , swapProd'
   )
 import Proarrow.Object.Exponential (BiCCC, CCC, Closed (..), curry, eval, lower, uncurry)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -220,6 +222,8 @@ instance (BiCCC k) => Monoidal (FK k) where
   rightUnitorInv = rightUnitorProdInv
   associator = associatorProd
   associatorInv = associatorProdInv
+instance (BiCCC k) => SymMonoidal (FK k) where
+  swap' = swapProd'
 instance (BiCCC k) => Closed (FK k) where
   type a ~~> b = a --> b
   curry' _ _ (Uncurry f) = f

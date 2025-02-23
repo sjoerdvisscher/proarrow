@@ -3,10 +3,11 @@ module Proarrow.Profunctor.Composition where
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->), tgt)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepObj)
 import Proarrow.Profunctor.Representable (Representable (..), withRepObj)
+import Proarrow.Category.Monoidal.Action (Strong (..))
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
@@ -42,6 +43,9 @@ instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) whe
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
   par0 = par0 :.: par0
   (p :.: q) `par` (r :.: s) = (p `par` r) :.: (q `par` s)
+
+instance (Strong m p, Strong m q) => Strong m (p :.: q) where
+  act f (p :.: q) = act f p :.: act (tgt f) q
 
 -- | Horizontal composition
 o

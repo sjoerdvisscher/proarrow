@@ -1,54 +1,62 @@
 module Proarrow.Promonad.Reader where
 
 import Proarrow.Adjunction (Adjunction (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), leftUnitorInvWith, obj2)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
-import Proarrow.Helper.CCC
-  ( FK (F)
-  , lam
-  , lift
-  , toCCC
-  , pattern (:&)
-  , type (*)
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , first
+  , obj2
+  , second
+  , unitObj, swap
   )
-import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), associatorProdInv)
-import Proarrow.Object.Exponential (BiCCC)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Functor (Functor (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..), comultAct, counitAct, mappendAct, memptyAct)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
 import Proarrow.Promonad.Writer (Writer (..))
 
 data Reader r a b where
-  Reader :: (Ob a, Ob b) => (r && a) ~> b -> Reader r a b
+  Reader :: (Ob a, Ob b) => Act r a ~> b -> Reader (OP r) a b
 
-instance (BiCCC k, Ob r) => Profunctor (Reader r :: k +-> k) where
-  dimap l r (Reader f) = Reader (r . f . (obj @r *** l)) \\ r \\ l
+instance (Ob (r :: m), MonoidalAction m k) => Profunctor (Reader (OP r) :: k +-> k) where
+  dimap l r (Reader f) = Reader (r . f . (act (obj @r) l)) \\ r \\ l
   r \\ Reader f = r \\ f
 
-instance (BiCCC k, Ob r) => Promonad (Reader r :: k +-> k) where
-  id = Reader (snd @k @r)
-  Reader @b @c g . Reader @a f = Reader (toCCC @(F r * F a) @(F c) (lam \(r :& a) -> lift @(F r * F b) g (r :& lift f (r :& a))))
+instance (MonoidalAction m k) => Functor (Reader :: OPPOSITE m -> k +-> k) where
+  map (Op f) = f // Prof \(Reader @a g) -> Reader (g . act f (obj @a))
 
-instance (Monoid m, BiCCC k) => Procomonad (Reader m :: k +-> k) where
-  extract (Reader f) = f . leftUnitorInvWith (mempty @m)
-  duplicate (Reader @a f) = Reader id :.: Reader (f . ((mappend :: m && m ~> m) *** obj @a) . associatorProdInv @m @m @a) \\ f
+instance (Comonoid (r :: m), MonoidalAction m k) => Promonad (Reader (OP r) :: k +-> k) where
+  id = Reader (counitAct @r)
+  Reader g . Reader @a f = Reader (g . act (obj @r) f . comultAct @r @a)
 
-instance (BiCCC k, Ob r) => MonoidalProfunctor (Reader r :: k +-> k) where
-  par0 = id
+instance (Monoid (r :: m), MonoidalAction m k) => Procomonad (Reader (OP r) :: k +-> k) where
+  extract (Reader f) = f . memptyAct @r
+  duplicate (Reader @a f) = Reader id :.: Reader (f . mappendAct @r @a) \\ f
+
+instance (Ob (r :: m), MonoidalAction m k, SymMonoidal m) => Strong m (Reader (OP r) :: k +-> k) where
+  act @a @b @x @y f (Reader g) =
+    Reader (act f g . multiplicatorInv @m @k @a @r @x . act (swap @r @a) (obj @x) . multiplicator @m @k @r @a @x)
+      \\ act (obj @a) (obj @x)
+      \\ act (obj @b) (obj @y)
+      \\ f
+
+instance (Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (Reader (OP r) :: k +-> k) where
+  par0 = id \\ unitObj @k
   Reader @x1 @x2 f `par` Reader @y1 @y2 g =
     Reader
-      ( ( toCCC @(F r * (F x1 * F y1)) @(F x2 * F y2)
-            ( lam \(r :& (x :& y)) ->
-                let f' = lift @(F r * F x1) f
-                    g' = lift @(F r * F y1) g
-                in f' (r :& x) :& g' (r :& y)
-            )
-        )
-          . (obj @r *** (obj2 @x1 @y1 :: x1 ** y1 ~> x1 && y1))
+      ( second @x2 g
+          . associator @k @x2 @r @y1
+          . ((swap' @k (obj @r) f . associator @k @r @r @x1 . first @x1 (comult @r)) `par` obj @y1)
+          . associatorInv @k @r @x1 @y1
       )
       \\ obj2 @x1 @y1
       \\ obj2 @x2 @y2
 
-instance (BiCCC k, Ob r) => Adjunction (Writer r :: k +-> k) (Reader r) where
-  unit @a = Reader id :.: Writer id \\ (obj @r *** obj @a)
+instance (Ob (r :: m), MonoidalAction m k) => Adjunction (Writer r :: k +-> k) (Reader (OP r)) where
+  unit @a = Reader id :.: Writer id \\ act (obj @r) (obj @a)
   counit (Writer f :.: Reader g) = g . f

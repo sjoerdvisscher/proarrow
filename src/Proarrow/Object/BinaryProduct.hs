@@ -16,7 +16,7 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , TracedMonoidalProfunctor (..)
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), SelfAction)
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, src, type (+->))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -59,8 +59,8 @@ type HasProducts k = (HasTerminalObject k, HasBinaryProducts k)
 
 class (a ** b ~ a && b) => TensorIsProduct a b
 instance (a ** b ~ a && b) => TensorIsProduct a b
-class (HasProducts k, Monoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
-instance (HasProducts k, Monoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
+class (HasProducts k, SymMonoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
+instance (HasProducts k, SymMonoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
 
 instance HasBinaryProducts Type where
   type a && b = (a, b)
@@ -218,8 +218,12 @@ instance TracedMonoidalProfunctor U.Unit where
 
 class (Act a b ~ a && b) => ActIsProd a b
 instance (Act a b ~ a && b) => ActIsProd a b
-class (Strong k p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
-instance (Strong k p, HasProducts k, forall (a :: k) (b :: k). ActIsProd a b) => StrongProd (p :: CAT k)
+class (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c
+instance (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c
+class (Cartesian k, SelfAction k, forall (a :: k) (b :: k). ActIsProd a b, forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c) => ProdAction k
+instance (Cartesian k, SelfAction k, forall (a :: k) (b :: k). ActIsProd a b, forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c) => ProdAction k
+class (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
+instance (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
 
 first' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (a && c) (b && c)
 first' p = dimap (swapProd @_ @a @c) (swapProd @_ @c @b) (second' @_ @c p) \\ p

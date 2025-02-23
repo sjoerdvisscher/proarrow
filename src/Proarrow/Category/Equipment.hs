@@ -47,7 +47,7 @@ instance (Adjunction (Companion hk f) (Conjoint hk f)) => ComConAdjunction hk vk
 
 type Equipment :: forall {c}. CAT c -> CAT c -> Constraint
 class (HasCompanions hk vk) => Equipment hk vk | hk -> vk where
-  {-# MINIMAL mapConjoint, (conjToId, conjFromId, conjToCompose, conjFromCompose | comConUnit, comConCounit) #-}
+  {-# MINIMAL mapConjoint #-}
   type Conjoint hk (f :: vk j k) :: hk k j
   mapConjoint :: forall {j} {k} (f :: vk j k) g. f ~> g -> Conjoint hk g ~> Conjoint hk f
 

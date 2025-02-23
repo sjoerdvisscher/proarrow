@@ -1,7 +1,6 @@
 module Proarrow.Category.Bicategory.Prof where
 
 import Data.Kind (Constraint, Type)
-import Prelude (($))
 
 import Data.Proxy (Proxy (..))
 import Data.Reflection (Reifies (..), reify)
@@ -89,14 +88,14 @@ instance Bicategory PROFK where
   type Ob0 PROFK k = CategoryOf k
   type I = PK Id
   type p `O` q = PK (UN PK p :.: UN PK q)
-  Prof m `o` Prof n = Prof $ \(p :.: q) -> m p :.: n q
+  Prof m `o` Prof n = Prof \(p :.: q) -> m p :.: n q
   r \\\ Prof{} = r
-  leftUnitor = Prof $ \(Id h :.: q) -> lmap h q
-  leftUnitorInv = Prof $ \p -> Id (src p) :.: p
-  rightUnitor = Prof $ \(p :.: Id h) -> rmap h p
-  rightUnitorInv = Prof $ \p -> p :.: Id (tgt p)
-  associator = Prof $ \((p :.: q) :.: r) -> p :.: (q :.: r)
-  associatorInv = Prof $ \(p :.: (q :.: r)) -> (p :.: q) :.: r
+  leftUnitor = Prof \(Id h :.: q) -> lmap h q
+  leftUnitorInv = Prof \p -> Id (src p) :.: p
+  rightUnitor = Prof \(p :.: Id h) -> rmap h p
+  rightUnitorInv = Prof \p -> p :.: Id (tgt p)
+  associator = Prof \((p :.: q) :.: r) -> p :.: (q :.: r)
+  associatorInv = Prof \(p :.: (q :.: r)) -> (p :.: q) :.: r
 
 data ProfRep
 type instance IsOb ProfRep p = Representable (UN PK p)
@@ -205,7 +204,7 @@ type ProfSq p q f g = Sq '(PK p, FUN g) '(PK q, FUN f)
 -- > |   v   |
 -- > K-InjL-Col
 isCotabulator :: (Profunctor p) => ProfSq p Col.Collage (Col.InjR p) (Col.InjL p)
-isCotabulator = Sq $ Prof $ \(Col.InjL f :.: p) -> f :.: Col.InjR (Col.L2R p) \\ p
+isCotabulator = Sq (Prof \(Col.InjL f :.: p) -> f :.: Col.InjR (Col.L2R p) \\ p)
 
 -- | Any 2-cell of shape p(a, b) -> e(f a, g b) factors through the cotabulator 2-cell.
 --
@@ -248,7 +247,7 @@ cotabulatorFactorize
        -> r
      )
   -> r
-cotabulatorFactorize sq f = reify sq $ \(Proxy @s) -> f (vArr $ obj @(FUN (CotabulatorFactorizer s p f g)))
+cotabulatorFactorize sq f = reify sq \(Proxy @s) -> f (vArr (obj @(FUN (CotabulatorFactorizer s p f g))))
 
 type instance Bi.TerminalObject FUNK = ()
 instance Bi.HasTerminalObject FUNK where

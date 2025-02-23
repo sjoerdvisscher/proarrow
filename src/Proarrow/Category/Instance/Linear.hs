@@ -202,6 +202,7 @@ multQuest (Quest f) = Quest \(Ur na) -> f (Ur (\(Quest nuna) -> nuna (Ur na)))
 questPar :: Par (Quest a) (Quest b) %1 -> Quest (Either a b)
 questPar (Par f) = Quest (\(Ur g) -> f (\(Quest nuna) -> nuna (Ur (\a -> g (Left a))), \(Quest nunb) -> nunb (Ur (\b -> g (Right b)))))
 
+-- LINEAR is not CompactClosed.
 instance StarAutonomous LINEAR where
   type Dual (L a) = L (Not a)
   dual (Linear f) = Linear (\nb a -> nb (f a))

@@ -3,6 +3,7 @@
 module Proarrow.Category.Monoidal.Action where
 
 import Data.Kind (Constraint)
+import Prelude (type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
@@ -19,6 +20,13 @@ class (Monoidal m, CategoryOf k, Strong m ((~>) :: CAT k)) => MonoidalAction m k
   unitorInv :: (Ob (x :: k)) => x ~> Act (Unit :: m) x
   multiplicator :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act a (Act b x) ~> Act (a ** b) x
   multiplicatorInv :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act (a ** b) x ~> Act a (Act b x)
+
+class (Act a b ~ a ** b) => ActIsTensor a b
+instance (Act a b ~ a ** b) => ActIsTensor a b
+class (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
+instance (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
+class (MonoidalAction k k, forall (a :: k) (b :: k). ActIsTensor a b, forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c) => SelfAction k
+instance (MonoidalAction k k, forall (a :: k) (b :: k). ActIsTensor a b, forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c) => SelfAction k
 
 composeActs
   :: forall {m} {k} (x :: m) y (c :: k) a b
