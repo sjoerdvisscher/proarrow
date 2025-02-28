@@ -8,10 +8,12 @@ import Proarrow.Core (PRO, Profunctor (..), Promonad (..), (:~>))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Category.Monoidal.Distributive (Traversable (..))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 
 type Fix :: PRO k k -> PRO k k
-newtype Fix p a b where
-  In :: {out :: (p :.: Fix p) a b} -> Fix p a b
+data Fix p a b where
+  In :: {out :: ~((p :.: Fix p) a b)} -> Fix p a b
 
 instance (Profunctor p) => Profunctor (Fix p) where
   dimap l r = In . dimap l r . out \\ l \\ r
@@ -19,6 +21,13 @@ instance (Profunctor p) => Profunctor (Fix p) where
 
 instance Functor Fix where
   map n@Prof{} = Prof (In . unProf (unNat (map n) . map (map n)) . out)
+
+instance MonoidalProfunctor p => MonoidalProfunctor (Fix p) where
+  par0 = In par0
+  In p `par` In q = In (p `par` q)
+
+instance Traversable p => Traversable (Fix p) where
+  traverse (In pfp :.: r) = case traverse (pfp :.: r) of r' :.: pfp' -> r' :.: In pfp'
 
 hylo :: (Profunctor p, Profunctor a, Profunctor b) => (p :.: b :~> b) -> (a :~> p :.: a) -> a :~> b
 hylo alg coalg = unProf go where go = Prof alg . map go . Prof coalg

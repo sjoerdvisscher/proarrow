@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Profunctor.Star where
 
 import Data.Functor.Compose (Compose (..))
@@ -7,13 +8,15 @@ import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
-import Proarrow.Category.Monoidal.Applicative (Applicative (..), Alternative (..))
+import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Cocartesian, Coprod (..), HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), StrongProd)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
-import Proarrow.Object.BinaryCoproduct (Cocartesian, COPROD(..), Coprod (..), HasBinaryCoproducts (..))
+import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
+import Proarrow.Category.Instance.Nat (Nat(..))
 
 type Star :: (k1 -> k2) -> k1 +-> k2
 data Star f a b where
@@ -44,7 +47,7 @@ instance (Applicative f, Cartesian j, Cartesian k) => MonoidalProfunctor (Star (
 type CoprodDom :: j +-> k -> COPROD j +-> k
 data CoprodDom p a b where
   Co :: {unCo :: p a b} -> CoprodDom p a (COPR b)
-instance Profunctor p => Profunctor (CoprodDom p) where
+instance (Profunctor p) => Profunctor (CoprodDom p) where
   dimap l (Coprod r) (Co p) = Co (dimap l r p)
   r \\ Co p = r \\ p
 
@@ -54,6 +57,9 @@ instance (Alternative f, Cartesian k, Cocartesian j) => MonoidalProfunctor (Copr
 
 instance (Functor (f :: Type -> Type)) => Strong Type (Star f) where
   act f (Star k) = Star (\(a, x) -> map (f a,) (k x))
+
+instance (Functor f, P.Applicative f) => Strong (SUBCAT P.Traversable) (Star (Prelude f)) where
+  act (Sub (Nat n)) (Star f) = Star (\t -> Prelude (P.traverse (unPrelude . f) (n t)))
 
 strength :: forall f a b. (Functor f, StrongProd (Star f), Ob a, Ob b) => a && f b ~> f (a && b)
 strength = unStar (act (obj @a) (Star (obj @(f b))))

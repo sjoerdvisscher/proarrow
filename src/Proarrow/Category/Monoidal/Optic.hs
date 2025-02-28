@@ -85,11 +85,11 @@ mkLens sa sbt = ex2prof (Optic (\s -> (s, sa s)) (src sa) (uncurry sbt))
 
 type Prism s t a b = MixedOptic (COPROD Type) (COPR a) (COPR b) (COPR s) (COPR t)
 mkPrism :: (s -> Either t a) -> (b -> t) -> Prism s t a b
-mkPrism sat bt = ex2prof (Optic (Coprod sat) (Coprod (tgt bt)) (Coprod (either id bt)))
+mkPrism sat bt = ex2prof @(COPROD Type) (Optic (Coprod sat) id (Coprod (either id bt)))
 
-type Traversal s t a b = MixedOptic (Type -> Type) a b s t
+type Traversal s t a b = MixedOptic (SUBCAT Traversable) a b s t
 traversing :: (Traversable f) => Traversal (f a) (f b) a b
-traversing = ex2prof @(Type -> Type) (Optic Prelude id unPrelude)
+traversing = ex2prof @(SUBCAT Traversable) (Optic Prelude id unPrelude)
 
 class (Monad m) => Algebra m a where algebra :: m a -> a
 instance (Monad m) => Algebra m (m a) where algebra = (>>= id)
@@ -99,7 +99,7 @@ instance (Monad m, Algebra m a, Algebra m b) => Algebra m (a, b) where
 
 type AlgebraicLens m s t a b = MixedOptic (SUBCAT (Algebra m)) a b s t
 mkAlgebraicLens :: forall m s t a b. (Monad m) => (s -> a) -> (m s -> b -> t) -> AlgebraicLens m s t a b
-mkAlgebraicLens v u = ex2prof @(SUBCAT (Algebra m)) (Optic (\s -> (return @m s, v s)) (Sub obj) (uncurry u))
+mkAlgebraicLens v u = ex2prof @(SUBCAT (Algebra m)) (Optic (\s -> (return @m s, v s)) id (uncurry u))
 
 newtype Viewing a (b :: Type) s (t :: Type) = Viewing {unView :: s -> a}
 instance Profunctor (Viewing a b) where

@@ -19,6 +19,7 @@ class (CategoryOf k1, CategoryOf k2, forall a. (Ob a) => Ob' (f a)) => Functor (
 
 -- Can't make an instance Functor (f :: Type -> Type) because that would overlap with instances of kind k -> Type
 newtype Prelude f a = Prelude {unPrelude :: f a}
+  deriving (P.Functor, P.Foldable, P.Traversable)
 instance (P.Functor f) => Functor (Prelude f) where
   map f = Prelude . P.fmap f . unPrelude
 
