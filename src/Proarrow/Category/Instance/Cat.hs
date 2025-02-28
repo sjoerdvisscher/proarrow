@@ -244,6 +244,7 @@ data DualUnit a b where
 instance Profunctor (DualUnit :: OPPOSITE () +-> ()) where
   dimap Unit (Op Unit) DualUnit = DualUnit
   r \\ DualUnit = r
+
 instance CompactClosed KIND where
   distribDual = Cat @DistribDual
   dualUnit = Cat @DualUnit

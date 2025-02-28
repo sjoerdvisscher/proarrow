@@ -9,12 +9,17 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..))
-import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
-import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
-import Proarrow.Object.Exponential (BiCCC)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, src, (:~>), type (+->))
 import Proarrow.Helper.CCC
+import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), PROD (..), Prod (..), diag)
+import Proarrow.Object.Exponential (BiCCC)
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Product ((:*:) (..))
+import Proarrow.Profunctor.Star (Star (..))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
@@ -57,11 +62,42 @@ instance (BiCCC k) => Distributive (PROD k) where
   distL0 @(PR a) = Prod (toCCC @(F a * InitF) @InitF (lam \(_ :& v) -> v))
   distR0 @(PR a) = Prod (toCCC @(InitF * F a) @InitF (lam \(v :& _) -> v))
 
-travList :: (DistributiveProfunctor p) => p a b -> p [a] [b]
-travList p = go
-  where
-    go =
-      dimap
-        (\l -> case l of [] -> Left (); (x : xs) -> Right (x, xs))
-        (const [] ||| \(x, xs) -> x : xs)
-        (par0 `copar` (p `par` go))
+class (Profunctor t) => Traversable t where
+  traverse :: (DistributiveProfunctor p) => t :.: p :~> p :.: t
+
+instance (CategoryOf k) => Traversable (Id :: k +-> k) where
+  traverse (Id f :.: p) = lmap f p :.: Id id \\ p
+
+instance Traversable (->) where
+  traverse (f :.: p) = lmap f p :.: id
+
+instance (Traversable p, Traversable q) => Traversable (p :.: q) where
+  traverse ((p :.: q) :.: r) = case traverse (q :.: r) of
+    r' :.: q' -> case traverse (p :.: r') of
+      r'' :.: p' -> r'' :.: (p' :.: q')
+
+instance (Cartesian k, Traversable p, Traversable q) => Traversable ((p :: k +-> k) :*: q) where
+  traverse ((p :*: q) :.: r) = case (traverse (p :.: r), traverse (q :.: r)) of
+    (r' :.: p', r'' :.: q') -> lmap diag (r' `par` r'') :.: (lmap (fst' (src p') (src q')) p' :*: lmap (snd' (src p') (src q')) q') \\ p
+
+instance (Traversable p, Traversable q) => Traversable (p :+: q) where
+  traverse (InjL p :.: r) = case traverse (p :.: r) of r' :.: p' -> r' :.: InjL p'
+  traverse (InjR q :.: r) = case traverse (q :.: r) of r' :.: q' -> r' :.: InjR q'
+
+instance Traversable (Star P.Maybe) where
+  traverse (Star a2mb :.: p) = lmap a2mb go :.: Star P.id
+    where
+      go =
+        dimap
+          (P.maybe (Left ()) Right)
+          (const P.Nothing ||| P.Just)
+          (par0 `copar` p)
+
+instance Traversable (Star []) where
+  traverse (Star a2bs :.: p) = lmap a2bs go :.: Star P.id
+    where
+      go =
+        dimap
+          (\l -> case l of [] -> Left (); (x : xs) -> Right (x, xs))
+          (const [] ||| \(x, xs) -> x : xs)
+          (par0 `copar` (p `par` go))

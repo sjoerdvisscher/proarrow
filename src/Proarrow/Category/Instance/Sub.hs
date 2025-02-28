@@ -4,7 +4,7 @@ import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN)
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type SUBCAT :: forall {k}. OB k -> Type
@@ -61,7 +61,7 @@ instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub
   tabulate (Sub f) = Sub (tabulate f)
   repMap (Sub f) = Sub (repMap @p f)
 
-instance (Strong m p, Monoidal (SUBCAT (ob :: OB m))) => Strong (SUBCAT (ob :: OB m)) (p :: Type +-> Type) where
+instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => Strong (SUBCAT (ob :: OB m)) (->) where
   Sub f `act` g = f `act` g
 instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) Type where
   type Act (p :: SUBCAT ob) (x :: Type) = Act (UN SUB p) x
