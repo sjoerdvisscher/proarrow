@@ -26,6 +26,7 @@ instance (CategoryOf k) => Bicategory (PLAINK k) where
   type Ob0 (PLAINK k) a = Ob a
   type I = PLAIN
   type O PLAIN PLAIN = PLAIN
+  withOb2 r = r
   r \\\ Id{} = r
   Id f `o` Id g = Id (liftA2 (.) f g)
   leftUnitor = id

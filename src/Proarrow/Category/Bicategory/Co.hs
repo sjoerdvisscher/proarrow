@@ -36,6 +36,7 @@ instance (Bicategory kk) => Bicategory (COK kk) where
   type Ob0 (COK kk) k = Ob0 kk k
   type I = CO I
   type a `O` b = CO (UN CO a `O` UN CO b)
+  withOb2 @(CO a) @(CO b) = withOb2 @kk @a @b
   r \\\ Co f = r \\\ f
   Co f `o` Co g = Co (f `o` g)
   leftUnitor = Co leftUnitorInv

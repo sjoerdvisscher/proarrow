@@ -53,10 +53,13 @@ class
   IsPath (ps :: Path kk j k)
   where
   singPath :: SPath ps
+  withIsPath2 :: IsPath qs => ((Ob (ps +++ qs)) => r) -> r
 instance (Bicategory kk, Ob0 kk k) => IsPath (Nil :: Path kk k k) where
   singPath = SNil
+  withIsPath2 r = r
 instance (Ob0 kk i, Ob (p :: kk i j), IsPath (ps :: Path kk j k)) => IsPath (p ::: ps) where
   singPath = let p = obj @p in SCons p singPath
+  withIsPath2 @qs = withIsPath2 @ps @qs
 
 withIsPath :: (Bicategory kk) => SPath (ps :: Path kk j k) -> ((IsPath ps, Ob0 kk j, Ob0 kk k) => r) -> r
 withIsPath SNil r = r
@@ -185,6 +188,7 @@ instance (Bicategory kk) => Bicategory (Path kk) where
   type Ob0 (Path kk) j = Ob0 kk j
   type I = Nil
   type O ps qs = qs +++ ps
+  withOb2 @ps @qs = withIsPath2 @qs @ps
   r \\\ Str ps qs _ = withIsPath ps $ withIsPath qs r
   Str cs ds qs `o` Str as bs ps = Str (append as cs) (append bs ds) (concatFold bs ds . (qs `o` ps) . splitFold as cs)
   leftUnitor = id

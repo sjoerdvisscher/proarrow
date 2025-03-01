@@ -26,6 +26,7 @@ instance Bicategory Unit where
   type Ob0 Unit k = (k ~ '())
   type I = 'Unit
   type O a b = 'Unit
+  withOb2 r = r
   r \\\ Terminal = r
   Terminal `o` Terminal = Terminal
   leftUnitor = Terminal

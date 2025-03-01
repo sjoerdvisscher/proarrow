@@ -53,6 +53,7 @@ instance (MonoidalAction m k) => CategoryOf (STT m k i j) where
 instance (MonoidalAction m k) => Bicategory (STT m k) where
   type I = ST Id
   type ST a `O` ST b = ST (a :.: b)
+  withOb2 r = r
   StT m `o` StT n = StT \(p :.: q) -> m p :.: n q
   r \\\ StT{} = r
   leftUnitor = StT \(Id h :.: q) -> lmap h q

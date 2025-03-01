@@ -7,8 +7,9 @@ import Proarrow.Category.Bicategory qualified as Adj
 import Proarrow.Category.Bicategory.Strictified (Path (..), SPath (..), Strictified (..))
 import Proarrow.Category.Equipment (HasCompanions (..), Sq (..), (===), (|||))
 import Proarrow.Category.Equipment.Limit qualified as L
-import Proarrow.Core (CategoryOf (..), obj, (//))
+import Proarrow.Core (CategoryOf (..), obj)
 import Proarrow.Squares (vArr, vCombine, vId, vId', vSplit, vUnitor, vUnitorInv)
+import Prelude (($))
 
 -- | The projection out of the @j@-weighted limit @l@ of @d@.
 --
@@ -19,17 +20,16 @@ import Proarrow.Squares (vArr, vCombine, vId, vId', vSplit, vUnitor, vUnitorInv)
 -- > I--d--K
 limit
   :: forall {hk} {vk} {a} {i} {k} (j :: hk i a) (d :: vk i k)
-   . (Ob0 vk i, L.HasLimits vk j k, Ob d)
+   . (Ob0 vk i, Ob0 vk a, Ob0 vk k, L.HasLimits vk j k, Ob d)
   => Sq '(j ::: Nil, L.Limit j d ::: Nil) '(Nil, d ::: Nil)
 limit =
-  let l = L.limitObj @vk @j @k @d
-  in Sq
-      ( Str
+  L.withObLimit @vk @j @_ @d $
+    let l = obj @(L.Limit j d)
+    in Sq $
+        Str
           (SCons (obj @j) (SCons (mapCompanion @hk l) SNil))
           (SCons (mapCompanion @hk (obj @d)) SNil)
           (L.limit @vk @j @k @d)
-      )
-      \\\ l
 
 -- | The universal property of the limit.
 --
@@ -91,10 +91,10 @@ rightAdjointPreservesLimits
      )
   => Sq '(Nil :: Path hk a a, L.Limit j (g `O` d) ::: Nil) '(Nil, L.Limit j d ::: g ::: Nil)
 rightAdjointPreservesLimits =
-  let g = obj @g; d = obj @d; f = obj @f
-  in g `o` d //
-      let l' = L.limitObj @vk @j @k' @(g `O` d)
-      in vId' l' ||| unit @f @g
+  withOb2 @_ @g @d $
+    L.withObLimit @_ @j @_ @(g `O` d) $
+      withOb2 @_ @f @(L.Limit j (g `O` d)) $
+        vId @(L.Limit j (g `O` d)) ||| unit @f @g
           === ( vCombine
                   === limitUniv @j
                     ( vSplit
@@ -103,8 +103,6 @@ rightAdjointPreservesLimits =
                     )
               )
             ||| vId @g
-          \\\ l'
-          \\\ f `o` l'
 
 -- | The inverse works for any arrow:
 --
@@ -129,16 +127,15 @@ rightAdjointPreservesLimitsInv
    . (HasCompanions hk vk, Ob d, Ob g, L.HasLimits vk j k, L.HasLimits vk j k', Ob0 vk i, Ob0 vk k, Ob0 vk k', Ob0 vk a)
   => Sq '(Nil :: Path hk a a, L.Limit j d ::: g ::: Nil) '(Nil, L.Limit j (g `O` d) ::: Nil)
 rightAdjointPreservesLimitsInv =
-  let l = L.limitObj @vk @j @k @d; g = obj @g; d = obj @d
-  in vCombine
-      === limitUniv @j @(g `O` d) @(g `O` L.Limit j d)
-        ( vSplit
-            === limit @j @d ||| vId @g
-            === vCombine
-        )
-      \\\ l
-      \\\ g `o` d
-      \\\ g `o` l
+  L.withObLimit @vk @j @k @d $
+    withOb2 @vk @g @d $
+      withOb2 @vk @g @(L.Limit j d) $
+        vCombine
+          === limitUniv @j @(g `O` d) @(g `O` L.Limit j d)
+            ( vSplit
+                === limit @j @d ||| vId @g
+                === vCombine
+            )
 
 -- | The projection into the @j@-weighted colimit @c@ of @d@.
 --
@@ -149,17 +146,16 @@ rightAdjointPreservesLimitsInv =
 -- > A--l--K
 colimit
   :: forall {hk} {vk} {a} {i} {k} (j :: hk a i) (d :: vk i k)
-   . (Ob0 vk i, L.HasColimits vk j k, Ob d)
+   . (Ob0 vk i, Ob0 vk a, Ob0 vk k, L.HasColimits vk j k, Ob d)
   => Sq '(j ::: Nil, d ::: Nil) '(Nil, L.Colimit j d ::: Nil)
 colimit =
-  let c = L.colimitObj @vk @j @k @d
-  in Sq
-      ( Str
+  L.withObColimit @vk @j @_ @d $
+    let c = obj @(L.Colimit j d)
+    in Sq $
+        Str
           (SCons (obj @j) (SCons (mapCompanion @hk (obj @d)) SNil))
           (SCons (mapCompanion @hk c) SNil)
           (L.colimit @vk @j @k @d)
-      )
-      \\\ c
 
 -- | The universal property of the colimit.
 --
@@ -221,20 +217,19 @@ leftAdjointPreservesColimits
      )
   => Sq '(Nil :: Path hk a a, L.Colimit j d ::: f ::: Nil) '(Nil, L.Colimit j (f `O` d) ::: Nil)
 leftAdjointPreservesColimits =
-  let f = obj @f; g = obj @g; d = obj @d
-  in f `o` d //
-      let c' = L.colimitObj @vk @j @k' @(f `O` d)
-      in ( colimitUniv @j
-            ( vId @d ||| unit @f @g
-                === (vCombine === colimit @j) ||| vId @g
-                === vCombine
-            )
-            === vSplit
-         )
-          ||| vId @f
-          === vId' c' ||| counit @f @g
-          \\\ c'
-          \\\ g `o` c'
+  withOb2 @_ @f @d $
+    L.withObColimit @vk @j @k' @(f `O` d) $
+      withOb2 @_ @g @(L.Colimit j (f `O` d)) $
+        let c' = obj @(L.Colimit j (f `O` d))
+        in ( colimitUniv @j
+              ( vId @d ||| unit @f @g
+                  === (vCombine === colimit @j) ||| vId @g
+                  === vCombine
+              )
+              === vSplit
+           )
+            ||| vId @f
+            === vId' c' ||| counit @f @g
 
 -- | The inverse works for any arrow:
 --
@@ -259,16 +254,15 @@ leftAdjointPreservesColimitsInv
    . (HasCompanions hk vk, Ob d, Ob f, L.HasColimits vk j k, L.HasColimits vk j k', Ob0 vk i, Ob0 vk k, Ob0 vk k', Ob0 vk a)
   => Sq '(Nil :: Path hk a a, L.Colimit j (f `O` d) ::: Nil) '(Nil, L.Colimit j d ::: f ::: Nil)
 leftAdjointPreservesColimitsInv =
-  let c = L.colimitObj @vk @j @k @d; f = obj @f; d = obj @d
-  in colimitUniv @j @(f `O` d) @(f `O` L.Colimit j d)
-        ( vSplit
-            === colimit @j @d ||| vId @f
-            === vCombine
-        )
-      === vSplit
-      \\\ c
-      \\\ f `o` d
-      \\\ f `o` c
+  L.withObColimit @vk @j @k @d $
+    withOb2 @vk @f @d $
+      withOb2 @vk @f @(L.Colimit j d) $
+        colimitUniv @j @(f `O` d) @(f `O` L.Colimit j d)
+          ( vSplit
+              === colimit @j @d ||| vId @f
+              === vCombine
+          )
+          === vSplit
 
 unit
   :: forall {hk} {vk} {j} {k} (f :: vk j k) (g :: vk k j)

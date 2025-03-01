@@ -35,6 +35,7 @@ instance (Bicategory kk) => Bicategory (OPK kk) where
   type Ob0 (OPK kk) k = Ob0 kk k
   type I = OP I
   type O a b = OP (UN OP b `O` UN OP a)
+  withOb2 @(OP a) @(OP b) = withOb2 @kk @b @a
   r \\\ Op f = r \\\ f
   Op f `o` Op g = Op (g `o` f)
   leftUnitor = Op rightUnitor
