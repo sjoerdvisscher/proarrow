@@ -6,7 +6,7 @@ import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
 import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapRan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.Coexponential (Coclosed (..))
 import Proarrow.Object.Exponential (Closed (..))
@@ -31,14 +31,15 @@ instance (Bicategory kk, Ob0 kk k) => CategoryOf (ENDO kk k) where
   type (~>) = Endo
   type Ob p = (Is E p, Ob (UN E p))
 
-instance (Bicategory kk, Ob0 kk k) => MonoidalProfunctor (Endo :: CAT (ENDO kk k)) where
+instance (Bicategory kk, Ob0 kk k, (Ob (I :: kk k k))) => MonoidalProfunctor (Endo :: CAT (ENDO kk k)) where
   par0 = Endo iObj
   Endo f `par` Endo g = mkEndo (f `o` g)
 
 -- | The monoidal subcategory of a bicategory for a single object.
-instance (Bicategory kk, Ob0 kk k) => Monoidal (ENDO kk k) where
+instance (Bicategory kk, Ob0 kk k, (Ob (I :: kk k k))) => Monoidal (ENDO kk k) where
   type Unit = E I
   type E p ** E q = E (p `O` q)
+  withOb2 @(E a) @(E b) r = r \\\ (obj @a `o` obj @b)
   leftUnitor = mkEndo B.leftUnitor
   leftUnitorInv = mkEndo B.leftUnitorInv
   rightUnitor = mkEndo B.rightUnitor

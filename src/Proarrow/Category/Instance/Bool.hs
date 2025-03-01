@@ -13,7 +13,7 @@ import Proarrow.Object.BinaryProduct
   , leftUnitorProdInv
   , rightUnitorProd
   , rightUnitorProdInv
-  , swapProd'
+  , swapProd
   )
 import Proarrow.Object.Dual (ExpSA, StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
@@ -74,6 +74,9 @@ instance HasBinaryProducts BOOL where
   type FLS && b = FLS
   type a && TRU = a
   type a && FLS = FLS
+  withObProd @a r = case obj @a of
+    Tru -> r
+    Fls -> r
   fst @a @b = case obj @a of
     Fls -> Fls
     Tru -> terminate @_ @b
@@ -95,6 +98,9 @@ instance HasBinaryCoproducts BOOL where
   type TRU || b = TRU
   type a || FLS = a
   type a || TRU = TRU
+  withObCoprod @a r = case obj @a of
+    Tru -> r
+    Fls -> r
   lft @a @b = case obj @a of
     Fls -> initiate @_ @b
     Tru -> Tru
@@ -112,6 +118,7 @@ instance MonoidalProfunctor Booleans where
 instance Monoidal BOOL where
   type Unit = TerminalObject
   type a ** b = a && b
+  withOb2 @a @b = withObProd @BOOL @a @b
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
@@ -120,7 +127,7 @@ instance Monoidal BOOL where
   associatorInv @a @b @c = associatorProdInv @a @b @c
 
 instance SymMonoidal BOOL where
-  swap' = swapProd'
+  swap @a @b = swapProd @a @b
 
 instance Distributive BOOL where
   distL @a @b @c = case obj @a of

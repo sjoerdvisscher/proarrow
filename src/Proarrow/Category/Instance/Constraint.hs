@@ -48,6 +48,7 @@ instance HasTerminalObject CONSTRAINT where
 
 instance HasBinaryProducts CONSTRAINT where
   type CNSTRNT l && CNSTRNT r = CNSTRNT (l, r)
+  withObProd r = r
   fst = Entails \r -> r
   snd = Entails \r -> r
   Entails f &&& Entails g = Entails \r -> f (g r)
@@ -59,6 +60,7 @@ instance MonoidalProfunctor (:-) where
 instance Monoidal CONSTRAINT where
   type Unit = TerminalObject
   type a ** b = a && b
+  withOb2 r = r
   leftUnitor = P.leftUnitorProd
   leftUnitorInv = P.leftUnitorProdInv
   rightUnitor = P.rightUnitorProd
@@ -67,7 +69,7 @@ instance Monoidal CONSTRAINT where
   associatorInv = P.associatorProdInv
 
 instance SymMonoidal CONSTRAINT where
-  swap' (Entails f) (Entails g) = Entails \r -> f (g r)
+  swap = Entails \r -> r
 
 instance Monoid (CNSTRNT ()) where
   mempty = id

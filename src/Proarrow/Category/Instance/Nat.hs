@@ -60,6 +60,7 @@ instance (Functor f, Functor g) => Functor (Product f g) where
 
 instance HasBinaryProducts (k1 -> Type) where
   type f && g = Product f g
+  withObProd r = r
   fst = Nat \(Pair f _) -> f
   snd = Nat \(Pair _ g) -> g
   Nat f &&& Nat g = Nat \a -> Pair (f a) (g a)
@@ -70,6 +71,7 @@ instance (Functor f, Functor g) => Functor (Sum f g) where
 
 instance HasBinaryCoproducts (k1 -> Type) where
   type f || g = Sum f g
+  withObCoprod r = r
   lft = Nat InL
   rgt = Nat InR
   Nat f ||| Nat g = Nat \case
@@ -95,6 +97,7 @@ instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
 instance Monoidal (Type -> Type) where
   type Unit = Identity
   type f ** g = Compose f g
+  withOb2 r = r
   leftUnitor = Nat (runIdentity . getCompose)
   leftUnitorInv = Nat (Compose . Identity)
   rightUnitor = Nat (map runIdentity . getCompose)

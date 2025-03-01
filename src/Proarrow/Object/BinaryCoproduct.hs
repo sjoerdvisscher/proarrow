@@ -22,17 +22,18 @@ infixl 4 +++
 
 class (CategoryOf k) => HasBinaryCoproducts k where
   type (a :: k) || (b :: k) :: k
+  withObCoprod :: (Ob (a :: k), Ob b) => (Ob (a || b) => r) -> r
   lft :: (Ob (a :: k), Ob b) => a ~> (a || b)
-  lft @a @b = lft' (obj @a) (obj @b)
-  lft' :: (a :: k) ~> a' -> Obj b -> a ~> (a' || b)
-  lft' @_ @a' @b a b = lft @k @a' @b . a \\ a \\ b
   rgt :: (Ob (a :: k), Ob b) => b ~> (a || b)
-  rgt @a @b = rgt' (obj @a) (obj @b)
-  rgt' :: Obj (a :: k) -> b ~> b' -> b ~> (a || b')
-  rgt' @a @_ @b' a b = rgt @k @a @b' . b \\ a \\ b
   (|||) :: (x :: k) ~> a -> y ~> a -> (x || y) ~> a
   (+++) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a || b ~> x || y
   l +++ r = (lft @k @x @y . l) ||| (rgt @k @x @y . r) \\ l \\ r
+
+lft' :: forall {k} (a :: k) a' b. HasBinaryCoproducts k => a ~> a' -> Obj b -> a ~> (a' || b)
+lft' a b = lft @k @a' @b . a \\ a \\ b
+
+rgt' :: forall {k} (a :: k) b b'. HasBinaryCoproducts k => Obj a -> b ~> b' -> b ~> (a || b')
+rgt' a b = rgt @k @a @b' . b \\ a \\ b
 
 left :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryCoproducts k, Ob c) => a ~> b -> (a || c) ~> (b || c)
 left f = f +++ obj @c
@@ -62,24 +63,28 @@ instance
 
 instance HasBinaryCoproducts Type where
   type a || b = P.Either a b
+  withObCoprod r = r
   lft = P.Left
   rgt = P.Right
   (|||) = P.either
 
 instance HasBinaryCoproducts () where
   type '() || '() = '()
+  withObCoprod r = r
   lft = U.Unit
   rgt = U.Unit
   U.Unit ||| U.Unit = U.Unit
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (PRO j k) where
   type p || q = p :+: q
+  withObCoprod r = r
   lft = Prof InjL
   rgt = Prof InjR
   Prof l ||| Prof r = Prof (coproduct l r)
 
 instance (HasBinaryCoproducts k) => HasBinaryCoproducts (PROD k) where
   type PR a || PR b = PR (a || b)
+  withObCoprod @(PR a) @(PR b) r = withObCoprod @k @a @b r
   lft @(PR a) @(PR b) = Prod (lft @_ @a @b)
   rgt @(PR a) @(PR b) = Prod (rgt @_ @a @b)
   Prod l ||| Prod r = Prod (l ||| r)
@@ -108,15 +113,16 @@ instance (HasCoproducts k, Category cat) => MonoidalProfunctor (Coprod cat :: CA
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)
+  withOb2 @(COPR a) @(COPR b) = withObCoprod @k @a @b
   leftUnitor = Coprod (initiate ||| id)
   leftUnitorInv = Coprod (rgt @_ @InitialObject)
   rightUnitor = Coprod (id ||| initiate)
   rightUnitorInv = Coprod (lft @_ @_ @InitialObject)
-  associator @(COPR a) @(COPR b) @(COPR c) = Coprod ((obj @a +++ lft @k @b @c) ||| (rgt @k @a @(b || c) . rgt @k @b @c) \\ (obj @b +++ obj @c))
-  associatorInv @(COPR a) @(COPR b) @(COPR c) = Coprod ((lft @k @(a || b) @c . lft @k @a @b) ||| (rgt @k @a @b +++ obj @c) \\ (obj @a +++ obj @b))
+  associator @(COPR a) @(COPR b) @(COPR c) = Coprod ((obj @a +++ lft @k @b @c) ||| (withObCoprod @k @b @c (rgt @k @a @(b || c)) . rgt @k @b @c))
+  associatorInv @(COPR a) @(COPR b) @(COPR c) = Coprod ((withObCoprod @k @a @b (lft @k @(a || b) @c) . lft @k @a @b) ||| (rgt @k @a @b +++ obj @c))
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
-  swap' (Coprod a) (Coprod b) = Coprod (rgt' (tgt b) a ||| lft' b (tgt a))
+  swap @(COPR a) @(COPR b) = Coprod (swapCoprod @k @a @b)
 
 instance TracedMonoidalProfunctor (Coprod (->)) where
   trace (Coprod xuyu) = Coprod (let loop xu = P.either id (loop . P.Right) (xuyu xu) in loop . P.Left)

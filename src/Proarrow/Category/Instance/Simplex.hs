@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Instance.Simplex where
 
 import Data.Kind (Constraint, Type)
@@ -20,8 +21,13 @@ data SNat :: Nat -> Type where
 
 class (a + Z ~ a) => IsNat (a :: Nat) where
   singNat :: SNat a
-instance IsNat Z where singNat = SZ
-instance (IsNat a) => IsNat (S a) where singNat = SS singNat
+  withIsNat2 :: IsNat b => (IsNat (a + b) => r) -> r
+instance IsNat Z where
+  singNat = SZ
+  withIsNat2 r = r
+instance (IsNat a) => IsNat (S a) where
+  singNat = SS singNat
+  withIsNat2 @b r = withIsNat2 @a @b r
 
 singNat' :: forall a. Obj a -> SNat a
 singNat' a = singNat @a \\ a
@@ -103,6 +109,7 @@ instance MonoidalProfunctor Simplex where
 instance Monoidal Nat where
   type Unit = Z
   type a ** b = a + b
+  withOb2 @a @b = withIsNat2 @a @b
   leftUnitor = id
   leftUnitorInv = id
   rightUnitor = id

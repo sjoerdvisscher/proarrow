@@ -10,7 +10,7 @@ import Proarrow.Category.Monoidal
   , first
   , obj2
   , second
-  , swap
+  , swap'
   , unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
@@ -40,7 +40,7 @@ instance (Comonoid (w :: m), MonoidalAction m k) => Procomonad (Writer w :: k +-
 
 instance (Ob (w :: m), MonoidalAction m k, SymMonoidal m) => Strong m (Writer w :: k +-> k) where
   act @a @b @x @y f (Writer g) =
-    Writer (multiplicatorInv @m @k @w @b @y . act (swap @b @w) (obj @y) . multiplicator @m @k @b @w @y . act f g)
+    Writer (multiplicatorInv @m @k @w @b @y . act (swap @_ @b @w) (obj @y) . multiplicator @m @k @b @w @y . act f g)
       \\ act (obj @a) (obj @x)
       \\ act (obj @b) (obj @y)
       \\ f
@@ -50,7 +50,7 @@ instance (Monoid (w :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (W
   Writer @x1 @x2 f `par` Writer @y1 @y2 g =
     Writer
       ( associator @k @w @x2 @y2
-          . ((first @x2 (mappend @w) . associatorInv @k @w @w @x2 . swap' @k f (obj @w)) `par` obj @y2)
+          . ((first @x2 (mappend @w) . associatorInv @k @w @w @x2 . swap' f (obj @w)) `par` obj @y2)
           . associatorInv @k @x1 @w @y2
           . second @x1 g
       )

@@ -41,8 +41,9 @@ instance HasTerminalObject (POCATK Constraint) where
 
 instance HasBinaryProducts (POCATK Constraint) where
   type l && r = PC ((UN PC l, UN PC r) :: Constraint)
-  fst' PoAsCat PoAsCat = PoAsCat
-  snd' PoAsCat PoAsCat = PoAsCat
+  withObProd r = r
+  fst = PoAsCat
+  snd = PoAsCat
   PoAsCat &&& PoAsCat = PoAsCat
 
 instance MonoidalProfunctor (PoAsCat :: CAT (POCATK Constraint)) where
@@ -52,6 +53,7 @@ instance MonoidalProfunctor (PoAsCat :: CAT (POCATK Constraint)) where
 instance Monoidal (POCATK Constraint) where
   type Unit = TerminalObject
   type a ** b = a && b
+  withOb2 r = r
   leftUnitor = P.leftUnitorProd
   leftUnitorInv = P.leftUnitorProdInv
   rightUnitor = P.rightUnitorProd

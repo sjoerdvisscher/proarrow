@@ -5,7 +5,7 @@ module Proarrow.Category.Instance.Product where
 import Prelude (type (~))
 
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swap')
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal(..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Preorder.ThinCategory (Codiscrete, Discrete (..), ThinProfunctor (..), anyArr)
@@ -62,6 +62,7 @@ instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :
 instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   type Unit = '(Unit, Unit)
   type '(a1, a2) ** '(b1, b2) = '(a1 ** b1, a2 ** b2)
+  withOb2 @'(a1, a2) @'(b1, b2) r = withOb2 @j @a1 @b1 (withOb2 @k @a2 @b2 r)
   leftUnitor @'(a1, a2) = leftUnitor @j @a1 :**: leftUnitor @k @a2
   leftUnitorInv @'(a1, a2) = leftUnitorInv @j @a1 :**: leftUnitorInv @k @a2
   rightUnitor @'(a1, a2) = rightUnitor @j @a1 :**: rightUnitor @k @a2
@@ -70,7 +71,7 @@ instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   associatorInv @'(a1, a2) @'(b1, b2) @'(c1, c2) = associatorInv @j @a1 @b1 @c1 :**: associatorInv @k @a2 @b2 @c2
 
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j, k) where
-  swap' (a1 :**: a2) (b1 :**: b2) = swap' a1 b1 :**: swap' a2 b2
+  swap @'(a1, a2) @'(b1, b2) = swap @j @a1 @b1 :**: swap @k @a2 @b2
 
 instance (Strong m p, Strong m' q) => Strong (m, m') (p :**: q) where
   act (p :**: q) (x :**: y) = act p x :**: act q y

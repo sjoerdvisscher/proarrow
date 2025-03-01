@@ -199,7 +199,7 @@ instance (IsChart m c d) => Promonad (ChartCat :: CAT (CHART m c d)) where
   id = ChartCat (prof2ex id)
   ChartCat (Optic @x @x' @_ @t ll lw lr) . ChartCat (Optic @y @y' @a rl rw rr) =
     ChartCat $
-      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @x' @y' `act` obj @t))
+      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `act` obj @t))
         \\ lw
         \\ rw
 instance (IsChart m c d) => CategoryOf (CHART m c d) where

@@ -9,7 +9,7 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Object (Obj, obj)
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft', rgt')
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -19,7 +19,8 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   , swapProd
-  , swapProd'
+  , fst'
+  , snd'
   )
 import Proarrow.Object.Exponential (BiCCC, CCC, Closed (..), curry, eval, lower, uncurry)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -78,7 +79,7 @@ either
 either f g = swapExp @(a || b) @i @c (swapExp @i @a @c f ||| swapExp @i @b @c g) \\ f
 
 swapExp :: forall {k} (a :: k) b c. (CCC k, Ob b, Ob c) => a ~> b ~~> c -> b ~> a ~~> c
-swapExp f = curry @b @a @c (uncurry @a @b @c f . swapProd @_ @b @a) \\ f
+swapExp f = curry @b @a @c (uncurry @a @b @c f . swapProd @b @a) \\ f
 
 data FK k = F k
 type instance UN F (F a) = a
@@ -200,12 +201,14 @@ instance (BiCCC k) => HasTerminalObject (FK k) where
   terminate = Ter
 instance (BiCCC k) => HasBinaryCoproducts (FK k) where
   type a || b = a + b
+  withObCoprod r = r
   lft = Lft
   rgt = Rgt
   Lft ||| Rgt = Id
   l ||| r = Sum l r
 instance (BiCCC k) => HasBinaryProducts (FK k) where
   type a && b = a * b
+  withObProd r = r
   fst = Fst
   snd = Snd
   Fst &&& Snd = Id
@@ -216,6 +219,7 @@ instance (BiCCC k) => MonoidalProfunctor (FreeCCC :: CAT (FK k)) where
 instance (BiCCC k) => Monoidal (FK k) where
   type Unit = TerminalObject
   type a ** b = a && b
+  withOb2 r = r
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
@@ -223,7 +227,7 @@ instance (BiCCC k) => Monoidal (FK k) where
   associator = associatorProd
   associatorInv = associatorProdInv
 instance (BiCCC k) => SymMonoidal (FK k) where
-  swap' = swapProd'
+  swap = swapProd
 instance (BiCCC k) => Closed (FK k) where
   type a ~~> b = a --> b
   curry' _ _ (Uncurry f) = f
