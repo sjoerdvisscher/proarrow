@@ -159,17 +159,15 @@ instance (P.Num a) => HasTerminalObject (MatK a) where
 
 instance (P.Num a) => HasBinaryCoproducts (MatK a) where
   type M x || M y = M (x + y)
-  lft @m @n = lft' (obj @m) (obj @n)
-  lft' (Mat m) (Mat n) = mat (append m (zero P.<$ n))
-  rgt @m @n = rgt' (obj @m) (obj @n)
-  rgt' (Mat m) (Mat n) = mat (append (zero P.<$ m) n)
+  withObCoprod @(M x) @(M y) r = withPlusNat @x @y r
+  lft @(M m) @(M n) = mat (append (matId @m) (zero P.<$ matId @n @a))
+  rgt @(M m) @(M n) = mat (append (zero P.<$ matId @m @a) (matId @n))
   Mat @m a ||| Mat @n b = withPlusNat @m @n (Mat (P.liftA2 append a b))
 instance (P.Num a) => HasBinaryProducts (MatK a) where
   type M x && M y = M (x + y)
-  fst @m @n = fst' (obj @m) (obj @n)
-  fst' (Mat @m m) (Mat @n n) = withPlusNat @m @n (Mat (P.fmap (`append` (0 P.<$ n)) m))
-  snd @m @n = snd' (obj @m) (obj @n)
-  snd' (Mat @m m) (Mat @n n) = withPlusNat @m @n (Mat (P.fmap (append (0 P.<$ m)) n))
+  withObProd @(M x) @(M y) r = withPlusNat @x @y r
+  fst @(M m) @(M n) = withPlusNat @m @n (Mat (P.fmap (`append` (0 P.<$ matId @n @a)) (matId @m)))
+  snd @(M m) @(M n) = withPlusNat @m @n (Mat (P.fmap (append (0 P.<$ matId @m @a)) (matId @n)))
   Mat a &&& Mat b = mat (append a b)
 
 instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
@@ -183,6 +181,7 @@ instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
 instance (P.Num a) => Monoidal (MatK a) where
   type Unit = M (S Z)
   type M x ** M y = M (y * x)
+  withOb2 @(M x) @(M y) = withMultNat @y @x
   leftUnitor = id
   leftUnitorInv = id
   rightUnitor = id
@@ -190,13 +189,9 @@ instance (P.Num a) => Monoidal (MatK a) where
   associator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
   associatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
 
-instance (P.Num a) => SymMonoidal (MatK a) where
-  Mat @gx @gy g `swap'` Mat @fx @fy f =
-    withMultNat @fx @gx $
-      withMultNat @gy @fy $
-        withMultSym @fx @gx $
-          Mat $
-            concatMap (\grow -> P.fmap (\frow -> concatMap (\a -> P.fmap (a P.*) frow) grow) f) g
+instance (P.Num a) => SymMonoidal (MatK a) where -- TODO: test this
+  swap @(M x) @(M y) = withMultNat @x @y $ withMultNat @y @x $ Mat $
+    concatMap @x @y (\x -> P.fmap (\b -> concatMap @y @x (\a -> P.fmap (a P.*) x) b) (matId @y @a)) (matId @x @a)
 
 instance (P.Num a) => Closed (MatK a) where
   type x ~~> y = ExpSA x y

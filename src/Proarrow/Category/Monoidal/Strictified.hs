@@ -6,7 +6,7 @@ module Proarrow.Category.Monoidal.Strictified where
 import Data.Kind (Constraint)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator', associatorInv', isObPar)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), associatorInv', associator')
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
 
 infixl 8 ||
@@ -30,9 +30,30 @@ class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
 instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
 
 type IsList :: forall {k}. [k] -> Constraint
-class (CategoryOf k, as ~ as ++ '[], forall bs cs. Assoc as bs cs) => IsList (as :: [k]) where sList :: SList as
-instance (CategoryOf k) => IsList ('[] :: [k]) where sList = Nil
-instance (Ob a, Ob as) => IsList (a ': as) where sList = Cons (obj @a) (sList @as)
+class (CategoryOf k, as ~ as ++ '[], forall bs cs. Assoc as bs cs) => IsList (as :: [k]) where
+  sList :: SList as
+  withIsList2 :: IsList bs => (IsList (as ++ bs) => r) -> r
+  swap1 :: (Ob b, SymMonoidal k) => as ++ '[b] ~> b ': as
+  swap1Inv :: (Ob b, SymMonoidal k) => b ': as ~> as ++ '[b]
+  swap' :: (IsList (bs :: [k]), SymMonoidal k) => as ++ bs ~> bs ++ as
+instance (CategoryOf k) => IsList ('[] :: [k]) where
+  sList = Nil
+  withIsList2 r = r
+  swap1 = id
+  swap1Inv = id
+  swap' = id
+instance (Ob (a :: k), CategoryOf k) => IsList '[a] where
+  sList = Cons (obj @a) Nil
+  withIsList2 @bs r = case sList @bs of Nil -> r; Cons{} -> r
+  swap1 @b = Str (swap @k @a @b)
+  swap1Inv @b = Str (swap @k @b @a)
+  swap' @bs = swap1Inv @bs @a
+instance (Ob (a1 :: k), IsList (a2 ': as), IsList as) => IsList (a1 ': a2 ': as) where
+  sList = Cons (obj @a1) (sList @(a2 ': as))
+  withIsList2 @bs r = withIsList2 @(a2 ': as) @bs $ withIsList2 @as @bs r
+  swap1 @b = case swap1 @(a2 ': as) @b of f -> (Str @[a1, b] @[b, a1] (swap @_ @a1 @b) `par` obj @(a2 ': as)) . (obj @'[a1] `par` f)
+  swap1Inv @b = case swap1Inv @(a2 ': as) @b of f -> (obj @'[a1] `par` f) . (Str @[b, a1] @[a1, b] (swap @_ @b @a1) `par` obj @(a2 ': as))
+  swap' @bs = case swap' @(a2 ': as) @bs of f -> associator @_ @bs @'[a1] @(a2 ': as) . (swap1Inv @bs @a1 `par` obj @(a2 ': as)) . (obj @'[a1] `par` f)
 
 type family Fold (as :: [k]) :: k where
   Fold ('[] :: [k]) = Unit :: k
@@ -100,13 +121,14 @@ instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
   par0 = id
   par :: (as :: [k]) ~> bs -> cs ~> ds -> as ++ cs ~> bs ++ ds
   par (Str @as @bs f) (Str @cs @ds g) =
-    isObPar @as @cs $
-      isObPar @bs @ds $
+    withOb2 @[k] @as @cs $
+      withOb2 @[k] @bs @ds $
         Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)
 
 instance (Monoidal k) => Monoidal [k] where
   type Unit = '[]
   type as ** bs = as ++ bs
+  withOb2 @as @bs r = withIsList2 @as @bs r
   leftUnitor = id
   leftUnitorInv = id
   rightUnitor = id
@@ -114,21 +136,5 @@ instance (Monoidal k) => Monoidal [k] where
   associator @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
   associatorInv @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
 
--- instance (SymMonoidal k) => SymMonoidal [k] where
---   swap' :: forall (as :: [k]) (bs :: [k]). (SymMonoidal k) => Obj as -> Obj bs -> (as ** bs) ~> (bs ** as)
---   swap' as bs = go (sList @as) (sList @bs) \\ as \\ bs
---     where
---       go :: forall (as' :: [k]) bs'. SList as' -> SList bs' -> (as' ** bs') ~> (bs' ** as')
---       go as' Nil = rightUnitor (asObj as')
---       go Nil bs' = rightUnitorInv (asObj bs')
---       go (Cons a as') (Cons b bs') =
---         let sa = singleton a; sb = singleton b; sas = asObj as'; sbs = asObj bs'
---         in (singleton b `par` (associator sbs sa sas . (swap1 a bs' `par` sas) . (singleton a `par` go as' bs')))
---             . (strSwap a b `par` (sas `par` sbs))
---             . (sa `par` ((swap1Inv b as' `par` sbs) . associatorInv sas sb sbs))
---       strSwap :: Obj (a :: k) -> Obj b -> '[a, b] ~> '[b, a]
---       strSwap a b = Str (swap' a b) \\ a \\ b
---       swap1 :: forall x xs. Obj (x :: k) -> SList (xs :: [k]) -> (x ': xs) ~> (xs ++ '[x])
---       swap1 = swap1
---       swap1Inv :: forall x xs. Obj (x :: k) -> SList (xs :: [k]) -> (xs ++ '[x]) ~> (x ': xs)
---       swap1Inv = swap1Inv
+instance (SymMonoidal k) => SymMonoidal [k] where
+  swap @as @bs = swap' @as @bs

@@ -6,7 +6,7 @@ module Proarrow.Adjunction where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), isObPar)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
@@ -97,5 +97,5 @@ instance
   where
   par0 = RepCostar (counit @l @r (tabulate (repMap @l @Unit id) :.: par0)) \\ (par0 :: Obj (Unit :: k))
   RepCostar @x1 fx `par` RepCostar @y1 fy =
-    (fx `par` fy) // isObPar @x1 @y1 $
+    (fx `par` fy) // withOb2 @_ @x1 @y1 $
       RepCostar (rightAdjunct @l @r (leftAdjunct @l @r @x1 fx `par` leftAdjunct @l @r @y1 fy))

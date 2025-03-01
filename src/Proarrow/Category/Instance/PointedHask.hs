@@ -33,6 +33,7 @@ instance CategoryOf POINTED where
 data These a b = This a | That b | These a b
 instance HasBinaryProducts POINTED where
   type P a && P b = P (These a b)
+  withObProd r = r
   fst = P (\case Nothing -> Nothing; Just (This a) -> Just a; Just (That _) -> Nothing; Just (These a _) -> Just a)
   snd = P (\case Nothing -> Nothing; Just (This _) -> Nothing; Just (That b) -> Just b; Just (These _ b) -> Just b)
   P f &&& P g = P (\a -> case (f a, g a) of
@@ -46,6 +47,7 @@ instance HasTerminalObject POINTED where
 
 instance HasBinaryCoproducts POINTED where
   type P a || P b = P (a || b)
+  withObCoprod r = r
   lft = P (map lft)
   rgt = P (map rgt)
   P f ||| P g = P (>>= (f . Just ||| g . Just))
@@ -59,6 +61,7 @@ instance MonoidalProfunctor Pointed where
 instance Monoidal POINTED where
   type Unit = P ()
   type P a ** P b = P (a, b)
+  withOb2 r = r
   leftUnitor = P (map snd)
   leftUnitorInv = P (map ((),))
   rightUnitor = P (map fst)

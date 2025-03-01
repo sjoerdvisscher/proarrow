@@ -24,11 +24,15 @@ mkCons f fs = Cons f fs \\ fs
 
 class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
 instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
-
-class (as ~ as ++ '[], forall bs cs. (IsList bs, IsList cs) => Assoc as bs cs) => IsList as where
+class (as ~ as ++ '[], forall bs cs. Assoc as bs cs) => IsList as where
   listId :: List (L as) (L as)
-instance IsList '[] where listId = Nil
-instance (CategoryOf k, Ob (a :: k), IsList as) => IsList (a ': as) where listId = Cons id id
+  withIsList2 :: IsList bs => (IsList (as ++ bs) => r) -> r
+instance IsList '[] where
+  listId = Nil
+  withIsList2 r = r
+instance (CategoryOf k, Ob (a :: k), IsList as) => IsList (a ': as) where
+  listId = Cons id listId
+  withIsList2 @bs r = withIsList2 @as @bs r
 
 instance (CategoryOf k) => CategoryOf (LIST k) where
   type (~>) = List
@@ -54,6 +58,7 @@ instance (CategoryOf k) => MonoidalProfunctor (List :: CAT (LIST k)) where
 instance (CategoryOf k) => Monoidal (LIST k) where
   type Unit = L '[]
   type p ** q = L (UN L p ++ UN L q)
+  withOb2 @(L as) @(L bs) = withIsList2 @as @bs
   leftUnitor = listId
   leftUnitorInv = listId
   rightUnitor = listId

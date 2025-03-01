@@ -1,6 +1,6 @@
 module Proarrow.Promonad.State where
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap')
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj)
 
 data State s a b where

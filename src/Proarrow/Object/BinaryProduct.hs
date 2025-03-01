@@ -28,23 +28,19 @@ infixl 5 &&&
 infixl 5 ***
 
 class (CategoryOf k) => HasBinaryProducts k where
-  {-# MINIMAL (fst | fst'), (snd | snd'), (&&&) #-}
   type (a :: k) && (b :: k) :: k
-
+  withObProd :: (Ob (a :: k), Ob b) => (Ob (a && b) => r) -> r
   fst :: (Ob (a :: k), Ob b) => (a && b) ~> a
-  fst @a @b = fst' (obj @a) (obj @b)
-  fst' :: (a :: k) ~> a' -> Obj b -> a && b ~> a'
-  fst' @a @_ @b a b = a . fst @k @a @b \\ a \\ b
-
   snd :: (Ob (a :: k), Ob b) => (a && b) ~> b
-  snd @a @b = snd' (obj @a) (obj @b)
-  snd' :: Obj (a :: k) -> b ~> b' -> a && b ~> b'
-  snd' @a @b a b = b . snd @k @a @b \\ a \\ b
-
   (&&&) :: (a :: k) ~> x -> a ~> y -> a ~> x && y
-
   (***) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a && b ~> x && y
   l *** r = (l . fst @k @a @b) &&& (r . snd @k @a @b) \\ l \\ r
+
+fst' :: forall {k} (a :: k) a' b. HasBinaryProducts k => a ~> a' -> Obj b -> a && b ~> a'
+fst' a b = a . fst @k @a @b \\ a \\ b
+
+snd' :: forall {k} (a :: k) b b'. HasBinaryProducts k => Obj a -> b ~> b' -> a && b ~> b'
+snd' a b = b . snd @k @a @b \\ a \\ b
 
 first :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryProducts k, Ob c) => a ~> b -> (a && c) ~> (b && c)
 first f = f *** obj @c
@@ -64,24 +60,28 @@ instance (HasProducts k, SymMonoidal k, (Unit :: k) ~ TerminalObject, forall (a 
 
 instance HasBinaryProducts Type where
   type a && b = (a, b)
+  withObProd r = r
   fst = P.fst
   snd = P.snd
   f &&& g = \a -> (f a, g a)
 
 instance HasBinaryProducts () where
   type '() && '() = '()
+  withObProd r = r
   fst = U.Unit
   snd = U.Unit
   U.Unit &&& U.Unit = U.Unit
 
 instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
   type a && b = '(Fst a && Fst b, Snd a && Snd b)
+  withObProd @'(a1, a2) @'(b1, b2) r = withObProd @j @a1 @b1 (withObProd @k @a2 @b2 r)
   fst @'(a1, a2) @'(b1, b2) = fst @_ @a1 @b1 :**: fst @_ @a2 @b2
   snd @a @b = snd @_ @(Fst a) @(Fst b) :**: snd @_ @(Snd a) @(Snd b)
   (f1 :**: f2) &&& (g1 :**: g2) = (f1 &&& g1) :**: (f2 &&& g2)
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
   type p && q = p :*: q
+  withObProd r = r
   fst = Prof fstP
   snd = Prof sndP
   Prof l &&& Prof r = Prof (prod l r)
@@ -107,8 +107,8 @@ associatorProdInv = (obj @a *** fst @k @b @c) &&& (snd @k @b @c . snd @k @a @(b 
 swapProd' :: (HasBinaryProducts k) => (a :: k) ~> a' -> b ~> b' -> (a && b) ~> (b' && a')
 swapProd' a b = snd' (src a) b &&& fst' a (src b)
 
-swapProd :: (HasBinaryProducts k, Ob a, Ob b) => (a :: k) && b ~> b && a
-swapProd @_ @a @b = swapProd' (obj @a) (obj @b)
+swapProd :: forall {k} (a :: k) b. (HasBinaryProducts k, Ob a, Ob b) => a && b ~> b && a
+swapProd = swapProd' (obj @a) (obj @b)
 
 newtype PROD k = PR k
 type instance UN PR (PR k) = k
@@ -132,6 +132,7 @@ instance (HasTerminalObject k) => HasTerminalObject (PROD k) where
   terminate = Prod terminate
 instance (HasBinaryProducts k) => HasBinaryProducts (PROD k) where
   type a && b = PR (UN PR a && UN PR b)
+  withObProd @(PR a) @(PR b) r = withObProd @k @a @b r
   fst @(PR a) @(PR b) = Prod (fst @_ @a @b)
   snd @(PR a) @(PR b) = Prod (snd @_ @a @b)
   Prod f &&& Prod g = Prod (f &&& g)
@@ -147,7 +148,7 @@ instance (HasProducts k, Category cat) => MonoidalProfunctor (Prod cat :: CAT (P
 instance (HasProducts k) => Monoidal (PROD k) where
   type Unit = TerminalObject
   type a ** b = a && b
-
+  withOb2 @(PR a) @(PR b) = withObProd @k @a @b
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
@@ -156,7 +157,7 @@ instance (HasProducts k) => Monoidal (PROD k) where
   associatorInv @(PR a) @(PR b) @(PR c) = Prod (associatorProdInv @a @b @c)
 
 instance (HasProducts k) => SymMonoidal (PROD k) where
-  swap' (Prod a) (Prod b) = Prod (swapProd' a b)
+  swap @(PR a) @(PR b) = Prod (swapProd @a @b)
 
 instance MonoidalProfunctor (->) where
   par0 = id
@@ -165,6 +166,7 @@ instance MonoidalProfunctor (->) where
 instance Monoidal Type where
   type Unit = TerminalObject
   type a ** b = a && b
+  withOb2 r = r
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
@@ -173,7 +175,7 @@ instance Monoidal Type where
   associatorInv = associatorProdInv
 
 instance SymMonoidal Type where
-  swap' = swapProd'
+  swap = swapProd
 
 instance Strong Type (->) where
   act = par
@@ -194,6 +196,7 @@ instance MonoidalProfunctor U.Unit where
 instance Monoidal () where
   type Unit = TerminalObject
   type a ** b = a && b
+  withOb2 r = r
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
@@ -202,7 +205,7 @@ instance Monoidal () where
   associatorInv = associatorProdInv
 
 instance SymMonoidal () where
-  swap' = swapProd'
+  swap = swapProd
 
 instance Strong () U.Unit where
   act = par
@@ -226,7 +229,7 @@ class (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
 instance (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
 
 first' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (a && c) (b && c)
-first' p = dimap (swapProd @_ @a @c) (swapProd @_ @c @b) (second' @_ @c p) \\ p
+first' p = dimap (swapProd @a @c) (swapProd @c @b) (second' @_ @c p) \\ p
 
 second' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (c && a) (c && b)
 second' p = act (obj @c) p

@@ -49,6 +49,7 @@ instance MonoidalProfunctor Linear where
 instance Monoidal LINEAR where
   type Unit = L ()
   type L a ** L b = L (a, b)
+  withOb2 r = r
   leftUnitor = Linear \((), x) -> x
   leftUnitorInv = Linear \x -> ((), x)
   rightUnitor = Linear \(x, ()) -> x
@@ -57,7 +58,7 @@ instance Monoidal LINEAR where
   associatorInv = Linear \(x, (y, z)) -> ((x, y), z)
 
 instance SymMonoidal LINEAR where
-  swap' (Linear f) (Linear g) = Linear \(x, y) -> (g y, f x)
+  swap = Linear \(x, y) -> (y, x)
 
 -- instance TracedMonoidalProfunctor Linear where
 --   trace (Linear f) = Linear \x -> let !(y, u) = f (x, u) in y
@@ -134,6 +135,7 @@ instance Adjunction Free Forget where
 
 instance HasBinaryCoproducts LINEAR where
   type L a || L b = L (Either a b)
+  withObCoprod r = r
   lft = Linear Left
   rgt = Linear Right
   Linear f ||| Linear g = Linear \case
@@ -159,6 +161,7 @@ instance HasTerminalObject LINEAR where
 
 instance HasBinaryProducts LINEAR where
   type L a && L b = L (With a b)
+  withObProd r = r
   fst = Linear \(With x xa _) -> xa x
   snd = Linear \(With x _ xb) -> xb x
   Linear f &&& Linear g = Linear \x -> With x f g

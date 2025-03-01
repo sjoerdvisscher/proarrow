@@ -45,6 +45,7 @@ instance
 instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => Monoidal (SUBCAT (ob :: OB k)) where
   type Unit = SUB Unit
   type a ** b = SUB (UN SUB a ** UN SUB b)
+  withOb2 @(SUB a) @(SUB b) r = withOb2 @k @a @b r
   leftUnitor = Sub leftUnitor
   leftUnitorInv = Sub leftUnitorInv
   rightUnitor = Sub rightUnitor
@@ -53,7 +54,7 @@ instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => M
   associatorInv @(SUB a) @(SUB b) @(SUB c) = Sub (associatorInv @_ @a @b @c)
 
 instance (SymMonoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SymMonoidal (SUBCAT (ob :: OB k)) where
-  swap' (Sub a) (Sub b) = Sub (swap' a b)
+  swap @(SUB a) @(SUB b) = Sub (swap @k @a @b)
 
 instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub p :: CAT (SUBCAT (ob :: OB k))) where
   type Sub p % a = SUB (p % UN SUB a)

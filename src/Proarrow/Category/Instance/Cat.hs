@@ -125,6 +125,7 @@ instance (Representable p, Representable q) => Representable (p :&&&: q) where
 
 instance HasBinaryProducts KIND where
   type l && r = K (UN K l, UN K r)
+  withObProd r = r
   fst = Cat @FstCat
   snd = Cat @SndCat
   Cat @p &&& Cat @q = Cat @(p :&&&: q)
@@ -177,6 +178,7 @@ instance (Representable p, Representable q) => Representable (p :|||: q) where
 
 instance HasBinaryCoproducts KIND where
   type K l || K r = K (COPRODUCT l r)
+  withObCoprod r = r
   lft = Cat @LftCat
   rgt = Cat @RgtCat
   Cat @p ||| Cat @q = Cat @(p :|||: q)
@@ -188,6 +190,7 @@ instance MonoidalProfunctor Cat where
 instance Monoidal KIND where
   type Unit = K ()
   type l ** r = K (UN K l, UN K r)
+  withOb2 r = r
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
   rightUnitor = rightUnitorProd
@@ -195,14 +198,14 @@ instance Monoidal KIND where
   associator = associatorProd
   associatorInv = associatorProdInv
 
-type Swap :: h +-> i -> j +-> k -> (h, j) +-> (k, i)
-data Swap p q a b where
-  Swap :: p a b -> q c d -> Swap p q '(a, c) '(d, b)
-instance (Profunctor p, Profunctor q) => Profunctor (Swap p q) where
+type Swap :: (j, k) +-> (k, j)
+data Swap a b where
+  Swap :: a ~> b -> c ~> d -> Swap '(a, c) '(d, b)
+instance (CategoryOf j, CategoryOf k) => Profunctor (Swap :: (j, k) +-> (k, j)) where
   dimap (l1 :**: l2) (r1 :**: r2) (Swap p q) = Swap (dimap l1 r2 p) (dimap l2 r1 q)
   r \\ Swap p q = r \\ p \\ q
 instance SymMonoidal KIND where
-  swap' (Cat @p) (Cat @q) = Cat @(Swap p q)
+  swap @(K j) @(K k) = Cat @(Swap :: (j, k) +-> (k, j))
 
 type Curry :: (i, j) +-> k -> i +-> (k, OPPOSITE j)
 data Curry p a b where
@@ -229,7 +232,7 @@ instance StarAutonomous KIND where
   dual (Cat @p) = Cat @(Op p)
   dualInv (Cat @p) = Cat @(UnOp p)
   linDist (Cat @p) = combineDual . swap . Cat @(Curry p)
-  linDistInv (Cat @p) = Cat @(Uncurry (Swap (~>) (~>) :.: DistribDual :.: p))
+  linDistInv (Cat @p) = Cat @(Uncurry (Swap :.: DistribDual :.: p))
 
 type DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)
 data DistribDual a b where

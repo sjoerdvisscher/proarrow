@@ -3,6 +3,7 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
+import Prelude (($))
 
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
 
@@ -14,9 +15,10 @@ class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: j +-> k
   par :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
 
 type Monoidal :: Kind -> Constraint
-class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k)) => Monoidal k where
+class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Monoidal k where
   type Unit :: k
   type (a :: k) ** (b :: k) :: k
+  withOb2 :: (Ob (a :: k), Ob b) => ((Ob (a ** b)) => r) -> r
   leftUnitor :: (Ob (a :: k)) => Unit ** a ~> a
   leftUnitorInv :: (Ob (a :: k)) => a ~> Unit ** a
   rightUnitor :: (Ob (a :: k)) => a ** Unit ~> a
@@ -61,10 +63,10 @@ unitObj :: (Monoidal k) => Obj (Unit :: k)
 unitObj = par0
 
 class (Monoidal k) => SymMonoidal k where
-  swap' :: (a :: k) ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
+  swap :: (Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
 
-swap :: forall {k} a b. (SymMonoidal k, Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
-swap = swap' (obj @a) (obj @b)
+swap' :: forall {k} (a :: k) a' b b'. (SymMonoidal k) => a ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
+swap' f g = swap @k @a' @b' . (f `par` g) \\ f \\ g
 
 type TracedMonoidalProfunctor :: forall {k}. k +-> k -> Constraint
 class (SymMonoidal k, Profunctor p) => TracedMonoidalProfunctor (p :: k +-> k) where
@@ -76,9 +78,6 @@ class (SymMonoidal k, Profunctor p) => TracedMonoidalProfunctor (p :: k +-> k) w
 
 class (TracedMonoidalProfunctor ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
 instance (TracedMonoidalProfunctor ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
-
-isObPar :: forall {k} a b r. (Monoidal k, Ob (a :: k), Ob b) => ((Ob (a ** b)) => r) -> r
-isObPar r = r \\ (obj @a `par` obj @b)
 
 first :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (a ** c) ~> (b ** c)
 first f = f `par` obj @c
@@ -100,16 +99,21 @@ swapInner' a b c d =
 
 swapInner
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((a ** c) ** (b ** d))
-swapInner = swapInner' (obj @a) (obj @b) (obj @c) (obj @d)
+swapInner =
+  withOb2 @k @b @d $
+    withOb2 @k @c @d $
+      associatorInv @k @a @c @(b ** d)
+        . (obj @a `par` (associator @k @c @b @d . (swap @k @b @c `par` obj @d) . associatorInv @k @b @c @d))
+        . associator @k @a @b @(c ** d)
 
 swapFst
   :: forall {k} (a :: k) b c d. (SymMonoidal k, Ob a, Ob b, Ob c, Ob d) => (a ** b) ** (c ** d) ~> (c ** b) ** (a ** d)
-swapFst = (swap @b @c `par` obj2 @a @d) . swapInner @b @a @c @d . (swap @a @b `par` obj2 @c @d)
+swapFst = (swap @k @b @c `par` obj2 @a @d) . swapInner @b @a @c @d . (swap @k @a @b `par` obj2 @c @d)
 
 swapSnd
   :: forall {k} a (b :: k) c d. (SymMonoidal k, Ob a, Ob b, Ob c, Ob d) => (a ** b) ** (c ** d) ~> (a ** d) ** (c ** b)
-swapSnd = (obj2 @a @d `par` swap @b @c) . swapInner @a @b @d @c . (obj2 @a @b `par` swap @c @d)
+swapSnd = (obj2 @a @d `par` swap @k @b @c) . swapInner @a @b @d @c . (obj2 @a @b `par` swap @k @c @d)
 
 swapOuter
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((d ** b) ** (c ** a))
-swapOuter = (obj2 @d @b `par` swap @a @c) . swapFst @a @b @d @c . (obj2 @a @b `par` swap @c @d)
+swapOuter = (obj2 @d @b `par` swap @k @a @c) . swapFst @a @b @d @c . (obj2 @a @b `par` swap @k @c @d)

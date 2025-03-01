@@ -9,7 +9,8 @@ import Proarrow.Category.Monoidal
   , first
   , obj2
   , second
-  , unitObj, swap
+  , swap'
+  , unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
@@ -40,7 +41,7 @@ instance (Monoid (r :: m), MonoidalAction m k) => Procomonad (Reader (OP r) :: k
 
 instance (Ob (r :: m), MonoidalAction m k, SymMonoidal m) => Strong m (Reader (OP r) :: k +-> k) where
   act @a @b @x @y f (Reader g) =
-    Reader (act f g . multiplicatorInv @m @k @a @r @x . act (swap @r @a) (obj @x) . multiplicator @m @k @r @a @x)
+    Reader (act f g . multiplicatorInv @m @k @a @r @x . act (swap @_ @r @a) (obj @x) . multiplicator @m @k @r @a @x)
       \\ act (obj @a) (obj @x)
       \\ act (obj @b) (obj @y)
       \\ f
@@ -51,7 +52,7 @@ instance (Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor 
     Reader
       ( second @x2 g
           . associator @k @x2 @r @y1
-          . ((swap' @k (obj @r) f . associator @k @r @r @x1 . first @x1 (comult @r)) `par` obj @y1)
+          . ((swap' (obj @r) f . associator @k @r @r @x1 . first @x1 (comult @r)) `par` obj @y1)
           . associatorInv @k @r @x1 @y1
       )
       \\ obj2 @x1 @y1

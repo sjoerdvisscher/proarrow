@@ -65,8 +65,8 @@ instance (M.Monoidal k) => HasCompanions (MonK k) (MonK k) where
   compFromCompose (Mon2 f) (Mon2 g) = Mon2 (f `M.par` g)
 
 instance (M.CompactClosed k, Ob (a :: k), b ~ M.Dual a, Ob b) => Adjunction (MK a) (MK b) where
-  unit = Mon2 (M.swap @a @b . M.dualityUnit @a)
-  counit = Mon2 (M.dualityCounit @a . M.swap @a @b)
+  unit = Mon2 (M.swap @k @a @b . M.dualityUnit @a)
+  counit = Mon2 (M.dualityCounit @a . M.swap @k @a @b)
 
 instance (M.CompactClosed k) => Equipment (MonK k) (MonK k) where
   type Conjoint (MonK k) (MK a) = MK (M.Dual a)
@@ -95,8 +95,8 @@ instance (Closed k, Ob (p ~~> q), Ob p, Ob q) => RightKanExtension (MK (p :: k))
 
 instance (Closed k, SymMonoidal k, Ob (p ~~> q), Ob p, Ob q) => RightKanLift (MK (p :: k)) (MK (q :: k)) where
   type Rift (MK p) (MK q) = MK (p ~~> q)
-  rift = Mon2 (eval @p @q . M.swap @p @(p ~~> q))
-  riftUniv @(MK g) (Mon2 f) = Mon2 (curry @g @p @q (f . M.swap @g @p))
+  rift = Mon2 (eval @p @q . M.swap @k @p @(p ~~> q))
+  riftUniv @(MK g) (Mon2 f) = Mon2 (curry @g @p @q (f . M.swap @k @g @p))
 
 instance (Coclosed k, Ob (q <~~ p), Ob p, Ob q) => LeftKanExtension (MK (p :: k)) (MK (q :: k)) where
   type Lan (MK p) (MK q) = MK (q <~~ p)
@@ -105,5 +105,5 @@ instance (Coclosed k, Ob (q <~~ p), Ob p, Ob q) => LeftKanExtension (MK (p :: k)
 
 instance (Coclosed k, SymMonoidal k, Ob (q <~~ p), Ob p, Ob q) => LeftKanLift (MK (p :: k)) (MK (q :: k)) where
   type Lift (MK p) (MK q) = MK (q <~~ p)
-  lift = Mon2 (M.swap @(q <~~ p) @p . coeval @q @p)
-  liftUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @q @p @g (M.swap @p @g . f))
+  lift = Mon2 (M.swap @k @(q <~~ p) @p . coeval @q @p)
+  liftUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @q @p @g (M.swap @k @p @g . f))

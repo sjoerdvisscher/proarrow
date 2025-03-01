@@ -29,6 +29,7 @@ instance (MonoidalProfunctor p) => MonoidalProfunctor (Rev p) where
 instance (Monoidal k) => Monoidal (REV k) where
   type Unit = R Unit
   type R a ** R b = R (b ** a)
+  withOb2 @(R a) @(R b) = withOb2 @k @b @a
   leftUnitor = Rev rightUnitor
   leftUnitorInv = Rev rightUnitorInv
   rightUnitor = Rev leftUnitor
@@ -37,4 +38,4 @@ instance (Monoidal k) => Monoidal (REV k) where
   associatorInv @(R a) @(R b) @(R c) = Rev (associator @k @c @b @a)
 
 instance (SymMonoidal k) => SymMonoidal (REV k) where
-  swap' (Rev a) (Rev b) = Rev (swap' b a)
+  swap @(R a) @(R b) = Rev (swap @k @b @a)

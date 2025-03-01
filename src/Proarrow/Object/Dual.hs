@@ -34,7 +34,7 @@ doubleNeg :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Dual (Dual a) ~> a
 doubleNeg = dualInv @k @a (doubleNegInv @(Dual a))
 
 doubleNegInv :: forall {k} (a :: k). (StarAutonomous k, Ob a) => a ~> Dual (Dual a)
-doubleNegInv = linDistInv @k @Unit @a @(Dual a) (dual (swap @a @(Dual a)) . dualityUnitSA @a) . leftUnitorInv @k @a
+doubleNegInv = linDistInv @k @Unit @a @(Dual a) (dual (swap @k @a @(Dual a)) . dualityUnitSA @a) . leftUnitorInv @k @a
 
 type ExpSA a b = Dual (a ** Dual b)
 
@@ -83,15 +83,15 @@ dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @Unit
 combineDual :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => Dual a ** Dual b ~> Dual (a ** b)
 combineDual =
   linDist @k @_ @a @b
-    ( leftUnitorWith (dualityCounit @a . swap @a @(Dual a))
+    ( leftUnitorWith (dualityCounit @a . swap @k @a @(Dual a))
         . associatorInv @k @a @(Dual a) @(Dual b)
-        . swap @(Dual a ** Dual b) @a
+        . swap @k @(Dual a ** Dual b) @a
     )
     \\ obj @(Dual a) `par` obj @(Dual b)
 
 compactClosedTrace :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** u ~> y ** u -> x ~> y
 compactClosedTrace f =
-  rightUnitorWith (dualityCounit @u . swap @u @(Dual u))
+  rightUnitorWith (dualityCounit @u . swap @k @u @(Dual u))
     . associator @k @y @u @(Dual u)
     . (f `par` obj @(Dual u))
     . associatorInv @k @x @u @(Dual u)

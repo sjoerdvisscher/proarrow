@@ -45,12 +45,14 @@ instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
 
 instance (HasBinaryCoproducts k) => HasBinaryProducts (OPPOSITE k) where
   type a && b = OP (UN OP a || UN OP b)
+  withObProd @(OP a) @(OP b) = withObCoprod @k @a @b
   fst @(OP a) @(OP b) = Op (lft @_ @a @b)
   snd @(OP a) @(OP b) = Op (rgt @_ @a @b)
   Op a &&& Op b = Op (a ||| b)
 
 instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
   type a || b = OP (UN OP a && UN OP b)
+  withObCoprod @(OP a) @(OP b) = withObProd @k @a @b
   lft @(OP a) @(OP b) = Op (fst @_ @a @b)
   rgt @(OP a) @(OP b) = Op (snd @_ @a @b)
   Op a ||| Op b = Op (a &&& b)
@@ -62,6 +64,7 @@ instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where
 instance (Monoidal k) => Monoidal (OPPOSITE k) where
   type Unit = OP Unit
   type a ** b = OP (UN OP a ** UN OP b)
+  withOb2 @(OP a) @(OP b) = withOb2 @k @a @b
   leftUnitor = Op leftUnitorInv
   leftUnitorInv = Op leftUnitor
   rightUnitor = Op rightUnitorInv
@@ -70,7 +73,7 @@ instance (Monoidal k) => Monoidal (OPPOSITE k) where
   associatorInv @(OP a) @(OP b) @(OP c) = Op (associator @k @a @b @c)
 
 instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
-  swap' (Op a) (Op b) = Op (swap' b a)
+  swap @(OP a) @(OP b) = Op (swap @k @b @a)
 
 instance (Comonoid c) => Monoid (OP c) where
   mempty = Op counit

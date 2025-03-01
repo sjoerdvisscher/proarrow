@@ -60,6 +60,7 @@ instance (Monoidal j, Monoidal k) => MonoidalProfunctor (Prof :: CAT (j +-> k)) 
 instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
   type Unit = DayUnit
   type p ** q = Day p q
+  withOb2 r = r
   leftUnitor = Prof \(Day f (DayUnit h i) q g) -> dimap (leftUnitor . (h `par` src q) . f) (g . (i `par` tgt q) . leftUnitorInv) q \\ q
   leftUnitorInv = Prof \q -> Day leftUnitorInv (DayUnit par0 par0) q leftUnitor \\ q
   rightUnitor = Prof \(Day f p (DayUnit h i) g) -> dimap (rightUnitor . (src p `par` h) . f) (g . (tgt p `par` i) . rightUnitorInv) p \\ p
@@ -76,7 +77,7 @@ instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
     \\ p1 \\ p2 \\ q2
 
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (PRO j k) where
-  swap' (Prof n) (Prof m) = Prof \(Day @c @d @e @f f p q g) -> Day (swap @c @e . f) (m q) (n p) (g . swap @f @d) \\ p \\ q
+  swap = Prof \(Day @c @d @e @f f p q g) -> Day (swap @_ @c @e . f) q p (g . swap @_ @f @d) \\ p \\ q
 
 instance (Monoidal j, Monoidal k) => Distributive (PRO j k) where
   distL = Prof \(Day l a bc r) -> case bc of
