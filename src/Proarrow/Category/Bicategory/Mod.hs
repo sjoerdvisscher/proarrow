@@ -34,7 +34,5 @@ instance (Bicategory kk) => Bicategory (MODK kk) where
   type Ob0 (MODK kk) (s :: MONK kk) = (Monad (UN MON s :: kk (MONObj0 s) (MONObj0 s)), Ob0 kk (MONObj0 s), IsMON kk s)
   type I @(MODK kk) @(i :: MONK kk) = MOD (UN MON i)
   type MOD p `O` MOD q = MOD (q `O` p)
-  iObj :: forall (i :: MONK kk). (Ob0 (MODK kk) i) => Obj (I :: MODK kk i i)
-  iObj = Mod _ _ _
   Mod p f q `o` Mod p' g q' = let fg = f `o` g in Mod _ fg _
   -- leftUnitor (Mod p) = let lp = leftUnitor p in Mod lp \\ lp

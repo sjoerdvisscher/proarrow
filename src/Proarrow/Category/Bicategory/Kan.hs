@@ -31,13 +31,12 @@ dimapLan :: forall i j f g. (LeftKanExtension j f, LeftKanExtension i g) => (i ~
 dimapLan ij fg = lanUniv @j ((obj @(Lan i g) `o` ij) . lan @i . fg) \\ ij
 
 lanComonadEpsilon :: forall {kk} {c} {d} (p :: kk c d). (LeftKanExtension p p) => Lan p p ~> I
-lanComonadEpsilon = lanUniv @p @p leftUnitorInv \\ iObj @kk @d
+lanComonadEpsilon = lanUniv @p @p leftUnitorInv
 
 lanComonadDelta :: forall {kk} {c} {d} (p :: kk c d). (LeftKanExtension p p) => Lan p p ~> Lan p p `O` Lan p p
 lanComonadDelta =
   let lpp = obj @(Lan p p)
   in lanUniv @p @p (associatorInv @_ @(Lan p p) @(Lan p p) @p . (lpp `o` lan @p @p) . lan @p @p)
-      \\ iObj @kk @d
       \\ (lpp `o` lpp)
 
 idLan :: forall f. (LeftKanExtension I f, Ob f) => f ~> Lan I f
@@ -80,12 +79,12 @@ dimapRan
 dimapRan ij fg = ranUniv @i (fg . ran @j . (obj @(Ran j f) `o` ij)) \\ ij
 
 ranMonadEta :: forall {kk} {c} {d} (p :: kk c d). (RightKanExtension p p) => I ~> Ran p p
-ranMonadEta = ranUniv @p @p leftUnitor \\ iObj @kk @d
+ranMonadEta = ranUniv @p @p leftUnitor
 
 ranMonadMu :: forall {kk} {c} {d} (p :: kk c d). (RightKanExtension p p) => Ran p p `O` Ran p p ~> Ran p p
 ranMonadMu =
   let rpp = obj @(Ran p p)
-  in ranUniv @p @p (ran @p @p . (rpp `o` ran @p @p) . associator @_ @(Ran p p) @(Ran p p) @p) \\ iObj @kk @d \\ (rpp `o` rpp)
+  in ranUniv @p @p (ran @p @p . (rpp `o` ran @p @p) . associator @_ @(Ran p p) @(Ran p p) @p) \\ (rpp `o` rpp)
 
 composeRan
   :: forall i j f
@@ -132,13 +131,12 @@ dimapLift :: forall i j f g. (LeftKanLift j f, LeftKanLift i g) => (i ~> j) -> (
 dimapLift ij fg = liftUniv @j ((ij `o` obj @(Lift i g)) . lift @i . fg) \\ ij
 
 liftComonadEpsilon :: forall {kk} {c} {d} (p :: kk d c). (LeftKanLift p p) => Lift p p ~> I
-liftComonadEpsilon = liftUniv @p @p rightUnitorInv \\ iObj @kk @d
+liftComonadEpsilon = liftUniv @p @p rightUnitorInv
 
 liftComonadDelta :: forall {kk} {c} {d} (p :: kk d c). (LeftKanLift p p) => Lift p p ~> Lift p p `O` Lift p p
 liftComonadDelta =
   let lpp = obj @(Lift p p)
   in liftUniv @p @p (associator @_ @p @(Lift p p) @(Lift p p) . (lift @p @p `o` lpp) . lift @p @p)
-      \\ iObj @kk @d
       \\ (lpp `o` lpp)
 
 idLift :: forall f. (LeftKanLift I f, Ob f) => f ~> Lift I f
@@ -180,13 +178,12 @@ dimapRift :: forall i j f g. (RightKanLift j f, RightKanLift i g) => (i ~> j) ->
 dimapRift ij fg = riftUniv @i (fg . rift @j . (ij `o` obj @(Rift j f))) \\ ij
 
 riftMonadEta :: forall {kk} {c} {d} (p :: kk d c). (RightKanLift p p) => I ~> Rift p p
-riftMonadEta = riftUniv @p @p rightUnitor \\ iObj @kk @d
+riftMonadEta = riftUniv @p @p rightUnitor
 
 riftMonadMu :: forall {kk} {c} {d} (p :: kk d c). (RightKanLift p p) => Rift p p `O` Rift p p ~> Rift p p
 riftMonadMu =
   let rpp = obj @(Rift p p)
   in riftUniv @p @p (rift @p @p . (rift @p @p `o` rpp) . associatorInv @_ @p @(Rift p p) @(Rift p p))
-      \\ iObj @kk @d
       \\ (rpp `o` rpp)
 
 composeRift

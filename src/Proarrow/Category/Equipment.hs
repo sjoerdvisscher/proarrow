@@ -13,6 +13,7 @@ import Proarrow.Category.Bicategory
   , Ob0'
   , associator'
   , associatorInv'
+  , iObj
   , leftUnitorInvWith
   , leftUnitorWith
   , rightUnitorInvWith
@@ -138,7 +139,7 @@ instance (HasCompanions hk vk, Ob0 vk h, Ob0 vk i, Ob0 vk j, Ob0 vk k) => Profun
 -- > |     |
 -- > k-----k
 object :: (HasCompanions hk vk, Ob0 vk k) => Sq '(I :: hk k k, I :: vk k k) '(I, I)
-object = hArr iObj
+object = hArr id
 
 -- | Make a square from a horizontal arrow
 --
@@ -155,8 +156,6 @@ hArr
 hArr n =
   Sq (rightUnitorInvWith (compFromId @hk @vk) (tgt n) . n . leftUnitorWith (compToId @hk @vk) (src n))
     \\ n
-    \\ iObj @vk @j
-    \\ iObj @vk @k
 
 -- > j-----j
 -- > |     |
@@ -202,7 +201,7 @@ vArr
   -> Sq '(I :: hk j j, f) '(I :: hk k k, g)
 vArr n =
   let n' = mapCompanion @hk @vk n
-  in Sq (leftUnitorInv . n' . rightUnitor) \\ n \\ n' \\ iObj @hk @j \\ iObj @hk @k
+  in Sq (leftUnitorInv . n' . rightUnitor) \\ n \\ n'
 
 -- > j--f--k
 -- > |  v  |
@@ -314,7 +313,7 @@ toRight
   :: forall {hk} {vk} {j} {k} f
    . (HasCompanions hk vk, Ob' (f :: vk j k))
   => Sq '(I :: hk j j, f) '(Companion hk f, I :: vk j j)
-toRight = let comp = mapCompanion @hk @vk (obj @f) in Sq (comp `o` compFromId) \\ comp \\ iObj @hk @j \\ iObj @vk @j
+toRight = let comp = mapCompanion @hk @vk (obj @f) in Sq (comp `o` compFromId) \\ comp
 
 -- > k-----k
 -- > |     |
@@ -325,7 +324,7 @@ fromLeft
   :: forall {hk} {vk} {j} {k} f
    . (HasCompanions hk vk, Ob' (f :: vk j k))
   => Sq '(Companion hk f, I :: vk k k) '(I :: hk k k, f)
-fromLeft = let comp = mapCompanion @hk @vk (obj @f) in Sq (compToId `o` comp) \\ comp \\ iObj @hk @k \\ iObj @vk @k
+fromLeft = let comp = mapCompanion @hk @vk (obj @f) in Sq (compToId `o` comp) \\ comp
 
 -- > j-----j
 -- > |     |
@@ -338,10 +337,8 @@ fromRight
   => Sq '(I :: hk j j, I :: vk j j) '(Conjoint hk f, f)
 fromRight =
   let f = obj @f
-  in Sq (comConUnit @hk @vk f . leftUnitorWith (compToId @hk @vk) iObj)
+  in Sq (comConUnit @hk @vk f . leftUnitorWith (compToId @hk @vk) id)
       \\\ mapConjoint @hk @vk f
-      \\ iObj @hk @j
-      \\ iObj @vk @j
 
 -- > j--f--k
 -- > |  v  |
@@ -354,10 +351,8 @@ toLeft
   => Sq '(Conjoint hk f, f) '(I :: hk k k, I :: vk k k)
 toLeft =
   let f = obj @f
-  in Sq (rightUnitorInvWith (compFromId @hk @vk) iObj . comConCounit @hk @vk f)
+  in Sq (rightUnitorInvWith (compFromId @hk @vk) id . comConCounit @hk @vk f)
       \\\ mapConjoint @hk @vk f
-      \\ iObj @hk @k
-      \\ iObj @vk @k
 
 flipCompanion
   :: forall {j} {k} hk vk (f :: vk j k) p q

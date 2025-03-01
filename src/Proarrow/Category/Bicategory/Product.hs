@@ -38,7 +38,6 @@ instance (Bicategory jj, Bicategory kk) => Bicategory (PRODK jj kk) where
   type I = PROD I I
   type PROD a b `O` PROD c d = PROD (a `O` c) (b `O` d)
   r \\\ Prod f g = r \\\ f \\\ g
-  iObj = Prod iObj iObj
   Prod f g `o` Prod h i = Prod (f `o` h) (g `o` i)
   leftUnitor = Prod leftUnitor leftUnitor
   leftUnitorInv = Prod leftUnitorInv leftUnitorInv
