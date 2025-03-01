@@ -11,6 +11,7 @@ import Proarrow.Category.Bicategory
   , Monad (..)
   , associator'
   , associatorInv'
+  , iObj
   , leftUnitorInvWith
   , leftUnitorWith
   , rightUnitorWith
@@ -131,7 +132,7 @@ type instance Fold (p ::: Nil) = p
 type instance Fold (p ::: (q ::: ps)) = Fold (q ::: ps) `O` p
 
 fold :: forall {kk} {i} {j} (as :: Path kk i j). (Bicategory kk) => SPath as -> Fold as ~> Fold as
-fold SNil = iObj
+fold SNil = id
 fold (SCons p SNil) = p
 fold (SCons p fs@SCons{}) = fold fs `o` p
 
@@ -163,10 +164,10 @@ instance (CategoryOf (kk j k), Bicategory kk) => CategoryOf (Path kk j k) where
   type Ob (ps :: Path kk j k) = (IsPath ps, Ob0 kk j, Ob0 kk k)
 
 introI :: forall {kk} {j}. (Ob0 kk j, Bicategory kk) => (Nil :: Path kk j j) ~> (I ::: Nil)
-introI = Str SNil (SCons iObj SNil) iObj
+introI = Str SNil (SCons id SNil) id
 
 elimI :: forall {kk} {j}. (Ob0 kk j, Bicategory kk) => (I ::: Nil) ~> (Nil :: Path kk j j)
-elimI = Str (SCons iObj SNil) SNil iObj
+elimI = Str (SCons id SNil) SNil id
 
 introO
   :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
@@ -226,8 +227,8 @@ instance (HasCompanions hk vk) => HasCompanions (Path hk) (Path vk) where
   mapCompanion (Str fs gs n) =
     Str (mapCompanionSPath @hk fs) (mapCompanionSPath @hk gs) $ companionFold gs . mapCompanion @hk @vk n . foldCompanion fs
 
-  compToId = Str SNil SNil iObj
-  compFromId = Str SNil SNil iObj
+  compToId = Str SNil SNil id
+  compFromId = Str SNil SNil id
   compToCompose (Str fs _ f) (Str gs _ g) =
     let cfs = mapCompanionSPath fs
         cgs = mapCompanionSPath gs
@@ -395,16 +396,16 @@ adjHK (RetroSq sq) =
 --       )
 
 instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
-  eta = iObj
-  mu = iObj
+  eta = id
+  mu = id
 
 instance (Monad s, Ob s) => Monad (s ::: Nil) where
   eta = str iObj (obj1 @s) eta
   mu = str (obj1 @s || obj1 @s) (obj1 @s) mu
 
 instance (Bicategory kk, Ob0 kk a) => Comonad (Nil :: Path kk a a) where
-  epsilon = iObj
-  delta = iObj
+  epsilon = id
+  delta = id
 
 instance (Adjunction l r, Ob r, Ob l) => Monad (l ::: r ::: Nil) where
   eta = str iObj (obj1 @r || obj1 @l) (unit @l @r)

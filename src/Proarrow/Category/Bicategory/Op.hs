@@ -36,7 +36,6 @@ instance (Bicategory kk) => Bicategory (OPK kk) where
   type I = OP I
   type O a b = OP (UN OP b `O` UN OP a)
   r \\\ Op f = r \\\ f
-  iObj = Op iObj
   Op f `o` Op g = Op (g `o` f)
   leftUnitor = Op rightUnitor
   leftUnitorInv = Op rightUnitorInv

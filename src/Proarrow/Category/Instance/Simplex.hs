@@ -12,8 +12,6 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
--- import Proarrow.Category.Bicategory qualified as B
-
 type data Nat = Z | S Nat
 data SNat :: Nat -> Type where
   SZ :: SNat Z
@@ -187,24 +185,3 @@ instance Promonad BiSimplex where
 instance CategoryOf (Simplex j k) where
   type (~>) = BiSimplex
   type Ob a = IsSimplex a
-
-type family SimplexI :: Simplex i i
-type instance SimplexI @Z = ZZ
-type instance SimplexI @(S n) = X (Y (SimplexI @n))
-
-type family SimplexO (f :: Simplex i j) (g :: Simplex j k) :: Simplex i k
-type instance SimplexO f ZZ = f
-type instance SimplexO f (Y g) = Y (SimplexO f g)
-type instance SimplexO (Y f) (X g) = SimplexO f g
-type instance SimplexO (X f) (X g) = X (SimplexO f (X g))
-
--- instance B.Bicategory Simplex where
---   type Ob0 Simplex n = IsNat n
---   type I = SimplexI
---   type a `O` b = SimplexO a b
---   iObj :: forall i. B.Ob0 Simplex i => Obj (B.I :: Simplex i i)
---   iObj = go (singNat @i) where
---     go :: SNat n -> Obj (B.I :: Simplex n n)
---     go SZ = ZZZ
---     go (SS n) = XXX (YYY (go n))
---   ZZZ `o` ZZZ = ZZZ

@@ -50,7 +50,7 @@ instance (Bicategory kk) => LaxProfunctor kk kk (HK kk) where
        . (Ob a, Ob b, Ob s, Ob t, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k)
       => a `O` s ~> t `O` b
       -> P kk kk (HK kk) (CO s) t (HomK a) (HomK b)
-  laxId (Id (HomW f) :: Id (a :: HK kk i j) b) = Hom (leftUnitorInv . f . rightUnitor) \\ f \\ iObj @kk @i \\ iObj @kk @j
+  laxId (Id (HomW f) :: Id (a :: HK kk i j) b) = Hom (leftUnitorInv . f . rightUnitor) \\ f
   laxComp (Hom @a @b @s @t n :.: Hom @_ @c @s' @t' m) =
     let s = obj @s; t = obj @t; s' = obj @s'; t' = obj @t'
     in Hom (associatorInv @_ @a @s @s' == n || s' == associator @_ @t @b @s' == t || m == associatorInv @_ @t @t' @c)

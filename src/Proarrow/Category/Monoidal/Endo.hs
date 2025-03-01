@@ -32,7 +32,7 @@ instance (Bicategory kk, Ob0 kk k) => CategoryOf (ENDO kk k) where
   type Ob p = (Is E p, Ob (UN E p))
 
 instance (Bicategory kk, Ob0 kk k, (Ob (I :: kk k k))) => MonoidalProfunctor (Endo :: CAT (ENDO kk k)) where
-  par0 = Endo iObj
+  par0 = Endo id
   Endo f `par` Endo g = mkEndo (f `o` g)
 
 -- | The monoidal subcategory of a bicategory for a single object.

@@ -3,6 +3,7 @@
 module Proarrow.Category.Bicategory
   ( -- * Bicategories
     Bicategory (..)
+  , iObj
   , (==)
   , (||)
   , appendObj
@@ -49,22 +50,20 @@ instance (Ob0 kk j) => Ob0' kk j
 class (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
 instance (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
 
+class Ob (I :: kk i i) => ObUnit kk i
+instance Ob (I :: kk i i) => ObUnit kk i
+
 -- | Bicategories.
 --
 -- * 0-cells are kinds @i@, @j@, @k@... satisfying the @Ob0 kk@ constraint.
 -- * 1-cells are types of kind @kk j k@ for any 0-cells @j@ and @k@, satisfying the @Ob@ constraint.
 -- * 2-cells are values of type @p ~> q@, where @p@ and @q@ are 1-cells.
 type Bicategory :: forall {s}. CAT s -> Constraint
-class (Locally CategoryOf kk, CategoryOf s) => Bicategory (kk :: CAT s) where
+class (Locally CategoryOf kk, CategoryOf s, forall i. (Ob0 kk i) => ObUnit kk i) => Bicategory (kk :: CAT s) where
   type Ob0 kk (j :: k) :: Constraint
   type Ob0 kk j = ()
   type I :: kk i i
   type O (p :: kk j k) (q :: kk i j) :: kk i k
-
-  -- | The identity 1-cell (as represented by an identity 2-cell).
-  iObj :: (Ob0 kk i) => Obj (I :: kk i i)
-  default iObj :: (Ob0 kk i, Ob (I :: kk i i)) => Obj (I :: kk i i)
-  iObj = id
 
   -- | Horizontal composition of 2-cells.
   o :: (a :: kk j k) ~> b -> c ~> d -> (a `O` c) ~> (b `O` d)
@@ -84,6 +83,11 @@ class (Locally CategoryOf kk, CategoryOf s) => Bicategory (kk :: CAT s) where
     :: forall {h} {i} {j} {k} a b c
      . (Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob (a :: kk j k), Ob (b :: kk i j), Ob (c :: kk h i))
     => a `O` (b `O` c) ~> (a `O` b) `O` c
+
+
+-- | The identity 1-cell (as represented by an identity 2-cell).
+iObj :: (Bicategory kk, Ob0 kk i) => Obj (I :: kk i i)
+iObj = id
 
 leftUnitor' :: (Bicategory kk) => (a :: kk i j) ~> b -> (I `O` a) ~> b
 leftUnitor' f = f . leftUnitor \\\ f
