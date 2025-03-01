@@ -4,11 +4,11 @@ module Proarrow.Squares.Limit where
 
 import Proarrow.Category.Bicategory (Adjunction, Bicategory (..))
 import Proarrow.Category.Bicategory qualified as Adj
-import Proarrow.Category.Bicategory.Strictified (Path (..), SPath (..), Strictified (..))
+import Proarrow.Category.Bicategory.Strictified (Path (..), Strictified (..), st)
 import Proarrow.Category.Equipment (HasCompanions (..), Sq (..), (===), (|||))
 import Proarrow.Category.Equipment.Limit qualified as L
-import Proarrow.Core (CategoryOf (..), obj)
-import Proarrow.Squares (vArr, vCombine, vId, vId', vSplit, vUnitor, vUnitorInv)
+import Proarrow.Core (CategoryOf (..))
+import Proarrow.Squares (vArr, vCombine, vId, vSplit, vUnitor, vUnitorInv)
 import Prelude (($))
 
 -- | The projection out of the @j@-weighted limit @l@ of @d@.
@@ -24,12 +24,11 @@ limit
   => Sq '(j ::: Nil, L.Limit j d ::: Nil) '(Nil, d ::: Nil)
 limit =
   L.withObLimit @vk @j @_ @d $
-    let l = obj @(L.Limit j d)
-    in Sq $
-        Str
-          (SCons (obj @j) (SCons (mapCompanion @hk l) SNil))
-          (SCons (mapCompanion @hk (obj @d)) SNil)
-          (L.limit @vk @j @k @d)
+    withObCompanion @hk @vk @d $
+      withObCompanion @hk @vk @(L.Limit j d) $
+        Sq $
+          st @(j ::: Companion hk (L.Limit j d) ::: Nil) @(Companion hk d ::: Nil)
+            (L.limit @vk @j @k @d)
 
 -- | The universal property of the limit.
 --
@@ -150,12 +149,11 @@ colimit
   => Sq '(j ::: Nil, d ::: Nil) '(Nil, L.Colimit j d ::: Nil)
 colimit =
   L.withObColimit @vk @j @_ @d $
-    let c = obj @(L.Colimit j d)
-    in Sq $
-        Str
-          (SCons (obj @j) (SCons (mapCompanion @hk (obj @d)) SNil))
-          (SCons (mapCompanion @hk c) SNil)
-          (L.colimit @vk @j @k @d)
+    withObCompanion @hk @vk @d $
+      withObCompanion @hk @vk @(L.Colimit j d) $
+        Sq $
+          st @(j ::: Companion hk d ::: Nil) @(Companion hk (L.Colimit j d) ::: Nil)
+            (L.colimit @vk @j @k @d)
 
 -- | The universal property of the colimit.
 --
@@ -220,16 +218,15 @@ leftAdjointPreservesColimits =
   withOb2 @_ @f @d $
     L.withObColimit @vk @j @k' @(f `O` d) $
       withOb2 @_ @g @(L.Colimit j (f `O` d)) $
-        let c' = obj @(L.Colimit j (f `O` d))
-        in ( colimitUniv @j
-              ( vId @d ||| unit @f @g
-                  === (vCombine === colimit @j) ||| vId @g
-                  === vCombine
-              )
-              === vSplit
-           )
-            ||| vId @f
-            === vId' c' ||| counit @f @g
+        ( colimitUniv @j
+            ( vId @d ||| unit @f @g
+                === (vCombine === colimit @j) ||| vId @g
+                === vCombine
+            )
+            === vSplit
+        )
+          ||| vId @f
+          === vId @(L.Colimit j (f `O` d)) ||| counit @f @g
 
 -- | The inverse works for any arrow:
 --

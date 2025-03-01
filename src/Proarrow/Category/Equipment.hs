@@ -35,6 +35,8 @@ class (Bicategory hk, Bicategory vk, forall (k :: c). (Ob0 vk k) => Ob0' hk k) =
   type Companion hk (f :: vk j k) :: hk j k
   mapCompanion :: forall {j} {k} (f :: vk j k) g. f ~> g -> Companion hk f ~> Companion hk g
 
+  withObCompanion :: forall {j} {k} f r. (Ob (f :: vk j k)) => ((Ob (Companion hk f)) => r) -> r
+
   compToId :: (Ob0 vk k) => Companion hk (I :: vk k k) ~> (I :: hk k k)
   compFromId :: (Ob0 vk k) => (I :: hk k k) ~> Companion hk (I :: vk k k)
 
@@ -48,9 +50,11 @@ instance (Adjunction (Companion hk f) (Conjoint hk f)) => ComConAdjunction hk vk
 
 type Equipment :: forall {c}. CAT c -> CAT c -> Constraint
 class (HasCompanions hk vk) => Equipment hk vk | hk -> vk where
-  {-# MINIMAL mapConjoint #-}
+  {-# MINIMAL mapConjoint, withObConjoint #-}
   type Conjoint hk (f :: vk j k) :: hk k j
   mapConjoint :: forall {j} {k} (f :: vk j k) g. f ~> g -> Conjoint hk g ~> Conjoint hk f
+
+  withObConjoint :: forall {j} {k} f r. (Ob (f :: vk j k)) => ((Ob (Conjoint hk f)) => r) -> r
 
   conjToId :: forall k. (Ob0 vk k) => Conjoint hk (I :: vk k k) ~> (I :: hk k k)
   conjToId = comConCounit iObj . leftUnitorInvWith compFromId (mapConjoint iObj)
