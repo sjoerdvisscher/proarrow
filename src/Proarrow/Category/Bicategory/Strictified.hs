@@ -149,6 +149,9 @@ data Strictified ps qs where
     -> Fold ps ~> Fold qs
     -> Strictified ps qs
 
+st :: forall {kk} {i} {j} (ps :: Path kk i j) qs. (Bicategory kk, Ob ps, Ob qs) => (Fold ps ~> Fold qs) -> Strictified ps qs
+st = str (obj @ps) (obj @qs)
+
 str :: (Bicategory kk) => Obj (ps :: Path kk j k) -> Obj qs -> (Fold ps ~> Fold qs) -> Strictified ps qs
 str ps qs f = Str (asSPath ps) (asSPath qs) f \\\ f
 
@@ -231,6 +234,8 @@ instance (HasCompanions hk vk) => HasCompanions (Path hk) (Path vk) where
   mapCompanion (Str fs gs n) =
     Str (mapCompanionSPath @hk fs) (mapCompanionSPath @hk gs) $ companionFold gs . mapCompanion @hk @vk n . foldCompanion fs
 
+  withObCompanion @p = withIsPath (mapCompanionSPath @hk (singPath @p))
+
   compToId = Str SNil SNil id
   compFromId = Str SNil SNil id
   compToCompose (Str fs _ f) (Str gs _ g) =
@@ -276,6 +281,8 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
         . associator' cfs (tgt compN) cgs
         . ((cfs `o` compN) `o` cgs)
         . leftUnitorInvWith (comConUnit fs) cgs
+
+  withObConjoint @p = withIsPath (mapConjointSPath @hk (singPath @p))
 
   comConUnit fs' = case asSPath fs' of
     SNil -> id

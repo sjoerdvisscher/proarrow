@@ -41,6 +41,7 @@ instance (Bicategory kk) => Bicategory (QKK kk) where
 instance (Bicategory kk) => HasCompanions (QKK kk) kk where
   type Companion (QKK kk) f = QK f
   mapCompanion f = Q2 f
+  withObCompanion r = r
   compToId = Q2 id
   compFromId = Q2 id
   compToCompose f g = Q2 (f `o` g)

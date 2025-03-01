@@ -69,6 +69,7 @@ instance (MonoidalAction m k) => Bicategory (STT m k) where
 instance (MonoidalAction m k, M.SymMonoidal m, Ob (M.Unit @m)) => HasCompanions (STT m k) (MonK m) where
   type Companion (STT m k) (MK a) = ST (Writer a)
   mapCompanion (Mon2 f) = StT (unProf (map f)) \\ f
+  withObCompanion r = r
   compToId = StT \(Writer f) -> Id (unitor @m . f)
   compFromId = StT \(Id f) -> Writer (unitorInv @m . f) \\ f
   compToCompose (Mon2 @m1 m1) (Mon2 @m2 m2) =
@@ -88,6 +89,7 @@ instance
 instance (MonoidalAction m k, M.SymMonoidal m, Ob (M.Unit @m)) => Equipment (STT m k) (MonK m) where
   type Conjoint (STT m k) (MK a) = ST (Reader (OP a))
   mapConjoint (Mon2 f) = StT (unProf (map (Op f))) \\ f
+  withObConjoint r = r
 
 type STSq (p :: k +-> k) (q :: k +-> k) (a :: m) (b :: m) =
   Sq '(ST p :: STT m k '() '(), MK a :: MonK m '() '()) '(ST q, MK b :: MonK m '() '())

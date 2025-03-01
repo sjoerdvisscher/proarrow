@@ -108,6 +108,7 @@ type UNFUN p = UN PK (UN SUB p)
 instance HasCompanions PROFK FUNK where
   type Companion PROFK p = PK (UNFUN p)
   mapCompanion (Sub (Prof n)) = Prof n
+  withObCompanion r = r
   compToId = Prof id
   compFromId = Prof id
   compToCompose f g = Prof id \\ f \\ g
@@ -116,6 +117,7 @@ instance HasCompanions PROFK FUNK where
 instance Equipment PROFK FUNK where
   type Conjoint PROFK p = PK (RepCostar (UNFUN p))
   mapConjoint (Sub (Prof @p n)) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (tabulate @p @a (repMap @p @a id))))
+  withObConjoint r = r
   conjToId = Prof (Id . unRepCostar)
   conjFromId = Prof \(Id f) -> RepCostar f \\ f
   conjToCompose (Sub Prof{}) (Sub (Prof @g _)) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repMap @g (obj @b)
