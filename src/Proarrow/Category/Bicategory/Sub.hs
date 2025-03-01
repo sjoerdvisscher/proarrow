@@ -45,6 +45,7 @@ instance
   type Ob0 (SUBCAT tag kk) k = Ob0 kk k
   type I = SUB I
   type p `O` q = SUB (UN SUB p `O` UN SUB q)
+  withOb2 @(SUB a) @(SUB b) r = withOb2 @kk @a @b r
   Sub m `o` Sub n = Sub $ m `o` n
   r \\\ Sub f = r \\\ f
   leftUnitor = Sub leftUnitor

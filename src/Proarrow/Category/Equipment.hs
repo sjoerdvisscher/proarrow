@@ -236,8 +236,8 @@ Sq sqL ||| Sq sqR =
         ec = mapCompanion @hk e
         fc = mapCompanion @hk f
         gc = mapCompanion @hk g
-    in (g `o` e) //
-        (f `o` d) //
+    in withOb2 @vk @g @e $
+        withOb2 @vk @f @d $
           dc //
             ec //
               fc //
@@ -283,14 +283,12 @@ Sq sqL ||| Sq sqR =
   -> Sq '(r `O` p, e) '(s `O` q, g)
 Sq sqL === Sq sqR =
   ( let p = obj @p
-        q = obj @q
-        r = obj @r
         s = obj @s
         ec = mapCompanion @hk (obj @e)
         fc = mapCompanion @hk (obj @f)
         gc = mapCompanion @hk (obj @g)
-    in (r `o` p) //
-        (s `o` q) //
+    in withOb2 @hk @r @p $
+        withOb2 @hk @s @q $
           ec //
             fc //
               gc //

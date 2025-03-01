@@ -6,7 +6,6 @@ module Proarrow.Category.Bicategory
   , iObj
   , (==)
   , (||)
-  , appendObj
   , leftUnitor'
   , leftUnitorInv'
   , rightUnitor'
@@ -50,8 +49,8 @@ instance (Ob0 kk j) => Ob0' kk j
 class (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
 instance (Ob0 kk j, Ob0 kk k, Ob a) => Ob' (a :: kk j k)
 
-class Ob (I :: kk i i) => ObUnit kk i
-instance Ob (I :: kk i i) => ObUnit kk i
+class (Ob (I :: kk i i)) => ObUnit kk i
+instance (Ob (I :: kk i i)) => ObUnit kk i
 
 -- | Bicategories.
 --
@@ -68,6 +67,13 @@ class (Locally CategoryOf kk, CategoryOf s, forall i. (Ob0 kk i) => ObUnit kk i)
   -- | Horizontal composition of 2-cells.
   o :: (a :: kk j k) ~> b -> c ~> d -> (a `O` c) ~> (b `O` d)
 
+  -- | Get proof that the composition of 2 1-cells is also a 1-cell.
+  withOb2
+    :: forall {i} {j} {k} (a :: kk j k) (b :: kk i j) r
+     . (Ob a, Ob b, Ob0 kk i, Ob0 kk j, Ob0 kk k)
+    => ((Ob (a `O` b)) => r)
+    -> r
+
   -- | Observe constraints from a 2-cell value.
   (\\\) :: ((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) => r) -> (ps :: kk i j) ~> qs -> r
 
@@ -83,7 +89,6 @@ class (Locally CategoryOf kk, CategoryOf s, forall i. (Ob0 kk i) => ObUnit kk i)
     :: forall {h} {i} {j} {k} a b c
      . (Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob (a :: kk j k), Ob (b :: kk i j), Ob (c :: kk h i))
     => a `O` (b `O` c) ~> (a `O` b) `O` c
-
 
 -- | The identity 1-cell (as represented by an identity 2-cell).
 iObj :: (Bicategory kk, Ob0 kk i) => Obj (I :: kk i i)
@@ -120,13 +125,6 @@ rightUnitorWith c ab = (rightUnitor . (ab `o` c)) \\\ ab
 
 rightUnitorInvWith :: (Bicategory kk) => ((I :: kk i i) ~> c) -> a ~> b -> a ~> (b `O` c)
 rightUnitorInvWith c ab = ((ab `o` c) . rightUnitorInv) \\\ ab
-
-appendObj
-  :: forall {kk} {i} {j} {k} (a :: kk j k) (b :: kk i j) r
-   . (Bicategory kk, Ob0 kk i, Ob0 kk j, Ob0 kk k, Ob a, Ob b)
-  => ((Ob (a `O` b)) => r)
-  -> r
-appendObj r = r \\\ (obj @a `o` obj @b)
 
 (||) :: (Bicategory kk) => ((a :: kk i j) ~> b) -> (c ~> d) -> O a c ~> O b d
 (||) = o

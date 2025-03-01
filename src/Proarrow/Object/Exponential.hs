@@ -20,6 +20,11 @@ import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 infixr 2 ~~>
 
+class Ob (a ~~> b) => ObExp' a b
+instance Ob (a ~~> b) => ObExp' a b
+class (forall (a :: k) b. (Ob a, Ob b) => ObExp' a b) => ObExp k
+instance (forall (a :: k) b. (Ob a, Ob b) => ObExp' a b) => ObExp k
+
 class (Monoidal k) => Closed k where
   type (a :: k) ~~> (b :: k) :: k
   curry' :: Obj (a :: k) -> Obj b -> a ** b ~> c -> a ~> b ~~> c

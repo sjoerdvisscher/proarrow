@@ -88,6 +88,7 @@ instance Bicategory PROFK where
   type Ob0 PROFK k = CategoryOf k
   type I = PK Id
   type p `O` q = PK (UN PK p :.: UN PK q)
+  withOb2 r = r
   Prof m `o` Prof n = Prof \(p :.: q) -> m p :.: n q
   r \\\ Prof{} = r
   leftUnitor = Prof \(Id h :.: q) -> lmap h q
@@ -151,13 +152,13 @@ instance (Profunctor f, Profunctor j) => RightKanLift (PK j :: PROFK d c) (PK f 
 
 instance (L.HasLimits j k, Ob j) => HasLimits FUNK (PK j) k where
   type Limit (PK j) d = FUN (L.Limit j (UNFUN d))
-  limitObj = Sub (Prof id)
+  withObLimit r = r
   limit = Prof L.limit
   limitUniv (Prof n) = Sub (Prof (L.limitUniv n))
 
 instance (L.HasColimits j k, Ob j) => HasColimits FUNK (PK j) k where
   type Colimit (PK j) d = FUN (L.Colimit j (UNFUN d))
-  colimitObj = Sub (Prof id)
+  withObColimit r = r
   colimit = Prof L.colimit
   colimitUniv (Prof n) = Sub (Prof (L.colimitUniv n))
 
