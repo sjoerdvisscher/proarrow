@@ -110,6 +110,12 @@ instance (HasCoproducts k, Category cat) => MonoidalProfunctor (Coprod cat :: CA
   par0 = id
   Coprod f `par` Coprod g = Coprod (f +++ g)
 
+copar0 :: (MonoidalProfunctor (Coprod p)) => p InitialObject InitialObject
+copar0 = unCoprod par0
+
+copar :: (MonoidalProfunctor (Coprod p)) => p a b -> p c d -> p (a || c) (b || d)
+copar p q = unCoprod (Coprod p `par` Coprod q)
+
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)

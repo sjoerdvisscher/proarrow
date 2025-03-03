@@ -7,7 +7,7 @@ import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Obj, PRO, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
@@ -17,10 +17,10 @@ import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Promonad (Procomonad (..))
 import Proarrow.Category.Opposite (Op (..))
 
-type Adjunction :: forall {j} {k}. PRO k j -> PRO j k -> Constraint
+type Adjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
 
 -- | Adjunctions between two profunctors.
-class (Profunctor p, Profunctor q) => Adjunction (p :: PRO k j) (q :: PRO j k) where
+class (Profunctor p, Profunctor q) => Adjunction (p :: j +-> k) (q :: k +-> j) where
   unit :: (Ob a) => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)
 

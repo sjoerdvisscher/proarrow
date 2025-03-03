@@ -8,6 +8,9 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
 import Proarrow.Promonad (Procomonad (..))
 import Prelude qualified as P
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
+import Proarrow.Object.Terminal (HasTerminalObject(..))
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 
 type Costar :: (j -> k) -> k +-> j
 data Costar f a b where
@@ -29,3 +32,8 @@ instance (P.Monad m) => Procomonad (Costar (Prelude m)) where
 
 composeCostar :: (Functor g) => Costar f :.: Costar g :~> Costar (Compose g f)
 composeCostar (Costar f :.: Costar g) = Costar (g . map f . getCompose)
+
+-- | Every functor between cartesian categories is a colax monoidal functor.
+instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor (Costar f) where
+  par0 = Costar terminate
+  Costar @a f `par` Costar @b g = withOb2 @j @a @b (Costar (f . map (fst @j @a @b) &&& g . map (snd @j @a @b)))

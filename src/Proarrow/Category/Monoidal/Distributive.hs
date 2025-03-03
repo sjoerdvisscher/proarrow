@@ -11,7 +11,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, src, (:~>), type (+->))
 import Proarrow.Helper.CCC
-import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
+import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
 import Proarrow.Object.BinaryProduct (Cartesian, fst', snd', PROD (..), Prod (..), diag)
 import Proarrow.Object.Exponential (BiCCC)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -23,12 +23,6 @@ import Proarrow.Profunctor.Star (Star (..))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
-
-copar0 :: (DistributiveProfunctor p) => p InitialObject InitialObject
-copar0 = unCoprod par0
-
-copar :: (DistributiveProfunctor p) => p a b -> p c d -> p (a || c) (b || d)
-copar p q = unCoprod (Coprod p `par` Coprod q)
 
 class (Monoidal k, HasCoproducts k, DistributiveProfunctor ((~>) :: CAT k)) => Distributive k where
   distL :: (Ob (a :: k), Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
