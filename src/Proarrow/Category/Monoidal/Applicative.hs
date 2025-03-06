@@ -5,6 +5,7 @@ module Proarrow.Category.Monoidal.Applicative where
 import Control.Applicative qualified as P
 import Data.Function (($))
 import Data.Kind (Constraint)
+import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
@@ -30,20 +31,19 @@ instance (P.Applicative f) => Applicative (Prelude f) where
 deriving via Prelude ((,) a) instance (P.Monoid a) => Applicative ((,) a)
 deriving via Prelude ((->) a) instance Applicative ((->) a)
 deriving via Prelude [] instance Applicative []
+deriving via Prelude P.IO instance Applicative P.IO
 deriving via Prelude P.Maybe instance Applicative P.Maybe
+deriving via Prelude P.NonEmpty instance Applicative P.NonEmpty
 
 type Alternative :: forall {j} {k}. (j -> k) -> Constraint
 class (HasCoproducts j, Applicative f) => Alternative (f :: j -> k) where
   empty :: (Ob a) => El (f a)
   alt :: (Ob a, Ob b) => (a || b ~> c) -> f a && f b ~> f c
 
--- TODO: only works without Applicative as superclass of Alternative. This needs Distributive.
--- instance (MonoidalProfunctor (p :: j +-> k), Ob (x :: k), Cocartesian j, Cartesian k) => Alternative (FromProfunctor p x) where
---   empty () = FromProfunctor $ dimap terminate initiate par0
---   alt abc (FromProfunctor pxa, FromProfunctor pxb) = FromProfunctor $ dimap diag abc (pxa `par` pxb)
-
 instance (P.Alternative f) => Alternative (Prelude f) where
   empty () = Prelude P.empty
   alt abc (Prelude fl, Prelude fr) = Prelude (P.fmap abc $ P.fmap P.Left fl P.<|> P.fmap P.Right fr)
 
 deriving via Prelude [] instance Alternative []
+deriving via Prelude P.Maybe instance Alternative P.Maybe
+deriving via Prelude P.IO instance Alternative P.IO

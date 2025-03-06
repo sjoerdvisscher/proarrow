@@ -13,12 +13,13 @@ import Proarrow.Category.Monoidal
   , swap'
   , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), strongPar0)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->), lmap, tgt)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid, Monoid (..), comultAct, counitAct, mappendAct, memptyAct)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 
 data Writer w a b where
   Writer :: (Ob a, Ob b) => a ~> Act w b -> Writer w a b
@@ -45,7 +46,7 @@ instance (Ob (w :: m), MonoidalAction m k, SymMonoidal m) => Strong m (Writer w 
       \\ act (obj @b) (obj @y)
       \\ f
 
-instance (Monoid (w :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (Writer w :: k +-> k) where
+instance (Monoid (w :: k), SelfAction k) => MonoidalProfunctor (Writer w :: k +-> k) where
   par0 = id \\ unitObj @k
   Writer @x1 @x2 f `par` Writer @y1 @y2 g =
     Writer
@@ -56,3 +57,6 @@ instance (Monoid (w :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (W
       )
       \\ obj2 @x1 @y1
       \\ obj2 @x2 @y2
+
+instance (Monoid (w :: k), SelfAction k) => Traversable (Writer w :: k +-> k) where
+  traverse (Writer f :.: p) = let wp = strongPar0 @w `act` p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p

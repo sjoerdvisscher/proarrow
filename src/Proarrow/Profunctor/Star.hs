@@ -6,17 +6,17 @@ import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Cocartesian, Coprod (..), HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), StrongProd)
+import Proarrow.Object.BinaryProduct (Cartesian)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
-import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
-import Proarrow.Category.Instance.Nat (Nat(..))
 
 type Star :: (k1 -> k2) -> k1 +-> k2
 data Star f a b where
@@ -61,5 +61,5 @@ instance (Functor (f :: Type -> Type)) => Strong Type (Star f) where
 instance (Functor f, P.Applicative f) => Strong (SUBCAT P.Traversable) (Star (Prelude f)) where
   act (Sub (Nat n)) (Star f) = Star (\t -> Prelude (P.traverse (unPrelude . f) (n t)))
 
-strength :: forall f a b. (Functor f, StrongProd (Star f), Ob a, Ob b) => a && f b ~> f (a && b)
+strength :: forall {m} f a b. (Functor f, Strong m (Star f), Ob (a :: m), Ob b) => Act a (f b) ~> f (Act a b)
 strength = unStar (act (obj @a) (Star (obj @(f b))))

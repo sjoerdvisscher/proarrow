@@ -1,10 +1,12 @@
 module Proarrow.Object.Terminal where
 
 import Data.Kind (Type)
+import Prelude (type (~))
 
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CategoryOf (..), PRO, Promonad (..), Profunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..))
 import Proarrow.Object (obj)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
@@ -29,3 +31,6 @@ instance (HasTerminalObject j, HasTerminalObject k) => HasTerminalObject (j, k) 
 instance (CategoryOf j, CategoryOf k) => HasTerminalObject (PRO j k) where
   type TerminalObject = TerminalProfunctor
   terminate = Prof \a -> TerminalProfunctor \\ a
+
+class ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k
+instance ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k

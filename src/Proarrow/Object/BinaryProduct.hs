@@ -16,11 +16,11 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , TracedMonoidalProfunctor (..)
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), SelfAction)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, src, type (+->))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
 
 infixl 5 &&
@@ -29,17 +29,17 @@ infixl 5 ***
 
 class (CategoryOf k) => HasBinaryProducts k where
   type (a :: k) && (b :: k) :: k
-  withObProd :: (Ob (a :: k), Ob b) => (Ob (a && b) => r) -> r
+  withObProd :: (Ob (a :: k), Ob b) => ((Ob (a && b)) => r) -> r
   fst :: (Ob (a :: k), Ob b) => (a && b) ~> a
   snd :: (Ob (a :: k), Ob b) => (a && b) ~> b
   (&&&) :: (a :: k) ~> x -> a ~> y -> a ~> x && y
   (***) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a && b ~> x && y
   l *** r = (l . fst @k @a @b) &&& (r . snd @k @a @b) \\ l \\ r
 
-fst' :: forall {k} (a :: k) a' b. HasBinaryProducts k => a ~> a' -> Obj b -> a && b ~> a'
+fst' :: forall {k} (a :: k) a' b. (HasBinaryProducts k) => a ~> a' -> Obj b -> a && b ~> a'
 fst' a b = a . fst @k @a @b \\ a \\ b
 
-snd' :: forall {k} (a :: k) b b'. HasBinaryProducts k => Obj a -> b ~> b' -> a && b ~> b'
+snd' :: forall {k} (a :: k) b b'. (HasBinaryProducts k) => Obj a -> b ~> b' -> a && b ~> b'
 snd' a b = b . snd @k @a @b \\ a \\ b
 
 first :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryProducts k, Ob c) => a ~> b -> (a && c) ~> (b && c)
@@ -55,8 +55,8 @@ type HasProducts k = (HasTerminalObject k, HasBinaryProducts k)
 
 class (a ** b ~ a && b) => TensorIsProduct a b
 instance (a ** b ~ a && b) => TensorIsProduct a b
-class (HasProducts k, SymMonoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
-instance (HasProducts k, SymMonoidal k, (Unit :: k) ~ TerminalObject, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
+class (HasProducts k, SymMonoidal k, Semicartesian k, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
+instance (HasProducts k, SymMonoidal k, Semicartesian k, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
 
 instance HasBinaryProducts Type where
   type a && b = (a, b)
@@ -223,14 +223,19 @@ class (Act a b ~ a && b) => ActIsProd a b
 instance (Act a b ~ a && b) => ActIsProd a b
 class (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c
 instance (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c
-class (Cartesian k, SelfAction k, forall (a :: k) (b :: k). ActIsProd a b, forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c) => ProdAction k
-instance (Cartesian k, SelfAction k, forall (a :: k) (b :: k). ActIsProd a b, forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c) => ProdAction k
+class
+  ( Cartesian k
+  , SelfAction k
+  , forall (a :: k) (b :: k). ActIsProd a b
+  , forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c
+  ) =>
+  ProdAction k
+instance
+  ( Cartesian k
+  , SelfAction k
+  , forall (a :: k) (b :: k). ActIsProd a b
+  , forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c
+  )
+  => ProdAction k
 class (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
 instance (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
-
-first' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (a && c) (b && c)
-first' p = dimap (swapProd @a @c) (swapProd @c @b) (second' @_ @c p) \\ p
-
-second' :: forall {k} (p :: CAT k) c a b. (StrongProd p, Ob c) => p a b -> p (c && a) (c && b)
-second' p = act (obj @c) p
-

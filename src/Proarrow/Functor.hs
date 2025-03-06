@@ -7,7 +7,7 @@ import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
-import Proarrow.Core (CategoryOf (..), Promonad (..), Profunctor, rmap)
+import Proarrow.Core (CategoryOf (..), Promonad (..), Profunctor, rmap, type (+->))
 import Proarrow.Object (Ob')
 
 infixr 0 .~>
@@ -25,6 +25,7 @@ instance (P.Functor f) => Functor (Prelude f) where
 
 deriving via Prelude ((,) a) instance Functor ((,) a)
 deriving via Prelude (P.Either a) instance Functor (P.Either a)
+deriving via Prelude P.IO instance Functor P.IO
 deriving via Prelude P.Maybe instance Functor P.Maybe
 deriving via Prelude P.NonEmpty instance Functor P.NonEmpty
 deriving via Prelude ((->) a) instance Functor ((->) a)
@@ -40,3 +41,10 @@ instance (Functor f, Functor g) => Functor (Compose f g) where
 newtype FromProfunctor p a b = FromProfunctor {unFromProfunctor :: p a b}
 instance (Profunctor p) => Functor (FromProfunctor p a) where
   map f = FromProfunctor . rmap f . unFromProfunctor
+instance (Profunctor p) => P.Functor (FromProfunctor p a) where
+  fmap = map
+
+-- | Presheaves are functors but it makes more sense in proarrow to represent them as profunctors from the unit category.
+type Presheaf k = () +-> k
+-- | Copresheaves are functors but it makes more sense in proarrow to represent them as profunctors into the unit category.
+type Copresheaf k = k +-> ()

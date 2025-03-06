@@ -5,7 +5,7 @@ module Proarrow.Category.Monoidal.Action where
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
-import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 
 -- | Weighted strength for a monoidal action. Usually this is used unweighted, where @w@ is the hom profunctor.
@@ -25,8 +25,20 @@ class (Act a b ~ a ** b) => ActIsTensor a b
 instance (Act a b ~ a ** b) => ActIsTensor a b
 class (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
 instance (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
-class (MonoidalAction k k, forall (a :: k) (b :: k). ActIsTensor a b, forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c) => SelfAction k
-instance (MonoidalAction k k, forall (a :: k) (b :: k). ActIsTensor a b, forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c) => SelfAction k
+class
+  ( MonoidalAction k k
+  , SymMonoidal k
+  , forall (a :: k) (b :: k). ActIsTensor a b
+  , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
+  ) =>
+  SelfAction k
+instance
+  ( MonoidalAction k k
+  , SymMonoidal k
+  , forall (a :: k) (b :: k). ActIsTensor a b
+  , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
+  )
+  => SelfAction k
 
 composeActs
   :: forall {m} {k} (x :: m) y (c :: k) a b
@@ -43,3 +55,12 @@ decomposeActs
   -> Act x b ~> a
   -> Act (x ** y) c ~> a
 decomposeActs f g = g . act (obj @x) f . multiplicatorInv @m @k @x @y @c
+
+first' :: forall {k} {p :: CAT k} c a b. (SelfAction k, Strong k p, Ob c) => p a b -> p (a ** c) (b ** c)
+first' p = dimap (swap @k @a @c) (swap @k @c @b) (second' @c p) \\ p
+
+second' :: forall {k} {p :: CAT k} c a b. (SelfAction k, Strong k p, Ob c) => p a b -> p (c ** a) (c ** b)
+second' p = act (obj @c) p
+
+strongPar0 :: forall {k} {p :: CAT k} a. (SelfAction k, Strong k p, MonoidalProfunctor p, Ob a) => p a a
+strongPar0 = dimap rightUnitorInv rightUnitor (act (obj @a) par0)

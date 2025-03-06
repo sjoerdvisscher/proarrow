@@ -9,14 +9,29 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, src, (:~>), type (+->))
+import Proarrow.Category.Monoidal.Action (SelfAction, Strong)
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Profunctor (..)
+  , Promonad (..)
+  , lmap
+  , rmap
+  , src
+  , tgt
+  , (//)
+  , (:~>)
+  , type (+->)
+  )
+import Proarrow.Functor (Functor)
 import Proarrow.Helper.CCC
-import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
-import Proarrow.Object.BinaryProduct (Cartesian, fst', snd', PROD (..), Prod (..), diag)
+import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, copar, lft', rgt')
+import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag, fst', snd')
 import Proarrow.Object.Exponential (BiCCC)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Profunctor.Star (Star (..))
@@ -56,8 +71,8 @@ instance (BiCCC k) => Distributive (PROD k) where
   distL0 @(PR a) = Prod (toCCC @(F a * InitF) @InitF (lam \(_ :& v) -> v))
   distR0 @(PR a) = Prod (toCCC @(InitF * F a) @InitF (lam \(v :& _) -> v))
 
-class (Profunctor t) => Traversable t where
-  traverse :: (DistributiveProfunctor p) => t :.: p :~> p :.: t
+class (Profunctor t) => Traversable (t :: k +-> k) where
+  traverse :: (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => t :.: p :~> p :.: t
 
 instance (CategoryOf k) => Traversable (Id :: k +-> k) where
   traverse (Id f :.: p) = lmap f p :.: Id id \\ p
@@ -79,7 +94,7 @@ instance (Traversable p, Traversable q) => Traversable (p :+: q) where
   traverse (InjR q :.: r) = case traverse (q :.: r) of r' :.: q' -> r' :.: InjR q'
 
 instance Traversable (Star P.Maybe) where
-  traverse (Star a2mb :.: p) = lmap a2mb go :.: Star P.id
+  traverse (Star a2mb :.: p) = lmap a2mb go :.: Star id
     where
       go =
         dimap
@@ -88,10 +103,35 @@ instance Traversable (Star P.Maybe) where
           (par0 `copar` p)
 
 instance Traversable (Star []) where
-  traverse (Star a2bs :.: p) = lmap a2bs go :.: Star P.id
+  traverse (Star a2bs :.: p) = lmap a2bs go :.: Star id
     where
       go =
         dimap
           (\l -> case l of [] -> Left (); (x : xs) -> Right (x, xs))
           (const [] ||| \(x, xs) -> x : xs)
           (par0 `copar` (p `par` go))
+
+class (Profunctor t) => Cotraversable (t :: k +-> k) where
+  cotraverse :: (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => p :.: t :~> t :.: p
+
+instance (CategoryOf k) => Cotraversable (Id :: k +-> k) where
+  cotraverse (p :.: Id f) = Id id :.: rmap f p \\ p
+
+instance Cotraversable (->) where
+  cotraverse (p :.: f) = id :.: rmap f p
+
+instance (Cotraversable p, Cotraversable q) => Cotraversable (p :.: q) where
+  cotraverse (r :.: (p :.: q)) = case cotraverse (r :.: p) of
+    p' :.: r' -> case cotraverse (r' :.: q) of
+      q' :.: r'' -> (p' :.: q') :.: r''
+
+instance (HasBinaryCoproducts k, Cotraversable p, Cotraversable q) => Cotraversable ((p :: k +-> k) :*: q) where
+  cotraverse (r :.: (p :*: q)) = case (cotraverse (r :.: p), cotraverse (r :.: q)) of
+    (p' :.: r', q' :.: r'') -> (rmap (lft' (tgt p') (tgt q')) p' :*: rmap (rgt' (tgt p') (tgt q')) q') :.: rmap codiag (r' `copar` r'') \\ p
+
+instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
+  cotraverse (r :.: InjL p) = case cotraverse (r :.: p) of p' :.: r' -> InjL p' :.: r'
+  cotraverse (r :.: InjR q) = case cotraverse (r :.: q) of q' :.: r' -> InjR q' :.: r'
+
+instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
+  cotraverse (p :.: Costar f) = p // Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p'

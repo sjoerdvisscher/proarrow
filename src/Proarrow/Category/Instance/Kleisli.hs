@@ -7,7 +7,7 @@ module Proarrow.Category.Instance.Kleisli where
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), first', second')
 import Proarrow.Category.Monoidal.Distributive (distL)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core
@@ -31,12 +31,10 @@ import Proarrow.Object.BinaryProduct
   , associatorProd
   , associatorProdInv
   , diag
-  , first'
   , leftUnitorProd
   , leftUnitorProdInv
   , rightUnitorProd
   , rightUnitorProdInv
-  , second'
   , swapProd
   )
 import Proarrow.Object.Exponential (BiCCC)
@@ -64,7 +62,7 @@ instance (Promonad p) => CategoryOf (KLEISLI p) where
   type Ob a = (Is KL a, Ob (UN KL a))
 
 instance (Promonad p) => Promonad (Kleisli :: CAT (KLEISLI p)) where
-  id = Kleisli (id @p)
+  id = Kleisli id
   Kleisli f . Kleisli g = Kleisli (f . g)
 
 type KleisliFree :: forall (p :: k +-> k) -> k +-> KLEISLI p
@@ -87,9 +85,10 @@ instance (Promonad p) => Adjunction (KleisliFree p) (KleisliForget p) where
 
 -- | This is not monoidal but premonoidal, i.e. no sliding.
 -- So with `par f g` the effects of f happen before the effects of g.
+-- p needs to be a commutative promonad for this to be monoidal.
 instance (Promonad p, StrongProd p) => MonoidalProfunctor (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
   par0 = Kleisli id
-  Kleisli @_ @_ @b1 f `par` Kleisli @_ @a2 @_ g = Kleisli (second' @_ @b1 g . first' @_ @a2 f) \\ f \\ g
+  Kleisli @_ @_ @b1 f `par` Kleisli @_ @a2 @_ g = Kleisli (second' @b1 g . first' @a2 f) \\ f \\ g
 
 instance (Promonad p, StrongProd p) => Monoidal (KLEISLI (p :: k +-> k)) where
   type Unit @(KLEISLI (p :: k +-> k)) = KL (TerminalObject :: k)
@@ -118,6 +117,7 @@ type UNDUAL (a :: KLEISLI (Op p)) = KL (UN OP (UN KL a)) :: KLEISLI p
 type (++) :: forall {k} {p}. KLEISLI (p :: k +-> k) -> KLEISLI p -> KLEISLI p
 type (a :: KLEISLI p) ++ b = UNDUAL (DUAL a ** DUAL b)
 
+-- | Not dual as in StarAutonomous, since the dual lies in a different kleisli category.
 dual :: a ~> b -> DUAL b ~> DUAL a
 dual (Kleisli p) = Kleisli (Op p)
 

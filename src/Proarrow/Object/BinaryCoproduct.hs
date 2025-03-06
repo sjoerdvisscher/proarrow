@@ -1,20 +1,27 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE IncoherentInstances #-}
 
 module Proarrow.Object.BinaryCoproduct where
 
 import Data.Kind (Type)
-import Prelude (type (~))
+import Prelude (($), type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), TracedMonoidalProfunctor (..))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , TracedMonoidalProfunctor (..)
+  )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 infixl 4 ||
 infixl 4 |||
@@ -22,17 +29,17 @@ infixl 4 +++
 
 class (CategoryOf k) => HasBinaryCoproducts k where
   type (a :: k) || (b :: k) :: k
-  withObCoprod :: (Ob (a :: k), Ob b) => (Ob (a || b) => r) -> r
+  withObCoprod :: (Ob (a :: k), Ob b) => ((Ob (a || b)) => r) -> r
   lft :: (Ob (a :: k), Ob b) => a ~> (a || b)
   rgt :: (Ob (a :: k), Ob b) => b ~> (a || b)
   (|||) :: (x :: k) ~> a -> y ~> a -> (x || y) ~> a
   (+++) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a || b ~> x || y
   l +++ r = (lft @k @x @y . l) ||| (rgt @k @x @y . r) \\ l \\ r
 
-lft' :: forall {k} (a :: k) a' b. HasBinaryCoproducts k => a ~> a' -> Obj b -> a ~> (a' || b)
+lft' :: forall {k} (a :: k) a' b. (HasBinaryCoproducts k) => a ~> a' -> Obj b -> a ~> (a' || b)
 lft' a b = lft @k @a' @b . a \\ a \\ b
 
-rgt' :: forall {k} (a :: k) b b'. HasBinaryCoproducts k => Obj a -> b ~> b' -> b ~> (a || b')
+rgt' :: forall {k} (a :: k) b b'. (HasBinaryCoproducts k) => Obj a -> b ~> b' -> b ~> (a || b')
 rgt' a b = rgt @k @a @b' . b \\ a \\ b
 
 left :: forall {k} (c :: k) (a :: k) (b :: k). (HasBinaryCoproducts k, Ob c) => a ~> b -> (a || c) ~> (b || c)
@@ -106,9 +113,14 @@ instance (CategoryOf k) => CategoryOf (COPROD k) where
   type (~>) = Coprod (~>)
   type Ob a = (Is COPR a, Ob (UN COPR a))
 
-instance (HasCoproducts k, Category cat) => MonoidalProfunctor (Coprod cat :: CAT (COPROD k)) where
-  par0 = id
+instance {-# OVERLAPPABLE #-} (HasCoproducts k, Category cat) => MonoidalProfunctor (Coprod (cat :: k +-> k)) where
+  par0 = Coprod id
   Coprod f `par` Coprod g = Coprod (f +++ g)
+
+instance (HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (TerminalProfunctor :: j +-> k)) where
+  par0 = Coprod TerminalProfunctor
+  Coprod (TerminalProfunctor @a1 @b1) `par` Coprod (TerminalProfunctor @a2 @b2) =
+    withObCoprod @k @a1 @a2 $ withObCoprod @j @b1 @b2 $ Coprod TerminalProfunctor
 
 copar0 :: (MonoidalProfunctor (Coprod p)) => p InitialObject InitialObject
 copar0 = unCoprod par0

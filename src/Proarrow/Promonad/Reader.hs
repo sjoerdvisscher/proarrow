@@ -12,14 +12,15 @@ import Proarrow.Category.Monoidal
   , swap'
   , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), strongPar0)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->), src, rmap)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..), comultAct, counitAct, mappendAct, memptyAct)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
 import Proarrow.Promonad.Writer (Writer (..))
+import Proarrow.Category.Monoidal.Distributive (Cotraversable (..))
 
 data Reader r a b where
   Reader :: (Ob a, Ob b) => Act r a ~> b -> Reader (OP r) a b
@@ -57,6 +58,9 @@ instance (Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor 
       )
       \\ obj2 @x1 @y1
       \\ obj2 @x2 @y2
+
+instance (Comonoid (r :: k), SelfAction k) => Cotraversable (Reader (OP r) :: k +-> k) where
+  cotraverse (p :.: Reader f) = let rp = strongPar0 @r `act` p in Reader (src rp) :.: rmap f rp \\ rp \\ p
 
 instance (Ob (r :: m), MonoidalAction m k) => Adjunction (Writer r :: k +-> k) (Reader (OP r)) where
   unit @a = Reader id :.: Writer id \\ act (obj @r) (obj @a)
