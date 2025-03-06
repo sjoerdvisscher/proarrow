@@ -195,8 +195,9 @@ instance (P.Num a) => SymMonoidal (MatK a) where -- TODO: test this
 
 instance (P.Num a) => Closed (MatK a) where
   type x ~~> y = ExpSA x y
-  curry' (Mat @x _) (Mat @y _) = currySA @(M x) @(M y)
-  uncurry' (Mat @y _) (Mat @z _) = uncurrySA @_ @(M y) @(M z)
+  withObExp @(M x) @(M y) r = withMultNat @y @x r
+  curry @x @y = currySA @x @y
+  uncurry @y @z = uncurrySA @_ @y @z
   (^^^) = expSA
 
 instance (P.Num a) => StarAutonomous (MatK a) where

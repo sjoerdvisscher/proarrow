@@ -65,8 +65,9 @@ instance SymMonoidal LINEAR where
 
 instance Closed LINEAR where
   type a ~~> b = L (UN L a %1 -> UN L b)
-  curry' Linear{} Linear{} (Linear f) = Linear \a b -> f (a, b)
-  uncurry' Linear{} Linear{} (Linear f) = Linear \(a, b) -> f a b
+  withObExp r = r
+  curry (Linear f) = Linear \a b -> f (a, b)
+  uncurry (Linear f) = Linear \(a, b) -> f a b
   Linear f ^^^ Linear g = Linear \h x -> f (h (g x))
 
 type Forget :: LINEAR +-> Type

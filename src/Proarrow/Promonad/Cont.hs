@@ -25,6 +25,7 @@ instance StarAutonomous (KLEISLI (Cont r)) where
   linDistInv (Kleisli (Cont f)) = Kleisli (Cont \k (a, b) -> k (\c -> f (\g -> g (b, c)) a))
 instance Closed (KLEISLI (Cont r)) where
   type a ~~> b = ExpSA a b
-  curry' Kleisli{} Kleisli{} = currySA
-  uncurry' Kleisli{} Kleisli{} = uncurrySA
+  withObExp r = r
+  curry = currySA
+  uncurry = uncurrySA
   (^^^) = expSA

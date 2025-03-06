@@ -86,8 +86,9 @@ instance (Functor f, Functor g) => Functor (f :~>: g) where
 
 instance (CategoryOf k1) => Closed (PROD (k1 -> Type)) where
   type f ~~> g = PR (UN PR f :~>: UN PR g)
-  curry' (Prod Nat{}) (Prod Nat{}) (Prod (Nat n)) = Prod (Nat \f -> Exp \ab g -> n (Pair (map ab f) g) \\ ab)
-  uncurry' (Prod Nat{}) (Prod Nat{}) (Prod (Nat n)) = Prod (Nat \(Pair f g) -> case n f of Exp k -> k id g)
+  withObExp r = r
+  curry (Prod (Nat n)) = Prod (Nat \f -> Exp \ab g -> n (Pair (map ab f) g) \\ ab)
+  uncurry (Prod (Nat n)) = Prod (Nat \(Pair f g) -> case n f of Exp k -> k id g)
   Prod (Nat m) ^^^ Prod (Nat n) = Prod (Nat \(Exp k) -> Exp \cd h -> m (k cd (n h)) \\ cd)
 
 instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
@@ -119,8 +120,9 @@ instance Functor (HaskRan j h) where
   map f (Ran k) = Ran \j -> k (j . f)
 instance Closed (Type -> Type) where
   type j ~~> h = HaskRan j h
-  curry' Nat{} Nat{} (Nat n) = Nat \fa -> Ran \ajb -> n (Compose (map ajb fa))
-  uncurry' Nat{} Nat{} (Nat n) = Nat \(Compose fja) -> runRan (n fja) id
+  withObExp r = r
+  curry (Nat n) = Nat \fa -> Ran \ajb -> n (Compose (map ajb fa))
+  uncurry (Nat n) = Nat \(Compose fja) -> runRan (n fja) id
   (^^^) (Nat by) (Nat xa) = Nat \h -> Ran \x -> by (runRan h (xa . x))
 
 data HaskLan j f a where
@@ -129,8 +131,9 @@ instance Functor (HaskLan j f) where
   map g (Lan k f) = Lan (g . k) f
 instance Coclosed (Type -> Type) where
   type f <~~ j = HaskLan j f
-  coeval' Nat{} Nat{} = Nat (Compose . Lan id)
-  coevalUniv' Nat{} Nat{} (Nat n) = Nat \(Lan k f) -> map k (getCompose (n f))
+  withObCoExp r = r
+  coeval = Nat (Compose . Lan id)
+  coevalUniv (Nat n) = Nat \(Lan k f) -> map k (getCompose (n f))
 
 data CatAsComonoid k a where
   CatAsComonoid :: forall {k} (c :: k) a. (Ob c) => (forall c'. c ~> c' -> a) -> CatAsComonoid k a

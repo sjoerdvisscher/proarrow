@@ -12,7 +12,6 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
@@ -84,11 +83,10 @@ instance ((b) => c) => b :=> c
 
 instance Closed CONSTRAINT where
   type CNSTRNT a ~~> CNSTRNT b = CNSTRNT (a :=> b)
-  (^^^) :: forall (a :: CONSTRAINT) b x y. (b ~> y) -> (x ~> a) -> (a ~~> b) ~> (x ~~> y)
+  withObExp r = r
   Entails f ^^^ Entails g = Entails \r -> f (g r)
-  curry' Entails{} Entails{} (Entails f) = Entails f
-  uncurry' :: forall (a :: CONSTRAINT) b c. Obj b -> Obj c -> (a ~> (b ~~> c)) -> (a ** b) ~> c
-  uncurry' Entails{} Entails{} (Entails f) = Entails (h @(UN CNSTRNT a) @(UN CNSTRNT b) @(UN CNSTRNT c) f)
+  curry (Entails f) = Entails f
+  uncurry @b @c @a (Entails f) = Entails (h @(UN CNSTRNT a) @(UN CNSTRNT b) @(UN CNSTRNT c) f)
     where
       h :: ((((x) => y :=> z) => r) -> r) -> (((x, y) => z) => r) -> r
       h g = g

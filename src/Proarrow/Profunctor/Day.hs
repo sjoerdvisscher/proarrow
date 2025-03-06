@@ -112,8 +112,9 @@ instance (Monoidal j, Monoidal k, Profunctor p, Profunctor q) => Profunctor (Day
 
 instance (Monoidal j, Monoidal k) => Closed (PRO j k) where
   type p ~~> q = DayExp p q
-  curry' Prof{} Prof{} (Prof n) = Prof \p -> p // DayExp \f g q -> n (Day f p q g)
-  uncurry' Prof{} Prof{} (Prof n) = Prof \(Day f p q g) -> case n p of DayExp h -> h f g q
+  withObExp r = r
+  curry (Prof n) = Prof \p -> p // DayExp \f g q -> n (Day f p q g)
+  uncurry (Prof n) = Prof \(Day f p q g) -> case n p of DayExp h -> h f g q
   (^^^) (Prof n) (Prof m) = Prof \(DayExp k) -> DayExp \f g p -> n (k f g (m p))
 
 multDayExp

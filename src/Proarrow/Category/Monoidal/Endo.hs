@@ -4,7 +4,7 @@ module Proarrow.Category.Monoidal.Endo where
 
 import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
-import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapRan)
+import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapRan, dimapLan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -52,8 +52,9 @@ instance
   => Closed (ENDO kk k)
   where
   type E f ~~> E g = E (Ran f g)
-  curry' (Endo @g g) (Endo @j j) (Endo h) = Endo (ranUniv @j @_ @g h) \\ g \\ j \\ h
-  uncurry' (Endo @j j) (Endo @f f) (Endo h) = Endo (ran @j @f . (h `o` j)) \\ j \\ f
+  withObExp @(E a) @(E b) r = r \\ dimapRan (obj @a) (obj @b)
+  curry @(E g) @(E j) (Endo h) = Endo (ranUniv @j @_ @g h) \\ h
+  uncurry @(E j) @(E f) (Endo h) = Endo (ran @j @f . (h `o` obj @j))
   (^^^) (Endo f) (Endo g) = Endo (dimapRan g f) \\ f \\ g
 
 instance
@@ -61,8 +62,9 @@ instance
   => Coclosed (ENDO kk k)
   where
   type E f <~~ E g = E (Lan g f)
-  coeval' (Endo @g g) (Endo @j j) = Endo (lan @j @g) \\ g \\ j
-  coevalUniv' (Endo @j j) (Endo @f f) (Endo h) = Endo (lanUniv @j @_ @f h) \\ j \\ f \\ h
+  withObCoExp @(E f) @(E g) r = r \\ dimapLan (obj @g) (obj @f)
+  coeval @(E g) @(E j) = Endo (lan @j @g)
+  coevalUniv @(E j) @(E f) (Endo h) = Endo (lanUniv @j @_ @f h) \\ h
 
 -- | Monads are monoids in the category of endo-1-cells.
 instance (Bicategory kk, Ob (I :: kk a a), Monad m, Ob m) => Monoid (E m :: ENDO kk a) where

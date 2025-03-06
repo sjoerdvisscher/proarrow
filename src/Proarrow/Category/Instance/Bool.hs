@@ -141,14 +141,19 @@ instance Distributive BOOL where
 
 instance Closed BOOL where
   type a ~~> b = ExpSA a b
-  curry' Fls Fls _ = F2T
-  curry' Fls Tru Fls = Fls
-  curry' Fls Tru F2T = F2T
-  curry' Tru Fls _ = Tru
-  curry' Tru Tru Tru = Tru
-  uncurry' Fls c _ = initiate' c
-  uncurry' Tru Fls a = a
-  uncurry' Tru Tru a = a
+  withObExp @a r = case obj @a of
+    Fls -> r
+    Tru -> r
+  curry @a @b f = case (obj @a, obj @b, f) of
+    (Fls, Fls, _) -> F2T
+    (Fls, Tru, Fls) -> Fls
+    (Fls, Tru, F2T) -> F2T
+    (Tru, Fls, _) -> Tru
+    (Tru, Tru, Tru) -> Tru
+  uncurry @b @c f = case (obj @b, obj @c) of
+    (Fls, c) -> initiate' c
+    (Tru, Fls) -> f
+    (Tru, Tru) -> f
   _ ^^^ Fls = Tru
   Tru ^^^ _ = Tru
   Fls ^^^ Tru = Fls

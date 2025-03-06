@@ -82,7 +82,7 @@ instance (Closed k, Ob j) => HasLimits (MonK k) (MK (j :: k)) '() where
   type Limit (MK j) (MK d) = MK (j ~~> d)
   withObLimit @(MK d) r = r \\ obj @d ^^^ obj @j
   limit @(MK d) = Mon2 (eval @j @d)
-  limitUniv @_ @(MK p) (Mon2 pj2d) = Mon2 (curry @p @j pj2d)
+  limitUniv @_ @(MK p) (Mon2 pj2d) = Mon2 (curry @_ @p @j pj2d)
 
 instance (M.Monoidal k, Ob j) => HasColimits (MonK k) (MK (j :: k)) '() where
   type Colimit (MK j) (MK d) = MK (d M.** j)
@@ -93,19 +93,19 @@ instance (M.Monoidal k, Ob j) => HasColimits (MonK k) (MK (j :: k)) '() where
 instance (Closed k, Ob (p ~~> q), Ob p, Ob q) => RightKanExtension (MK (p :: k)) (MK (q :: k)) where
   type Ran (MK p) (MK q) = MK (p ~~> q)
   ran = Mon2 (eval @p @q)
-  ranUniv @(MK g) (Mon2 f) = Mon2 (curry @g @p @q f)
+  ranUniv @(MK g) (Mon2 f) = Mon2 (curry @k @g @p @q f)
 
 instance (Closed k, SymMonoidal k, Ob (p ~~> q), Ob p, Ob q) => RightKanLift (MK (p :: k)) (MK (q :: k)) where
   type Rift (MK p) (MK q) = MK (p ~~> q)
   rift = Mon2 (eval @p @q . M.swap @k @p @(p ~~> q))
-  riftUniv @(MK g) (Mon2 f) = Mon2 (curry @g @p @q (f . M.swap @k @g @p))
+  riftUniv @(MK g) (Mon2 f) = Mon2 (curry @k @g @p @q (f . M.swap @k @g @p))
 
 instance (Coclosed k, Ob (q <~~ p), Ob p, Ob q) => LeftKanExtension (MK (p :: k)) (MK (q :: k)) where
   type Lan (MK p) (MK q) = MK (q <~~ p)
-  lan = Mon2 (coeval @q @p)
-  lanUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @q @p @g f)
+  lan = Mon2 (coeval @k @q @p)
+  lanUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @k @p @g f)
 
 instance (Coclosed k, SymMonoidal k, Ob (q <~~ p), Ob p, Ob q) => LeftKanLift (MK (p :: k)) (MK (q :: k)) where
   type Lift (MK p) (MK q) = MK (q <~~ p)
-  lift = Mon2 (M.swap @k @(q <~~ p) @p . coeval @q @p)
-  liftUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @q @p @g (M.swap @k @p @g . f))
+  lift = Mon2 (M.swap @k @(q <~~ p) @p . coeval @k @q @p)
+  liftUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @k @p @g (M.swap @k @p @g . f))

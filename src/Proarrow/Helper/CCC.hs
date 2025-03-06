@@ -22,7 +22,7 @@ import Proarrow.Object.BinaryProduct
   , fst'
   , snd'
   )
-import Proarrow.Object.Exponential (BiCCC, CCC, Closed (..), curry, eval, lower, uncurry)
+import Proarrow.Object.Exponential (BiCCC, CCC, Closed (..), eval, lower, curry', uncurry')
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
@@ -40,7 +40,7 @@ lam
    . (CCC k, Ob i, Ob a, Ob b)
   => ((forall (x :: k). (Cast x (i && a)) => x ~> a) -> (i && a) ~> b)
   -> (i :: k) ~> (a ~~> b)
-lam f = curry @i @a @b (f snd_)
+lam f = curry @k @i @a @b (f snd_)
   where
     snd_ :: forall x. (Cast x (i && a)) => x ~> a
     snd_ = snd @k @i @a . cast @k @x @(i && a)
@@ -79,7 +79,7 @@ either
 either f g = swapExp @(a || b) @i @c (swapExp @i @a @c f ||| swapExp @i @b @c g) \\ f
 
 swapExp :: forall {k} (a :: k) b c. (CCC k, Ob b, Ob c) => a ~> b ~~> c -> b ~> a ~~> c
-swapExp f = curry @b @a @c (uncurry @a @b @c f . swapProd @b @a) \\ f
+swapExp f = curry @k @b @a @c (uncurry @k @b @c @a f . swapProd @b @a) \\ f
 
 data FK k = F k
 type instance UN F (F a) = a
@@ -230,12 +230,13 @@ instance (BiCCC k) => SymMonoidal (FK k) where
   swap = swapProd
 instance (BiCCC k) => Closed (FK k) where
   type a ~~> b = a --> b
-  curry' _ _ (Uncurry f) = f
-  curry' _ _ (Comp f (Uncurry g)) = (f ^^^ id) . g
-  curry' a b f = Curry f \\ a \\ b
-  uncurry' _ _ (Curry f) = f
-  uncurry' _ _ (Comp (Curry f) g) = f . (g *** Id)
-  uncurry' a b f = Uncurry f \\ a \\ b
+  withObExp r = r
+  curry (Uncurry f) = f
+  curry (Comp f (Uncurry g)) = (f ^^^ id) . g
+  curry f = Curry f
+  uncurry (Curry f) = f
+  uncurry (Comp (Curry f) g) = f . (g *** Id)
+  uncurry f = Uncurry f
   Id ^^^ Id = Id
   l ^^^ r = Ex l r
 

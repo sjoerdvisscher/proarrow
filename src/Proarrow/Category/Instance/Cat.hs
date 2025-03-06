@@ -223,8 +223,9 @@ instance (Profunctor (p :: i +-> (k, OPPOSITE j)), CategoryOf j, CategoryOf k) =
 
 instance Closed KIND where
   type K a ~~> K b = K (b, OPPOSITE a)
-  curry' Cat Cat (Cat @p) = Cat @(Curry p)
-  uncurry' Cat Cat (Cat @p) = Cat @(Uncurry p)
+  withObExp r = r
+  curry (Cat @p) = Cat @(Curry p)
+  uncurry (Cat @p) = Cat @(Uncurry p)
   Cat @p ^^^ Cat @q = Cat @(p :**: Op q)
 
 instance StarAutonomous KIND where
