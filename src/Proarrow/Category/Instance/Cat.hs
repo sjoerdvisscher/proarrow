@@ -13,9 +13,9 @@ import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
-  , TracedMonoidalProfunctor (..)
   , swap
   )
+import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -28,7 +28,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), combineDual, compactClosedTrace)
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedCoact)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -207,33 +207,40 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Swap :: (j, k) +-> (k, j)) 
 instance SymMonoidal KIND where
   swap @(K j) @(K k) = Cat @(Swap :: (j, k) +-> (k, j))
 
-type Curry :: (i, j) +-> k -> i +-> (k, OPPOSITE j)
+type Curry :: (i, j) +-> k -> i +-> (OPPOSITE j, k)
 data Curry p a b where
-  Curry :: p c '(a, b) -> Curry p '(c, OP b) a
-instance (Profunctor (p :: (i, j) +-> k), CategoryOf i, CategoryOf j) => Profunctor (Curry p :: i +-> (k, OPPOSITE j)) where
-  dimap (l1 :**: Op l2) r (Curry p) = Curry (dimap l1 (r :**: l2) p) \\ r \\ l2
+  Curry :: p c '(a, b) -> Curry p '(OP b, c) a
+instance (Profunctor (p :: (i, j) +-> k), CategoryOf i, CategoryOf j) => Profunctor (Curry p :: i +-> (OPPOSITE j, k)) where
+  dimap (Op l1 :**: l2) r (Curry p) = Curry (dimap l2 (r :**: l1) p) \\ r \\ l2
   r \\ Curry f = r \\ f
 
-type Uncurry :: i +-> (k, OPPOSITE j) -> (i, j) +-> k
+type Uncurry :: i +-> (OPPOSITE j, k) -> (i, j) +-> k
 data Uncurry p a b where
-  Uncurry :: p '(c, OP b) a -> Uncurry p c '(a, b)
-instance (Profunctor (p :: i +-> (k, OPPOSITE j)), CategoryOf j, CategoryOf k) => Profunctor (Uncurry p :: (i, j) +-> k) where
-  dimap l (r1 :**: r2) (Uncurry p) = Uncurry (dimap (l :**: Op r2) r1 p)
+  Uncurry :: p '(OP b, c) a -> Uncurry p c '(a, b)
+instance (Profunctor (p :: i +-> (OPPOSITE j, k)), CategoryOf j, CategoryOf k) => Profunctor (Uncurry p :: (i, j) +-> k) where
+  dimap l (r1 :**: r2) (Uncurry p) = Uncurry (dimap (Op r2 :**: l) r1 p)
   r \\ Uncurry f = r \\ f
 
 instance Closed KIND where
-  type K a ~~> K b = K (b, OPPOSITE a)
+  type K a ~~> K b = K (OPPOSITE a, b)
   withObExp r = r
   curry (Cat @p) = Cat @(Curry p)
   uncurry (Cat @p) = Cat @(Uncurry p)
-  Cat @p ^^^ Cat @q = Cat @(p :**: Op q)
+  Cat @p ^^^ Cat @q = Cat @(Op q :**: p)
 
 instance StarAutonomous KIND where
   type Dual (K a) = K (OPPOSITE a)
   dual (Cat @p) = Cat @(Op p)
   dualInv (Cat @p) = Cat @(UnOp p)
-  linDist (Cat @p) = combineDual . swap . Cat @(Curry p)
-  linDistInv (Cat @p) = Cat @(Uncurry (Swap :.: DistribDual :.: p))
+  linDist (Cat @p) = Cat @(CombineDual :.: Curry p)
+  linDistInv (Cat @p) = Cat @(Uncurry (DistribDual :.: p))
+
+type CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)
+data CombineDual a b where
+  CombineDual :: c ~> a -> d ~> b -> CombineDual (OP '(a, b)) '(OP c, OP d)
+instance (CategoryOf j, CategoryOf k) => Profunctor (CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)) where
+  dimap (Op (l1 :**: l2)) (Op r1 :**: Op r2) (CombineDual f g) = CombineDual (l1 . f . r1) (l2 . g . r2)
+  r \\ CombineDual f g = r \\ f \\ g
 
 type DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)
 data DistribDual a b where
@@ -253,5 +260,16 @@ instance CompactClosed KIND where
   distribDual = Cat @DistribDual
   dualUnit = Cat @DualUnit
 
-instance TracedMonoidalProfunctor Cat where
-  trace = compactClosedTrace
+instance MonoidalAction KIND KIND where
+  type Act a x = a ** x
+  withObAct r = r
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator = associatorInv
+  multiplicatorInv = associator
+
+instance Strong KIND Cat where
+  act = par
+
+instance Costrong KIND Cat where
+  coact @u = compactClosedCoact @u

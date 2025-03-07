@@ -5,9 +5,10 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->), tgt)
 import Proarrow.Functor (Functor (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepObj)
-import Proarrow.Profunctor.Representable (Representable (..), withRepObj)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
+import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
 import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Object.BinaryCoproduct (Coprod (..), copar0, copar)
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
@@ -30,19 +31,23 @@ instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)
   index (p :.: q) = repMap @p (index q) . index p
   tabulate :: forall a b. (Ob b) => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
-  tabulate f = withRepObj @q @b (tabulate f :.: tabulate id)
+  tabulate f = withRepOb @q @b (tabulate f :.: tabulate id)
   repMap f = repMap @p (repMap @q f)
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where
   type (p :.: q) %% a = q %% (p %% a)
   coindex (p :.: q) = coindex q . corepMap @q (coindex p)
   cotabulate :: forall a b. (Ob a) => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
-  cotabulate f = withCorepObj @p @a (cotabulate id :.: cotabulate f)
+  cotabulate f = withCorepOb @p @a (cotabulate id :.: cotabulate f)
   corepMap f = corepMap @q (corepMap @p f)
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
   par0 = par0 :.: par0
   (p :.: q) `par` (r :.: s) = (p `par` r) :.: (q `par` s)
+
+instance (Profunctor f, Profunctor g, MonoidalProfunctor (Coprod f), MonoidalProfunctor (Coprod g)) => MonoidalProfunctor (Coprod (f :.: g)) where
+  par0 = Coprod (copar0 :.: copar0)
+  Coprod (f :.: g) `par` Coprod (h :.: i) = Coprod ((f `copar` h) :.: (g `copar` i))
 
 instance (Strong m p, Strong m q) => Strong m (p :.: q) where
   act f (p :.: q) = act f p :.: act (tgt f) q

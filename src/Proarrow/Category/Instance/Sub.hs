@@ -66,6 +66,7 @@ instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => Strong (SUBC
   Sub f `act` g = f `act` g
 instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) Type where
   type Act (p :: SUBCAT ob) (x :: Type) = Act (UN SUB p) x
+  withObAct r = r
   unitor = unitor @m
   unitorInv = unitorInv @m
   multiplicator @(SUB p) @(SUB q) @x = multiplicator @_ @_ @p @q @x

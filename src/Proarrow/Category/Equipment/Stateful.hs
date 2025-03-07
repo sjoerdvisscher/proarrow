@@ -73,10 +73,10 @@ instance (MonoidalAction m k, M.SymMonoidal m, Ob (M.Unit @m)) => HasCompanions 
   compToId = StT \(Writer f) -> Id (unitor @m . f)
   compFromId = StT \(Id f) -> Writer (unitorInv @m . f) \\ f
   compToCompose (Mon2 @m1 m1) (Mon2 @m2 m2) =
-    m1 // m2 // m1 `par` m2 // StT \(Writer @_ @b f) ->
+    m1 // m2 // m1 `par` m2 // StT \(Writer @b f) ->
       let m2b = m2 `act` obj @b in Writer (multiplicatorInv @m @k @m1 @m2 @b . f) :.: Writer m2b \\ m2b
   compFromCompose (Mon2 m1) (Mon2 m2) =
-    m1 // m2 // m1 `par` m2 // StT \(Writer @_ @_ @m1 f :.: Writer @_ @c @m2 g) ->
+    m1 // m2 // m1 `par` m2 // StT \(Writer @_ @_ @m1 f :.: Writer @c @_ @m2 g) ->
       Writer (multiplicator @m @k @m1 @m2 @c . act m1 g . f)
 
 instance

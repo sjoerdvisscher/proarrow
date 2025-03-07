@@ -12,6 +12,7 @@ import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasCoproducts,
 import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Object.Terminal (terminate)
+import Proarrow.Profunctor.Identity (Id(..))
 
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
@@ -30,8 +31,8 @@ instance (Monoid m, Cartesian k, Ob x) => P.Monoid (GenElt x (m :: k)) where
   mempty = GenElt (mempty . arr terminate)
 
 instance (HasCoproducts k, Ob a) => Monoid (COPR (a :: k)) where
-  mempty = Coprod initiate
-  mappend = Coprod codiag
+  mempty = Coprod (Id initiate)
+  mappend = Coprod (Id codiag)
 
 memptyAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => n ~> Act a n
 memptyAct = act (mempty @a) (obj @n) . unitorInv @m

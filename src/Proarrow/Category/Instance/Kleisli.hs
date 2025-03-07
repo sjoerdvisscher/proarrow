@@ -2,14 +2,21 @@
 {-# LANGUAGE RequiredTypeArguments #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Category.Instance.Kleisli where
+module Proarrow.Category.Instance.Kleisli
+  ( KLEISLI (..)
+  , Kleisli (..)
+  , arr
+  , KleisliFree (..)
+  , KleisliForget (..)
+  , LIFTEDF
+  , pattern LiftF
+  ) where
 
 import Proarrow.Adjunction (Adjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), first', second')
-import Proarrow.Category.Monoidal.Distributive (distL)
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveProfunctor)
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -22,28 +29,18 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), codiag)
-import Proarrow.Object.BinaryProduct
-  ( HasBinaryProducts (..)
-  , PROD (..)
-  , Prod (..)
-  , StrongProd
-  , associatorProd
-  , associatorProdInv
-  , diag
-  , leftUnitorProd
-  , leftUnitorProdInv
-  , rightUnitorProd
-  , rightUnitorProdInv
-  , swapProd
-  )
-import Proarrow.Object.Exponential (BiCCC)
+import Proarrow.Functor (Functor)
+import Proarrow.Object (pattern Obj, type Obj)
+import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, copar)
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Costar (Costar (..))
+import Proarrow.Profunctor.Star (Star (..))
 
 newtype KLEISLI (p :: CAT k) = KL k
-type instance UN KL (KL k) = k
+type instance UN KL (KL k) = k -- test
 
 type Kleisli :: CAT (KLEISLI p)
 data Kleisli (a :: KLEISLI p) b where
@@ -65,6 +62,61 @@ instance (Promonad p) => Promonad (Kleisli :: CAT (KLEISLI p)) where
   id = Kleisli id
   Kleisli f . Kleisli g = Kleisli (f . g)
 
+instance (HasTerminalObject k, Promonad p) => HasTerminalObject (KLEISLI (p :: k +-> k)) where
+  type TerminalObject @(KLEISLI (p :: k +-> k)) = KL (TerminalObject :: k)
+  terminate = arr terminate
+
+instance (HasInitialObject k, Promonad p) => HasInitialObject (KLEISLI (p :: k +-> k)) where
+  type InitialObject @(KLEISLI (p :: k +-> k)) = KL (InitialObject :: k)
+  initiate = arr initiate
+
+instance (Cartesian k, Promonad p, MonoidalProfunctor p) => HasBinaryProducts (KLEISLI (p :: k +-> k)) where
+  type a && b = KL (UN KL a && UN KL b)
+  withObProd @(KL a) @(KL b) r = withObProd @k @a @b r
+  fst @(KL a) @(KL b) = arr (fst @_ @a @b)
+  snd @(KL a) @(KL b) = arr (snd @_ @a @b)
+  Kleisli f &&& Kleisli g = Kleisli (lmap diag (f `par` g)) \\ f
+
+instance (HasBinaryCoproducts k, Promonad p, MonoidalProfunctor (Coprod p)) => HasBinaryCoproducts (KLEISLI (p :: k +-> k)) where
+  type a || b = KL (UN KL a || UN KL b)
+  withObCoprod @(KL a) @(KL b) r = withObCoprod @k @a @b r
+  lft @(KL a) @(KL b) = arr (lft @_ @a @b)
+  rgt @(KL a) @(KL b) = arr (rgt @_ @a @b)
+  Kleisli f ||| Kleisli g = Kleisli (rmap codiag (f `copar` g)) \\ f
+
+instance (Promonad p, MonoidalProfunctor p) => MonoidalProfunctor (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
+  par0 = Kleisli par0
+  Kleisli f `par` Kleisli g = Kleisli (f `par` g)
+
+instance (Promonad p, MonoidalProfunctor p) => Monoidal (KLEISLI (p :: k +-> k)) where
+  type Unit @(KLEISLI (p :: k +-> k)) = KL (Unit :: k)
+  type a ** b = KL (UN KL a ** UN KL b)
+  withOb2 @(KL a) @(KL b) = withOb2 @k @a @b
+  leftUnitor = arr leftUnitor
+  leftUnitorInv = arr leftUnitorInv
+  rightUnitor = arr rightUnitor
+  rightUnitorInv = arr rightUnitorInv
+  associator @(KL a) @(KL b) @(KL c) = arr (associator @k @a @b @c)
+  associatorInv @(KL a) @(KL b) @(KL c) = arr (associatorInv @k @a @b @c)
+instance (Promonad p, MonoidalProfunctor p, SymMonoidal k) => SymMonoidal (KLEISLI (p :: k +-> k)) where
+  swap @(KL a) @(KL b) = arr (swap @k @a @b)
+
+instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive (KLEISLI (p :: k +-> k)) where
+  distL @(KL a) @(KL b) @(KL c) = arr (distL @k @a @b @c)
+  distR @(KL a) @(KL b) @(KL c) = arr (distR @k @a @b @c)
+  distL0 @(KL a) = arr (distL0 @k @a)
+  distR0 @(KL a) = arr (distR0 @k @a)
+
+instance (Strong k p, Promonad p, Monoidal k) => Strong k (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
+  act f (Kleisli p) = Kleisli (act f p)
+instance (Strong k p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p :: k +-> k)) where
+  type Act y (KL x) = KL (Act y x)
+  withObAct @y @(KL x) r = withObAct @k @k @y @x r
+  unitor = arr (unitor @k)
+  unitorInv = arr (unitorInv @k)
+  multiplicator @a @b @(KL c) = arr (multiplicator @k @k @a @b @c)
+  multiplicatorInv @a @b @(KL c) = arr (multiplicatorInv @k @k @a @b @c)
+
 type KleisliFree :: forall (p :: k +-> k) -> k +-> KLEISLI p
 data KleisliFree p a b where
   KleisliFree :: p a b -> KleisliFree p (KL a) b
@@ -83,58 +135,15 @@ instance (Promonad p) => Adjunction (KleisliFree p) (KleisliForget p) where
   unit = KleisliForget id :.: KleisliFree id
   counit (KleisliFree p :.: KleisliForget q) = Kleisli (q . p)
 
--- | This is not monoidal but premonoidal, i.e. no sliding.
--- So with `par f g` the effects of f happen before the effects of g.
--- p needs to be a commutative promonad for this to be monoidal.
-instance (Promonad p, StrongProd p) => MonoidalProfunctor (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
-  par0 = Kleisli id
-  Kleisli @_ @_ @b1 f `par` Kleisli @_ @a2 @_ g = Kleisli (second' @b1 g . first' @a2 f) \\ f \\ g
+-- | Categories lifted by a functor: @f a ~> f b@.
+type LIFTEDF (f :: j -> k) = KLEISLI (Costar f :.: Star f)
 
-instance (Promonad p, StrongProd p) => Monoidal (KLEISLI (p :: k +-> k)) where
-  type Unit @(KLEISLI (p :: k +-> k)) = KL (TerminalObject :: k)
-  type a ** b = KL (UN KL a && UN KL b)
-  withOb2 @(KL a) @(KL b) = withObProd @k @a @b
-  leftUnitor = arr leftUnitorProd
-  leftUnitorInv = arr leftUnitorProdInv
-  rightUnitor = arr rightUnitorProd
-  rightUnitorInv = arr rightUnitorProdInv
-  associator @(KL a) @(KL b) @(KL c) = arr (associatorProd @a @b @c)
-  associatorInv @(KL a) @(KL b) @(KL c) = arr (associatorProdInv @a @b @c)
-instance (Promonad p, StrongProd p) => SymMonoidal (KLEISLI (p :: k +-> k)) where
-  swap @(KL a) @(KL b) = arr (swapProd @a @b)
+unlift :: (Functor f) => Kleisli (KL a :: LIFTEDF f) (KL b) -> (f a ~> f b, Obj a, Obj b)
+unlift (Kleisli (Costar f :.: Star g)) = (g . f, Obj, Obj)
 
-instance (Strong k p, Promonad p, Monoidal k) => Strong k (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
-  act f (Kleisli p) = Kleisli (act f p)
-instance (Strong k p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p :: k +-> k)) where
-  type Act y (KL x) = KL (Act y x)
-  unitor = arr (unitor @k)
-  unitorInv = arr (unitorInv @k)
-  multiplicator @a @b @(KL c) = arr (multiplicator @k @k @a @b @c)
-  multiplicatorInv @a @b @(KL c) = arr (multiplicatorInv @k @k @a @b @c)
+pattern LiftF :: (Functor f) => (Ob a, Ob b) => (f a ~> f b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
+pattern LiftF f <- (unlift -> (f, Obj, Obj))
+  where
+    LiftF f = Kleisli (Costar f :.: Star id)
 
-type DUAL (a :: KLEISLI p) = KL (OP (UN KL a)) :: KLEISLI (Op p)
-type UNDUAL (a :: KLEISLI (Op p)) = KL (UN OP (UN KL a)) :: KLEISLI p
-type (++) :: forall {k} {p}. KLEISLI (p :: k +-> k) -> KLEISLI p -> KLEISLI p
-type (a :: KLEISLI p) ++ b = UNDUAL (DUAL a ** DUAL b)
-
--- | Not dual as in StarAutonomous, since the dual lies in a different kleisli category.
-dual :: a ~> b -> DUAL b ~> DUAL a
-dual (Kleisli p) = Kleisli (Op p)
-
-dist
-  :: forall {k} {p} a b c
-   . (BiCCC k, Promonad p, Ob (a :: KLEISLI (p :: k +-> k)), Ob b, Ob c)
-  => (a ** (b ++ c)) ~> ((a ** b) ++ (a ** c))
-dist @(KL a') @(KL b') @(KL c') = arr (unProd (distL @_ @(PR a') @(PR b') @(PR c')))
-
-copy :: (HasBinaryProducts k, Promonad p, Ob (a :: KLEISLI (p :: k +-> k))) => a ~> (a ** a)
-copy = arr diag
-
-discard :: (HasTerminalObject k, Promonad p, Ob (a :: KLEISLI (p :: k +-> k))) => a ~> Unit
-discard = arr terminate
-
-add :: (HasBinaryCoproducts k, Promonad p, Ob (a :: KLEISLI (p :: k +-> k))) => (a ++ a) ~> a
-add = arr codiag
-
-zero :: (HasInitialObject k, Promonad p, Ob (a :: KLEISLI (p :: k +-> k))) => UNDUAL Unit ~> a
-zero = arr initiate
+{-# COMPLETE LiftF #-}

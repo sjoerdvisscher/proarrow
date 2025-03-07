@@ -16,6 +16,7 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 class (Ob (Dual a)) => ObDual (a :: k)
 instance (Ob (Dual a)) => ObDual (a :: k)
@@ -96,6 +97,16 @@ compactClosedTrace f =
     . (f `par` obj @(Dual u))
     . associatorInv @k @x @u @(Dual u)
     . rightUnitorInvWith (dualityUnit @u)
+
+compactClosedCoact :: forall {m} {k} (u :: m) (x :: k) (y :: k). (CompactClosed m, MonoidalAction m k, Ob x, Ob y, Ob u) => Act u x ~> Act u y -> x ~> y
+compactClosedCoact f =
+  unitor @m @k @y
+    . act (dualityCounit @u) (obj @y)
+    . multiplicator @m @k @(Dual u) @u @y
+    . act (obj @(Dual u)) f
+    . multiplicatorInv @m @k @(Dual u) @u @x
+    . act (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
+    . unitorInv @m @k @x
 
 instance CompactClosed () where
   distribDual = U.Unit

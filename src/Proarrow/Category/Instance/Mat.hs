@@ -8,12 +8,8 @@ import Prelude (($), type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Monoidal
-  ( Monoidal (..)
-  , MonoidalProfunctor (..)
-  , SymMonoidal (..)
-  , TracedMonoidalProfunctor (..)
-  )
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
@@ -21,7 +17,7 @@ import Proarrow.Object.Dual
   ( CompactClosed (..)
   , ExpSA
   , StarAutonomous (..)
-  , compactClosedTrace
+  , compactClosedCoact
   , currySA
   , expSA
   , uncurrySA
@@ -190,8 +186,11 @@ instance (P.Num a) => Monoidal (MatK a) where
   associatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
 
 instance (P.Num a) => SymMonoidal (MatK a) where -- TODO: test this
-  swap @(M x) @(M y) = withMultNat @x @y $ withMultNat @y @x $ Mat $
-    concatMap @x @y (\x -> P.fmap (\b -> concatMap @y @x (\a -> P.fmap (a P.*) x) b) (matId @y @a)) (matId @x @a)
+  swap @(M x) @(M y) =
+    withMultNat @x @y $
+      withMultNat @y @x $
+        Mat $
+          concatMap @x @y (\x -> P.fmap (\b -> concatMap @y @x (\a -> P.fmap (a P.*) x) b) (matId @y @a)) (matId @x @a)
 
 instance (P.Num a) => Closed (MatK a) where
   type x ~~> y = ExpSA x y
@@ -211,5 +210,16 @@ instance (P.Num a) => CompactClosed (MatK a) where
   distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ dagger (obj @m) `par` dagger (obj @n)
   dualUnit = id
 
-instance (P.Num a) => TracedMonoidalProfunctor (Mat :: CAT (MatK a)) where
-  trace @x = compactClosedTrace @x
+instance (P.Num a) => MonoidalAction (MatK a) (MatK a) where
+  type Act p x = p ** x
+  withObAct @b @c r = withOb2 @_ @b @c r
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
+  multiplicatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
+
+instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a)) where
+  act = par
+
+instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
+  coact @x = compactClosedCoact @x

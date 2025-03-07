@@ -6,18 +6,17 @@ import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
-  , TracedMonoidal
   , obj2
   , par
   , swap
   , swapFst
   , swapInner
   , swapOuter
-  , trace
   )
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Object.Dual (CompactClosed (..), Dual, ExpSA, StarAutonomous (..), currySA, expSA, uncurrySA)
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Category.Monoidal.Action (TracedMonoidal, trace)
 
 data INT k = I k k
 

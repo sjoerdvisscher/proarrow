@@ -37,7 +37,7 @@ instance (PreorderOf k) => ThinProfunctor (PoAsCat :: CAT (POCATK k)) where
 
 instance HasTerminalObject (POCATK Constraint) where
   type TerminalObject = PC (() :: Constraint)
-  terminate' PoAsCat = PoAsCat
+  terminate = PoAsCat
 
 instance HasBinaryProducts (POCATK Constraint) where
   type l && r = PC ((UN PC l, UN PC r) :: Constraint)

@@ -12,7 +12,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), COPROD, Coprod (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Dual (StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
@@ -22,6 +22,8 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep)
 import System.IO.Unsafe (unsafeDupablePerformIO)
 import Unsafe.Coerce (unsafeCoerce)
+import Proarrow.Category.Monoidal.Action (Costrong (..))
+import Proarrow.Profunctor.Identity (Id (..))
 
 data LINEAR = L Type
 type instance UN L (L a) = a
@@ -59,9 +61,6 @@ instance Monoidal LINEAR where
 
 instance SymMonoidal LINEAR where
   swap = Linear \(x, y) -> (y, x)
-
--- instance TracedMonoidalProfunctor Linear where
---   trace (Linear f) = Linear \x -> let !(y, u) = f (x, u) in y
 
 instance Closed LINEAR where
   type a ~~> b = L (UN L a %1 -> UN L b)
@@ -147,6 +146,11 @@ instance HasInitialObject LINEAR where
   type InitialObject = L Void
   initiate = Linear \case {}
 
+instance Costrong (COPROD LINEAR) (Coprod (Id :: CAT LINEAR)) where
+  coact (Coprod (Id (Linear uxuy))) = Coprod (Id (loop . Linear Right))
+    where
+      loop = Linear \ux -> case uxuy ux of Left x -> unLinear loop (Left x); Right b -> b
+
 data Top where
   Top :: a %1 -> Top
 
@@ -155,6 +159,9 @@ data With a b where
 
 urWith :: Ur (With a b) %1 -> (Ur a, Ur b)
 urWith (Ur (With x f g)) = (Ur (f x), Ur (g x))
+
+mkWith :: a -> b -> With a b
+mkWith a b = With () (\() -> a) (\() -> b)
 
 instance HasTerminalObject LINEAR where
   type TerminalObject = L Top
@@ -177,8 +184,8 @@ not' ab nb a = nb (ab a)
 
 newtype Par a b = Par (Not (Not a, Not b))
 
-toPar :: (a, b) %1 -> Par a b
-toPar (a, b) = Par \(na, nb) -> case (na a, nb b) of ((), ()) -> ()
+mkPar :: a %1 -> b %1 -> Par a b
+mkPar a b = Par \(na, nb) -> case (na a, nb b) of ((), ()) -> ()
 
 pairFst :: (a, b `Par` c) %1 -> (a, b) `Par` c
 pairFst (a, Par f) = Par \(nab, nc) -> f (\b -> nab (a, b), nc)
@@ -206,7 +213,8 @@ multQuest (Quest f) = Quest \(Ur na) -> f (Ur (\(Quest nuna) -> nuna (Ur na)))
 questPar :: Par (Quest a) (Quest b) %1 -> Quest (Either a b)
 questPar (Par f) = Quest (\(Ur g) -> f (\(Quest nuna) -> nuna (Ur (\a -> g (Left a))), \(Quest nunb) -> nunb (Ur (\b -> g (Right b)))))
 
--- LINEAR is not CompactClosed.
+-- LINEAR is not CompactClosed. And hence it is also not traced,
+-- since any star autonomous category with a trace is compact closed.
 instance StarAutonomous LINEAR where
   type Dual (L a) = L (Not a)
   dual (Linear f) = Linear (\nb a -> nb (f a))

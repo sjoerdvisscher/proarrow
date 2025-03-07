@@ -7,6 +7,7 @@ import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), currySA, expSA, uncurrySA)
 import Proarrow.Object.Exponential (Closed (..), curry, uncurry)
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 
 newtype Cont r a b = Cont {runCont :: (b -> r) -> (a -> r)}
 instance Profunctor (Cont r) where
@@ -17,6 +18,10 @@ instance Promonad (Cont r) where
   Cont f . Cont g = Cont (g . f)
 instance Strong Type (Cont r) where
   act ab (Cont yrxy) = Cont \byr -> uncurry (yrxy . curry byr . ab)
+-- | Only premonoidal not monoidal?
+instance MonoidalProfunctor (Cont r) where
+  par0 = Cont id
+  Cont f `par` Cont g = Cont \k (x1, y1) -> f (\x2 -> g (\y2 -> k (x2, y2)) y1) x1
 instance StarAutonomous (KLEISLI (Cont r)) where
   type Dual @(KLEISLI (Cont r)) (KL a) = KL (a -> r)
   dual (Kleisli (Cont f)) = Kleisli (Cont \k br -> k (f br))

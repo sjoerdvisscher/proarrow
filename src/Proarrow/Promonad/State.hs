@@ -15,6 +15,7 @@ instance (Monoidal k, Ob s) => Promonad (State (s :: k)) where
   id = State (obj @s `par` obj @a)
   State f . State g = State (f . g)
 
+-- | Note: This is only premonoidal, not monoidal.
 instance (SymMonoidal k, Ob s) => MonoidalProfunctor (State (s :: k)) where
   par0 = State (obj @s `par` par0) \\ (par0 :: (Unit :: k) ~> Unit)
   par (State @a1 @b1 f) (State @a2 @b2 g) =

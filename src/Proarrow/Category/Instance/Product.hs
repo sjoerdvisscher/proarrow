@@ -77,6 +77,7 @@ instance (Strong m p, Strong m' q) => Strong (m, m') (p :**: q) where
   act (p :**: q) (x :**: y) = act p x :**: act q y
 instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
   type Act '(p, q) '(x, y) = '(Act p x, Act q y)
+  withObAct @'(p, q) @'(x, y) r = withObAct @n @j @p @x (withObAct @m @k @q @y r)
   unitor = unitor @n :**: unitor @m
   unitorInv = unitorInv @n :**: unitorInv @m
   multiplicator @'(p, q) @'(r, s) @'(x, y) = multiplicator @n @j @p @r @x :**: multiplicator @m @k @q @s @y

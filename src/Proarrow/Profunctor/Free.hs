@@ -29,15 +29,16 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), fst, snd, (&&&), HasProducts, HasBinaryProducts (..))
-import Proarrow.Object.Terminal (terminate, El)
-import Proarrow.Profunctor.Forget (Forget)
+import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), fst, snd, (&&&), HasBinaryProducts (..))
+import Proarrow.Object.Terminal (terminate)
+import Proarrow.Profunctor.Forget (Forget (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj)
+import Proarrow.Profunctor.Representable (Representable (..), repObj, dimapRep)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat(..))
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
+import Proarrow.Category.Monoidal (Monoidal (..))
 
 type HasFree :: forall {k}. (k -> Constraint) -> Constraint
 class (CategoryOf k, Representable (Free ob), forall b. (Ob b) => ob (Free ob % b)) => HasFree (ob :: k -> Constraint) where
@@ -86,9 +87,9 @@ instance HasFree (P.Monoid `On` Semigroup) where
 
 type Ap :: (k -> Type) -> k -> Type
 data Ap f a where
-  Pure :: El a -> Ap f a
+  Pure :: Unit ~> a -> Ap f a
   Eff :: f a -> Ap f a
-  LiftA2 :: (Ob a, Ob b) => (a && b ~> c) -> Ap f a -> Ap f b -> Ap f c
+  LiftA2 :: (Ob a, Ob b) => (a ** b ~> c) -> Ap f a -> Ap f b -> Ap f c
 
 instance (CategoryOf k, Functor f) => Functor (Ap (f :: k -> Type)) where
   map f (Pure a) = Pure (f . a)
@@ -101,16 +102,20 @@ instance Functor Ap where
     Eff fa -> Eff (n fa)
     LiftA2 k x y -> LiftA2 k (unNat (map (Nat n)) x) (unNat (map (Nat n)) y)
 
-instance (HasProducts k, Functor f) => Applicative (Ap (f :: k -> Type)) where
+instance (Monoidal k, Functor f) => Applicative (Ap (f :: k -> Type)) where
   pure a () = Pure a
   liftA2 f (fa, fb) = LiftA2 f fa fb
+
+instance (Monoidal k, Monoid m) => Monoid (Ap (f :: k -> Type) m) where
+  mempty () = Pure mempty
+  mappend (l, r) = LiftA2 mappend l r
 
 retractAp :: (Applicative f) => Ap f a -> f a
 retractAp (Pure a) = pure a ()
 retractAp (Eff fa) = fa
 retractAp (LiftA2 k x y) = liftA2 k (retractAp x, retractAp y)
 
-instance (HasProducts k) => HasFree (Applicative :: (k -> Type) -> Constraint) where
+instance (Monoidal k) => HasFree (Applicative :: (k -> Type) -> Constraint) where
   type Free Applicative = Star Ap
   lift' (Nat f) = Star (Nat (Eff . f))
   retract' (Star (Nat f)) = Nat (retractAp . f)

@@ -10,14 +10,9 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal
-  ( Monoidal (..)
-  , MonoidalProfunctor (..)
-  , SymMonoidal (..)
-  , TracedMonoidalProfunctor (..)
-  )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
-import Proarrow.Core (CAT, Category, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, src, type (+->))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
+import Proarrow.Core (CAT, Category, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, src, type (+->))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
@@ -79,7 +74,7 @@ instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) 
   snd @a @b = snd @_ @(Fst a) @(Fst b) :**: snd @_ @(Snd a) @(Snd b)
   (f1 :**: f2) &&& (g1 :**: g2) = (f1 &&& g1) :**: (f2 &&& g2)
 
-instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (PRO j k) where
+instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (j +-> k) where
   type p && q = p :*: q
   withObProd r = r
   fst = Prof fstP
@@ -181,13 +176,14 @@ instance Strong Type (->) where
   act = par
 instance MonoidalAction Type Type where
   type Act p x = p ** x
+  withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
   multiplicator = associatorInv
   multiplicatorInv = associator
 
-instance TracedMonoidalProfunctor (->) where
-  trace f x = let (y, u) = f (x, u) in y
+instance Costrong Type (->) where
+  coact f x = let (u, y) = f (u, x) in y
 
 instance MonoidalProfunctor U.Unit where
   par0 = id
@@ -211,13 +207,14 @@ instance Strong () U.Unit where
   act = par
 instance MonoidalAction () () where
   type Act p x = p ** x
+  withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
   multiplicator = associatorInv
   multiplicatorInv = associator
 
-instance TracedMonoidalProfunctor U.Unit where
-  trace U.Unit = U.Unit
+instance Costrong () U.Unit where
+  coact U.Unit = U.Unit
 
 class (Act a b ~ a && b) => ActIsProd a b
 instance (Act a b ~ a && b) => ActIsProd a b
