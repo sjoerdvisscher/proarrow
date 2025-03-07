@@ -17,7 +17,7 @@ import Proarrow.Object.BinaryProduct
   )
 import Proarrow.Object.Dual (ExpSA, StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..), initiate)
+import Proarrow.Object.Initial (HasInitialObject (..), initiate, initiate')
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 

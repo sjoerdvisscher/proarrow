@@ -106,6 +106,7 @@ instance Strong k p => Strong (OPPOSITE k) (Op p) where
   act (Op w) (Op p) = Op (act w p)
 instance MonoidalAction m k => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   type Act (OP a) (OP b) = OP (Act a b)
+  withObAct @(OP a) @(OP b) = withObAct @m @k @a @b
   unitor = Op (unitorInv @m)
   unitorInv = Op (unitor @m)
   multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @m @k @a @b @x)

@@ -149,6 +149,7 @@ instance Strong (COPROD Type) (Coprod (->)) where
   act = par
 instance MonoidalAction (COPROD Type) (COPROD Type) where
   type Act p x = p ** x
+  withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
   multiplicator = associatorInv
@@ -158,6 +159,7 @@ instance Strong Type (Coprod (->)) where
   l `act` Coprod r = Coprod (l `par` r)
 instance MonoidalAction Type (COPROD Type) where
   type Act (p :: Type) (COPR x :: COPROD Type) = COPR (p ** x)
+  withObAct r = r
   unitor = Coprod leftUnitor
   unitorInv = Coprod leftUnitorInv
   multiplicator = Coprod associatorInv
@@ -167,6 +169,7 @@ instance Strong (COPROD Type) (->) where
   f@Coprod{} `act` g = unCoprod (f `par` Coprod g)
 instance MonoidalAction (COPROD Type) Type where
   type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
+  withObAct r = r
   unitor = unCoprod leftUnitor
   unitorInv = unCoprod leftUnitorInv
   multiplicator = unCoprod associatorInv

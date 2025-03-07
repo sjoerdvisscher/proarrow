@@ -107,6 +107,7 @@ instance (Strong k p, Promonad p, Monoidal k) => Strong k (Kleisli :: CAT (KLEIS
   act f (Kleisli p) = Kleisli (act f p)
 instance (Strong k p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p :: k +-> k)) where
   type Act y (KL x) = KL (Act y x)
+  withObAct @y @(KL x) r = withObAct @k @k @y @x r
   unitor = arr (unitor @k)
   unitorInv = arr (unitorInv @k)
   multiplicator @a @b @(KL c) = arr (multiplicator @k @k @a @b @c)

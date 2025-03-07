@@ -23,8 +23,8 @@ import Proarrow.Object.BinaryProduct
   , snd'
   )
 import Proarrow.Object.Exponential (BiCCC, CCC, Closed (..), eval, lower, curry', uncurry')
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Object.Initial (HasInitialObject (..), initiate')
+import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
 
 class (CCC k) => Cast (x :: k) y where
   cast :: x ~> y

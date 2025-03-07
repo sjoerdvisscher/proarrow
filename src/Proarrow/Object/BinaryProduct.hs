@@ -181,6 +181,7 @@ instance Strong Type (->) where
   act = par
 instance MonoidalAction Type Type where
   type Act p x = p ** x
+  withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
   multiplicator = associatorInv
@@ -211,6 +212,7 @@ instance Strong () U.Unit where
   act = par
 instance MonoidalAction () () where
   type Act p x = p ** x
+  withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
   multiplicator = associatorInv

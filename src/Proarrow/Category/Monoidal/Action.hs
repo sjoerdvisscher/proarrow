@@ -16,6 +16,7 @@ class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Strong m (p :: c
 class (Monoidal m, CategoryOf k, Strong m ((~>) :: CAT k)) => MonoidalAction m k where
   -- I would like to default Act to `**`, but that doesn't seem possible without GHC thinking `m` and `k` are the same.
   type Act (a :: m) (x :: k) :: k
+  withObAct :: (Ob (a :: m), Ob (x :: k)) => (Ob (Act a x) => r) -> r
   unitor :: (Ob (x :: k)) => Act (Unit :: m) x ~> x
   unitorInv :: (Ob (x :: k)) => x ~> Act (Unit :: m) x
   multiplicator :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act a (Act b x) ~> Act (a ** b) x

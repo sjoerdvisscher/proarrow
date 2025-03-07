@@ -2,24 +2,25 @@
 
 module Proarrow.Promonad.Writer where
 
+import Prelude (($))
+
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
   , first
-  , obj2
   , second
   , swap'
   , unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), strongPar0)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->), lmap, tgt)
+import Proarrow.Category.Monoidal.Distributive (Traversable (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, tgt, (//), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid, Monoid (..), comultAct, counitAct, mappendAct, memptyAct)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
-import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 
 data Writer w a b where
   Writer :: (Ob a, Ob b) => a ~> Act w b -> Writer w a b
@@ -49,14 +50,14 @@ instance (Ob (w :: m), MonoidalAction m k, SymMonoidal m) => Strong m (Writer w 
 instance (Monoid (w :: k), SelfAction k) => MonoidalProfunctor (Writer w :: k +-> k) where
   par0 = id \\ unitObj @k
   Writer @x1 @x2 f `par` Writer @y1 @y2 g =
-    Writer
-      ( associator @k @w @x2 @y2
-          . ((first @x2 (mappend @w) . associatorInv @k @w @w @x2 . swap' f (obj @w)) `par` obj @y2)
-          . associatorInv @k @x1 @w @y2
-          . second @x1 g
-      )
-      \\ obj2 @x1 @y1
-      \\ obj2 @x2 @y2
+    withOb2 @_ @x1 @y1 $
+      withOb2 @_ @x2 @y2 $
+        Writer
+          ( associator @k @w @x2 @y2
+              . ((first @x2 (mappend @w) . associatorInv @k @w @w @x2 . swap' f (obj @w)) `par` obj @y2)
+              . associatorInv @k @x1 @w @y2
+              . second @x1 g
+          )
 
 instance (Monoid (w :: k), SelfAction k) => Traversable (Writer w :: k +-> k) where
   traverse (Writer f :.: p) = let wp = strongPar0 @w `act` p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p

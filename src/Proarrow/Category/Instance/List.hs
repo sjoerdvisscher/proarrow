@@ -7,7 +7,7 @@ import Prelude (type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Strictified (type (++))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data LIST k = L [k]
 type instance UN L (L as) = as
@@ -59,9 +59,9 @@ instance (CategoryOf k) => Monoidal (LIST k) where
   type Unit = L '[]
   type p ** q = L (UN L p ++ UN L q)
   withOb2 @(L as) @(L bs) = withIsList2 @as @bs
-  leftUnitor = listId
-  leftUnitorInv = listId
-  rightUnitor = listId
-  rightUnitorInv = listId
-  associator @(L as) @(L bs) @(L cs) = listId \\ (obj @(L as) `par` obj @(L bs)) `par` obj @(L cs)
-  associatorInv @(L as) @(L bs) @(L cs) = listId \\ obj @(L as) `par` (obj @(L bs) `par` obj @(L cs))
+  leftUnitor = id
+  leftUnitorInv = id
+  rightUnitor = id
+  rightUnitorInv = id
+  associator @as @bs @cs = withOb2 @_ @as @bs (withOb2 @_ @(as ** bs) @cs (id @List))
+  associatorInv @as @bs @cs = withOb2 @_ @bs @cs (withOb2 @_ @as @(bs ** cs) (id @List))
