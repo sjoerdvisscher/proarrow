@@ -12,10 +12,10 @@ import Proarrow.Core
   , dimapDefault
   , lmap
   , rmap
-  , type (+->)
+  , type (+->), obj
   )
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Object.Initial (HasInitialObject (..), initiate')
+import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
 import Proarrow.Preorder.ThinCategory (Codiscrete (..), Thin, ThinProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
@@ -55,15 +55,15 @@ instance (Profunctor p) => CategoryOf (COLLAGE p) where
 
 instance (HasInitialObject j, CategoryOf k, Codiscrete p) => HasInitialObject (COLLAGE (p :: k +-> j)) where
   type InitialObject = L InitialObject
-  initiate' (InL a) = InL (initiate' a)
-  initiate' (L2R p) = L2R anyArr \\ p
-  initiate' (InR b) = L2R anyArr \\ b
+  initiate @a = case obj @a of
+    InL a -> InL (initiate' a)
+    InR b -> L2R anyArr \\ b
 
 instance (HasTerminalObject k, CategoryOf j, Codiscrete p) => HasTerminalObject (COLLAGE (p :: k +-> j)) where
   type TerminalObject = R TerminalObject
-  terminate' (InL a) = L2R anyArr \\ a
-  terminate' (L2R p) = L2R anyArr \\ p
-  terminate' (InR b) = InR (terminate' b)
+  terminate @a = case obj @a of
+    InL a -> L2R anyArr \\ a
+    InR b -> InR (terminate' b)
 
 class HasArrowCollage p (a :: COLLAGE p) b where arrCoprod :: a ~> b
 instance (Thin j, HasArrow (~>) (a :: j) b, Ob a, Ob b) => HasArrowCollage (p :: k +-> j) (L a) (L b) where

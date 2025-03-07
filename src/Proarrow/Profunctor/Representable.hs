@@ -20,8 +20,8 @@ class (Profunctor p) => Representable (p :: j +-> k) where
 repObj :: forall p a. (Representable p, Ob a) => Obj (p % a)
 repObj = repMap @p (obj @a)
 
-withRepObj :: forall p a r. (Representable p, Ob a) => ((Ob (p % a)) => r) -> r
-withRepObj r = r \\ repObj @p @a
+withRepOb :: forall p a r. (Representable p, Ob a) => ((Ob (p % a)) => r) -> r
+withRepOb r = r \\ repObj @p @a
 
 dimapRep :: forall p a b c d. (Representable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r

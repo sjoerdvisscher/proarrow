@@ -13,7 +13,6 @@ import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
-  , TracedMonoidalProfunctor (..)
   , swap
   )
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
@@ -28,13 +27,14 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), combineDual, compactClosedTrace)
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), combineDual, compactClosedCoact)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id)
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
@@ -253,5 +253,16 @@ instance CompactClosed KIND where
   distribDual = Cat @DistribDual
   dualUnit = Cat @DualUnit
 
-instance TracedMonoidalProfunctor Cat where
-  trace = compactClosedTrace
+instance MonoidalAction KIND KIND where
+  type Act a x = a ** x
+  withObAct r = r
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator = associatorInv
+  multiplicatorInv = associator
+
+instance Strong KIND Cat where
+  act = par
+
+instance Costrong KIND Cat where
+  coact @u = compactClosedCoact @u

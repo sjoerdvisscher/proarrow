@@ -68,17 +68,6 @@ class (Monoidal k) => SymMonoidal k where
 swap' :: forall {k} (a :: k) a' b b'. (SymMonoidal k) => a ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
 swap' f g = swap @k @a' @b' . (f `par` g) \\ f \\ g
 
-type TracedMonoidalProfunctor :: forall {k}. k +-> k -> Constraint
-class (SymMonoidal k, Profunctor p) => TracedMonoidalProfunctor (p :: k +-> k) where
-  {-# MINIMAL trace | trace' #-}
-  trace :: forall u x y. (Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
-  trace = trace' (obj @x) (obj @y) (obj @u)
-  trace' :: (x :: k) ~> x' -> y ~> y' -> u ~> u' -> p (x' ** u') (y ** u) -> p x y'
-  trace' @_ @_ @_ @_ @u x y u p = trace @_ @u (dimap (x `par` u) (y `par` src u) p) \\ x \\ y \\ u
-
-class (TracedMonoidalProfunctor ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
-instance (TracedMonoidalProfunctor ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
-
 first :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (a ** c) ~> (b ** c)
 first f = f `par` obj @c
 

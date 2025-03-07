@@ -43,7 +43,7 @@ instance ThinProfunctor (:-) where
 
 instance HasTerminalObject CONSTRAINT where
   type TerminalObject = CNSTRNT ()
-  terminate' Entails{} = Entails \r -> r
+  terminate = Entails \r -> r
 
 instance HasBinaryProducts CONSTRAINT where
   type CNSTRNT l && CNSTRNT r = CNSTRNT (l, r)

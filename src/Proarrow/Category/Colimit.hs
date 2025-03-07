@@ -12,9 +12,9 @@ import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, src, (//), (:~>), type (+->))
 import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
-import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Initial (HasInitialObject (..), initiate')
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepObj)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepOb)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type Unweighted = TerminalProfunctor
@@ -89,6 +89,6 @@ cochoose
    . (HasBinaryCoproducts k, Representable d)
   => Obj b
   -> (d % b) ~> ((d % L '()) || (d % R '()))
-cochoose b = withRepObj @d @(L '()) $ withRepObj @d @(R '()) $ case b of
+cochoose b = withRepOb @d @(L '()) $ withRepOb @d @(R '()) $ case b of
   (InjL Unit) -> lft @_ @(d % L '()) @(d % R '())
   (InjR Unit) -> rgt @_ @(d % L '()) @(d % R '())

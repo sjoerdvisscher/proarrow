@@ -1,8 +1,9 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Profunctor.Costar where
 
 import Control.Monad qualified as P
 import Data.Functor.Compose (Compose (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->), (//), rmap, obj)
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
@@ -11,6 +12,9 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
 import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
+import Proarrow.Category.Monoidal.Distributive (Traversable (..), Cotraversable (..))
+import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 type Costar :: (j -> k) -> k +-> j
 data Costar f a b where
@@ -37,3 +41,9 @@ composeCostar (Costar f :.: Costar g) = Costar (g . map f . getCompose)
 instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor (Costar f) where
   par0 = Costar terminate
   Costar @a f `par` Costar @b g = withOb2 @j @a @b (Costar (f . map (fst @j @a @b) &&& g . map (snd @j @a @b)))
+
+instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
+  cotraverse (p :.: Costar f) = p // Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p'
+
+costrength :: forall {m} f a b. (Functor f, Strong m (Costar f), Ob (a :: m), Ob b) => f (Act a b) ~> Act a (f b)
+costrength = unCostar (act (obj @a) (Costar (obj @(f b))))

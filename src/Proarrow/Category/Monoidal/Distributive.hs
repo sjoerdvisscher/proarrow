@@ -3,13 +3,12 @@
 module Proarrow.Category.Monoidal.Distributive where
 
 import Data.Bifunctor (bimap)
-import Data.Kind (Type)
-import Prelude (Either (..), const)
+import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (SelfAction, Strong)
+import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -19,27 +18,23 @@ import Proarrow.Core
   , rmap
   , src
   , tgt
-  , (//)
   , (:~>)
   , type (+->)
   )
-import Proarrow.Functor (Functor)
 import Proarrow.Helper.CCC
 import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, copar, lft', rgt')
-import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag, fst', snd')
+import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag, fst', snd', HasBinaryProducts (..))
 import Proarrow.Object.Exponential (BiCCC)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
-import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
-import Proarrow.Profunctor.Star (Star (..))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 
-class (Monoidal k, HasCoproducts k, DistributiveProfunctor ((~>) :: CAT k)) => Distributive k where
+class (Monoidal k, HasCoproducts k, DistributiveProfunctor (Id :: CAT k)) => Distributive k where
   distL :: (Ob (a :: k), Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
   distR :: (Ob (a :: k), Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
   distL0 :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
@@ -58,19 +53,20 @@ instance Distributive () where
   distR0 = U.Unit
 
 instance (BiCCC k) => Distributive (PROD k) where
-  distL @(PR a) @(PR b) @(PR c) =
-    Prod
-      ( toCCC @(F a * (F b + F c)) @((F a * F b) + (F a * F c))
-          (lam \(a :& bc) -> either (lam \b -> lam \a' -> left (a' :& b)) (lam \c -> lam \a' -> right (a' :& c)) $ bc $ a)
-      )
-  distR @(PR a) @(PR b) @(PR c) =
-    Prod
-      ( toCCC @((F a + F b) * F c) @((F a * F c) + (F b * F c))
-          (lam \(ab :& c) -> either (lam \a -> lam \c' -> left (a :& c')) (lam \b -> lam \c' -> right (b :& c')) $ ab $ c)
-      )
+  distL @(PR a) @(PR b) @(PR c) = Prod (distLProd @a @b @c)
+  distR @(PR a) @(PR b) @(PR c) = Prod (distRProd @a @b @c)
   distL0 @(PR a) = Prod (toCCC @(F a * InitF) @InitF (lam \(_ :& v) -> v))
   distR0 @(PR a) = Prod (toCCC @(InitF * F a) @InitF (lam \(v :& _) -> v))
 
+distLProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => (a && (b || c)) ~> (a && b || a && c)
+distLProd = toCCC @(F a * (F b + F c)) @((F a * F b) + (F a * F c))
+  (lam \(a :& bc) -> either (lam \b -> lam \a' -> left (a' :& b)) (lam \c -> lam \a' -> right (a' :& c)) $ bc $ a)
+
+distRProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => ((a || b) && c) ~> (a && c || b && c)
+distRProd = toCCC @((F a + F b) * F c) @((F a * F c) + (F b * F c))
+  (lam \(ab :& c) -> either (lam \a -> lam \c' -> left (a :& c')) (lam \b -> lam \c' -> right (b :& c')) $ ab $ c)
+
+type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where
   traverse :: (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => t :.: p :~> p :.: t
 
@@ -93,24 +89,7 @@ instance (Traversable p, Traversable q) => Traversable (p :+: q) where
   traverse (InjL p :.: r) = case traverse (p :.: r) of r' :.: p' -> r' :.: InjL p'
   traverse (InjR q :.: r) = case traverse (q :.: r) of r' :.: q' -> r' :.: InjR q'
 
-instance Traversable (Star P.Maybe) where
-  traverse (Star a2mb :.: p) = lmap a2mb go :.: Star id
-    where
-      go =
-        dimap
-          (P.maybe (Left ()) Right)
-          (const P.Nothing ||| P.Just)
-          (par0 `copar` p)
-
-instance Traversable (Star []) where
-  traverse (Star a2bs :.: p) = lmap a2bs go :.: Star id
-    where
-      go =
-        dimap
-          (\l -> case l of [] -> Left (); (x : xs) -> Right (x, xs))
-          (const [] ||| \(x, xs) -> x : xs)
-          (par0 `copar` (p `par` go))
-
+type Cotraversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Cotraversable (t :: k +-> k) where
   cotraverse :: (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => p :.: t :~> t :.: p
 
@@ -132,6 +111,3 @@ instance (HasBinaryCoproducts k, Cotraversable p, Cotraversable q) => Cotraversa
 instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
   cotraverse (r :.: InjL p) = case cotraverse (r :.: p) of p' :.: r' -> InjL p' :.: r'
   cotraverse (r :.: InjR q) = case cotraverse (r :.: q) of q' :.: r' -> InjR q' :.: r'
-
-instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
-  cotraverse (p :.: Costar f) = p // Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p'

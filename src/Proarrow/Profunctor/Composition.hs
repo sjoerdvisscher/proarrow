@@ -5,8 +5,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->), tgt)
 import Proarrow.Functor (Functor (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepObj)
-import Proarrow.Profunctor.Representable (Representable (..), withRepObj)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
+import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
 import Proarrow.Category.Monoidal.Action (Strong (..))
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
@@ -30,14 +30,14 @@ instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)
   index (p :.: q) = repMap @p (index q) . index p
   tabulate :: forall a b. (Ob b) => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
-  tabulate f = withRepObj @q @b (tabulate f :.: tabulate id)
+  tabulate f = withRepOb @q @b (tabulate f :.: tabulate id)
   repMap f = repMap @p (repMap @q f)
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where
   type (p :.: q) %% a = q %% (p %% a)
   coindex (p :.: q) = coindex q . corepMap @q (coindex p)
   cotabulate :: forall a b. (Ob a) => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
-  cotabulate f = withCorepObj @p @a (cotabulate id :.: cotabulate f)
+  cotabulate f = withCorepOb @p @a (cotabulate id :.: cotabulate f)
   corepMap f = corepMap @q (corepMap @p f)
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where

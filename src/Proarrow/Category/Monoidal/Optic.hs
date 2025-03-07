@@ -21,6 +21,7 @@ import Proarrow.Object (src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
 import Proarrow.Object.BinaryProduct ()
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Identity (Id(..))
 
 type Optic :: Kind -> c -> d -> c -> d -> Type
 data Optic m a b s t where
@@ -85,7 +86,7 @@ mkLens sa sbt = ex2prof (Optic (\s -> (s, sa s)) (src sa) (uncurry sbt))
 
 type Prism s t a b = MixedOptic (COPROD Type) (COPR a) (COPR b) (COPR s) (COPR t)
 mkPrism :: (s -> Either t a) -> (b -> t) -> Prism s t a b
-mkPrism sat bt = ex2prof @(COPROD Type) (Optic (Coprod sat) id (Coprod (either id bt)))
+mkPrism sat bt = ex2prof @(COPROD Type) (Optic (Coprod (Id sat)) id (Coprod (Id (either id bt))))
 
 type Traversal s t a b = MixedOptic (SUBCAT Traversable) a b s t
 traversing :: (Traversable f) => Traversal (f a) (f b) a b
@@ -114,7 +115,7 @@ infixl 8 ^.
 data Previewing a (b :: COPROD Type) s (t :: COPROD Type) where
   Previewing :: {unPreview :: s -> Maybe a} -> Previewing (COPR a) (COPR b) (COPR s) (COPR t)
 instance Profunctor (Previewing a b) where
-  dimap (Coprod l) Coprod{} (Previewing f) = Previewing (f . l)
+  dimap (Coprod (Id l)) Coprod{} (Previewing f) = Previewing (f . l)
   r \\ Previewing f = r \\ f
 instance Strong (COPROD Type) (Previewing a b) where
   act _ (Previewing f) = Previewing (either (const Nothing) f)
@@ -132,7 +133,7 @@ instance Profunctor (Setting a b) where
 instance Strong Type (Setting a b) where
   act w (Setting f) = Setting (\u -> bimap w (f u))
 instance Strong (COPROD Type) (Setting a b) where
-  act (Coprod w) (Setting f) = Setting (\u -> bimap w (f u))
+  act (Coprod (Id w)) (Setting f) = Setting (\u -> bimap w (f u))
 
 infixl 8 .~
 (.~) :: (Setting a b a b -> Setting a b s t) -> b -> s -> t
@@ -161,7 +162,7 @@ instance Profunctor (Replacing a b) where
 instance Strong Type (Replacing a b) where
   act w (Replace f) = Replace (\u -> bimap w (f u))
 instance Strong (COPROD Type) (Replacing a b) where
-  act (Coprod w) (Replace f) = Replace (\u -> bimap w (f u))
+  act (Coprod (Id w)) (Replace f) = Replace (\u -> bimap w (f u))
 instance Strong (Type -> Type) (Replacing a b) where
   act w (Replace f) = Replace (\g -> w ! f g)
 
