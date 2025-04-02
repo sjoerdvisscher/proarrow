@@ -1,0 +1,771 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Profunctor.Fold</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Profunctor.Fold.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Profunctor.Fold</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Fold" class="def"
+	    >Fold</a
+	    > (a :: k) (b :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Profunctor.Fold.html#Fold" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L26" class="link"
+	    >Comments</a
+	    > <a href="#t:Fold" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Fold" class="def"
+		  >Fold</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (m :: k) (b :: k) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > m =&gt; (m <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > b) -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > m) -&gt; ((m <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > m) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > m) -&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+		  >Unit</a
+		  > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > m) -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		  >Fold</a
+		  > a b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Fold"
+	    >Instances</h4
+	    ><details id="i:Fold" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Fold:Costrong:1"
+		      ></span
+		      > <a href="Proarrow-Object-BinaryProduct.html#t:ProdAction" title="Proarrow.Object.BinaryProduct"
+		      >ProdAction</a
+		      > k =&gt; <a href="Proarrow-Category-Monoidal-Action.html#t:Costrong" title="Proarrow.Category.Monoidal.Action"
+		      >Costrong</a
+		      > k (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		      >Fold</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Fold.html#line-49" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L49" class="link"
+		    >Comments</a
+		    > <a href="#t:Fold" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Fold:Costrong:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Fold.html"
+			>Proarrow.Profunctor.Fold</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:coact"
+			  >coact</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (x :: k) (y :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > x, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > y) =&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > (<a href="Proarrow-Category-Monoidal-Action.html#t:Act" title="Proarrow.Category.Monoidal.Action"
+			  >Act</a
+			  > a x) (<a href="Proarrow-Category-Monoidal-Action.html#t:Act" title="Proarrow.Category.Monoidal.Action"
+			  >Act</a
+			  > a y) -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > x y <a href="src/Proarrow.Category.Monoidal.Action.html#coact" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L78" class="link"
+			  >Comments</a
+			  > <a href="#v:coact" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Fold:MonoidalProfunctor:2"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+		      >SymMonoidal</a
+		      > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		      >Fold</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Fold.html#line-37" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L37" class="link"
+		    >Comments</a
+		    > <a href="#t:Fold" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Fold:MonoidalProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Fold.html"
+			>Proarrow.Profunctor.Fold</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:par0"
+			  >par0</a
+			  > :: <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: k) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: k) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:par0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:par"
+			  >par</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x1 :: k) (x2 :: k) (y1 :: k) (y2 :: k). <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > x1 x2 -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > y1 y2 -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > (x1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y1) (x2 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:par" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Fold:Profunctor:3"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		      >Fold</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Fold.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:Fold" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Fold:Profunctor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Fold.html"
+			>Proarrow.Profunctor.Fold</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > a b -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Fold:Corepresentable:4"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      >Corepresentable</a
+		      > (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		      >Fold</a
+		      > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Fold.html#line-55" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L55" class="link"
+		    >Comments</a
+		    > <a href="#t:Fold" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Fold:Corepresentable:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Fold.html"
+			>Proarrow.Profunctor.Fold</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-37--37-TYPETYPEFolda:-37--37-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+				>Fold</a
+				> :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+				>%%</a
+				> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-37--37-TYPETYPEFolda:-37--37-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Profunctor-Fold.html"
+				  >Proarrow.Profunctor.Fold</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+				  >Fold</a
+				  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+				  >%%</a
+				  > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) = [a]</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:coindex"
+			  >coindex</a
+			  > :: <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > a b -&gt; ((<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Corepresentable.html#coindex" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:coindex" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:cotabulate"
+			  >cotabulate</a
+			  > :: <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (((<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > a b <a href="src/Proarrow.Profunctor.Corepresentable.html#cotabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:cotabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:corepMap"
+			  >corepMap</a
+			  > :: (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; ((<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > b) <a href="src/Proarrow.Profunctor.Corepresentable.html#corepMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:corepMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Fold:Strong:5"
+		      ></span
+		      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:CoprodAction" title="Proarrow.Object.BinaryCoproduct"
+		      >CoprodAction</a
+		      > k, <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+		      >BiCCC</a
+		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
+		      >Strong</a
+		      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+		      >COPROD</a
+		      > k) (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		      >Fold</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Fold.html#line-43" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L43" class="link"
+		    >Comments</a
+		    > <a href="#t:Fold" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Fold:Strong:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Fold.html"
+			>Proarrow.Profunctor.Fold</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:act"
+			  >act</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k) (b :: <a href="Proarrow-Object-BinaryCoproduct.html#t:COPROD" title="Proarrow.Object.BinaryCoproduct"
+			  >COPROD</a
+			  > k) (x :: k) (y :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > x y -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > (<a href="Proarrow-Category-Monoidal-Action.html#t:Act" title="Proarrow.Category.Monoidal.Action"
+			  >Act</a
+			  > a x) (<a href="Proarrow-Category-Monoidal-Action.html#t:Act" title="Proarrow.Category.Monoidal.Action"
+			  >Act</a
+			  > b y) <a href="src/Proarrow.Category.Monoidal.Action.html#act" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:act" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Fold:Procomonad:6"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k =&gt; <a href="Proarrow-Promonad.html#t:Procomonad" title="Proarrow.Promonad"
+		      >Procomonad</a
+		      > (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		      >Fold</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Fold.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:Fold" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Fold:Procomonad:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Fold.html"
+			>Proarrow.Profunctor.Fold</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:extract"
+			  >extract</a
+			  > :: (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >(~&gt;)</a
+			  > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+			  >CAT</a
+			  > k) <a href="src/Proarrow.Promonad.html#extract" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:extract" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:duplicate"
+			  >duplicate</a
+			  > :: (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > ((<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			  >Fold</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="src/Proarrow.Promonad.html#duplicate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:duplicate" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Fold:-37--37-:7"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+		      >Fold</a
+		      > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+		      >%%</a
+		      > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Fold.html#line-56" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L56" class="link"
+		    >Comments</a
+		    > <a href="#t:Fold" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Fold:-37--37-:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Fold.html"
+			>Proarrow.Profunctor.Fold</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+			>Fold</a
+			> :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			> -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			>%%</a
+			> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) = [a]</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:trav" class="def"
+	    >trav</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {j} {k} (f :: j -&gt; k) (a :: j) (b :: j). <a href="Proarrow-Category-Monoidal-Applicative.html#t:Applicative" title="Proarrow.Category.Monoidal.Applicative"
+	    >Applicative</a
+	    > f =&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+	    >Fold</a
+	    > a b -&gt; <a href="Proarrow-Profunctor-Fold.html#t:Fold" title="Proarrow.Profunctor.Fold"
+	    >Fold</a
+	    > (f a) (f b) <a href="src/Proarrow.Profunctor.Fold.html#trav" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Fold.hs#L53" class="link"
+	    >Comments</a
+	    > <a href="#v:trav" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.30.0</p
+      ></div
+    ></body
+  ></html
+>

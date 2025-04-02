@@ -94,20 +94,22 @@
 		  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
 		  >TerminalObject</a
 		  > :: k)</li
-		><li
-		><a href="#v:terminate-39-"
-		  >terminate'</a
-		  > :: <span class="keyword"
-		  >forall</span
-		  > (a :: k) (a' :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-		  >~&gt;</a
-		  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-		  >~&gt;</a
-		  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-		  >TerminalObject</a
-		  > :: k)</li
 		></ul
 	      ></li
+	    ><li class="src short"
+	    ><a href="#v:terminate-39-"
+	      >terminate'</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (a' :: k). <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+	      >HasTerminalObject</a
+	      > k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+	      >TerminalObject</a
+	      > :: k)</li
 	    ><li class="src short"
 	    ><span class="keyword"
 	      >type</span
@@ -118,6 +120,22 @@
 	      > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	      >~&gt;</a
 	      > a</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: k) <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	      >~</a
+	      > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+	      >TerminalObject</a
+	      > :: k), <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+	      >HasTerminalObject</a
+	      > k, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+	      >Monoidal</a
+	      > k) =&gt; <a href="#t:Semicartesian"
+	      >Semicartesian</a
+	      > k</li
 	    ></ul
 	  ></details
 	></div
@@ -140,17 +158,11 @@
 	    >where</span
 	    > <a href="src/Proarrow.Object.Terminal.html#HasTerminalObject" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L11" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L12" class="link"
 	    >Comments</a
 	    > <a href="#t:HasTerminalObject" class="selflink"
 	    >#</a
 	    ></p
-	  ><div class="subs minimal"
-	  ><p class="caption"
-	    >Minimal complete definition</p
-	    ><p class="src"
-	    >Nothing</p
-	    ></div
 	  ><div class="subs associated-types"
 	  ><p class="caption"
 	    >Associated Types</p
@@ -183,27 +195,9 @@
 	      >TerminalObject</a
 	      > :: k) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L11" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L12" class="link"
 	      >Comments</a
 	      > <a href="#v:terminate" class="selflink"
-	      >#</a
-	      ></p
-	    ><p class="src"
-	    ><a id="v:terminate-39-" class="def"
-	      >terminate'</a
-	      > :: <span class="keyword"
-	      >forall</span
-	      > (a :: k) (a' :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	      >~&gt;</a
-	      > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	      >~&gt;</a
-	      > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-	      >TerminalObject</a
-	      > :: k) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L11" class="link"
-	      >Comments</a
-	      > <a href="#v:terminate-39-" class="selflink"
 	      >#</a
 	      ></p
 	    ></div
@@ -303,33 +297,9 @@
 			  >BOOL</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
-			  >BOOL</a
-			  >) (a' :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
-			  >BOOL</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
-			  >BOOL</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -425,33 +395,9 @@
 			  >KIND</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
-			  >KIND</a
-			  >) (a' :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
-			  >KIND</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Cat.html#t:KIND" title="Proarrow.Category.Instance.Cat"
-			  >KIND</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -468,9 +414,9 @@
 		      > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
 		      >CONSTRAINT</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.Constraint.html#line-45" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Constraint.html#line-44" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L45" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L44" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -547,33 +493,9 @@
 			  >CONSTRAINT</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
-			  >CONSTRAINT</a
-			  >) (a' :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
-			  >CONSTRAINT</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
-			  >CONSTRAINT</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -590,9 +512,9 @@
 		      > <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
 		      >LINEAR</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.Linear.html#line-158" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Linear.html#line-166" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L158" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L166" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -671,33 +593,9 @@
 			  >LINEAR</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
-			  >LINEAR</a
-			  >) (a' :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
-			  >LINEAR</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
-			  >LINEAR</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -714,9 +612,9 @@
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-44" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-45" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L44" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L45" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -767,7 +665,7 @@
 				  >TerminalObject</a
 				  > = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 				  >P</a
-				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
 				  >Void</a
 				  ></div
 				></details
@@ -795,33 +693,9 @@
 			  >POINTED</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
-			  >POINTED</a
-			  >) (a' :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
-			  >POINTED</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
-			  >POINTED</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -838,9 +712,9 @@
 		      > <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
 		      >Nat</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.Simplex.html#line-70" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Simplex.html#line-62" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L70" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L62" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -919,33 +793,9 @@
 			  >Nat</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
-			  >Nat</a
-			  >) (a' :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
-			  >Nat</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Simplex.html#t:Nat" title="Proarrow.Category.Instance.Simplex"
-			  >Nat</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1033,27 +883,9 @@
 			  >TerminalObject</a
 			  > :: ()) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: ()) (a' :: ()). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: ()) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1070,9 +902,9 @@
 		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      ></span
-		    > <a href="src/Proarrow.Object.Terminal.html#line-21" class="link"
+		    > <a href="src/Proarrow.Object.Terminal.html#line-22" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L21" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L22" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -1143,27 +975,9 @@
 			  >Type</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1190,9 +1004,9 @@
 		      > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
 		      >S</a
 		      > n)))</span
-		    > <a href="src/Proarrow.Category.Instance.Fin.html#line-82" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Fin.html#line-92" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L82" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L92" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -1283,45 +1097,9 @@
 			  >S</a
 			  > n))) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
-			  >FIN</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > n))) (a' :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
-			  >FIN</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > n))). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
-			  >FIN</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > n))) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1342,9 +1120,9 @@
 		      > '<a href="Proarrow-Category-Instance-Fin.html#t:Z" title="Proarrow.Category.Instance.Fin"
 		      >Z</a
 		      >))</span
-		    > <a href="src/Proarrow.Category.Instance.Fin.html#line-78" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Fin.html#line-88" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L78" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L88" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -1435,45 +1213,9 @@
 			  >Z</a
 			  >)) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
-			  >FIN</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > '<a href="Proarrow-Category-Instance-Fin.html#t:Z" title="Proarrow.Category.Instance.Fin"
-			  >Z</a
-			  >)) (a' :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
-			  >FIN</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > '<a href="Proarrow-Category-Instance-Fin.html#t:Z" title="Proarrow.Category.Instance.Fin"
-			  >Z</a
-			  >)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
-			  >FIN</a
-			  > ('<a href="Proarrow-Category-Instance-Fin.html#t:S" title="Proarrow.Category.Instance.Fin"
-			  >S</a
-			  > '<a href="Proarrow-Category-Instance-Fin.html#t:Z" title="Proarrow.Category.Instance.Fin"
-			  >Z</a
-			  >)) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1485,16 +1227,16 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:11"
 		      ></span
-		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Prelude.html#t:Num" title="Prelude"
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Prelude.html#t:Num" title="Prelude"
 		      >Num</a
 		      > a =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
 		      >HasTerminalObject</a
 		      > (<a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
 		      >MatK</a
 		      > a)</span
-		    > <a href="src/Proarrow.Category.Instance.Mat.html#line-156" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Mat.html#line-152" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L156" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L152" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -1575,33 +1317,9 @@
 			  >MatK</a
 			  > a) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a0 :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
-			  >MatK</a
-			  > a) (a' :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
-			  >MatK</a
-			  > a). (a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Mat.html#t:MatK" title="Proarrow.Category.Instance.Mat"
-			  >MatK</a
-			  > a) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1617,7 +1335,7 @@
 		      >HasTerminalObject</a
 		      > (<a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
 		      >POCATK</a
-		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 		      >Constraint</a
 		      >)</span
 		    > <a href="src/Proarrow.Category.Instance.PreorderAsCategory.html#line-38" class="link"
@@ -1689,7 +1407,7 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
 			  >POCATK</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 			  >Constraint</a
 			  >). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -1699,43 +1417,13 @@
 			  >TerminalObject</a
 			  > :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
 			  >POCATK</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 			  >Constraint</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
-			  >POCATK</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
-			  >Constraint</a
-			  >) (a' :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
-			  >POCATK</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
-			  >Constraint</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-PreorderAsCategory.html#t:POCATK" title="Proarrow.Category.Instance.PreorderAsCategory"
-			  >POCATK</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Kind.html#t:Constraint" title="Data.Kind"
-			  >Constraint</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1835,33 +1523,9 @@
 			  >OPPOSITE</a
 			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k) (a' :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-			  >OPPOSITE</a
-			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -1961,33 +1625,9 @@
 			  >FK</a
 			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
-			  >FK</a
-			  > k) (a' :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
-			  >FK</a
-			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Helper-CCC.html#t:FK" title="Proarrow.Helper.CCC"
-			  >FK</a
-			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -2006,9 +1646,9 @@
 		      > (<a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
 		      >PROD</a
 		      > k)</span
-		    > <a href="src/Proarrow.Object.BinaryProduct.html#line-130" class="link"
+		    > <a href="src/Proarrow.Object.BinaryProduct.html#line-125" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L130" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L125" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -2087,33 +1727,9 @@
 			  >PROD</a
 			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
-			  >PROD</a
-			  > k) (a' :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
-			  >PROD</a
-			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
-			  >PROD</a
-			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -2125,18 +1741,18 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:16"
 		      ></span
-		      > (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
-		      >CategoryOf</a
-		      > j, <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
-		      >CategoryOf</a
-		      > k) =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      > (<a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
 		      >HasTerminalObject</a
-		      > (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j k)</span
-		    > <a href="src/Proarrow.Object.Terminal.html#line-29" class="link"
+		      > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p) =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-65" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L29" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L65" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -2147,6 +1763,112 @@
 		><tr
 		><td colspan="2"
 		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:16"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:TerminalObjectKLEISLI:TerminalObject:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				>TerminalObject</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:TerminalObjectKLEISLI:TerminalObject:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+				  >Proarrow.Category.Instance.Kleisli</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+				  >KL</a
+				  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > :: k) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+				  >KLEISLI</a
+				  > p</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:terminate"
+			  >terminate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			  >TerminalObject</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:terminate" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:17"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > j, <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k) =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Object.Terminal.html#line-30" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L30" class="link"
+		    >Comments</a
+		    > <a href="#t:HasTerminalObject" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:17"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2187,7 +1909,7 @@
 				  >TerminalObject</a
 				  > = <a href="Proarrow-Profunctor-Terminal.html#t:TerminalProfunctor" title="Proarrow.Profunctor.Terminal"
 				  >TerminalProfunctor</a
-				  > :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 				  >Type</a
 				  ></div
 				></details
@@ -2203,45 +1925,21 @@
 			  >terminate</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > j k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
 			  >TerminalObject</a
-			  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > j k) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
+			  > :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > j k) (a' :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > j k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			  >PRO</a
-			  > j k) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -2251,7 +1949,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:17"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:18"
 		      ></span
 		      > (<a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
 		      >HasTerminalObject</a
@@ -2260,9 +1958,9 @@
 		      > k) =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
 		      >HasTerminalObject</a
 		      > (j, k)</span
-		    > <a href="src/Proarrow.Object.Terminal.html#line-25" class="link"
+		    > <a href="src/Proarrow.Object.Terminal.html#line-26" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L25" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L26" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -2272,7 +1970,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:17"
+		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:18"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2337,27 +2035,9 @@
 			  >TerminalObject</a
 			  > :: (j, k)) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: (j, k)) (a' :: (j, k)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: (j, k)) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -2367,7 +2047,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:18"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:19"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 		      >CategoryOf</a
@@ -2388,7 +2068,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:18"
+		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:19"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2427,7 +2107,7 @@
 				  >type</span
 				  > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
 				  >TerminalObject</a
-				  > = <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
+				  > = <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
 				  >Const</a
 				  > () :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 				  >Type</a
@@ -2457,33 +2137,9 @@
 			  >Type</a
 			  >) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) (a' :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -2493,7 +2149,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:19"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:20"
 		      ></span
 		      > (<a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
 		      >HasTerminalObject</a
@@ -2518,7 +2174,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:19"
+		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:20"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2589,163 +2245,9 @@
 			  >COLLAGE</a
 			  > p) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
-			  >COLLAGE</a
-			  > p) (a' :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
-			  >COLLAGE</a
-			  > p). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
-			  >COLLAGE</a
-			  > p) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasTerminalObject:HasTerminalObject:20"
-		      ></span
-		      > (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
-		      >Adjunction</a
-		      > p q, <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
-		      >HasTerminalObject</a
-		      > j) =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
-		      >HasTerminalObject</a
-		      > (<a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
-		      >LIFTED</a
-		      > p q)</span
-		    > <a href="src/Proarrow.Category.Instance.Lifted.html#line-33" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L33" class="link"
-		    >Comments</a
-		    > <a href="#t:HasTerminalObject" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:ic:HasTerminalObject:HasTerminalObject:20"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Instance-Lifted.html"
-			>Proarrow.Category.Instance.Lifted</a
-			></p
-		      > <div class="subs associated-types"
-		      ><p class="caption"
-			>Associated Types</p
-			><table
-			><tr
-			  ><td class="src clearfix"
-			    ><span class="inst-left"
-			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:TerminalObjectLIFTED:TerminalObject:1"
-				></span
-				> <span class="keyword"
-				>type</span
-				> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-				>TerminalObject</a
-				></span
-			      ></td
-			    ><td class="doc empty"
-			    >&nbsp;</td
-			    ></tr
-			  ><tr
-			  ><td colspan="2"
-			    ><details id="i:if:D:R:TerminalObjectLIFTED:TerminalObject:1"
-			      ><summary class="hide-when-js-enabled"
-				>Instance details</summary
-				><p
-				>Defined in <a href="Proarrow-Category-Instance-Lifted.html"
-				  >Proarrow.Category.Instance.Lifted</a
-				  ></p
-				> <div class="src"
-				><span class="keyword"
-				  >type</span
-				  > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-				  >TerminalObject</a
-				  > = '<a href="Proarrow-Category-Instance-Lifted.html#v:LIFT" title="Proarrow.Category.Instance.Lifted"
-				  >LIFT</a
-				  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-				  >TerminalObject</a
-				  > :: j) :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
-				  >LIFTED</a
-				  > p q</div
-				></details
-			      ></td
-			    ></tr
-			  ></table
-			></div
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:terminate"
-			  >terminate</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
-			  >LIFTED</a
-			  > p q). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-			  >Ob</a
-			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
-			  >LIFTED</a
-			  > p q) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L13" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:terminate-39-"
-			  >terminate'</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
-			  >LIFTED</a
-			  > p q) (a' :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
-			  >LIFTED</a
-			  > p q). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			  >TerminalObject</a
-			  > :: <a href="Proarrow-Category-Instance-Lifted.html#t:LIFTED" title="Proarrow.Category.Instance.Lifted"
-			  >LIFTED</a
-			  > p q) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L15" class="link"
-			  >Comments</a
-			  > <a href="#v:terminate-39-" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -2755,6 +2257,28 @@
 		></table
 	      ></details
 	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:terminate-39-" class="def"
+	    >terminate'</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (a' :: k). <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+	    >HasTerminalObject</a
+	    > k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a') -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+	    >TerminalObject</a
+	    > :: k) <a href="src/Proarrow.Object.Terminal.html#terminate%27" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L17" class="link"
+	    >Comments</a
+	    > <a href="#v:terminate-39-" class="selflink"
+	    >#</a
+	    ></p
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -2768,16 +2292,90 @@
 	    >~&gt;</a
 	    > a <a href="src/Proarrow.Object.Terminal.html#El" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L19" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L20" class="link"
 	    >Comments</a
 	    > <a href="#t:El" class="selflink"
 	    >#</a
 	    ></p
 	  ><div class="doc"
 	  ><p
-	    >The type of elements of <code
+	    >The type of elements of <code class="inline-code"
 	      >a</code
 	      >.</p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	    >~</a
+	    > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+	    >TerminalObject</a
+	    > :: k), <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+	    >HasTerminalObject</a
+	    > k, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+	    >Monoidal</a
+	    > k) =&gt; <a id="t:Semicartesian" class="def"
+	    >Semicartesian</a
+	    > k <a href="src/Proarrow.Object.Terminal.html#Semicartesian" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L34" class="link"
+	    >Comments</a
+	    > <a href="#t:Semicartesian" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Semicartesian"
+	    >Instances</h4
+	    ><details id="i:Semicartesian" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Semicartesian:Semicartesian:1"
+		      ></span
+		      > ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+		      >Unit</a
+		      > :: k) <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      >~</a
+		      > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+		      >TerminalObject</a
+		      > :: k), <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > k, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k) =&gt; <a href="Proarrow-Object-Terminal.html#t:Semicartesian" title="Proarrow.Object.Terminal"
+		      >Semicartesian</a
+		      > k</span
+		    > <a href="src/Proarrow.Object.Terminal.html#line-35" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L35" class="link"
+		    >Comments</a
+		    > <a href="#t:Semicartesian" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Semicartesian:Semicartesian:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Terminal.html"
+			>Proarrow.Object.Terminal</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
 	    ></div
 	  ></div
 	></div
@@ -2786,7 +2384,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.28.0</p
+	> version 2.30.0</p
       ></div
     ></body
   ></html

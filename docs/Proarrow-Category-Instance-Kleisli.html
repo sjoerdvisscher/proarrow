@@ -57,6 +57,186 @@
 	><p class="caption"
 	>Proarrow.Category.Instance.Kleisli</p
 	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >newtype</span
+	      > <a href="#t:KLEISLI"
+	      >KLEISLI</a
+	      > (p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k) = <a href="#v:KL"
+	      >KL</a
+	      > k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:Kleisli"
+	      >Kleisli</a
+	      > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > p) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:Kleisli"
+		  >Kleisli</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		  >CAT</a
+		  > k) (a1 :: k) (b1 :: k). {..} -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+		  >Kleisli</a
+		  > ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+		  >KL</a
+		  > a1 :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		  >KLEISLI</a
+		  > p) ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+		  >KL</a
+		  > b1 :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		  >KLEISLI</a
+		  > p)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:arr"
+	      >arr</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
+	      >PRO</a
+	      > k k) (a :: k) (b :: k). <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+	      >Promonad</a
+	      > p =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+	      >Kleisli</a
+	      > ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+	      >KL</a
+	      > a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > p) ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+	      >KL</a
+	      > b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > p)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:KleisliFree"
+	      >KleisliFree</a
+	      > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > p) (b :: k) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:KleisliFree"
+		  >KleisliFree</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a1 :: k) (b :: k). p a1 b -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KleisliFree" title="Proarrow.Category.Instance.Kleisli"
+		  >KleisliFree</a
+		  > p ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+		  >KL</a
+		  > a1 :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		  >KLEISLI</a
+		  > p) b</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:KleisliForget"
+	      >KleisliForget</a
+	      > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > p) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:KleisliForget"
+		  >KleisliForget</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k) (b1 :: k). p a b1 -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KleisliForget" title="Proarrow.Category.Instance.Kleisli"
+		  >KleisliForget</a
+		  > p a ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+		  >KL</a
+		  > b1 :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		  >KLEISLI</a
+		  > p)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:LIFTEDF"
+	      >LIFTEDF</a
+	      > (f :: j -&gt; k) = <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	      >Costar</a
+	      > f <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > f)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >pattern</span
+	      > <a href="#v:LiftF"
+	      >LiftF</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1). <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	      >Functor</a
+	      > f =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (f a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > f b) -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+	      >Kleisli</a
+	      > ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+	      >KL</a
+	      > a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	      >Costar</a
+	      > f <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > f)) ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+	      >KL</a
+	      > b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	      >KLEISLI</a
+	      > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	      >Costar</a
+	      > f <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > f))</li
+	    ></ul
+	  ></details
+	></div
       ><div id="interface"
       ><h1
 	>Documentation</h1
@@ -70,7 +250,7 @@
 	    >CAT</a
 	    > k) <a href="src/Proarrow.Category.Instance.Kleisli.html#KLEISLI" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L47" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L42" class="link"
 	    >Comments</a
 	    > <a href="#t:KLEISLI" class="selflink"
 	    >#</a
@@ -101,7 +281,7 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Profunctor:1"
 		      ></span
-		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Control-Monad.html#t:Monad" title="Control.Monad"
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Control-Monad.html#t:Monad" title="Control.Monad"
 		      >Monad</a
 		      > m =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
@@ -114,9 +294,9 @@
 		      > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-144" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-145" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L144" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L145" class="link"
 		    >Comments</a
 		    > <a href="#t:Profunctor" class="selflink"
 		    >#</a
@@ -200,9 +380,9 @@
 		      > k (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 		      >KLEISLI</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-109" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-112" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L109" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L112" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -223,6 +403,28 @@
 		      ><p class="caption"
 			>Methods</p
 			><p class="src"
+			><a href="#v:withObAct"
+			  >withObAct</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (x :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > x) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Monoidal-Action.html#t:Act" title="Proarrow.Category.Monoidal.Action"
+			  >Act</a
+			  > a x) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.Action.html#withObAct" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:withObAct" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
 			><a href="#v:unitor"
 			  >unitor</a
 			  > :: <span class="keyword"
@@ -239,7 +441,7 @@
 			  >~&gt;</a
 			  > x <a href="src/Proarrow.Category.Monoidal.Action.html#unitor" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L19" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L21" class="link"
 			  >Comments</a
 			  > <a href="#v:unitor" class="selflink"
 			  >#</a
@@ -261,7 +463,7 @@
 			  >Unit</a
 			  > :: k) x <a href="src/Proarrow.Category.Monoidal.Action.html#unitorInv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L20" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L22" class="link"
 			  >Comments</a
 			  > <a href="#v:unitorInv" class="selflink"
 			  >#</a
@@ -291,7 +493,7 @@
 			  >**</a
 			  > b) x <a href="src/Proarrow.Category.Monoidal.Action.html#multiplicator" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L21" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L23" class="link"
 			  >Comments</a
 			  > <a href="#v:multiplicator" class="selflink"
 			  >#</a
@@ -321,7 +523,7 @@
 			  >Act</a
 			  > b x) <a href="src/Proarrow.Category.Monoidal.Action.html#multiplicatorInv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L22" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L24" class="link"
 			  >Comments</a
 			  > <a href="#v:multiplicatorInv" class="selflink"
 			  >#</a
@@ -346,9 +548,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-80" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-130" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L80" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L130" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -438,9 +640,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-84" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-134" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L84" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L134" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -513,7 +715,7 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Strong:5"
 		      ></span
-		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Control-Monad.html#t:Monad" title="Control.Monad"
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Control-Monad.html#t:Monad" title="Control.Monad"
 		      >Monad</a
 		      > m =&gt; <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
 		      >Strong</a
@@ -528,9 +730,9 @@
 		      > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-147" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Optic.html#line-148" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L147" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L148" class="link"
 		    >Comments</a
 		    > <a href="#t:Strong" class="selflink"
 		    >#</a
@@ -569,7 +771,7 @@
 			  >Act</a
 			  > b0 y) <a href="src/Proarrow.Category.Monoidal.Action.html#act" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L14" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L15" class="link"
 			  >Comments</a
 			  > <a href="#v:act" class="selflink"
 			  >#</a
@@ -585,16 +787,16 @@
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
-		      > p, <a href="Proarrow-Object-BinaryProduct.html#t:StrongProd" title="Proarrow.Object.BinaryProduct"
-		      >StrongProd</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
 		      > p) =&gt; <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
 		      >Monoidal</a
 		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 		      >KLEISLI</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-94" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-91" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L94" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L91" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -645,8 +847,8 @@
 				  >Unit</a
 				  > = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
 				  >KL</a
-				  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-				  >TerminalObject</a
+				  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+				  >Unit</a
 				  > :: k) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 				  >KLEISLI</a
 				  > p</div
@@ -857,16 +1059,18 @@
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
-		      > p, <a href="Proarrow-Object-BinaryProduct.html#t:StrongProd" title="Proarrow.Object.BinaryProduct"
-		      >StrongProd</a
-		      > p) =&gt; <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+		      >SymMonoidal</a
+		      > k) =&gt; <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
 		      >SymMonoidal</a
 		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 		      >KLEISLI</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-104" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-101" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L104" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L101" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -919,7 +1123,177 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:CategoryOf:8"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Distributive:8"
+		      ></span
+		      > (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Distributive" title="Proarrow.Category.Monoidal.Distributive"
+		      >Distributive</a
+		      > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p, <a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+		      >DistributiveProfunctor</a
+		      > p) =&gt; <a href="Proarrow-Category-Monoidal-Distributive.html#t:Distributive" title="Proarrow.Category.Monoidal.Distributive"
+		      >Distributive</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-104" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L104" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:Distributive:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:distL"
+			  >distL</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (c :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (b <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:distL" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:distR"
+			  >distR</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (c :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:distR" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:distL0"
+			  >distL0</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L40" class="link"
+			  >Comments</a
+			  > <a href="#v:distL0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:distR0"
+			  >distR0</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L41" class="link"
+			  >Comments</a
+			  > <a href="#v:distR0" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:CategoryOf:9"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
@@ -928,9 +1302,9 @@
 		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 		      >KLEISLI</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-62" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-57" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L62" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L57" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -942,7 +1316,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:CategoryOf:8"
+		  ><details id="i:id:KLEISLI:CategoryOf:9"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1001,7 +1375,349 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:StarAutonomous:9"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:HasBinaryCoproducts:10"
+		      ></span
+		      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+		      >HasBinaryCoproducts</a
+		      > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:Coprod" title="Proarrow.Object.BinaryCoproduct"
+		      >Coprod</a
+		      > p)) =&gt; <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
+		      >HasBinaryCoproducts</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-80" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L80" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:HasBinaryCoproducts:10"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObCoprod"
+			  >withObCoprod</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.BinaryCoproduct.html#withObCoprod" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withObCoprod" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lft"
+			  >lft</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="src/Proarrow.Object.BinaryCoproduct.html#lft" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:lft" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rgt"
+			  >rgt</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="src/Proarrow.Object.BinaryCoproduct.html#rgt" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:rgt" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-124--124--124-"
+			  >(|||)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (y :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (y <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (x <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > y) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:-124--124--124-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-43--43--43-"
+			  >(+++)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (x :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (y :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > y) <a href="src/Proarrow.Object.BinaryCoproduct.html#%2B%2B%2B" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryCoproduct.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:-43--43--43-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:HasBinaryProducts:11"
+		      ></span
+		      > (<a href="Proarrow-Object-BinaryProduct.html#t:Cartesian" title="Proarrow.Object.BinaryProduct"
+		      >Cartesian</a
+		      > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > p) =&gt; <a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
+		      >HasBinaryProducts</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-73" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L73" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:HasBinaryProducts:11"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObProd"
+			  >withObProd</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.BinaryProduct.html#withObProd" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withObProd" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:fst"
+			  >fst</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.BinaryProduct.html#fst" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:fst" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:snd"
+			  >snd</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.BinaryProduct.html#snd" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:snd" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-38--38--38-"
+			  >(&amp;&amp;&amp;)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (x :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (y :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > y) <a href="src/Proarrow.Object.BinaryProduct.html#%26%26%26" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:-38--38--38-" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-42--42--42-"
+			  >(***)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (x :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (y :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > x) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			  >&amp;&amp;</a
+			  > y) <a href="src/Proarrow.Object.BinaryProduct.html#%2A%2A%2A" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/BinaryProduct.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:-42--42--42-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:StarAutonomous:12"
 		      ></span
 		      > <a href="Proarrow-Object-Dual.html#t:StarAutonomous" title="Proarrow.Object.Dual"
 		      >StarAutonomous</a
@@ -1010,9 +1726,9 @@
 		      > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 		      >Cont</a
 		      > r))</span
-		    > <a href="src/Proarrow.Promonad.Cont.html#line-20" class="link"
+		    > <a href="src/Proarrow.Promonad.Cont.html#line-25" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L20" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
 		    >Comments</a
 		    > <a href="#t:StarAutonomous" class="selflink"
 		    >#</a
@@ -1022,7 +1738,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:StarAutonomous:9"
+		  ><details id="i:id:KLEISLI:StarAutonomous:12"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1055,7 +1771,7 @@
 			  >Dual</a
 			  > a <a href="src/Proarrow.Object.Dual.html#dual" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L25" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
 			  >Comments</a
 			  > <a href="#v:dual" class="selflink"
 			  >#</a
@@ -1087,7 +1803,7 @@
 			  >~&gt;</a
 			  > a <a href="src/Proarrow.Object.Dual.html#dualInv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
 			  >Comments</a
 			  > <a href="#v:dualInv" class="selflink"
 			  >#</a
@@ -1129,7 +1845,7 @@
 			  >**</a
 			  > c) <a href="src/Proarrow.Object.Dual.html#linDist" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L27" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
 			  >Comments</a
 			  > <a href="#v:linDist" class="selflink"
 			  >#</a
@@ -1171,7 +1887,7 @@
 			  >Dual</a
 			  > c <a href="src/Proarrow.Object.Dual.html#linDistInv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L28" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L29" class="link"
 			  >Comments</a
 			  > <a href="#v:linDistInv" class="selflink"
 			  >#</a
@@ -1183,7 +1899,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Closed:10"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Closed:13"
 		      ></span
 		      > <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
 		      >Closed</a
@@ -1192,9 +1908,9 @@
 		      > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 		      >Cont</a
 		      > r))</span
-		    > <a href="src/Proarrow.Promonad.Cont.html#line-26" class="link"
+		    > <a href="src/Proarrow.Promonad.Cont.html#line-31" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L26" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L31" class="link"
 		    >Comments</a
 		    > <a href="#t:Closed" class="selflink"
 		    >#</a
@@ -1204,7 +1920,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Closed:10"
+		  ><details id="i:id:KLEISLI:Closed:13"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1215,8 +1931,36 @@
 		      ><p class="caption"
 			>Methods</p
 			><p class="src"
-			><a href="#v:curry-39-"
-			  >curry'</a
+			><a href="#v:withObExp"
+			  >withObExp</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
+			  >Cont</a
+			  > r)) r0. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > b) =&gt; r0) -&gt; r0 <a href="src/Proarrow.Object.Exponential.html#withObExp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:withObExp" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:curry"
+			  >curry</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
@@ -1231,11 +1975,11 @@
 			  >KLEISLI</a
 			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 			  >Cont</a
-			  > r)). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  > r)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -1243,16 +1987,16 @@
 			  >~&gt;</a
 			  > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
 			  >~~&gt;</a
-			  > c) <a href="src/Proarrow.Object.Exponential.html#curry%27" class="link"
+			  > c) <a href="src/Proarrow.Object.Exponential.html#curry" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L30" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L26" class="link"
 			  >Comments</a
-			  > <a href="#v:curry-39-" class="selflink"
+			  > <a href="#v:curry" class="selflink"
 			  >#</a
 			  ></p
 			><p class="src"
-			><a href="#v:uncurry-39-"
-			  >uncurry'</a
+			><a href="#v:uncurry"
+			  >uncurry</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
@@ -1267,11 +2011,11 @@
 			  >KLEISLI</a
 			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 			  >Cont</a
-			  > r)). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > c -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > r)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
 			  >~~&gt;</a
@@ -1279,11 +2023,11 @@
 			  >**</a
 			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > c <a href="src/Proarrow.Object.Exponential.html#uncurry%27" class="link"
+			  > c <a href="src/Proarrow.Object.Exponential.html#uncurry" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L31" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L27" class="link"
 			  >Comments</a
-			  > <a href="#v:uncurry-39-" class="selflink"
+			  > <a href="#v:uncurry" class="selflink"
 			  >#</a
 			  ></p
 			><p class="src"
@@ -1291,11 +2035,11 @@
 			  >(^^^)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 			  >KLEISLI</a
 			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 			  >Cont</a
-			  > r)) (y :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  > r)) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 			  >KLEISLI</a
 			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 			  >Cont</a
@@ -1303,7 +2047,7 @@
 			  >KLEISLI</a
 			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 			  >Cont</a
-			  > r)) (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  > r)) (y :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 			  >KLEISLI</a
 			  > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 			  >Cont</a
@@ -1319,7 +2063,7 @@
 			  >~~&gt;</a
 			  > y) <a href="src/Proarrow.Object.Exponential.html#%5E%5E%5E" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L32" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L28" class="link"
 			  >Comments</a
 			  > <a href="#v:-94--94--94-" class="selflink"
 			  >#</a
@@ -1331,7 +2075,219 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Profunctor:11"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:HasInitialObject:14"
+		      ></span
+		      > (<a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
+		      >HasInitialObject</a
+		      > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p) =&gt; <a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
+		      >HasInitialObject</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-69" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L69" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:HasInitialObject:14"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:InitialObjectKLEISLI:InitialObject:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				>InitialObject</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:InitialObjectKLEISLI:InitialObject:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+				  >Proarrow.Category.Instance.Kleisli</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				  >InitialObject</a
+				  > = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+				  >KL</a
+				  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+				  >InitialObject</a
+				  > :: k) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+				  >KLEISLI</a
+				  > p</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:initiate"
+			  >initiate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a <a href="src/Proarrow.Object.Initial.html#initiate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Initial.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:initiate" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:HasTerminalObject:15"
+		      ></span
+		      > (<a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p) =&gt; <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
+		      >HasTerminalObject</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-65" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L65" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:HasTerminalObject:15"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:TerminalObjectKLEISLI:TerminalObject:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				>TerminalObject</a
+				></span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:TerminalObjectKLEISLI:TerminalObject:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+				  >Proarrow.Category.Instance.Kleisli</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+				  >KL</a
+				  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+				  >TerminalObject</a
+				  > :: k) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+				  >KLEISLI</a
+				  > p</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:terminate"
+			  >terminate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			  >TerminalObject</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) <a href="src/Proarrow.Object.Terminal.html#terminate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Terminal.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:terminate" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Profunctor:16"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
@@ -1344,9 +2300,9 @@
 		      > p -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-73" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-123" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L73" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L123" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1356,7 +2312,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Profunctor:11"
+		  ><details id="i:id:KLEISLI:Profunctor:16"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1417,7 +2373,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Promonad:12"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Promonad:17"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
@@ -1432,9 +2388,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-66" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-61" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L66" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L61" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1444,7 +2400,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Promonad:12"
+		  ><details id="i:id:KLEISLI:Promonad:17"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1503,7 +2459,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Strong:13"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Strong:18"
 		      ></span
 		      > (<a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
 		      >Strong</a
@@ -1522,9 +2478,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-107" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-110" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L107" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L110" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1534,7 +2490,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Strong:13"
+		  ><details id="i:id:KLEISLI:Strong:18"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1565,7 +2521,7 @@
 			  >Act</a
 			  > b y) <a href="src/Proarrow.Category.Monoidal.Action.html#act" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L14" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L15" class="link"
 			  >Comments</a
 			  > <a href="#v:act" class="selflink"
 			  >#</a
@@ -1577,12 +2533,12 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:MonoidalProfunctor:14"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:MonoidalProfunctor:19"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
-		      > p, <a href="Proarrow-Object-BinaryProduct.html#t:StrongProd" title="Proarrow.Object.BinaryProduct"
-		      >StrongProd</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
 		      > p) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
 		      >MonoidalProfunctor</a
 		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
@@ -1594,22 +2550,19 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-90" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-87" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L90" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L87" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
 		    ></td
-		  ><td class="doc"
-		  ><p
-		    >This is not monoidal but premonoidal, i.e. no sliding.
- So with `par f g` the effects of f happen before the effects of g.</p
-		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:MonoidalProfunctor:14"
+		  ><details id="i:id:KLEISLI:MonoidalProfunctor:19"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1676,7 +2629,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Profunctor:15"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Profunctor:20"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
@@ -1691,9 +2644,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-54" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-49" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L54" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L49" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1703,7 +2656,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Profunctor:15"
+		  ><details id="i:id:KLEISLI:Profunctor:20"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1770,7 +2723,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Act:16"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Act:21"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1781,9 +2734,9 @@
 		      > x :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 		      >KLEISLI</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-110" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-113" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L110" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L113" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1793,7 +2746,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Act:16"
+		  ><details id="i:id:KLEISLI:Act:21"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1822,7 +2775,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:UN:17"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:UN:22"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1837,9 +2790,9 @@
 		      > k :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 		      >KLEISLI</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-48" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-43" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L48" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L43" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1849,7 +2802,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:UN:17"
+		  ><details id="i:id:KLEISLI:UN:22"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1876,16 +2829,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Unit:18"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Unit:23"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
 		      >Unit</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-95" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-92" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L95" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L92" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1895,7 +2848,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Unit:18"
+		  ><details id="i:id:KLEISLI:Unit:23"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1909,8 +2862,8 @@
 			>Unit</a
 			> = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
 			>KL</a
-			> (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
-			>TerminalObject</a
+			> (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			>Unit</a
 			> :: k) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 			>KLEISLI</a
 			> p</div
@@ -1920,16 +2873,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-126--62-:19"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-126--62-:24"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >(~&gt;)</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-63" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-58" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L63" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L58" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1939,7 +2892,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:-126--62-:19"
+		  ><details id="i:id:KLEISLI:-126--62-:24"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1966,18 +2919,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Ob:20"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:InitialObject:25"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
-		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-		      >Ob</a
-		      > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-		      >KLEISLI</a
-		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-64" class="link"
+		      > <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+		      >InitialObject</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-70" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L64" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L70" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -1987,7 +2938,97 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Ob:20"
+		  ><details id="i:id:KLEISLI:InitialObject:25"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			>InitialObject</a
+			> = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			>InitialObject</a
+			> :: k) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:TerminalObject:26"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+		      >TerminalObject</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-66" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L66" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:TerminalObject:26"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			>TerminalObject</a
+			> = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> (<a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
+			>TerminalObject</a
+			> :: k) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Ob:27"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-59" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L59" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:Ob:27"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2022,7 +3063,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-42--42-:21"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-42--42-:28"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -2033,9 +3074,9 @@
 		      > (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 		      >KLEISLI</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-96" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-93" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L96" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L93" class="link"
 		    >Comments</a
 		    > <a href="#t:KLEISLI" class="selflink"
 		    >#</a
@@ -2045,7 +3086,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:-42--42-:21"
+		  ><details id="i:id:KLEISLI:-42--42-:28"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2059,6 +3100,134 @@
 			>KLEISLI</a
 			> p) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			>**</a
+			> (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> :: k -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			>**</a
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> :: k -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) b) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-124--124-:29"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+		      >||</a
+		      > (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-81" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L81" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:-124--124-:29"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			>||</a
+			> (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> :: k -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			>||</a
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+			>KL</a
+			> :: k -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) b) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-38--38-:30"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+		      >&amp;&amp;</a
+		      > (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-74" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L74" class="link"
+		    >Comments</a
+		    > <a href="#t:KLEISLI" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:KLEISLI:-38--38-:30"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			>KLEISLI</a
+			> p) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+			>&amp;&amp;</a
 			> (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 			>KLEISLI</a
 			> p) = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
@@ -2086,7 +3255,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-126--126--62-:22"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:-126--126--62-:31"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -2101,9 +3270,9 @@
 		      > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 		      >Cont</a
 		      > r))</span
-		    > <a href="src/Proarrow.Promonad.Cont.html#line-27" class="link"
+		    > <a href="src/Proarrow.Promonad.Cont.html#line-32" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L27" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L32" class="link"
 		    >Comments</a
 		    > <a href="#t:-126--126--62-" class="selflink"
 		    >#</a
@@ -2113,7 +3282,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:-126--126--62-:22"
+		  ><details id="i:id:KLEISLI:-126--126--62-:31"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2142,7 +3311,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Dual:23"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:KLEISLI:Dual:32"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -2155,9 +3324,9 @@
 		      > (<a href="Proarrow-Promonad-Cont.html#t:Cont" title="Proarrow.Promonad.Cont"
 		      >Cont</a
 		      > r))</span
-		    > <a href="src/Proarrow.Promonad.Cont.html#line-21" class="link"
+		    > <a href="src/Proarrow.Promonad.Cont.html#line-26" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L21" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Dual.hs#L26" class="link"
 		    >Comments</a
 		    > <a href="#t:Dual" class="selflink"
 		    >#</a
@@ -2167,7 +3336,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:KLEISLI:Dual:23"
+		  ><details id="i:id:KLEISLI:Dual:32"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2213,7 +3382,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Instance.Kleisli.html#Kleisli" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L51" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L46" class="link"
 	    >Comments</a
 	    > <a href="#t:Kleisli" class="selflink"
 	    >#</a
@@ -2295,9 +3464,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-66" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-61" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L66" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L61" class="link"
 		    >Comments</a
 		    > <a href="#t:Kleisli" class="selflink"
 		    >#</a
@@ -2385,9 +3554,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-107" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-110" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L107" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L110" class="link"
 		    >Comments</a
 		    > <a href="#t:Kleisli" class="selflink"
 		    >#</a
@@ -2428,7 +3597,7 @@
 			  >Act</a
 			  > b y) <a href="src/Proarrow.Category.Monoidal.Action.html#act" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L14" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L15" class="link"
 			  >Comments</a
 			  > <a href="#v:act" class="selflink"
 			  >#</a
@@ -2444,8 +3613,8 @@
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
-		      > p, <a href="Proarrow-Object-BinaryProduct.html#t:StrongProd" title="Proarrow.Object.BinaryProduct"
-		      >StrongProd</a
+		      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
 		      > p) =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
 		      >MonoidalProfunctor</a
 		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
@@ -2457,18 +3626,15 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-90" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-87" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L90" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L87" class="link"
 		    >Comments</a
 		    > <a href="#t:Kleisli" class="selflink"
 		    >#</a
 		    ></td
-		  ><td class="doc"
-		  ><p
-		    >This is not monoidal but premonoidal, i.e. no sliding.
- So with `par f g` the effects of f happen before the effects of g.</p
-		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
 		  ></tr
 		><tr
 		><td colspan="2"
@@ -2554,9 +3720,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-54" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-49" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L54" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L49" class="link"
 		    >Comments</a
 		    > <a href="#t:Kleisli" class="selflink"
 		    >#</a
@@ -2658,7 +3824,7 @@
 	    >KLEISLI</a
 	    > p) <a href="src/Proarrow.Category.Instance.Kleisli.html#arr" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L59" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L54" class="link"
 	    >Comments</a
 	    > <a href="#v:arr" class="selflink"
 	    >#</a
@@ -2678,7 +3844,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Instance.Kleisli.html#KleisliFree" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L71" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L121" class="link"
 	    >Comments</a
 	    > <a href="#t:KleisliFree" class="selflink"
 	    >#</a
@@ -2736,9 +3902,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-84" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-134" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L84" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L134" class="link"
 		    >Comments</a
 		    > <a href="#t:KleisliFree" class="selflink"
 		    >#</a
@@ -2822,9 +3988,9 @@
 		      > p -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-73" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-123" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L73" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L123" class="link"
 		    >Comments</a
 		    > <a href="#t:KleisliFree" class="selflink"
 		    >#</a
@@ -2910,7 +4076,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Instance.Kleisli.html#KleisliForget" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L78" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L128" class="link"
 	    >Comments</a
 	    > <a href="#t:KleisliForget" class="selflink"
 	    >#</a
@@ -2962,9 +4128,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-80" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-130" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L80" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L130" class="link"
 		    >Comments</a
 		    > <a href="#t:KleisliForget" class="selflink"
 		    >#</a
@@ -3054,9 +4220,9 @@
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-84" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-134" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L84" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L134" class="link"
 		    >Comments</a
 		    > <a href="#t:KleisliForget" class="selflink"
 		    >#</a
@@ -3132,285 +4298,73 @@
 	><p class="src"
 	  ><span class="keyword"
 	    >type</span
-	    > <a id="t:DUAL" class="def"
-	    >DUAL</a
-	    > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	    > <a id="t:LIFTEDF" class="def"
+	    >LIFTEDF</a
+	    > (f :: j -&gt; k) = <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
 	    >KLEISLI</a
-	    > p) = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
-	    >KL</a
-	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-	    >OP</a
-	    > (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-	    >UN</a
-	    > ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
-	    >KL</a
-	    > :: k -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p) a)) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
-	    >Op</a
-	    > p) <a href="src/Proarrow.Category.Instance.Kleisli.html#DUAL" class="link"
+	    > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	    >Costar</a
+	    > f <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > f) <a href="src/Proarrow.Category.Instance.Kleisli.html#LIFTEDF" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L116" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L139" class="link"
 	    >Comments</a
-	    > <a href="#t:DUAL" class="selflink"
+	    > <a href="#t:LIFTEDF" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Categories lifted by a functor: <code class="inline-code"
+	      >f a ~&gt; f b</code
+	      >.</p
+	    ></div
 	  ></div
 	><div class="top"
 	><p class="src"
 	  ><span class="keyword"
-	    >type</span
-	    > <a id="t:UNDUAL" class="def"
-	    >UNDUAL</a
-	    > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
-	    >Op</a
-	    > p)) = '<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
-	    >KL</a
-	    > (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-	    >UN</a
-	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-	    >OP</a
-	    > :: k -&gt; <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-	    >OPPOSITE</a
-	    > k) (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-	    >UN</a
-	    > ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
-	    >KL</a
-	    > :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
-	    >OPPOSITE</a
-	    > k -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
-	    >Op</a
-	    > p)) a)) :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p <a href="src/Proarrow.Category.Instance.Kleisli.html#UNDUAL" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L117" class="link"
-	    >Comments</a
-	    > <a href="#t:UNDUAL" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><span class="keyword"
-	    >type</span
-	    > <a id="t:-43--43-" class="def"
-	    >(++)</a
-	    > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p) = <a href="Proarrow-Category-Instance-Kleisli.html#t:UNDUAL" title="Proarrow.Category.Instance.Kleisli"
-	    >UNDUAL</a
-	    > (<a href="Proarrow-Category-Instance-Kleisli.html#t:DUAL" title="Proarrow.Category.Instance.Kleisli"
-	    >DUAL</a
-	    > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
-	    >**</a
-	    > <a href="Proarrow-Category-Instance-Kleisli.html#t:DUAL" title="Proarrow.Category.Instance.Kleisli"
-	    >DUAL</a
-	    > b) <a href="src/Proarrow.Category.Instance.Kleisli.html#%2B%2B" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L119" class="link"
-	    >Comments</a
-	    > <a href="#t:-43--43-" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:dual" class="def"
-	    >dual</a
+	    >pattern</span
+	    > <a id="v:LiftF" class="def"
+	    >LiftF</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k} {p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
-	    >CAT</a
-	    > k} (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > b) -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:DUAL" title="Proarrow.Category.Instance.Kleisli"
-	    >DUAL</a
-	    > b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > <a href="Proarrow-Category-Instance-Kleisli.html#t:DUAL" title="Proarrow.Category.Instance.Kleisli"
-	    >DUAL</a
-	    > a <a href="src/Proarrow.Category.Instance.Kleisli.html#dual" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L122" class="link"
-	    >Comments</a
-	    > <a href="#v:dual" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:dist" class="def"
-	    >dist</a
-	    > :: <span class="keyword"
-	    >forall</span
-	    > {k} {p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k} (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p) (c :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
-	    >BiCCC</a
-	    > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
-	    >Promonad</a
-	    > p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    > {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1). <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > f =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 	    >Ob</a
 	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 	    >Ob</a
-	    > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > c) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
-	    >**</a
-	    > (b <a href="Proarrow-Category-Instance-Kleisli.html#t:-43--43-" title="Proarrow.Category.Instance.Kleisli"
-	    >++</a
-	    > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    > b) =&gt; (f a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
-	    > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
-	    >**</a
-	    > b) <a href="Proarrow-Category-Instance-Kleisli.html#t:-43--43-" title="Proarrow.Category.Instance.Kleisli"
-	    >++</a
-	    > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
-	    >**</a
-	    > c)) <a href="src/Proarrow.Category.Instance.Kleisli.html#dist" class="link"
+	    > f b) -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+	    >Kleisli</a
+	    > ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+	    >KL</a
+	    > a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	    >KLEISLI</a
+	    > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	    >Costar</a
+	    > f <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > f)) ('<a href="Proarrow-Category-Instance-Kleisli.html#v:KL" title="Proarrow.Category.Instance.Kleisli"
+	    >KL</a
+	    > b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+	    >KLEISLI</a
+	    > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+	    >Costar</a
+	    > f <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > f)) <a href="src/Proarrow.Category.Instance.Kleisli.html#LiftF" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L128" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L145" class="link"
 	    >Comments</a
-	    > <a href="#v:dist" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:copy" class="def"
-	    >copy</a
-	    > :: <span class="keyword"
-	    >forall</span
-	    > k (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k) (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p). (<a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
-	    >HasBinaryProducts</a
-	    > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
-	    >Promonad</a
-	    > p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > a) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
-	    >**</a
-	    > a) <a href="src/Proarrow.Category.Instance.Kleisli.html#copy" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L131" class="link"
-	    >Comments</a
-	    > <a href="#v:copy" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:discard" class="def"
-	    >discard</a
-	    > :: <span class="keyword"
-	    >forall</span
-	    > k (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k) (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p). (<a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
-	    >HasTerminalObject</a
-	    > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
-	    >Promonad</a
-	    > p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > a) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
-	    >Unit</a
-	    > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p) <a href="src/Proarrow.Category.Instance.Kleisli.html#discard" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L134" class="link"
-	    >Comments</a
-	    > <a href="#v:discard" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:add" class="def"
-	    >add</a
-	    > :: <span class="keyword"
-	    >forall</span
-	    > k (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k) (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p). (<a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
-	    >HasBinaryCoproducts</a
-	    > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
-	    >Promonad</a
-	    > p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > a) =&gt; (a <a href="Proarrow-Category-Instance-Kleisli.html#t:-43--43-" title="Proarrow.Category.Instance.Kleisli"
-	    >++</a
-	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > a <a href="src/Proarrow.Category.Instance.Kleisli.html#add" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L137" class="link"
-	    >Comments</a
-	    > <a href="#v:add" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:zero" class="def"
-	    >zero</a
-	    > :: <span class="keyword"
-	    >forall</span
-	    > k (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k) (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > p). (<a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
-	    >HasInitialObject</a
-	    > k, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
-	    >Promonad</a
-	    > p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > a) =&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:UNDUAL" title="Proarrow.Category.Instance.Kleisli"
-	    >UNDUAL</a
-	    > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
-	    >Unit</a
-	    > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
-	    >KLEISLI</a
-	    > (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
-	    >Op</a
-	    > p)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > a <a href="src/Proarrow.Category.Instance.Kleisli.html#zero" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Kleisli.hs#L140" class="link"
-	    >Comments</a
-	    > <a href="#v:zero" class="selflink"
+	    > <a href="#v:LiftF" class="selflink"
 	    >#</a
 	    ></p
 	  ></div
@@ -3420,7 +4374,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.28.0</p
+	> version 2.30.0</p
       ></div
     ></body
   ></html

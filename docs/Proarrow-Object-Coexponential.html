@@ -97,37 +97,57 @@
 	  ><p class="caption"
 	    >Methods</p
 	    ><p class="src"
-	    ><a id="v:coeval-39-" class="def"
-	      >coeval'</a
+	    ><a id="v:withObCoExp" class="def"
+	      >withObCoExp</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > (a :: k) (b :: k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-	      >Obj</a
-	      > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-	      >Obj</a
-	      > b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      > (a :: k) (b :: k) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
+	      >&lt;~~</a
+	      > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Coexponential.html#withObCoExp" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L9" class="link"
+	      >Comments</a
+	      > <a href="#v:withObCoExp" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:coeval" class="def"
+	      >coeval</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	      >~&gt;</a
 	      > ((a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
 	      >&lt;~~</a
 	      > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 	      >**</a
-	      > b) <a href="src/Proarrow.Object.Coexponential.html#coeval%27" class="link"
+	      > b) <a href="src/Proarrow.Object.Coexponential.html#coeval" class="link"
 	      >Source</a
 	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L9" class="link"
 	      >Comments</a
-	      > <a href="#v:coeval-39-" class="selflink"
+	      > <a href="#v:coeval" class="selflink"
 	      >#</a
 	      ></p
 	    ><p class="src"
-	    ><a id="v:coevalUniv-39-" class="def"
-	      >coevalUniv'</a
+	    ><a id="v:coevalUniv" class="def"
+	      >coevalUniv</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > (b :: k) (c :: k) (a :: k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-	      >Obj</a
-	      > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-	      >Obj</a
-	      > c -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      > (b :: k) (c :: k) (a :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	      >~&gt;</a
 	      > (c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 	      >**</a
@@ -135,11 +155,11 @@
 	      >&lt;~~</a
 	      > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	      >~&gt;</a
-	      > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv%27" class="link"
+	      > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv" class="link"
 	      >Source</a
 	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L9" class="link"
 	      >Comments</a
-	      > <a href="#v:coevalUniv-39-" class="selflink"
+	      > <a href="#v:coevalUniv" class="selflink"
 	      >#</a
 	      ></p
 	    ></div
@@ -162,9 +182,9 @@
 		      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Nat.html#line-130" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Nat.html#line-133" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L130" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L133" class="link"
 		    >Comments</a
 		    > <a href="#t:Coclosed" class="selflink"
 		    >#</a
@@ -241,8 +261,8 @@
 		      ><p class="caption"
 			>Methods</p
 			><p class="src"
-			><a href="#v:coeval-39-"
-			  >coeval'</a
+			><a href="#v:withObCoExp"
+			  >withObCoExp</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
@@ -253,26 +273,54 @@
 			  >Type</a
 			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
+			  >&lt;~~</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Coexponential.html#withObCoExp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L11" class="link"
+			  >Comments</a
+			  > <a href="#v:withObCoExp" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:coeval"
+			  >coeval</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > ((a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
 			  >&lt;~~</a
 			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
-			  > b) <a href="src/Proarrow.Object.Coexponential.html#coeval%27" class="link"
+			  > b) <a href="src/Proarrow.Object.Coexponential.html#coeval" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L11" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L12" class="link"
 			  >Comments</a
-			  > <a href="#v:coeval-39-" class="selflink"
+			  > <a href="#v:coeval" class="selflink"
 			  >#</a
 			  ></p
 			><p class="src"
-			><a href="#v:coevalUniv-39-"
-			  >coevalUniv'</a
+			><a href="#v:coevalUniv"
+			  >coevalUniv</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
@@ -287,11 +335,11 @@
 			  >Type</a
 			  > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > c -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > (c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
@@ -299,11 +347,11 @@
 			  >&lt;~~</a
 			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv%27" class="link"
+			  > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L12" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L13" class="link"
 			  >Comments</a
-			  > <a href="#v:coevalUniv-39-" class="selflink"
+			  > <a href="#v:coevalUniv" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -336,9 +384,9 @@
 		      > (<a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 		      >ENDO</a
 		      > kk k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-60" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Endo.html#line-61" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L60" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L61" class="link"
 		    >Comments</a
 		    > <a href="#t:Coclosed" class="selflink"
 		    >#</a
@@ -359,34 +407,58 @@
 		      ><p class="caption"
 			>Methods</p
 			><p class="src"
-			><a href="#v:coeval-39-"
-			  >coeval'</a
+			><a href="#v:withObCoExp"
+			  >withObCoExp</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
 			  > kk k) (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > a -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > kk k) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
+			  >&lt;~~</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Coexponential.html#withObCoExp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L11" class="link"
+			  >Comments</a
+			  > <a href="#v:withObCoExp" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:coeval"
+			  >coeval</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k) (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
+			  >ENDO</a
+			  > kk k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > ((a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
 			  >&lt;~~</a
 			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
-			  > b) <a href="src/Proarrow.Object.Coexponential.html#coeval%27" class="link"
+			  > b) <a href="src/Proarrow.Object.Coexponential.html#coeval" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L11" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L12" class="link"
 			  >Comments</a
-			  > <a href="#v:coeval-39-" class="selflink"
+			  > <a href="#v:coeval" class="selflink"
 			  >#</a
 			  ></p
 			><p class="src"
-			><a href="#v:coevalUniv-39-"
-			  >coevalUniv'</a
+			><a href="#v:coevalUniv"
+			  >coevalUniv</a
 			  > :: <span class="keyword"
 			  >forall</span
 			  > (b :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
@@ -395,11 +467,11 @@
 			  >ENDO</a
 			  > kk k) (a :: <a href="Proarrow-Category-Monoidal-Endo.html#t:ENDO" title="Proarrow.Category.Monoidal.Endo"
 			  >ENDO</a
-			  > kk k). <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > b -&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-			  >Obj</a
-			  > c -&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > kk k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > (c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
@@ -407,11 +479,11 @@
 			  >&lt;~~</a
 			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv%27" class="link"
+			  > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L12" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L13" class="link"
 			  >Comments</a
-			  > <a href="#v:coevalUniv-39-" class="selflink"
+			  > <a href="#v:coevalUniv" class="selflink"
 			  >#</a
 			  ></p
 			></div
@@ -421,60 +493,6 @@
 		></table
 	      ></details
 	    ></div
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:coeval" class="def"
-	    >coeval</a
-	    > :: <span class="keyword"
-	    >forall</span
-	    > {k} (a :: k) (b :: k). (<a href="Proarrow-Object-Coexponential.html#t:Coclosed" title="Proarrow.Object.Coexponential"
-	    >Coclosed</a
-	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > ((a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
-	    >&lt;~~</a
-	    > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
-	    >**</a
-	    > b) <a href="src/Proarrow.Object.Coexponential.html#coeval" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L15" class="link"
-	    >Comments</a
-	    > <a href="#v:coeval" class="selflink"
-	    >#</a
-	    ></p
-	  ></div
-	><div class="top"
-	><p class="src"
-	  ><a id="v:coevalUniv" class="def"
-	    >coevalUniv</a
-	    > :: <span class="keyword"
-	    >forall</span
-	    > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Object-Coexponential.html#t:Coclosed" title="Proarrow.Object.Coexponential"
-	    >Coclosed</a
-	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-	    >Ob</a
-	    > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > (c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
-	    >**</a
-	    > b)) -&gt; (a <a href="Proarrow-Object-Coexponential.html#t:-60--126--126-" title="Proarrow.Object.Coexponential"
-	    >&lt;~~</a
-	    > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	    >~&gt;</a
-	    > c <a href="src/Proarrow.Object.Coexponential.html#coevalUniv" class="link"
-	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L18" class="link"
-	    >Comments</a
-	    > <a href="#v:coevalUniv" class="selflink"
-	    >#</a
-	    ></p
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -488,7 +506,7 @@
 	    >CoCCC</a
 	    > k <a href="src/Proarrow.Object.Coexponential.html#CoCCC" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L20" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L15" class="link"
 	    >Comments</a
 	    > <a href="#t:CoCCC" class="selflink"
 	    >#</a
@@ -512,9 +530,9 @@
 		      > k) =&gt; <a href="Proarrow-Object-Coexponential.html#t:CoCCC" title="Proarrow.Object.Coexponential"
 		      >CoCCC</a
 		      > k</span
-		    > <a href="src/Proarrow.Object.Coexponential.html#line-21" class="link"
+		    > <a href="src/Proarrow.Object.Coexponential.html#line-16" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L21" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Coexponential.hs#L16" class="link"
 		    >Comments</a
 		    > <a href="#t:CoCCC" class="selflink"
 		    >#</a
@@ -544,7 +562,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.28.0</p
+	> version 2.30.0</p
       ></div
     ></body
   ></html
