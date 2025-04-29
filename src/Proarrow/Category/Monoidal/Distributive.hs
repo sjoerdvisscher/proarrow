@@ -21,15 +21,24 @@ import Proarrow.Core
   , (:~>)
   , type (+->)
   )
-import Proarrow.Helper.CCC
 import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, copar, lft', rgt')
-import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag, fst', snd', HasBinaryProducts (..))
-import Proarrow.Object.Exponential (BiCCC)
+import Proarrow.Object.BinaryProduct
+  ( Cartesian
+  , HasBinaryProducts (..)
+  , PROD (..)
+  , Prod (..)
+  , diag
+  , fst'
+  , snd'
+  , swapProd
+  )
+import Proarrow.Object.Exponential (BiCCC, Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
+import Prelude (($))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
@@ -55,16 +64,18 @@ instance Distributive () where
 instance (BiCCC k) => Distributive (PROD k) where
   distL @(PR a) @(PR b) @(PR c) = Prod (distLProd @a @b @c)
   distR @(PR a) @(PR b) @(PR c) = Prod (distRProd @a @b @c)
-  distL0 @(PR a) = Prod (toCCC @(F a * InitF) @InitF (lam \(_ :& v) -> v))
-  distR0 @(PR a) = Prod (toCCC @(InitF * F a) @InitF (lam \(v :& _) -> v))
+  distL0 @(PR a) = Prod (snd @k @a)
+  distR0 @(PR a) = Prod (fst @k @_ @a)
 
 distLProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => (a && (b || c)) ~> (a && b || a && c)
-distLProd = toCCC @(F a * (F b + F c)) @((F a * F b) + (F a * F c))
-  (lam \(a :& bc) -> either (lam \b -> lam \a' -> left (a' :& b)) (lam \c -> lam \a' -> right (a' :& c)) $ bc $ a)
+distLProd = (swapProd @b @a +++ swapProd @c @a) . distRProd @b @c @a . withObCoprod @k @b @c (swapProd @a @(b || c))
 
 distRProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => ((a || b) && c) ~> (a && c || b && c)
-distRProd = toCCC @((F a + F b) * F c) @((F a * F c) + (F b * F c))
-  (lam \(ab :& c) -> either (lam \a -> lam \c' -> left (a :& c')) (lam \b -> lam \c' -> right (b :& c')) $ ab $ c)
+distRProd =
+  withObProd @k @a @c $
+    withObProd @k @b @c $
+      withObCoprod @k @(a && c) @(b && c) $
+        uncurry @k @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
 
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where
