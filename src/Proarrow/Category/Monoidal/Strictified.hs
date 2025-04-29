@@ -24,7 +24,8 @@ type family (as :: [k]) ++ (bs :: [k]) :: [k] where
 
 data SList as where
   Nil :: SList '[]
-  Cons :: (Ob a, Ob as) => Obj a -> SList as -> SList (a ': as)
+  Sing :: (Ob a) => SList '[a]
+  Cons :: (Ob a, Ob as, as ~ b ': bs) => SList (a ': as)
 
 class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
 instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
@@ -43,13 +44,13 @@ instance (CategoryOf k) => IsList ('[] :: [k]) where
   swap1Inv = id
   swap' = id
 instance (Ob (a :: k), CategoryOf k) => IsList '[a] where
-  sList = Cons (obj @a) Nil
-  withIsList2 @bs r = case sList @bs of Nil -> r; Cons{} -> r
+  sList = Sing
+  withIsList2 @bs r = case sList @bs of Nil -> r; Sing -> r; Cons -> r
   swap1 @b = Str (swap @k @a @b)
   swap1Inv @b = Str (swap @k @b @a)
   swap' @bs = swap1Inv @bs @a
 instance (Ob (a1 :: k), IsList (a2 ': as), IsList as) => IsList (a1 ': a2 ': as) where
-  sList = Cons (obj @a1) (sList @(a2 ': as))
+  sList = Cons
   withIsList2 @bs r = withIsList2 @(a2 ': as) @bs $ withIsList2 @as @bs r
   swap1 @b = case swap1 @(a2 ': as) @b of f -> (Str @[a1, b] @[b, a1] (swap @_ @a1 @b) `par` obj @(a2 ': as)) . (obj @'[a1] `par` f)
   swap1Inv @b = case swap1Inv @(a2 ': as) @b of f -> (obj @'[a1] `par` f) . (Str @[b, a1] @[a1, b] (swap @_ @b @a1) `par` obj @(a2 ': as))
@@ -62,8 +63,8 @@ type family Fold (as :: [k]) :: k where
 
 fold :: forall {k} as. (Monoidal k) => SList (as :: [k]) -> Fold as ~> Fold as
 fold Nil = par0
-fold (Cons f Nil) = f
-fold (Cons f fs@Cons{}) = f `par` fold fs
+fold (Sing @a) = obj @a
+fold (Cons @a @as') = obj @a `par` fold (sList @as')
 
 concatFold
   :: forall {k} (as :: [k]) (bs :: [k])
@@ -73,10 +74,11 @@ concatFold =
   let fbs = fold (sList @bs)
       h :: forall (cs :: [k]). SList cs -> (Fold cs ** Fold bs) ~> Fold (cs ++ bs)
       h Nil = leftUnitor \\ fbs
-      h (Cons c Nil) = case sList @bs of
+      h (Sing @c) = case sList @bs of
         Nil -> rightUnitor
-        Cons{} -> c `par` fbs
-      h (Cons c cs@Cons{}) = (c `par` h cs) . associator' c (fold cs) fbs
+        Sing -> obj @c `par` fbs
+        Cons -> obj @c `par` fbs
+      h (Cons @c @cs') = let c = obj @c; cs = sList @cs' in (c `par` h cs) . associator' c (fold cs) fbs
   in h (sList @as)
 
 splitFold
@@ -87,10 +89,11 @@ splitFold =
   let fbs = fold (sList @bs)
       h :: forall cs. SList cs -> Fold (cs ++ bs) ~> Fold cs ** Fold bs
       h Nil = leftUnitorInv \\ fbs
-      h (Cons c Nil) = case sList @bs of
+      h (Sing @c) = case sList @bs of
         Nil -> rightUnitorInv
-        Cons{} -> c `par` fbs
-      h (Cons c cs@Cons{}) = associatorInv' c (fold cs) fbs . (c `par` h cs)
+        Sing -> obj @c `par` fbs
+        Cons -> obj @c `par` fbs
+      h (Cons @c @cs') = let c = obj @c; cs = sList @cs' in associatorInv' c (fold cs) fbs . (c `par` h cs)
   in h (sList @as)
 
 type Strictified :: CAT [k]
@@ -102,7 +105,8 @@ singleton a = Str a \\ a
 
 asObj :: (Monoidal k) => SList (as :: [k]) -> Obj as
 asObj Nil = obj
-asObj (Cons a as) = singleton a `par` asObj as
+asObj Sing = obj
+asObj (Cons @a @as) = obj @'[a] `par` obj @as
 
 instance (Monoidal k) => Profunctor (Strictified :: CAT [k]) where
   dimap = dimapDefault
