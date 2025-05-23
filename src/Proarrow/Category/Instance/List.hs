@@ -14,11 +14,11 @@ type List :: CAT (LIST k)
 
 -- | The free monoid in CAT
 data List as bs where
-  Nil :: List (L '[]) (L '[])
-  Cons :: (Str.IsList as, Str.IsList bs) => a ~> b -> List (L as) (L bs) -> List (L (a ': as)) (L (b ': bs))
+  SNil :: List (L '[]) (L '[])
+  SCons :: (Str.IsList as, Str.IsList bs) => a ~> b -> List (L as) (L bs) -> List (L (a ': as)) (L (b ': bs))
 
 mkCons :: (CategoryOf k) => (a :: k) ~> b -> L as ~> L bs -> L (a ': as) ~> L (b ': bs)
-mkCons f fs = Cons f fs \\ fs
+mkCons f fs = SCons f fs \\ fs
 
 instance (CategoryOf k) => CategoryOf (LIST k) where
   type (~>) = List
@@ -26,24 +26,24 @@ instance (CategoryOf k) => CategoryOf (LIST k) where
 
 instance (CategoryOf k) => Promonad (List :: CAT (LIST k)) where
   id @(L bs) = case Str.sList @bs of
-    Str.Nil -> Nil
-    Str.Sing @a -> Cons (obj @a) Nil
-    Str.Cons @a @as -> Cons (obj @a) (obj @(L as))
-  Nil . Nil = Nil
-  Cons f fs . Cons g gs = Cons (f . g) (fs . gs)
+    Str.SNil -> SNil
+    Str.SSing @a -> SCons (obj @a) SNil
+    Str.SCons @a @as -> SCons (obj @a) (obj @(L as))
+  SNil . SNil = SNil
+  SCons f fs . SCons g gs = SCons (f . g) (fs . gs)
 
 instance (CategoryOf k) => Profunctor (List :: CAT (LIST k)) where
   dimap = dimapDefault
-  r \\ Nil = r
-  r \\ Cons f Nil = r \\ f
-  r \\ Cons f fs@Cons{} = r \\ f \\ fs
+  r \\ SNil = r
+  r \\ SCons f SNil = r \\ f
+  r \\ SCons f fs@SCons{} = r \\ f \\ fs
 
 instance (CategoryOf k) => MonoidalProfunctor (List :: CAT (LIST k)) where
-  par0 = Nil
-  Nil `par` Nil = Nil
-  Nil `par` gs@Cons{} = gs
-  Cons f fs `par` Nil = mkCons f (fs `par` Nil)
-  Cons f fs `par` Cons g gs = mkCons f (fs `par` Cons g gs)
+  par0 = SNil
+  SNil `par` SNil = SNil
+  SNil `par` gs@SCons{} = gs
+  SCons f fs `par` SNil = mkCons f (fs `par` SNil)
+  SCons f fs `par` SCons g gs = mkCons f (fs `par` SCons g gs)
 
 instance (CategoryOf k) => Monoidal (LIST k) where
   type Unit = L '[]
