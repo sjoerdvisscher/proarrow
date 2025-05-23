@@ -17,6 +17,12 @@ class (Profunctor p) => Representable (p :: j +-> k) where
   tabulate :: (Ob b) => (a ~> p % b) -> p a b
   repMap :: (a ~> b) -> p % a ~> p % b
 
+instance Representable (->) where
+  type (->) % a = a
+  index f = f
+  tabulate f = f
+  repMap f = f
+
 repObj :: forall p a. (Representable p, Ob a) => Obj (p % a)
 repObj = repMap @p (obj @a)
 
