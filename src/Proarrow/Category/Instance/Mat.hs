@@ -67,7 +67,7 @@ data Mat :: CAT (MatK a) where
     -> Mat m' n'
 
 apply :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
-apply m v = P.fmap (P.foldr (P.+) 0 . P.liftA2 (P.*) v) m
+apply m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
 
 class (P.Applicative (Vec n), n + Z ~ n, n * Z ~ Z, n * S Z ~ n) => IsNat (n :: Nat) where
   matId :: (P.Num a) => Vec n (Vec n a)
