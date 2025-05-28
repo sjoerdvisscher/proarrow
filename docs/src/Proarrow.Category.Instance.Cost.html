@@ -1,0 +1,6452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Cost</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>GHC.TypeLits</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >(</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>KnownNat</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Nat</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>OrderingI</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>cmpNat</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>natVal</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>withSomeSNat</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >pattern</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>SNat</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>SNat</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(+)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(&lt;=)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Unsafe.Coerce</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>unsafeCoerce</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Prelude</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Num</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(+)</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>error</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>($)</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator"
+	  >(//)</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier"
+	  >obj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="COST"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#COST"
+	  ><span class="hs-identifier hs-var"
+	    >COST</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="C"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#C"
+	  ><span class="hs-identifier hs-var"
+	    >C</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Nat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >|</span
+      ><span
+      > </span
+      ><span id="INF"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#INF"
+	  ><span class="hs-identifier hs-var"
+	    >INF</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="SCost"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#SCost"
+	  ><span class="hs-identifier hs-var"
+	    >SCost</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412995"
+      ><span class="annot"
+	><a href="#local-6989586621679412995"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679412996"
+      ><span id="SC"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	    ><span class="hs-identifier hs-var"
+	      >SC</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><span class="hs-identifier hs-type"
+	  >KnownNat</span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679412996"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#SCost"
+	  ><span class="hs-identifier hs-type"
+	    >SCost</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#C"
+	  ><span class="hs-identifier hs-type"
+	    >C</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679412996"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="SINF"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	  ><span class="hs-identifier hs-var"
+	    >SINF</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SCost"
+	><span class="hs-identifier hs-type"
+	  >SCost</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#INF"
+	><span class="hs-identifier hs-type"
+	  >INF</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier hs-type"
+	  >CAT</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#COST"
+	><span class="hs-identifier hs-type"
+	  >COST</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="GTE"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	  ><span class="hs-identifier hs-var"
+	    >GTE</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412999"
+      ><span class="annot"
+	><a href="#local-6989586621679412999"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413000"
+      ><span class="annot"
+	><a href="#local-6989586621679413000"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679412899"
+      ><span id="Inf"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	    ><span class="hs-identifier hs-var"
+	      >Inf</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-type"
+	    >Ob</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679412899"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	  ><span class="hs-identifier hs-type"
+	    >GTE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#INF"
+	  ><span class="hs-identifier hs-type"
+	    >INF</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679412899"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413002"
+      ><span id="local-6989586621679413003"
+	><span id="GTE"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	      ><span class="hs-identifier hs-var"
+		>GTE</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><span class="hs-identifier hs-type"
+	    >KnownNat</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413002"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><span class="hs-identifier hs-type"
+	    >KnownNat</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413003"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413003"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><span class="hs-operator hs-type"
+	    >&lt;=</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413002"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	    ><span class="hs-identifier hs-type"
+	      >GTE</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Cost.html#C"
+	    ><span class="hs-identifier hs-type"
+	      >C</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413002"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Cost.html#C"
+	    ><span class="hs-identifier hs-type"
+	      >C</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413003"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#lteTrans"
+	><span class="hs-identifier hs-type"
+	  >lteTrans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679412802"
+      ><span class="annot"
+	><a href="#local-6989586621679412802"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Nat</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679412803"
+      ><span class="annot"
+	><a href="#local-6989586621679412803"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412805"
+      ><span class="annot"
+	><a href="#local-6989586621679412805"
+	  ><span class="hs-identifier hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412806"
+      ><span class="annot"
+	><a href="#local-6989586621679412806"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412802"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>&lt;=</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412803"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412803"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>&lt;=</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412805"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>KnownNat</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412802"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>KnownNat</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412805"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412802"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>&lt;=</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412805"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412806"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412806"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span id="lteTrans"
+      ><span class="annot"
+	><span class="annottext"
+	  >lteTrans :: forall (a :: Nat) (b :: Nat) (c :: Nat) r.
+(a &lt;= b, b &lt;= c, KnownNat a, KnownNat c) =&gt;
+((a &lt;= c) =&gt; r) -&gt; r
+</span
+	  ><a href="Proarrow.Category.Instance.Cost.html#lteTrans"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >lteTrans</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413012"
+      ><span class="annot"
+	><span class="annottext"
+	  >(a &lt;= c) =&gt; r
+</span
+	  ><a href="#local-6989586621679413012"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy a -&gt; Proxy c -&gt; OrderingI a c
+forall (a :: Nat) (b :: Nat) (proxy1 :: Nat -&gt; Type)
+       (proxy2 :: Nat -&gt; Type).
+(KnownNat a, KnownNat b) =&gt;
+proxy1 a -&gt; proxy2 b -&gt; OrderingI a b
+</span
+	><span class="hs-identifier hs-var"
+	>cmpNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy a
+forall {k} (t :: k). Proxy t
+</span
+	><span class="hs-identifier hs-var"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412802"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy c
+forall {k} (t :: k). Proxy t
+</span
+	><span class="hs-identifier hs-var"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412805"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>OrderingI a c
+</span
+	><span class="hs-identifier hs-var"
+	>LTI</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(a &lt;= c) =&gt; r
+</span
+	><a href="#local-6989586621679413012"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>OrderingI a c
+</span
+	><span class="hs-identifier hs-var"
+	>EQI</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(a &lt;= c) =&gt; r
+</span
+	><a href="#local-6989586621679413012"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>OrderingI a c
+</span
+	><span class="hs-identifier hs-var"
+	>GTI</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>[Char] -&gt; r
+forall a. HasCallStack =&gt; [Char] -&gt; a
+</span
+	><span class="hs-identifier hs-var"
+	>error</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>[Char]
+</span
+	><span class="hs-string"
+	>&quot;lteTrans: broken transitivity&quot;</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#plusMonotone"
+	><span class="hs-identifier hs-type"
+	  >plusMonotone</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679412826"
+      ><span class="annot"
+	><a href="#local-6989586621679412826"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Nat</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679412827"
+      ><span class="annot"
+	><a href="#local-6989586621679412827"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412828"
+      ><span class="annot"
+	><a href="#local-6989586621679412828"
+	  ><span class="hs-identifier hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412829"
+      ><span class="annot"
+	><a href="#local-6989586621679412829"
+	  ><span class="hs-identifier hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412830"
+      ><span class="annot"
+	><a href="#local-6989586621679412830"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412826"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>&lt;=</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412827"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412828"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>&lt;=</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412829"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>KnownNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412826"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412828"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>KnownNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412827"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412829"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412826"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412828"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>&lt;=</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412827"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412829"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412830"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412830"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span id="plusMonotone"
+      ><span class="annot"
+	><span class="annottext"
+	  >plusMonotone :: forall (a :: Nat) (b :: Nat) (c :: Nat) (d :: Nat) r.
+(a &lt;= b, c &lt;= d, KnownNat (a + c), KnownNat (b + d)) =&gt;
+(((a + c) &lt;= (b + d)) =&gt; r) -&gt; r
+</span
+	  ><a href="Proarrow.Category.Instance.Cost.html#plusMonotone"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >plusMonotone</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413036"
+      ><span class="annot"
+	><span class="annottext"
+	  >((a + c) &lt;= (b + d)) =&gt; r
+</span
+	  ><a href="#local-6989586621679413036"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy (a + c) -&gt; Proxy (b + d) -&gt; OrderingI (a + c) (b + d)
+forall (a :: Nat) (b :: Nat) (proxy1 :: Nat -&gt; Type)
+       (proxy2 :: Nat -&gt; Type).
+(KnownNat a, KnownNat b) =&gt;
+proxy1 a -&gt; proxy2 b -&gt; OrderingI a b
+</span
+	><span class="hs-identifier hs-var"
+	>cmpNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy (a + c)
+forall {k} (t :: k). Proxy t
+</span
+	><span class="hs-identifier hs-var"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412826"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412828"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy (b + d)
+forall {k} (t :: k). Proxy t
+</span
+	><span class="hs-identifier hs-var"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412827"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412829"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>OrderingI (a + c) (b + d)
+</span
+	><span class="hs-identifier hs-var"
+	>LTI</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+((a + c) &lt;= (b + d)) =&gt; r
+</span
+	><a href="#local-6989586621679413036"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>OrderingI (a + c) (b + d)
+</span
+	><span class="hs-identifier hs-var"
+	>EQI</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+((a + c) &lt;= (b + d)) =&gt; r
+</span
+	><a href="#local-6989586621679413036"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>OrderingI (a + c) (b + d)
+</span
+	><span class="hs-identifier hs-var"
+	>GTI</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>[Char] -&gt; r
+forall a. HasCallStack =&gt; [Char] -&gt; a
+</span
+	><span class="hs-identifier hs-var"
+	>error</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>[Char]
+</span
+	><span class="hs-string"
+	>&quot;plusMonotone: broken monotonicity&quot;</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-type"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span id="local-6989586621679412836"
+      ><span class="annot"
+	><a href="#local-6989586621679412836"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412837"
+      ><span class="annot"
+	><a href="#local-6989586621679412837"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679412838"
+      ><span class="annot"
+	><a href="#local-6989586621679412838"
+	  ><span class="hs-identifier hs-type"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>KnownNat</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412836"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>KnownNat</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412837"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>KnownNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412836"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412837"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412838"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412838"
+	><span class="hs-identifier hs-type"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span id="withPlusIsNat"
+      ><span class="annot"
+	><span class="annottext"
+	  >withPlusIsNat :: forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	  ><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >withPlusIsNat</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413056"
+      ><span class="annot"
+	><span class="annottext"
+	  >KnownNat (a + b) =&gt; r
+</span
+	  ><a href="#local-6989586621679413056"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SNat (a + b)
+</span
+	><a href="#local-6989586621679413057"
+	><span class="hs-identifier hs-var"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SNat (a + b)
+</span
+	><span class="hs-identifier hs-var"
+	>SNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+KnownNat (a + b) =&gt; r
+</span
+	><a href="#local-6989586621679413056"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413057"
+	><span class="hs-identifier hs-type"
+	  >ab</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>SNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679412836"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412837"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span
+      >    </span
+      ><span id="local-6989586621679413057"
+      ><span class="annot"
+	><span class="annottext"
+	  >ab :: SNat (a + b)
+</span
+	  ><a href="#local-6989586621679413057"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >ab</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Integer
+-&gt; (forall (n :: Nat). Maybe (SNat n) -&gt; SNat (a + b))
+-&gt; SNat (a + b)
+forall r. Integer -&gt; (forall (n :: Nat). Maybe (SNat n) -&gt; r) -&gt; r
+</span
+	><span class="hs-identifier hs-var"
+	>withSomeSNat</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy a -&gt; Integer
+forall (n :: Nat) (proxy :: Nat -&gt; Type).
+KnownNat n =&gt;
+proxy n -&gt; Integer
+</span
+	><span class="hs-identifier hs-var"
+	>natVal</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy a
+forall {k} (t :: k). Proxy t
+</span
+	><span class="hs-identifier hs-var"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412836"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Integer -&gt; Integer -&gt; Integer
+forall a. Num a =&gt; a -&gt; a -&gt; a
+</span
+	><span class="hs-operator hs-var"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy b -&gt; Integer
+forall (n :: Nat) (proxy :: Nat -&gt; Type).
+KnownNat n =&gt;
+proxy n -&gt; Integer
+</span
+	><span class="hs-identifier hs-var"
+	>natVal</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Proxy b
+forall {k} (t :: k). Proxy t
+</span
+	><span class="hs-identifier hs-var"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Proxy</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412837"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Maybe (SNat n) -&gt; SNat (a + b)
+forall (n :: Nat). Maybe (SNat n) -&gt; SNat (a + b)
+forall a b. a -&gt; b
+</span
+	><span class="hs-identifier hs-var"
+	>unsafeCoerce</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span id="IsCost"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#IsCost"
+	  ><span class="hs-identifier hs-var"
+	    >IsCost</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679412857"
+      ><span class="annot"
+	><a href="#local-6989586621679412857"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#COST"
+	><span class="hs-identifier hs-type"
+	  >COST</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >  </span
+      ><span id="sing"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	  ><span class="hs-identifier hs-type"
+	    >sing</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SCost"
+	><span class="hs-identifier hs-type"
+	  >SCost</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679412857"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679412858"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><span class="hs-identifier hs-type"
+	  >KnownNat</span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679412858"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#IsCost"
+	  ><span class="hs-identifier hs-type"
+	    >IsCost</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#C"
+	  ><span class="hs-identifier hs-type"
+	    >C</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679412858"
+	  ><span class="hs-identifier hs-type"
+	    >n</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413066"
+      ><span class="annot"
+	><span class="annottext"
+	  >sing :: SCost (C n)
+</span
+	  ><a href="Proarrow.Category.Instance.Cost.html#sing"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >sing</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost (C n)
+forall (n :: Nat). KnownNat n =&gt; SCost (C n)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-var"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#IsCost"
+	><span class="hs-identifier hs-type"
+	  >IsCost</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#INF"
+	><span class="hs-identifier hs-type"
+	  >INF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413069"
+      ><span class="annot"
+	><span class="annottext"
+	  >sing :: SCost INF
+</span
+	  ><a href="Proarrow.Category.Instance.Cost.html#sing"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >sing</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost INF
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413081"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: COST) (a :: COST) (b :: COST) (d :: COST).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; GTE a b -&gt; GTE c d
+</span
+	  ><a href="#local-6989586621679413081"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; GTE a b -&gt; GTE c d
+GTE c a -&gt; GTE b d -&gt; GTE a b -&gt; GTE c d
+forall {k} (p :: k +-&gt; k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413083"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679413083"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413084"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: COST) (b :: COST) r.
+((Ob a, Ob b) =&gt; r) -&gt; GTE a b -&gt; r
+</span
+	  ><a href="#local-6989586621679413084"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE a b
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679413083"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413092"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679413092"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE a b
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679413092"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413110"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: COST). Ob a =&gt; GTE a a
+</span
+	  ><a href="#local-6989586621679413110"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413112"
+      ><span class="annot"
+	><a href="#local-6989586621679413112"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413112"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE a a
+GTE INF a
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-var"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE a a
+GTE (C n) (C n)
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413122"
+      ><span class="annot"
+	><span class="annottext"
+	  >GTE b c
+</span
+	  ><a href="#local-6989586621679413122"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413123"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: COST) (c :: COST) (a :: COST).
+GTE b c -&gt; GTE a b -&gt; GTE a c
+</span
+	  ><a href="#local-6989586621679413123"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE a b
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE a c
+GTE INF c
+(Ob b, Ob c) =&gt; GTE a c
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob b, Ob c) =&gt; GTE a c) -&gt; GTE b c -&gt; GTE a c
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: COST) (b :: COST) r.
+((Ob a, Ob b) =&gt; r) -&gt; GTE a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE b c
+</span
+	><a href="#local-6989586621679413122"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413138"
+      ><span class="annot"
+	><a href="#local-6989586621679413138"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413139"
+      ><span class="annot"
+	><a href="#local-6989586621679413139"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >.</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413155"
+      ><span class="annot"
+	><a href="#local-6989586621679413155"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) (c :: Nat) r.
+(a &lt;= b, b &lt;= c, KnownNat a, KnownNat c) =&gt;
+((a &lt;= c) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#lteTrans"
+	><span class="hs-identifier hs-var"
+	  >lteTrans</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413139"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413138"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413155"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE a c
+GTE (C a) (C b)
+(b &lt;= a) =&gt; GTE a c
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | Cost category. Categories enriched in the cost category are lawvere metric spaces.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier hs-type"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#COST"
+	><span class="hs-identifier hs-type"
+	  >COST</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413166"
+      ><span class="annot"
+	><a href="#local-6989586621679413166"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#IsCost"
+	><span class="hs-identifier hs-type"
+	  >IsCost</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413166"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier hs-type"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-77"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413182"
+      ><span class="annot"
+	><span class="annottext"
+	  >par0 :: GTE Unit Unit
+</span
+	  ><a href="#local-6989586621679413182"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >par0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE Unit Unit
+GTE (C 0) (C 0)
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-78"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-identifier hs-type"
+	  >par</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span id="local-6989586621679413185"
+      ><span class="annot"
+	><a href="#local-6989586621679413185"
+	  ><span class="hs-identifier hs-type"
+	    >x1</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413186"
+      ><span class="annot"
+	><a href="#local-6989586621679413186"
+	  ><span class="hs-identifier hs-type"
+	    >x2</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413187"
+      ><span class="annot"
+	><a href="#local-6989586621679413187"
+	  ><span class="hs-identifier hs-type"
+	    >y1</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413188"
+      ><span class="annot"
+	><a href="#local-6989586621679413188"
+	  ><span class="hs-identifier hs-type"
+	    >y2</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413185"
+	><span class="hs-identifier hs-type"
+	  >x1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413186"
+	><span class="hs-identifier hs-type"
+	  >x2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413187"
+	><span class="hs-identifier hs-type"
+	  >y1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413188"
+	><span class="hs-identifier hs-type"
+	  >y2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413185"
+	><span class="hs-identifier hs-type"
+	  >x1</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413187"
+	><span class="hs-identifier hs-type"
+	  >y1</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413186"
+	><span class="hs-identifier hs-type"
+	  >x2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	><span class="hs-operator hs-type"
+	  >**</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413188"
+	><span class="hs-identifier hs-type"
+	  >y2</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-79"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413189"
+      ><span class="annot"
+	><span class="annottext"
+	  >GTE x1 x2
+</span
+	  ><a href="#local-6989586621679413189"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413190"
+      ><span class="annot"
+	><span class="annottext"
+	  >par :: forall (x1 :: COST) (x2 :: COST) (y1 :: COST) (y2 :: COST).
+GTE x1 x2 -&gt; GTE y1 y2 -&gt; GTE (x1 ** y1) (x2 ** y2)
+</span
+	  ><a href="Proarrow.Category.Monoidal.html#par"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`par`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413191"
+      ><span class="annot"
+	><span class="annottext"
+	  >GTE y1 y2
+</span
+	  ><a href="#local-6989586621679413191"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE x1 x2
+</span
+	><a href="#local-6989586621679413189"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE y1 y2
+</span
+	><a href="#local-6989586621679413191"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-80"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE x1 x2
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE y1 y2
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE y1 y2
+</span
+	><a href="#local-6989586621679413191"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE y1 y2
+-&gt; ((Ob y1, Ob y2) =&gt; GTE INF (x2 ** y2)) -&gt; GTE INF (x2 ** y2)
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(Monoidal k, Ob a, Ob b) =&gt;
+(Ob (a ** b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Monoidal.html#withOb2"
+	><span class="hs-identifier hs-var"
+	  >withOb2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413186"
+	><span class="hs-identifier hs-type"
+	  >x2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413188"
+	><span class="hs-identifier hs-type"
+	  >y2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE INF (x2 ** y2)
+Ob (x2 ** y2) =&gt; GTE INF (x2 ** y2)
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-81"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE x1 x2
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE y1 y2
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE x1 x2
+</span
+	><a href="#local-6989586621679413189"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE x1 x2
+-&gt; ((Ob x1, Ob x2) =&gt; GTE INF (x2 ** y2)) -&gt; GTE INF (x2 ** y2)
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(Monoidal k, Ob a, Ob b) =&gt;
+(Ob (a ** b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Monoidal.html#withOb2"
+	><span class="hs-identifier hs-var"
+	  >withOb2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413186"
+	><span class="hs-identifier hs-type"
+	  >x2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413188"
+	><span class="hs-identifier hs-type"
+	  >y2</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE INF (x2 ** y2)
+Ob (x2 ** y2) =&gt; GTE INF (x2 ** y2)
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-82"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413225"
+      ><span class="annot"
+	><a href="#local-6989586621679413225"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413226"
+      ><span class="annot"
+	><a href="#local-6989586621679413226"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-type"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413235"
+      ><span class="annot"
+	><a href="#local-6989586621679413235"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413236"
+      ><span class="annot"
+	><a href="#local-6989586621679413236"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >d</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-var"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413225"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413235"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((KnownNat (a + a) =&gt; GTE (x1 ** y1) (x2 ** y2))
+ -&gt; GTE (x1 ** y1) (x2 ** y2))
+-&gt; (KnownNat (a + a) =&gt; GTE (x1 ** y1) (x2 ** y2))
+-&gt; GTE (x1 ** y1) (x2 ** y2)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-var"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413226"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413236"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((KnownNat (b + b) =&gt; GTE (x1 ** y1) (x2 ** y2))
+ -&gt; GTE (x1 ** y1) (x2 ** y2))
+-&gt; (KnownNat (b + b) =&gt; GTE (x1 ** y1) (x2 ** y2))
+-&gt; GTE (x1 ** y1) (x2 ** y2)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) (c :: Nat) (d :: Nat) r.
+(a &lt;= b, c &lt;= d, KnownNat (a + c), KnownNat (b + d)) =&gt;
+(((a + c) &lt;= (b + d)) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#plusMonotone"
+	><span class="hs-identifier hs-var"
+	  >plusMonotone</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413226"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413225"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413236"
+	><span class="hs-identifier hs-type"
+	  >d</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413235"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE (C (a + a)) (C (b + b))
+((b + b) &lt;= (a + a)) =&gt; GTE (C (a + a)) (C (b + b))
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-83"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-84"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier hs-type"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#COST"
+	><span class="hs-identifier hs-type"
+	  >COST</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-85"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Unit"
+      ><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Unit"
+	  ><span class="hs-identifier hs-var"
+	    >Unit</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#C"
+	><span class="hs-identifier hs-type"
+	  >C</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-number"
+	>0</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-86"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679413270"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#INF"
+	  ><span class="hs-identifier hs-type"
+	    >INF</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%2A%2A"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	    ><span class="hs-operator hs-var"
+	      >**</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679413270"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#INF"
+	><span class="hs-identifier hs-type"
+	  >INF</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-87"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679413271"
+      ><span class="annot"
+	><a href="#local-6989586621679413271"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%2A%2A"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	    ><span class="hs-operator hs-var"
+	      >**</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Cost.html#INF"
+	  ><span class="hs-identifier hs-type"
+	    >INF</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#INF"
+	><span class="hs-identifier hs-type"
+	  >INF</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-88"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679413272"
+      ><span id="local-6989586621679413273"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Cost.html#C"
+	    ><span class="hs-identifier hs-type"
+	      >C</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413272"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%2A%2A"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Monoidal.html#%2A%2A"
+	      ><span class="hs-operator hs-var"
+		>**</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Cost.html#C"
+	    ><span class="hs-identifier hs-type"
+	      >C</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679413273"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#C"
+	><span class="hs-identifier hs-type"
+	  >C</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413272"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413273"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-89"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413280"
+      ><span class="annot"
+	><span class="annottext"
+	  >withOb2 :: forall (a :: COST) (b :: COST) r.
+(Ob a, Ob b) =&gt;
+(Ob (a ** b) =&gt; r) -&gt; r
+</span
+	  ><a href="Proarrow.Category.Monoidal.html#withOb2"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withOb2</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413281"
+      ><span class="annot"
+	><a href="#local-6989586621679413281"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413282"
+      ><span class="annot"
+	><a href="#local-6989586621679413282"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679413283"
+      ><span class="annot"
+	><span class="annottext"
+	  >Ob (a ** b) =&gt; r
+</span
+	  ><a href="#local-6989586621679413283"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413281"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413282"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-90"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413286"
+      ><span class="annot"
+	><a href="#local-6989586621679413286"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413291"
+      ><span class="annot"
+	><a href="#local-6989586621679413291"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-var"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413286"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413291"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+KnownNat (n + n) =&gt; r
+Ob (a ** b) =&gt; r
+</span
+	><a href="#local-6989586621679413283"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-91"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+Ob (a ** b) =&gt; r
+</span
+	><a href="#local-6989586621679413283"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-92"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+Ob (a ** b) =&gt; r
+</span
+	><a href="#local-6989586621679413283"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-93"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413304"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitor :: forall (a :: COST). Ob a =&gt; (Unit ** a) ~&gt; a
+</span
+	  ><a href="#local-6989586621679413304"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413306"
+      ><span class="annot"
+	><a href="#local-6989586621679413306"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413306"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-94"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Unit ** a) ~&gt; a
+GTE INF INF
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+forall (a :: COST). Ob a =&gt; GTE a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-95"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-var"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Unit ** a) ~&gt; a
+GTE (C n) (C n)
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-96"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413320"
+      ><span class="annot"
+	><span class="annottext"
+	  >leftUnitorInv :: forall (a :: COST). Ob a =&gt; a ~&gt; (Unit ** a)
+</span
+	  ><a href="#local-6989586621679413320"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >leftUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413322"
+      ><span class="annot"
+	><a href="#local-6989586621679413322"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413322"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-97"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (Unit ** a)
+GTE INF INF
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+forall (a :: COST). Ob a =&gt; GTE a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-98"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-var"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (Unit ** a)
+GTE (C n) (C n)
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-99"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413336"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitor :: forall (a :: COST). Ob a =&gt; (a ** Unit) ~&gt; a
+</span
+	  ><a href="#local-6989586621679413336"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413338"
+      ><span class="annot"
+	><a href="#local-6989586621679413338"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413338"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-100"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** Unit) ~&gt; a
+GTE INF INF
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+forall (a :: COST). Ob a =&gt; GTE a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-101"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-var"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** Unit) ~&gt; a
+GTE (C n) (C n)
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-102"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413352"
+      ><span class="annot"
+	><span class="annottext"
+	  >rightUnitorInv :: forall (a :: COST). Ob a =&gt; a ~&gt; (a ** Unit)
+</span
+	  ><a href="#local-6989586621679413352"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rightUnitorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413354"
+      ><span class="annot"
+	><a href="#local-6989586621679413354"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413354"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-103"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a ** Unit)
+GTE INF INF
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+forall (a :: COST). Ob a =&gt; GTE a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-104"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-var"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (a ** Unit)
+GTE (C n) (C n)
+forall (a :: Nat) (b :: Nat).
+(KnownNat a, KnownNat b, b &lt;= a) =&gt;
+GTE (C a) (C b)
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#GTE"
+	><span class="hs-identifier hs-var"
+	  >GTE</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-105"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413374"
+      ><span class="annot"
+	><span class="annottext"
+	  >associator :: forall (a :: COST) (b :: COST) (c :: COST).
+(Ob a, Ob b, Ob c) =&gt;
+((a ** b) ** c) ~&gt; (a ** (b ** c))
+</span
+	  ><a href="#local-6989586621679413374"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associator</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413376"
+      ><span class="annot"
+	><a href="#local-6989586621679413376"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413377"
+      ><span class="annot"
+	><a href="#local-6989586621679413377"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413378"
+      ><span class="annot"
+	><a href="#local-6989586621679413378"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413376"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413377"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413378"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-106"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413381"
+      ><span class="annot"
+	><a href="#local-6989586621679413381"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413384"
+      ><span class="annot"
+	><a href="#local-6989586621679413384"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413389"
+      ><span class="annot"
+	><a href="#local-6989586621679413389"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE (C ((n + n) + n)) (C ((n + n) + n))
+-&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+forall a b. a -&gt; b
+</span
+	><span class="hs-identifier hs-var"
+	>unsafeCoerce</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(GTE (C ((n + n) + n)) (C ((n + n) + n))
+ -&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c)))
+-&gt; GTE (C ((n + n) + n)) (C ((n + n) + n))
+-&gt; ((a ** b) ** c) ~&gt; (a ** (b ** c))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-var"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413381"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413384"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((KnownNat (n + n) =&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+ -&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; (KnownNat (n + n) =&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; GTE (C ((n + n) + n)) (C ((n + n) + n))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-var"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413381"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413384"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413389"
+	><span class="hs-identifier hs-type"
+	  >c'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((KnownNat ((n + n) + n) =&gt;
+  GTE (C ((n + n) + n)) (C ((n + n) + n)))
+ -&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; (KnownNat ((n + n) + n) =&gt;
+    GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; GTE (C ((n + n) + n)) (C ((n + n) + n))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: COST). (CategoryOf COST, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#C"
+	><span class="hs-identifier hs-type"
+	  >C</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413381"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413384"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413389"
+	><span class="hs-identifier hs-type"
+	  >c'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-107"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost c
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** b) ** c) ~&gt; (a ** (b ** c))
+GTE INF INF
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-108"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost c
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** b) ** c) ~&gt; (a ** (b ** c))
+GTE INF INF
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-109"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost c
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ** b) ** c) ~&gt; (a ** (b ** c))
+GTE INF INF
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-110"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679413415"
+      ><span class="annot"
+	><span class="annottext"
+	  >associatorInv :: forall (a :: COST) (b :: COST) (c :: COST).
+(Ob a, Ob b, Ob c) =&gt;
+(a ** (b ** c)) ~&gt; ((a ** b) ** c)
+</span
+	  ><a href="#local-6989586621679413415"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >associatorInv</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413417"
+      ><span class="annot"
+	><a href="#local-6989586621679413417"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413418"
+      ><span class="annot"
+	><a href="#local-6989586621679413418"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413419"
+      ><span class="annot"
+	><a href="#local-6989586621679413419"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413417"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413418"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: COST). IsCost a =&gt; SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#sing"
+	><span class="hs-identifier hs-var"
+	  >sing</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413419"
+	><span class="hs-identifier hs-type"
+	  >c</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-111"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413422"
+      ><span class="annot"
+	><a href="#local-6989586621679413422"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413425"
+      ><span class="annot"
+	><a href="#local-6989586621679413425"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#SC"
+	><span class="hs-identifier hs-type"
+	  >SC</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679413430"
+      ><span class="annot"
+	><a href="#local-6989586621679413430"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >c'</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>GTE (C ((n + n) + n)) (C ((n + n) + n))
+-&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+forall a b. a -&gt; b
+</span
+	><span class="hs-identifier hs-var"
+	>unsafeCoerce</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(GTE (C ((n + n) + n)) (C ((n + n) + n))
+ -&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c))
+-&gt; GTE (C ((n + n) + n)) (C ((n + n) + n))
+-&gt; (a ** (b ** c)) ~&gt; ((a ** b) ** c)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-var"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413422"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413425"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((KnownNat (n + n) =&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+ -&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; (KnownNat (n + n) =&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; GTE (C ((n + n) + n)) (C ((n + n) + n))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (a :: Nat) (b :: Nat) r.
+(KnownNat a, KnownNat b) =&gt;
+(KnownNat (a + b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#withPlusIsNat"
+	><span class="hs-identifier hs-var"
+	  >withPlusIsNat</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413422"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413425"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413430"
+	><span class="hs-identifier hs-type"
+	  >c'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((KnownNat ((n + n) + n) =&gt;
+  GTE (C ((n + n) + n)) (C ((n + n) + n)))
+ -&gt; GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; (KnownNat ((n + n) + n) =&gt;
+    GTE (C ((n + n) + n)) (C ((n + n) + n)))
+-&gt; GTE (C ((n + n) + n)) (C ((n + n) + n))
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: COST). (CategoryOf COST, Ob a) =&gt; Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Cost.html#C"
+	><span class="hs-identifier hs-type"
+	  >C</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679413422"
+	><span class="hs-identifier hs-type"
+	  >a'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413425"
+	><span class="hs-identifier hs-type"
+	  >b'</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>+</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679413430"
+	><span class="hs-identifier hs-type"
+	  >c'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-112"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost c
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** (b ** c)) ~&gt; ((a ** b) ** c)
+GTE INF INF
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-113"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost c
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** (b ** c)) ~&gt; ((a ** b) ** c)
+GTE INF INF
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-114"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost a
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost b
+</span
+	><span class="hs-identifier"
+	>_</span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>SCost c
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#SINF"
+	><span class="hs-identifier hs-var"
+	  >SINF</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ** (b ** c)) ~&gt; ((a ** b) ** c)
+GTE INF INF
+forall (a :: COST). Ob a =&gt; GTE INF a
+</span
+	><a href="Proarrow.Category.Instance.Cost.html#Inf"
+	><span class="hs-identifier hs-var"
+	  >Inf</span
+	  ></a
+	></span
+      ></pre
+    ></body
+  ></html
+>

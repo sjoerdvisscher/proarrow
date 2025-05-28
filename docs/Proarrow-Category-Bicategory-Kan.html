@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Category.Bicategory.Kan.html"
@@ -51,11 +51,1099 @@
 	  ><th
 	    >Language</th
 	    ><td
-	    >Haskell2010</td
+	    >GHC2024</td
 	    ></tr
 	  ></table
 	><p class="caption"
 	>Proarrow.Category.Bicategory.Kan</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > j f)) =&gt; <a href="#t:LeftKanExtension"
+	      >LeftKanExtension</a
+	      > (j :: kk c d) (f :: kk c e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > <a href="#t:Lan"
+		  >Lan</a
+		  > (j :: kk c d) (f :: kk c e) :: kk d e</li
+		><li
+		><a href="#v:lan"
+		  >lan</a
+		  > :: f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+		  >Lan</a
+		  > j f) j</li
+		><li
+		><a href="#v:lanUniv"
+		  >lanUniv</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (g :: kk d e). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > g =&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > g j) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+		  >Lan</a
+		  > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > g</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:mapLan"
+	      >mapLan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {d :: k} {e :: k} (j :: kk c d) (f :: kk c e) (g :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > j g) =&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > j g</li
+	    ><li class="src short"
+	    ><a href="#v:rebaseLan"
+	      >rebaseLan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {e :: k} {d :: k} (f :: kk c e) (i :: kk c d) (j :: kk c d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > i f) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > i f</li
+	    ><li class="src short"
+	    ><a href="#v:dimapLan"
+	      >dimapLan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {d :: k} {e :: k} (i :: kk c d) (j :: kk c d) (f :: kk c e) (g :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > i g) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > i g</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Density"
+	      >Density</a
+	      > (p :: kk c e) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > p p</li
+	    ><li class="src short"
+	    ><a href="#v:lanComonadEpsilon"
+	      >lanComonadEpsilon</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: k} {d :: k} (p :: kk c d). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	      >Density</a
+	      > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d)</li
+	    ><li class="src short"
+	    ><a href="#v:lanComonadDelta"
+	      >lanComonadDelta</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: k} {d :: k} (p :: kk c d). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	      >Density</a
+	      > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	      >Density</a
+	      > p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	      >Density</a
+	      > p)</li
+	    ><li class="src short"
+	    ><a href="#v:coinj"
+	      >coinj</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Comonad" title="Proarrow.Category.Bicategory"
+	      >Comonad</a
+	      > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > p p) =&gt; p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	      >Density</a
+	      > p</li
+	    ><li class="src short"
+	    ><a href="#v:corun"
+	      >corun</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Comonad" title="Proarrow.Category.Bicategory"
+	      >Comonad</a
+	      > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > p p) =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	      >Density</a
+	      > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > p</li
+	    ><li class="src short"
+	    ><a href="#v:idLan"
+	      >idLan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {e :: k} (f :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk c c) f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f) =&gt; f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk c c) f</li
+	    ><li class="src short"
+	    ><a href="#v:lanAlongCompanion"
+	      >lanAlongCompanion</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {c} {k1 :: c} {i :: c} {k2 :: c} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > c) (vk :: c -&gt; c -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i k2) (f :: hk i k1). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > f (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j)</li
+	    ><li class="src short"
+	    ><a href="#v:lanAlongCompanionInv"
+	      >lanAlongCompanionInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {e :: k1} {i :: k1} {k2 :: k1} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k1) (vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i k2) (f :: hk i e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanExtension</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > f (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	      >Lan</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:-124--62-"
+	      >(|&gt;)</a
+	      > (j :: kk c d) (p :: kk c e) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j p</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j f)) =&gt; <a href="#t:RightKanExtension"
+	      >RightKanExtension</a
+	      > (j :: kk c d) (f :: kk c e) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > <a href="#t:Ran"
+		  >Ran</a
+		  > (j :: kk c d) (f :: kk c e) :: kk d e</li
+		><li
+		><a href="#v:ran"
+		  >ran</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+		  >Ran</a
+		  > j f) j <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > f</li
+		><li
+		><a href="#v:ranUniv"
+		  >ranUniv</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (g :: kk d e). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > g =&gt; (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > g j <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > f) -&gt; g <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+		  >Ran</a
+		  > j f</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:mapRan"
+	      >mapRan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {d :: k} {e :: k} (j :: kk c d) (f :: kk c e) (g :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > j g) =&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j g</li
+	    ><li class="src short"
+	    ><a href="#v:rebaseRan"
+	      >rebaseRan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {e :: k} {d :: k} (f :: kk c e) (i :: kk c d) (j :: kk c d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > i f) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > i f</li
+	    ><li class="src short"
+	    ><a href="#v:dimapRan"
+	      >dimapRan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {d :: k} {e :: k} (i :: kk c d) (j :: kk c d) (f :: kk c e) (g :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > i g) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > i g</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Codensity"
+	      >Codensity</a
+	      > (p :: kk c e) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > p p</li
+	    ><li class="src short"
+	    ><a href="#v:ranMonadEta"
+	      >ranMonadEta</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {s} {kk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: s} {d :: s} (p :: kk c d). <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > p p =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	      >Codensity</a
+	      > p</li
+	    ><li class="src short"
+	    ><a href="#v:ranMonadMu"
+	      >ranMonadMu</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: k} {d :: k} (p :: kk c d). <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > p p =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	      >Codensity</a
+	      > p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	      >Codensity</a
+	      > p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	      >Codensity</a
+	      > p</li
+	    ><li class="src short"
+	    ><a href="#v:inj"
+	      >inj</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Monad" title="Proarrow.Category.Bicategory"
+	      >Monad</a
+	      > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > p p) =&gt; p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	      >Codensity</a
+	      > p</li
+	    ><li class="src short"
+	    ><a href="#v:run"
+	      >run</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Monad" title="Proarrow.Category.Bicategory"
+	      >Monad</a
+	      > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > p p) =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	      >Codensity</a
+	      > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > p</li
+	    ><li class="src short"
+	    ><a href="#v:composeRan"
+	      >composeRan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {j1 :: k} {d :: k} {c :: k} {e :: k} (i :: kk j1 d) (j2 :: kk c j1) (f :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > j2 f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > i (<a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j2 f), <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > i j2) f) =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > i (<a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > j2 f) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > i j2) f</li
+	    ><li class="src short"
+	    ><a href="#v:idRan"
+	      >idRan</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {c :: k} {e :: k} (f :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk c c) f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f) =&gt; f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk c c) f</li
+	    ><li class="src short"
+	    ><a href="#v:ranAlongConjoint"
+	      >ranAlongConjoint</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {c} {k1 :: c} {i :: c} {k2 :: c} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > c) (vk :: c -&gt; c -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i k2) (f :: hk k2 k1). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > f (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j)</li
+	    ><li class="src short"
+	    ><a href="#v:ranAlongConjointInv"
+	      >ranAlongConjointInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {e :: k1} {i :: k1} {k2 :: k1} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k1) (vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i k2) (f :: hk k2 e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanExtension</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > f (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	      >Ran</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > j f)) =&gt; <a href="#t:LeftKanLift"
+	      >LeftKanLift</a
+	      > (j :: kk d c) (f :: kk e c) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > <a href="#t:Lift"
+		  >Lift</a
+		  > (j :: kk d c) (f :: kk e c) :: kk e d</li
+		><li
+		><a href="#v:lift"
+		  >lift</a
+		  > :: f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+		  >Lift</a
+		  > j f)</li
+		><li
+		><a href="#v:liftUniv"
+		  >liftUniv</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (g :: kk e d). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > g =&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+		  >Lift</a
+		  > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > g</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:mapLift"
+	      >mapLift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {d :: k} {c :: k} {e :: k} (j :: kk d c) (f :: kk e c) (g :: kk e c). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > j g) =&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > j g</li
+	    ><li class="src short"
+	    ><a href="#v:rebaseLift"
+	      >rebaseLift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {e :: k} {c :: k} {d :: k} (f :: kk e c) (i :: kk d c) (j :: kk d c). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > i f) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > i f</li
+	    ><li class="src short"
+	    ><a href="#v:dimapLift"
+	      >dimapLift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {d :: k} {c :: k} {e :: k} (i :: kk d c) (j :: kk d c) (f :: kk e c) (g :: kk e c). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > i g) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > i g</li
+	    ><li class="src short"
+	    ><a href="#v:liftComonadEpsilon"
+	      >liftComonadEpsilon</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: k} {d :: k} (p :: kk d c). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > p p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d)</li
+	    ><li class="src short"
+	    ><a href="#v:liftComonadDelta"
+	      >liftComonadDelta</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: k} {d :: k} (p :: kk d c). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > p p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > p p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > p p)</li
+	    ><li class="src short"
+	    ><a href="#v:idLift"
+	      >idLift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {e :: k} {d :: k} (f :: kk e d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d) f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f) =&gt; f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d) f</li
+	    ><li class="src short"
+	    ><a href="#v:liftAlongConjoint"
+	      >liftAlongConjoint</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {s} {i1 :: s} {i2 :: s} {k :: s} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > s) (vk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i2 k) (f :: hk i1 i2). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f</li
+	    ><li class="src short"
+	    ><a href="#v:liftAlongConjointInv"
+	      >liftAlongConjointInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {e :: k1} {i :: k1} {k2 :: k1} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k1) (vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i k2) (f :: hk e i). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >LeftKanLift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
+	      >Lift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:-60--124-"
+	      >(&lt;|)</a
+	      > (f :: kk e c) (j :: kk d c) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j f</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
+	      >Bicategory</a
+	      > kk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk c, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk d, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+	      >Ob0</a
+	      > kk e, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > j, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j f)) =&gt; <a href="#t:RightKanLift"
+	      >RightKanLift</a
+	      > (j :: kk d c) (f :: kk e c) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > <a href="#t:Rift"
+		  >Rift</a
+		  > (j :: kk d c) (f :: kk e c) :: kk e d</li
+		><li
+		><a href="#v:rift"
+		  >rift</a
+		  > :: <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j (<a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+		  >Rift</a
+		  > j f) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > f</li
+		><li
+		><a href="#v:riftUniv"
+		  >riftUniv</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (g :: kk e d). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > g =&gt; (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+		  >O</a
+		  > j g <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > f) -&gt; g <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+		  >Rift</a
+		  > j f</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:mapRift"
+	      >mapRift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {d :: k} {c :: k} {e :: k} (j :: kk d c) (f :: kk e c) (g :: kk e c). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > j g) =&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j g</li
+	    ><li class="src short"
+	    ><a href="#v:rebaseRift"
+	      >rebaseRift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {e :: k} {c :: k} {d :: k} (f :: kk e c) (i :: kk d c) (j :: kk d c). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > i f) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > i f</li
+	    ><li class="src short"
+	    ><a href="#v:dimapRift"
+	      >dimapRift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {d :: k} {c :: k} {e :: k} (i :: kk d c) (j :: kk d c) (f :: kk e c) (g :: kk e c). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > j f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > i g) =&gt; (i <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > j) -&gt; (f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > g) -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > i g</li
+	    ><li class="src short"
+	    ><a href="#v:riftMonadEta"
+	      >riftMonadEta</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {s} {kk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: s} {d :: s} (p :: kk d c). <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > p p =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > p p</li
+	    ><li class="src short"
+	    ><a href="#v:riftMonadMu"
+	      >riftMonadMu</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {c :: k} {d :: k} (p :: kk d c). <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > p p =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > p p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > p p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > p p</li
+	    ><li class="src short"
+	    ><a href="#v:composeRift"
+	      >composeRift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {d :: k} {j1 :: k} {c :: k} {e :: k} (i :: kk d j1) (j2 :: kk j1 c) (f :: kk e c). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > j2 f, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > i (<a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j2 f), <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > j2 i) f) =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > i (<a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > j2 f) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > j2 i) f</li
+	    ><li class="src short"
+	    ><a href="#v:idRift"
+	      >idRift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k} {e :: k} {d :: k} (f :: kk e d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d) f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > f) =&gt; f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
+	      >I</a
+	      > :: kk d d) f</li
+	    ><li class="src short"
+	    ><a href="#v:riftAlongCompanion"
+	      >riftAlongCompanion</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {s} {i1 :: s} {i2 :: s} {k :: s} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > s) (vk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i2 k) (f :: hk i1 k). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f</li
+	    ><li class="src short"
+	    ><a href="#v:riftAlongCompanionInv"
+	      >riftAlongCompanionInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {e :: k1} {i :: k1} {k2 :: k1} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k1) (vk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (j :: vk i k2) (f :: hk e k2). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	      >RightKanLift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f, <a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
+	      >Obj</a
+	      > j -&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk j) f <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	      >Rift</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk j) f</li
+	    ></ul
+	  ></details
 	></div
       ><div id="interface"
       ><h1
@@ -182,9 +1270,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
 		      >MonK</a
 		      > k c e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-103" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-112" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L103" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L112" class="link"
 		    >Comments</a
 		    > <a href="#t:LeftKanExtension" class="selflink"
 		    >#</a
@@ -358,9 +1446,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co"
 		      >COK</a
 		      > kk j1 e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-61" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-62" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L61" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L62" class="link"
 		    >Comments</a
 		    > <a href="#t:LeftKanExtension" class="selflink"
 		    >#</a
@@ -516,9 +1604,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Op.html#t:OPK" title="Proarrow.Category.Bicategory.Op"
 		      >OPK</a
 		      > kk j1 e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-109" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-110" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L109" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L110" class="link"
 		    >Comments</a
 		    > <a href="#t:LeftKanExtension" class="selflink"
 		    >#</a
@@ -748,23 +1836,39 @@
 	  ></div
 	><div class="top"
 	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:Density" class="def"
+	    >Density</a
+	    > (p :: kk c e) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
+	    >Lan</a
+	    > p p <a href="src/Proarrow.Category.Bicategory.Kan.html#Density" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L33" class="link"
+	    >Comments</a
+	    > <a href="#t:Density" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
 	  ><a id="v:lanComonadEpsilon" class="def"
 	    >lanComonadEpsilon</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {s} {kk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
-	    >} {c :: s} {d :: s} (p :: kk c d). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	    >} {c :: k} {d :: k} (p :: kk c d). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
 	    >LeftKanExtension</a
-	    > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
-	    >Lan</a
-	    > p p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	    >Density</a
+	    > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
 	    > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 	    >I</a
 	    > :: kk d d) <a href="src/Proarrow.Category.Bicategory.Kan.html#lanComonadEpsilon" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L34" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L36" class="link"
 	    >Comments</a
 	    > <a href="#v:lanComonadEpsilon" class="selflink"
 	    >#</a
@@ -780,21 +1884,73 @@
 	    >Type</a
 	    >} {c :: k} {d :: k} (p :: kk c d). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
 	    >LeftKanExtension</a
-	    > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
-	    >Lan</a
-	    > p p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	    >Density</a
+	    > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
 	    > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 	    >O</a
-	    > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
-	    >Lan</a
-	    > p p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Lan" title="Proarrow.Category.Bicategory.Kan"
-	    >Lan</a
-	    > p p) <a href="src/Proarrow.Category.Bicategory.Kan.html#lanComonadDelta" class="link"
+	    > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	    >Density</a
+	    > p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	    >Density</a
+	    > p) <a href="src/Proarrow.Category.Bicategory.Kan.html#lanComonadDelta" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L37" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L39" class="link"
 	    >Comments</a
 	    > <a href="#v:lanComonadDelta" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:coinj" class="def"
+	    >coinj</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Comonad" title="Proarrow.Category.Bicategory"
+	    >Comonad</a
+	    > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	    >LeftKanExtension</a
+	    > p p) =&gt; p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	    >Density</a
+	    > p <a href="src/Proarrow.Category.Bicategory.Kan.html#coinj" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L46" class="link"
+	    >Comments</a
+	    > <a href="#v:coinj" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Density is the &quot;mother of all comonads&quot;</p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:corun" class="def"
+	    >corun</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Comonad" title="Proarrow.Category.Bicategory"
+	    >Comonad</a
+	    > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	    >LeftKanExtension</a
+	    > p p) =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Density" title="Proarrow.Category.Bicategory.Kan"
+	    >Density</a
+	    > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > p <a href="src/Proarrow.Category.Bicategory.Kan.html#corun" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L49" class="link"
+	    >Comments</a
+	    > <a href="#v:corun" class="selflink"
 	    >#</a
 	    ></p
 	  ></div
@@ -804,9 +1960,9 @@
 	    >idLan</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {s} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
-	    > s} {c :: s} {e :: s} (f :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	    > k} {c :: k} {e :: k} (f :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanExtension" title="Proarrow.Category.Bicategory.Kan"
 	    >LeftKanExtension</a
 	    > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 	    >I</a
@@ -820,7 +1976,7 @@
 	    >I</a
 	    > :: kk c c) f <a href="src/Proarrow.Category.Bicategory.Kan.html#idLan" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L43" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L52" class="link"
 	    >Comments</a
 	    > <a href="#v:idLan" class="selflink"
 	    >#</a
@@ -856,7 +2012,7 @@
 	    >Conjoint</a
 	    > hk j) <a href="src/Proarrow.Category.Bicategory.Kan.html#lanAlongCompanion" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L50" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L59" class="link"
 	    >Comments</a
 	    > <a href="#v:lanAlongCompanion" class="selflink"
 	    >#</a
@@ -892,7 +2048,7 @@
 	    >Companion</a
 	    > hk j) f <a href="src/Proarrow.Category.Bicategory.Kan.html#lanAlongCompanionInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L62" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L71" class="link"
 	    >Comments</a
 	    > <a href="#v:lanAlongCompanionInv" class="selflink"
 	    >#</a
@@ -908,7 +2064,7 @@
 	    >Ran</a
 	    > j p <a href="src/Proarrow.Category.Bicategory.Kan.html#%7C%3E" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L64" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L73" class="link"
 	    >Comments</a
 	    > <a href="#t:-124--62-" class="selflink"
 	    >#</a
@@ -940,7 +2096,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Bicategory.Kan.html#RightKanExtension" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L66" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L75" class="link"
 	    >Comments</a
 	    > <a href="#t:RightKanExtension" class="selflink"
 	    >#</a
@@ -975,7 +2131,7 @@
 	      >~&gt;</a
 	      > f <a href="src/Proarrow.Category.Bicategory.Kan.html#ran" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L66" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L75" class="link"
 	      >Comments</a
 	      > <a href="#v:ran" class="selflink"
 	      >#</a
@@ -997,7 +2153,7 @@
 	      >Ran</a
 	      > j f <a href="src/Proarrow.Category.Bicategory.Kan.html#ranUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L66" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L75" class="link"
 	      >Comments</a
 	      > <a href="#v:ranUniv" class="selflink"
 	      >#</a
@@ -1030,9 +2186,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > c e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-145" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-148" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L145" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L148" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanExtension" class="selflink"
 		    >#</a
@@ -1131,7 +2287,7 @@
 			  >PK</a
 			  > f <a href="src/Proarrow.Category.Bicategory.Kan.html#ran" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L68" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L77" class="link"
 			  >Comments</a
 			  > <a href="#v:ran" class="selflink"
 			  >#</a
@@ -1163,7 +2319,7 @@
 			  >PK</a
 			  > f) <a href="src/Proarrow.Category.Bicategory.Kan.html#ranUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L69" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L78" class="link"
 			  >Comments</a
 			  > <a href="#v:ranUniv" class="selflink"
 			  >#</a
@@ -1198,9 +2354,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
 		      >MonK</a
 		      > k c e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-93" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-102" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L93" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L102" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanExtension" class="selflink"
 		    >#</a
@@ -1307,7 +2463,7 @@
 			  >MonK</a
 			  > k c e) <a href="src/Proarrow.Category.Bicategory.Kan.html#ran" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L68" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L77" class="link"
 			  >Comments</a
 			  > <a href="#v:ran" class="selflink"
 			  >#</a
@@ -1347,7 +2503,7 @@
 			  >MonK</a
 			  > k c e) <a href="src/Proarrow.Category.Bicategory.Kan.html#ranUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L69" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L78" class="link"
 			  >Comments</a
 			  > <a href="#v:ranUniv" class="selflink"
 			  >#</a
@@ -1374,9 +2530,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co"
 		      >COK</a
 		      > kk j1 e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-66" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-67" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L66" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L67" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanExtension" class="selflink"
 		    >#</a
@@ -1473,7 +2629,7 @@
 			  >CO</a
 			  > f <a href="src/Proarrow.Category.Bicategory.Kan.html#ran" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L68" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L77" class="link"
 			  >Comments</a
 			  > <a href="#v:ran" class="selflink"
 			  >#</a
@@ -1505,7 +2661,7 @@
 			  >CO</a
 			  > f) <a href="src/Proarrow.Category.Bicategory.Kan.html#ranUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L69" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L78" class="link"
 			  >Comments</a
 			  > <a href="#v:ranUniv" class="selflink"
 			  >#</a
@@ -1532,9 +2688,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Op.html#t:OPK" title="Proarrow.Category.Bicategory.Op"
 		      >OPK</a
 		      > kk j1 e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-104" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-105" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L104" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L105" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanExtension" class="selflink"
 		    >#</a
@@ -1631,7 +2787,7 @@
 			  >OP</a
 			  > f <a href="src/Proarrow.Category.Bicategory.Kan.html#ran" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L68" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L77" class="link"
 			  >Comments</a
 			  > <a href="#v:ran" class="selflink"
 			  >#</a
@@ -1663,7 +2819,7 @@
 			  >OP</a
 			  > f) <a href="src/Proarrow.Category.Bicategory.Kan.html#ranUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L69" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L78" class="link"
 			  >Comments</a
 			  > <a href="#v:ranUniv" class="selflink"
 			  >#</a
@@ -1698,7 +2854,7 @@
 	    >Ran</a
 	    > j g <a href="src/Proarrow.Category.Bicategory.Kan.html#mapRan" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L72" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L81" class="link"
 	    >Comments</a
 	    > <a href="#v:mapRan" class="selflink"
 	    >#</a
@@ -1726,7 +2882,7 @@
 	    >Ran</a
 	    > i f <a href="src/Proarrow.Category.Bicategory.Kan.html#rebaseRan" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L75" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L84" class="link"
 	    >Comments</a
 	    > <a href="#v:rebaseRan" class="selflink"
 	    >#</a
@@ -1756,9 +2912,25 @@
 	    >Ran</a
 	    > i g <a href="src/Proarrow.Category.Bicategory.Kan.html#dimapRan" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L79" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L88" class="link"
 	    >Comments</a
 	    > <a href="#v:dimapRan" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:Codensity" class="def"
+	    >Codensity</a
+	    > (p :: kk c e) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
+	    >Ran</a
+	    > p p <a href="src/Proarrow.Category.Bicategory.Kan.html#Codensity" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L90" class="link"
+	    >Comments</a
+	    > <a href="#t:Codensity" class="selflink"
 	    >#</a
 	    ></p
 	  ></div
@@ -1776,11 +2948,11 @@
 	    >I</a
 	    > :: kk d d) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
-	    > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
-	    >Ran</a
-	    > p p <a href="src/Proarrow.Category.Bicategory.Kan.html#ranMonadEta" class="link"
+	    > <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	    >Codensity</a
+	    > p <a href="src/Proarrow.Category.Bicategory.Kan.html#ranMonadEta" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L82" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L93" class="link"
 	    >Comments</a
 	    > <a href="#v:ranMonadEta" class="selflink"
 	    >#</a
@@ -1798,19 +2970,71 @@
 	    >RightKanExtension</a
 	    > p p =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
 	    >O</a
-	    > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
-	    >Ran</a
-	    > p p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
-	    >Ran</a
-	    > p p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    > (<a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	    >Codensity</a
+	    > p) (<a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	    >Codensity</a
+	    > p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
-	    > <a href="Proarrow-Category-Bicategory-Kan.html#t:Ran" title="Proarrow.Category.Bicategory.Kan"
-	    >Ran</a
-	    > p p <a href="src/Proarrow.Category.Bicategory.Kan.html#ranMonadMu" class="link"
+	    > <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	    >Codensity</a
+	    > p <a href="src/Proarrow.Category.Bicategory.Kan.html#ranMonadMu" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L85" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L96" class="link"
 	    >Comments</a
 	    > <a href="#v:ranMonadMu" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:inj" class="def"
+	    >inj</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Monad" title="Proarrow.Category.Bicategory"
+	    >Monad</a
+	    > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	    >RightKanExtension</a
+	    > p p) =&gt; p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	    >Codensity</a
+	    > p <a href="src/Proarrow.Category.Bicategory.Kan.html#inj" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L102" class="link"
+	    >Comments</a
+	    > <a href="#v:inj" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Codensity is the &quot;mother of all monads&quot;</p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:run" class="def"
+	    >run</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k} {c :: k} (p :: kk c c). (<a href="Proarrow-Category-Bicategory.html#t:Monad" title="Proarrow.Category.Bicategory"
+	    >Monad</a
+	    > p, <a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	    >RightKanExtension</a
+	    > p p) =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Codensity" title="Proarrow.Category.Bicategory.Kan"
+	    >Codensity</a
+	    > p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > p <a href="src/Proarrow.Category.Bicategory.Kan.html#run" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L105" class="link"
+	    >Comments</a
+	    > <a href="#v:run" class="selflink"
 	    >#</a
 	    ></p
 	  ></div
@@ -1844,7 +3068,7 @@
 	    >O</a
 	    > i j2) f <a href="src/Proarrow.Category.Bicategory.Kan.html#composeRan" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L93" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L111" class="link"
 	    >Comments</a
 	    > <a href="#v:composeRan" class="selflink"
 	    >#</a
@@ -1856,9 +3080,9 @@
 	    >idRan</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {s} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
-	    > s} {c :: s} {e :: s} (f :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
+	    > k} {c :: k} {e :: k} (f :: kk c e). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanExtension" title="Proarrow.Category.Bicategory.Kan"
 	    >RightKanExtension</a
 	    > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 	    >I</a
@@ -1872,7 +3096,7 @@
 	    >I</a
 	    > :: kk c c) f <a href="src/Proarrow.Category.Bicategory.Kan.html#idRan" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L98" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L116" class="link"
 	    >Comments</a
 	    > <a href="#v:idRan" class="selflink"
 	    >#</a
@@ -1908,7 +3132,7 @@
 	    >Companion</a
 	    > hk j) <a href="src/Proarrow.Category.Bicategory.Kan.html#ranAlongConjoint" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L105" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L123" class="link"
 	    >Comments</a
 	    > <a href="#v:ranAlongConjoint" class="selflink"
 	    >#</a
@@ -1944,7 +3168,7 @@
 	    >Conjoint</a
 	    > hk j) f <a href="src/Proarrow.Category.Bicategory.Kan.html#ranAlongConjointInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L112" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L130" class="link"
 	    >Comments</a
 	    > <a href="#v:ranAlongConjointInv" class="selflink"
 	    >#</a
@@ -1976,7 +3200,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Bicategory.Kan.html#LeftKanLift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L119" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L137" class="link"
 	    >Comments</a
 	    > <a href="#t:LeftKanLift" class="selflink"
 	    >#</a
@@ -2011,7 +3235,7 @@
 	      >Lift</a
 	      > j f) <a href="src/Proarrow.Category.Bicategory.Kan.html#lift" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L119" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L137" class="link"
 	      >Comments</a
 	      > <a href="#v:lift" class="selflink"
 	      >#</a
@@ -2033,7 +3257,7 @@
 	      >~&gt;</a
 	      > g <a href="src/Proarrow.Category.Bicategory.Kan.html#liftUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L119" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L137" class="link"
 	      >Comments</a
 	      > <a href="#v:liftUniv" class="selflink"
 	      >#</a
@@ -2074,9 +3298,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
 		      >MonK</a
 		      > k e c)</span
-		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-108" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-117" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L108" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L117" class="link"
 		    >Comments</a
 		    > <a href="#t:LeftKanLift" class="selflink"
 		    >#</a
@@ -2183,7 +3407,7 @@
 			  >MonK</a
 			  > k e c)) <a href="src/Proarrow.Category.Bicategory.Kan.html#lift" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L121" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L139" class="link"
 			  >Comments</a
 			  > <a href="#v:lift" class="selflink"
 			  >#</a
@@ -2223,7 +3447,7 @@
 			  >~&gt;</a
 			  > g <a href="src/Proarrow.Category.Bicategory.Kan.html#liftUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L122" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L140" class="link"
 			  >Comments</a
 			  > <a href="#v:liftUniv" class="selflink"
 			  >#</a
@@ -2250,9 +3474,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co"
 		      >COK</a
 		      > kk e k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-71" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-72" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L71" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L72" class="link"
 		    >Comments</a
 		    > <a href="#t:LeftKanLift" class="selflink"
 		    >#</a
@@ -2349,7 +3573,7 @@
 			  >CO</a
 			  > f)) <a href="src/Proarrow.Category.Bicategory.Kan.html#lift" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L121" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L139" class="link"
 			  >Comments</a
 			  > <a href="#v:lift" class="selflink"
 			  >#</a
@@ -2381,7 +3605,7 @@
 			  >~&gt;</a
 			  > g <a href="src/Proarrow.Category.Bicategory.Kan.html#liftUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L122" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L140" class="link"
 			  >Comments</a
 			  > <a href="#v:liftUniv" class="selflink"
 			  >#</a
@@ -2408,9 +3632,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Op.html#t:OPK" title="Proarrow.Category.Bicategory.Op"
 		      >OPK</a
 		      > kk e k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-99" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-100" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L99" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L100" class="link"
 		    >Comments</a
 		    > <a href="#t:LeftKanLift" class="selflink"
 		    >#</a
@@ -2507,7 +3731,7 @@
 			  >OP</a
 			  > f)) <a href="src/Proarrow.Category.Bicategory.Kan.html#lift" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L121" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L139" class="link"
 			  >Comments</a
 			  > <a href="#v:lift" class="selflink"
 			  >#</a
@@ -2539,7 +3763,7 @@
 			  >~&gt;</a
 			  > g <a href="src/Proarrow.Category.Bicategory.Kan.html#liftUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L122" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L140" class="link"
 			  >Comments</a
 			  > <a href="#v:liftUniv" class="selflink"
 			  >#</a
@@ -2574,7 +3798,7 @@
 	    >Lift</a
 	    > j g <a href="src/Proarrow.Category.Bicategory.Kan.html#mapLift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L125" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L143" class="link"
 	    >Comments</a
 	    > <a href="#v:mapLift" class="selflink"
 	    >#</a
@@ -2602,7 +3826,7 @@
 	    >Lift</a
 	    > i f <a href="src/Proarrow.Category.Bicategory.Kan.html#rebaseLift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L128" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L146" class="link"
 	    >Comments</a
 	    > <a href="#v:rebaseLift" class="selflink"
 	    >#</a
@@ -2632,7 +3856,7 @@
 	    >Lift</a
 	    > i g <a href="src/Proarrow.Category.Bicategory.Kan.html#dimapLift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L131" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L149" class="link"
 	    >Comments</a
 	    > <a href="#v:dimapLift" class="selflink"
 	    >#</a
@@ -2644,9 +3868,9 @@
 	    >liftComonadEpsilon</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {s} {kk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    > {k} {kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
-	    >} {c :: s} {d :: s} (p :: kk d c). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	    >} {c :: k} {d :: k} (p :: kk d c). <a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
 	    >LeftKanLift</a
 	    > p p =&gt; <a href="Proarrow-Category-Bicategory-Kan.html#t:Lift" title="Proarrow.Category.Bicategory.Kan"
 	    >Lift</a
@@ -2656,7 +3880,7 @@
 	    >I</a
 	    > :: kk d d) <a href="src/Proarrow.Category.Bicategory.Kan.html#liftComonadEpsilon" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L134" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L152" class="link"
 	    >Comments</a
 	    > <a href="#v:liftComonadEpsilon" class="selflink"
 	    >#</a
@@ -2684,7 +3908,7 @@
 	    >Lift</a
 	    > p p) <a href="src/Proarrow.Category.Bicategory.Kan.html#liftComonadDelta" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L137" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L155" class="link"
 	    >Comments</a
 	    > <a href="#v:liftComonadDelta" class="selflink"
 	    >#</a
@@ -2696,9 +3920,9 @@
 	    >idLift</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {s} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
-	    > s} {e :: s} {d :: s} (f :: kk e d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
+	    > k} {e :: k} {d :: k} (f :: kk e d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:LeftKanLift" title="Proarrow.Category.Bicategory.Kan"
 	    >LeftKanLift</a
 	    > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 	    >I</a
@@ -2712,7 +3936,7 @@
 	    >I</a
 	    > :: kk d d) f <a href="src/Proarrow.Category.Bicategory.Kan.html#idLift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L143" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L161" class="link"
 	    >Comments</a
 	    > <a href="#v:idLift" class="selflink"
 	    >#</a
@@ -2748,7 +3972,7 @@
 	    >Companion</a
 	    > hk j) f <a href="src/Proarrow.Category.Bicategory.Kan.html#liftAlongConjoint" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L150" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L168" class="link"
 	    >Comments</a
 	    > <a href="#v:liftAlongConjoint" class="selflink"
 	    >#</a
@@ -2784,7 +4008,7 @@
 	    >Conjoint</a
 	    > hk j) f <a href="src/Proarrow.Category.Bicategory.Kan.html#liftAlongConjointInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L162" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L180" class="link"
 	    >Comments</a
 	    > <a href="#v:liftAlongConjointInv" class="selflink"
 	    >#</a
@@ -2796,11 +4020,11 @@
 	    >type</span
 	    > <a id="t:-60--124-" class="def"
 	    >(&lt;|)</a
-	    > (p :: kk e c) (j :: kk d c) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
+	    > (f :: kk e c) (j :: kk d c) = <a href="Proarrow-Category-Bicategory-Kan.html#t:Rift" title="Proarrow.Category.Bicategory.Kan"
 	    >Rift</a
-	    > j p <a href="src/Proarrow.Category.Bicategory.Kan.html#%3C%7C" class="link"
+	    > j f <a href="src/Proarrow.Category.Bicategory.Kan.html#%3C%7C" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L164" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L182" class="link"
 	    >Comments</a
 	    > <a href="#t:-60--124-" class="selflink"
 	    >#</a
@@ -2832,7 +4056,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Bicategory.Kan.html#RightKanLift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L166" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L184" class="link"
 	    >Comments</a
 	    > <a href="#t:RightKanLift" class="selflink"
 	    >#</a
@@ -2867,7 +4091,7 @@
 	      >~&gt;</a
 	      > f <a href="src/Proarrow.Category.Bicategory.Kan.html#rift" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L166" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L184" class="link"
 	      >Comments</a
 	      > <a href="#v:rift" class="selflink"
 	      >#</a
@@ -2889,7 +4113,7 @@
 	      >Rift</a
 	      > j f <a href="src/Proarrow.Category.Bicategory.Kan.html#riftUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L166" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L184" class="link"
 	      >Comments</a
 	      > <a href="#v:riftUniv" class="selflink"
 	      >#</a
@@ -2922,9 +4146,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > e c)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-150" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-153" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L150" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L153" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanLift" class="selflink"
 		    >#</a
@@ -3023,7 +4247,7 @@
 			  >PK</a
 			  > f <a href="src/Proarrow.Category.Bicategory.Kan.html#rift" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L168" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L186" class="link"
 			  >Comments</a
 			  > <a href="#v:rift" class="selflink"
 			  >#</a
@@ -3055,7 +4279,7 @@
 			  >PK</a
 			  > f) <a href="src/Proarrow.Category.Bicategory.Kan.html#riftUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L169" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L187" class="link"
 			  >Comments</a
 			  > <a href="#v:riftUniv" class="selflink"
 			  >#</a
@@ -3092,9 +4316,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
 		      >MonK</a
 		      > k e c)</span
-		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-98" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.MonoidalAsBi.html#line-107" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L98" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L107" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanLift" class="selflink"
 		    >#</a
@@ -3201,7 +4425,7 @@
 			  >MonK</a
 			  > k e c) <a href="src/Proarrow.Category.Bicategory.Kan.html#rift" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L168" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L186" class="link"
 			  >Comments</a
 			  > <a href="#v:rift" class="selflink"
 			  >#</a
@@ -3241,7 +4465,7 @@
 			  >MonK</a
 			  > k e c) <a href="src/Proarrow.Category.Bicategory.Kan.html#riftUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L169" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L187" class="link"
 			  >Comments</a
 			  > <a href="#v:riftUniv" class="selflink"
 			  >#</a
@@ -3268,9 +4492,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Co.html#t:COK" title="Proarrow.Category.Bicategory.Co"
 		      >COK</a
 		      > kk e k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-76" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Co.html#line-77" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L76" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L77" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanLift" class="selflink"
 		    >#</a
@@ -3367,7 +4591,7 @@
 			  >CO</a
 			  > f <a href="src/Proarrow.Category.Bicategory.Kan.html#rift" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L168" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L186" class="link"
 			  >Comments</a
 			  > <a href="#v:rift" class="selflink"
 			  >#</a
@@ -3399,7 +4623,7 @@
 			  >CO</a
 			  > f) <a href="src/Proarrow.Category.Bicategory.Kan.html#riftUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L169" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L187" class="link"
 			  >Comments</a
 			  > <a href="#v:riftUniv" class="selflink"
 			  >#</a
@@ -3426,9 +4650,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Op.html#t:OPK" title="Proarrow.Category.Bicategory.Op"
 		      >OPK</a
 		      > kk e k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-94" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Op.html#line-95" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L94" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L95" class="link"
 		    >Comments</a
 		    > <a href="#t:RightKanLift" class="selflink"
 		    >#</a
@@ -3525,7 +4749,7 @@
 			  >OP</a
 			  > f <a href="src/Proarrow.Category.Bicategory.Kan.html#rift" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L168" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L186" class="link"
 			  >Comments</a
 			  > <a href="#v:rift" class="selflink"
 			  >#</a
@@ -3557,7 +4781,7 @@
 			  >OP</a
 			  > f) <a href="src/Proarrow.Category.Bicategory.Kan.html#riftUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L169" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L187" class="link"
 			  >Comments</a
 			  > <a href="#v:riftUniv" class="selflink"
 			  >#</a
@@ -3592,7 +4816,7 @@
 	    >Rift</a
 	    > j g <a href="src/Proarrow.Category.Bicategory.Kan.html#mapRift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L172" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L190" class="link"
 	    >Comments</a
 	    > <a href="#v:mapRift" class="selflink"
 	    >#</a
@@ -3620,7 +4844,7 @@
 	    >Rift</a
 	    > i f <a href="src/Proarrow.Category.Bicategory.Kan.html#rebaseRift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L175" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L193" class="link"
 	    >Comments</a
 	    > <a href="#v:rebaseRift" class="selflink"
 	    >#</a
@@ -3650,7 +4874,7 @@
 	    >Rift</a
 	    > i g <a href="src/Proarrow.Category.Bicategory.Kan.html#dimapRift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L178" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L196" class="link"
 	    >Comments</a
 	    > <a href="#v:dimapRift" class="selflink"
 	    >#</a
@@ -3674,7 +4898,7 @@
 	    >Rift</a
 	    > p p <a href="src/Proarrow.Category.Bicategory.Kan.html#riftMonadEta" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L181" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L199" class="link"
 	    >Comments</a
 	    > <a href="#v:riftMonadEta" class="selflink"
 	    >#</a
@@ -3702,7 +4926,7 @@
 	    >Rift</a
 	    > p p <a href="src/Proarrow.Category.Bicategory.Kan.html#riftMonadMu" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L184" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L202" class="link"
 	    >Comments</a
 	    > <a href="#v:riftMonadMu" class="selflink"
 	    >#</a
@@ -3738,7 +4962,7 @@
 	    >O</a
 	    > j2 i) f <a href="src/Proarrow.Category.Bicategory.Kan.html#composeRift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L193" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L211" class="link"
 	    >Comments</a
 	    > <a href="#v:composeRift" class="selflink"
 	    >#</a
@@ -3750,9 +4974,9 @@
 	    >idRift</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {s} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    > {k} {kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
-	    > s} {e :: s} {d :: s} (f :: kk e d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
+	    > k} {e :: k} {d :: k} (f :: kk e d). (<a href="Proarrow-Category-Bicategory-Kan.html#t:RightKanLift" title="Proarrow.Category.Bicategory.Kan"
 	    >RightKanLift</a
 	    > (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
 	    >I</a
@@ -3766,7 +4990,7 @@
 	    >I</a
 	    > :: kk d d) f <a href="src/Proarrow.Category.Bicategory.Kan.html#idRift" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L198" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L216" class="link"
 	    >Comments</a
 	    > <a href="#v:idRift" class="selflink"
 	    >#</a
@@ -3802,7 +5026,7 @@
 	    >Conjoint</a
 	    > hk j) f <a href="src/Proarrow.Category.Bicategory.Kan.html#riftAlongCompanion" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L205" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L223" class="link"
 	    >Comments</a
 	    > <a href="#v:riftAlongCompanion" class="selflink"
 	    >#</a
@@ -3838,7 +5062,7 @@
 	    >Companion</a
 	    > hk j) f <a href="src/Proarrow.Category.Bicategory.Kan.html#riftAlongCompanionInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L212" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Kan.hs#L230" class="link"
 	    >Comments</a
 	    > <a href="#v:riftAlongCompanionInv" class="selflink"
 	    >#</a
@@ -3850,7 +5074,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.31.0</p
       ></div
     ></body
   ></html
