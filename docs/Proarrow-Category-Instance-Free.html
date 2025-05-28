@@ -63,14 +63,34 @@
 	><div class="top"
 	><p class="src"
 	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:MULTICAT" class="def"
+	    >MULTICAT</a
+	    > k = [k] -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    > <a href="src/Proarrow.Category.Instance.Free.html#MULTICAT" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L9" class="link"
+	    >Comments</a
+	    > <a href="#t:MULTICAT" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
 	    >newtype</span
 	    > <a id="t:FREE" class="def"
 	    >FREE</a
-	    > (g :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-	    >Type</a
-	    >) <a href="src/Proarrow.Category.Instance.Free.html#FREE" class="link"
+	    > (p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) (str :: <a href="Proarrow-Category-Instance-Free.html#t:MULTICAT" title="Proarrow.Category.Instance.Free"
+	    >MULTICAT</a
+	    > (<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k)) <a href="src/Proarrow.Category.Instance.Free.html#FREE" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L9" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L11" class="link"
 	    >Comments</a
 	    > <a href="#t:FREE" class="selflink"
 	    >#</a
@@ -83,7 +103,9 @@
 	      ><td class="src"
 		><a id="v:F" class="def"
 		  >F</a
-		  > k</td
+		  > (<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k)</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
@@ -101,16 +123,16 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FREE:CategoryOf:1"
 		      ></span
-		      > <a href="Proarrow-Category-Instance-Free.html#t:Rewrite" title="Proarrow.Category.Instance.Free"
-		      >Rewrite</a
-		      > g =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 		      >CategoryOf</a
 		      > (<a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g)</span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-20" class="link"
+		      > p str)</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-58" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L20" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L58" class="link"
 		    >Comments</a
 		    > <a href="#t:FREE" class="selflink"
 		    >#</a
@@ -163,9 +185,9 @@
 				  >Free</a
 				  > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 				  >FREE</a
-				  > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+				  > p str -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 				  >FREE</a
-				  > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  > p str -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 				  >Type</a
 				  ></div
 				></details
@@ -181,22 +203,22 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FREE:Promonad:2"
 		      ></span
-		      > <a href="Proarrow-Category-Instance-Free.html#t:Rewrite" title="Proarrow.Category.Instance.Free"
-		      >Rewrite</a
-		      > g =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
 		      > (<a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 		      >Free</a
 		      > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-24" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-62" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L24" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L62" class="link"
 		    >Comments</a
 		    > <a href="#t:FREE" class="selflink"
 		    >#</a
@@ -223,7 +245,7 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > p str). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a =&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 			  >Free</a
@@ -241,11 +263,11 @@
 			  >forall</span
 			  > (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g). <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
+			  > p str). <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 			  >Free</a
 			  > b c -&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 			  >Free</a
@@ -267,22 +289,22 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FREE:Profunctor:3"
 		      ></span
-		      > <a href="Proarrow-Category-Instance-Free.html#t:Rewrite" title="Proarrow.Category.Instance.Free"
-		      >Rewrite</a
-		      > g =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 		      >Free</a
 		      > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-30" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-68" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L30" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L68" class="link"
 		    >Comments</a
 		    > <a href="#t:FREE" class="selflink"
 		    >#</a
@@ -309,13 +331,13 @@
 			  >forall</span
 			  > (c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (d :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (d :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > p str). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -337,9 +359,9 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > p str) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -367,16 +389,18 @@
 		      >UN</a
 		      > ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
 		      >F</a
-		      > :: j -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      > :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > k1 -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+		      > p str) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
 		      >F</a
-		      > k :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      > k2 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g)</span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-10" class="link"
+		      > p str)</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-12" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L10" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L12" class="link"
 		    >Comments</a
 		    > <a href="#t:FREE" class="selflink"
 		    >#</a
@@ -400,13 +424,15 @@
 			>UN</a
 			> ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
 			>F</a
-			> :: j -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			> :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+			>FK</a
+			> k1 -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			>FREE</a
-			> g) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+			> p str) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
 			>F</a
-			> k :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			> k2 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			>FREE</a
-			> g) = k</div
+			> p str) = k2</div
 		      ></details
 		    ></td
 		  ></tr
@@ -420,9 +446,9 @@
 		      > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >(~&gt;)</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-21" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-59" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L21" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L59" class="link"
 		    >Comments</a
 		    > <a href="#t:FREE" class="selflink"
 		    >#</a
@@ -448,9 +474,9 @@
 			>Free</a
 			> :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			>FREE</a
-			> g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			> p str -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			>FREE</a
-			> g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			> p str -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
 			></div
 		      ></details
@@ -467,10 +493,10 @@
 		      >Ob</a
 		      > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g)</span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-22" class="link"
+		      > p str)</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-60" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L22" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L60" class="link"
 		    >Comments</a
 		    > <a href="#t:FREE" class="selflink"
 		    >#</a
@@ -494,13 +520,25 @@
 			>Ob</a
 			> (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			>FREE</a
-			> g) = <a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
+			> p str) = (<a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
 			>Is</a
 			> ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
 			>F</a
-			> :: k -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			> :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+			>FK</a
+			> k -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			>FREE</a
-			> g) a</div
+			> p str) a, <a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+			>IsFK</a
+			> (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+			>F</a
+			> :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+			>FK</a
+			> k -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			>FREE</a
+			> p str) a))</div
 		      ></details
 		    ></td
 		  ></tr
@@ -516,13 +554,13 @@
 	    >Free</a
 	    > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 	    >FREE</a
-	    > g) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+	    > p str) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 	    >FREE</a
-	    > g) <span class="keyword"
+	    > p str) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Category.Instance.Free.html#Free" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L13" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L15" class="link"
 	    >Comments</a
 	    > <a href="#t:Free" class="selflink"
 	    >#</a
@@ -533,59 +571,35 @@
 	    ><table
 	    ><tr
 	      ><td class="src"
-		><a id="v:FreeId" class="def"
-		  >FreeId</a
+		><a id="v:Free" class="def"
+		  >Free</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} {g :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		  >Type</a
-		  >} (a1 :: k). <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
+		  > {k} (p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		  >CAT</a
+		  > k) (str :: <a href="Proarrow-Category-Instance-Free.html#t:MULTICAT" title="Proarrow.Category.Instance.Free"
+		  >MULTICAT</a
+		  > (<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k)) (as :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k]) (b1 :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k). <a href="Proarrow-Category-Instance-Free.html#t:MFree" title="Proarrow.Category.Instance.Free"
+		  >MFree</a
+		  > p str as b1 -&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 		  >Free</a
 		  > ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
 		  >F</a
-		  > a1 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		  > (<a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+		  >Flatten</a
+		  > as) :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		  >FREE</a
-		  > g) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
-		  >F</a
-		  > a1 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-		  >FREE</a
-		  > g)</td
-		><td class="doc empty"
-		>&nbsp;</td
-		></tr
-	      ><tr
-	      ><td class="src"
-		><a id="v::-124-" class="def"
-		  >(:|)</a
-		  > :: <span class="keyword"
-		  >forall</span
-		  > {k} (g :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		  >Type</a
-		  >) (a1 :: k) (b1 :: k) (c :: k). g a1 b1 -&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
-		  >Free</a
-		  > ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+		  > p str) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
 		  >F</a
 		  > b1 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		  >FREE</a
-		  > g) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
-		  >F</a
-		  > c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-		  >FREE</a
-		  > g) -&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
-		  >Free</a
-		  > ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
-		  >F</a
-		  > a1 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-		  >FREE</a
-		  > g) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
-		  >F</a
-		  > c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-		  >FREE</a
-		  > g) <span class="fixity"
-		  >infixr 4</span
-		  ><span class="rightedge"
-		  ></span
-		  ></td
+		  > p str)</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
@@ -603,22 +617,22 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Free:Promonad:1"
 		      ></span
-		      > <a href="Proarrow-Category-Instance-Free.html#t:Rewrite" title="Proarrow.Category.Instance.Free"
-		      >Rewrite</a
-		      > g =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
 		      > (<a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 		      >Free</a
 		      > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-24" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-62" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L24" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L62" class="link"
 		    >Comments</a
 		    > <a href="#t:Free" class="selflink"
 		    >#</a
@@ -645,7 +659,7 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > p str). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a =&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 			  >Free</a
@@ -663,11 +677,11 @@
 			  >forall</span
 			  > (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g). <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
+			  > p str). <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 			  >Free</a
 			  > b c -&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 			  >Free</a
@@ -689,22 +703,22 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Free:Profunctor:2"
 		      ></span
-		      > <a href="Proarrow-Category-Instance-Free.html#t:Rewrite" title="Proarrow.Category.Instance.Free"
-		      >Rewrite</a
-		      > g =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
 		      >Free</a
 		      > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 		      >FREE</a
-		      > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > p str -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Free.html#line-30" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-68" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L30" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L68" class="link"
 		    >Comments</a
 		    > <a href="#t:Free" class="selflink"
 		    >#</a
@@ -731,13 +745,13 @@
 			  >forall</span
 			  > (c :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (d :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (d :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > p str). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -759,9 +773,9 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			  > p str) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
 			  >FREE</a
-			  > g) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > p str) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -785,52 +799,744 @@
 	><div class="top"
 	><p class="src"
 	  ><span class="keyword"
-	    >class</span
-	    > <a id="t:Rewrite" class="def"
-	    >Rewrite</a
-	    > (g :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-	    >Type</a
-	    >) <span class="keyword"
-	    >where</span
-	    > <a href="src/Proarrow.Category.Instance.Free.html#Rewrite" class="link"
+	    >data</span
+	    > <a id="t:FK" class="def"
+	    >FK</a
+	    > k <a href="src/Proarrow.Category.Instance.Free.html#FK" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L17" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L18" class="link"
 	    >Comments</a
-	    > <a href="#t:Rewrite" class="selflink"
+	    > <a href="#t:FK" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:EMB" class="def"
+		  >EMB</a
+		  > k</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FK"
+	    >Instances</h4
+	    ><details id="i:FK" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:IsFKs:1"
+		      ></span
+		      > <a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+		      >IsFK</a
+		      > a =&gt; <a href="Proarrow-Category-Instance-Free.html#t:IsFKs" title="Proarrow.Category.Instance.Free"
+		      >IsFKs</a
+		      > ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > k])</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-40" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L40" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:IsFKs:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Free.html"
+			>Proarrow.Category.Instance.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:Flattenk::Flatten:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+				>Flatten</a
+				> ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+				>FK</a
+				> k])</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:Flattenk::Flatten:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Free.html"
+				  >Proarrow.Category.Instance.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+				  >Flatten</a
+				  > ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+				  >FK</a
+				  > k]) = a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withFlattenOb"
+			  >withFlattenOb</a
+			  > :: (<a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+			  >IsFK</a
+			  > (<a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+			  >Flatten</a
+			  > '[a]) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Instance.Free.html#withFlattenOb" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:withFlattenOb" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:UN:2"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+		      >EMB</a
+		      > :: j -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > j) ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+		      >EMB</a
+		      > a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > j)</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-19" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L19" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:UN:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Free.html"
+			>Proarrow.Category.Instance.Free</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+			>EMB</a
+			> :: j -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+			>FK</a
+			> j) ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+			>EMB</a
+			> a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+			>FK</a
+			> j) = a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:Flatten:3"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+		      >Flatten</a
+		      > ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > k])</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-41" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L41" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:Flatten:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Free.html"
+			>Proarrow.Category.Instance.Free</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+			>Flatten</a
+			> ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+			>FK</a
+			> k]) = a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:UN:4"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+		      >F</a
+		      > :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > k1 -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      >FREE</a
+		      > p str) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+		      >F</a
+		      > k2 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+		      >FREE</a
+		      > p str)</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-12" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L12" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:UN:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Free.html"
+			>Proarrow.Category.Instance.Free</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+			>F</a
+			> :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+			>FK</a
+			> k1 -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			>FREE</a
+			> p str) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+			>F</a
+			> k2 :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+			>FREE</a
+			> p str) = k2</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:MFree" class="def"
+	    >MFree</a
+	    > (p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) (str :: <a href="Proarrow-Category-Instance-Free.html#t:MULTICAT" title="Proarrow.Category.Instance.Free"
+	    >MULTICAT</a
+	    > (<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k)) (as :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k]) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Instance.Free.html#MFree" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L22" class="link"
+	    >Comments</a
+	    > <a href="#t:MFree" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Id" class="def"
+		  >Id</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (b :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k) (p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		  >CAT</a
+		  > k) (str :: <a href="Proarrow-Category-Instance-Free.html#t:MULTICAT" title="Proarrow.Category.Instance.Free"
+		  >MULTICAT</a
+		  > (<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k)). <a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+		  >IsFK</a
+		  > b =&gt; <a href="Proarrow-Category-Instance-Free.html#t:MFree" title="Proarrow.Category.Instance.Free"
+		  >MFree</a
+		  > p str '[b] b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td class="src"
+		><a id="v:Emb" class="def"
+		  >Emb</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (p :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		  >CAT</a
+		  > k) (a :: k) (b1 :: k) (str :: <a href="Proarrow-Category-Instance-Free.html#t:MULTICAT" title="Proarrow.Category.Instance.Free"
+		  >MULTICAT</a
+		  > (<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k)) (as :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		  >FK</a
+		  > k]). p a b1 -&gt; <a href="Proarrow-Category-Instance-Free.html#t:MFree" title="Proarrow.Category.Instance.Free"
+		  >MFree</a
+		  > p str as ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+		  >EMB</a
+		  > a) -&gt; <a href="Proarrow-Category-Instance-Free.html#t:MFree" title="Proarrow.Category.Instance.Free"
+		  >MFree</a
+		  > p str as ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+		  >EMB</a
+		  > b1)</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a id="t:IsFK" class="def"
+	    >IsFK</a
+	    > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Instance.Free.html#IsFK" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L28" class="link"
+	    >Comments</a
+	    > <a href="#t:IsFK" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:Lower" class="def"
+	      >Lower</a
+	      > (a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	      >FK</a
+	      > k) :: k <a href="src/Proarrow.Category.Instance.Free.html#Lower" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:Lower" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
 	  ><div class="subs methods"
 	  ><p class="caption"
 	    >Methods</p
 	    ><p class="src"
-	    ><a id="v:rewriteAfterCons" class="def"
-	      >rewriteAfterCons</a
-	      > :: (<a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
-	      >Free</a
-	      > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-	      >FREE</a
-	      > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-	      >FREE</a
-	      > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-	      >Type</a
-	      >) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-	      >:~&gt;</a
-	      > (<a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
-	      >Free</a
-	      > :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-	      >FREE</a
-	      > g -&gt; <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
-	      >FREE</a
-	      > g -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-	      >Type</a
-	      >) <a href="src/Proarrow.Category.Instance.Free.html#rewriteAfterCons" class="link"
+	    ><a id="v:withLowerOb" class="def"
+	      >withLowerOb</a
+	      > :: (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (<a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+	      >Lower</a
+	      > a) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Instance.Free.html#withLowerOb" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L17" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L28" class="link"
 	      >Comments</a
-	      > <a href="#v:rewriteAfterCons" class="selflink"
+	      > <a href="#v:withLowerOb" class="selflink"
 	      >#</a
 	      ></p
 	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:IsFK"
+	    >Instances</h4
+	    ><details id="i:IsFK" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:IsFK:IsFK:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a =&gt; <a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+		      >IsFK</a
+		      > ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+		      >EMB</a
+		      > a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-31" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L31" class="link"
+		    >Comments</a
+		    > <a href="#t:IsFK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:IsFK:IsFK:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Free.html"
+			>Proarrow.Category.Instance.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:LowerkEMB:Lower:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+				>Lower</a
+				> ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+				>EMB</a
+				> a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+				>FK</a
+				> k)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:LowerkEMB:Lower:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Free.html"
+				  >Proarrow.Category.Instance.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+				  >Lower</a
+				  > ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+				  >EMB</a
+				  > a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+				  >FK</a
+				  > k) = a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withLowerOb"
+			  >withLowerOb</a
+			  > :: (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+			  >Lower</a
+			  > ('<a href="Proarrow-Category-Instance-Free.html#v:EMB" title="Proarrow.Category.Instance.Free"
+			  >EMB</a
+			  > a)) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Instance.Free.html#withLowerOb" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:withLowerOb" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a id="t:IsFKs" class="def"
+	    >IsFKs</a
+	    > (as :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k]) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Instance.Free.html#IsFKs" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L36" class="link"
+	    >Comments</a
+	    > <a href="#t:IsFKs" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:Flatten" class="def"
+	      >Flatten</a
+	      > (as :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	      >FK</a
+	      > k]) :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	      >FK</a
+	      > k <a href="src/Proarrow.Category.Instance.Free.html#Flatten" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:Flatten" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:withFlattenOb" class="def"
+	      >withFlattenOb</a
+	      > :: (<a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+	      >IsFK</a
+	      > (<a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+	      >Flatten</a
+	      > as) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Instance.Free.html#withFlattenOb" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L36" class="link"
+	      >Comments</a
+	      > <a href="#v:withFlattenOb" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:IsFKs"
+	    >Instances</h4
+	    ><details id="i:IsFKs" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:IsFKs:IsFKs:1"
+		      ></span
+		      > <a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+		      >IsFK</a
+		      > a =&gt; <a href="Proarrow-Category-Instance-Free.html#t:IsFKs" title="Proarrow.Category.Instance.Free"
+		      >IsFKs</a
+		      > ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+		      >FK</a
+		      > k])</span
+		    > <a href="src/Proarrow.Category.Instance.Free.html#line-40" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L40" class="link"
+		    >Comments</a
+		    > <a href="#t:IsFKs" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:IsFKs:IsFKs:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Free.html"
+			>Proarrow.Category.Instance.Free</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:Flattenk::Flatten:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+				>Flatten</a
+				> ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+				>FK</a
+				> k])</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:Flattenk::Flatten:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Free.html"
+				  >Proarrow.Category.Instance.Free</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+				  >Flatten</a
+				  > ('[a] :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+				  >FK</a
+				  > k]) = a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withFlattenOb"
+			  >withFlattenOb</a
+			  > :: (<a href="Proarrow-Category-Instance-Free.html#t:IsFK" title="Proarrow.Category.Instance.Free"
+			  >IsFK</a
+			  > (<a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+			  >Flatten</a
+			  > '[a]) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Instance.Free.html#withFlattenOb" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:withFlattenOb" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:fold" class="def"
+	    >fold</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) str cat (a :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k). <a href="Proarrow-Core.html#t:Category" title="Proarrow.Core"
+	    >Category</a
+	    > cat =&gt; (p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    >:~&gt;</a
+	    > cat) -&gt; (<span class="keyword"
+	    >forall</span
+	    > (as :: [<a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k]) (c :: <a href="Proarrow-Category-Instance-Free.html#t:FK" title="Proarrow.Category.Instance.Free"
+	    >FK</a
+	    > k). str as c -&gt; cat (<a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+	    >Lower</a
+	    > (<a href="Proarrow-Category-Instance-Free.html#t:Flatten" title="Proarrow.Category.Instance.Free"
+	    >Flatten</a
+	    > as)) (<a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+	    >Lower</a
+	    > c)) -&gt; <a href="Proarrow-Category-Instance-Free.html#t:Free" title="Proarrow.Category.Instance.Free"
+	    >Free</a
+	    > ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+	    >F</a
+	    > a :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+	    >FREE</a
+	    > p str) ('<a href="Proarrow-Category-Instance-Free.html#v:F" title="Proarrow.Category.Instance.Free"
+	    >F</a
+	    > b :: <a href="Proarrow-Category-Instance-Free.html#t:FREE" title="Proarrow.Category.Instance.Free"
+	    >FREE</a
+	    > p str) -&gt; cat (<a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+	    >Lower</a
+	    > a) (<a href="Proarrow-Category-Instance-Free.html#t:Lower" title="Proarrow.Category.Instance.Free"
+	    >Lower</a
+	    > b) <a href="src/Proarrow.Category.Instance.Free.html#fold" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Free.hs#L51" class="link"
+	    >Comments</a
+	    > <a href="#v:fold" class="selflink"
+	    >#</a
+	    ></p
 	  ></div
 	></div
       ></div
@@ -838,7 +1544,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.28.0</p
       ></div
     ></body
   ></html

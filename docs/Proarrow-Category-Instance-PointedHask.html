@@ -57,6 +57,116 @@
 	><p class="caption"
 	>Proarrow.Category.Instance.PointedHask</p
 	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:POINTED"
+	      >POINTED</a
+	      > = <a href="#t:P"
+	      >P</a
+	      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:Pointed"
+	      >Pointed</a
+	      > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+	      >POINTED</a
+	      >) (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+	      >POINTED</a
+	      >) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:P"
+		  >P</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > a1 b1. (a1 -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+		  >Maybe</a
+		  > b1) -&gt; <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
+		  >Pointed</a
+		  > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+		  >P</a
+		  > a1) ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+		  >P</a
+		  > b1)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:toHask"
+	      >toHask</a
+	      > :: ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	      >P</a
+	      > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	      >P</a
+	      > b) -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+	      >Maybe</a
+	      > a -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+	      >Maybe</a
+	      > b</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:These"
+	      >These</a
+	      > a b<ul class="subs"
+	      ><li
+		>= <a href="#v:This"
+		  >This</a
+		  > a</li
+		><li
+		>| <a href="#v:That"
+		  >That</a
+		  > b</li
+		><li
+		>| <a href="#v:These"
+		  >These</a
+		  > a b</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:memptyDefault"
+	      >memptyDefault</a
+	      > :: <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+	      >Monoid</a
+	      > a =&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+	      >POINTED</a
+	      >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	      >P</a
+	      > a</li
+	    ><li class="src short"
+	    ><a href="#v:mappendDefault"
+	      >mappendDefault</a
+	      > :: <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+	      >Monoid</a
+	      > a =&gt; ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	      >P</a
+	      > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	      >P</a
+	      > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	      >P</a
+	      > a</li
+	    ></ul
+	  ></details
+	></div
       ><div id="interface"
       ><h1
 	>Documentation</h1
@@ -106,9 +216,9 @@
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-64" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-68" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L64" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L68" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -416,16 +526,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:CategoryOf:2"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:SymMonoidal:2"
 		      ></span
-		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
-		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+		      >SymMonoidal</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-30" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-78" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L30" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L78" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -435,7 +545,69 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:CategoryOf:2"
+		  ><details id="i:id:POINTED:SymMonoidal:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-PointedHask.html"
+			>Proarrow.Category.Instance.PointedHask</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:swap"
+			  >swap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > a) <a href="src/Proarrow.Category.Monoidal.html#swap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L66" class="link"
+			  >Comments</a
+			  > <a href="#v:swap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:CategoryOf:3"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+		      >POINTED</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-34" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L34" class="link"
+		    >Comments</a
+		    > <a href="#t:POINTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:POINTED:CategoryOf:3"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -512,7 +684,7 @@
 				  >Ob</a
 				  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 				  >POINTED</a
-				  >) = a <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+				  >) = a <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
 				  >~</a
 				  > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 				  >P</a
@@ -532,16 +704,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasBinaryCoproducts:3"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasBinaryCoproducts:4"
 		      ></span
 		      > <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
 		      >HasBinaryCoproducts</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-49" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-53" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L49" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L53" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -551,7 +723,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:HasBinaryCoproducts:3"
+		  ><details id="i:id:POINTED:HasBinaryCoproducts:4"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -754,16 +926,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasBinaryProducts:4"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasBinaryProducts:5"
 		      ></span
 		      > <a href="Proarrow-Object-BinaryProduct.html#t:HasBinaryProducts" title="Proarrow.Object.BinaryProduct"
 		      >HasBinaryProducts</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-35" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-39" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L35" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L39" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -773,7 +945,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:HasBinaryProducts:4"
+		  ><details id="i:id:POINTED:HasBinaryProducts:5"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -976,16 +1148,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasInitialObject:5"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Closed:6"
 		      ></span
-		      > <a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
-		      >HasInitialObject</a
+		      > <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+		      >Closed</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-55" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-80" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L55" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L80" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -995,7 +1167,215 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:HasInitialObject:5"
+		  ><details id="i:id:POINTED:Closed:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-PointedHask.html"
+			>Proarrow.Category.Instance.PointedHask</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-126--126--62-POINTEDPP:-126--126--62-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				>P</a
+				> a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+				>POINTED</a
+				>) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+				>~~&gt;</a
+				> ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				>P</a
+				> b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+				>POINTED</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-126--126--62-POINTEDPP:-126--126--62-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-PointedHask.html"
+				  >Proarrow.Category.Instance.PointedHask</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				  >P</a
+				  > a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+				  >POINTED</a
+				  >) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+				  >~~&gt;</a
+				  > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				  >P</a
+				  > b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+				  >POINTED</a
+				  >) = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				  >P</a
+				  > (a -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+				  >Maybe</a
+				  > b)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObExp"
+			  >withObExp</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > b) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Exponential.html#withObExp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L25" class="link"
+			  >Comments</a
+			  > <a href="#v:withObExp" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:curry"
+			  >curry</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (c :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > c) <a href="src/Proarrow.Object.Exponential.html#curry" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:curry" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:uncurry"
+			  >uncurry</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (c :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > c)) -&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > c <a href="src/Proarrow.Object.Exponential.html#uncurry" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:uncurry" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-94--94--94-"
+			  >(^^^)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (x :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (y :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >). (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > y) -&gt; (x <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (x <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			  >~~&gt;</a
+			  > y) <a href="src/Proarrow.Object.Exponential.html#%5E%5E%5E" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Exponential.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:-94--94--94-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasInitialObject:7"
+		      ></span
+		      > <a href="Proarrow-Object-Initial.html#t:HasInitialObject" title="Proarrow.Object.Initial"
+		      >HasInitialObject</a
+		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+		      >POINTED</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-59" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L59" class="link"
+		    >Comments</a
+		    > <a href="#t:POINTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:POINTED:HasInitialObject:7"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1036,7 +1416,7 @@
 				  >InitialObject</a
 				  > = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 				  >P</a
-				  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 				  >Void</a
 				  ></div
 				></details
@@ -1076,16 +1456,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasTerminalObject:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:HasTerminalObject:8"
 		      ></span
 		      > <a href="Proarrow-Object-Terminal.html#t:HasTerminalObject" title="Proarrow.Object.Terminal"
 		      >HasTerminalObject</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-45" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-49" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L45" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L49" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1095,7 +1475,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:HasTerminalObject:6"
+		  ><details id="i:id:POINTED:HasTerminalObject:8"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1136,7 +1516,7 @@
 				  >TerminalObject</a
 				  > = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 				  >P</a
-				  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+				  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 				  >Void</a
 				  ></div
 				></details
@@ -1176,16 +1556,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Promonad:7"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Promonad:9"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
 		      >Pointed</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-27" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-31" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L27" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L31" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1195,7 +1575,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Promonad:7"
+		  ><details id="i:id:POINTED:Promonad:9"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1254,16 +1634,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:MonoidalProfunctor:8"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:MonoidalProfunctor:10"
 		      ></span
 		      > <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
 		      >MonoidalProfunctor</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
 		      >Pointed</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-59" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-63" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L59" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L63" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1273,7 +1653,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:MonoidalProfunctor:8"
+		  ><details id="i:id:POINTED:MonoidalProfunctor:10"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1340,16 +1720,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Profunctor:9"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Profunctor:11"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
 		      >Pointed</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-24" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-28" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L24" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L28" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1359,7 +1739,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Profunctor:9"
+		  ><details id="i:id:POINTED:Profunctor:11"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1426,7 +1806,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Comonoid:10"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Comonoid:12"
 		      ></span
 		      > <a href="Proarrow-Monoid.html#t:Comonoid" title="Proarrow.Monoid"
 		      >Comonoid</a
@@ -1435,9 +1815,9 @@
 		      > x :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-94" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-106" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L94" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L106" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1447,7 +1827,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Comonoid:10"
+		  ><details id="i:id:POINTED:Comonoid:12"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1502,13 +1882,13 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Monoid:11"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Monoid:13"
 		      ></span
 		      > <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
 		      >Monoid</a
 		      > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 		      >P</a
-		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 		      >Void</a
 		      >)</span
 		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-86" class="link"
@@ -1523,7 +1903,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Monoid:11"
+		  ><details id="i:id:POINTED:Monoid:13"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1544,7 +1924,7 @@
 			  >~&gt;</a
 			  > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 			  >P</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 			  >Void</a
 			  > <a href="src/Proarrow.Monoid.html#mempty" class="link"
 			  >Source</a
@@ -1558,19 +1938,19 @@
 			  >mappend</a
 			  > :: ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 			  >P</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 			  >Void</a
 			  > <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 			  >P</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 			  >Void</a
 			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 			  >P</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 			  >Void</a
 			  > <a href="src/Proarrow.Monoid.html#mappend" class="link"
 			  >Source</a
@@ -1586,16 +1966,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Monoid:12"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Monoid:14"
 		      ></span
 		      > <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
 		      >Monoid</a
 		      > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 		      >P</a
 		      > ())</span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-82" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-98" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L82" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L98" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1607,7 +1987,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Monoid:12"
+		  ><details id="i:id:POINTED:Monoid:14"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1662,7 +2042,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Monoid:13"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Monoid:15"
 		      ></span
 		      > <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
 		      >Monoid</a
@@ -1671,9 +2051,9 @@
 		      > [a] :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-90" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-102" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L90" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L102" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1683,7 +2063,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Monoid:13"
+		  ><details id="i:id:POINTED:Monoid:15"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1738,16 +2118,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Unit:14"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Unit:16"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
 		      >Unit</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-65" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-69" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L65" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L69" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1757,7 +2137,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Unit:14"
+		  ><details id="i:id:POINTED:Unit:16"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1778,16 +2158,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-126--62-:15"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-126--62-:17"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >(~&gt;)</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-31" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-35" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L31" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L35" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1797,7 +2177,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:-126--62-:15"
+		  ><details id="i:id:POINTED:-126--62-:17"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1818,16 +2198,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:InitialObject:16"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:InitialObject:18"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
 		      >InitialObject</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-56" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-60" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L56" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L60" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1837,7 +2217,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:InitialObject:16"
+		  ><details id="i:id:POINTED:InitialObject:18"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1851,7 +2231,7 @@
 			>InitialObject</a
 			> = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 			>P</a
-			> <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+			> <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 			>Void</a
 			></div
 		      ></details
@@ -1860,16 +2240,16 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:TerminalObject:17"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:TerminalObject:19"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
 		      > <a href="Proarrow-Object-Terminal.html#t:TerminalObject" title="Proarrow.Object.Terminal"
 		      >TerminalObject</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-46" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-50" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L46" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L50" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1879,7 +2259,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:TerminalObject:17"
+		  ><details id="i:id:POINTED:TerminalObject:19"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1893,7 +2273,7 @@
 			>TerminalObject</a
 			> = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 			>P</a
-			> <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Void.html#t:Void" title="Data.Void"
+			> <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Void.html#t:Void" title="Data.Void"
 			>Void</a
 			></div
 		      ></details
@@ -1902,7 +2282,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Ob:18"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:Ob:20"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1911,9 +2291,9 @@
 		      > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-32" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-36" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L32" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L36" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -1923,7 +2303,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:Ob:18"
+		  ><details id="i:id:POINTED:Ob:20"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1937,7 +2317,7 @@
 			>Ob</a
 			> (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 			>POINTED</a
-			>) = a <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+			>) = a <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
 			>~</a
 			> '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
 			>P</a
@@ -1952,7 +2332,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:UN:19"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:UN:21"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1977,7 +2357,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:UN:19"
+		  ><details id="i:id:POINTED:UN:21"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2002,7 +2382,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-42--42-:20"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-42--42-:22"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -2017,9 +2397,9 @@
 		      > b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-66" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-70" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L66" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L70" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -2029,7 +2409,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:-42--42-:20"
+		  ><details id="i:id:POINTED:-42--42-:22"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2058,7 +2438,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-124--124-:21"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-124--124-:23"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -2073,9 +2453,9 @@
 		      > b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-50" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-54" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L50" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L54" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -2085,7 +2465,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:-124--124-:21"
+		  ><details id="i:id:POINTED:-124--124-:23"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2116,7 +2496,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-38--38-:22"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-38--38-:24"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -2131,9 +2511,9 @@
 		      > b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
 		      >POINTED</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-36" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-40" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L36" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L40" class="link"
 		    >Comments</a
 		    > <a href="#t:POINTED" class="selflink"
 		    >#</a
@@ -2143,7 +2523,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:POINTED:-38--38-:22"
+		  ><details id="i:id:POINTED:-38--38-:24"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2171,6 +2551,64 @@
 		      ></details
 		    ></td
 		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:POINTED:-126--126--62-:25"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+		      >P</a
+		      > a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+		      >POINTED</a
+		      >) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+		      >~~&gt;</a
+		      > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+		      >P</a
+		      > b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+		      >POINTED</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-81" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L81" class="link"
+		    >Comments</a
+		    > <a href="#t:POINTED" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:POINTED:-126--126--62-:25"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-PointedHask.html"
+			>Proarrow.Category.Instance.PointedHask</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+			>P</a
+			> a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			>POINTED</a
+			>) <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+			>~~&gt;</a
+			> ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+			>P</a
+			> b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			>POINTED</a
+			>) = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+			>P</a
+			> (a -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+			>Maybe</a
+			> b)</div
+		      ></details
+		    ></td
+		  ></tr
 		></table
 	      ></details
 	    ></div
@@ -2189,11 +2627,15 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Instance.PointedHask.html#Pointed" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L21" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L22" class="link"
 	    >Comments</a
 	    > <a href="#t:Pointed" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The category of types with an added point and point-preserving morphisms.</p
+	    ></div
 	  ><div class="subs constructors"
 	  ><p class="caption"
 	    >Constructors</p
@@ -2204,9 +2646,7 @@
 		  >P</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > a1 b1. (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
-		  >Maybe</a
-		  > a1 -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+		  > a1 b1. (a1 -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
 		  >Maybe</a
 		  > b1) -&gt; <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
 		  >Pointed</a
@@ -2237,9 +2677,9 @@
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
 		      >Pointed</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-27" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-31" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L27" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L31" class="link"
 		    >Comments</a
 		    > <a href="#t:Pointed" class="selflink"
 		    >#</a
@@ -2315,9 +2755,9 @@
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
 		      >Pointed</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-59" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-63" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L59" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L63" class="link"
 		    >Comments</a
 		    > <a href="#t:Pointed" class="selflink"
 		    >#</a
@@ -2401,9 +2841,9 @@
 		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:Pointed" title="Proarrow.Category.Instance.PointedHask"
 		      >Pointed</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-24" class="link"
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-28" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L24" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L28" class="link"
 		    >Comments</a
 		    > <a href="#t:Pointed" class="selflink"
 		    >#</a
@@ -2483,13 +2923,35 @@
 	  ></div
 	><div class="top"
 	><p class="src"
+	  ><a id="v:toHask" class="def"
+	    >toHask</a
+	    > :: ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	    >P</a
+	    > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	    >P</a
+	    > b) -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+	    >Maybe</a
+	    > a -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+	    >Maybe</a
+	    > b <a href="src/Proarrow.Category.Instance.PointedHask.html#toHask" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L26" class="link"
+	    >Comments</a
+	    > <a href="#v:toHask" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
 	  ><span class="keyword"
 	    >data</span
 	    > <a id="t:These" class="def"
 	    >These</a
 	    > a b <a href="src/Proarrow.Category.Instance.PointedHask.html#These" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L34" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L38" class="link"
 	    >Comments</a
 	    > <a href="#t:These" class="selflink"
 	    >#</a
@@ -2525,13 +2987,63 @@
 	      ></table
 	    ></div
 	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:memptyDefault" class="def"
+	    >memptyDefault</a
+	    > :: <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+	    >Monoid</a
+	    > a =&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+	    >POINTED</a
+	    >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	    >P</a
+	    > a <a href="src/Proarrow.Category.Instance.PointedHask.html#memptyDefault" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L92" class="link"
+	    >Comments</a
+	    > <a href="#v:memptyDefault" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Lift Hask monoids.</p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mappendDefault" class="def"
+	    >mappendDefault</a
+	    > :: <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+	    >Monoid</a
+	    > a =&gt; ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	    >P</a
+	    > a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	    >P</a
+	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+	    >P</a
+	    > a <a href="src/Proarrow.Category.Instance.PointedHask.html#mappendDefault" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/PointedHask.hs#L95" class="link"
+	    >Comments</a
+	    > <a href="#v:mappendDefault" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
 	></div
       ></div
     ><div id="footer"
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.28.0</p
       ></div
     ></body
   ></html
