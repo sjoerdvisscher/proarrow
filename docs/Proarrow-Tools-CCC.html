@@ -1,0 +1,799 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Tools.CCC</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Tools.CCC.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >GHC2024</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Tools.CCC</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><a href="#v:toCCC"
+	      >toCCC</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	      >BiCCC</a
+	      > k, IsFK a, IsFK b) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > ('[] :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k]) (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	      >--&gt;</a
+	      > b) -&gt; FromFree a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > FromFree b</li
+	    ><li class="src short"
+	    ><a href="#v:lam"
+	      >lam</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k]). (IsFK a, IsFK b, IsFKs i) =&gt; ((<span class="keyword"
+	      >forall</span
+	      > (x :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k]). Cast x (a ': i) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > x a) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > (a ': i) b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	      >--&gt;</a
+	      > b)</li
+	    ><li class="src short"
+	    ><a href="#v:-36-"
+	      >($)</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k]). (IsFK a, IsFK b, IsFKs i) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	      >--&gt;</a
+	      > b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i a -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i b</li
+	    ><li class="src short"
+	    ><a href="#v:lift"
+	      >lift</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k]). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+	      >F</a
+	      > a) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+	      >F</a
+	      > b)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >pattern</span
+	      > <a href="#v::-38-"
+	      >(:&amp;)</a
+	      > :: (IsFK a, IsFK b, IsFKs i) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i a -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i b -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i (a <a href="Proarrow-Tools-CCC.html#t:-42--33-" title="Proarrow.Tools.CCC"
+	      >*!</a
+	      > b)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:Free"
+	      >Free</a
+	      > (a :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k]) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:Lft"
+		  >Lft</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (a1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (b1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (a :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k]). (IsFK a1, IsFK b1, IsFKs a) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a a1 -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a (a1 <a href="Proarrow-Tools-CCC.html#t:-43-" title="Proarrow.Tools.CCC"
+		  >+</a
+		  > b1)</li
+		><li
+		><a href="#v:Rgt"
+		  >Rgt</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (a1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (b1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (a :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k]). (IsFK a1, IsFK b1, IsFKs a) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a b1 -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a (a1 <a href="Proarrow-Tools-CCC.html#t:-43-" title="Proarrow.Tools.CCC"
+		  >+</a
+		  > b1)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:either"
+	      >either</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (c :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	      >FK</a
+	      > k]). (IsFK a, IsFK b, IsFK c, IsFKs i, <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	      >Closed</a
+	      > k) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	      >--&gt;</a
+	      > c) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i (b <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	      >--&gt;</a
+	      > c) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i (a <a href="Proarrow-Tools-CCC.html#t:-43-" title="Proarrow.Tools.CCC"
+	      >+</a
+	      > b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	      >Free</a
+	      > i c</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > <a href="#t:InitF"
+	      >InitF</a
+	      > :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > <a href="#t:TermF"
+	      >TermF</a
+	      > :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > (a :: k) <a href="#t:-42--33-"
+	      >*!</a
+	      > (b :: k) :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > (a :: k) <a href="#t:-43-"
+	      >+</a
+	      > (b :: k) :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data family</span
+	      > (a :: k) <a href="#t:-45--45--62-"
+	      >--&gt;</a
+	      > (b :: k) :: k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:FK"
+	      >FK</a
+	      > k = <a href="#v:F"
+	      >F</a
+	      > k</li
+	    ></ul
+	  ></details
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><a id="v:toCCC" class="def"
+	    >toCCC</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	    >BiCCC</a
+	    > k, IsFK a, IsFK b) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > ('[] :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k]) (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	    >--&gt;</a
+	    > b) -&gt; FromFree a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > FromFree b <a href="src/Proarrow.Tools.CCC.html#toCCC" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L205" class="link"
+	    >Comments</a
+	    > <a href="#v:toCCC" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Adapted from Phil Freeman: <a href="https://blog.functorial.com/posts/2017-10-08-HOAS-CCCs.html"
+	      >https://blog.functorial.com/posts/2017-10-08-HOAS-CCCs.html</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:lam" class="def"
+	    >lam</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k]). (IsFK a, IsFK b, IsFKs i) =&gt; ((<span class="keyword"
+	    >forall</span
+	    > (x :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k]). Cast x (a ': i) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > x a) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > (a ': i) b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	    >--&gt;</a
+	    > b) <a href="src/Proarrow.Tools.CCC.html#lam" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L50" class="link"
+	    >Comments</a
+	    > <a href="#v:lam" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:-36-" class="def"
+	    >($)</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k]). (IsFK a, IsFK b, IsFKs i) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	    >--&gt;</a
+	    > b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i a -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i b <span class="fixity"
+	    >infixr 0</span
+	    ><span class="rightedge"
+	    ></span
+	    > <a href="src/Proarrow.Tools.CCC.html#%24" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L57" class="link"
+	    >Comments</a
+	    > <a href="#v:-36-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:lift" class="def"
+	    >lift</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k]). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+	    >F</a
+	    > a) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+	    >F</a
+	    > b) <a href="src/Proarrow.Tools.CCC.html#lift" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L60" class="link"
+	    >Comments</a
+	    > <a href="#v:lift" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >pattern</span
+	    > <a id="v::-38-" class="def"
+	    >(:&amp;)</a
+	    > :: (IsFK a, IsFK b, IsFKs i) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i a -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i b -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i (a <a href="Proarrow-Tools-CCC.html#t:-42--33-" title="Proarrow.Tools.CCC"
+	    >*!</a
+	    > b) <a href="src/Proarrow.Tools.CCC.html#%3A%26" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L66" class="link"
+	    >Comments</a
+	    > <a href="#v::-38-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Free" class="def"
+	    >Free</a
+	    > (a :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k]) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Tools.CCC.html#Free" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L98" class="link"
+	    >Comments</a
+	    > <a href="#t:Free" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Lft" class="def"
+		  >Lft</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (a1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (b1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (a :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k]). (IsFK a1, IsFK b1, IsFKs a) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a a1 -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a (a1 <a href="Proarrow-Tools-CCC.html#t:-43-" title="Proarrow.Tools.CCC"
+		  >+</a
+		  > b1)</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td class="src"
+		><a id="v:Rgt" class="def"
+		  >Rgt</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} (a1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (b1 :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k) (a :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		  >FK</a
+		  > k]). (IsFK a1, IsFK b1, IsFKs a) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a b1 -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		  >Free</a
+		  > a (a1 <a href="Proarrow-Tools-CCC.html#t:-43-" title="Proarrow.Tools.CCC"
+		  >+</a
+		  > b1)</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Free"
+	    >Instances</h4
+	    ><details id="i:Free" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Free:Show:1"
+		      ></span
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Prelude.html#t:Show" title="Prelude"
+		      >Show</a
+		      > (<a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+		      >Free</a
+		      > a b)</span
+		    > <a href="src/Proarrow.Tools.CCC.html#line-114" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L114" class="link"
+		    >Comments</a
+		    > <a href="#t:Free" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Free:Show:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Tools-CCC.html"
+			>Proarrow.Tools.CCC</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:showsPrec"
+			  >showsPrec</a
+			  > :: <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Data-Int.html#t:Int" title="Data.Int"
+			  >Int</a
+			  > -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+			  >Free</a
+			  > a b -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Prelude.html#t:ShowS" title="Prelude"
+			  >ShowS</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Prelude.hs#L" class="link"
+			  >Comments</a
+			  > <a href="#v:showsPrec" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:show"
+			  >show</a
+			  > :: <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+			  >Free</a
+			  > a b -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Data-String.html#t:String" title="Data.String"
+			  >String</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Prelude.hs#L" class="link"
+			  >Comments</a
+			  > <a href="#v:show" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:showList"
+			  >showList</a
+			  > :: [<a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+			  >Free</a
+			  > a b] -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Prelude.html#t:ShowS" title="Prelude"
+			  >ShowS</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Prelude.hs#L" class="link"
+			  >Comments</a
+			  > <a href="#v:showList" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:either" class="def"
+	    >either</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (b :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (c :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k) (i :: [<a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+	    >FK</a
+	    > k]). (IsFK a, IsFK b, IsFK c, IsFKs i, <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	    >Closed</a
+	    > k) =&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i (a <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	    >--&gt;</a
+	    > c) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i (b <a href="Proarrow-Tools-CCC.html#t:-45--45--62-" title="Proarrow.Tools.CCC"
+	    >--&gt;</a
+	    > c) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i (a <a href="Proarrow-Tools-CCC.html#t:-43-" title="Proarrow.Tools.CCC"
+	    >+</a
+	    > b) -&gt; <a href="Proarrow-Tools-CCC.html#t:Free" title="Proarrow.Tools.CCC"
+	    >Free</a
+	    > i c <a href="src/Proarrow.Tools.CCC.html#either" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L79" class="link"
+	    >Comments</a
+	    > <a href="#v:either" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > <a id="t:InitF" class="def"
+	    >InitF</a
+	    > :: k <a href="src/Proarrow.Tools.CCC.html#InitF" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L87" class="link"
+	    >Comments</a
+	    > <a href="#t:InitF" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > <a id="t:TermF" class="def"
+	    >TermF</a
+	    > :: k <a href="src/Proarrow.Tools.CCC.html#TermF" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L88" class="link"
+	    >Comments</a
+	    > <a href="#t:TermF" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > (a :: k) <a id="t:-42--33-" class="def"
+	    >*!</a
+	    > (b :: k) :: k <a href="src/Proarrow.Tools.CCC.html#%2A%21" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L90" class="link"
+	    >Comments</a
+	    > <a href="#t:-42--33-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > (a :: k) <a id="t:-43-" class="def"
+	    >+</a
+	    > (b :: k) :: k <a href="src/Proarrow.Tools.CCC.html#%2B" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L89" class="link"
+	    >Comments</a
+	    > <a href="#t:-43-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data family</span
+	    > (a :: k) <a id="t:-45--45--62-" class="def"
+	    >--&gt;</a
+	    > (b :: k) :: k <span class="fixity"
+	    >infixr 2</span
+	    ><span class="rightedge"
+	    ></span
+	    > <a href="src/Proarrow.Tools.CCC.html#--%3E" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L91" class="link"
+	    >Comments</a
+	    > <a href="#t:-45--45--62-" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:FK" class="def"
+	    >FK</a
+	    > k <a href="src/Proarrow.Tools.CCC.html#FK" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L82" class="link"
+	    >Comments</a
+	    > <a href="#t:FK" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:F" class="def"
+		  >F</a
+		  > k</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FK"
+	    >Instances</h4
+	    ><details id="i:FK" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FK:UN:1"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+		      >UN</a
+		      > ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+		      >F</a
+		      > :: j -&gt; <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		      >FK</a
+		      > j) ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+		      >F</a
+		      > a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+		      >FK</a
+		      > j)</span
+		    > <a href="src/Proarrow.Tools.CCC.html#line-83" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Tools/CCC.hs#L83" class="link"
+		    >Comments</a
+		    > <a href="#t:FK" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FK:UN:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Tools-CCC.html"
+			>Proarrow.Tools.CCC</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+			>F</a
+			> :: j -&gt; <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+			>FK</a
+			> j) ('<a href="Proarrow-Tools-CCC.html#v:F" title="Proarrow.Tools.CCC"
+			>F</a
+			> a :: <a href="Proarrow-Tools-CCC.html#t:FK" title="Proarrow.Tools.CCC"
+			>FK</a
+			> j) = a</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.31.0</p
+      ></div
+    ></body
+  ></html
+>

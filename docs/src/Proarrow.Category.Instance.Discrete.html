@@ -1,0 +1,2063 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Discrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Prelude</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator"
+	>(~)</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Enriched.Dagger.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Enriched.Dagger</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Enriched.Dagger.html#DaggerProfunctor"
+	><span class="hs-identifier"
+	  >DaggerProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CAT"
+	><span class="hs-identifier"
+	  >CAT</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Enriched.ThinCategory.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Enriched.ThinCategory</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Thin</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >newtype</span
+      ><span
+      > </span
+      ><span id="DISCRETE"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#DISCRETE"
+	  ><span class="hs-identifier hs-var"
+	    >DISCRETE</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424685"
+      ><span class="annot"
+	><a href="#local-6989586621679424685"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="D"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#D"
+	  ><span class="hs-identifier hs-var"
+	    >D</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679424685"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424687"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#D"
+	  ><span class="hs-identifier hs-type"
+	    >D</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#D"
+	  ><span class="hs-identifier hs-type"
+	    >D</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424687"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679424687"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	><span class="hs-identifier hs-type"
+	  >Discrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679424688"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#CAT"
+	  ><span class="hs-identifier hs-type"
+	    >CAT</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#DISCRETE"
+	  ><span class="hs-identifier hs-type"
+	    >DISCRETE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424688"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Discrete"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	  ><span class="hs-identifier hs-var"
+	    >Discrete</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424689"
+      ><span class="annot"
+	><a href="#local-6989586621679424689"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424690"
+      ><span class="annot"
+	><a href="#local-6989586621679424690"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424575"
+      ><span id="Refl"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	    ><span class="hs-identifier hs-var"
+	      >Refl</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	  ><span class="hs-identifier hs-type"
+	    >Discrete</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424575"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424575"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | The discrete category with only identity arrows, every type of kind @k@ is an object.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679424534"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#CategoryOf"
+	  ><span class="hs-identifier hs-type"
+	    >CategoryOf</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#DISCRETE"
+	  ><span class="hs-identifier hs-type"
+	    >DISCRETE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424534"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	><span class="hs-identifier hs-type"
+	  >Discrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679424704"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Profunctor"
+	  ><span class="hs-identifier hs-type"
+	    >Profunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	  ><span class="hs-identifier hs-type"
+	    >Discrete</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424714"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: DISCRETE k) (a :: DISCRETE k) (b :: DISCRETE k)
+       (d :: DISCRETE k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Discrete a b -&gt; Discrete c d
+</span
+	  ><a href="#local-6989586621679424714"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Discrete a b -&gt; Discrete c d
+Discrete c a -&gt; Discrete b d -&gt; Discrete a b -&gt; Discrete c d
+forall {k} (p :: k +-&gt; k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	><span class="hs-identifier hs-type"
+	  >Discrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424722"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: DISCRETE k). Ob a =&gt; Discrete a a
+</span
+	  ><a href="#local-6989586621679424722"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete a a
+forall {k} (a :: DISCRETE k). Discrete a a
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete b c
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424725"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: DISCRETE k) (c :: DISCRETE k) (a :: DISCRETE k).
+Discrete b c -&gt; Discrete a b -&gt; Discrete a c
+</span
+	  ><a href="#local-6989586621679424725"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete a c
+Discrete a a
+forall {k} (a :: DISCRETE k). Discrete a a
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Enriched.ThinCategory.html#ThinProfunctor"
+	><span class="hs-identifier hs-type"
+	  >Thin.ThinProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	><span class="hs-identifier hs-type"
+	  >Discrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="HasArrow"
+      ><span class="annot"
+	><a href="Proarrow.Category.Enriched.ThinCategory.html#HasArrow"
+	  ><span class="hs-identifier hs-var"
+	    >HasArrow</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424743"
+      ><span id="local-6989586621679424744"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	    ><span class="hs-identifier hs-type"
+	      >Discrete</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424743"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424744"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679424743"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-operator hs-type"
+	>~</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679424744"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424750"
+      ><span class="annot"
+	><span class="annottext"
+	  >arr :: forall (a :: DISCRETE k) (b :: DISCRETE k).
+(Ob a, Ob b, HasArrow Discrete a b) =&gt;
+Discrete a b
+</span
+	  ><a href="#local-6989586621679424750"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >arr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete a a
+Discrete a b
+forall {k} (a :: DISCRETE k). Discrete a a
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424752"
+      ><span class="annot"
+	><span class="annottext"
+	  >withArr :: forall (a :: DISCRETE k) (b :: DISCRETE k) r.
+Discrete a b -&gt; (HasArrow Discrete a b =&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679424752"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withArr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424757"
+      ><span class="annot"
+	><span class="annottext"
+	  >HasArrow Discrete a b =&gt; r
+</span
+	  ><a href="#local-6989586621679424757"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+HasArrow Discrete a b =&gt; r
+</span
+	><a href="#local-6989586621679424757"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span id="local-6989586621679424602"
+      ><span id="local-6989586621679424603"
+	><span id="local-6989586621679424604"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Discrete.html#withEq"
+	      ><span class="hs-identifier hs-type"
+		>withEq</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	      ><span class="hs-identifier hs-type"
+		>Discrete</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679424602"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679424603"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679424602"
+	      ><span class="hs-identifier hs-type"
+		>a</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><span class="hs-operator hs-type"
+	      >~</span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679424603"
+	      ><span class="hs-identifier hs-type"
+		>b</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679424604"
+	      ><span class="hs-identifier hs-type"
+		>r</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679424604"
+	      ><span class="hs-identifier hs-type"
+		>r</span
+		></a
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span id="withEq"
+      ><span class="annot"
+	><span class="annottext"
+	  >withEq :: forall {k} (a :: DISCRETE k) (b :: DISCRETE k) r.
+Discrete a b -&gt; ((a ~ b) =&gt; r) -&gt; r
+</span
+	  ><a href="Proarrow.Category.Instance.Discrete.html#withEq"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >withEq</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete a b -&gt; ((a ~ b) =&gt; r) -&gt; r
+forall {k} (p :: k +-&gt; k) (a :: k) (b :: k) r.
+DiscreteProfunctor p =&gt;
+p a b -&gt; ((a ~ b) =&gt; r) -&gt; r
+forall (a :: DISCRETE k) (b :: DISCRETE k) r.
+Discrete a b -&gt; ((a ~ b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Category.Enriched.ThinCategory.html#withEq"
+	><span class="hs-identifier hs-var"
+	  >Thin.withEq</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Enriched.Dagger.html#DaggerProfunctor"
+	><span class="hs-identifier hs-type"
+	  >DaggerProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Discrete"
+	><span class="hs-identifier hs-type"
+	  >Discrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424777"
+      ><span class="annot"
+	><span class="annottext"
+	  >dagger :: forall (a :: DISCRETE k) (b :: DISCRETE k).
+Discrete a b -&gt; Discrete b a
+</span
+	  ><a href="#local-6989586621679424777"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dagger</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Discrete b a
+Discrete b b
+forall {k} (a :: DISCRETE k). Discrete a a
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Refl"
+	><span class="hs-identifier hs-var"
+	  >Refl</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span class="hs-keyword"
+      >newtype</span
+      ><span
+      > </span
+      ><span id="CODISCRETE"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#CODISCRETE"
+	  ><span class="hs-identifier hs-var"
+	    >CODISCRETE</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424780"
+      ><span class="annot"
+	><a href="#local-6989586621679424780"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="CD"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#CD"
+	  ><span class="hs-identifier hs-var"
+	    >CD</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679424780"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424782"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#CD"
+	  ><span class="hs-identifier hs-type"
+	    >CD</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#CD"
+	  ><span class="hs-identifier hs-type"
+	    >CD</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424782"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679424782"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	><span class="hs-identifier hs-type"
+	  >Codiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679424783"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#CAT"
+	  ><span class="hs-identifier hs-type"
+	    >CAT</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#CODISCRETE"
+	  ><span class="hs-identifier hs-type"
+	    >CODISCRETE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424783"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Codiscrete"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	  ><span class="hs-identifier hs-var"
+	    >Codiscrete</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424784"
+      ><span class="annot"
+	><a href="#local-6989586621679424784"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424785"
+      ><span class="annot"
+	><a href="#local-6989586621679424785"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424649"
+      ><span id="local-6989586621679424650"
+	><span id="Arr"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	      ><span class="hs-identifier hs-var"
+		>Arr</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	    ><span class="hs-identifier hs-type"
+	      >Codiscrete</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424649"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424650"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span class="annot"
+      ><span class="hs-comment"
+	>-- | The codiscrete category has exactly one arrow between every object, every type of kind @k@ is an object.</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679424636"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#CategoryOf"
+	  ><span class="hs-identifier hs-type"
+	    >CategoryOf</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#CODISCRETE"
+	  ><span class="hs-identifier hs-type"
+	    >CODISCRETE</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679424636"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	><span class="hs-identifier hs-type"
+	  >Codiscrete</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679424798"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Profunctor"
+	  ><span class="hs-identifier hs-type"
+	    >Profunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	  ><span class="hs-identifier hs-type"
+	    >Codiscrete</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424806"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: CODISCRETE k) (a :: CODISCRETE k) (b :: CODISCRETE k)
+       (d :: CODISCRETE k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Codiscrete a b -&gt; Codiscrete c d
+</span
+	  ><a href="Proarrow.Core.html#dimap"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Codiscrete a b -&gt; Codiscrete c d
+Codiscrete c a
+-&gt; Codiscrete b d -&gt; Codiscrete a b -&gt; Codiscrete c d
+forall {k} (p :: k +-&gt; k) (c :: k) (a :: k) (b :: k) (d :: k).
+Promonad p =&gt;
+p c a -&gt; p b d -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimapDefault"
+	><span class="hs-identifier hs-var"
+	  >dimapDefault</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier hs-type"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	><span class="hs-identifier hs-type"
+	  >Codiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424812"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: CODISCRETE k). Ob a =&gt; Codiscrete a a
+</span
+	  ><a href="Proarrow.Core.html#id"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete a a
+forall {k} (a :: CODISCRETE k) (b :: CODISCRETE k). Codiscrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete b c
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424813"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: CODISCRETE k) (c :: CODISCRETE k) (a :: CODISCRETE k).
+Codiscrete b c -&gt; Codiscrete a b -&gt; Codiscrete a c
+</span
+	  ><a href="Proarrow.Core.html#."
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete a c
+forall {k} (a :: CODISCRETE k) (b :: CODISCRETE k). Codiscrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Enriched.ThinCategory.html#ThinProfunctor"
+	><span class="hs-identifier hs-type"
+	  >Thin.ThinProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	><span class="hs-identifier hs-type"
+	  >Codiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="HasArrow"
+      ><span class="annot"
+	><a href="Proarrow.Category.Enriched.ThinCategory.html#HasArrow"
+	  ><span class="hs-identifier hs-var"
+	    >HasArrow</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424827"
+      ><span id="local-6989586621679424828"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	    ><span class="hs-identifier hs-type"
+	      >Codiscrete</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424827"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424828"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424832"
+      ><span class="annot"
+	><span class="annottext"
+	  >arr :: forall (a :: CODISCRETE k) (b :: CODISCRETE k).
+(Ob a, Ob b, HasArrow Codiscrete a b) =&gt;
+Codiscrete a b
+</span
+	  ><a href="Proarrow.Category.Enriched.ThinCategory.html#arr"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >arr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete a b
+forall {k} (a :: CODISCRETE k) (b :: CODISCRETE k). Codiscrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424835"
+      ><span class="annot"
+	><span class="annottext"
+	  >withArr :: forall (a :: CODISCRETE k) (b :: CODISCRETE k) r.
+Codiscrete a b -&gt; (HasArrow Codiscrete a b =&gt; r) -&gt; r
+</span
+	  ><a href="Proarrow.Category.Enriched.ThinCategory.html#withArr"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withArr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679424836"
+      ><span class="annot"
+	><span class="annottext"
+	  >HasArrow Codiscrete a b =&gt; r
+</span
+	  ><a href="#local-6989586621679424836"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+HasArrow Codiscrete a b =&gt; r
+</span
+	><a href="#local-6989586621679424836"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span id="local-6989586621679424837"
+      ><span id="local-6989586621679424838"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Discrete.html#anyArr"
+	    ><span class="hs-identifier hs-type"
+	      >anyArr</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	    ><span class="hs-identifier hs-type"
+	      >Codiscrete</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424837"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679424838"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span id="anyArr"
+      ><span class="annot"
+	><span class="annottext"
+	  >anyArr :: forall {k} (a :: CODISCRETE k) (b :: CODISCRETE k). Codiscrete a b
+</span
+	  ><a href="Proarrow.Category.Instance.Discrete.html#anyArr"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >anyArr</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete a b
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j).
+(CodiscreteProfunctor p, Ob a, Ob b) =&gt;
+p a b
+forall (a :: CODISCRETE k) (b :: CODISCRETE k).
+(Ob a, Ob b) =&gt;
+Codiscrete a b
+</span
+	><a href="Proarrow.Category.Enriched.ThinCategory.html#anyArr"
+	><span class="hs-identifier hs-var"
+	  >Thin.anyArr</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Enriched.Dagger.html#DaggerProfunctor"
+	><span class="hs-identifier hs-type"
+	  >DaggerProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Discrete.html#Codiscrete"
+	><span class="hs-identifier hs-type"
+	  >Codiscrete</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679424862"
+      ><span class="annot"
+	><span class="annottext"
+	  >dagger :: forall (a :: CODISCRETE k) (b :: CODISCRETE k).
+Codiscrete a b -&gt; Codiscrete b a
+</span
+	  ><a href="Proarrow.Category.Enriched.Dagger.html#dagger"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dagger</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Codiscrete b a
+forall {k} (a :: CODISCRETE k) (b :: CODISCRETE k). Codiscrete a b
+</span
+	><a href="Proarrow.Category.Instance.Discrete.html#Arr"
+	><span class="hs-identifier hs-var"
+	  >Arr</span
+	  ></a
+	></span
+      ></pre
+    ></body
+  ></html
+>
