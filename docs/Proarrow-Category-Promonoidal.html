@@ -1,0 +1,1667 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Category.Promonoidal</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Category.Promonoidal.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >GHC2024</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Category.Promonoidal</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:PROTENSOR" class="def"
+	    >PROTENSOR</a
+	    > k = <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	    >LIST</a
+	    > k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k <a href="src/Proarrow.Category.Promonoidal.html#PROTENSOR" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L28" class="link"
+	    >Comments</a
+	    > <a href="#t:PROTENSOR" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p =&gt; <a id="t:Protensor" class="def"
+	    >Protensor</a
+	    > (p :: <a href="Proarrow-Category-Promonoidal.html#t:PROTENSOR" title="Proarrow.Category.Promonoidal"
+	    >PROTENSOR</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Promonoidal.html#Protensor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L30" class="link"
+	    >Comments</a
+	    > <a href="#t:Protensor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:compose" class="def"
+	      >compose</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (bss :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > k)). (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+	      >List</a
+	      > p) a bss -&gt; p a ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+	      >Tensor</a
+	      > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > bss) <a href="src/Proarrow.Category.Promonoidal.html#compose" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L30" class="link"
+	      >Comments</a
+	      > <a href="#v:compose" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:decompose" class="def"
+	      >decompose</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (bss :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > k)) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > bss =&gt; p a ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+	      >Tensor</a
+	      > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	      >LIST</a
+	      > k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > bss) -&gt; (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+	      >List</a
+	      > p) a bss <a href="src/Proarrow.Category.Promonoidal.html#decompose" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L30" class="link"
+	      >Comments</a
+	      > <a href="#v:decompose" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Protensor"
+	    >Instances</h4
+	    ><details id="i:Protensor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Protensor:Protensor:1"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k =&gt; <a href="Proarrow-Category-Promonoidal.html#t:Protensor" title="Proarrow.Category.Promonoidal"
+		      >Protensor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-55" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L55" class="link"
+		    >Comments</a
+		    > <a href="#t:Protensor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Protensor:Protensor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:compose"
+			  >compose</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (bss :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k)). ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+			  >List</a
+			  > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) a bss -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > bss) <a href="src/Proarrow.Category.Promonoidal.html#compose" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:compose" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:decompose"
+			  >decompose</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (bss :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k)) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > bss =&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > bss) -&gt; ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+			  >List</a
+			  > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) a bss <a href="src/Proarrow.Category.Promonoidal.html#decompose" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L32" class="link"
+			  >Comments</a
+			  > <a href="#v:decompose" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Category-Promonoidal.html#t:Protensor" title="Proarrow.Category.Promonoidal"
+	    >Protensor</a
+	    > p =&gt; <a id="t:Promonoid" class="def"
+	    >Promonoid</a
+	    > (p :: <a href="Proarrow-Category-Promonoidal.html#t:PROTENSOR" title="Proarrow.Category.Promonoidal"
+	    >PROTENSOR</a
+	    > k) (m :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Promonoidal.html#Promonoid" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L34" class="link"
+	    >Comments</a
+	    > <a href="#t:Promonoid" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:mempty" class="def"
+	      >mempty</a
+	      > :: p m ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+	      >L</a
+	      > ('[] :: [k])) <a href="src/Proarrow.Category.Promonoidal.html#mempty" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L34" class="link"
+	      >Comments</a
+	      > <a href="#v:mempty" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:mappend" class="def"
+	      >mappend</a
+	      > :: p m ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+	      >L</a
+	      > '[m, m]) <a href="src/Proarrow.Category.Promonoidal.html#mappend" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L34" class="link"
+	      >Comments</a
+	      > <a href="#v:mappend" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Promonoidal.html#t:Protensor" title="Proarrow.Category.Promonoidal"
+	    >Protensor</a
+	    > t, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p) =&gt; <a id="t:PromonoidalProfunctor" class="def"
+	    >PromonoidalProfunctor</a
+	    > (t :: <a href="Proarrow-Category-Promonoidal.html#t:PROTENSOR" title="Proarrow.Category.Promonoidal"
+	    >PROTENSOR</a
+	    > j) (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Promonoidal.html#PromonoidalProfunctor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L38" class="link"
+	    >Comments</a
+	    > <a href="#t:PromonoidalProfunctor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:parN" class="def"
+	      >parN</a
+	      > :: (t <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+	      >List</a
+	      > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	      >:~&gt;</a
+	      > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > t) <a href="src/Proarrow.Category.Promonoidal.html#parN" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L38" class="link"
+	      >Comments</a
+	      > <a href="#v:parN" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:PromonoidalProfunctor"
+	    >Instances</h4
+	    ><details id="i:PromonoidalProfunctor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:PromonoidalProfunctor:PromonoidalProfunctor:1"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > p =&gt; <a href="Proarrow-Category-Promonoidal.html#t:PromonoidalProfunctor" title="Proarrow.Category.Promonoidal"
+		      >PromonoidalProfunctor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: j -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > j)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-72" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L72" class="link"
+		    >Comments</a
+		    > <a href="#t:PromonoidalProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:PromonoidalProfunctor:PromonoidalProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:parN"
+			  >parN</a
+			  > :: ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: j -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+			  >List</a
+			  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: j -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="src/Proarrow.Category.Promonoidal.html#parN" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:parN" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Tensor" class="def"
+	    >Tensor</a
+	    > (a :: k) (bs :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	    >LIST</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Promonoidal.html#Tensor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L42" class="link"
+	    >Comments</a
+	    > <a href="#t:Tensor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Tensor" class="def"
+		  >Tensor</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			>:: <span class="keyword"
+			  >forall</span
+			  > {k} (bs :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > bs</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>=&gt; { <a id="v:unTensor" class="def"
+			  >unTensor</a
+			  > :: '[a] <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			  >UN</a
+			  > ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+			  >L</a
+			  > :: [k] -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) bs</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;} -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a bs</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Tensor"
+	    >Instances</h4
+	    ><details id="i:Tensor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Tensor:Protensor:1"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k =&gt; <a href="Proarrow-Category-Promonoidal.html#t:Protensor" title="Proarrow.Category.Promonoidal"
+		      >Protensor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-55" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L55" class="link"
+		    >Comments</a
+		    > <a href="#t:Tensor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Tensor:Protensor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:compose"
+			  >compose</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (bss :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k)). ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+			  >List</a
+			  > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) a bss -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > bss) <a href="src/Proarrow.Category.Promonoidal.html#compose" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:compose" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:decompose"
+			  >decompose</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (bss :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k)) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > bss =&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (<a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > bss) -&gt; ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+			  >List</a
+			  > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) a bss <a href="src/Proarrow.Category.Promonoidal.html#decompose" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L32" class="link"
+			  >Comments</a
+			  > <a href="#v:decompose" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Tensor:PromonoidalProfunctor:2"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > p =&gt; <a href="Proarrow-Category-Promonoidal.html#t:PromonoidalProfunctor" title="Proarrow.Category.Promonoidal"
+		      >PromonoidalProfunctor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: j -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > j)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-72" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L72" class="link"
+		    >Comments</a
+		    > <a href="#t:Tensor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Tensor:PromonoidalProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:parN"
+			  >parN</a
+			  > :: ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: j -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-List.html#t:List" title="Proarrow.Profunctor.List"
+			  >List</a
+			  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: j -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="src/Proarrow.Category.Promonoidal.html#parN" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:parN" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Tensor:MonoidalProfunctor:3"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+		      >MonoidalProfunctor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-52" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L52" class="link"
+		    >Comments</a
+		    > <a href="#t:Tensor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Tensor:MonoidalProfunctor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:par0"
+			  >par0</a
+			  > :: <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: k) (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L26" class="link"
+			  >Comments</a
+			  > <a href="#v:par0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:par"
+			  >par</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (x1 :: k) (x2 :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (y1 :: k) (y2 :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k). <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > x1 x2 -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > y1 y2 -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > (x1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y1) (x2 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:par" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Tensor:Profunctor:4"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-44" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L44" class="link"
+		    >Comments</a
+		    > <a href="#t:Tensor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Tensor:Profunctor:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (d :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a b -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Tensor:Representable:5"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-47" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L47" class="link"
+		    >Comments</a
+		    > <a href="#t:Tensor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Tensor:Representable:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k). <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L19" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			  >Tensor</a
+			  > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Tensor:-37-:6"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+		      >Tensor</a
+		      > :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > (as :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-48" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L48" class="link"
+		    >Comments</a
+		    > <a href="#t:Tensor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Tensor:-37-:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Category-Promonoidal.html#t:Tensor" title="Proarrow.Category.Promonoidal"
+			>Tensor</a
+			> :: k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			>LIST</a
+			> k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> (as :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			>LIST</a
+			> k) = <a href="Proarrow-Category-Monoidal-Strictified.html#t:Fold" title="Proarrow.Category.Monoidal.Strictified"
+			>Fold</a
+			> (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+			>UN</a
+			> ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+			>L</a
+			> :: [k] -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			>LIST</a
+			> k) as)</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:PList" class="def"
+	    >PList</a
+	    > (ps :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	    >LIST</a
+	    > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k)) (as :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	    >LIST</a
+	    > k) (bs :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	    >LIST</a
+	    > j) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Promonoidal.html#PList" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L76" class="link"
+	    >Comments</a
+	    > <a href="#t:PList" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:PNil" class="def"
+		  >PNil</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {j} {k}. <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+		  >PList</a
+		  > ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > ('[] :: [j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k])) ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > ('[] :: [k])) ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > ('[] :: [j]))</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td class="src"
+		><a id="v:PCons" class="def"
+		  >PCons</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} {j} (as1 :: [k]) (bs1 :: [j]) (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (ps1 :: [j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k]) (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > as1, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > bs1, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > p, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > ps1) =&gt; p a b -&gt; <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+		  >PList</a
+		  > ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > ps1) ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > as1) ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > bs1) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+		  >PList</a
+		  > ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > (p ': ps1)) ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > (a ': as1)) ('<a href="Proarrow-Profunctor-List.html#t:L" title="Proarrow.Profunctor.List"
+		  >L</a
+		  > (b ': bs1))</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:PList"
+	    >Instances</h4
+	    ><details id="i:PList" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:PList:Profunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > j, <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > ps) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+		      >PList</a
+		      > ps :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-80" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L80" class="link"
+		    >Comments</a
+		    > <a href="#t:PList" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:PList:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (a :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > j) (d :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+			  >PList</a
+			  > ps a b -&gt; <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+			  >PList</a
+			  > ps c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > k) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+			  >PList</a
+			  > ps a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:PList:Functor:2"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > j, <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k) =&gt; <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+		      >PList</a
+		      > :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > k -&gt; <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-91" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L91" class="link"
+		    >Comments</a
+		    > <a href="#t:PList" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:PList:Functor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:map"
+			  >map</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k)) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+			  >PList</a
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+			  >PList</a
+			  > b <a href="src/Proarrow.Functor.html#map" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Functor.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:map" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:Day" class="def"
+	    >Day</a
+	    > (tk :: <a href="Proarrow-Category-Promonoidal.html#t:PROTENSOR" title="Proarrow.Category.Promonoidal"
+	    >PROTENSOR</a
+	    > k) (tj :: <a href="Proarrow-Category-Promonoidal.html#t:PROTENSOR" title="Proarrow.Category.Promonoidal"
+	    >PROTENSOR</a
+	    > j) (ps :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+	    >LIST</a
+	    > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k)) (a :: k) (b :: j) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Promonoidal.html#Day" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L96" class="link"
+	    >Comments</a
+	    > <a href="#t:Day" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Day" class="def"
+		  >Day</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} {j} (a :: k) (b :: j) (tj :: <a href="Proarrow-Category-Promonoidal.html#t:PROTENSOR" title="Proarrow.Category.Promonoidal"
+		  >PROTENSOR</a
+		  > j) (bs :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		  >LIST</a
+		  > j) (tk :: <a href="Proarrow-Category-Promonoidal.html#t:PROTENSOR" title="Proarrow.Category.Promonoidal"
+		  >PROTENSOR</a
+		  > k) (as :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		  >LIST</a
+		  > k) (ps :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		  >LIST</a
+		  > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b) =&gt; (tj b bs -&gt; (tk a as, <a href="Proarrow-Category-Promonoidal.html#t:PList" title="Proarrow.Category.Promonoidal"
+		  >PList</a
+		  > ps as bs)) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+		  >Day</a
+		  > tk tj ps a b</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Day"
+	    >Instances</h4
+	    ><details id="i:Day" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Day:Profunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > tk, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > tj) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+		      >Day</a
+		      > tk tj ps :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-98" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L98" class="link"
+		    >Comments</a
+		    > <a href="#t:Day" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Day:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+			  >Day</a
+			  > tk tj ps a b -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+			  >Day</a
+			  > tk tj ps c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+			  >Day</a
+			  > tk tj ps a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Day:Functor:2"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > tk, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > tj) =&gt; <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > (<a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+		      >Day</a
+		      > tk tj :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+		      >LIST</a
+		      > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) -&gt; k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Promonoidal.html#line-103" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Promonoidal.hs#L103" class="link"
+		    >Comments</a
+		    > <a href="#t:Day" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Day:Functor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Promonoidal.html"
+			>Proarrow.Category.Promonoidal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:map"
+			  >map</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k)) (b :: <a href="Proarrow-Profunctor-List.html#t:LIST" title="Proarrow.Profunctor.List"
+			  >LIST</a
+			  > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k)). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+			  >Day</a
+			  > tk tj a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Promonoidal.html#t:Day" title="Proarrow.Category.Promonoidal"
+			  >Day</a
+			  > tk tj b <a href="src/Proarrow.Functor.html#map" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Functor.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:map" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.30.0</p
+      ></div
+    ></body
+  ></html
+>

@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Category.Enriched.html"
@@ -51,11 +51,261 @@
 	  ><th
 	    >Language</th
 	    ><td
-	    >Haskell2010</td
+	    >GHC2024</td
 	    ></tr
 	  ></table
 	><p class="caption"
 	>Proarrow.Category.Enriched</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+	      >Monoidal</a
+	      > v, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > p, <a href="Proarrow-Category-Enriched.html#t:Enriched" title="Proarrow.Category.Enriched"
+	      >Enriched</a
+	      > v j, <a href="Proarrow-Category-Enriched.html#t:Enriched" title="Proarrow.Category.Enriched"
+	      >Enriched</a
+	      > v k) =&gt; <a href="#t:EnrichedProfunctor"
+	      >EnrichedProfunctor</a
+	      > v (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > <a href="#t:ProObj"
+		  >ProObj</a
+		  > v (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k) (b :: j) :: v</li
+		><li
+		><a href="#v:withProObj"
+		  >withProObj</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: j) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+		  >ProObj</a
+		  > v p a b) =&gt; r) -&gt; r</li
+		><li
+		><a href="#v:underlying"
+		  >underlying</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: j). p a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+		  >Unit</a
+		  > :: v) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+		  >ProObj</a
+		  > v p a b</li
+		><li
+		><a href="#v:enriched"
+		  >enriched</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+		  >Unit</a
+		  > :: v) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+		  >ProObj</a
+		  > v p a b) -&gt; p a b</li
+		><li
+		><a href="#v:rmap"
+		  >rmap</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: j) (c :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+		  >HomObj</a
+		  > v b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+		  >ProObj</a
+		  > v p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+		  >ProObj</a
+		  > v p a c</li
+		><li
+		><a href="#v:lmap"
+		  >lmap</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: j) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+		  >HomObj</a
+		  > v c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+		  >ProObj</a
+		  > v p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+		  >ProObj</a
+		  > v p c b</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+	      >EnrichedProfunctor</a
+	      > v (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >(~&gt;)</a
+	      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k) =&gt; <a href="#t:Enriched"
+	      >Enriched</a
+	      > v k</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:HomObj"
+	      >HomObj</a
+	      > v (a :: k) (b :: k) = <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >(~&gt;)</a
+	      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k) a b</li
+	    ><li class="src short"
+	    ><a href="#v:comp"
+	      >comp</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} v (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Category-Enriched.html#t:Enriched" title="Proarrow.Category.Enriched"
+	      >Enriched</a
+	      > v k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	      >HomObj</a
+	      > v b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > <a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	      >HomObj</a
+	      > v a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	      >HomObj</a
+	      > v a c</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:HomSelf"
+	      >HomSelf</a
+	      > (a :: k) (b :: k) = a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	      >~~&gt;</a
+	      > b</li
+	    ><li class="src short"
+	    ><a href="#v:underlyingSelf"
+	      >underlyingSelf</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: k) (b :: k). <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	      >Closed</a
+	      > k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	      >HomSelf</a
+	      > a b</li
+	    ><li class="src short"
+	    ><a href="#v:enrichedSelf"
+	      >enrichedSelf</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: k) (b :: k). (<a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	      >Closed</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	      >HomSelf</a
+	      > a b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b</li
+	    ><li class="src short"
+	    ><a href="#v:compSelf"
+	      >compSelf</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	      >Closed</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	      >HomSelf</a
+	      > b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	      >HomSelf</a
+	      > a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	      >HomSelf</a
+	      > a c</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Clone"
+	      >Clone</a
+	      > k = <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+	      >SUBCAT</a
+	      > (<a href="Proarrow-Core.html#t:Any" title="Proarrow.Core"
+	      >Any</a
+	      > :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
+	      >Constraint</a
+	      >)</li
+	    ></ul
+	  ></details
 	></div
       ><div id="interface"
       ><h1
@@ -63,46 +313,198 @@
 	><div class="top"
 	><p class="src"
 	  ><span class="keyword"
-	    >type family</span
-	    > <a id="t:V" class="def"
-	    >V</a
-	    > (vk :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-	    >Type</a
-	    >) :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
-	    >CAT</a
-	    > k <a href="src/Proarrow.Category.Enriched.html#V" class="link"
+	    >class</span
+	    > (<a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+	    >Monoidal</a
+	    > v, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p, <a href="Proarrow-Category-Enriched.html#t:Enriched" title="Proarrow.Category.Enriched"
+	    >Enriched</a
+	    > v j, <a href="Proarrow-Category-Enriched.html#t:Enriched" title="Proarrow.Category.Enriched"
+	    >Enriched</a
+	    > v k) =&gt; <a id="t:EnrichedProfunctor" class="def"
+	    >EnrichedProfunctor</a
+	    > v (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Enriched.html#EnrichedProfunctor" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L15" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L25" class="link"
 	    >Comments</a
-	    > <a href="#t:V" class="selflink"
+	    > <a href="#t:EnrichedProfunctor" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Working with enriched categories and profunctors in Haskell is hard.
+ Instead we encode them using the underlying regular category/profunctor,
+ and show that the enriched structure can be recovered.</p
+	    ></div
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:ProObj" class="def"
+	      >ProObj</a
+	      > v (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: j) :: v <a href="src/Proarrow.Category.Enriched.html#ProObj" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:ProObj" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:withProObj" class="def"
+	      >withProObj</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v p a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.html#withProObj" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L25" class="link"
+	      >Comments</a
+	      > <a href="#v:withProObj" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:underlying" class="def"
+	      >underlying</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j). p a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: v) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v p a b <a href="src/Proarrow.Category.Enriched.html#underlying" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L25" class="link"
+	      >Comments</a
+	      > <a href="#v:underlying" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:enriched" class="def"
+	      >enriched</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	      >Unit</a
+	      > :: v) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v p a b) -&gt; p a b <a href="src/Proarrow.Category.Enriched.html#enriched" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L25" class="link"
+	      >Comments</a
+	      > <a href="#v:enriched" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:rmap" class="def"
+	      >rmap</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j) (c :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	      >HomObj</a
+	      > v b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v p a c <a href="src/Proarrow.Category.Enriched.html#rmap" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L25" class="link"
+	      >Comments</a
+	      > <a href="#v:rmap" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:lmap" class="def"
+	      >lmap</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	      >HomObj</a
+	      > v c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	      >ProObj</a
+	      > v p c b <a href="src/Proarrow.Category.Enriched.html#lmap" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L25" class="link"
+	      >Comments</a
+	      > <a href="#v:lmap" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
 	  ><div class="subs instances"
-	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:V"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:EnrichedProfunctor"
 	    >Instances</h4
-	    ><details id="i:V" open="open"
+	    ><details id="i:EnrichedProfunctor" open="open"
 	    ><summary class="hide-when-js-enabled"
 	      >Instances details</summary
 	      ><table
 	      ><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:V:V:1"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:EnrichedProfunctor:EnrichedProfunctor:1"
 		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-		      >V</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-		      >Kind</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-31" class="link"
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p =&gt; <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+		      >CONSTRAINT</a
+		      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Enriched.html#line-81" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L81" class="link"
 		    >Comments</a
-		    > <a href="#t:V" class="selflink"
+		    > <a href="#t:EnrichedProfunctor" class="selflink"
 		    >#</a
 		    ></td
 		  ><td class="doc empty"
@@ -110,26 +512,154 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:if:V:V:1"
+		  ><details id="i:ic:EnrichedProfunctor:EnrichedProfunctor:1"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
 		      >Defined in <a href="Proarrow-Category-Enriched.html"
 			>Proarrow.Category.Enriched</a
 			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			>V</a
-			> (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-			>Kind</a
-			>) = <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withProObj"
+			  >withProObj</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > p a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.html#withProObj" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withProObj" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:underlying"
+			  >underlying</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). p a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > p a b <a href="src/Proarrow.Category.Enriched.html#underlying" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:underlying" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:enriched"
+			  >enriched</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > p a b) -&gt; p a b <a href="src/Proarrow.Category.Enriched.html#enriched" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:enriched" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rmap"
+			  >rmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) (c :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > p a c <a href="src/Proarrow.Category.Enriched.html#rmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:rmap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lmap"
+			  >lmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  > p c b <a href="src/Proarrow.Category.Enriched.html#lmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:lmap" class="selflink"
+			  >#</a
+			  ></p
 			></div
 		      ></details
 		    ></td
@@ -137,22 +667,20 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:V:V:2"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:EnrichedProfunctor:EnrichedProfunctor:2"
 		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-		      >V</a
-		      > (<a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-		      >BIPARAK</a
-		      > k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-		      >Kind</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.Bipara.html#line-28" class="link"
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:CodiscreteProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >CodiscreteProfunctor</a
+		      > p =&gt; <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > () (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Enriched.html#line-89" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L28" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L89" class="link"
 		    >Comments</a
-		    > <a href="#t:V" class="selflink"
+		    > <a href="#t:EnrichedProfunctor" class="selflink"
 		    >#</a
 		    ></td
 		  ><td class="doc empty"
@@ -160,73 +688,1009 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:if:V:V:2"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched-Bipara.html"
-			>Proarrow.Category.Enriched.Bipara</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			>V</a
-			> (<a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			>BIPARAK</a
-			> k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-			>Kind</a
-			>) = <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			>PRO</a
-			> k k)</div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:V:V:3"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-		      >V</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-59" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L59" class="link"
-		    >Comments</a
-		    > <a href="#t:V" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:if:V:V:3"
+		  ><details id="i:ic:EnrichedProfunctor:EnrichedProfunctor:2"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
 		      >Defined in <a href="Proarrow-Category-Enriched.html"
 			>Proarrow.Category.Enriched</a
 			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			>V</a
-			> (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			>) = kk</div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withProObj"
+			  >withProObj</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > () p a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.html#withProObj" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withProObj" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:underlying"
+			  >underlying</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). p a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: ()) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > () p a b <a href="src/Proarrow.Category.Enriched.html#underlying" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:underlying" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:enriched"
+			  >enriched</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: ()) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > () p a b) -&gt; p a b <a href="src/Proarrow.Category.Enriched.html#enriched" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:enriched" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rmap"
+			  >rmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) (c :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > () b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > () p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > () p a c <a href="src/Proarrow.Category.Enriched.html#rmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:rmap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lmap"
+			  >lmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > () c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > () p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > () p c b <a href="src/Proarrow.Category.Enriched.html#lmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:lmap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:EnrichedProfunctor:EnrichedProfunctor:3"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Enriched.html#line-65" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L65" class="link"
+		    >Comments</a
+		    > <a href="#t:EnrichedProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:EnrichedProfunctor:EnrichedProfunctor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched.html"
+			>Proarrow.Category.Enriched</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withProObj"
+			  >withProObj</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > p a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.html#withProObj" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withProObj" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:underlying"
+			  >underlying</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). p a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > p a b <a href="src/Proarrow.Category.Enriched.html#underlying" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:underlying" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:enriched"
+			  >enriched</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > p a b) -&gt; p a b <a href="src/Proarrow.Category.Enriched.html#enriched" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:enriched" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rmap"
+			  >rmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) (c :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > p a c <a href="src/Proarrow.Category.Enriched.html#rmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:rmap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lmap"
+			  >lmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > p c b <a href="src/Proarrow.Category.Enriched.html#lmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:lmap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:EnrichedProfunctor:EnrichedProfunctor:4"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Enriched.Dagger"
+		      >DaggerProfunctor</a
+		      > p =&gt; <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > j)</span
+		    > <a href="src/Proarrow.Category.Enriched.html#line-73" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L73" class="link"
+		    >Comments</a
+		    > <a href="#t:EnrichedProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:EnrichedProfunctor:EnrichedProfunctor:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched.html"
+			>Proarrow.Category.Enriched</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withProObj"
+			  >withProObj</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) p a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.html#withProObj" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withProObj" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:underlying"
+			  >underlying</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j). p a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) p a b <a href="src/Proarrow.Category.Enriched.html#underlying" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:underlying" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:enriched"
+			  >enriched</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) p a b) -&gt; p a b <a href="src/Proarrow.Category.Enriched.html#enriched" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:enriched" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rmap"
+			  >rmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j) (c :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) p a c <a href="src/Proarrow.Category.Enriched.html#rmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:rmap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lmap"
+			  >lmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j) (c :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) p a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >, <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) p c b <a href="src/Proarrow.Category.Enriched.html#lmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:lmap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:EnrichedProfunctor:EnrichedProfunctor:5"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > v p =&gt; <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+		      >Clone</a
+		      > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+		      >Op</a
+		      > p :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > j -&gt; <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Enriched.html#line-97" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L97" class="link"
+		    >Comments</a
+		    > <a href="#t:EnrichedProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:EnrichedProfunctor:EnrichedProfunctor:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched.html"
+			>Proarrow.Category.Enriched</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withProObj"
+			  >withProObj</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.html#withProObj" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withProObj" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:underlying"
+			  >underlying</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k). <a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a b <a href="src/Proarrow.Category.Enriched.html#underlying" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:underlying" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:enriched"
+			  >enriched</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a b) -&gt; <a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p a b <a href="src/Proarrow.Category.Enriched.html#enriched" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:enriched" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rmap"
+			  >rmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) (c :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a c <a href="src/Proarrow.Category.Enriched.html#rmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:rmap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lmap"
+			  >lmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) (c :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > v) (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) c b <a href="src/Proarrow.Category.Enriched.html#lmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:lmap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:EnrichedProfunctor:EnrichedProfunctor:6"
+		      ></span
+		      > <a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+		      >Monoid</a
+		      > m =&gt; <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+		      >Clone</a
+		      > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+		      >Mon</a
+		      > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+		      >MONOIDK</a
+		      > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+		      >MONOIDK</a
+		      > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Enriched.html#line-57" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L57" class="link"
+		    >Comments</a
+		    > <a href="#t:EnrichedProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc"
+		  ><p
+		    >A monoid is a one object enriched category.</p
+		    ></td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:EnrichedProfunctor:EnrichedProfunctor:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched.html"
+			>Proarrow.Category.Enriched</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withProObj"
+			  >withProObj</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) (b :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) r. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.html#withProObj" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:withProObj" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:underlying"
+			  >underlying</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) (b :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m). <a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > a b -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b <a href="src/Proarrow.Category.Enriched.html#underlying" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L28" class="link"
+			  >Comments</a
+			  > <a href="#v:underlying" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:enriched"
+			  >enriched</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) (b :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+			  >Unit</a
+			  > :: <a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) -&gt; <a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > a b <a href="src/Proarrow.Category.Enriched.html#enriched" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
+			  >Comments</a
+			  > <a href="#v:enriched" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:rmap"
+			  >rmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) (b :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) (c :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a c <a href="src/Proarrow.Category.Enriched.html#rmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L30" class="link"
+			  >Comments</a
+			  > <a href="#v:rmap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:lmap"
+			  >lmap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) (b :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m) (c :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+			  >HomObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) c a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+			  >ProObj</a
+			  > (<a href="Proarrow-Category-Enriched.html#t:Clone" title="Proarrow.Category.Enriched"
+			  >Clone</a
+			  > k) (<a href="Proarrow-Monoid.html#t:Mon" title="Proarrow.Monoid"
+			  >Mon</a
+			  > :: <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Monoid.html#t:MONOIDK" title="Proarrow.Monoid"
+			  >MONOIDK</a
+			  > m -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) c b <a href="src/Proarrow.Category.Enriched.html#lmap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:lmap" class="selflink"
+			  >#</a
+			  ></p
+			></div
 		      ></details
 		    ></td
 		  ></tr
@@ -237,190 +1701,48 @@
 	><div class="top"
 	><p class="src"
 	  ><span class="keyword"
-	    >type family</span
-	    > <a id="t:Arr" class="def"
-	    >Arr</a
-	    > (v :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >class</span
+	    > <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+	    >EnrichedProfunctor</a
+	    > v (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
-	    > k) (a :: vk exta) (b :: vk extb) :: v exta extb <a href="src/Proarrow.Category.Enriched.html#Arr" class="link"
+	    > k) =&gt; <a id="t:Enriched" class="def"
+	    >Enriched</a
+	    > v k <a href="src/Proarrow.Category.Enriched.html#Enriched" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L16" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L33" class="link"
 	    >Comments</a
-	    > <a href="#t:Arr" class="selflink"
+	    > <a href="#t:Enriched" class="selflink"
 	    >#</a
 	    ></p
 	  ><div class="subs instances"
-	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Arr"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Enriched"
 	    >Instances</h4
-	    ><details id="i:Arr" open="open"
+	    ><details id="i:Enriched" open="open"
 	    ><summary class="hide-when-js-enabled"
 	      >Instances details</summary
 	      ><table
 	      ><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:Arr:Arr:1"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Enriched:Enriched:1"
 		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-		      >Arr</a
-		      > (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-		      >MonK</a
-		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-		      >CK</a
-		      > a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k exta) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-		      >CK</a
-		      > b :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k extb)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-32" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L32" class="link"
-		    >Comments</a
-		    > <a href="#t:Arr" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:if:Arr:Arr:1"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-			>Arr</a
-			> (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			>) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k exta) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> b :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k extb) = '<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#v:MK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MK</a
-			> (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			>~&gt;</a
-			> b) :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			> exta extb</div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:Arr:Arr:2"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-		      >Arr</a
-		      > (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-		      >MonK</a
-		      > (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > k k) :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >) ('<a href="Proarrow-Category-Enriched-Bipara.html#v:BIPARA" title="Proarrow.Category.Enriched.Bipara"
-		      >BIPARA</a
-		      > a :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-		      >BIPARAK</a
-		      > k exta) ('<a href="Proarrow-Category-Enriched-Bipara.html#v:BIPARA" title="Proarrow.Category.Enriched.Bipara"
-		      >BIPARA</a
-		      > b :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-		      >BIPARAK</a
-		      > k extb)</span
-		    > <a href="src/Proarrow.Category.Enriched.Bipara.html#line-29" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
-		    >Comments</a
-		    > <a href="#t:Arr" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:if:Arr:Arr:2"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched-Bipara.html"
-			>Proarrow.Category.Enriched.Bipara</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-			>Arr</a
-			> (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> (<a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			>PRO</a
-			> k k) :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			>) ('<a href="Proarrow-Category-Enriched-Bipara.html#v:BIPARA" title="Proarrow.Category.Enriched.Bipara"
-			>BIPARA</a
-			> a :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			>BIPARAK</a
-			> k exta) ('<a href="Proarrow-Category-Enriched-Bipara.html#v:BIPARA" title="Proarrow.Category.Enriched.Bipara"
-			>BIPARA</a
-			> b :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			>BIPARAK</a
-			> k extb) = '<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#v:MK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MK</a
-			> (<a href="Proarrow-Category-Enriched-Bipara.html#t:Bipara" title="Proarrow.Category.Enriched.Bipara"
-			>Bipara</a
-			> a b) :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> (k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			>) exta extb</div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:Arr:Arr:3"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-		      >Arr</a
-		      > (kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      > <a href="Proarrow-Category-Enriched.html#t:EnrichedProfunctor" title="Proarrow.Category.Enriched"
+		      >EnrichedProfunctor</a
+		      > v (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 		      >CAT</a
-		      > k) (m :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t a) (n :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t a)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-60" class="link"
+		      > k) =&gt; <a href="Proarrow-Category-Enriched.html#t:Enriched" title="Proarrow.Category.Enriched"
+		      >Enriched</a
+		      > v k</span
+		    > <a href="src/Proarrow.Category.Enriched.html#line-34" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L60" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L34" class="link"
 		    >Comments</a
-		    > <a href="#t:Arr" class="selflink"
+		    > <a href="#t:Enriched" class="selflink"
 		    >#</a
 		    ></td
 		  ><td class="doc empty"
@@ -428,25 +1750,13 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:if:Arr:Arr:3"
+		  ><details id="i:ic:Enriched:Enriched:1"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
 		      >Defined in <a href="Proarrow-Category-Enriched.html"
 			>Proarrow.Category.Enriched</a
 			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-			>Arr</a
-			> (kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
-			>CAT</a
-			> k) (m :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t a) (n :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t a) = t</div
 		      ></details
 		    ></td
 		  ></tr
@@ -458,1097 +1768,177 @@
 	><p class="src"
 	  ><span class="keyword"
 	    >type</span
-	    > <a id="t:-37--126--62-" class="def"
-	    >(%~&gt;)</a
-	    > (a :: vk exta) (b :: vk extb) = <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-	    >Arr</a
-	    > (<a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-	    >V</a
-	    > vk) a b <a href="src/Proarrow.Category.Enriched.html#%25~%3E" class="link"
+	    > <a id="t:HomObj" class="def"
+	    >HomObj</a
+	    > v (a :: k) (b :: k) = <a href="Proarrow-Category-Enriched.html#t:ProObj" title="Proarrow.Category.Enriched"
+	    >ProObj</a
+	    > v (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) a b <a href="src/Proarrow.Category.Enriched.html#HomObj" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L17" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L36" class="link"
 	    >Comments</a
-	    > <a href="#t:-37--126--62-" class="selflink"
+	    > <a href="#t:HomObj" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:comp" class="def"
+	    >comp</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} v (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Category-Enriched.html#t:Enriched" title="Proarrow.Category.Enriched"
+	    >Enriched</a
+	    > v k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	    >HomObj</a
+	    > v b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > <a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	    >HomObj</a
+	    > v a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Enriched.html#t:HomObj" title="Proarrow.Category.Enriched"
+	    >HomObj</a
+	    > v a c <a href="src/Proarrow.Category.Enriched.html#comp" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L39" class="link"
+	    >Comments</a
+	    > <a href="#v:comp" class="selflink"
 	    >#</a
 	    ></p
 	  ></div
 	><div class="top"
 	><p class="src"
 	  ><span class="keyword"
-	    >class</span
-	    > <a href="Proarrow-Category-Bicategory.html#t:Bicategory" title="Proarrow.Category.Bicategory"
-	    >Bicategory</a
-	    > (<a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-	    >V</a
-	    > vk) =&gt; <a id="t:ECategory" class="def"
-	    >ECategory</a
-	    > (vk :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-	    >Type</a
-	    >) <span class="keyword"
-	    >where</span
-	    > <a href="src/Proarrow.Category.Enriched.html#ECategory" class="link"
+	    >type</span
+	    > <a id="t:HomSelf" class="def"
+	    >HomSelf</a
+	    > (a :: k) (b :: k) = a <a href="Proarrow-Object-Exponential.html#t:-126--126--62-" title="Proarrow.Object.Exponential"
+	    >~~&gt;</a
+	    > b <a href="src/Proarrow.Category.Enriched.html#HomSelf" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L19" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L42" class="link"
 	    >Comments</a
-	    > <a href="#t:ECategory" class="selflink"
+	    > <a href="#t:HomSelf" class="selflink"
 	    >#</a
 	    ></p
-	  ><div class="subs associated-types"
-	  ><p class="caption"
-	    >Associated Types</p
-	    ><p class="src"
-	    ><span class="keyword"
-	      >type</span
-	      > <a id="t:EOb" class="def"
-	      >EOb</a
-	      > (a :: vk exta) <a href="src/Proarrow.Category.Enriched.html#EOb" class="link"
-	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L" class="link"
-	      >Comments</a
-	      > <a href="#t:EOb" class="selflink"
-	      >#</a
-	      ></p
-	    ></div
-	  ><div class="subs methods"
-	  ><p class="caption"
-	    >Methods</p
-	    ><p class="src"
-	    ><a id="v:eid" class="def"
-	      >eid</a
-	      > :: <span class="keyword"
-	      >forall</span
-	      > (exta :: k) (a :: vk exta). <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-	      >EOb</a
-	      > a =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
-	      >I</a
-	      > :: <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-	      >V</a
-	      > vk exta exta) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	      >~&gt;</a
-	      > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-	      >%~&gt;</a
-	      > a) <a href="src/Proarrow.Category.Enriched.html#eid" class="link"
-	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L19" class="link"
-	      >Comments</a
-	      > <a href="#v:eid" class="selflink"
-	      >#</a
-	      ></p
-	    ><p class="src"
-	    ><a id="v:ecomp" class="def"
-	      >ecomp</a
-	      > :: <span class="keyword"
-	      >forall</span
-	      > (exta :: k) (a :: vk exta) (extb :: k) (b :: vk extb) (extc :: k) (c :: vk extc). (<a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-	      >EOb</a
-	      > a, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-	      >EOb</a
-	      > b, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-	      >EOb</a
-	      > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
-	      >O</a
-	      > (b <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-	      >%~&gt;</a
-	      > c) (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-	      >%~&gt;</a
-	      > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-	      >~&gt;</a
-	      > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-	      >%~&gt;</a
-	      > c) <a href="src/Proarrow.Category.Enriched.html#ecomp" class="link"
-	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L19" class="link"
-	      >Comments</a
-	      > <a href="#v:ecomp" class="selflink"
-	      >#</a
-	      ></p
-	    ></div
-	  ><div class="subs instances"
-	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ECategory"
-	    >Instances</h4
-	    ><details id="i:ECategory" open="open"
-	    ><summary class="hide-when-js-enabled"
-	      >Instances details</summary
-	      ><table
-	      ><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ECategory:ECategory:1"
-		      ></span
-		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
-		      >CategoryOf</a
-		      > k =&gt; <a href="Proarrow-Category-Enriched.html#t:ECategory" title="Proarrow.Category.Enriched"
-		      >ECategory</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-		      >Kind</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-35" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L35" class="link"
-		    >Comments</a
-		    > <a href="#t:ECategory" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc"
-		  ><p
-		    >A regular category as a Type-enriched category</p
-		    ></td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:ic:ECategory:ECategory:1"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:eid"
-			  >eid</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: ()) (a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k exta). <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
-			  >I</a
-			  > :: <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			  >V</a
-			  > (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k) exta exta) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > a) <a href="src/Proarrow.Category.Enriched.html#eid" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L21" class="link"
-			  >Comments</a
-			  > <a href="#v:eid" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:ecomp"
-			  >ecomp</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: ()) (a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k exta) (extb :: ()) (b :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k extb) (extc :: ()) (c :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k extc). (<a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > b, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
-			  >O</a
-			  > (b <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) <a href="src/Proarrow.Category.Enriched.html#ecomp" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L22" class="link"
-			  >Comments</a
-			  > <a href="#v:ecomp" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ECategory:ECategory:2"
-		      ></span
-		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
-		      >Monoidal</a
-		      > k =&gt; <a href="Proarrow-Category-Enriched.html#t:ECategory" title="Proarrow.Category.Enriched"
-		      >ECategory</a
-		      > (<a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-		      >BIPARAK</a
-		      > k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-		      >Kind</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.Bipara.html#line-40" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L40" class="link"
-		    >Comments</a
-		    > <a href="#t:ECategory" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc"
-		  ><p
-		    >Bipara as a profunctor enriched category.</p
-		    ></td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:ic:ECategory:ECategory:2"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched-Bipara.html"
-			>Proarrow.Category.Enriched.Bipara</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:eid"
-			  >eid</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: ()) (a :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			  >BIPARAK</a
-			  > k exta). <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
-			  >I</a
-			  > :: <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			  >V</a
-			  > (<a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			  >BIPARAK</a
-			  > k) exta exta) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > a) <a href="src/Proarrow.Category.Enriched.html#eid" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L21" class="link"
-			  >Comments</a
-			  > <a href="#v:eid" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:ecomp"
-			  >ecomp</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: ()) (a :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			  >BIPARAK</a
-			  > k exta) (extb :: ()) (b :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			  >BIPARAK</a
-			  > k extb) (extc :: ()) (c :: <a href="Proarrow-Category-Enriched-Bipara.html#t:BIPARAK" title="Proarrow.Category.Enriched.Bipara"
-			  >BIPARAK</a
-			  > k extc). (<a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > b, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
-			  >O</a
-			  > (b <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) <a href="src/Proarrow.Category.Enriched.html#ecomp" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L22" class="link"
-			  >Comments</a
-			  > <a href="#v:ecomp" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ECategory:ECategory:3"
-		      ></span
-		      > <a href="Proarrow-Category-Bicategory.html#t:Monad" title="Proarrow.Category.Bicategory"
-		      >Monad</a
-		      > t =&gt; <a href="Proarrow-Category-Enriched.html#t:ECategory" title="Proarrow.Category.Enriched"
-		      >ECategory</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-63" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L63" class="link"
-		    >Comments</a
-		    > <a href="#t:ECategory" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc"
-		  ><p
-		    >A monad in a bicategory as a one object enriched category</p
-		    ></td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:ic:ECategory:ECategory:3"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:eid"
-			  >eid</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: k) (a0 :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t exta). <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a0 =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
-			  >I</a
-			  > :: <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			  >V</a
-			  > (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t) exta exta) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a0 <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > a0) <a href="src/Proarrow.Category.Enriched.html#eid" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L21" class="link"
-			  >Comments</a
-			  > <a href="#v:eid" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:ecomp"
-			  >ecomp</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: k) (a0 :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t exta) (extb :: k) (b :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t extb) (extc :: k) (c :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t extc). (<a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a0, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > b, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
-			  >O</a
-			  > (b <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) (a0 <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a0 <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) <a href="src/Proarrow.Category.Enriched.html#ecomp" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L22" class="link"
-			  >Comments</a
-			  > <a href="#v:ecomp" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		></table
-	      ></details
+	  ><div class="doc"
+	  ><p
+	    >Closed monoidal categories are enriched in themselves.</p
 	    ></div
 	  ></div
 	><div class="top"
 	><p class="src"
-	  ><span class="keyword"
-	    >data</span
-	    > <a id="t:CATK" class="def"
-	    >CATK</a
-	    > k (ext :: ()) <span class="keyword"
-	    >where</span
-	    > <a href="src/Proarrow.Category.Enriched.html#CATK" class="link"
+	  ><a id="v:underlyingSelf" class="def"
+	    >underlyingSelf</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > k (a :: k) (b :: k). <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	    >Closed</a
+	    > k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b) -&gt; (<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	    >HomSelf</a
+	    > a b <a href="src/Proarrow.Category.Enriched.html#underlyingSelf" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L27" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L45" class="link"
 	    >Comments</a
-	    > <a href="#t:CATK" class="selflink"
+	    > <a href="#v:underlyingSelf" class="selflink"
 	    >#</a
 	    ></p
-	  ><div class="subs constructors"
-	  ><p class="caption"
-	    >Constructors</p
-	    ><table
-	    ><tr
-	      ><td class="src"
-		><a id="v:CK" class="def"
-		  >CK</a
-		  > :: <span class="keyword"
-		  >forall</span
-		  > k (ext :: ()). k -&gt; <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		  >CATK</a
-		  > k ext</td
-		><td class="doc empty"
-		>&nbsp;</td
-		></tr
-	      ></table
-	    ></div
-	  ><div class="subs instances"
-	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:CATK"
-	    >Instances</h4
-	    ><details id="i:CATK" open="open"
-	    ><summary class="hide-when-js-enabled"
-	      >Instances details</summary
-	      ><table
-	      ><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CATK:ECategory:1"
-		      ></span
-		      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
-		      >CategoryOf</a
-		      > k =&gt; <a href="Proarrow-Category-Enriched.html#t:ECategory" title="Proarrow.Category.Enriched"
-		      >ECategory</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-		      >Kind</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-35" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L35" class="link"
-		    >Comments</a
-		    > <a href="#t:CATK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc"
-		  ><p
-		    >A regular category as a Type-enriched category</p
-		    ></td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:CATK:ECategory:1"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:eid"
-			  >eid</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: ()) (a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k exta). <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
-			  >I</a
-			  > :: <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			  >V</a
-			  > (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k) exta exta) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > a) <a href="src/Proarrow.Category.Enriched.html#eid" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L21" class="link"
-			  >Comments</a
-			  > <a href="#v:eid" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:ecomp"
-			  >ecomp</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: ()) (a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k exta) (extb :: ()) (b :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k extb) (extc :: ()) (c :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			  >CATK</a
-			  > k extc). (<a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > b, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
-			  >O</a
-			  > (b <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) <a href="src/Proarrow.Category.Enriched.html#ecomp" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L22" class="link"
-			  >Comments</a
-			  > <a href="#v:ecomp" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CATK:V:2"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-		      >V</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-		      >Kind</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-31" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L31" class="link"
-		    >Comments</a
-		    > <a href="#t:CATK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:CATK:V:2"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			>V</a
-			> (<a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k :: () -&gt; <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
-			>Kind</a
-			>) = <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CATK:EOb:3"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-		      >EOb</a
-		      > (a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k exta)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-36" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L36" class="link"
-		    >Comments</a
-		    > <a href="#t:CATK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:CATK:EOb:3"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			>EOb</a
-			> (a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k exta) = (<a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
-			>Is</a
-			> ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> :: k -&gt; <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k exta) a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-			>Ob</a
-			> (<a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-			>UN</a
-			> ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> :: k -&gt; <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k exta) a))</div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CATK:Arr:4"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-		      >Arr</a
-		      > (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-		      >MonK</a
-		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-		      >CK</a
-		      > a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k exta) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-		      >CK</a
-		      > b :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > k extb)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-32" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L32" class="link"
-		    >Comments</a
-		    > <a href="#t:CATK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:CATK:Arr:4"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-			>Arr</a
-			> (<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			>) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k exta) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> b :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> k extb) = '<a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#v:MK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MK</a
-			> (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			>~&gt;</a
-			> b) :: <a href="Proarrow-Category-Bicategory-MonoidalAsBi.html#t:MonK" title="Proarrow.Category.Bicategory.MonoidalAsBi"
-			>MonK</a
-			> <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			> exta extb</div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CATK:UN:5"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-		      >UN</a
-		      > ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-		      >CK</a
-		      > :: j -&gt; <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > j i) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-		      >CK</a
-		      > a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-		      >CATK</a
-		      > j i)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-29" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L29" class="link"
-		    >Comments</a
-		    > <a href="#t:CATK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:CATK:UN:5"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
-			>UN</a
-			> ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> :: j -&gt; <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> j i) ('<a href="Proarrow-Category-Enriched.html#v:CK" title="Proarrow.Category.Enriched"
-			>CK</a
-			> a :: <a href="Proarrow-Category-Enriched.html#t:CATK" title="Proarrow.Category.Enriched"
-			>CATK</a
-			> j i) = a</div
-		      ></details
-		    ></td
-		  ></tr
-		></table
-	      ></details
-	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:enrichedSelf" class="def"
+	    >enrichedSelf</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > k (a :: k) (b :: k). (<a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	    >Closed</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; ((<a href="Proarrow-Category-Monoidal.html#t:Unit" title="Proarrow.Category.Monoidal"
+	    >Unit</a
+	    > :: k) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	    >HomSelf</a
+	    > a b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b <a href="src/Proarrow.Category.Enriched.html#enrichedSelf" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L48" class="link"
+	    >Comments</a
+	    > <a href="#v:enrichedSelf" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:compSelf" class="def"
+	    >compSelf</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
+	    >Closed</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > c) =&gt; (<a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	    >HomSelf</a
+	    > b c <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	    >HomSelf</a
+	    > a b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Enriched.html#t:HomSelf" title="Proarrow.Category.Enriched"
+	    >HomSelf</a
+	    > a c <a href="src/Proarrow.Category.Enriched.html#compSelf" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L51" class="link"
+	    >Comments</a
+	    > <a href="#v:compSelf" class="selflink"
+	    >#</a
+	    ></p
 	  ></div
 	><div class="top"
 	><p class="src"
 	  ><span class="keyword"
-	    >data</span
-	    > <a id="t:MONADK" class="def"
-	    >MONADK</a
-	    > (t :: kk a a) (ext :: k) <span class="keyword"
-	    >where</span
-	    > <a href="src/Proarrow.Category.Enriched.html#MONADK" class="link"
+	    >type</span
+	    > <a id="t:Clone" class="def"
+	    >Clone</a
+	    > k = <a href="Proarrow-Category-Instance-Sub.html#t:SUBCAT" title="Proarrow.Category.Instance.Sub"
+	    >SUBCAT</a
+	    > (<a href="Proarrow-Core.html#t:Any" title="Proarrow.Core"
+	    >Any</a
+	    > :: k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
+	    >Constraint</a
+	    >) <a href="src/Proarrow.Category.Enriched.html#Clone" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L56" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L54" class="link"
 	    >Comments</a
-	    > <a href="#t:MONADK" class="selflink"
+	    > <a href="#t:Clone" class="selflink"
 	    >#</a
 	    ></p
-	  ><div class="subs constructors"
-	  ><p class="caption"
-	    >Constructors</p
-	    ><table
-	    ><tr
-	      ><td class="src"
-		><a id="v:MDK" class="def"
-		  >MDK</a
-		  > :: <span class="keyword"
-		  >forall</span
-		  > {k} (kk :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		  >Type</a
-		  >) (a :: k) (t :: kk a a) (ext :: k). () -&gt; <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		  >MONADK</a
-		  > t ext</td
-		><td class="doc empty"
-		>&nbsp;</td
-		></tr
-	      ></table
-	    ></div
-	  ><div class="subs instances"
-	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:MONADK"
-	    >Instances</h4
-	    ><details id="i:MONADK" open="open"
-	    ><summary class="hide-when-js-enabled"
-	      >Instances details</summary
-	      ><table
-	      ><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:MONADK:ECategory:1"
-		      ></span
-		      > <a href="Proarrow-Category-Bicategory.html#t:Monad" title="Proarrow.Category.Bicategory"
-		      >Monad</a
-		      > t =&gt; <a href="Proarrow-Category-Enriched.html#t:ECategory" title="Proarrow.Category.Enriched"
-		      >ECategory</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-63" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L63" class="link"
-		    >Comments</a
-		    > <a href="#t:MONADK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc"
-		  ><p
-		    >A monad in a bicategory as a one object enriched category</p
-		    ></td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:MONADK:ECategory:1"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:eid"
-			  >eid</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: k) (a0 :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t exta). <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a0 =&gt; (<a href="Proarrow-Category-Bicategory.html#t:I" title="Proarrow.Category.Bicategory"
-			  >I</a
-			  > :: <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			  >V</a
-			  > (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t) exta exta) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a0 <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > a0) <a href="src/Proarrow.Category.Enriched.html#eid" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L21" class="link"
-			  >Comments</a
-			  > <a href="#v:eid" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:ecomp"
-			  >ecomp</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (exta :: k) (a0 :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t exta) (extb :: k) (b :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t extb) (extc :: k) (c :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			  >MONADK</a
-			  > t extc). (<a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > a0, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > b, <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			  >EOb</a
-			  > c) =&gt; <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
-			  >O</a
-			  > (b <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) (a0 <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > b) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-			  >~&gt;</a
-			  > (a0 <a href="Proarrow-Category-Enriched.html#t:-37--126--62-" title="Proarrow.Category.Enriched"
-			  >%~&gt;</a
-			  > c) <a href="src/Proarrow.Category.Enriched.html#ecomp" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L22" class="link"
-			  >Comments</a
-			  > <a href="#v:ecomp" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:MONADK:V:2"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-		      >V</a
-		      > (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-59" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L59" class="link"
-		    >Comments</a
-		    > <a href="#t:MONADK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:MONADK:V:2"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:V" title="Proarrow.Category.Enriched"
-			>V</a
-			> (<a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			>) = kk</div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:MONADK:EOb:3"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-		      >EOb</a
-		      > (m :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t exta)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-64" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L64" class="link"
-		    >Comments</a
-		    > <a href="#t:MONADK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:MONADK:EOb:3"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:EOb" title="Proarrow.Category.Enriched"
-			>EOb</a
-			> (m :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t exta) = (<a href="Proarrow-Core.html#t:Is" title="Proarrow.Core"
-			>Is</a
-			> ('<a href="Proarrow-Category-Enriched.html#v:MDK" title="Proarrow.Category.Enriched"
-			>MDK</a
-			> :: () -&gt; <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t exta) m, exta <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
-			>~</a
-			> a)</div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:MONADK:Arr:4"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-		      >Arr</a
-		      > (kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
-		      >CAT</a
-		      > k) (m :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t a) (n :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-		      >MONADK</a
-		      > t a)</span
-		    > <a href="src/Proarrow.Category.Enriched.html#line-60" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched.hs#L60" class="link"
-		    >Comments</a
-		    > <a href="#t:MONADK" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:MONADK:Arr:4"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Enriched.html"
-			>Proarrow.Category.Enriched</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Enriched.html#t:Arr" title="Proarrow.Category.Enriched"
-			>Arr</a
-			> (kk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
-			>CAT</a
-			> k) (m :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t a) (n :: <a href="Proarrow-Category-Enriched.html#t:MONADK" title="Proarrow.Category.Enriched"
-			>MONADK</a
-			> t a) = t</div
-		      ></details
-		    ></td
-		  ></tr
-		></table
-	      ></details
-	    ></div
 	  ></div
 	></div
       ></div

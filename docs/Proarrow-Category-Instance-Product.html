@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Category.Instance.Product.html"
@@ -51,7 +51,7 @@
 	  ><th
 	    >Language</th
 	    ><td
-	    >Haskell2010</td
+	    >GHC2024</td
 	    ></tr
 	  ></table
 	><p class="caption"
@@ -159,17 +159,49 @@
 	      ><td class="src"
 		><a id="v::-42--42-:" class="def"
 		  >(:**:)</a
-		  > :: <span class="keyword"
-		  >forall</span
-		  > {j1} {k1} {j2} {k2} (c :: j1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
-		  >+-&gt;</a
-		  > k1) (a1 :: k1) (b1 :: j1) (d :: j2 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
-		  >+-&gt;</a
-		  > k2) (a2 :: k2) (b2 :: j2). c a1 b1 -&gt; d a2 b2 -&gt; (c <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-		  >:**:</a
-		  > d) '(a1, a2) '(b1, b2)</td
+		  ></td
 		><td class="doc empty"
 		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			>:: <span class="keyword"
+			  >forall</span
+			  > {j1} {k1} {j2} {k2} (c :: j1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k1) (a1 :: k1) (b1 :: j1) (d :: j2 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k2) (a2 :: k2) (b2 :: j2). { <a id="v:fstK" class="def"
+			  >fstK</a
+			  > :: c a1 b1</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;, <a id="v:sndK" class="def"
+			  >sndK</a
+			  > :: d a2 b2</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;} -&gt; (c <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > d) '(a1, a2) '(b1, b2)</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
 		></tr
 	      ></table
 	    ></div
@@ -196,9 +228,9 @@
 		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-76" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-71" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L76" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L71" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -247,7 +279,89 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::MonoidalProfunctor:2"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::ThinProfunctor:2"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > q) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+		      >:**:</a
+		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-42" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L42" class="link"
+		    >Comments</a
+		    > <a href="#t::-42--42-:" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::-42--42-::ThinProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
+			>Proarrow.Category.Instance.Product</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (j1, j2)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b) =&gt; (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (j1, j2)) r. (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::MonoidalProfunctor:3"
 		      ></span
 		      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
 		      >MonoidalProfunctor</a
@@ -260,9 +374,9 @@
 		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-58" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-53" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L58" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L53" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -272,7 +386,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::-42--42-::MonoidalProfunctor:2"
+		  ><details id="i:id::-42--42-::MonoidalProfunctor:3"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -293,7 +407,7 @@
 			  >Unit</a
 			  > :: (j1, j2)) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L14" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L26" class="link"
 			  >Comments</a
 			  > <a href="#v:par0" class="selflink"
 			  >#</a
@@ -315,7 +429,7 @@
 			  >**</a
 			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L27" class="link"
 			  >Comments</a
 			  > <a href="#v:par" class="selflink"
 			  >#</a
@@ -327,7 +441,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Profunctor:3"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Profunctor:4"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
@@ -340,9 +454,9 @@
 		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-34" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-35" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L34" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L35" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -352,7 +466,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::-42--42-::Profunctor:3"
+		  ><details id="i:id::-42--42-::Profunctor:4"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -377,7 +491,7 @@
 			  >:**:</a
 			  > q) c d <a href="src/Proarrow.Core.html#dimap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
 			  >Comments</a
 			  > <a href="#v:dimap" class="selflink"
 			  >#</a
@@ -395,7 +509,7 @@
 			  >:**:</a
 			  > q) a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
 			  >Comments</a
 			  > <a href="#v:-92--92-" class="selflink"
 			  >#</a
@@ -407,149 +521,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Codiscrete:4"
-		      ></span
-		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:Codiscrete" title="Proarrow.Preorder.ThinCategory"
-		      >Codiscrete</a
-		      > p, <a href="Proarrow-Preorder-ThinCategory.html#t:Codiscrete" title="Proarrow.Preorder.ThinCategory"
-		      >Codiscrete</a
-		      > q) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:Codiscrete" title="Proarrow.Preorder.ThinCategory"
-		      >Codiscrete</a
-		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-		      >:**:</a
-		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-46" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L46" class="link"
-		    >Comments</a
-		    > <a href="#t::-42--42-:" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id::-42--42-::Codiscrete:4"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
-			>Proarrow.Category.Instance.Product</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:anyArr"
-			  >anyArr</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: (k1, k2)) (b :: (j1, j2)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-			  >Ob</a
-			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-			  >Ob</a
-			  > b) =&gt; (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-			  >:**:</a
-			  > q) a b <a href="src/Proarrow.Preorder.ThinCategory.html#anyArr" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L23" class="link"
-			  >Comments</a
-			  > <a href="#v:anyArr" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::ThinProfunctor:5"
-		      ></span
-		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
-		      >ThinProfunctor</a
-		      > p, <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
-		      >ThinProfunctor</a
-		      > q) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Preorder.ThinCategory"
-		      >ThinProfunctor</a
-		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-		      >:**:</a
-		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-41" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L41" class="link"
-		    >Comments</a
-		    > <a href="#t::-42--42-:" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id::-42--42-::ThinProfunctor:5"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
-			>Proarrow.Category.Instance.Product</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:arr"
-			  >arr</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: (k1, k2)) (b :: (j1, j2)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-			  >Ob</a
-			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-			  >Ob</a
-			  > b, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
-			  >HasArrow</a
-			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-			  >:**:</a
-			  > q) a b) =&gt; (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-			  >:**:</a
-			  > q) a b <a href="src/Proarrow.Preorder.ThinCategory.html#arr" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L13" class="link"
-			  >Comments</a
-			  > <a href="#v:arr" class="selflink"
-			  >#</a
-			  ></p
-			><p class="src"
-			><a href="#v:withArr"
-			  >withArr</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: (k1, k2)) (b :: (j1, j2)) r. (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-			  >:**:</a
-			  > q) a b -&gt; (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
-			  >HasArrow</a
-			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-			  >:**:</a
-			  > q) a b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withArr" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L14" class="link"
-			  >Comments</a
-			  > <a href="#v:withArr" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Representable:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Representable:5"
 		      ></span
 		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 		      >Representable</a
@@ -562,9 +534,9 @@
 		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-52" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-47" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L52" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L47" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -574,7 +546,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::-42--42-::Representable:6"
+		  ><details id="i:id::-42--42-::Representable:5"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -599,7 +571,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:index" class="selflink"
 			  >#</a
@@ -621,7 +593,7 @@
 			  >:**:</a
 			  > q) a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L17" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L19" class="link"
 			  >Comments</a
 			  > <a href="#v:tabulate" class="selflink"
 			  >#</a
@@ -645,7 +617,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L20" class="link"
 			  >Comments</a
 			  > <a href="#v:repMap" class="selflink"
 			  >#</a
@@ -657,22 +629,22 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::DaggerProfunctor:7"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::DaggerProfunctor:6"
 		      ></span
-		      > (<a href="Proarrow-Category-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Dagger"
+		      > (<a href="Proarrow-Category-Enriched-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Enriched.Dagger"
 		      >DaggerProfunctor</a
-		      > p, <a href="Proarrow-Category-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Dagger"
+		      > p, <a href="Proarrow-Category-Enriched-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Enriched.Dagger"
 		      >DaggerProfunctor</a
-		      > q) =&gt; <a href="Proarrow-Category-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Dagger"
+		      > q) =&gt; <a href="Proarrow-Category-Enriched-Dagger.html#t:DaggerProfunctor" title="Proarrow.Category.Enriched.Dagger"
 		      >DaggerProfunctor</a
 		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
 		      >:**:</a
 		      > q :: (j1, j2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-38" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-39" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L38" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L39" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -682,7 +654,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::-42--42-::DaggerProfunctor:7"
+		  ><details id="i:id::-42--42-::DaggerProfunctor:6"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -701,9 +673,9 @@
 			  >:**:</a
 			  > q) a b -&gt; (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
 			  >:**:</a
-			  > q) b a <a href="src/Proarrow.Category.Dagger.html#dagger" class="link"
+			  > q) b a <a href="src/Proarrow.Category.Enriched.Dagger.html#dagger" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Dagger.hs#L6" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/Dagger.hs#L6" class="link"
 			  >Comments</a
 			  > <a href="#v:dagger" class="selflink"
 			  >#</a
@@ -715,7 +687,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Promonad:8"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Promonad:7"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
@@ -728,9 +700,9 @@
 		      > q :: (j1, j2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-30" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-31" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L30" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L31" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -746,7 +718,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::-42--42-::Promonad:8"
+		  ><details id="i:id::-42--42-::Promonad:7"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -767,7 +739,7 @@
 			  >:**:</a
 			  > q) a a <a href="src/Proarrow.Core.html#id" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L56" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L146" class="link"
 			  >Comments</a
 			  > <a href="#v:id" class="selflink"
 			  >#</a
@@ -785,7 +757,7 @@
 			  >:**:</a
 			  > q) a c <a href="src/Proarrow.Core.html#." class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L57" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L148" class="link"
 			  >Comments</a
 			  > <a href="#v:." class="selflink"
 			  >#</a
@@ -797,65 +769,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::Discrete:9"
-		      ></span
-		      > (<a href="Proarrow-Preorder-ThinCategory.html#t:Discrete" title="Proarrow.Preorder.ThinCategory"
-		      >Discrete</a
-		      > p, <a href="Proarrow-Preorder-ThinCategory.html#t:Discrete" title="Proarrow.Preorder.ThinCategory"
-		      >Discrete</a
-		      > q) =&gt; <a href="Proarrow-Preorder-ThinCategory.html#t:Discrete" title="Proarrow.Preorder.ThinCategory"
-		      >Discrete</a
-		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-		      >:**:</a
-		      > q :: (j1, j2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-49" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L49" class="link"
-		    >Comments</a
-		    > <a href="#t::-42--42-:" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id::-42--42-::Discrete:9"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
-			>Proarrow.Category.Instance.Product</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:withEq"
-			  >withEq</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (a :: (j1, j2)) (b :: (j1, j2)) r. (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
-			  >:**:</a
-			  > q) a b -&gt; (a <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
-			  >~</a
-			  > b =&gt; r) -&gt; r <a href="src/Proarrow.Preorder.ThinCategory.html#withEq" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Preorder/ThinCategory.hs#L28" class="link"
-			  >Comments</a
-			  > <a href="#v:withEq" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::-37-:10"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::-37-:8"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -866,9 +780,9 @@
 		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		      >%</a
 		      > ('(a, b) :: (j1, j2))</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-53" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-48" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L53" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L48" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -878,7 +792,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::-42--42-::-37-:10"
+		  ><details id="i:id::-42--42-::-37-:8"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -905,20 +819,20 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::HasArrow:11"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-42--42-::HasArrow:9"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
-		      > <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
 		      >HasArrow</a
 		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
 		      >:**:</a
 		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) ('(a1, a2) :: (k1, k2)) ('(b1, b2) :: (j1, j2))</span
-		    > <a href="src/Proarrow.Category.Instance.Product.html#line-42" class="link"
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-43" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L42" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L43" class="link"
 		    >Comments</a
 		    > <a href="#t::-42--42-:" class="selflink"
 		    >#</a
@@ -928,7 +842,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::-42--42-::HasArrow:11"
+		  ><details id="i:id::-42--42-::HasArrow:9"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -938,15 +852,15 @@
 		      > <div class="src"
 		      ><span class="keyword"
 			>type</span
-			> <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			> <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
 			>HasArrow</a
 			> (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
 			>:**:</a
 			> q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			>Type</a
-			>) ('(a1, a2) :: (k1, k2)) ('(b1, b2) :: (j1, j2)) = (<a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			>) ('(a1, a2) :: (k1, k2)) ('(b1, b2) :: (j1, j2)) = (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
 			>HasArrow</a
-			> p a1 b1, <a href="Proarrow-Preorder-ThinCategory.html#t:HasArrow" title="Proarrow.Preorder.ThinCategory"
+			> p a1 b1, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
 			>HasArrow</a
 			> q a2 b2)</div
 		      ></details
@@ -972,9 +886,9 @@
 		  > k) =&gt; <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
 		  >Monoidal</a
 		  > (j, k)</span
-		> <a href="src/Proarrow.Category.Instance.Product.html#line-62" class="link"
+		> <a href="src/Proarrow.Category.Instance.Product.html#line-57" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L62" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L57" class="link"
 		>Comments</a
 		> <a href="#v:-36-fMonoidalTuple2" class="selflink"
 		>#</a
@@ -1049,7 +963,7 @@
 		      >**</a
 		      > b) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.html#withOb2" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L21" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L33" class="link"
 		      >Comments</a
 		      > <a href="#v:withOb2" class="selflink"
 		      >#</a
@@ -1069,7 +983,7 @@
 		      >~&gt;</a
 		      > a <a href="src/Proarrow.Category.Monoidal.html#leftUnitor" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L22" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L34" class="link"
 		      >Comments</a
 		      > <a href="#v:leftUnitor" class="selflink"
 		      >#</a
@@ -1089,7 +1003,7 @@
 		      >**</a
 		      > a) <a href="src/Proarrow.Category.Monoidal.html#leftUnitorInv" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L23" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L35" class="link"
 		      >Comments</a
 		      > <a href="#v:leftUnitorInv" class="selflink"
 		      >#</a
@@ -1109,7 +1023,7 @@
 		      >~&gt;</a
 		      > a <a href="src/Proarrow.Category.Monoidal.html#rightUnitor" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L24" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L36" class="link"
 		      >Comments</a
 		      > <a href="#v:rightUnitor" class="selflink"
 		      >#</a
@@ -1129,7 +1043,7 @@
 		      >Unit</a
 		      > :: (j, k))) <a href="src/Proarrow.Category.Monoidal.html#rightUnitorInv" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L25" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L37" class="link"
 		      >Comments</a
 		      > <a href="#v:rightUnitorInv" class="selflink"
 		      >#</a
@@ -1157,7 +1071,7 @@
 		      >**</a
 		      > c)) <a href="src/Proarrow.Category.Monoidal.html#associator" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L26" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L38" class="link"
 		      >Comments</a
 		      > <a href="#v:associator" class="selflink"
 		      >#</a
@@ -1185,7 +1099,7 @@
 		      >**</a
 		      > c) <a href="src/Proarrow.Category.Monoidal.html#associatorInv" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L27" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L39" class="link"
 		      >Comments</a
 		      > <a href="#v:associatorInv" class="selflink"
 		      >#</a
@@ -1206,9 +1120,9 @@
 		  > k) =&gt; <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
 		  >SymMonoidal</a
 		  > (j, k)</span
-		> <a href="src/Proarrow.Category.Instance.Product.html#line-73" class="link"
+		> <a href="src/Proarrow.Category.Instance.Product.html#line-68" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L73" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L68" class="link"
 		>Comments</a
 		> <a href="#v:-36-fSymMonoidalTuple2" class="selflink"
 		>#</a
@@ -1243,7 +1157,7 @@
 		      >**</a
 		      > a) <a href="src/Proarrow.Category.Monoidal.html#swap" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L66" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L84" class="link"
 		      >Comments</a
 		      > <a href="#v:swap" class="selflink"
 		      >#</a
@@ -1264,15 +1178,17 @@
 		  > k2) =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 		  >CategoryOf</a
 		  > (k1, k2)</span
-		> <a href="src/Proarrow.Category.Instance.Product.html#line-25" class="link"
+		> <a href="src/Proarrow.Category.Instance.Product.html#line-26" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L25" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L26" class="link"
 		>Comments</a
 		> <a href="#v:-36-fCategoryOfTuple2" class="selflink"
 		>#</a
 		></td
-	      ><td class="doc empty"
-	      >&nbsp;</td
+	      ><td class="doc"
+	      ><p
+		>The product of two categories.</p
+		></td
 	      ></tr
 	    ><tr
 	    ><td colspan="2"
@@ -1344,9 +1260,9 @@
 		  > m k) =&gt; <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
 		  >MonoidalAction</a
 		  > (n, m) (j, k)</span
-		> <a href="src/Proarrow.Category.Instance.Product.html#line-78" class="link"
+		> <a href="src/Proarrow.Category.Instance.Product.html#line-73" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L78" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Instance/Product.hs#L73" class="link"
 		>Comments</a
 		> <a href="#v:-36-fMonoidalActionTuple2Tuple2" class="selflink"
 		>#</a

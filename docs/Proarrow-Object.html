@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Object.html"
@@ -51,11 +51,109 @@
 	  ><th
 	    >Language</th
 	    ><td
-	    >Haskell2010</td
+	    >GHC2024</td
 	    ></tr
 	  ></table
 	><p class="caption"
 	>Proarrow.Object</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Obj"
+	      >Obj</a
+	      > (a :: k) = a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >pattern</span
+	      > <a href="#v:Obj"
+	      >Obj</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: k). <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	      >CategoryOf</a
+	      > k =&gt; <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a =&gt; <a href="Proarrow-Object.html#t:Obj" title="Proarrow.Object"
+	      >Obj</a
+	      > a</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >pattern</span
+	      > <a href="#v:Objs"
+	      >Objs</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: k) (b :: k). <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	      >CategoryOf</a
+	      > k =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b</li
+	    ><li class="src short"
+	    ><a href="#v:obj"
+	      >obj</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k). (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	      >CategoryOf</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a) =&gt; <a href="Proarrow-Object.html#t:Obj" title="Proarrow.Object"
+	      >Obj</a
+	      > a</li
+	    ><li class="src short"
+	    ><a href="#v:src"
+	      >src</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {j} {k} (a :: k) (b :: j) p. <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > p =&gt; p a b -&gt; <a href="Proarrow-Object.html#t:Obj" title="Proarrow.Object"
+	      >Obj</a
+	      > a</li
+	    ><li class="src short"
+	    ><a href="#v:tgt"
+	      >tgt</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k1} {k2} (a :: k2) (b :: k1) p. <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > p =&gt; p a b -&gt; <a href="Proarrow-Object.html#t:Obj" title="Proarrow.Object"
+	      >Obj</a
+	      > b</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	      >CategoryOf</a
+	      > k) =&gt; <a href="#t:Ob-39-"
+	      >Ob'</a
+	      > (a :: k)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:VacuusOb"
+	      >VacuusOb</a
+	      > k = <span class="keyword"
+	      >forall</span
+	      > (a :: k). <a href="Proarrow-Object.html#t:Ob-39-" title="Proarrow.Object"
+	      >Ob'</a
+	      > a</li
+	    ></ul
+	  ></details
 	></div
       ><div id="interface"
       ><h1
@@ -70,11 +168,17 @@
 	    >~&gt;</a
 	    > a <a href="src/Proarrow.Core.html#Obj" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L62" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L159" class="link"
 	    >Comments</a
 	    > <a href="#t:Obj" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Type of identity morphism for object <code class="inline-code"
+	      >a</code
+	      >.</p
+	    ></div
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -136,11 +240,23 @@
 	    >Obj</a
 	    > a <a href="src/Proarrow.Core.html#obj" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L65" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L165" class="link"
 	    >Comments</a
 	    > <a href="#v:obj" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The identity morphism for a given object.
+ Compared to <code class="inline-code"
+	      >id</code
+	      > this makes the kind argument implicit,
+ allowing to write <code class="inline-code"
+	      >obj @a</code
+	      > instead of <code class="inline-code"
+	      >id @k @a</code
+	      >.</p
+	    ></div
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -148,17 +264,21 @@
 	    >src</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k1} {k2} (a :: k2) (b :: k1) p. <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {j} {k} (a :: k) (b :: j) p. <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > p =&gt; p a b -&gt; <a href="Proarrow-Object.html#t:Obj" title="Proarrow.Object"
 	    >Obj</a
 	    > a <a href="src/Proarrow.Core.html#src" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L68" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L169" class="link"
 	    >Comments</a
 	    > <a href="#v:src" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Extract source identity morphism from a profunctor heteromorphism.</p
+	    ></div
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -172,11 +292,15 @@
 	    >Obj</a
 	    > b <a href="src/Proarrow.Core.html#tgt" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L71" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object.hs#L173" class="link"
 	    >Comments</a
 	    > <a href="#v:tgt" class="selflink"
 	    >#</a
 	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Extract target identity morphism from a profunctor heteromorphism.</p
+	    ></div
 	  ></div
 	><div class="top"
 	><p class="src"

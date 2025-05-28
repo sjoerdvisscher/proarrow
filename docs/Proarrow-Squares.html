@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Squares.html"
@@ -51,7 +51,7 @@
 	  ><th
 	    >Language</th
 	    ><td
-	    >Haskell2010</td
+	    >GHC2024</td
 	    ></tr
 	  ></table
 	><p class="caption"
@@ -139,11 +139,11 @@
 	      >hId</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > {k1} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	      >CAT</a
-	      > k1) (vk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
-	      >CAT</a
-	      > k1) (j :: k1) (k2 :: k1) (p :: hk k2 j). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	      > k1} {j :: k1} {k2 :: k1} (p :: hk k2 j). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
 	      >HasCompanions</a
 	      > hk vk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
 	      >Ob0</a
@@ -934,6 +934,246 @@
 	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
 	      >Path</a
 	      > vk j j)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Optic"
+	      >Optic</a
+	      > (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > k) (a :: vk z j) (b :: vk z k1) (s :: vk x j) (t :: vk x k1) = <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	      >Sq</a
+	      > '(<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk t '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk s '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk j j)), '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk j j) '(<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk b '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk a '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	      >:::</a
+	      > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > hk j j)), '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	      >Nil</a
+	      > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	      >Path</a
+	      > vk k1 k1)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:ProfOptic"
+	      >ProfOptic</a
+	      > (a :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > j) (b :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (s :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > j) (t :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) = <a href="Proarrow-Squares.html#t:Optic" title="Proarrow.Squares"
+	      >Optic</a
+	      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
+	      >PROFK</a
+	      > (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	      >FUN</a
+	      > a) (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	      >FUN</a
+	      > b) (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	      >FUN</a
+	      > s) (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	      >FUN</a
+	      > t)</li
+	    ><li class="src short"
+	    ><a href="#v:mkProfOptic"
+	      >mkProfOptic</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {x} {j} {k} {z} (s :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > j) (t :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > j) (b :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > s, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > a, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > b) =&gt; ((s <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+	      >RepCostar</a
+	      > t) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	      >:~&gt;</a
+	      > (a <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      >:.:</a
+	      > <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+	      >RepCostar</a
+	      > b)) -&gt; <a href="Proarrow-Squares.html#t:ProfOptic" title="Proarrow.Squares"
+	      >ProfOptic</a
+	      > a b s t</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:HaskOptic"
+	      >HaskOptic</a
+	      > (a :: z -&gt; j) (b :: z -&gt; k) (s :: x -&gt; j) (t :: x -&gt; k) = <a href="Proarrow-Squares.html#t:ProfOptic" title="Proarrow.Squares"
+	      >ProfOptic</a
+	      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > a) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > b) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > s) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	      >Star</a
+	      > t)</li
+	    ><li class="src short"
+	    ><a href="#v:mkHaskOptic"
+	      >mkHaskOptic</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {z} {j} {k} {x} (a :: z -&gt; j) (b :: z -&gt; k) (s :: x -&gt; j) (t :: x -&gt; k). (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	      >Functor</a
+	      > a, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	      >Functor</a
+	      > b, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	      >Functor</a
+	      > s, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	      >Functor</a
+	      > t) =&gt; (<span class="keyword"
+	      >forall</span
+	      > (x1 :: x) r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > x1 =&gt; (<span class="keyword"
+	      >forall</span
+	      > (y :: z). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > y =&gt; (s x1 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > a y) -&gt; (b y <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > t x1) -&gt; r) -&gt; r) -&gt; <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	      >HaskOptic</a
+	      > a b s t</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Lens"
+	      >Lens</a
+	      > s t a b = <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	      >HaskOptic</a
+	      > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	      >(,)</a
+	      > a) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	      >(,)</a
+	      > b) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	      >(,)</a
+	      > s) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	      >(,)</a
+	      > t)</li
+	    ><li class="src short"
+	    ><a href="#v:mkLens"
+	      >mkLens</a
+	      > :: (s -&gt; a) -&gt; (s -&gt; b -&gt; t) -&gt; <a href="Proarrow-Squares.html#t:Lens" title="Proarrow.Squares"
+	      >Lens</a
+	      > s t a b</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Prism"
+	      >Prism</a
+	      > s t a b = <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	      >HaskOptic</a
+	      > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	      >Either</a
+	      > a) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	      >Either</a
+	      > b) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	      >Either</a
+	      > s) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	      >Either</a
+	      > t)</li
+	    ><li class="src short"
+	    ><a href="#v:mkPrism"
+	      >mkPrism</a
+	      > :: (s -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	      >Either</a
+	      > a t) -&gt; (b -&gt; t) -&gt; <a href="Proarrow-Squares.html#t:Prism" title="Proarrow.Squares"
+	      >Prism</a
+	      > s t a b</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:FlipApp"
+	      >FlipApp</a
+	      > (a :: k) (f :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) = <a href="#v:FlipApp"
+	      >FlipApp</a
+	      > {<ul class="subs"
+	      ><li
+		><a href="#v:unFlipApp"
+		  >unFlipApp</a
+		  > :: f a</li
+		></ul
+	      >}</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >type</span
+	      > <a href="#t:Traversal"
+	      >Traversal</a
+	      > (s :: k) (t :: k) (a :: k1) (b :: k1) = <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	      >HaskOptic</a
+	      > (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	      >FlipApp</a
+	      > a) (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	      >FlipApp</a
+	      > b) (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	      >FlipApp</a
+	      > s) (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	      >FlipApp</a
+	      > t)</li
+	    ><li class="src short"
+	    ><a href="#v:mkTraversal"
+	      >mkTraversal</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (f :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) a b. (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Traversable.html#t:Traversable" title="Data.Traversable"
+	      >Traversable</a
+	      > f, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	      >Functor</a
+	      > f) =&gt; <a href="Proarrow-Squares.html#t:Traversal" title="Proarrow.Squares"
+	      >Traversal</a
+	      > (f a) (f b) a b</li
 	    ></ul
 	  ></details
 	></div
@@ -974,7 +1214,7 @@
 	    >Path</a
 	    > vk k2 k2) <a href="src/Proarrow.Squares.html#object" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L35" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L43" class="link"
 	    >Comments</a
 	    > <a href="#v:object" class="selflink"
 	    >#</a
@@ -1032,7 +1272,7 @@ K-----K</pre
 	    >Path</a
 	    > vk j j) <a href="src/Proarrow.Squares.html#hArr" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L49" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L57" class="link"
 	    >Comments</a
 	    > <a href="#v:hArr" class="selflink"
 	    >#</a
@@ -1054,11 +1294,11 @@ J-----J</pre
 	    >hId</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k1} (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    > {k1} {hk :: k1 -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
-	    > k1) (vk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
-	    >CAT</a
-	    > k1) (j :: k1) (k2 :: k1) (p :: hk k2 j). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
+	    > k1} {j :: k1} {k2 :: k1} (p :: hk k2 j). (<a href="Proarrow-Category-Equipment.html#t:HasCompanions" title="Proarrow.Category.Equipment"
 	    >HasCompanions</a
 	    > hk vk, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
 	    >Ob0</a
@@ -1090,7 +1330,7 @@ J-----J</pre
 	    >Path</a
 	    > vk k2 k2) <a href="src/Proarrow.Squares.html#hId" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L60" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L70" class="link"
 	    >Comments</a
 	    > <a href="#v:hId" class="selflink"
 	    >#</a
@@ -1152,7 +1392,7 @@ K-----K</pre
 	    >Path</a
 	    > vk j j) <a href="src/Proarrow.Squares.html#compId" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L75" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L85" class="link"
 	    >Comments</a
 	    > <a href="#v:compId" class="selflink"
 	    >#</a
@@ -1218,7 +1458,7 @@ J-----J</pre
 	    >Path</a
 	    > vk k2 k2) <a href="src/Proarrow.Squares.html#conjId" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L90" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L100" class="link"
 	    >Comments</a
 	    > <a href="#v:conjId" class="selflink"
 	    >#</a
@@ -1280,7 +1520,7 @@ K-----K</pre
 	    >Path</a
 	    > vk k2 k2)) <a href="src/Proarrow.Squares.html#vArr" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L104" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L114" class="link"
 	    >Comments</a
 	    > <a href="#v:vArr" class="selflink"
 	    >#</a
@@ -1338,7 +1578,7 @@ J--g--K</pre
 	    >Path</a
 	    > vk k2 k2)) <a href="src/Proarrow.Squares.html#vId" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L117" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L127" class="link"
 	    >Comments</a
 	    > <a href="#v:vId" class="selflink"
 	    >#</a
@@ -1396,7 +1636,7 @@ J--f--K</pre
 	    >Path</a
 	    > vk k2 k2)) <a href="src/Proarrow.Squares.html#vId%27" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L124" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L134" class="link"
 	    >Comments</a
 	    > <a href="#v:vId-39-" class="selflink"
 	    >#</a
@@ -1444,7 +1684,7 @@ J--f--K</pre
 	    ></span
 	    > <a href="src/Proarrow.Squares.html#%7C%7C%7C" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L139" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L149" class="link"
 	    >Comments</a
 	    > <a href="#v:-124--124--124-" class="selflink"
 	    >#</a
@@ -1502,7 +1742,7 @@ M--e--J     J--g--K     M-e+g-K</pre
 	    ></span
 	    > <a href="src/Proarrow.Squares.html#%3D%3D%3D" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L168" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L178" class="link"
 	    >Comments</a
 	    > <a href="#v:-61--61--61-" class="selflink"
 	    >#</a
@@ -1572,7 +1812,7 @@ p+r-@-q+s
 	    >Path</a
 	    > vk j j) <a href="src/Proarrow.Squares.html#toRight" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L181" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L191" class="link"
 	    >Comments</a
 	    > <a href="#v:toRight" class="selflink"
 	    >#</a
@@ -1632,7 +1872,7 @@ J-----J</pre
 	    >Path</a
 	    > vk k2 k2) <a href="src/Proarrow.Squares.html#toLeft" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L194" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L204" class="link"
 	    >Comments</a
 	    > <a href="#v:toLeft" class="selflink"
 	    >#</a
@@ -1688,7 +1928,7 @@ K-----K</pre
 	    >Path</a
 	    > vk k2 k2)) <a href="src/Proarrow.Squares.html#fromLeft" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L207" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L217" class="link"
 	    >Comments</a
 	    > <a href="#v:fromLeft" class="selflink"
 	    >#</a
@@ -1748,7 +1988,7 @@ J--f--K</pre
 	    >Path</a
 	    > vk k2 k2)) <a href="src/Proarrow.Squares.html#fromRight" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L220" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L230" class="link"
 	    >Comments</a
 	    > <a href="#v:fromRight" class="selflink"
 	    >#</a
@@ -1802,7 +2042,7 @@ J--f--K</pre
 	    >Path</a
 	    > vk k2 k2) <a href="src/Proarrow.Squares.html#vUnitor" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L231" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L241" class="link"
 	    >Comments</a
 	    > <a href="#v:vUnitor" class="selflink"
 	    >#</a
@@ -1846,7 +2086,7 @@ J--f--K</pre
 	    >Path</a
 	    > vk k k)) <a href="src/Proarrow.Squares.html#vUnitorInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L242" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L252" class="link"
 	    >Comments</a
 	    > <a href="#v:vUnitorInv" class="selflink"
 	    >#</a
@@ -1902,7 +2142,7 @@ J--f--K</pre
 	    >Path</a
 	    > vk k2 k2)) <a href="src/Proarrow.Squares.html#vCombine" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L253" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L263" class="link"
 	    >Comments</a
 	    > <a href="#v:vCombine" class="selflink"
 	    >#</a
@@ -1958,7 +2198,7 @@ J--f--K</pre
 	    >Path</a
 	    > vk k2 k2))) <a href="src/Proarrow.Squares.html#vSplit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L264" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L274" class="link"
 	    >Comments</a
 	    > <a href="#v:vSplit" class="selflink"
 	    >#</a
@@ -2004,7 +2244,7 @@ J--f--K</pre
 	    >Path</a
 	    > vk k2 k2)) <a href="src/Proarrow.Squares.html#vCombineAll" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L277" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L287" class="link"
 	    >Comments</a
 	    > <a href="#v:vCombineAll" class="selflink"
 	    >#</a
@@ -2060,7 +2300,7 @@ J--f--K</pre
 	    >Path</a
 	    > hk k2 k2, ps) <a href="src/Proarrow.Squares.html#vSplitAll" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L292" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L302" class="link"
 	    >Comments</a
 	    > <a href="#v:vSplitAll" class="selflink"
 	    >#</a
@@ -2116,7 +2356,7 @@ J-p..-K</pre
 	    >Path</a
 	    > vk j j) <a href="src/Proarrow.Squares.html#hCombineAll" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L307" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L317" class="link"
 	    >Comments</a
 	    > <a href="#v:hCombineAll" class="selflink"
 	    >#</a
@@ -2172,7 +2412,7 @@ J-----J</pre
 	    >Path</a
 	    > vk j j) <a href="src/Proarrow.Squares.html#hSplitAll" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L320" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L330" class="link"
 	    >Comments</a
 	    > <a href="#v:hSplitAll" class="selflink"
 	    >#</a
@@ -2187,6 +2427,452 @@ f--@--:
 |  \--:
 J-----J</pre
 	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:Optic" class="def"
+	    >Optic</a
+	    > (hk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) (a :: vk z j) (b :: vk z k1) (s :: vk x j) (t :: vk x k1) = <a href="Proarrow-Category-Equipment.html#t:Sq" title="Proarrow.Category.Equipment"
+	    >Sq</a
+	    > '(<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	    >Conjoint</a
+	    > hk t '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk s '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk j j)), '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk j j) '(<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	    >Conjoint</a
+	    > hk b '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk a '<a href="Proarrow-Category-Bicategory-Strictified.html#t::::" title="Proarrow.Category.Bicategory.Strictified"
+	    >:::</a
+	    > ('<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > hk j j)), '<a href="Proarrow-Category-Bicategory-Strictified.html#t:Nil" title="Proarrow.Category.Bicategory.Strictified"
+	    >Nil</a
+	    > :: <a href="Proarrow-Category-Bicategory-Strictified.html#t:Path" title="Proarrow.Category.Bicategory.Strictified"
+	    >Path</a
+	    > vk k1 k1) <a href="src/Proarrow.Squares.html#Optic" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L339" class="link"
+	    >Comments</a
+	    > <a href="#t:Optic" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Optics in proarrow equipments.</p
+	    ><pre
+	    >J-------J
+s&gt;--@--&gt;a
+|   @   |
+t&lt;--@--&lt;b
+K-------K</pre
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:ProfOptic" class="def"
+	    >ProfOptic</a
+	    > (a :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j) (b :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (s :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j) (t :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) = <a href="Proarrow-Squares.html#t:Optic" title="Proarrow.Squares"
+	    >Optic</a
+	    > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
+	    >PROFK</a
+	    > (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	    >FUN</a
+	    > a) (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	    >FUN</a
+	    > b) (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	    >FUN</a
+	    > s) (<a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
+	    >FUN</a
+	    > t) <a href="src/Proarrow.Squares.html#ProfOptic" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L374" class="link"
+	    >Comments</a
+	    > <a href="#t:ProfOptic" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mkProfOptic" class="def"
+	    >mkProfOptic</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {x} {j} {k} {z} (s :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j) (t :: x <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j) (b :: z <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > s, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > a, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > b) =&gt; ((s <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+	    >RepCostar</a
+	    > t) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    >:~&gt;</a
+	    > (a <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+	    >RepCostar</a
+	    > b)) -&gt; <a href="Proarrow-Squares.html#t:ProfOptic" title="Proarrow.Squares"
+	    >ProfOptic</a
+	    > a b s t <a href="src/Proarrow.Squares.html#mkProfOptic" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L378" class="link"
+	    >Comments</a
+	    > <a href="#v:mkProfOptic" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:HaskOptic" class="def"
+	    >HaskOptic</a
+	    > (a :: z -&gt; j) (b :: z -&gt; k) (s :: x -&gt; j) (t :: x -&gt; k) = <a href="Proarrow-Squares.html#t:ProfOptic" title="Proarrow.Squares"
+	    >ProfOptic</a
+	    > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > a) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > b) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > s) (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+	    >Star</a
+	    > t) <a href="src/Proarrow.Squares.html#HaskOptic" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L380" class="link"
+	    >Comments</a
+	    > <a href="#t:HaskOptic" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mkHaskOptic" class="def"
+	    >mkHaskOptic</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {z} {j} {k} {x} (a :: z -&gt; j) (b :: z -&gt; k) (s :: x -&gt; j) (t :: x -&gt; k). (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > a, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > b, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > s, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > t) =&gt; (<span class="keyword"
+	    >forall</span
+	    > (x1 :: x) r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > x1 =&gt; (<span class="keyword"
+	    >forall</span
+	    > (y :: z). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > y =&gt; (s x1 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > a y) -&gt; (b y <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > t x1) -&gt; r) -&gt; r) -&gt; <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	    >HaskOptic</a
+	    > a b s t <a href="src/Proarrow.Squares.html#mkHaskOptic" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L384" class="link"
+	    >Comments</a
+	    > <a href="#v:mkHaskOptic" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:Lens" class="def"
+	    >Lens</a
+	    > s t a b = <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	    >HaskOptic</a
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	    >(,)</a
+	    > a) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	    >(,)</a
+	    > b) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	    >(,)</a
+	    > s) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/ghc-prim-0.13.0-983d/GHC-Tuple.html#t:Tuple2" title="GHC.Tuple"
+	    >(,)</a
+	    > t) <a href="src/Proarrow.Squares.html#Lens" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L386" class="link"
+	    >Comments</a
+	    > <a href="#t:Lens" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mkLens" class="def"
+	    >mkLens</a
+	    > :: (s -&gt; a) -&gt; (s -&gt; b -&gt; t) -&gt; <a href="Proarrow-Squares.html#t:Lens" title="Proarrow.Squares"
+	    >Lens</a
+	    > s t a b <a href="src/Proarrow.Squares.html#mkLens" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L388" class="link"
+	    >Comments</a
+	    > <a href="#v:mkLens" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:Prism" class="def"
+	    >Prism</a
+	    > s t a b = <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	    >HaskOptic</a
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	    >Either</a
+	    > a) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	    >Either</a
+	    > b) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	    >Either</a
+	    > s) (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	    >Either</a
+	    > t) <a href="src/Proarrow.Squares.html#Prism" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L390" class="link"
+	    >Comments</a
+	    > <a href="#t:Prism" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mkPrism" class="def"
+	    >mkPrism</a
+	    > :: (s -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Either.html#t:Either" title="Data.Either"
+	    >Either</a
+	    > a t) -&gt; (b -&gt; t) -&gt; <a href="Proarrow-Squares.html#t:Prism" title="Proarrow.Squares"
+	    >Prism</a
+	    > s t a b <a href="src/Proarrow.Squares.html#mkPrism" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L392" class="link"
+	    >Comments</a
+	    > <a href="#v:mkPrism" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:FlipApp" class="def"
+	    >FlipApp</a
+	    > (a :: k) (f :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) <a href="src/Proarrow.Squares.html#FlipApp" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L394" class="link"
+	    >Comments</a
+	    > <a href="#t:FlipApp" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:FlipApp" class="def"
+		  >FlipApp</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			><a id="v:unFlipApp" class="def"
+			  >unFlipApp</a
+			  > :: f a</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FlipApp"
+	    >Instances</h4
+	    ><details id="i:FlipApp" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FlipApp:Functor:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a =&gt; <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+		      >FlipApp</a
+		      > a :: (k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Squares.html#line-395" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L395" class="link"
+		    >Comments</a
+		    > <a href="#t:FlipApp" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FlipApp:Functor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Squares.html"
+			>Proarrow.Squares</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:map"
+			  >map</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a0 :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) (b :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >). (a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+			  >FlipApp</a
+			  > a a0 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+			  >FlipApp</a
+			  > a b <a href="src/Proarrow.Functor.html#map" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Functor.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:map" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >type</span
+	    > <a id="t:Traversal" class="def"
+	    >Traversal</a
+	    > (s :: k) (t :: k) (a :: k1) (b :: k1) = <a href="Proarrow-Squares.html#t:HaskOptic" title="Proarrow.Squares"
+	    >HaskOptic</a
+	    > (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	    >FlipApp</a
+	    > a) (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	    >FlipApp</a
+	    > b) (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	    >FlipApp</a
+	    > s) (<a href="Proarrow-Squares.html#t:FlipApp" title="Proarrow.Squares"
+	    >FlipApp</a
+	    > t) <a href="src/Proarrow.Squares.html#Traversal" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L397" class="link"
+	    >Comments</a
+	    > <a href="#t:Traversal" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mkTraversal" class="def"
+	    >mkTraversal</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > (f :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    > -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) a b. (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Traversable.html#t:Traversable" title="Data.Traversable"
+	    >Traversable</a
+	    > f, <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    >Functor</a
+	    > f) =&gt; <a href="Proarrow-Squares.html#t:Traversal" title="Proarrow.Squares"
+	    >Traversal</a
+	    > (f a) (f b) a b <a href="src/Proarrow.Squares.html#mkTraversal" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Squares.hs#L399" class="link"
+	    >Comments</a
+	    > <a href="#v:mkTraversal" class="selflink"
+	    >#</a
+	    ></p
 	  ></div
 	></div
       ></div

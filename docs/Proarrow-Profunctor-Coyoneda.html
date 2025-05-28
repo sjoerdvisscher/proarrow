@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Profunctor.Coyoneda.html"
@@ -51,7 +51,7 @@
 	  ><th
 	    >Language</th
 	    ><td
-	    >Haskell2010</td
+	    >GHC2024</td
 	    ></tr
 	  ></table
 	><p class="caption"
@@ -78,13 +78,13 @@
 	    >data</span
 	    > <a id="t:Coyoneda" class="def"
 	    >Coyoneda</a
-	    > (p :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-	    >Type</a
-	    >) (a :: j) (b :: k) <span class="keyword"
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: j) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Profunctor.Coyoneda.html#Coyoneda" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L14" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L12" class="link"
 	    >Comments</a
 	    > <a href="#t:Coyoneda" class="selflink"
 	    >#</a
@@ -99,9 +99,9 @@
 		  >Coyoneda</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {j} {k} (a :: j) (c :: j) (d :: k) (b :: k) (p :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		  >Type</a
-		  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > {k} {j} (a :: k) (c :: k) (d :: j) (b :: j) (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
 		  > c) -&gt; (d <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
@@ -133,12 +133,12 @@
 		      >Profunctor</a
 		      > (<a href="Proarrow-Profunctor-Coyoneda.html#t:Coyoneda" title="Proarrow.Profunctor.Coyoneda"
 		      >Coyoneda</a
-		      > p :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Coyoneda.html#line-17" class="link"
+		    > <a href="src/Proarrow.Profunctor.Coyoneda.html#line-15" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L17" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L15" class="link"
 		    >Comments</a
 		    > <a href="#t:Coyoneda" class="selflink"
 		    >#</a
@@ -163,7 +163,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: j) (a :: j) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (c :: k) (a :: k) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -173,7 +173,7 @@
 			  >Coyoneda</a
 			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
 			  >Comments</a
 			  > <a href="#v:dimap" class="selflink"
 			  >#</a
@@ -183,7 +183,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: j) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: k) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -191,7 +191,7 @@
 			  >Coyoneda</a
 			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
 			  >Comments</a
 			  > <a href="#v:-92--92-" class="selflink"
 			  >#</a
@@ -209,14 +209,14 @@
 		      >Functor</a
 		      > (<a href="Proarrow-Profunctor-Coyoneda.html#t:Coyoneda" title="Proarrow.Profunctor.Coyoneda"
 		      >Coyoneda</a
-		      > :: (j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >) -&gt; j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > :: (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) -&gt; k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Coyoneda.html#line-21" class="link"
+		    > <a href="src/Proarrow.Profunctor.Coyoneda.html#line-19" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L21" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L19" class="link"
 		    >Comments</a
 		    > <a href="#t:Coyoneda" class="selflink"
 		    >#</a
@@ -241,11 +241,11 @@
 			  >map</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) (b :: j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (a :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (b :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > b) -&gt; <a href="Proarrow-Profunctor-Coyoneda.html#t:Coyoneda" title="Proarrow.Profunctor.Coyoneda"
 			  >Coyoneda</a
@@ -274,7 +274,7 @@
 	    >coyoneda</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > j k (a :: j) (b :: k) p. (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	    > j k (a :: k) (b :: j) p. (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 	    >CategoryOf</a
 	    > j, <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 	    >CategoryOf</a
@@ -286,7 +286,7 @@
 	    >Coyoneda</a
 	    > p a b <a href="src/Proarrow.Profunctor.Coyoneda.html#coyoneda" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L30" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L28" class="link"
 	    >Comments</a
 	    > <a href="#v:coyoneda" class="selflink"
 	    >#</a
@@ -298,9 +298,9 @@
 	    >unCoyoneda</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k} {k1} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k1). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k1} {k} (p :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > p =&gt; <a href="Proarrow-Profunctor-Coyoneda.html#t:Coyoneda" title="Proarrow.Profunctor.Coyoneda"
 	    >Coyoneda</a
@@ -308,7 +308,7 @@
 	    >:~&gt;</a
 	    > p <a href="src/Proarrow.Profunctor.Coyoneda.html#unCoyoneda" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L33" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L31" class="link"
 	    >Comments</a
 	    > <a href="#v:unCoyoneda" class="selflink"
 	    >#</a
@@ -327,14 +327,14 @@
 		  >HasFree</a
 		  > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		  >Profunctor</a
-		  > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		  >PRO</a
-		  > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
+		  > :: (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 		  >Constraint</a
 		  >)</span
-		> <a href="src/Proarrow.Profunctor.Coyoneda.html#line-24" class="link"
+		> <a href="src/Proarrow.Profunctor.Coyoneda.html#line-22" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L24" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Coyoneda.hs#L22" class="link"
 		>Comments</a
 		> <a href="#v:-36-fHasFreeFUNProfunctor" class="selflink"
 		>#</a
@@ -364,9 +364,9 @@
 			    >Free</a
 			    > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 			    >Profunctor</a
-			    > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			    >PRO</a
-			    > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
+			    > :: (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			    >+-&gt;</a
+			    > k) -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 			    >Constraint</a
 			    >)</span
 			  ></td
@@ -389,17 +389,17 @@
 			      >Free</a
 			      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 			      >Profunctor</a
-			      > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-			      >PRO</a
-			      > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
+			      > :: (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			      >+-&gt;</a
+			      > k) -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 			      >Constraint</a
 			      >) = <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 			      >Star</a
 			      > (<a href="Proarrow-Profunctor-Coyoneda.html#t:Coyoneda" title="Proarrow.Profunctor.Coyoneda"
 			      >Coyoneda</a
-			      > :: (j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			      >Type</a
-			      >) -&gt; j -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			      > :: (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			      >+-&gt;</a
+			      > k) -&gt; k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			      >Type</a
 			      >)</div
 			    ></details
@@ -415,23 +415,23 @@
 		      >lift'</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j k) (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      > (a :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) (b :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >~&gt;</a
 		      > b) -&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
 		      >Free</a
 		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
-		      > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      > :: (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 		      >Constraint</a
 		      >) a b <a href="src/Proarrow.Profunctor.Free.html#lift%27" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L46" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L48" class="link"
 		      >Comments</a
 		      > <a href="#v:lift-39-" class="selflink"
 		      >#</a
@@ -441,25 +441,25 @@
 		      >retract'</a
 		      > :: <span class="keyword"
 		      >forall</span
-		      > (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j k) (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j k). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      > (b :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) (a :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > b =&gt; <a href="Proarrow-Profunctor-Free.html#t:Free" title="Proarrow.Profunctor.Free"
 		      >Free</a
 		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
-		      > :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-		      >PRO</a
-		      > j k -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
+		      > :: (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Kind.html#t:Constraint" title="Data.Kind"
 		      >Constraint</a
 		      >) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		      >~&gt;</a
 		      > b <a href="src/Proarrow.Profunctor.Free.html#retract%27" class="link"
 		      >Source</a
-		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L47" class="link"
+		      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Free.hs#L49" class="link"
 		      >Comments</a
 		      > <a href="#v:retract-39-" class="selflink"
 		      >#</a

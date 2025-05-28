@@ -1,0 +1,2901 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Category.Enriched.ThinCategory</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Category.Enriched.ThinCategory.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >GHC2024</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Category.Enriched.ThinCategory</p
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > p, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+	    >Thin</a
+	    > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+	    >Thin</a
+	    > k) =&gt; <a id="t:ThinProfunctor" class="def"
+	    >ThinProfunctor</a
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#ThinProfunctor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L10" class="link"
+	    >Comments</a
+	    > <a href="#t:ThinProfunctor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:HasArrow" class="def"
+	      >HasArrow</a
+	      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: j) <a href="src/Proarrow.Category.Enriched.ThinCategory.html#HasArrow" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:HasArrow" class="selflink"
+	      >#</a
+	      ></p
+	    > <div class="subs default"
+	    ><p class="caption"
+	      ></p
+	      ><p class="src"
+	      ><span class="keyword"
+		>type</span
+		> <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+		>HasArrow</a
+		> (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		>+-&gt;</a
+		> k) (a :: k) (b :: j) = ()</p
+	      ></div
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:arr" class="def"
+	      >arr</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+	      >HasArrow</a
+	      > p a b) =&gt; p a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L10" class="link"
+	      >Comments</a
+	      > <a href="#v:arr" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:withArr" class="def"
+	      >withArr</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j) r. p a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+	      >HasArrow</a
+	      > p a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L10" class="link"
+	      >Comments</a
+	      > <a href="#v:withArr" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ThinProfunctor"
+	    >Instances</h4
+	    ><details id="i:ThinProfunctor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:1"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+		      >Booleans</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Bool.html#line-59" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L59" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Bool.html"
+			>Proarrow.Category.Instance.Bool</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:HasArrowBOOLBOOLBooleansab:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+				>Booleans</a
+				> (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				>BOOL</a
+				>) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				>BOOL</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:HasArrowBOOLBOOLBooleansab:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Bool.html"
+				  >Proarrow.Category.Instance.Bool</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+				  >Booleans</a
+				  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				  >BOOL</a
+				  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+				  >BOOL</a
+				  >) = <a href="Proarrow-Category-Instance-Bool.html#t:IsBoolArr" title="Proarrow.Category.Instance.Bool"
+				  >IsBoolArr</a
+				  > a b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b) =&gt; <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Bool.html#t:BOOL" title="Proarrow.Category.Instance.Bool"
+			  >BOOL</a
+			  >) r. <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Bool.html#t:Booleans" title="Proarrow.Category.Instance.Bool"
+			  >Booleans</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:2"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+		      >(:-)</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Constraint.html#line-37" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L37" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Constraint.html"
+			>Proarrow.Category.Instance.Constraint</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:HasArrowCONSTRAINTCONSTRAINT:-45-ab:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+				>(:-)</a
+				> (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				>CONSTRAINT</a
+				>) (b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				>CONSTRAINT</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:HasArrowCONSTRAINTCONSTRAINT:-45-ab:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Constraint.html"
+				  >Proarrow.Category.Instance.Constraint</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+				  >(:-)</a
+				  > (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				  >CONSTRAINT</a
+				  >) (b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+				  >CONSTRAINT</a
+				  >) = <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+				  >UN</a
+				  > '<a href="Proarrow-Category-Instance-Constraint.html#v:CNSTRNT" title="Proarrow.Category.Instance.Constraint"
+				  >CNSTRNT</a
+				  > a <a href="Proarrow-Category-Instance-Constraint.html#t::-61--62-" title="Proarrow.Category.Instance.Constraint"
+				  >:=&gt;</a
+				  > <a href="Proarrow-Core.html#t:UN" title="Proarrow.Core"
+				  >UN</a
+				  > '<a href="Proarrow-Category-Instance-Constraint.html#v:CNSTRNT" title="Proarrow.Category.Instance.Constraint"
+				  >CNSTRNT</a
+				  > b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >(:-)</a
+			  > a b) =&gt; a <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >:-</a
+			  > b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Constraint.html#t:CONSTRAINT" title="Proarrow.Category.Instance.Constraint"
+			  >CONSTRAINT</a
+			  >) r. (a <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >:-</a
+			  > b) -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Constraint.html#t::-45-" title="Proarrow.Category.Instance.Constraint"
+			  >(:-)</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:3"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Cost.html#t:GTE" title="Proarrow.Category.Instance.Cost"
+		      >GTE</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Cost.html#line-81" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L81" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Cost.html"
+			>Proarrow.Category.Instance.Cost</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:HasArrowCOSTCOSTGTEab:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Cost.html#t:GTE" title="Proarrow.Category.Instance.Cost"
+				>GTE</a
+				> (a :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+				>COST</a
+				>) (b :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+				>COST</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:HasArrowCOSTCOSTGTEab:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Cost.html"
+				  >Proarrow.Category.Instance.Cost</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Cost.html#t:GTE" title="Proarrow.Category.Instance.Cost"
+				  >GTE</a
+				  > (a :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+				  >COST</a
+				  >) (b :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+				  >COST</a
+				  >) = <a href="Proarrow-Category-Instance-Cost.html#t:HasCostArrow" title="Proarrow.Category.Instance.Cost"
+				  >HasCostArrow</a
+				  > a b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+			  >COST</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+			  >COST</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Cost.html#t:GTE" title="Proarrow.Category.Instance.Cost"
+			  >GTE</a
+			  > a b) =&gt; <a href="Proarrow-Category-Instance-Cost.html#t:GTE" title="Proarrow.Category.Instance.Cost"
+			  >GTE</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+			  >COST</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Cost.html#t:COST" title="Proarrow.Category.Instance.Cost"
+			  >COST</a
+			  >) r. <a href="Proarrow-Category-Instance-Cost.html#t:GTE" title="Proarrow.Category.Instance.Cost"
+			  >GTE</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Cost.html#t:GTE" title="Proarrow.Category.Instance.Cost"
+			  >GTE</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:4"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+		      >Zero</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Zero.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Zero.html"
+			>Proarrow.Category.Instance.Zero</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:R:HasArrowVOIDVOIDZeroab:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+				>Zero</a
+				> (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				>VOID</a
+				>) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				>VOID</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:R:HasArrowVOIDVOIDZeroab:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Zero.html"
+				  >Proarrow.Category.Instance.Zero</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+				  >Zero</a
+				  > (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				  >VOID</a
+				  >) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+				  >VOID</a
+				  >) = ()</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b) =&gt; <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Zero.html#t:VOID" title="Proarrow.Category.Instance.Zero"
+			  >VOID</a
+			  >) r. <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Zero.html#t:Zero" title="Proarrow.Category.Instance.Zero"
+			  >Zero</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:5"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+		      >Unit</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Unit.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Unit.html"
+			>Proarrow.Category.Instance.Unit</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:HasArrowUnitUnitUnitab:HasArrow:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				>HasArrow</a
+				> <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+				>Unit</a
+				> (a :: ()) (b :: ())</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:HasArrowUnitUnitUnitab:HasArrow:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Unit.html"
+				  >Proarrow.Category.Instance.Unit</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+				  >HasArrow</a
+				  > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+				  >Unit</a
+				  > (a :: ()) (b :: ()) = a <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+				  >~</a
+				  > b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b) =&gt; <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()) r. <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > <a href="Proarrow-Category-Instance-Unit.html#t:Unit" title="Proarrow.Category.Instance.Unit"
+			  >Unit</a
+			  > a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:6"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > k =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+		      >Id</a
+		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Identity.html#line-44" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L44" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Identity.html"
+			>Proarrow.Profunctor.Identity</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k) r. <a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  >Id</a
+			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:7"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+		      >InitialProfunctor</a
+		      > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Initial.html#line-21" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L21" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Initial.html"
+			>Proarrow.Profunctor.Initial</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			  >InitialProfunctor</a
+			  > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			  >InitialProfunctor</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. <a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			  >InitialProfunctor</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Initial.html#t:InitialProfunctor" title="Proarrow.Profunctor.Initial"
+			  >InitialProfunctor</a
+			  > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:8"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Terminal.html#t:TerminalProfunctor" title="Proarrow.Profunctor.Terminal"
+		      >TerminalProfunctor</a
+		      > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Terminal.html#line-34" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L34" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Terminal.html"
+			>Proarrow.Profunctor.Terminal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Terminal.html#t:TerminalProfunctor" title="Proarrow.Profunctor.Terminal"
+			  >TerminalProfunctor</a
+			  > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Profunctor-Terminal.html#t:TerminalProfunctor" title="Proarrow.Profunctor.Terminal"
+			  >TerminalProfunctor</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. <a href="Proarrow-Profunctor-Terminal.html#t:TerminalProfunctor" title="Proarrow.Profunctor.Terminal"
+			  >TerminalProfunctor</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Terminal.html#t:TerminalProfunctor" title="Proarrow.Profunctor.Terminal"
+			  >TerminalProfunctor</a
+			  > :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:9"
+		      ></span
+		      > <a href="Proarrow-Category-Instance-Rel.html#t:Relation" title="Proarrow.Category.Instance.Rel"
+		      >Relation</a
+		      > p =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Rel.html#t:Converse" title="Proarrow.Category.Instance.Rel"
+		      >Converse</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Rel.html#line-22" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L22" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:9"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Rel.html"
+			>Proarrow.Category.Instance.Rel</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Rel.html#t:Converse" title="Proarrow.Category.Instance.Rel"
+			  >Converse</a
+			  > p) a b) =&gt; <a href="Proarrow-Category-Instance-Rel.html#t:Converse" title="Proarrow.Category.Instance.Rel"
+			  >Converse</a
+			  > p a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. <a href="Proarrow-Category-Instance-Rel.html#t:Converse" title="Proarrow.Category.Instance.Rel"
+			  >Converse</a
+			  > p a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Rel.html#t:Converse" title="Proarrow.Category.Instance.Rel"
+			  >Converse</a
+			  > p) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:10"
+		      ></span
+		      > (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > f, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Discrete</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+		      >Costar</a
+		      > f :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Costar.html#line-49" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L49" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:10"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Costar.html"
+			>Proarrow.Profunctor.Costar</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+			  >Costar</a
+			  > f) a b) =&gt; <a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+			  >Costar</a
+			  > f a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. <a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+			  >Costar</a
+			  > f a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Costar.html#t:Costar" title="Proarrow.Profunctor.Costar"
+			  >Costar</a
+			  > f) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:11"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > p, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Discrete</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+		      >RepCostar</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Representable.html#line-63" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L63" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:11"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Representable.html"
+			>Proarrow.Profunctor.Representable</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+			  >RepCostar</a
+			  > p) a b) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+			  >RepCostar</a
+			  > p a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+			  >RepCostar</a
+			  > p a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+			  >RepCostar</a
+			  > p) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:12"
+		      ></span
+		      > (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      >Functor</a
+		      > f, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Discrete</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+		      >Star</a
+		      > f :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Star.html#line-89" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L89" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:12"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Star.html"
+			>Proarrow.Profunctor.Star</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f) a b) =&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > f) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:13"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > q, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Discrete</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Discrete</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (p <a href="Proarrow-Profunctor-Exponential.html#t::-126--62-:" title="Proarrow.Profunctor.Exponential"
+		      >:~&gt;:</a
+		      > q :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Exponential.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:13"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Exponential.html"
+			>Proarrow.Profunctor.Exponential</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Profunctor-Exponential.html#t::-126--62-:" title="Proarrow.Profunctor.Exponential"
+			  >:~&gt;:</a
+			  > q) a b) =&gt; (p <a href="Proarrow-Profunctor-Exponential.html#t::-126--62-:" title="Proarrow.Profunctor.Exponential"
+			  >:~&gt;:</a
+			  > q) a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. (p <a href="Proarrow-Profunctor-Exponential.html#t::-126--62-:" title="Proarrow.Profunctor.Exponential"
+			  >:~&gt;:</a
+			  > q) a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Profunctor-Exponential.html#t::-126--62-:" title="Proarrow.Profunctor.Exponential"
+			  >:~&gt;:</a
+			  > q) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:14"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > q) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+		      >:*:</a
+		      > q :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Product.html#line-27" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L27" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:14"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Product.html"
+			>Proarrow.Profunctor.Product</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) a b) =&gt; (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  >:*:</a
+			  > q) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:15"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Discrete.html#t:Codiscrete" title="Proarrow.Category.Instance.Discrete"
+		      >Codiscrete</a
+		      > :: <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+		      >CODISCRETE</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+		      >CODISCRETE</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Discrete.html#line-52" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L52" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:15"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Discrete.html"
+			>Proarrow.Category.Instance.Discrete</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Discrete.html#t:Codiscrete" title="Proarrow.Category.Instance.Discrete"
+			  >Codiscrete</a
+			  > :: <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:Codiscrete" title="Proarrow.Category.Instance.Discrete"
+			  >Codiscrete</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k) r. <a href="Proarrow-Category-Instance-Discrete.html#t:Codiscrete" title="Proarrow.Category.Instance.Discrete"
+			  >Codiscrete</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Discrete.html#t:Codiscrete" title="Proarrow.Category.Instance.Discrete"
+			  >Codiscrete</a
+			  > :: <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:CODISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >CODISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:16"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Discrete.html#t:Discrete" title="Proarrow.Category.Instance.Discrete"
+		      >Discrete</a
+		      > :: <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+		      >DISCRETE</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+		      >DISCRETE</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Discrete.html#line-25" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L25" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:16"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Discrete.html"
+			>Proarrow.Category.Instance.Discrete</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Discrete.html#t:Discrete" title="Proarrow.Category.Instance.Discrete"
+			  >Discrete</a
+			  > :: <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:Discrete" title="Proarrow.Category.Instance.Discrete"
+			  >Discrete</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k) (b :: <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k) r. <a href="Proarrow-Category-Instance-Discrete.html#t:Discrete" title="Proarrow.Category.Instance.Discrete"
+			  >Discrete</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Discrete.html#t:Discrete" title="Proarrow.Category.Instance.Discrete"
+			  >Discrete</a
+			  > :: <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Discrete.html#t:DISCRETE" title="Proarrow.Category.Instance.Discrete"
+			  >DISCRETE</a
+			  > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:17"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+		      >LTE</a
+		      > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+		      >FIN</a
+		      > n -&gt; <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+		      >FIN</a
+		      > n -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Fin.html#line-76" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L76" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:17"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Fin.html"
+			>Proarrow.Category.Instance.Fin</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n) (b :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n) (b :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n) r. <a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Fin.html#t:LTE" title="Proarrow.Category.Instance.Fin"
+			  >LTE</a
+			  > :: <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Fin.html#t:FIN" title="Proarrow.Category.Instance.Fin"
+			  >FIN</a
+			  > n -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:18"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+		      >Op</a
+		      > p :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > j -&gt; <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Opposite.html#line-108" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L108" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:18"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Opposite.html"
+			>Proarrow.Category.Opposite</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a b) =&gt; <a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > j) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) r. <a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Opposite.html#t:Op" title="Proarrow.Category.Opposite"
+			  >Op</a
+			  > p) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:19"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      >Promonad</a
+		      > p) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+		      >Kleisli</a
+		      > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+		      >KLEISLI</a
+		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-131" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L131" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:19"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Kleisli.html"
+			>Proarrow.Category.Instance.Kleisli</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+			  >Kleisli</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+			  >Kleisli</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p) r. <a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+			  >Kleisli</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Kleisli.html#t:Kleisli" title="Proarrow.Category.Instance.Kleisli"
+			  >Kleisli</a
+			  > :: <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Kleisli.html#t:KLEISLI" title="Proarrow.Category.Instance.Kleisli"
+			  >KLEISLI</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:20"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > q) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+		      >:**:</a
+		      > q :: (k1, k2) -&gt; (j1, j2) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Product.html#line-42" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L42" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:20"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Product.html"
+			>Proarrow.Category.Instance.Product</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (j1, j2)). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b) =&gt; (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (k1, k2)) (b :: (j1, j2)) r. (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (p <a href="Proarrow-Category-Instance-Product.html#t::-42--42-:" title="Proarrow.Category.Instance.Product"
+			  >:**:</a
+			  > q) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ThinProfunctor:ThinProfunctor:21"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > k, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+		      >Collage</a
+		      > :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+		      >COLLAGE</a
+		      > p -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+		      >COLLAGE</a
+		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Collage.html#line-78" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L78" class="link"
+		    >Comments</a
+		    > <a href="#t:ThinProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ThinProfunctor:ThinProfunctor:21"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Collage.html"
+			>Proarrow.Category.Instance.Collage</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arr"
+			  >arr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b) =&gt; <a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L13" class="link"
+			  >Comments</a
+			  > <a href="#v:arr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:withArr"
+			  >withArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p) r. <a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > a b -&gt; (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > (<a href="Proarrow-Category-Instance-Collage.html#t:Collage" title="Proarrow.Category.Instance.Collage"
+			  >Collage</a
+			  > :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  >COLLAGE</a
+			  > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) a b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:withArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+	    >ThinProfunctor</a
+	    > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) =&gt; <a id="t:Thin" class="def"
+	    >Thin</a
+	    > k <a href="src/Proarrow.Category.Enriched.ThinCategory.html#Thin" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L16" class="link"
+	    >Comments</a
+	    > <a href="#t:Thin" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Thin"
+	    >Instances</h4
+	    ><details id="i:Thin" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Thin:Thin:1"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Thin" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Thin</a
+		      > k</span
+		    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#line-17" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L17" class="link"
+		    >Comments</a
+		    > <a href="#t:Thin" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Thin:Thin:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched-ThinCategory.html"
+			>Proarrow.Category.Enriched.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+	    >HasArrow</a
+	    > p a b =&gt; <a id="t:HasArrow-39-" class="def"
+	    >HasArrow'</a
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: j) <a href="src/Proarrow.Category.Enriched.ThinCategory.html#HasArrow%27" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L19" class="link"
+	    >Comments</a
+	    > <a href="#t:HasArrow-39-" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:HasArrow-39-"
+	    >Instances</h4
+	    ><details id="i:HasArrow-39-" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasArrow-39-:HasArrow-39-:1"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+		      >HasArrow</a
+		      > p a b =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow-39-" title="Proarrow.Category.Enriched.ThinCategory"
+		      >HasArrow'</a
+		      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) (a :: k) (b :: j)</span
+		    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#line-20" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L20" class="link"
+		    >Comments</a
+		    > <a href="#t:HasArrow-39-" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasArrow-39-:HasArrow-39-:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched-ThinCategory.html"
+			>Proarrow.Category.Enriched.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+	    >ThinProfunctor</a
+	    > p, <span class="keyword"
+	    >forall</span
+	    > (c :: k) (d :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > c, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > d) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow-39-" title="Proarrow.Category.Enriched.ThinCategory"
+	    >HasArrow'</a
+	    > p c d, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Codiscrete" title="Proarrow.Category.Enriched.ThinCategory"
+	    >Codiscrete</a
+	    > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Codiscrete" title="Proarrow.Category.Enriched.ThinCategory"
+	    >Codiscrete</a
+	    > k) =&gt; <a id="t:CodiscreteProfunctor" class="def"
+	    >CodiscreteProfunctor</a
+	    > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#CodiscreteProfunctor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L23" class="link"
+	    >Comments</a
+	    > <a href="#t:CodiscreteProfunctor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:anyArr" class="def"
+	      >anyArr</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; p a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#anyArr" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L23" class="link"
+	      >Comments</a
+	      > <a href="#v:anyArr" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:CodiscreteProfunctor"
+	    >Instances</h4
+	    ><details id="i:CodiscreteProfunctor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:CodiscreteProfunctor:CodiscreteProfunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <span class="keyword"
+		      >forall</span
+		      > (c :: k) (d :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > c, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > d) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow-39-" title="Proarrow.Category.Enriched.ThinCategory"
+		      >HasArrow'</a
+		      > p c d, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Codiscrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Codiscrete</a
+		      > j, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Codiscrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Codiscrete</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:CodiscreteProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >CodiscreteProfunctor</a
+		      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#line-29" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L29" class="link"
+		    >Comments</a
+		    > <a href="#t:CodiscreteProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:CodiscreteProfunctor:CodiscreteProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched-ThinCategory.html"
+			>Proarrow.Category.Enriched.ThinCategory</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:anyArr"
+			  >anyArr</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; p a b <a href="src/Proarrow.Category.Enriched.ThinCategory.html#anyArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L27" class="link"
+			  >Comments</a
+			  > <a href="#v:anyArr" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:CodiscreteProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+	    >CodiscreteProfunctor</a
+	    > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) =&gt; <a id="t:Codiscrete" class="def"
+	    >Codiscrete</a
+	    > k <a href="src/Proarrow.Category.Enriched.ThinCategory.html#Codiscrete" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L34" class="link"
+	    >Comments</a
+	    > <a href="#t:Codiscrete" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Codiscrete"
+	    >Instances</h4
+	    ><details id="i:Codiscrete" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Codiscrete:Codiscrete:1"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:CodiscreteProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >CodiscreteProfunctor</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Codiscrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Codiscrete</a
+		      > k</span
+		    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#line-35" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L35" class="link"
+		    >Comments</a
+		    > <a href="#t:Codiscrete" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Codiscrete:Codiscrete:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched-ThinCategory.html"
+			>Proarrow.Category.Enriched.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+	    >HasArrow</a
+	    > p c d <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	    >~</a
+	    > (c <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	    >~</a
+	    > d) =&gt; <a id="t:ArrowIsId" class="def"
+	    >ArrowIsId</a
+	    > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (c :: k) (d :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#ArrowIsId" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L37" class="link"
+	    >Comments</a
+	    > <a href="#t:ArrowIsId" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:arrowIsIdProof" class="def"
+	      >arrowIsIdProof</a
+	      > :: <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+	      >HasArrow</a
+	      > p c d =&gt; (c <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	      >~</a
+	      > d =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arrowIsIdProof" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L37" class="link"
+	      >Comments</a
+	      > <a href="#v:arrowIsIdProof" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:ArrowIsId"
+	    >Instances</h4
+	    ><details id="i:ArrowIsId" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:ArrowIsId:ArrowIsId:1"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+		      >HasArrow</a
+		      > p c d <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      >~</a
+		      > (c <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      >~</a
+		      > d) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ArrowIsId" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ArrowIsId</a
+		      > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k) (c :: k) (d :: k)</span
+		    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#line-39" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L39" class="link"
+		    >Comments</a
+		    > <a href="#t:ArrowIsId" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:ArrowIsId:ArrowIsId:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched-ThinCategory.html"
+			>Proarrow.Category.Enriched.ThinCategory</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:arrowIsIdProof"
+			  >arrowIsIdProof</a
+			  > :: <a href="Proarrow-Category-Enriched-ThinCategory.html#t:HasArrow" title="Proarrow.Category.Enriched.ThinCategory"
+			  >HasArrow</a
+			  > p c d =&gt; (c <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+			  >~</a
+			  > d =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#arrowIsIdProof" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:arrowIsIdProof" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+	    >ThinProfunctor</a
+	    > p, <span class="keyword"
+	    >forall</span
+	    > (c :: k) (d :: k). <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ArrowIsId" title="Proarrow.Category.Enriched.ThinCategory"
+	    >ArrowIsId</a
+	    > p c d, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+	    >Discrete</a
+	    > k) =&gt; <a id="t:DiscreteProfunctor" class="def"
+	    >DiscreteProfunctor</a
+	    > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#DiscreteProfunctor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L43" class="link"
+	    >Comments</a
+	    > <a href="#t:DiscreteProfunctor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:withEq" class="def"
+	      >withEq</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k) r. p a b -&gt; (a <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	      >~</a
+	      > b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withEq" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L43" class="link"
+	      >Comments</a
+	      > <a href="#v:withEq" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:DiscreteProfunctor"
+	    >Instances</h4
+	    ><details id="i:DiscreteProfunctor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:DiscreteProfunctor:DiscreteProfunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Category-Enriched-ThinCategory.html#t:ThinProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ThinProfunctor</a
+		      > p, <span class="keyword"
+		      >forall</span
+		      > (c :: k) (d :: k). <a href="Proarrow-Category-Enriched-ThinCategory.html#t:ArrowIsId" title="Proarrow.Category.Enriched.ThinCategory"
+		      >ArrowIsId</a
+		      > p c d, <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Discrete</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:DiscreteProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >DiscreteProfunctor</a
+		      > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#line-45" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L45" class="link"
+		    >Comments</a
+		    > <a href="#t:DiscreteProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:DiscreteProfunctor:DiscreteProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched-ThinCategory.html"
+			>Proarrow.Category.Enriched.ThinCategory</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withEq"
+			  >withEq</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k) r. p a b -&gt; (a <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+			  >~</a
+			  > b =&gt; r) -&gt; r <a href="src/Proarrow.Category.Enriched.ThinCategory.html#withEq" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L44" class="link"
+			  >Comments</a
+			  > <a href="#v:withEq" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:DiscreteProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+	    >DiscreteProfunctor</a
+	    > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) =&gt; <a id="t:Discrete" class="def"
+	    >Discrete</a
+	    > k <a href="src/Proarrow.Category.Enriched.ThinCategory.html#Discrete" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L48" class="link"
+	    >Comments</a
+	    > <a href="#t:Discrete" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Discrete"
+	    >Instances</h4
+	    ><details id="i:Discrete" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Discrete:Discrete:1"
+		      ></span
+		      > <a href="Proarrow-Category-Enriched-ThinCategory.html#t:DiscreteProfunctor" title="Proarrow.Category.Enriched.ThinCategory"
+		      >DiscreteProfunctor</a
+		      > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		      >(~&gt;)</a
+		      > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+		      >CAT</a
+		      > k) =&gt; <a href="Proarrow-Category-Enriched-ThinCategory.html#t:Discrete" title="Proarrow.Category.Enriched.ThinCategory"
+		      >Discrete</a
+		      > k</span
+		    > <a href="src/Proarrow.Category.Enriched.ThinCategory.html#line-49" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Enriched/ThinCategory.hs#L49" class="link"
+		    >Comments</a
+		    > <a href="#t:Discrete" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Discrete:Discrete:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Enriched-ThinCategory.html"
+			>Proarrow.Category.Enriched.ThinCategory</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.30.0</p
+      ></div
+    ></body
+  ></html
+>

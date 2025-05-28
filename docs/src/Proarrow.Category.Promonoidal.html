@@ -1,0 +1,8428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-pragma"
+      >{-# LANGUAGE AllowAmbiguousTypes #-}</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span class="hs-pragma"
+      >{-# OPTIONS_GHC -Wno-orphans #-}</span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Promonoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Constraint</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Prof.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	><span class="hs-identifier"
+	  >Monoidal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	><span class="hs-identifier"
+	  >MonoidalProfunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Monoidal.Strictified</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Str</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >(</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Obj"
+	><span class="hs-identifier"
+	  >Obj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#tgt"
+	><span class="hs-identifier"
+	  >tgt</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator"
+	  >(//)</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%3A~%3E"
+	><span class="hs-operator"
+	  >(:~&gt;)</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2B-%3E"
+	><span class="hs-operator"
+	  >(+-&gt;)</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Functor.html"
+	><span class="hs-identifier"
+	  >Proarrow.Functor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Functor.html#Functor"
+	><span class="hs-identifier"
+	  >Functor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Composition</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator"
+	  >(:.:)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.List</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#LIST"
+	><span class="hs-identifier"
+	  >LIST</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#List"
+	><span class="hs-identifier"
+	  >List</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier"
+	  >foldList</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html"
+	><span class="hs-identifier"
+	  >Proarrow.Profunctor.Representable</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#Representable"
+	><span class="hs-identifier"
+	  >Representable</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Representable.html#dimapRep"
+	><span class="hs-identifier"
+	  >dimapRep</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="PROTENSOR"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	  ><span class="hs-identifier hs-var"
+	    >PROTENSOR</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486481"
+      ><span class="annot"
+	><a href="#local-6989586621679486481"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#LIST"
+	><span class="hs-identifier hs-type"
+	  >LIST</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486481"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2B-%3E"
+	><span class="hs-operator hs-type"
+	  >+-&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486481"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Protensor"
+	><span class="hs-identifier hs-type"
+	  >Protensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679486123"
+      ><span class="annot"
+	><a href="#local-6989586621679486123"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	><span class="hs-identifier hs-type"
+	  >PROTENSOR</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486123"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Constraint</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486125"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="Protensor"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Protensor"
+	  ><span class="hs-identifier hs-var"
+	    >Protensor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486125"
+      ><span class="annot"
+	><a href="#local-6989586621679486125"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span id="compose"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#compose"
+	  ><span class="hs-identifier hs-type"
+	    >compose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486251"
+      ><span id="local-6989586621679486252"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486125"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	    ><span class="hs-operator hs-type"
+	      >:.:</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#List"
+	    ><span class="hs-identifier hs-type"
+	      >List</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486125"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486251"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486252"
+	    ><span class="hs-identifier hs-type"
+	      >bss</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486125"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486251"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	    ><span class="hs-identifier hs-type"
+	      >Tensor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.Representable.html#%25"
+	    ><span class="hs-operator hs-type"
+	      >%</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486252"
+	    ><span class="hs-identifier hs-type"
+	      >bss</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="decompose"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#decompose"
+	  ><span class="hs-identifier hs-type"
+	    >decompose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486254"
+      ><span id="local-6989586621679486255"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486254"
+	    ><span class="hs-identifier hs-type"
+	      >bss</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486125"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486255"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	    ><span class="hs-identifier hs-type"
+	      >Tensor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.Representable.html#%25"
+	    ><span class="hs-operator hs-type"
+	      >%</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486254"
+	    ><span class="hs-identifier hs-type"
+	      >bss</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486125"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	    ><span class="hs-operator hs-type"
+	      >:.:</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#List"
+	    ><span class="hs-identifier hs-type"
+	      >List</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486125"
+	    ><span class="hs-identifier hs-type"
+	      >p</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486255"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486254"
+	    ><span class="hs-identifier hs-type"
+	      >bss</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Protensor"
+	><span class="hs-identifier hs-type"
+	  >Protensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486130"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="Promonoid"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Promonoid"
+	  ><span class="hs-identifier hs-var"
+	    >Promonoid</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486130"
+      ><span class="annot"
+	><a href="#local-6989586621679486130"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486131"
+      ><span class="annot"
+	><a href="#local-6989586621679486131"
+	  ><span class="hs-identifier hs-type"
+	    >m</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="mempty"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#mempty"
+	  ><span class="hs-identifier hs-type"
+	    >mempty</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486130"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486131"
+	><span class="hs-identifier hs-type"
+	  >m</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >[</span
+      ><span class="hs-special"
+      >]</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span
+      >  </span
+      ><span id="mappend"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#mappend"
+	  ><span class="hs-identifier hs-type"
+	    >mappend</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486130"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486131"
+	><span class="hs-identifier hs-type"
+	  >m</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >[</span
+      ><span class="annot"
+      ><a href="#local-6989586621679486131"
+	><span class="hs-identifier hs-type"
+	  >m</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486131"
+	><span class="hs-identifier hs-type"
+	  >m</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >]</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span class="hs-keyword"
+      >class</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Protensor"
+	><span class="hs-identifier hs-type"
+	  >Protensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486135"
+	><span class="hs-identifier hs-type"
+	  >t</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier hs-type"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486136"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span id="PromonoidalProfunctor"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PromonoidalProfunctor"
+	  ><span class="hs-identifier hs-var"
+	    >PromonoidalProfunctor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486135"
+      ><span class="annot"
+	><a href="#local-6989586621679486135"
+	  ><span class="hs-identifier hs-type"
+	    >t</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486136"
+      ><span class="annot"
+	><a href="#local-6989586621679486136"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="parN"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#parN"
+	  ><span class="hs-identifier hs-type"
+	    >parN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486135"
+	><span class="hs-identifier hs-type"
+	  >t</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#List"
+	><span class="hs-identifier hs-type"
+	  >List</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486136"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%3A~%3E"
+	><span class="hs-operator hs-type"
+	  >:~&gt;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486136"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486135"
+	><span class="hs-identifier hs-type"
+	  >t</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486491"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	  ><span class="hs-identifier hs-type"
+	    >PROTENSOR</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486491"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Tensor"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-var"
+	    >Tensor</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486492"
+      ><span class="annot"
+	><a href="#local-6989586621679486492"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486493"
+      ><span class="annot"
+	><a href="#local-6989586621679486493"
+	  ><span class="hs-identifier hs-type"
+	    >bs</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486139"
+      ><span id="local-6989586621679486140"
+	><span id="Tensor"
+	  ><span class="annot"
+	    ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	      ><span class="hs-identifier hs-var"
+		>Tensor</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Ob"
+	    ><span class="hs-identifier hs-type"
+	      >Ob</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486140"
+	    ><span class="hs-identifier hs-type"
+	      >bs</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >{</span
+	  ><span id="unTensor"
+	  ><span class="annot"
+	    ><span class="annottext"
+	      >forall {k} (bs :: LIST k) (a :: k). Tensor a bs -&gt; '[a] ~&gt; UN L bs
+</span
+	      ><a href="Proarrow.Category.Promonoidal.html#unTensor"
+	      ><span class="hs-identifier hs-var hs-var"
+		>unTensor</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >'</span
+	  ><span class="hs-special"
+	  >[</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486139"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >]</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#~%3E"
+	    ><span class="hs-operator hs-type"
+	      >~&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#UN"
+	    ><span class="hs-identifier hs-type"
+	      >UN</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#L"
+	    ><span class="hs-identifier hs-type"
+	      >L</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486140"
+	    ><span class="hs-identifier hs-type"
+	      >bs</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >}</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	    ><span class="hs-identifier hs-type"
+	      >Tensor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486139"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486140"
+	    ><span class="hs-identifier hs-type"
+	      >bs</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486168"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	  ><span class="hs-identifier hs-type"
+	    >Monoidal</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486168"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Profunctor"
+	  ><span class="hs-identifier hs-type"
+	    >Profunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	  ><span class="hs-identifier hs-type"
+	    >PROTENSOR</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486168"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486515"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: k) (a :: k) (b :: LIST k) (d :: LIST k).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Tensor a b -&gt; Tensor c d
+</span
+	  ><a href="#local-6989586621679486515"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Tensor a b -&gt; Tensor c d
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) (c :: k) (d :: j).
+Representable p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Profunctor.Representable.html#dimapRep"
+	><span class="hs-identifier hs-var"
+	  >dimapRep</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486517"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679486517"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486518"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: k) (b :: LIST k) r.
+((Ob a, Ob b) =&gt; r) -&gt; Tensor a b -&gt; r
+</span
+	  ><a href="#local-6989586621679486518"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-type"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486529"
+      ><span class="annot"
+	><span class="annottext"
+	  >Fold '[a] ~&gt; Fold (UN L b)
+</span
+	  ><a href="#local-6989586621679486529"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob (Fold (UN L b))) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679486517"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob (Fold (UN L b))) =&gt; r) -&gt; (a ~&gt; Fold (UN L b)) -&gt; r
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; Fold (UN L b)
+Fold '[a] ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486529"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486170"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	  ><span class="hs-identifier hs-type"
+	    >Monoidal</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486170"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Representable.html#Representable"
+	  ><span class="hs-identifier hs-type"
+	    >Representable</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	  ><span class="hs-identifier hs-type"
+	    >PROTENSOR</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486170"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-48"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486544"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span id="%25"
+	><span class="annot"
+	  ><a href="Proarrow.Profunctor.Representable.html#%25"
+	    ><span class="hs-operator hs-var"
+	      >%</span
+	      ></a
+	    ></span
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486544"
+	  ><span class="hs-keyword hs-type"
+	    >as</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Fold"
+	><span class="hs-identifier hs-type"
+	  >Str.Fold</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486544"
+	><span class="hs-keyword hs-type"
+	  >as</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-49"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486545"
+      ><span class="annot"
+	><span class="annottext"
+	  >index :: forall (a :: k) (b :: LIST k). Tensor a b -&gt; a ~&gt; (Tensor % b)
+</span
+	  ><a href="#local-6989586621679486545"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >index</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-type"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486553"
+      ><span class="annot"
+	><span class="annottext"
+	  >Fold '[a] ~&gt; Fold (UN L b)
+</span
+	  ><a href="#local-6989586621679486553"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (Tensor % b)
+Fold '[a] ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486553"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-50"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486562"
+      ><span class="annot"
+	><span class="annottext"
+	  >tabulate :: forall (b :: LIST k) (a :: k).
+Ob b =&gt;
+(a ~&gt; (Tensor % b)) -&gt; Tensor a b
+</span
+	  ><a href="#local-6989586621679486562"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >tabulate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486564"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; (Tensor % b)
+</span
+	  ><a href="#local-6989586621679486564"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[a] ~&gt; UN L b) -&gt; Tensor a b
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[a] ~&gt; Fold (UN L b)) -&gt; Strictified '[a] (UN L b)
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (Tensor % b)
+Fold '[a] ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486564"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob (Fold (UN L b))) =&gt; Tensor a b)
+-&gt; (a ~&gt; Fold (UN L b)) -&gt; Tensor a b
+forall (a :: k) (b :: k) r. ((Ob a, Ob b) =&gt; r) -&gt; (a ~&gt; b) -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; (Tensor % b)
+a ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486564"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-51"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486574"
+      ><span class="annot"
+	><span class="annottext"
+	  >repMap :: forall (a :: LIST k) (b :: LIST k).
+(a ~&gt; b) -&gt; (Tensor % a) ~&gt; (Tensor % b)
+</span
+	  ><a href="#local-6989586621679486574"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >repMap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (Tensor % a) ~&gt; (Tensor % b)
+List (~&gt;) a b -&gt; Fold (UN L a) ~&gt; Fold (UN L b)
+forall {k1} {k2} (p :: k1 +-&gt; k2) (as :: LIST k2) (bs :: LIST k1).
+MonoidalProfunctor p =&gt;
+List p as bs -&gt; p (Fold (UN L as)) (Fold (UN L bs))
+</span
+	><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier hs-var"
+	  >foldList</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-52"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486229"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	  ><span class="hs-identifier hs-type"
+	    >Monoidal</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486229"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >MonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	  ><span class="hs-identifier hs-type"
+	    >PROTENSOR</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486229"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-53"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486606"
+      ><span class="annot"
+	><span class="annottext"
+	  >par0 :: Tensor Unit Unit
+</span
+	  ><a href="#local-6989586621679486606"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >par0</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[Unit] ~&gt; UN L (L '[])) -&gt; Tensor Unit (L '[])
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[Unit] ~&gt; Fold '[]) -&gt; Strictified '[Unit] '[]
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Unit ~&gt; Unit
+Fold '[Unit] ~&gt; Fold '[]
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-54"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486613"
+      ><span class="annot"
+	><span class="annottext"
+	  >'[x1] ~&gt; UN L x2
+</span
+	  ><a href="#local-6989586621679486613"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486614"
+      ><span class="annot"
+	><span class="annottext"
+	  >par :: forall (x1 :: k) (x2 :: LIST k) (y1 :: k) (y2 :: LIST k).
+Tensor x1 x2 -&gt; Tensor y1 y2 -&gt; Tensor (x1 ** y1) (x2 ** y2)
+</span
+	  ><a href="#local-6989586621679486614"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >`par`</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486624"
+      ><span class="annot"
+	><span class="annottext"
+	  >'[y1] ~&gt; UN L y2
+</span
+	  ><a href="#local-6989586621679486624"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >let</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486625"
+      ><span class="annot"
+	><span class="annottext"
+	  >fg :: Strictified ('[x1] ** '[y1]) (UN L x2 ** UN L y2)
+</span
+	  ><a href="#local-6989586621679486625"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >fg</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>'[x1] ~&gt; UN L x2
+Strictified '[x1] (UN L x2)
+</span
+	><a href="#local-6989586621679486613"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[x1] (UN L x2)
+-&gt; Strictified '[y1] (UN L y2)
+-&gt; Strictified ('[x1] ** '[y1]) (UN L x2 ** UN L y2)
+forall (x1 :: [k]) (x2 :: [k]) (y1 :: [k]) (y2 :: [k]).
+Strictified x1 x2
+-&gt; Strictified y1 y2 -&gt; Strictified (x1 ** y1) (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>'[y1] ~&gt; UN L y2
+Strictified '[y1] (UN L y2)
+</span
+	><a href="#local-6989586621679486624"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >in</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[x1, y1] (UN L x2 ++ UN L y2)
+Strictified ('[x1] ** '[y1]) (UN L x2 ** UN L y2)
+</span
+	><a href="#local-6989586621679486625"
+	><span class="hs-identifier hs-var"
+	  >fg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[x1, y1] (UN L x2 ++ UN L y2)
+-&gt; ((Ob '[x1, y1], Ob (UN L x2 ++ UN L y2)) =&gt;
+    Tensor (x1 ** y1) (L (UN L x2 ++ UN L y2)))
+-&gt; Tensor (x1 ** y1) (L (UN L x2 ++ UN L y2))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[x1, y1] (UN L x2 ++ UN L y2)
+-&gt; Fold '[x1, y1] ~&gt; Fold (UN L x2 ++ UN L y2)
+forall {k} (as :: [k]) (bs :: [k]).
+Strictified as bs -&gt; Fold as ~&gt; Fold bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#unStr"
+	><span class="hs-identifier hs-var"
+	  >Str.unStr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[x1, y1] (UN L x2 ++ UN L y2)
+Strictified ('[x1] ** '[y1]) (UN L x2 ** UN L y2)
+</span
+	><a href="#local-6989586621679486625"
+	><span class="hs-identifier hs-var"
+	  >fg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[x1, y1] ~&gt; Fold (UN L x2 ++ UN L y2))
+-&gt; ((Ob (Fold '[x1, y1]), Ob (Fold (UN L x2 ++ UN L y2))) =&gt;
+    Tensor (x1 ** y1) (L (UN L x2 ++ UN L y2)))
+-&gt; Tensor (x1 ** y1) (L (UN L x2 ++ UN L y2))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[x1 ** y1] ~&gt; UN L (L (UN L x2 ++ UN L y2)))
+-&gt; Tensor (x1 ** y1) (L (UN L x2 ++ UN L y2))
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[x1 ** y1] ~&gt; Fold (UN L x2 ++ UN L y2))
+-&gt; Strictified '[x1 ** y1] (UN L x2 ++ UN L y2)
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[x1, y1] (UN L x2 ++ UN L y2)
+-&gt; Fold '[x1, y1] ~&gt; Fold (UN L x2 ++ UN L y2)
+forall {k} (as :: [k]) (bs :: [k]).
+Strictified as bs -&gt; Fold as ~&gt; Fold bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#unStr"
+	><span class="hs-identifier hs-var"
+	  >Str.unStr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[x1, y1] (UN L x2 ++ UN L y2)
+Strictified ('[x1] ** '[y1]) (UN L x2 ** UN L y2)
+</span
+	><a href="#local-6989586621679486625"
+	><span class="hs-identifier hs-var"
+	  >fg</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-55"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486256"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	  ><span class="hs-identifier hs-type"
+	    >Monoidal</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486256"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Protensor"
+	  ><span class="hs-identifier hs-type"
+	    >Protensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	  ><span class="hs-identifier hs-type"
+	    >PROTENSOR</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486256"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-56"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486653"
+      ><span class="annot"
+	><span class="annottext"
+	  >compose :: forall (a :: k) (bss :: LIST (LIST k)).
+(:.:) Tensor (List Tensor) a bss -&gt; Tensor a (Tensor % bss)
+</span
+	  ><a href="Proarrow.Category.Promonoidal.html#compose"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >compose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-type"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486662"
+      ><span class="annot"
+	><span class="annottext"
+	  >Fold '[a] ~&gt; Fold (UN L b)
+</span
+	  ><a href="#local-6989586621679486662"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486664"
+      ><span class="annot"
+	><span class="annottext"
+	  >List Tensor b bss
+</span
+	  ><a href="#local-6989586621679486664"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; Fold (UN L b))
+-&gt; Tensor (Fold (UN L b)) (Fold (UN L bss))
+-&gt; Tensor a (Fold (UN L bss))
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; Fold (UN L b)
+Fold '[a] ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486662"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>List Tensor b bss -&gt; Tensor (Fold (UN L b)) (Fold (UN L bss))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (as :: LIST k2) (bs :: LIST k1).
+MonoidalProfunctor p =&gt;
+List p as bs -&gt; p (Fold (UN L as)) (Fold (UN L bs))
+</span
+	><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier hs-var"
+	  >foldList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List Tensor b bss
+</span
+	><a href="#local-6989586621679486664"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-57"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486677"
+      ><span class="annot"
+	><span class="annottext"
+	  >decompose :: forall (bss :: LIST (LIST k)) (a :: k).
+Ob bss =&gt;
+Tensor a (Tensor % bss) -&gt; (:.:) Tensor (List Tensor) a bss
+</span
+	  ><a href="Proarrow.Category.Promonoidal.html#decompose"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >decompose</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679486678"
+      ><span class="annot"
+	><a href="#local-6989586621679486678"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >bss</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-type"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486693"
+      ><span class="annot"
+	><span class="annottext"
+	  >Fold '[a] ~&gt; Fold (UN L (Fold (UN L bss)))
+</span
+	  ><a href="#local-6989586621679486693"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; Fold (UN L (Fold (UN L bss))))
+-&gt; (:.:) Tensor (List Tensor) (Fold (UN L (Fold (UN L bss)))) bss
+-&gt; (:.:) Tensor (List Tensor) a bss
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; Fold (UN L (Fold (UN L bss)))
+Fold '[a] ~&gt; Fold (UN L (Fold (UN L bss)))
+</span
+	><a href="#local-6989586621679486693"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj bss -&gt; (:.:) Tensor (List Tensor) (Tensor % (Tensor % bss)) bss
+forall (ass :: LIST (LIST k)).
+Monoidal k =&gt;
+Obj ass -&gt; (:.:) Tensor (List Tensor) (Tensor % (Tensor % ass)) ass
+</span
+	><a href="#local-6989586621679486694"
+	><span class="hs-identifier hs-var"
+	  >go</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall {k} (a :: k). (CategoryOf k, Ob a) =&gt; Obj a
+forall (a :: LIST (LIST k)).
+(CategoryOf (LIST (LIST k)), Ob a) =&gt;
+Obj a
+</span
+	><a href="Proarrow.Core.html#obj"
+	><span class="hs-identifier hs-var"
+	  >obj</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679486678"
+	><span class="hs-identifier hs-type"
+	  >bss</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-58"
+      ></span
+      ><span
+      >    </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-59"
+      ></span
+      ><span
+      >      </span
+      ><span class="hs-comment"
+      >-- &#129326;</span
+      ><span
+      >
+</span
+      ><span id="line-60"
+      ></span
+      ><span
+      >      </span
+      ><span id="local-6989586621679486279"
+      ><span class="annot"
+	><a href="#local-6989586621679486694"
+	  ><span class="hs-identifier hs-type"
+	    >go</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#Monoidal"
+	  ><span class="hs-identifier hs-type"
+	    >Monoidal</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486256"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Core.html#Obj"
+	  ><span class="hs-identifier hs-type"
+	    >Obj</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="#local-6989586621679486279"
+	  ><span class="hs-identifier hs-type"
+	    >ass</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>::</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.List.html#LIST"
+	  ><span class="hs-identifier hs-type"
+	    >LIST</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.List.html#LIST"
+	  ><span class="hs-identifier hs-type"
+	    >LIST</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486256"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>-&gt;</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	  ><span class="hs-operator hs-type"
+	    >:.:</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.List.html#List"
+	  ><span class="hs-identifier hs-type"
+	    >List</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Representable.html#%25"
+	  ><span class="hs-operator hs-type"
+	    >%</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Profunctor.Representable.html#%25"
+	  ><span class="hs-operator hs-type"
+	    >%</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486279"
+	  ><span class="hs-identifier hs-type"
+	    >ass</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486279"
+	  ><span class="hs-identifier hs-type"
+	    >ass</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-61"
+      ></span
+      ><span
+      >      </span
+      ><span id="local-6989586621679486694"
+      ><span class="annot"
+	><span class="annottext"
+	  >go :: forall (ass :: LIST (LIST k)).
+Monoidal k =&gt;
+Obj ass -&gt; (:.:) Tensor (List Tensor) (Tensor % (Tensor % ass)) ass
+</span
+	  ><a href="#local-6989586621679486694"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >go</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj ass
+List (List (~&gt;)) ass ass
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[Unit] ~&gt; UN L (L '[])) -&gt; Tensor Unit (L '[])
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[Unit] ~&gt; Fold '[]) -&gt; Strictified '[Unit] '[]
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Unit ~&gt; Unit
+Fold '[Unit] ~&gt; Fold '[]
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Tensor Unit (L '[])
+-&gt; List Tensor (L '[]) ass -&gt; (:.:) Tensor (List Tensor) Unit ass
+forall {j} {k} {i} (p :: j +-&gt; k) (a :: k) (b :: j) (q :: i +-&gt; j)
+       (c :: i).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List Tensor (L '[]) ass
+List Tensor (L '[]) (L '[])
+forall {j} {k} (p :: j +-&gt; k). List p (L '[]) (L '[])
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-62"
+      ></span
+      ><span
+      >      </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486694"
+	><span class="hs-identifier hs-var"
+	  >go</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486719"
+      ><span class="annot"
+	><span class="annottext"
+	  >List (~&gt;) a b
+</span
+	  ><a href="#local-6989586621679486719"
+	  ><span class="hs-keyword hs-var"
+	    >as</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (List (~&gt;)) (L as1) (L bs1)
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >let</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486727"
+      ><span class="annot"
+	><span class="annottext"
+	  >fas :: Fold (UN L b) ~&gt; Fold (UN L b)
+</span
+	  ><a href="#local-6989586621679486727"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >fas</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) b b -&gt; Fold (UN L b) ~&gt; Fold (UN L b)
+forall {k1} {k2} (p :: k1 +-&gt; k2) (as :: LIST k2) (bs :: LIST k1).
+MonoidalProfunctor p =&gt;
+List p as bs -&gt; p (Fold (UN L as)) (Fold (UN L bs))
+</span
+	><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier hs-var"
+	  >foldList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a b
+List (~&gt;) b b
+</span
+	><a href="#local-6989586621679486719"
+	><span class="hs-keyword hs-var"
+	  >as</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >in</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a b
+</span
+	><a href="#local-6989586621679486719"
+	><span class="hs-keyword hs-var"
+	  >as</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a b
+-&gt; ((Ob a, Ob b) =&gt;
+    (:.:) Tensor (List Tensor) (Fold (UN L b)) (L '[b]))
+-&gt; (:.:) Tensor (List Tensor) (Fold (UN L b)) (L '[b])
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Fold (UN L b) ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486727"
+	><span class="hs-identifier hs-var"
+	  >fas</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold (UN L b) ~&gt; Fold (UN L b))
+-&gt; ((Ob (Fold (UN L b)), Ob (Fold (UN L b))) =&gt;
+    (:.:) Tensor (List Tensor) (Fold (UN L b)) (L '[b]))
+-&gt; (:.:) Tensor (List Tensor) (Fold (UN L b)) (L '[b])
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[Fold (UN L b)] ~&gt; UN L (L '[Fold (UN L b)]))
+-&gt; Tensor (Fold (UN L b)) (L '[Fold (UN L b)])
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[Fold (UN L b)] ~&gt; Fold '[Fold (UN L b)])
+-&gt; Strictified '[Fold (UN L b)] '[Fold (UN L b)]
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Fold '[Fold (UN L b)] ~&gt; Fold '[Fold (UN L b)]
+Fold (UN L b) ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486727"
+	><span class="hs-identifier hs-var"
+	  >fas</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Tensor (Fold (UN L b)) (L '[Fold (UN L b)])
+-&gt; List Tensor (L '[Fold (UN L b)]) (L '[b])
+-&gt; (:.:) Tensor (List Tensor) (Fold (UN L b)) (L '[b])
+forall {j} {k} {i} (p :: j +-&gt; k) (a :: k) (b :: j) (q :: i +-&gt; j)
+       (c :: i).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Tensor (Fold (UN L b)) b
+-&gt; List Tensor (L '[]) (L '[])
+-&gt; List Tensor (L '[Fold (UN L b)]) (L '[b])
+forall {k} {j} (as1 :: [k]) (bs1 :: [j]) (p :: j +-&gt; k) (a :: k)
+       (b :: j).
+(IsList as1, IsList bs1) =&gt;
+p a b
+-&gt; List p (L as1) (L bs1) -&gt; List p (L (a : as1)) (L (b : bs1))
+</span
+	><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-var"
+	  >Cons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[Fold (UN L b)] ~&gt; UN L b) -&gt; Tensor (Fold (UN L b)) b
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[Fold (UN L b)] ~&gt; Fold (UN L b))
+-&gt; Strictified '[Fold (UN L b)] (UN L b)
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Fold '[Fold (UN L b)] ~&gt; Fold (UN L b)
+Fold (UN L b) ~&gt; Fold (UN L b)
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List Tensor (L '[]) (L '[])
+forall {j} {k} (p :: j +-&gt; k). List p (L '[]) (L '[])
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-63"
+      ></span
+      ><span
+      >      </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486694"
+	><span class="hs-identifier hs-var"
+	  >go</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679486762"
+      ><span class="annot"
+	><a href="#local-6989586621679486762"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >ass'</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679486763"
+      ><span class="annot"
+	><a href="#local-6989586621679486763"
+	  ><span class="hs-keyword hs-type hs-type"
+	    >as</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486764"
+      ><span class="annot"
+	><span class="annottext"
+	  >List (~&gt;) a b
+</span
+	  ><a href="#local-6989586621679486764"
+	  ><span class="hs-keyword hs-var"
+	    >as</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486765"
+      ><span class="annot"
+	><span class="annottext"
+	  >ass :: List (List (~&gt;)) (L as1) (L bs1)
+</span
+	  ><a href="#local-6989586621679486765"
+	  ><span class="hs-identifier hs-var"
+	    >ass</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj (L (b : bs1))
+-&gt; (:.:)
+     Tensor
+     (List Tensor)
+     (Tensor % (Tensor % L (b : bs1)))
+     (L (b : bs1))
+forall (ass :: LIST (LIST k)).
+Monoidal k =&gt;
+Obj ass -&gt; (:.:) Tensor (List Tensor) (Tensor % (Tensor % ass)) ass
+</span
+	><a href="#local-6989586621679486694"
+	><span class="hs-identifier hs-var"
+	  >go</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Obj (L (b : bs1))
+List (List (~&gt;)) (L as1) (L bs1)
+</span
+	><a href="#local-6989586621679486765"
+	><span class="hs-identifier hs-var"
+	  >ass</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-64"
+      ></span
+      ><span
+      >        </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679486785"
+      ><span class="annot"
+	><a href="#local-6989586621679486785"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >bs</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486786"
+      ><span class="annot"
+	><span class="annottext"
+	  >'[Tensor % (Tensor % L (b : bs1))] ~&gt; UN L b
+</span
+	  ><a href="#local-6989586621679486786"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486787"
+      ><span class="annot"
+	><span class="annottext"
+	  >List Tensor b (L (b : bs1))
+</span
+	  ><a href="#local-6989586621679486787"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      >
+</span
+      ><span id="line-65"
+      ></span
+      ><span
+      >          </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a b
+</span
+	><a href="#local-6989586621679486764"
+	><span class="hs-keyword hs-var"
+	  >as</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a b
+-&gt; ((Ob a, Ob b) =&gt;
+    (:.:)
+      Tensor
+      (List Tensor)
+      (Fold (UN L b ++ UN L (Fold (b : bs1))))
+      (L (b : b : bs1)))
+-&gt; (:.:)
+     Tensor
+     (List Tensor)
+     (Fold (UN L b ++ UN L (Fold (b : bs1))))
+     (L (b : b : bs1))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-66"
+      ></span
+      ><span
+      >            </span
+      ><span class="hs-keyword"
+      >let</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486800"
+      ><span class="annot"
+	><span class="annottext"
+	  >fas :: Fold (UN L (L (UN L b))) ~&gt; Fold (UN L (L (UN L b)))
+</span
+	  ><a href="#local-6989586621679486800"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >fas</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (L (UN L b)) (L (UN L b))
+-&gt; Fold (UN L (L (UN L b))) ~&gt; Fold (UN L (L (UN L b)))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (as :: LIST k2) (bs :: LIST k1).
+MonoidalProfunctor p =&gt;
+List p as bs -&gt; p (Fold (UN L as)) (Fold (UN L bs))
+</span
+	><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier hs-var"
+	  >foldList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a b
+List (~&gt;) (L (UN L b)) (L (UN L b))
+</span
+	><a href="#local-6989586621679486764"
+	><span class="hs-keyword hs-var"
+	  >as</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >;</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486801"
+      ><span class="annot"
+	><span class="annottext"
+	  >fass :: List (~&gt;) (Fold (UN L (L as1))) (Fold (UN L (L bs1)))
+</span
+	  ><a href="#local-6989586621679486801"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >fass</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (List (~&gt;)) (L as1) (L bs1)
+-&gt; List (~&gt;) (Fold (UN L (L as1))) (Fold (UN L (L bs1)))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (as :: LIST k2) (bs :: LIST k1).
+MonoidalProfunctor p =&gt;
+List p as bs -&gt; p (Fold (UN L as)) (Fold (UN L bs))
+</span
+	><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier hs-var"
+	  >foldList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (List (~&gt;)) (L as1) (L bs1)
+</span
+	><a href="#local-6989586621679486765"
+	><span class="hs-identifier hs-var"
+	  >ass</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-67"
+      ></span
+      ><span
+      >            </span
+      ><span class="hs-keyword"
+      >in</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Fold (UN L b) ~&gt; Fold (UN L b)
+Fold (UN L (L (UN L b))) ~&gt; Fold (UN L (L (UN L b)))
+</span
+	><a href="#local-6989586621679486800"
+	><span class="hs-identifier hs-var"
+	  >fas</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold (UN L b) ~&gt; Fold (UN L b))
+-&gt; ((Ob (Fold (UN L b)), Ob (Fold (UN L b))) =&gt;
+    (:.:)
+      Tensor
+      (List Tensor)
+      (Fold (UN L b ++ UN L (Fold (b : bs1))))
+      (L (b : b : bs1)))
+-&gt; (:.:)
+     Tensor
+     (List Tensor)
+     (Fold (UN L b ++ UN L (Fold (b : bs1))))
+     (L (b : b : bs1))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-68"
+      ></span
+      ><span
+      >                 </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (Fold (b : bs1)) (Fold (b : bs1))
+List (~&gt;) (Fold (UN L (L as1))) (Fold (UN L (L bs1)))
+</span
+	><a href="#local-6989586621679486801"
+	><span class="hs-identifier hs-var"
+	  >fass</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (Fold (b : bs1)) (Fold (b : bs1))
+-&gt; ((Ob (Fold (b : bs1)), Ob (Fold (b : bs1))) =&gt;
+    (:.:)
+      Tensor
+      (List Tensor)
+      (Fold (UN L b ++ UN L (Fold (b : bs1))))
+      (L (b : b : bs1)))
+-&gt; (:.:)
+     Tensor
+     (List Tensor)
+     (Fold (UN L b ++ UN L (Fold (b : bs1))))
+     (L (b : b : bs1))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-69"
+      ></span
+      ><span
+      >                   </span
+      ><span class="hs-keyword"
+      >let</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486822"
+      ><span class="annot"
+	><span class="annottext"
+	  >fasg :: Strictified
+  (UN L b ** UN L (Fold (b : bs1))) ('[Fold (UN L b)] ** UN L b)
+</span
+	  ><a href="#local-6989586621679486822"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >fasg</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486763"
+	><span class="hs-keyword hs-type"
+	  >as</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >[</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Fold"
+	><span class="hs-identifier hs-type"
+	  >Str.Fold</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486763"
+	><span class="hs-keyword hs-type"
+	  >as</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >]</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Fold (UN L a) ~&gt; Fold '[Fold (UN L a)]
+Fold (UN L (L (UN L b))) ~&gt; Fold (UN L (L (UN L b)))
+</span
+	><a href="#local-6989586621679486800"
+	><span class="hs-identifier hs-var"
+	  >fas</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified (UN L b) '[Fold (UN L b)]
+-&gt; Strictified (UN L (Fold (b : bs1))) (UN L b)
+-&gt; Strictified
+     (UN L b ** UN L (Fold (b : bs1))) ('[Fold (UN L b)] ** UN L b)
+forall (x1 :: [k]) (x2 :: [k]) (y1 :: [k]) (y2 :: [k]).
+Strictified x1 x2
+-&gt; Strictified y1 y2 -&gt; Strictified (x1 ** y1) (x2 ** y2)
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Fold"
+	><span class="hs-identifier hs-type"
+	  >Str.Fold</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486762"
+	><span class="hs-identifier hs-type"
+	  >ass'</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679486785"
+	><span class="hs-identifier hs-type"
+	  >bs</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified '[Fold (UN L (Fold (b : bs1)))] (UN L b)
+-&gt; Fold '[Fold (UN L (Fold (b : bs1)))] ~&gt; Fold (UN L b)
+forall {k} (as :: [k]) (bs :: [k]).
+Strictified as bs -&gt; Fold as ~&gt; Fold bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#unStr"
+	><span class="hs-identifier hs-var"
+	  >Str.unStr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>'[Tensor % (Tensor % L (b : bs1))] ~&gt; UN L b
+Strictified '[Fold (UN L (Fold (b : bs1)))] (UN L b)
+</span
+	><a href="#local-6989586621679486786"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-70"
+      ></span
+      ><span
+      >                   </span
+      ><span class="hs-keyword"
+      >in</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List
+  (~&gt;)
+  (L (UN L b ++ UN L (L (UN L (Fold (b : bs1))))))
+  (L (UN L (L (UN L b)) ++ UN L (L (UN L (Fold (b : bs1))))))
+-&gt; Fold (UN L (L (UN L b ++ UN L (L (UN L (Fold (b : bs1)))))))
+   ~&gt; Fold
+        (UN L (L (UN L (L (UN L b)) ++ UN L (L (UN L (Fold (b : bs1)))))))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (as :: LIST k2) (bs :: LIST k1).
+MonoidalProfunctor p =&gt;
+List p as bs -&gt; p (Fold (UN L as)) (Fold (UN L bs))
+</span
+	><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier hs-var"
+	  >foldList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a b
+List (~&gt;) a (L (UN L b))
+</span
+	><a href="#local-6989586621679486764"
+	><span class="hs-keyword hs-var"
+	  >as</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) a (L (UN L b))
+-&gt; List
+     (~&gt;) (L (UN L (Fold (b : bs1)))) (L (UN L (Fold (b : bs1))))
+-&gt; List
+     (~&gt;)
+     (a ** L (UN L (Fold (b : bs1))))
+     (L (UN L b) ** L (UN L (Fold (b : bs1))))
+forall {j} {k} (p :: j +-&gt; k) (x1 :: k) (x2 :: j) (y1 :: k)
+       (y2 :: j).
+MonoidalProfunctor p =&gt;
+p x1 x2 -&gt; p y1 y2 -&gt; p (x1 ** y1) (x2 ** y2)
+forall (x1 :: LIST k) (x2 :: LIST k) (y1 :: LIST k) (y2 :: LIST k).
+List (~&gt;) x1 x2
+-&gt; List (~&gt;) y1 y2 -&gt; List (~&gt;) (x1 ** y1) (x2 ** y2)
+</span
+	><a href="Proarrow.Category.Monoidal.html#par"
+	><span class="hs-operator hs-var"
+	  >`par`</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (Fold (UN L (L as1))) (Fold (UN L (L bs1)))
+List (~&gt;) (L (UN L (Fold (b : bs1)))) (L (UN L (Fold (b : bs1))))
+</span
+	><a href="#local-6989586621679486801"
+	><span class="hs-identifier hs-var"
+	  >fass</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold (UN L (L (UN L b ++ UN L (L (UN L (Fold (b : bs1)))))))
+ ~&gt; Fold
+      (UN L (L (UN L (L (UN L b)) ++ UN L (L (UN L (Fold (b : bs1))))))))
+-&gt; ((Ob
+       (Fold (UN L (L (UN L b ++ UN L (L (UN L (Fold (b : bs1)))))))),
+     Ob
+       (Fold
+          (UN
+             L (L (UN L (L (UN L b)) ++ UN L (L (UN L (Fold (b : bs1))))))))) =&gt;
+    (:.:)
+      Tensor
+      (List Tensor)
+      (Fold (UN L b ++ UN L (Fold (b : bs1))))
+      (L (b : b : bs1)))
+-&gt; (:.:)
+     Tensor
+     (List Tensor)
+     (Fold (UN L b ++ UN L (Fold (b : bs1))))
+     (L (b : b : bs1))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified
+  (UN L b ** UN L (Fold (b : bs1))) ('[Fold (UN L b)] ** UN L b)
+Strictified
+  (UN L b ++ UN L (Fold (b : bs1))) (Fold (UN L b) : UN L b)
+</span
+	><a href="#local-6989586621679486822"
+	><span class="hs-identifier hs-var"
+	  >fasg</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified
+  (UN L b ++ UN L (Fold (b : bs1))) (Fold (UN L b) : UN L b)
+-&gt; ((Ob (UN L b ++ UN L (Fold (b : bs1))),
+     Ob (Fold (UN L b) : UN L b)) =&gt;
+    (:.:)
+      Tensor
+      (List Tensor)
+      (Fold (UN L b ++ UN L (Fold (b : bs1))))
+      (L (b : b : bs1)))
+-&gt; (:.:)
+     Tensor
+     (List Tensor)
+     (Fold (UN L b ++ UN L (Fold (b : bs1))))
+     (L (b : b : bs1))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[Fold (UN L b ++ UN L (Fold (b : bs1)))]
+ ~&gt; UN L (L (Fold (UN L b) : UN L b)))
+-&gt; Tensor
+     (Fold (UN L b ++ UN L (Fold (b : bs1))))
+     (L (Fold (UN L b) : UN L b))
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[Fold (UN L b ++ UN L (Fold (b : bs1)))]
+ ~&gt; Fold (Fold (UN L b) : UN L b))
+-&gt; Strictified
+     '[Fold (UN L b ++ UN L (Fold (b : bs1)))] (Fold (UN L b) : UN L b)
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified
+  (UN L b ++ UN L (Fold (b : bs1))) (Fold (UN L b) : UN L b)
+-&gt; Fold (UN L b ++ UN L (Fold (b : bs1)))
+   ~&gt; Fold (Fold (UN L b) : UN L b)
+forall {k} (as :: [k]) (bs :: [k]).
+Strictified as bs -&gt; Fold as ~&gt; Fold bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#unStr"
+	><span class="hs-identifier hs-var"
+	  >Str.unStr</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Strictified
+  (UN L b ** UN L (Fold (b : bs1))) ('[Fold (UN L b)] ** UN L b)
+Strictified
+  (UN L b ++ UN L (Fold (b : bs1))) (Fold (UN L b) : UN L b)
+</span
+	><a href="#local-6989586621679486822"
+	><span class="hs-identifier hs-var"
+	  >fasg</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Tensor
+  (Fold (UN L b ++ UN L (Fold (b : bs1))))
+  (L (Fold (UN L b) : UN L b))
+-&gt; List Tensor (L (Fold (UN L b) : UN L b)) (L (b : b : bs1))
+-&gt; (:.:)
+     Tensor
+     (List Tensor)
+     (Fold (UN L b ++ UN L (Fold (b : bs1))))
+     (L (b : b : bs1))
+forall {j} {k} {i} (p :: j +-&gt; k) (a :: k) (b :: j) (q :: i +-&gt; j)
+       (c :: i).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Tensor (Fold (UN L b)) b
+-&gt; List Tensor (L (UN L b)) (L (b : bs1))
+-&gt; List Tensor (L (Fold (UN L b) : UN L b)) (L (b : b : bs1))
+forall {k} {j} (as1 :: [k]) (bs1 :: [j]) (p :: j +-&gt; k) (a :: k)
+       (b :: j).
+(IsList as1, IsList bs1) =&gt;
+p a b
+-&gt; List p (L as1) (L bs1) -&gt; List p (L (a : as1)) (L (b : bs1))
+</span
+	><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-var"
+	  >Cons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[Fold (UN L b)] ~&gt; UN L b) -&gt; Tensor (Fold (UN L b)) b
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[Fold (UN L b)] ~&gt; Fold (UN L b))
+-&gt; Strictified '[Fold (UN L b)] (UN L b)
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Fold '[Fold (UN L b)] ~&gt; Fold (UN L b)
+Fold (UN L b) ~&gt; Fold (UN L b)
+forall (a :: k). Ob a =&gt; a ~&gt; a
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List Tensor b (L (b : bs1))
+List Tensor (L (UN L b)) (L (b : bs1))
+</span
+	><a href="#local-6989586621679486787"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-71"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-72"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486318"
+      ><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Monoidal.html#MonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >MonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486318"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	><span
+	> </span
+	><span class="hs-glyph"
+	>=&gt;</span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PromonoidalProfunctor"
+	  ><span class="hs-identifier hs-type"
+	    >PromonoidalProfunctor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	  ><span class="hs-identifier hs-type"
+	    >Tensor</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679486318"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-73"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486856"
+      ><span class="annot"
+	><span class="annottext"
+	  >parN :: (Tensor :.: List p) :~&gt; (p :.: Tensor)
+</span
+	  ><a href="Proarrow.Category.Promonoidal.html#parN"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >parN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-type"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-type"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486865"
+      ><span class="annot"
+	><span class="annottext"
+	  >Fold '[a] ~&gt; Fold (UN L b)
+</span
+	  ><a href="#local-6989586621679486865"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-type"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486866"
+      ><span class="annot"
+	><span class="annottext"
+	  >List p b b
+</span
+	  ><a href="#local-6989586621679486866"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >let</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486867"
+      ><span class="annot"
+	><span class="annottext"
+	  >fl :: p (Fold (UN L b)) (Fold (UN L b))
+</span
+	  ><a href="#local-6989586621679486867"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >fl</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List p b b -&gt; p (Fold (UN L b)) (Fold (UN L b))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (as :: LIST k2) (bs :: LIST k1).
+MonoidalProfunctor p =&gt;
+List p as bs -&gt; p (Fold (UN L as)) (Fold (UN L bs))
+</span
+	><a href="Proarrow.Profunctor.List.html#foldList"
+	><span class="hs-identifier hs-var"
+	  >foldList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List p b b
+</span
+	><a href="#local-6989586621679486866"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >in</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; Fold (UN L b))
+-&gt; p (Fold (UN L b)) (Fold (UN L b)) -&gt; p a (Fold (UN L b))
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; Fold (UN L b)
+Fold '[a] ~&gt; Fold (UN L b)
+</span
+	><a href="#local-6989586621679486865"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p (Fold (UN L b)) (Fold (UN L b))
+</span
+	><a href="#local-6989586621679486867"
+	><span class="hs-identifier hs-var"
+	  >fl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a (Fold (UN L b))
+-&gt; Tensor (Fold (UN L b)) b -&gt; (:.:) p Tensor a b
+forall {j} {k} {i} (p :: j +-&gt; k) (a :: k) (b :: j) (q :: i +-&gt; j)
+       (c :: i).
+p a b -&gt; q b c -&gt; (:.:) p q a c
+</span
+	><a href="Proarrow.Profunctor.Composition.html#%3A.%3A"
+	><span class="hs-operator hs-var"
+	  >:.:</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>('[Fold (UN L b)] ~&gt; UN L b) -&gt; Tensor (Fold (UN L b)) b
+forall {k} (bs :: LIST k) (a :: k).
+Ob bs =&gt;
+('[a] ~&gt; UN L bs) -&gt; Tensor a bs
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Tensor"
+	><span class="hs-identifier hs-var"
+	  >Tensor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Fold '[Fold (UN L b)] ~&gt; Fold (UN L b))
+-&gt; Strictified '[Fold (UN L b)] (UN L b)
+forall {k} (as :: [k]) (bs :: [k]).
+(Ob as, Ob bs) =&gt;
+(Fold as ~&gt; Fold bs) -&gt; Strictified as bs
+</span
+	><a href="Proarrow.Category.Monoidal.Strictified.html#Str"
+	><span class="hs-identifier hs-var"
+	  >Str.Str</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p (Fold (UN L b)) (Fold (UN L b)) -&gt; Obj (Fold (UN L b))
+forall {k1} {k2} (a :: k2) (b :: k1) (p :: k1 +-&gt; k2).
+Profunctor p =&gt;
+p a b -&gt; Obj b
+</span
+	><a href="Proarrow.Core.html#tgt"
+	><span class="hs-identifier hs-var"
+	  >tgt</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p (Fold (UN L b)) (Fold (UN L b))
+</span
+	><a href="#local-6989586621679486867"
+	><span class="hs-identifier hs-var"
+	  >fl</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (Fold (UN L b)), Ob (Fold (UN L b))) =&gt; (:.:) p Tensor a b)
+-&gt; p (Fold (UN L b)) (Fold (UN L b)) -&gt; (:.:) p Tensor a b
+forall (a :: j) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p (Fold (UN L b)) (Fold (UN L b))
+</span
+	><a href="#local-6989586621679486867"
+	><span class="hs-identifier hs-var"
+	  >fl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob b, Ob b) =&gt; (:.:) p Tensor a b)
+-&gt; List p b b -&gt; (:.:) p Tensor a b
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: LIST j) (b :: LIST j) r.
+((Ob a, Ob b) =&gt; r) -&gt; List p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List p b b
+</span
+	><a href="#local-6989586621679486866"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-74"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-75"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PList"
+	><span class="hs-identifier hs-type"
+	  >PList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486886"
+      ><span id="local-6989586621679486887"
+	><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#LIST"
+	    ><span class="hs-identifier hs-type"
+	      >LIST</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486886"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#%2B-%3E"
+	    ><span class="hs-operator hs-type"
+	      >+-&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486887"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#LIST"
+	    ><span class="hs-identifier hs-type"
+	      >LIST</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486886"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#%2B-%3E"
+	    ><span class="hs-operator hs-type"
+	      >+-&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#LIST"
+	    ><span class="hs-identifier hs-type"
+	      >LIST</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486887"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-76"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="PList"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PList"
+	  ><span class="hs-identifier hs-var"
+	    >PList</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486888"
+      ><span class="annot"
+	><a href="#local-6989586621679486888"
+	  ><span class="hs-identifier hs-type"
+	    >ps</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486889"
+      ><span class="annot"
+	><a href="#local-6989586621679486889"
+	  ><span class="hs-keyword hs-type"
+	    >as</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486890"
+      ><span class="annot"
+	><a href="#local-6989586621679486890"
+	  ><span class="hs-identifier hs-type"
+	    >bs</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-77"
+      ></span
+      ><span
+      >  </span
+      ><span id="PNil"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#PNil"
+	  ><span class="hs-identifier hs-var"
+	    >PNil</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PList"
+	><span class="hs-identifier hs-type"
+	  >PList</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >[</span
+      ><span class="hs-special"
+      >]</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >[</span
+      ><span class="hs-special"
+      >]</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#L"
+	><span class="hs-identifier hs-type"
+	  >L</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >'</span
+      ><span class="hs-special"
+      >[</span
+      ><span class="hs-special"
+      >]</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-78"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486892"
+      ><span id="local-6989586621679486893"
+	><span id="local-6989586621679486894"
+	  ><span id="local-6989586621679486895"
+	    ><span id="local-6989586621679486896"
+	      ><span id="local-6989586621679486897"
+		><span id="PCons"
+		  ><span class="annot"
+		    ><a href="Proarrow.Category.Promonoidal.html#PCons"
+		      ><span class="hs-identifier hs-var"
+			>PCons</span
+			></a
+		      ></span
+		    ></span
+		  ><span
+		  >
+</span
+		  ><span id="line-79"
+		  ></span
+		  ><span
+		  >    </span
+		  ><span class="hs-glyph"
+		  >::</span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="Proarrow.Core.html#Ob"
+		    ><span class="hs-identifier hs-type"
+		      >Ob</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486892"
+		    ><span class="hs-keyword hs-type"
+		      >as</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >,</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Core.html#Ob"
+		    ><span class="hs-identifier hs-type"
+		      >Ob</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486893"
+		    ><span class="hs-identifier hs-type"
+		      >bs</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >,</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Core.html#Ob"
+		    ><span class="hs-identifier hs-type"
+		      >Ob</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486894"
+		    ><span class="hs-identifier hs-type"
+		      >p</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >,</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Core.html#Ob"
+		    ><span class="hs-identifier hs-type"
+		      >Ob</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486895"
+		    ><span class="hs-identifier hs-type"
+		      >ps</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-glyph"
+		  >=&gt;</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486894"
+		    ><span class="hs-identifier hs-type"
+		      >p</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486896"
+		    ><span class="hs-identifier hs-type"
+		      >a</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486897"
+		    ><span class="hs-identifier hs-type"
+		      >b</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-glyph"
+		  >-&gt;</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Category.Promonoidal.html#PList"
+		    ><span class="hs-identifier hs-type"
+		      >PList</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="Proarrow.Profunctor.List.html#L"
+		    ><span class="hs-identifier hs-type"
+		      >L</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486895"
+		    ><span class="hs-identifier hs-type"
+		      >ps</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="Proarrow.Profunctor.List.html#L"
+		    ><span class="hs-identifier hs-type"
+		      >L</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486892"
+		    ><span class="hs-keyword hs-type"
+		      >as</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="Proarrow.Profunctor.List.html#L"
+		    ><span class="hs-identifier hs-type"
+		      >L</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486893"
+		    ><span class="hs-identifier hs-type"
+		      >bs</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-glyph"
+		  >-&gt;</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="Proarrow.Category.Promonoidal.html#PList"
+		    ><span class="hs-identifier hs-type"
+		      >PList</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="Proarrow.Profunctor.List.html#L"
+		    ><span class="hs-identifier hs-type"
+		      >L</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486894"
+		    ><span class="hs-identifier hs-type"
+		      >p</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >'</span
+		  ><span class="hs-glyph"
+		  >:</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486895"
+		    ><span class="hs-identifier hs-type"
+		      >ps</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="Proarrow.Profunctor.List.html#L"
+		    ><span class="hs-identifier hs-type"
+		      >L</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486896"
+		    ><span class="hs-identifier hs-type"
+		      >a</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >'</span
+		  ><span class="hs-glyph"
+		  >:</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486892"
+		    ><span class="hs-keyword hs-type"
+		      >as</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="Proarrow.Profunctor.List.html#L"
+		    ><span class="hs-identifier hs-type"
+		      >L</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >(</span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486897"
+		    ><span class="hs-identifier hs-type"
+		      >b</span
+		      ></a
+		    ></span
+		  ><span
+		  > </span
+		  ><span class="hs-special"
+		  >'</span
+		  ><span class="hs-glyph"
+		  >:</span
+		  ><span
+		  > </span
+		  ><span class="annot"
+		  ><a href="#local-6989586621679486893"
+		    ><span class="hs-identifier hs-type"
+		      >bs</span
+		      ></a
+		    ></span
+		  ><span class="hs-special"
+		  >)</span
+		  ><span class="hs-special"
+		  >)</span
+		  ></span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-80"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486331"
+      ><span id="local-6989586621679486332"
+	><span id="local-6989586621679486333"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486331"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#CategoryOf"
+	      ><span class="hs-identifier hs-type"
+		>CategoryOf</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486332"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Ob"
+	      ><span class="hs-identifier hs-type"
+		>Ob</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486333"
+	      ><span class="hs-identifier hs-type"
+		>ps</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Profunctor"
+	      ><span class="hs-identifier hs-type"
+		>Profunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Promonoidal.html#PList"
+	      ><span class="hs-identifier hs-type"
+		>PList</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486333"
+	      ><span class="hs-identifier hs-type"
+		>ps</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Profunctor.List.html#LIST"
+	      ><span class="hs-identifier hs-type"
+		>LIST</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486331"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#%2B-%3E"
+	      ><span class="hs-operator hs-type"
+		>+-&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Profunctor.List.html#LIST"
+	      ><span class="hs-identifier hs-type"
+		>LIST</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486332"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-81"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486916"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: LIST k) (a :: LIST k) (b :: LIST j) (d :: LIST j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; PList ps a b -&gt; PList ps c d
+</span
+	  ><a href="Proarrow.Core.html#dimap"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; a
+List (~&gt;) c a
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; d
+List (~&gt;) b d
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList ps a b
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PNil"
+	><span class="hs-identifier hs-var"
+	  >PNil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList ps c d
+PList (L '[]) (L '[]) (L '[])
+forall {j} {k}. PList (L '[]) (L '[]) (L '[])
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PNil"
+	><span class="hs-identifier hs-var"
+	  >PNil</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-82"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486930"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679486930"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486931"
+      ><span class="annot"
+	><span class="annottext"
+	  >List (~&gt;) (L as1) (L bs1)
+</span
+	  ><a href="#local-6989586621679486931"
+	  ><span class="hs-identifier hs-var"
+	    >ls</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486936"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679486936"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486937"
+      ><span class="annot"
+	><span class="annottext"
+	  >List (~&gt;) (L as1) (L bs1)
+</span
+	  ><a href="#local-6989586621679486937"
+	  ><span class="hs-identifier hs-var"
+	    >rs</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PCons"
+	><span class="hs-identifier hs-type"
+	  >PCons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486962"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679486962"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486963"
+      ><span class="annot"
+	><span class="annottext"
+	  >PList (L ps) (L as) (L bs)
+</span
+	  ><a href="#local-6989586621679486963"
+	  ><span class="hs-identifier hs-var"
+	    >fs</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-83"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (L as1) (L bs1)
+</span
+	><a href="#local-6989586621679486931"
+	><span class="hs-identifier hs-var"
+	  >ls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (L as1) (L bs1)
+-&gt; ((Ob (L as1), Ob (L bs1)) =&gt; PList ps c d) -&gt; PList ps c d
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-84"
+      ></span
+      ><span
+      >      </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (L as1) (L bs1)
+</span
+	><a href="#local-6989586621679486937"
+	><span class="hs-identifier hs-var"
+	  >rs</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List (~&gt;) (L as1) (L bs1)
+-&gt; ((Ob (L as1), Ob (L bs1)) =&gt; PList ps c d) -&gt; PList ps c d
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-85"
+      ></span
+      ><span
+      >        </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+-&gt; PList (L ps) (L as1) (L bs1)
+-&gt; PList (L (p : ps)) (L (a : as1)) (L (b : bs1))
+forall {k} {k} (bs :: [k]) (as :: [k]) (p :: k +-&gt; k)
+       (ps :: [k +-&gt; k]) (a :: k) (b :: k).
+(Ob bs, Ob as, Ob p, Ob ps) =&gt;
+p a b
+-&gt; PList (L ps) (L bs) (L as)
+-&gt; PList (L (p : ps)) (L (a : bs)) (L (b : as))
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PCons"
+	><span class="hs-identifier hs-var"
+	  >PCons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; a) -&gt; (b ~&gt; b) -&gt; p a b -&gt; p a b
+forall (c :: k) (a :: k) (b :: j) (d :: j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j) (d :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+a ~&gt; a
+</span
+	><a href="#local-6989586621679486930"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+b ~&gt; b
+</span
+	><a href="#local-6989586621679486936"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679486962"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(L as1 ~&gt; L as)
+-&gt; (L bs ~&gt; L bs1)
+-&gt; PList (L ps) (L as) (L bs)
+-&gt; PList (L ps) (L as1) (L bs1)
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j) (d :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall (c :: LIST k) (a :: LIST k) (b :: LIST j) (d :: LIST j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; PList (L ps) a b -&gt; PList (L ps) c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>L as1 ~&gt; L as
+List (~&gt;) (L as1) (L bs1)
+</span
+	><a href="#local-6989586621679486931"
+	><span class="hs-identifier hs-var"
+	  >ls</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>L bs ~&gt; L bs1
+List (~&gt;) (L as1) (L bs1)
+</span
+	><a href="#local-6989586621679486937"
+	><span class="hs-identifier hs-var"
+	  >rs</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList (L ps) (L as) (L bs)
+</span
+	><a href="#local-6989586621679486963"
+	><span class="hs-identifier hs-var"
+	  >fs</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-86"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; a
+List (~&gt;) c a
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486984"
+      ><span class="annot"
+	><span class="annottext"
+	  >PList ps a b
+</span
+	  ><a href="#local-6989586621679486984"
+	  ><span class="hs-identifier hs-var"
+	    >ps</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList ps a b
+</span
+	><a href="#local-6989586621679486984"
+	><span class="hs-identifier hs-var"
+	  >ps</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      >
+</span
+      ><span id="line-87"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; d
+List (~&gt;) b d
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486991"
+      ><span class="annot"
+	><span class="annottext"
+	  >PList ps a b
+</span
+	  ><a href="#local-6989586621679486991"
+	  ><span class="hs-identifier hs-var"
+	    >ps</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList ps a b
+</span
+	><a href="#local-6989586621679486991"
+	><span class="hs-identifier hs-var"
+	  >ps</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      >
+</span
+      ><span id="line-88"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486992"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679486992"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679486993"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: LIST k) (b :: LIST j) r.
+((Ob a, Ob b) =&gt; r) -&gt; PList ps a b -&gt; r
+</span
+	  ><a href="Proarrow.Core.html#%5C%5C"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList ps a b
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PNil"
+	><span class="hs-identifier hs-var"
+	  >PNil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679486992"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-89"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679487005"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679487005"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PCons"
+	><span class="hs-identifier hs-type"
+	  >PCons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487014"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679487014"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList (L ps) (L as) (L bs)
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PNil"
+	><span class="hs-identifier hs-var"
+	  >PNil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679487005"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: k) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679487014"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-90"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679487033"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679487033"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PCons"
+	><span class="hs-identifier hs-type"
+	  >PCons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487045"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679487045"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487046"
+      ><span class="annot"
+	><span class="annottext"
+	  >fs :: PList (L ps) (L as) (L bs)
+</span
+	  ><a href="#local-6989586621679487046"
+	  ><span class="hs-identifier hs-var"
+	    >fs</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PCons"
+	><span class="hs-identifier hs-type"
+	  >PCons</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679487033"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: k) (b :: j) r. ((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b
+</span
+	><a href="#local-6989586621679487045"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (L as), Ob (L bs)) =&gt; r) -&gt; PList (L ps) (L as) (L bs) -&gt; r
+forall {j} {k} (p :: j +-&gt; k) (a :: k) (b :: j) r.
+Profunctor p =&gt;
+((Ob a, Ob b) =&gt; r) -&gt; p a b -&gt; r
+forall (a :: LIST k) (b :: LIST j) r.
+((Ob a, Ob b) =&gt; r) -&gt; PList (L ps) a b -&gt; r
+</span
+	><a href="Proarrow.Core.html#%5C%5C"
+	><span class="hs-operator hs-var"
+	  >\\</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList (L ps) (L as) (L bs)
+</span
+	><a href="#local-6989586621679487046"
+	><span class="hs-identifier hs-var"
+	  >fs</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-91"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486407"
+      ><span id="local-6989586621679486408"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486407"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486408"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Functor.html#Functor"
+	    ><span class="hs-identifier hs-type"
+	      >Functor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Promonoidal.html#PList"
+	    ><span class="hs-identifier hs-type"
+	      >PList</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >::</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#LIST"
+	    ><span class="hs-identifier hs-type"
+	      >LIST</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486407"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#%2B-%3E"
+	    ><span class="hs-operator hs-type"
+	      >+-&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486408"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#LIST"
+	    ><span class="hs-identifier hs-type"
+	      >LIST</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486407"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#%2B-%3E"
+	    ><span class="hs-operator hs-type"
+	      >+-&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#LIST"
+	    ><span class="hs-identifier hs-type"
+	      >LIST</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486408"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-92"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679487097"
+      ><span class="annot"
+	><span class="annottext"
+	  >map :: forall (a :: LIST (j +-&gt; k)) (b :: LIST (j +-&gt; k)).
+(a ~&gt; b) -&gt; PList a ~&gt; PList b
+</span
+	  ><a href="#local-6989586621679487097"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >map</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+List Prof a b
+</span
+	><a href="Proarrow.Profunctor.List.html#Nil"
+	><span class="hs-identifier hs-var"
+	  >Nil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(PList (L '[]) :~&gt; PList (L '[]))
+-&gt; Prof (PList (L '[])) (PList (L '[]))
+forall {j} {k} (p :: j +-&gt; k) (q :: j +-&gt; k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList (L '[]) a b
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PNil"
+	><span class="hs-identifier hs-var"
+	  >PNil</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList (L '[]) a b
+PList (L '[]) (L '[]) (L '[])
+forall {j} {k}. PList (L '[]) (L '[]) (L '[])
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PNil"
+	><span class="hs-identifier hs-var"
+	  >PNil</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-93"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487112"
+      ><span class="annot"
+	><span class="annottext"
+	  >f :: a ~&gt; b
+</span
+	  ><a href="#local-6989586621679487112"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Profunctor.List.html#Cons"
+	><span class="hs-identifier hs-type"
+	  >Cons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier hs-type"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487124"
+      ><span class="annot"
+	><span class="annottext"
+	  >a :~&gt; b
+</span
+	  ><a href="#local-6989586621679487124"
+	  ><span class="hs-identifier hs-var"
+	    >n</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679487125"
+      ><span class="annot"
+	><span class="annottext"
+	  >List Prof (L as1) (L bs1)
+</span
+	  ><a href="#local-6989586621679487125"
+	  ><span class="hs-identifier hs-var"
+	    >fs</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+List Prof (L (a : as1)) (L (b : bs1))
+</span
+	><a href="#local-6989586621679487112"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>List Prof (L (a : as1)) (L (b : bs1))
+-&gt; ((Ob (L (a : as1)), Ob (L (b : bs1))) =&gt;
+    Prof (PList (L (a : as1))) (PList (L (b : bs1))))
+-&gt; Prof (PList (L (a : as1))) (PList (L (b : bs1)))
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(PList (L (a : as1)) :~&gt; PList (L (b : bs1)))
+-&gt; Prof (PList (L (a : as1))) (PList (L (b : bs1)))
+forall {j} {k} (p :: j +-&gt; k) (q :: j +-&gt; k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#PCons"
+	><span class="hs-identifier hs-type"
+	  >PCons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487153"
+      ><span class="annot"
+	><span class="annottext"
+	  >p a b
+</span
+	  ><a href="#local-6989586621679487153"
+	  ><span class="hs-identifier hs-var"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487154"
+      ><span class="annot"
+	><span class="annottext"
+	  >PList (L ps) (L as) (L bs)
+</span
+	  ><a href="#local-6989586621679487154"
+	  ><span class="hs-identifier hs-var"
+	    >ps</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b a b
+-&gt; PList (L bs1) (L as) (L bs)
+-&gt; PList (L (b : bs1)) (L (a : as)) (L (b : bs))
+forall {k} {k} (bs :: [k]) (as :: [k]) (p :: k +-&gt; k)
+       (ps :: [k +-&gt; k]) (a :: k) (b :: k).
+(Ob bs, Ob as, Ob p, Ob ps) =&gt;
+p a b
+-&gt; PList (L ps) (L bs) (L as)
+-&gt; PList (L (p : ps)) (L (a : bs)) (L (b : as))
+</span
+	><a href="Proarrow.Category.Promonoidal.html#PCons"
+	><span class="hs-identifier hs-var"
+	  >PCons</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>a a b -&gt; b a b
+a :~&gt; b
+</span
+	><a href="#local-6989586621679487124"
+	><span class="hs-identifier hs-var"
+	  >n</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a a b
+p a b
+</span
+	><a href="#local-6989586621679487153"
+	><span class="hs-identifier hs-var"
+	  >p</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>Prof (PList (L as1)) (PList (L bs1))
+-&gt; PList (L as1) :~&gt; PList (L bs1)
+forall {k1} {k} (p :: k1 +-&gt; k) (q :: k1 +-&gt; k).
+Prof p q -&gt; p :~&gt; q
+</span
+	><a href="Proarrow.Category.Instance.Prof.html#unProf"
+	><span class="hs-identifier hs-var"
+	  >unProf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(L as1 ~&gt; L bs1) -&gt; PList (L as1) ~&gt; PList (L bs1)
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (a :: LIST (j +-&gt; k)) (b :: LIST (j +-&gt; k)).
+(a ~&gt; b) -&gt; PList a ~&gt; PList b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>L as1 ~&gt; L bs1
+List Prof (L as1) (L bs1)
+</span
+	><a href="#local-6989586621679487125"
+	><span class="hs-identifier hs-var"
+	  >fs</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList (L as1) (L as) (L bs)
+PList (L ps) (L as) (L bs)
+</span
+	><a href="#local-6989586621679487154"
+	><span class="hs-identifier hs-var"
+	  >ps</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-94"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-95"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Day"
+	><span class="hs-identifier hs-type"
+	  >Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679487156"
+      ><span id="local-6989586621679487157"
+	><span class="annot"
+	  ><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	    ><span class="hs-identifier hs-type"
+	      >PROTENSOR</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679487156"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Promonoidal.html#PROTENSOR"
+	    ><span class="hs-identifier hs-type"
+	      >PROTENSOR</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679487157"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Profunctor.List.html#LIST"
+	    ><span class="hs-identifier hs-type"
+	      >LIST</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679487157"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#%2B-%3E"
+	    ><span class="hs-operator hs-type"
+	      >+-&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679487156"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >-&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679487157"
+	    ><span class="hs-identifier hs-type"
+	      >j</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#%2B-%3E"
+	    ><span class="hs-operator hs-type"
+	      >+-&gt;</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679487156"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-96"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Day"
+      ><span class="annot"
+	><a href="Proarrow.Category.Promonoidal.html#Day"
+	  ><span class="hs-identifier hs-var"
+	    >Day</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487158"
+      ><span class="annot"
+	><a href="#local-6989586621679487158"
+	  ><span class="hs-identifier hs-type"
+	    >tk</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487159"
+      ><span class="annot"
+	><a href="#local-6989586621679487159"
+	  ><span class="hs-identifier hs-type"
+	    >tj</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487160"
+      ><span class="annot"
+	><a href="#local-6989586621679487160"
+	  ><span class="hs-identifier hs-type"
+	    >ps</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487161"
+      ><span class="annot"
+	><a href="#local-6989586621679487161"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487162"
+      ><span class="annot"
+	><a href="#local-6989586621679487162"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-97"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679486453"
+      ><span id="local-6989586621679486454"
+	><span id="local-6989586621679486455"
+	  ><span id="local-6989586621679486456"
+	    ><span id="local-6989586621679486457"
+	      ><span id="local-6989586621679487163"
+		><span id="local-6989586621679487164"
+		  ><span id="Day"
+		    ><span class="annot"
+		      ><a href="Proarrow.Category.Promonoidal.html#Day"
+			><span class="hs-identifier hs-var"
+			  >Day</span
+			  ></a
+			></span
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="hs-glyph"
+		    >::</span
+		    ><span
+		    > </span
+		    ><span class="hs-special"
+		    >(</span
+		    ><span class="annot"
+		    ><a href="Proarrow.Core.html#Ob"
+		      ><span class="hs-identifier hs-type"
+			>Ob</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486453"
+		      ><span class="hs-identifier hs-type"
+			>a</span
+			></a
+		      ></span
+		    ><span class="hs-special"
+		    >,</span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="Proarrow.Core.html#Ob"
+		      ><span class="hs-identifier hs-type"
+			>Ob</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486454"
+		      ><span class="hs-identifier hs-type"
+			>b</span
+			></a
+		      ></span
+		    ><span class="hs-special"
+		    >)</span
+		    ><span
+		    > </span
+		    ><span class="hs-glyph"
+		    >=&gt;</span
+		    ><span
+		    > </span
+		    ><span class="hs-special"
+		    >(</span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486455"
+		      ><span class="hs-identifier hs-type"
+			>tj</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486454"
+		      ><span class="hs-identifier hs-type"
+			>b</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679487163"
+		      ><span class="hs-identifier hs-type"
+			>bs</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="hs-glyph"
+		    >-&gt;</span
+		    ><span
+		    > </span
+		    ><span class="hs-special"
+		    >(</span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486456"
+		      ><span class="hs-identifier hs-type"
+			>tk</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486453"
+		      ><span class="hs-identifier hs-type"
+			>a</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679487164"
+		      ><span class="hs-keyword hs-type"
+			>as</span
+			></a
+		      ></span
+		    ><span class="hs-special"
+		    >,</span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="Proarrow.Category.Promonoidal.html#PList"
+		      ><span class="hs-identifier hs-type"
+			>PList</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486457"
+		      ><span class="hs-identifier hs-type"
+			>ps</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679487164"
+		      ><span class="hs-keyword hs-type"
+			>as</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679487163"
+		      ><span class="hs-identifier hs-type"
+			>bs</span
+			></a
+		      ></span
+		    ><span class="hs-special"
+		    >)</span
+		    ><span class="hs-special"
+		    >)</span
+		    ><span
+		    > </span
+		    ><span class="hs-glyph"
+		    >-&gt;</span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="Proarrow.Category.Promonoidal.html#Day"
+		      ><span class="hs-identifier hs-type"
+			>Day</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486456"
+		      ><span class="hs-identifier hs-type"
+			>tk</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486455"
+		      ><span class="hs-identifier hs-type"
+			>tj</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486457"
+		      ><span class="hs-identifier hs-type"
+			>ps</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486453"
+		      ><span class="hs-identifier hs-type"
+			>a</span
+			></a
+		      ></span
+		    ><span
+		    > </span
+		    ><span class="annot"
+		    ><a href="#local-6989586621679486454"
+		      ><span class="hs-identifier hs-type"
+			>b</span
+			></a
+		      ></span
+		    ></span
+		  ></span
+		></span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-98"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486442"
+      ><span id="local-6989586621679486443"
+	><span id="local-6989586621679486444"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Profunctor"
+	      ><span class="hs-identifier hs-type"
+		>Profunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486442"
+	      ><span class="hs-identifier hs-type"
+		>tk</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Profunctor"
+	      ><span class="hs-identifier hs-type"
+		>Profunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486443"
+	      ><span class="hs-identifier hs-type"
+		>tj</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Profunctor"
+	      ><span class="hs-identifier hs-type"
+		>Profunctor</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Promonoidal.html#Day"
+	      ><span class="hs-identifier hs-type"
+		>Day</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486442"
+	      ><span class="hs-identifier hs-type"
+		>tk</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486443"
+	      ><span class="hs-identifier hs-type"
+		>tj</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679486444"
+	      ><span class="hs-identifier hs-type"
+		>ps</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-99"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679487182"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: k) (a :: k) (b :: j) (d :: j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Day tk tj ps a b -&gt; Day tk tj ps c d
+</span
+	  ><a href="Proarrow.Core.html#dimap"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487183"
+      ><span class="annot"
+	><span class="annottext"
+	  >c ~&gt; a
+</span
+	  ><a href="#local-6989586621679487183"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487184"
+      ><span class="annot"
+	><span class="annottext"
+	  >b ~&gt; d
+</span
+	  ><a href="#local-6989586621679487184"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Day"
+	><span class="hs-identifier hs-type"
+	  >Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487188"
+      ><span class="annot"
+	><span class="annottext"
+	  >tj b bs -&gt; (tk a as, PList ps as bs)
+</span
+	  ><a href="#local-6989586621679487188"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      >
+</span
+      ><span id="line-100"
+      ></span
+      ><span
+      >    </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; a
+</span
+	><a href="#local-6989586621679487183"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; ((Ob c, Ob a) =&gt; Day tk tj ps c d) -&gt; Day tk tj ps c d
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; d
+</span
+	><a href="#local-6989586621679487184"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; d) -&gt; ((Ob b, Ob d) =&gt; Day tk tj ps c d) -&gt; Day tk tj ps c d
+forall {k1} {k2} (p :: k1 +-&gt; k2) (a :: k2) (b :: k1) r.
+Profunctor p =&gt;
+p a b -&gt; ((Ob a, Ob b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Core.html#%2F%2F"
+	><span class="hs-operator hs-var"
+	  >//</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(tj d bs -&gt; (tk c as, PList ps as bs)) -&gt; Day tk tj ps c d
+forall {k} {j} (a :: k) (b :: j) (tj :: PROTENSOR j) (bs :: LIST j)
+       (tk :: PROTENSOR k) (as :: LIST k) (ps :: LIST (j +-&gt; k)).
+(Ob a, Ob b) =&gt;
+(tj b bs -&gt; (tk a as, PList ps as bs)) -&gt; Day tk tj ps a b
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Day"
+	><span class="hs-identifier hs-var"
+	  >Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679487198"
+      ><span class="annot"
+	><span class="annottext"
+	  >tj d bs
+</span
+	  ><a href="#local-6989586621679487198"
+	  ><span class="hs-identifier hs-var"
+	    >tj</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>tj b bs -&gt; (tk a as, PList ps as bs)
+</span
+	><a href="#local-6989586621679487188"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(b ~&gt; d) -&gt; tj d bs -&gt; tj b bs
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>b ~&gt; d
+</span
+	><a href="#local-6989586621679487184"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>tj d bs
+</span
+	><a href="#local-6989586621679487198"
+	><span class="hs-identifier hs-var"
+	  >tj</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      >
+</span
+      ><span id="line-101"
+      ></span
+      ><span
+      >      </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679487199"
+      ><span class="annot"
+	><span class="annottext"
+	  >tk a as
+</span
+	  ><a href="#local-6989586621679487199"
+	  ><span class="hs-identifier hs-var"
+	    >tk</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679487200"
+      ><span class="annot"
+	><span class="annottext"
+	  >PList ps as bs
+</span
+	  ><a href="#local-6989586621679487200"
+	  ><span class="hs-identifier hs-var"
+	    >ps</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(c ~&gt; a) -&gt; tk a as -&gt; tk c as
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; p a b -&gt; p c b
+</span
+	><a href="Proarrow.Core.html#lmap"
+	><span class="hs-identifier hs-var"
+	  >lmap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>c ~&gt; a
+</span
+	><a href="#local-6989586621679487183"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>tk a as
+</span
+	><a href="#local-6989586621679487199"
+	><span class="hs-identifier hs-var"
+	  >tk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList ps as bs
+</span
+	><a href="#local-6989586621679487200"
+	><span class="hs-identifier hs-var"
+	  >ps</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-102"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679487201"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679487201"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487202"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: k) (b :: j) r.
+((Ob a, Ob b) =&gt; r) -&gt; Day tk tj ps a b -&gt; r
+</span
+	  ><a href="Proarrow.Core.html#%5C%5C"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Day"
+	><span class="hs-identifier hs-type"
+	  >Day</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679487201"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-103"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679486467"
+      ><span id="local-6989586621679486468"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Profunctor"
+	    ><span class="hs-identifier hs-type"
+	      >Profunctor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486467"
+	    ><span class="hs-identifier hs-type"
+	      >tk</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#Profunctor"
+	    ><span class="hs-identifier hs-type"
+	      >Profunctor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486468"
+	    ><span class="hs-identifier hs-type"
+	      >tj</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Functor.html#Functor"
+	    ><span class="hs-identifier hs-type"
+	      >Functor</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Promonoidal.html#Day"
+	    ><span class="hs-identifier hs-type"
+	      >Day</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486467"
+	    ><span class="hs-identifier hs-type"
+	      >tk</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679486468"
+	    ><span class="hs-identifier hs-type"
+	      >tj</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-104"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679487223"
+      ><span class="annot"
+	><span class="annottext"
+	  >map :: forall (a :: LIST (j +-&gt; k)) (b :: LIST (j +-&gt; k)).
+(a ~&gt; b) -&gt; Day tk tj a ~&gt; Day tk tj b
+</span
+	  ><a href="Proarrow.Functor.html#map"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >map</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487224"
+      ><span class="annot"
+	><span class="annottext"
+	  >a ~&gt; b
+</span
+	  ><a href="#local-6989586621679487224"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(Day tk tj a :~&gt; Day tk tj b) -&gt; Prof (Day tk tj a) (Day tk tj b)
+forall {j} {k} (p :: j +-&gt; k) (q :: j +-&gt; k).
+(Profunctor p, Profunctor q) =&gt;
+(p :~&gt; q) -&gt; Prof p q
+</span
+	><a href="Proarrow.Category.Instance.Prof.html#Prof"
+	><span class="hs-identifier hs-var"
+	  >Prof</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >\</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Promonoidal.html#Day"
+	><span class="hs-identifier hs-type"
+	  >Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679487230"
+      ><span class="annot"
+	><span class="annottext"
+	  >tj b bs -&gt; (tk a as, PList a as bs)
+</span
+	  ><a href="#local-6989586621679487230"
+	  ><span class="hs-identifier hs-var"
+	    >d</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(tj b bs -&gt; (tk a as, PList b as bs)) -&gt; Day tk tj b a b
+forall {k} {j} (a :: k) (b :: j) (tj :: PROTENSOR j) (bs :: LIST j)
+       (tk :: PROTENSOR k) (as :: LIST k) (ps :: LIST (j +-&gt; k)).
+(Ob a, Ob b) =&gt;
+(tj b bs -&gt; (tk a as, PList ps as bs)) -&gt; Day tk tj ps a b
+</span
+	><a href="Proarrow.Category.Promonoidal.html#Day"
+	><span class="hs-identifier hs-var"
+	  >Day</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >\</span
+      ><span id="local-6989586621679487231"
+      ><span class="annot"
+	><span class="annottext"
+	  >tj b bs
+</span
+	  ><a href="#local-6989586621679487231"
+	  ><span class="hs-identifier hs-var"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >case</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>tj b bs -&gt; (tk a as, PList a as bs)
+</span
+	><a href="#local-6989586621679487230"
+	><span class="hs-identifier hs-var"
+	  >d</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>tj b bs
+</span
+	><a href="#local-6989586621679487231"
+	><span class="hs-identifier hs-var"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >of</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679487232"
+      ><span class="annot"
+	><span class="annottext"
+	  >tk a as
+</span
+	  ><a href="#local-6989586621679487232"
+	  ><span class="hs-identifier hs-var"
+	    >tk</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span id="local-6989586621679487233"
+      ><span class="annot"
+	><span class="annottext"
+	  >PList a as bs
+</span
+	  ><a href="#local-6989586621679487233"
+	  ><span class="hs-identifier hs-var"
+	    >ps</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>tk a as
+</span
+	><a href="#local-6989586621679487232"
+	><span class="hs-identifier hs-var"
+	  >tk</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>Prof (PList a) (PList b) -&gt; PList a :~&gt; PList b
+forall {k1} {k} (p :: k1 +-&gt; k) (q :: k1 +-&gt; k).
+Prof p q -&gt; p :~&gt; q
+</span
+	><a href="Proarrow.Category.Instance.Prof.html#unProf"
+	><span class="hs-identifier hs-var"
+	  >unProf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; PList a ~&gt; PList b
+forall {k1} {k2} (f :: k1 -&gt; k2) (a :: k1) (b :: k1).
+Functor f =&gt;
+(a ~&gt; b) -&gt; f a ~&gt; f b
+forall (a :: LIST (j +-&gt; k)) (b :: LIST (j +-&gt; k)).
+(a ~&gt; b) -&gt; PList a ~&gt; PList b
+</span
+	><a href="Proarrow.Functor.html#map"
+	><span class="hs-identifier hs-var"
+	  >map</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>a ~&gt; b
+</span
+	><a href="#local-6989586621679487224"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>PList a as bs
+</span
+	><a href="#local-6989586621679487233"
+	><span class="hs-identifier hs-var"
+	  >ps</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-105"
+      ></span
+      ></pre
+    ></body
+  ></html
+>
