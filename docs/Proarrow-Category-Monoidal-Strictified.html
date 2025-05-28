@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Category.Monoidal.Strictified.html"
@@ -174,7 +174,7 @@
 	    >data</span
 	    > <a id="t:SList" class="def"
 	    >SList</a
-	    > (as :: [k]) <span class="keyword"
+	    > (as :: [a]) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#SList" class="link"
 	    >Source</a
@@ -189,33 +189,47 @@
 	    ><table
 	    ><tr
 	      ><td class="src"
-		><a id="v:Nil" class="def"
-		  >Nil</a
+		><a id="v:SNil" class="def"
+		  >SNil</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k}. <a href="Proarrow-Category-Monoidal-Strictified.html#t:SList" title="Proarrow.Category.Monoidal.Strictified"
+		  > {a}. <a href="Proarrow-Category-Monoidal-Strictified.html#t:SList" title="Proarrow.Category.Monoidal.Strictified"
 		  >SList</a
-		  > ('[] :: [k])</td
+		  > ('[] :: [a])</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
 	      ><tr
 	      ><td class="src"
-		><a id="v:Cons" class="def"
-		  >Cons</a
+		><a id="v:SSing" class="def"
+		  >SSing</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} (a :: k) (as1 :: [k]). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  > {a} (a1 :: a). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		  >Ob</a
-		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  > a1 =&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:SList" title="Proarrow.Category.Monoidal.Strictified"
+		  >SList</a
+		  > '[a1]</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td class="src"
+		><a id="v:SCons" class="def"
+		  >SCons</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {a} (a1 :: a) (as1 :: [a]) (bs :: [a]) (b :: a). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		  >Ob</a
-		  > as1) =&gt; <a href="Proarrow-Core.html#t:Obj" title="Proarrow.Core"
-		  >Obj</a
-		  > a -&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:SList" title="Proarrow.Category.Monoidal.Strictified"
+		  > a1, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > as1, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > bs, as1 <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		  >~</a
+		  > (b ': bs)) =&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:SList" title="Proarrow.Category.Monoidal.Strictified"
 		  >SList</a
-		  > as1 -&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:SList" title="Proarrow.Category.Monoidal.Strictified"
-		  >SList</a
-		  > (a ': as1)</td
+		  > (a1 ': as1)</td
 		><td class="doc empty"
 		>&nbsp;</td
 		></tr
@@ -230,7 +244,7 @@
 	    >++</a
 	    > bs) <a href="Proarrow-Category-Monoidal-Strictified.html#t:-43--43-" title="Proarrow.Category.Monoidal.Strictified"
 	    >++</a
-	    > cs) <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	    > cs) <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
 	    >~</a
 	    > (as <a href="Proarrow-Category-Monoidal-Strictified.html#t:-43--43-" title="Proarrow.Category.Monoidal.Strictified"
 	    >++</a
@@ -240,7 +254,7 @@
 	    >Assoc</a
 	    > (as :: [k]) (bs :: [k]) (cs :: [k]) <a href="src/Proarrow.Category.Monoidal.Strictified.html#Assoc" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L29" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L30" class="link"
 	    >Comments</a
 	    > <a href="#t:Assoc" class="selflink"
 	    >#</a
@@ -261,7 +275,7 @@
 		      >++</a
 		      > (bs <a href="Proarrow-Category-Monoidal-Strictified.html#t:-43--43-" title="Proarrow.Category.Monoidal.Strictified"
 		      >++</a
-		      > cs)) <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      > cs)) <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
 		      >~</a
 		      > ((as <a href="Proarrow-Category-Monoidal-Strictified.html#t:-43--43-" title="Proarrow.Category.Monoidal.Strictified"
 		      >++</a
@@ -270,9 +284,9 @@
 		      > cs) =&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:Assoc" title="Proarrow.Category.Monoidal.Strictified"
 		      >Assoc</a
 		      > (as :: [k]) (bs :: [k]) (cs :: [k])</span
-		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-30" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-31" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L30" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L31" class="link"
 		    >Comments</a
 		    > <a href="#t:Assoc" class="selflink"
 		    >#</a
@@ -302,7 +316,7 @@
 	    >class</span
 	    > (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 	    >CategoryOf</a
-	    > k, as <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+	    > k, as <a href="${pkgroot}/../../../share/doc/ghc-9.10.2/html/libraries/base-4.20.1.0-7c8f/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
 	    >~</a
 	    > (as <a href="Proarrow-Category-Monoidal-Strictified.html#t:-43--43-" title="Proarrow.Category.Monoidal.Strictified"
 	    >++</a
@@ -316,7 +330,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#IsList" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L33" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
 	    >Comments</a
 	    > <a href="#t:IsList" class="selflink"
 	    >#</a
@@ -331,7 +345,7 @@
 	      >SList</a
 	      > as <a href="src/Proarrow.Category.Monoidal.Strictified.html#sList" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L33" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
 	      >Comments</a
 	      > <a href="#v:sList" class="selflink"
 	      >#</a
@@ -349,7 +363,7 @@
 	      >++</a
 	      > bs) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.Strictified.html#withIsList2" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L33" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
 	      >Comments</a
 	      > <a href="#v:withIsList2" class="selflink"
 	      >#</a
@@ -369,7 +383,7 @@
 	      >~&gt;</a
 	      > (b ': as) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L33" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
 	      >Comments</a
 	      > <a href="#v:swap1" class="selflink"
 	      >#</a
@@ -389,7 +403,7 @@
 	      >++</a
 	      > '[b]) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1Inv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L33" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
 	      >Comments</a
 	      > <a href="#v:swap1Inv" class="selflink"
 	      >#</a
@@ -411,7 +425,7 @@
 	      >++</a
 	      > as) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap%27" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L33" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
 	      >Comments</a
 	      > <a href="#v:swap-39-" class="selflink"
 	      >#</a
@@ -434,9 +448,9 @@
 		      > k =&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:IsList" title="Proarrow.Category.Monoidal.Strictified"
 		      >IsList</a
 		      > ('[] :: [k])</span
-		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-39" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-40" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L39" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L40" class="link"
 		    >Comments</a
 		    > <a href="#t:IsList" class="selflink"
 		    >#</a
@@ -463,7 +477,7 @@
 			  >SList</a
 			  > ('[] :: [k]) <a href="src/Proarrow.Category.Monoidal.Strictified.html#sList" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L35" class="link"
 			  >Comments</a
 			  > <a href="#v:sList" class="selflink"
 			  >#</a
@@ -481,7 +495,7 @@
 			  >++</a
 			  > bs) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.Strictified.html#withIsList2" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L36" class="link"
 			  >Comments</a
 			  > <a href="#v:withIsList2" class="selflink"
 			  >#</a
@@ -501,7 +515,7 @@
 			  >~&gt;</a
 			  > '[b] <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L37" class="link"
 			  >Comments</a
 			  > <a href="#v:swap1" class="selflink"
 			  >#</a
@@ -521,7 +535,7 @@
 			  >++</a
 			  > '[b]) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1Inv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L37" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L38" class="link"
 			  >Comments</a
 			  > <a href="#v:swap1Inv" class="selflink"
 			  >#</a
@@ -543,7 +557,7 @@
 			  >++</a
 			  > ('[] :: [k])) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap%27" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L38" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L39" class="link"
 			  >Comments</a
 			  > <a href="#v:swap-39-" class="selflink"
 			  >#</a
@@ -564,9 +578,9 @@
 		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:IsList" title="Proarrow.Category.Monoidal.Strictified"
 		      >IsList</a
 		      > ('[a] :: [k])</span
-		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-45" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-46" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L45" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L46" class="link"
 		    >Comments</a
 		    > <a href="#t:IsList" class="selflink"
 		    >#</a
@@ -593,7 +607,7 @@
 			  >SList</a
 			  > '[a] <a href="src/Proarrow.Category.Monoidal.Strictified.html#sList" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L35" class="link"
 			  >Comments</a
 			  > <a href="#v:sList" class="selflink"
 			  >#</a
@@ -611,7 +625,7 @@
 			  >++</a
 			  > bs) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.Strictified.html#withIsList2" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L36" class="link"
 			  >Comments</a
 			  > <a href="#v:withIsList2" class="selflink"
 			  >#</a
@@ -631,7 +645,7 @@
 			  >~&gt;</a
 			  > '[b, a] <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L37" class="link"
 			  >Comments</a
 			  > <a href="#v:swap1" class="selflink"
 			  >#</a
@@ -651,7 +665,7 @@
 			  >++</a
 			  > '[b]) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1Inv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L37" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L38" class="link"
 			  >Comments</a
 			  > <a href="#v:swap1Inv" class="selflink"
 			  >#</a
@@ -673,7 +687,7 @@
 			  >++</a
 			  > '[a]) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap%27" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L38" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L39" class="link"
 			  >Comments</a
 			  > <a href="#v:swap-39-" class="selflink"
 			  >#</a
@@ -696,9 +710,9 @@
 		      > as) =&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:IsList" title="Proarrow.Category.Monoidal.Strictified"
 		      >IsList</a
 		      > (a1 ': (a2 ': as) :: [k])</span
-		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-51" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-52" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L51" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L52" class="link"
 		    >Comments</a
 		    > <a href="#t:IsList" class="selflink"
 		    >#</a
@@ -725,7 +739,7 @@
 			  >SList</a
 			  > (a1 ': (a2 ': as)) <a href="src/Proarrow.Category.Monoidal.Strictified.html#sList" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L34" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L35" class="link"
 			  >Comments</a
 			  > <a href="#v:sList" class="selflink"
 			  >#</a
@@ -743,7 +757,7 @@
 			  >++</a
 			  > bs) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Monoidal.Strictified.html#withIsList2" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L35" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L36" class="link"
 			  >Comments</a
 			  > <a href="#v:withIsList2" class="selflink"
 			  >#</a
@@ -763,7 +777,7 @@
 			  >~&gt;</a
 			  > (b ': (a1 ': (a2 ': as))) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L36" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L37" class="link"
 			  >Comments</a
 			  > <a href="#v:swap1" class="selflink"
 			  >#</a
@@ -783,7 +797,7 @@
 			  >++</a
 			  > '[b]) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap1Inv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L37" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L38" class="link"
 			  >Comments</a
 			  > <a href="#v:swap1Inv" class="selflink"
 			  >#</a
@@ -805,7 +819,7 @@
 			  >++</a
 			  > (a1 ': (a2 ': as))) <a href="src/Proarrow.Category.Monoidal.Strictified.html#swap%27" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L38" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L39" class="link"
 			  >Comments</a
 			  > <a href="#v:swap-39-" class="selflink"
 			  >#</a
@@ -828,7 +842,7 @@
 	    >where ...</span
 	    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#Fold" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L58" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L59" class="link"
 	    >Comments</a
 	    > <a href="#t:Fold" class="selflink"
 	    >#</a
@@ -888,7 +902,7 @@
 	    >Fold</a
 	    > as <a href="src/Proarrow.Category.Monoidal.Strictified.html#fold" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L64" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L65" class="link"
 	    >Comments</a
 	    > <a href="#v:fold" class="selflink"
 	    >#</a
@@ -920,7 +934,7 @@
 	    >++</a
 	    > bs) <a href="src/Proarrow.Category.Monoidal.Strictified.html#concatFold" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L72" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L73" class="link"
 	    >Comments</a
 	    > <a href="#v:concatFold" class="selflink"
 	    >#</a
@@ -952,7 +966,7 @@
 	    >Fold</a
 	    > bs) <a href="src/Proarrow.Category.Monoidal.Strictified.html#splitFold" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L86" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L88" class="link"
 	    >Comments</a
 	    > <a href="#v:splitFold" class="selflink"
 	    >#</a
@@ -968,7 +982,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#Strictified" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L97" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L100" class="link"
 	    >Comments</a
 	    > <a href="#t:Strictified" class="selflink"
 	    >#</a
@@ -981,23 +995,53 @@
 	      ><td class="src"
 		><a id="v:Str" class="def"
 		  >Str</a
-		  > :: <span class="keyword"
-		  >forall</span
-		  > {k} (as :: [k]) (bs :: [k]). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-		  >Ob</a
-		  > as, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-		  >Ob</a
-		  > bs) =&gt; (<a href="Proarrow-Category-Monoidal-Strictified.html#t:Fold" title="Proarrow.Category.Monoidal.Strictified"
-		  >Fold</a
-		  > as <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
-		  >~&gt;</a
-		  > <a href="Proarrow-Category-Monoidal-Strictified.html#t:Fold" title="Proarrow.Category.Monoidal.Strictified"
-		  >Fold</a
-		  > bs) -&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:Strictified" title="Proarrow.Category.Monoidal.Strictified"
-		  >Strictified</a
-		  > as bs</td
+		  ></td
 		><td class="doc empty"
 		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			>:: <span class="keyword"
+			  >forall</span
+			  > {k} (as :: [k]) (bs :: [k]). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > as, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > bs)</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>=&gt; { <a id="v:unStr" class="def"
+			  >unStr</a
+			  > :: <a href="Proarrow-Category-Monoidal-Strictified.html#t:Fold" title="Proarrow.Category.Monoidal.Strictified"
+			  >Fold</a
+			  > as <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Category-Monoidal-Strictified.html#t:Fold" title="Proarrow.Category.Monoidal.Strictified"
+			  >Fold</a
+			  > bs</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;} -&gt; <a href="Proarrow-Category-Monoidal-Strictified.html#t:Strictified" title="Proarrow.Category.Monoidal.Strictified"
+			  >Strictified</a
+			  > as bs</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
 		></tr
 	      ></table
 	    ></div
@@ -1022,9 +1066,9 @@
 		      > :: [k] -&gt; [k] -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-111" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-115" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L111" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L115" class="link"
 		    >Comments</a
 		    > <a href="#t:Strictified" class="selflink"
 		    >#</a
@@ -1096,9 +1140,9 @@
 		      > :: [k] -&gt; [k] -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-120" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-125" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L120" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L125" class="link"
 		    >Comments</a
 		    > <a href="#t:Strictified" class="selflink"
 		    >#</a
@@ -1174,9 +1218,9 @@
 		      > :: [k] -&gt; [k] -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-107" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-111" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L107" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L111" class="link"
 		    >Comments</a
 		    > <a href="#t:Strictified" class="selflink"
 		    >#</a
@@ -1256,7 +1300,7 @@
 	    >~&gt;</a
 	    > '[b] <a href="src/Proarrow.Category.Monoidal.Strictified.html#singleton" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L101" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L104" class="link"
 	    >Comments</a
 	    > <a href="#v:singleton" class="selflink"
 	    >#</a
@@ -1276,7 +1320,7 @@
 	    >Obj</a
 	    > as <a href="src/Proarrow.Category.Monoidal.Strictified.html#asObj" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L104" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L107" class="link"
 	    >Comments</a
 	    > <a href="#v:asObj" class="selflink"
 	    >#</a
@@ -1296,15 +1340,17 @@
 		  > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
 		  >Monoidal</a
 		  > [k]</span
-		> <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-128" class="link"
+		> <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-134" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L128" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L134" class="link"
 		>Comments</a
 		> <a href="#v:-36-fMonoidalList" class="selflink"
 		>#</a
 		></td
-	      ><td class="doc empty"
-	      >&nbsp;</td
+	      ><td class="doc"
+	      ><p
+		>List concattenation as monoidal tensor.</p
+		></td
 	      ></tr
 	    ><tr
 	    ><td colspan="2"
@@ -1524,9 +1570,9 @@
 		  > k =&gt; <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
 		  >SymMonoidal</a
 		  > [k]</span
-		> <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-139" class="link"
+		> <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-145" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L139" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L145" class="link"
 		>Comments</a
 		> <a href="#v:-36-fSymMonoidalList" class="selflink"
 		>#</a
@@ -1580,15 +1626,17 @@
 		  > k =&gt; <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
 		  >CategoryOf</a
 		  > [k]</span
-		> <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-116" class="link"
+		> <a href="src/Proarrow.Category.Monoidal.Strictified.html#line-121" class="link"
 		>Source</a
-		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L116" class="link"
+		> <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Strictified.hs#L121" class="link"
 		>Comments</a
 		> <a href="#v:-36-fCategoryOfList" class="selflink"
 		>#</a
 		></td
-	      ><td class="doc empty"
-	      >&nbsp;</td
+	      ><td class="doc"
+	      ><p
+		>The strictified monoidal category, making the unitors and associators identities.</p
+		></td
 	      ></tr
 	    ><tr
 	    ><td colspan="2"
@@ -1650,7 +1698,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.31.0</p
       ></div
     ></body
   ></html

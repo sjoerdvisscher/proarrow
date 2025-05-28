@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Profunctor.Composition.html"
@@ -206,9 +206,9 @@
 		      > q :: d -&gt; c -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Composition.html#line-52" class="link"
+		    > <a href="src/Proarrow.Profunctor.Composition.html#line-55" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Composition.hs#L52" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Composition.hs#L55" class="link"
 		    >Comments</a
 		    > <a href="#t::.:" class="selflink"
 		    >#</a
@@ -347,7 +347,7 @@
 		      >Profunctor</a
 		      > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 		      >:.:</a
-		      > q :: j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > q :: k -&gt; j2 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
 		    > <a href="src/Proarrow.Profunctor.Composition.html#line-17" class="link"
@@ -377,7 +377,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: j1) (a :: j1) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (c :: k) (a :: k) (b :: j2) (d :: j2). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -397,7 +397,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: j1) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: k) (b :: j2) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -575,7 +575,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:index" class="selflink"
 			  >#</a
@@ -597,7 +597,7 @@
 			  >:.:</a
 			  > q) a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L17" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L19" class="link"
 			  >Comments</a
 			  > <a href="#v:tabulate" class="selflink"
 			  >#</a
@@ -621,7 +621,7 @@
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L20" class="link"
 			  >Comments</a
 			  > <a href="#v:repMap" class="selflink"
 			  >#</a
@@ -633,7 +633,243 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Adjunction:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::HasColimits:6"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      >Corepresentable</a
+		      > j2, <a href="Proarrow-Category-Colimit.html#t:HasColimits" title="Proarrow.Category.Colimit"
+		      >HasColimits</a
+		      > j1 k, <a href="Proarrow-Category-Colimit.html#t:HasColimits" title="Proarrow.Category.Colimit"
+		      >HasColimits</a
+		      > j2 k) =&gt; <a href="Proarrow-Category-Colimit.html#t:HasColimits" title="Proarrow.Category.Colimit"
+		      >HasColimits</a
+		      > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		      >:.:</a
+		      > j2 :: i -&gt; a -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) k</span
+		    > <a href="src/Proarrow.Category.Colimit.html#line-169" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L169" class="link"
+		    >Comments</a
+		    > <a href="#t:HasColimits" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::.::HasColimits:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Colimit.html"
+			>Proarrow.Category.Colimit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:colimit"
+			  >colimit</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d =&gt; (d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > <a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			  >Colimit</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2) d <a href="src/Proarrow.Category.Colimit.html#colimit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L56" class="link"
+			  >Comments</a
+			  > <a href="#v:colimit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:colimitUniv"
+			  >colimitUniv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (p :: a <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > p) =&gt; ((d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > p) -&gt; <a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			  >Colimit</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2) d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > p <a href="src/Proarrow.Category.Colimit.html#colimitUniv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L59" class="link"
+			  >Comments</a
+			  > <a href="#v:colimitUniv" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:colimitUniv-39-"
+			  >colimitUniv'</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) p (b :: a) (c :: k). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d, <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+			  >Corepresentable</a
+			  > p) =&gt; (((j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+			  >RepCostar</a
+			  > d) -&gt; p b c -&gt; <a href="Proarrow-Profunctor-Representable.html#t:RepCostar" title="Proarrow.Profunctor.Representable"
+			  >RepCostar</a
+			  > (<a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			  >Colimit</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2) d) b c <a href="src/Proarrow.Category.Colimit.html#colimitUniv%27" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L73" class="link"
+			  >Comments</a
+			  > <a href="#v:colimitUniv-39-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::HasLimits:7"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > j1, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+		      >HasLimits</a
+		      > j1 k, <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+		      >HasLimits</a
+		      > j2 k) =&gt; <a href="Proarrow-Category-Limit.html#t:HasLimits" title="Proarrow.Category.Limit"
+		      >HasLimits</a
+		      > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		      >:.:</a
+		      > j2 :: a -&gt; i -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) k</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-155" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L155" class="link"
+		    >Comments</a
+		    > <a href="#t:HasLimits" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::.::HasLimits:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Limit.html"
+			>Proarrow.Category.Limit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:limit"
+			  >limit</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d =&gt; (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			  >Limit</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2) d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > d <a href="src/Proarrow.Category.Limit.html#limit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L35" class="link"
+			  >Comments</a
+			  > <a href="#v:limit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:limitUniv"
+			  >limitUniv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (p :: a <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > p) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > d) -&gt; p <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			  >Limit</a
+			  > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > j2) d <a href="src/Proarrow.Category.Limit.html#limitUniv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L36" class="link"
+			  >Comments</a
+			  > <a href="#v:limitUniv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Adjunction:8"
 		      ></span
 		      > (<a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
 		      >Adjunction</a
@@ -662,7 +898,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Adjunction:6"
+		  ><details id="i:id::.::Adjunction:8"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -721,7 +957,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Cotraversable:7"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Cotraversable:9"
 		      ></span
 		      > (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Cotraversable" title="Proarrow.Category.Monoidal.Distributive"
 		      >Cotraversable</a
@@ -734,9 +970,9 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-102" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-119" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L102" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L119" class="link"
 		    >Comments</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
@@ -746,7 +982,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Cotraversable:7"
+		  ><details id="i:id::.::Cotraversable:9"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -781,7 +1017,7 @@
 			  >:.:</a
 			  > p0) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L94" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
 			  >Comments</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
@@ -793,7 +1029,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Traversable:8"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Traversable:10"
 		      ></span
 		      > (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
 		      >Traversable</a
@@ -806,9 +1042,9 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-79" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-96" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L79" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L96" class="link"
 		    >Comments</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
@@ -818,7 +1054,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Traversable:8"
+		  ><details id="i:id::.::Traversable:10"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -853,7 +1089,7 @@
 			  >:.:</a
 			  > q)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L71" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
 			  >Comments</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
@@ -865,7 +1101,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Promonad:9"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Promonad:11"
 		      ></span
 		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
 		      >Adjunction</a
@@ -888,7 +1124,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Promonad:9"
+		  ><details id="i:id::.::Promonad:11"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -939,7 +1175,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Procomonad:10"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Procomonad:12"
 		      ></span
 		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
 		      >Adjunction</a
@@ -962,7 +1198,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Procomonad:10"
+		  ><details id="i:id::.::Procomonad:12"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1017,7 +1253,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::MonoidalProfunctor:11"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::MonoidalProfunctor:13"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
@@ -1044,9 +1280,9 @@
 		      > j2 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Composition.html#line-48" class="link"
+		    > <a href="src/Proarrow.Profunctor.Composition.html#line-49" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Composition.hs#L48" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Composition.hs#L49" class="link"
 		    >Comments</a
 		    > <a href="#t::.:" class="selflink"
 		    >#</a
@@ -1056,7 +1292,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::MonoidalProfunctor:11"
+		  ><details id="i:id::.::MonoidalProfunctor:13"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1131,7 +1367,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Functor:12"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Functor:14"
 		      ></span
 		      > <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
 		      >Functor</a
@@ -1156,7 +1392,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Functor:12"
+		  ><details id="i:id::.::Functor:14"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1205,7 +1441,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Adjunction:13"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Adjunction:15"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
@@ -1254,7 +1490,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Adjunction:13"
+		  ><details id="i:id::.::Adjunction:15"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1345,7 +1581,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Functor:14"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Functor:16"
 		      ></span
 		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
@@ -1370,7 +1606,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::Functor:14"
+		  ><details id="i:id::.::Functor:16"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1411,7 +1647,115 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::-37--37-:15"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Colimit:17"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+		      >Colimit</a
+		      > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		      >:.:</a
+		      > j2 :: i -&gt; a -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Colimit.html#line-170" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L170" class="link"
+		    >Comments</a
+		    > <a href="#t:Colimit" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::.::Colimit:17"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Colimit.html"
+			>Proarrow.Category.Colimit</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			>Colimit</a
+			> (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			>:.:</a
+			> j2 :: i -&gt; a -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			>+-&gt;</a
+			> k) = <a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			>Colimit</a
+			> j2 (<a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			>Colimit</a
+			> j1 d)</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::Limit:18"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+		      >Limit</a
+		      > (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		      >:.:</a
+		      > j2 :: a -&gt; i -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Limit.html#line-156" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Limit.hs#L156" class="link"
+		    >Comments</a
+		    > <a href="#t:Limit" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::.::Limit:18"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Limit.html"
+			>Proarrow.Category.Limit</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			>Limit</a
+			> (j1 <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			>:.:</a
+			> j2 :: a -&gt; i -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			>+-&gt;</a
+			> k) = <a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			>Limit</a
+			> j1 (<a href="Proarrow-Category-Limit.html#t:Limit" title="Proarrow.Category.Limit"
+			>Limit</a
+			> j2 d)</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::-37--37-:19"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1434,7 +1778,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::-37--37-:15"
+		  ><details id="i:id::.::-37--37-:19"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1461,7 +1805,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::-37-:16"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::.::-37-:20"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1484,7 +1828,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id::.::-37-:16"
+		  ><details id="i:id::.::-37-:20"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1570,7 +1914,7 @@
 	    >:.:</a
 	    > s) <a href="src/Proarrow.Profunctor.Composition.html#o" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Composition.hs#L61" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Composition.hs#L66" class="link"
 	    >Comments</a
 	    > <a href="#v:o" class="selflink"
 	    >#</a
@@ -1586,7 +1930,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.31.0</p
       ></div
     ></body
   ></html
