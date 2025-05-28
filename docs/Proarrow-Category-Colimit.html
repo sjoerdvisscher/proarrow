@@ -89,7 +89,9 @@
 	    ><li class="src short"
 	    ><span class="keyword"
 	      >class</span
-	      > (<span class="keyword"
+	      > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > j, <span class="keyword"
 	      >forall</span
 	      > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	      >+-&gt;</a
@@ -245,9 +247,11 @@
 		  >+-&gt;</a
 		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
-		  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
-		  >InitialObject</a
-		  > :: k)) -&gt; <a href="Proarrow-Category-Colimit.html#t:InitialLimit" title="Proarrow.Category.Colimit"
+		  > (<a href="Proarrow-Category-Colimit.html#t:InitialLimit" title="Proarrow.Category.Colimit"
+		  >InitialLimit</a
+		  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		  >%</a
+		  > '())) -&gt; <a href="Proarrow-Category-Colimit.html#t:InitialLimit" title="Proarrow.Category.Colimit"
 		  >InitialLimit</a
 		  > d a '()</li
 		></ul
@@ -275,21 +279,11 @@
 		  >+-&gt;</a
 		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
-		  > ((d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		  > (<a href="Proarrow-Category-Colimit.html#t:CoproductColimit" title="Proarrow.Category.Colimit"
+		  >CoproductColimit</a
+		  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		  >%</a
-		  > ('<a href="Proarrow-Category-Instance-Coproduct.html#t:L" title="Proarrow.Category.Instance.Coproduct"
-		  >L</a
-		  > '() :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-		  >COPRODUCT</a
-		  > () ())) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
-		  >||</a
-		  > (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
-		  >%</a
-		  > ('<a href="Proarrow-Category-Instance-Coproduct.html#t:R" title="Proarrow.Category.Instance.Coproduct"
-		  >R</a
-		  > '() :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-		  >COPRODUCT</a
-		  > () ())))) -&gt; <a href="Proarrow-Category-Colimit.html#t:CoproductColimit" title="Proarrow.Category.Colimit"
+		  > '())) -&gt; <a href="Proarrow-Category-Colimit.html#t:CoproductColimit" title="Proarrow.Category.Colimit"
 		  >CoproductColimit</a
 		  > d a '()</li
 		></ul
@@ -330,6 +324,36 @@
 	      > '() :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 	      >COPRODUCT</a
 	      > () ())))</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > <a href="#t:CopowerLimit"
+	      >CopowerLimit</a
+	      > n (d :: () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: ()) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:CopowerLimit"
+		  >CopowerLimit</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} n (d :: () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > n =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+		  >CopowerLimit</a
+		  > n d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		  >%</a
+		  > '())) -&gt; <a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+		  >CopowerLimit</a
+		  > n d a '()</li
+		></ul
+	      ></li
 	    ></ul
 	  ></details
 	></div
@@ -348,7 +372,7 @@
 	    >Type</a
 	    > <a href="src/Proarrow.Category.Colimit.html#Unweighted" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L20" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L22" class="link"
 	    >Comments</a
 	    > <a href="#t:Unweighted" class="selflink"
 	    >#</a
@@ -370,7 +394,7 @@
 	    >+-&gt;</a
 	    > k) <a href="src/Proarrow.Category.Colimit.html#IsRepresentableColimit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L22" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L24" class="link"
 	    >Comments</a
 	    > <a href="#t:IsRepresentableColimit" class="selflink"
 	    >#</a
@@ -398,9 +422,9 @@
 		      > i) (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 		      >+-&gt;</a
 		      > k)</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-23" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-25" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L23" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L25" class="link"
 		    >Comments</a
 		    > <a href="#t:IsRepresentableColimit" class="selflink"
 		    >#</a
@@ -428,7 +452,9 @@
 	><p class="src"
 	  ><span class="keyword"
 	    >class</span
-	    > (<span class="keyword"
+	    > (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    >Profunctor</a
+	    > j, <span class="keyword"
 	    >forall</span
 	    > (d :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	    >+-&gt;</a
@@ -444,7 +470,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Colimit.html#HasColimits" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L27" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L29" class="link"
 	    >Comments</a
 	    > <a href="#t:HasColimits" class="selflink"
 	    >#</a
@@ -495,7 +521,7 @@
 	      >Colimit</a
 	      > j d <a href="src/Proarrow.Category.Colimit.html#colimit" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L27" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L29" class="link"
 	      >Comments</a
 	      > <a href="#v:colimit" class="selflink"
 	      >#</a
@@ -523,7 +549,7 @@
 	      >:~&gt;</a
 	      > p <a href="src/Proarrow.Category.Colimit.html#colimitUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L27" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L29" class="link"
 	      >Comments</a
 	      > <a href="#v:colimitUniv" class="selflink"
 	      >#</a
@@ -552,9 +578,9 @@
 		      > -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) k</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-60" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-64" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L60" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L64" class="link"
 		    >Comments</a
 		    > <a href="#t:HasColimits" class="selflink"
 		    >#</a
@@ -605,7 +631,7 @@
 			  >Type</a
 			  >) d <a href="src/Proarrow.Category.Colimit.html#colimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L29" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L31" class="link"
 			  >Comments</a
 			  > <a href="#v:colimit" class="selflink"
 			  >#</a
@@ -647,7 +673,7 @@
 			  >:~&gt;</a
 			  > p <a href="src/Proarrow.Category.Colimit.html#colimitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L30" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L34" class="link"
 			  >Comments</a
 			  > <a href="#v:colimitUniv" class="selflink"
 			  >#</a
@@ -661,6 +687,112 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasColimits:HasColimits:2"
 		      ></span
+		      > <a href="Proarrow-Object-Copower.html#t:Copowered" title="Proarrow.Object.Copower"
+		      >Copowered</a
+		      > k =&gt; <a href="Proarrow-Category-Colimit.html#t:HasColimits" title="Proarrow.Category.Colimit"
+		      >HasColimits</a
+		      > (<a href="Proarrow-Profunctor-HaskValue.html#t:HaskValue" title="Proarrow.Profunctor.HaskValue"
+		      >HaskValue</a
+		      > n :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) k</span
+		    > <a href="src/Proarrow.Category.Colimit.html#line-110" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L110" class="link"
+		    >Comments</a
+		    > <a href="#t:HasColimits" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:HasColimits:HasColimits:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Colimit.html"
+			>Proarrow.Category.Colimit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:colimit"
+			  >colimit</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d =&gt; (d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Profunctor-HaskValue.html#t:HaskValue" title="Proarrow.Profunctor.HaskValue"
+			  >HaskValue</a
+			  > n :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > <a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			  >Colimit</a
+			  > (<a href="Proarrow-Profunctor-HaskValue.html#t:HaskValue" title="Proarrow.Profunctor.HaskValue"
+			  >HaskValue</a
+			  > n :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) d <a href="src/Proarrow.Category.Colimit.html#colimit" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L31" class="link"
+			  >Comments</a
+			  > <a href="#v:colimit" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:colimitUniv"
+			  >colimitUniv</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (d :: () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (p :: () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > d, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			  >Representable</a
+			  > p) =&gt; ((d <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > (<a href="Proarrow-Profunctor-HaskValue.html#t:HaskValue" title="Proarrow.Profunctor.HaskValue"
+			  >HaskValue</a
+			  > n :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > p) -&gt; <a href="Proarrow-Category-Colimit.html#t:Colimit" title="Proarrow.Category.Colimit"
+			  >Colimit</a
+			  > (<a href="Proarrow-Profunctor-HaskValue.html#t:HaskValue" title="Proarrow.Profunctor.HaskValue"
+			  >HaskValue</a
+			  > n :: () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) d <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > p <a href="src/Proarrow.Category.Colimit.html#colimitUniv" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L34" class="link"
+			  >Comments</a
+			  > <a href="#v:colimitUniv" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:HasColimits:HasColimits:3"
+		      ></span
 		      > <a href="Proarrow-Object-BinaryCoproduct.html#t:HasBinaryCoproducts" title="Proarrow.Object.BinaryCoproduct"
 		      >HasBinaryCoproducts</a
 		      > k =&gt; <a href="Proarrow-Category-Colimit.html#t:HasColimits" title="Proarrow.Category.Colimit"
@@ -672,9 +804,9 @@
 		      > () () -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) k</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-79" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-81" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L79" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L81" class="link"
 		    >Comments</a
 		    > <a href="#t:HasColimits" class="selflink"
 		    >#</a
@@ -684,7 +816,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:HasColimits:HasColimits:2"
+		  ><details id="i:ic:HasColimits:HasColimits:3"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -725,7 +857,7 @@
 			  >Type</a
 			  >) d <a href="src/Proarrow.Category.Colimit.html#colimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L29" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L31" class="link"
 			  >Comments</a
 			  > <a href="#v:colimit" class="selflink"
 			  >#</a
@@ -767,7 +899,7 @@
 			  >:~&gt;</a
 			  > p <a href="src/Proarrow.Category.Colimit.html#colimitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L30" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L34" class="link"
 			  >Comments</a
 			  > <a href="#v:colimitUniv" class="selflink"
 			  >#</a
@@ -818,7 +950,7 @@
 	    >:.:</a
 	    > d) <a href="src/Proarrow.Category.Colimit.html#leftAdjointPreservesColimits" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L36" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L40" class="link"
 	    >Comments</a
 	    > <a href="#v:leftAdjointPreservesColimits" class="selflink"
 	    >#</a
@@ -856,7 +988,7 @@
 	    >Colimit</a
 	    > j d) <a href="src/Proarrow.Category.Colimit.html#leftAdjointPreservesColimitsInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L46" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L50" class="link"
 	    >Comments</a
 	    > <a href="#v:leftAdjointPreservesColimitsInv" class="selflink"
 	    >#</a
@@ -876,7 +1008,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Colimit.html#InitialLimit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L49" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L53" class="link"
 	    >Comments</a
 	    > <a href="#t:InitialLimit" class="selflink"
 	    >#</a
@@ -897,9 +1029,11 @@
 		  >+-&gt;</a
 		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
-		  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
-		  >InitialObject</a
-		  > :: k)) -&gt; <a href="Proarrow-Category-Colimit.html#t:InitialLimit" title="Proarrow.Category.Colimit"
+		  > (<a href="Proarrow-Category-Colimit.html#t:InitialLimit" title="Proarrow.Category.Colimit"
+		  >InitialLimit</a
+		  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		  >%</a
+		  > '())) -&gt; <a href="Proarrow-Category-Colimit.html#t:InitialLimit" title="Proarrow.Category.Colimit"
 		  >InitialLimit</a
 		  > d a '()</td
 		><td class="doc empty"
@@ -928,9 +1062,9 @@
 		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-52" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-55" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L52" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L55" class="link"
 		    >Comments</a
 		    > <a href="#t:InitialLimit" class="selflink"
 		    >#</a
@@ -1006,9 +1140,9 @@
 		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-55" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-58" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L55" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L58" class="link"
 		    >Comments</a
 		    > <a href="#t:InitialLimit" class="selflink"
 		    >#</a
@@ -1112,9 +1246,9 @@
 		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		      >%</a
 		      > '()</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-56" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-59" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L56" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L59" class="link"
 		    >Comments</a
 		    > <a href="#t:InitialLimit" class="selflink"
 		    >#</a
@@ -1164,7 +1298,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Colimit.html#CoproductColimit" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L66" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L70" class="link"
 	    >Comments</a
 	    > <a href="#t:CoproductColimit" class="selflink"
 	    >#</a
@@ -1185,21 +1319,11 @@
 		  >+-&gt;</a
 		  > k) (a :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
-		  > ((d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		  > (<a href="Proarrow-Category-Colimit.html#t:CoproductColimit" title="Proarrow.Category.Colimit"
+		  >CoproductColimit</a
+		  > d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		  >%</a
-		  > ('<a href="Proarrow-Category-Instance-Coproduct.html#t:L" title="Proarrow.Category.Instance.Coproduct"
-		  >L</a
-		  > '() :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-		  >COPRODUCT</a
-		  > () ())) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
-		  >||</a
-		  > (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
-		  >%</a
-		  > ('<a href="Proarrow-Category-Instance-Coproduct.html#t:R" title="Proarrow.Category.Instance.Coproduct"
-		  >R</a
-		  > '() :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
-		  >COPRODUCT</a
-		  > () ())))) -&gt; <a href="Proarrow-Category-Colimit.html#t:CoproductColimit" title="Proarrow.Category.Colimit"
+		  > '())) -&gt; <a href="Proarrow-Category-Colimit.html#t:CoproductColimit" title="Proarrow.Category.Colimit"
 		  >CoproductColimit</a
 		  > d a '()</td
 		><td class="doc empty"
@@ -1230,9 +1354,9 @@
 		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-69" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-72" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L69" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L72" class="link"
 		    >Comments</a
 		    > <a href="#t:CoproductColimit" class="selflink"
 		    >#</a
@@ -1310,9 +1434,9 @@
 		      > d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-73" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-75" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L73" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L75" class="link"
 		    >Comments</a
 		    > <a href="#t:CoproductColimit" class="selflink"
 		    >#</a
@@ -1416,9 +1540,9 @@
 		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		      >%</a
 		      > '()</span
-		    > <a href="src/Proarrow.Category.Colimit.html#line-74" class="link"
+		    > <a href="src/Proarrow.Category.Colimit.html#line-76" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L74" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L76" class="link"
 		    >Comments</a
 		    > <a href="#t:CoproductColimit" class="selflink"
 		    >#</a
@@ -1504,11 +1628,305 @@
 	    >COPRODUCT</a
 	    > () ()))) <a href="src/Proarrow.Category.Colimit.html#cochoose" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L92" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L94" class="link"
 	    >Comments</a
 	    > <a href="#v:cochoose" class="selflink"
 	    >#</a
 	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > <a id="t:CopowerLimit" class="def"
+	    >CopowerLimit</a
+	    > n (d :: () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: ()) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Category.Colimit.html#CopowerLimit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L99" class="link"
+	    >Comments</a
+	    > <a href="#t:CopowerLimit" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:CopowerLimit" class="def"
+		  >CopowerLimit</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} n (d :: () <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > n =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+		  >CopowerLimit</a
+		  > n d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		  >%</a
+		  > '())) -&gt; <a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+		  >CopowerLimit</a
+		  > n d a '()</td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:CopowerLimit"
+	    >Instances</h4
+	    ><details id="i:CopowerLimit" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CopowerLimit:Profunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > d, <a href="Proarrow-Object-Copower.html#t:Copowered" title="Proarrow.Object.Copower"
+		      >Copowered</a
+		      > k) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+		      >CopowerLimit</a
+		      > n d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Colimit.html#line-101" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L101" class="link"
+		    >Comments</a
+		    > <a href="#t:CopowerLimit" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:CopowerLimit:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Colimit.html"
+			>Proarrow.Category.Colimit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: ()) (d0 :: ()). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d0) -&gt; <a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d a b -&gt; <a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d c d0 <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: ()) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CopowerLimit:Representable:2"
+		      ></span
+		      > (<a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > d, <a href="Proarrow-Object-Copower.html#t:Copowered" title="Proarrow.Object.Copower"
+		      >Copowered</a
+		      > k) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+		      >CopowerLimit</a
+		      > n d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Colimit.html#line-104" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L104" class="link"
+		    >Comments</a
+		    > <a href="#t:CopowerLimit" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:CopowerLimit:Representable:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Colimit.html"
+			>Proarrow.Category.Colimit</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: ()). <a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: ()) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			  >CopowerLimit</a
+			  > n d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:CopowerLimit:-37-:3"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+		      >CopowerLimit</a
+		      > n d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > '()</span
+		    > <a href="src/Proarrow.Category.Colimit.html#line-105" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Colimit.hs#L105" class="link"
+		    >Comments</a
+		    > <a href="#t:CopowerLimit" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:CopowerLimit:-37-:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Colimit.html"
+			>Proarrow.Category.Colimit</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Category-Colimit.html#t:CopowerLimit" title="Proarrow.Category.Colimit"
+			>CopowerLimit</a
+			> n d :: k -&gt; () -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> '() = n <a href="Proarrow-Object-Copower.html#t:-42-." title="Proarrow.Object.Copower"
+			>*.</a
+			> (d <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> '())</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
 	  ></div
 	></div
       ></div
@@ -1516,7 +1934,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.28.0</p
       ></div
     ></body
   ></html

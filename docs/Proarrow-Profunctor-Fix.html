@@ -221,7 +221,7 @@
 		      >Profunctor</a
 		      > (<a href="Proarrow-Profunctor-Fix.html#t:Fix" title="Proarrow.Profunctor.Fix"
 		      >Fix</a
-		      > p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > p :: j -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
 		    > <a href="src/Proarrow.Profunctor.Fix.html#line-18" class="link"
@@ -251,7 +251,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: k) (a :: k) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (c :: j) (a :: j) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -271,7 +271,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: k) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: j) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -349,7 +349,7 @@
 			  >:.:</a
 			  > p0) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L94" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L105" class="link"
 			  >Comments</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
@@ -419,7 +419,7 @@
 			  >Fix</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L71" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L82" class="link"
 			  >Comments</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
@@ -576,13 +576,13 @@
 	    >hylo</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k} {k1} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k) (a :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k1) (b :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k k1). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k} {k1} (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (b :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > p, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
@@ -612,11 +612,11 @@
 	    >cata</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k1} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k1 k1) (r :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k1 k1). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k1} (p :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k1) (r :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k1). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > p, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
@@ -642,11 +642,11 @@
 	    >ana</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k1} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k1 k1) (r :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k1 k1). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k1} (p :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k1) (r :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k1). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > p, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
@@ -812,13 +812,13 @@
 	    >:.:</a
 	    > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 	    >Star</a
-	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
 	    >Const</a
 	    > [x] :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
 	    >)) a b -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 	    >Star</a
-	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
 	    >Const</a
 	    > [x] :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
@@ -838,7 +838,7 @@
 	    >forall</span
 	    > {k1} x a (b :: k1). <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 	    >Star</a
-	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
 	    >Const</a
 	    > [x] :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
@@ -850,7 +850,7 @@
 	    >:.:</a
 	    > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 	    >Star</a
-	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
 	    >Const</a
 	    > [x] :: k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
@@ -874,7 +874,7 @@
 	    >ListF</a
 	    > x)) a b -&gt; <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 	    >Star</a
-	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
 	    >Const</a
 	    > [x] :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
@@ -894,7 +894,7 @@
 	    >fromList</a
 	    > :: <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 	    >Star</a
-	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
+	    > (<a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Functor-Const.html#t:Const" title="Data.Functor.Const"
 	    >Const</a
 	    > [x] :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 	    >Type</a
@@ -920,7 +920,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.28.0</p
       ></div
     ></body
   ></html
