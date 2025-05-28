@@ -18,7 +18,7 @@
   ><body
   ><div id="package-header"
     ><span class="caption"
-      >proarrow-0: Category theory with a central role for profunctors</span
+      >proarrow</span
       ><ul class="links" id="page-menu"
       ><li
 	><a href="src/Proarrow.Category.Bicategory.Prof.html"
@@ -315,23 +315,23 @@
 	      >dimapLax</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > {s1} {t1} {h :: s1} {i :: s1} {j :: t1} {k :: t1} (sk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      > {k1} {t1} {h :: k1} {i :: k1} {j :: t1} {k2 :: t1} (sk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	      >CAT</a
-	      > s1) (tk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      > k1) (tk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	      >CAT</a
 	      > t1) (kk :: t1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	      >+-&gt;</a
-	      > s1) (s' :: sk h i) (s2 :: sk h i) (t2 :: tk j k) (t' :: tk j k). <a href="Proarrow-Category-Bicategory-Prof.html#t:LaxProfunctor" title="Proarrow.Category.Bicategory.Prof"
+	      > k1) (s' :: sk h i) (s :: sk h i) (t2 :: tk j k2) (t' :: tk j k2). <a href="Proarrow-Category-Bicategory-Prof.html#t:LaxProfunctor" title="Proarrow.Category.Bicategory.Prof"
 	      >LaxProfunctor</a
 	      > sk tk kk =&gt; (s' <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	      >~&gt;</a
-	      > s2) -&gt; (t2 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      > s) -&gt; (t2 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	      >~&gt;</a
 	      > t') -&gt; <a href="Proarrow-Category-Bicategory-Prof.html#t:P" title="Proarrow.Category.Bicategory.Prof"
 	      >P</a
 	      > sk tk kk ('<a href="Proarrow-Category-Bicategory-Co.html#v:CO" title="Proarrow.Category.Bicategory.Co"
 	      >CO</a
-	      > s2) t2 <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	      > s) t2 <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 	      >:~&gt;</a
 	      > <a href="Proarrow-Category-Bicategory-Prof.html#t:P" title="Proarrow.Category.Bicategory.Prof"
 	      >P</a
@@ -367,9 +367,9 @@
 	      >isCotabulator</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > {j} {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > j k). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      > {k} {j} (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > j). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	      >Profunctor</a
 	      > p =&gt; <a href="Proarrow-Category-Bicategory-Prof.html#t:ProfSq" title="Proarrow.Category.Bicategory.Prof"
 	      >ProfSq</a
@@ -433,9 +433,9 @@
 	      >cotabulatorFactorize</a
 	      > :: <span class="keyword"
 	      >forall</span
-	      > {h} {j} {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	      >PRO</a
-	      > h j) (f :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      > {j} {h} {k} (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > h) (f :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	      >+-&gt;</a
 	      > k) (g :: h <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	      >+-&gt;</a
@@ -453,7 +453,7 @@
 	      >Type</a
 	      >) f g -&gt; (<span class="keyword"
 	      >forall</span
-	      > s. <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.12.2-ea3d/rflctn-2.1.9-53023f1e/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
+	      > s. <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.10.2-b8ed/rflctn-2.1.9-c2d2a80f/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
 	      >Reifies</a
 	      > s (<a href="Proarrow-Category-Bicategory-Prof.html#t:ProfSq" title="Proarrow.Category.Bicategory.Prof"
 	      >ProfSq</a
@@ -767,6 +767,30 @@
 			  >#</a
 			  ></p
 			><p class="src"
+			><a href="#v:withOb0s"
+			  >withOb0s</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > {j} {k} (a :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
+			  >PROFK</a
+			  > j k) r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+			  >Ob0</a
+			  > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
+			  >PROFK</a
+			  > j, <a href="Proarrow-Category-Bicategory.html#t:Ob0" title="Proarrow.Category.Bicategory"
+			  >Ob0</a
+			  > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
+			  >PROFK</a
+			  > k) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Bicategory.html#withOb0s" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L78" class="link"
+			  >Comments</a
+			  > <a href="#v:withOb0s" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
 			><a href="#v:-92--92--92-"
 			  >(\\\)</a
 			  > :: <span class="keyword"
@@ -791,7 +815,7 @@
 			  >~&gt;</a
 			  > qs) -&gt; r <a href="src/Proarrow.Category.Bicategory.html#%5C%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L78" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L81" class="link"
 			  >Comments</a
 			  > <a href="#v:-92--92--92-" class="selflink"
 			  >#</a
@@ -823,7 +847,7 @@
 			  >~&gt;</a
 			  > a <a href="src/Proarrow.Category.Bicategory.html#leftUnitor" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L80" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L83" class="link"
 			  >Comments</a
 			  > <a href="#v:leftUnitor" class="selflink"
 			  >#</a
@@ -855,7 +879,7 @@
 			  >PROFK</a
 			  > j j) a <a href="src/Proarrow.Category.Bicategory.html#leftUnitorInv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L81" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L84" class="link"
 			  >Comments</a
 			  > <a href="#v:leftUnitorInv" class="selflink"
 			  >#</a
@@ -887,7 +911,7 @@
 			  >~&gt;</a
 			  > a <a href="src/Proarrow.Category.Bicategory.html#rightUnitor" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L82" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L85" class="link"
 			  >Comments</a
 			  > <a href="#v:rightUnitor" class="selflink"
 			  >#</a
@@ -919,7 +943,7 @@
 			  >PROFK</a
 			  > i i) <a href="src/Proarrow.Category.Bicategory.html#rightUnitorInv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L83" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L86" class="link"
 			  >Comments</a
 			  > <a href="#v:rightUnitorInv" class="selflink"
 			  >#</a
@@ -969,7 +993,7 @@
 			  >O</a
 			  > b c) <a href="src/Proarrow.Category.Bicategory.html#associator" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L84" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L87" class="link"
 			  >Comments</a
 			  > <a href="#v:associator" class="selflink"
 			  >#</a
@@ -1019,7 +1043,7 @@
 			  >O</a
 			  > a b) c <a href="src/Proarrow.Category.Bicategory.html#associatorInv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L88" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L91" class="link"
 			  >Comments</a
 			  > <a href="#v:associatorInv" class="selflink"
 			  >#</a
@@ -1038,9 +1062,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-262" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-264" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L262" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L264" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -1398,9 +1422,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-256" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-258" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L256" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L258" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -1542,9 +1566,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-117" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-119" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L117" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L119" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -1886,9 +1910,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-108" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-110" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L108" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L110" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -2164,9 +2188,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-309" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-311" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L309" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L311" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -2616,9 +2640,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-294" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-296" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L294" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L296" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -3062,9 +3086,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-288" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-290" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L288" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L290" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -3234,9 +3258,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-282" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-284" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L282" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L284" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -3412,9 +3436,9 @@
 		      > a i) (k :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
 		      >Kind</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-161" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-163" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L161" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L163" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -3554,9 +3578,9 @@
 		      > i a) (k :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
 		      >Kind</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-155" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-157" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L155" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L157" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -3696,9 +3720,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > c e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-145" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-147" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L145" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L147" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -3858,9 +3882,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > e c)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-150" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-152" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L150" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L152" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4018,9 +4042,9 @@
 		      > r :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > d c)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-141" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-143" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L141" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L143" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4057,7 +4081,7 @@
 			  >PK</a
 			  > l) <a href="src/Proarrow.Category.Bicategory.html#unit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L156" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L159" class="link"
 			  >Comments</a
 			  > <a href="#v:unit" class="selflink"
 			  >#</a
@@ -4079,7 +4103,7 @@
 			  >PROFK</a
 			  > d d) <a href="src/Proarrow.Category.Bicategory.html#counit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L157" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L160" class="link"
 			  >Comments</a
 			  > <a href="#v:counit" class="selflink"
 			  >#</a
@@ -4114,9 +4138,9 @@
 		      > p :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-135" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-137" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L135" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L137" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4151,7 +4175,7 @@
 			  >PK</a
 			  > p <a href="src/Proarrow.Category.Bicategory.html#leftAction" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L147" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L150" class="link"
 			  >Comments</a
 			  > <a href="#v:leftAction" class="selflink"
 			  >#</a
@@ -4171,7 +4195,7 @@
 			  >PK</a
 			  > p <a href="src/Proarrow.Category.Bicategory.html#rightAction" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L148" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L151" class="link"
 			  >Comments</a
 			  > <a href="#v:rightAction" class="selflink"
 			  >#</a
@@ -4194,9 +4218,9 @@
 		      > p :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > k k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-130" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-132" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L130" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L132" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4229,7 +4253,7 @@
 			  >PROFK</a
 			  > k k) <a href="src/Proarrow.Category.Bicategory.html#epsilon" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L142" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L145" class="link"
 			  >Comments</a
 			  > <a href="#v:epsilon" class="selflink"
 			  >#</a
@@ -4249,7 +4273,7 @@
 			  >PK</a
 			  > p) <a href="src/Proarrow.Category.Bicategory.html#delta" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L143" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L146" class="link"
 			  >Comments</a
 			  > <a href="#v:delta" class="selflink"
 			  >#</a
@@ -4272,9 +4296,9 @@
 		      > p :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > k k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-126" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-128" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L126" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L128" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4307,7 +4331,7 @@
 			  >PK</a
 			  > p <a href="src/Proarrow.Category.Bicategory.html#eta" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L137" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L140" class="link"
 			  >Comments</a
 			  > <a href="#v:eta" class="selflink"
 			  >#</a
@@ -4327,7 +4351,7 @@
 			  >PK</a
 			  > p <a href="src/Proarrow.Category.Bicategory.html#mu" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L138" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L141" class="link"
 			  >Comments</a
 			  > <a href="#v:mu" class="selflink"
 			  >#</a
@@ -4362,9 +4386,9 @@
 		      > c) m) :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > (kk i j) (kk i j))</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-196" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-198" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L196" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L198" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4401,7 +4425,7 @@
 			  >CO</a
 			  > c) m) <a href="src/Proarrow.Category.Bicategory.html#eta" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L137" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L140" class="link"
 			  >Comments</a
 			  > <a href="#v:eta" class="selflink"
 			  >#</a
@@ -4433,7 +4457,7 @@
 			  >CO</a
 			  > c) m) <a href="src/Proarrow.Category.Bicategory.html#mu" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L138" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory.hs#L141" class="link"
 			  >Comments</a
 			  > <a href="#v:mu" class="selflink"
 			  >#</a
@@ -4708,9 +4732,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-255" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-257" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L255" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L257" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4796,9 +4820,9 @@
 		      > (j :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-257" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-259" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L257" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L259" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4848,9 +4872,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-287" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-289" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L287" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L289" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4896,9 +4920,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-281" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-283" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L281" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L283" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -4992,9 +5016,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-263" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-265" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L263" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L265" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5048,9 +5072,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-261" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-263" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L261" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L263" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5098,9 +5122,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-264" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-266" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L264" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L266" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5154,9 +5178,9 @@
 		      > (j :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-289" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-291" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L289" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L291" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5212,9 +5236,9 @@
 		      > (j :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-283" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-285" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L283" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L285" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5270,9 +5294,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-308" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-310" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L308" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L310" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5326,9 +5350,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-295" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-297" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L295" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L297" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5386,9 +5410,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-310" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-312" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L310" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L312" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5448,9 +5472,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-293" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-295" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L293" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L295" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5502,9 +5526,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-311" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-313" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L311" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L313" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5564,9 +5588,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-296" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-298" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L296" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L298" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5694,9 +5718,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j2 k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-315" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-317" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L315" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L317" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5760,9 +5784,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j2 k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-300" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-302" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L300" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L302" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5838,9 +5862,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j2 j1)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-314" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-316" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L314" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L316" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -5938,9 +5962,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i1 j)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-299" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-301" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L299" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L301" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6020,9 +6044,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > c e)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-146" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-148" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L146" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L148" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6080,9 +6104,9 @@
 		      > f :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > e c)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-151" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-153" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L151" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L153" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6142,9 +6166,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-162" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-164" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L162" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L164" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6206,9 +6230,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-156" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-158" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L156" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L158" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6268,9 +6292,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-109" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-111" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L109" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L111" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6326,9 +6350,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > k j)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-118" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-120" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L118" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L120" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6390,9 +6414,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i1 j)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-267" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-269" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L267" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L269" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6558,9 +6582,9 @@
 		      > (p :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-102" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-103" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L102" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L103" class="link"
 		    >Comments</a
 		    > <a href="#t:PROFK" class="selflink"
 		    >#</a
@@ -6908,7 +6932,7 @@
 	    >ProfRep</a
 	    > <a href="src/Proarrow.Category.Bicategory.Prof.html#ProfRep" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L101" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L102" class="link"
 	    >Comments</a
 	    > <a href="#t:ProfRep" class="selflink"
 	    >#</a
@@ -6930,9 +6954,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-262" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-264" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L262" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L264" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -7290,9 +7314,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-256" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-258" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L256" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L258" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -7434,9 +7458,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-117" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-119" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L117" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L119" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -7778,9 +7802,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-108" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-110" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L108" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L110" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -8056,9 +8080,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-309" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-311" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L309" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L311" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -8508,9 +8532,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-294" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-296" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L294" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L296" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -8954,9 +8978,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-288" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-290" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L288" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L290" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9126,9 +9150,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-282" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-284" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L282" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L284" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9304,9 +9328,9 @@
 		      > a i) (k :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
 		      >Kind</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-161" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-163" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L161" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L163" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9446,9 +9470,9 @@
 		      > i a) (k :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
 		      >Kind</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-155" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-157" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L155" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L157" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9580,9 +9604,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-255" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-257" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L255" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L257" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9624,9 +9648,9 @@
 		      > (j :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-257" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-259" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L257" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L259" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9665,7 +9689,49 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:InitialObject:13"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:IsOb0:13"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Category-Bicategory-Sub.html#t:IsOb0" title="Proarrow.Category.Bicategory.Sub"
+		      >IsOb0</a
+		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:ProfRep" title="Proarrow.Category.Bicategory.Prof"
+		      >ProfRep</a
+		      > (k :: s)</span
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-104" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L104" class="link"
+		    >Comments</a
+		    > <a href="#t:ProfRep" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:ProfRep:IsOb0:13"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Bicategory-Prof.html"
+			>Proarrow.Category.Bicategory.Prof</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Category-Bicategory-Sub.html#t:IsOb0" title="Proarrow.Category.Bicategory.Sub"
+			>IsOb0</a
+			> <a href="Proarrow-Category-Bicategory-Prof.html#t:ProfRep" title="Proarrow.Category.Bicategory.Prof"
+			>ProfRep</a
+			> (k :: s) = ()</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:InitialObject:14"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -9676,9 +9742,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-287" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-289" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L287" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L289" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9688,7 +9754,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:InitialObject:13"
+		  ><details id="i:id:ProfRep:InitialObject:14"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -9713,7 +9779,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:TerminalObject:14"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:TerminalObject:15"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -9724,9 +9790,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-281" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-283" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L281" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L283" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9736,7 +9802,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:TerminalObject:14"
+		  ><details id="i:id:ProfRep:TerminalObject:15"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -9759,7 +9825,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Fst:15"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Fst:16"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -9772,9 +9838,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-263" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-265" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L263" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L265" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9784,7 +9850,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Fst:15"
+		  ><details id="i:id:ProfRep:Fst:16"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -9815,7 +9881,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Product:16"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Product:17"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -9828,9 +9894,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-261" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-263" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L261" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L263" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9840,7 +9906,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Product:16"
+		  ><details id="i:id:ProfRep:Product:17"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -9865,7 +9931,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Snd:17"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Snd:18"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -9878,9 +9944,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-264" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-266" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L264" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L266" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9890,7 +9956,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Snd:17"
+		  ><details id="i:id:ProfRep:Snd:18"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -9921,7 +9987,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Initiate:18"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Initiate:19"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -9934,9 +10000,9 @@
 		      > (j :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-289" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-291" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L289" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L291" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -9946,7 +10012,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Initiate:18"
+		  ><details id="i:id:ProfRep:Initiate:19"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -9979,7 +10045,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Terminate:19"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Terminate:20"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -9992,9 +10058,9 @@
 		      > (j :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-283" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-285" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L283" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L285" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10004,7 +10070,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Terminate:19"
+		  ><details id="i:id:ProfRep:Terminate:20"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10035,7 +10101,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Coproduct:20"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Coproduct:21"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10050,9 +10116,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-308" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-310" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L308" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L310" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10062,7 +10128,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Coproduct:20"
+		  ><details id="i:id:ProfRep:Coproduct:21"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10091,7 +10157,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Fst:21"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Fst:22"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10106,9 +10172,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-295" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-297" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L295" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L297" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10118,7 +10184,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Fst:21"
+		  ><details id="i:id:ProfRep:Fst:22"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10151,7 +10217,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Lft:22"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Lft:23"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10166,9 +10232,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-310" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-312" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L310" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L312" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10178,7 +10244,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Lft:22"
+		  ><details id="i:id:ProfRep:Lft:23"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10213,7 +10279,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Product:23"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Product:24"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10228,9 +10294,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-293" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-295" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L293" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L295" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10240,7 +10306,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Product:23"
+		  ><details id="i:id:ProfRep:Product:24"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10267,7 +10333,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Rgt:24"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Rgt:25"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10282,9 +10348,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-311" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-313" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L311" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L313" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10294,7 +10360,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Rgt:24"
+		  ><details id="i:id:ProfRep:Rgt:25"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10329,7 +10395,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Snd:25"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Snd:26"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10344,9 +10410,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-296" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-298" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L296" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L298" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10356,7 +10422,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Snd:25"
+		  ><details id="i:id:ProfRep:Snd:26"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10389,7 +10455,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:CoprodH:26"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:CoprodH:27"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10408,9 +10474,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j2 k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-315" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-317" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L315" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L317" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10420,7 +10486,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:CoprodH:26"
+		  ><details id="i:id:ProfRep:CoprodH:27"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10455,7 +10521,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:ProdH:27"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:ProdH:28"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10474,9 +10540,9 @@
 		      > q :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j2 k2)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-300" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-302" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L300" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L302" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10486,7 +10552,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:ProdH:27"
+		  ><details id="i:id:ProfRep:ProdH:28"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10521,7 +10587,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:CoprodV:28"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:CoprodV:29"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10552,9 +10618,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j2 j1)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-314" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-316" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L314" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L316" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10564,7 +10630,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:CoprodV:28"
+		  ><details id="i:id:ProfRep:CoprodV:29"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10621,7 +10687,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:ProdV:29"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:ProdV:30"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10652,9 +10718,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i1 j)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-299" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-301" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L299" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L301" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10664,7 +10730,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:ProdV:29"
+		  ><details id="i:id:ProfRep:ProdV:30"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10719,7 +10785,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Colimit:30"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Colimit:31"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10736,9 +10802,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-162" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-164" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L162" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L164" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10748,7 +10814,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Colimit:30"
+		  ><details id="i:id:ProfRep:Colimit:31"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10783,7 +10849,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Limit:31"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Limit:32"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10800,9 +10866,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-156" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-158" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L156" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L158" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10812,7 +10878,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Limit:31"
+		  ><details id="i:id:ProfRep:Limit:32"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10847,7 +10913,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Companion:32"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Companion:33"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10862,9 +10928,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-109" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-111" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L109" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L111" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10874,7 +10940,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Companion:32"
+		  ><details id="i:id:ProfRep:Companion:33"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10905,7 +10971,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Conjoint:33"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:Conjoint:34"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10920,9 +10986,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > k j)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-118" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-120" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L118" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L120" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10932,7 +10998,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:Conjoint:33"
+		  ><details id="i:id:ProfRep:Conjoint:34"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -10965,7 +11031,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:-38--38--38-:34"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:-38--38--38-:35"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -10984,9 +11050,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > i1 j)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-267" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-269" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L267" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L269" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -10996,7 +11062,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:-38--38--38-:34"
+		  ><details id="i:id:ProfRep:-38--38--38-:35"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -11035,7 +11101,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:IsOb:35"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:ProfRep:IsOb:36"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -11046,9 +11112,9 @@
 		      > (p :: <a href="Proarrow-Category-Bicategory-Prof.html#t:PROFK" title="Proarrow.Category.Bicategory.Prof"
 		      >PROFK</a
 		      > j k)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-102" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-103" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L102" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L103" class="link"
 		    >Comments</a
 		    > <a href="#t:ProfRep" class="selflink"
 		    >#</a
@@ -11058,7 +11124,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:ProfRep:IsOb:35"
+		  ><details id="i:id:ProfRep:IsOb:36"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -11106,7 +11172,7 @@
 	    >PROFK</a
 	    > <a href="src/Proarrow.Category.Bicategory.Prof.html#FUNK" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L104" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L106" class="link"
 	    >Comments</a
 	    > <a href="#t:FUNK" class="selflink"
 	    >#</a
@@ -11132,7 +11198,7 @@
 	    >PROFK</a
 	    > i j <a href="src/Proarrow.Category.Bicategory.Prof.html#FUN" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L105" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L107" class="link"
 	    >Comments</a
 	    > <a href="#t:FUN" class="selflink"
 	    >#</a
@@ -11168,7 +11234,7 @@
 	    >PROFK</a
 	    > j k) p) <a href="src/Proarrow.Category.Bicategory.Prof.html#UNFUN" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L106" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L108" class="link"
 	    >Comments</a
 	    > <a href="#t:UNFUN" class="selflink"
 	    >#</a
@@ -11206,7 +11272,7 @@
 	    >+-&gt;</a
 	    > kk i k2) <a href="src/Proarrow.Category.Bicategory.Prof.html#IsFunctorial" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L167" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L169" class="link"
 	    >Comments</a
 	    > <a href="#t:IsFunctorial" class="selflink"
 	    >#</a
@@ -11250,9 +11316,9 @@
 		      > sk h i -&gt; tk j k3 -&gt; kk h j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 		      >+-&gt;</a
 		      > kk i k3)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-174" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-176" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L174" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L176" class="link"
 		    >Comments</a
 		    > <a href="#t:IsFunctorial" class="selflink"
 		    >#</a
@@ -11318,7 +11384,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Bicategory.Prof.html#LaxProfunctor" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L181" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L183" class="link"
 	    >Comments</a
 	    > <a href="#t:LaxProfunctor" class="selflink"
 	    >#</a
@@ -11379,7 +11445,7 @@
 	      >I</a
 	      > :: tk j j) <a href="src/Proarrow.Category.Bicategory.Prof.html#laxId" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L181" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L183" class="link"
 	      >Comments</a
 	      > <a href="#v:laxId" class="selflink"
 	      >#</a
@@ -11409,7 +11475,7 @@
 	      >O</a
 	      > t0 t1) <a href="src/Proarrow.Category.Bicategory.Prof.html#laxComp" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L181" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L183" class="link"
 	      >Comments</a
 	      > <a href="#v:laxComp" class="selflink"
 	      >#</a
@@ -11603,7 +11669,7 @@
 			  >I</a
 			  > :: kk j j) <a href="src/Proarrow.Category.Bicategory.Prof.html#laxId" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L190" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L192" class="link"
 			  >Comments</a
 			  > <a href="#v:laxId" class="selflink"
 			  >#</a
@@ -11639,7 +11705,7 @@
 			  >O</a
 			  > t0 t1) <a href="src/Proarrow.Category.Bicategory.Prof.html#laxComp" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L191" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L193" class="link"
 			  >Comments</a
 			  > <a href="#v:laxComp" class="selflink"
 			  >#</a
@@ -11658,23 +11724,23 @@
 	    >dimapLax</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {s1} {t1} {h :: s1} {i :: s1} {j :: t1} {k :: t1} (sk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    > {k1} {t1} {h :: k1} {i :: k1} {j :: t1} {k2 :: t1} (sk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
-	    > s1) (tk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    > k1) (tk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
 	    >CAT</a
 	    > t1) (kk :: t1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	    >+-&gt;</a
-	    > s1) (s' :: sk h i) (s2 :: sk h i) (t2 :: tk j k) (t' :: tk j k). <a href="Proarrow-Category-Bicategory-Prof.html#t:LaxProfunctor" title="Proarrow.Category.Bicategory.Prof"
+	    > k1) (s' :: sk h i) (s :: sk h i) (t2 :: tk j k2) (t' :: tk j k2). <a href="Proarrow-Category-Bicategory-Prof.html#t:LaxProfunctor" title="Proarrow.Category.Bicategory.Prof"
 	    >LaxProfunctor</a
 	    > sk tk kk =&gt; (s' <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
-	    > s2) -&gt; (t2 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    > s) -&gt; (t2 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 	    >~&gt;</a
 	    > t') -&gt; <a href="Proarrow-Category-Bicategory-Prof.html#t:P" title="Proarrow.Category.Bicategory.Prof"
 	    >P</a
 	    > sk tk kk ('<a href="Proarrow-Category-Bicategory-Co.html#v:CO" title="Proarrow.Category.Bicategory.Co"
 	    >CO</a
-	    > s2) t2 <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+	    > s) t2 <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 	    >:~&gt;</a
 	    > <a href="Proarrow-Category-Bicategory-Prof.html#t:P" title="Proarrow.Category.Bicategory.Prof"
 	    >P</a
@@ -11682,7 +11748,7 @@
 	    >CO</a
 	    > s') t' <a href="src/Proarrow.Category.Bicategory.Prof.html#dimapLax" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L194" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L196" class="link"
 	    >Comments</a
 	    > <a href="#v:dimapLax" class="selflink"
 	    >#</a
@@ -11714,7 +11780,7 @@
 	    >FUN</a
 	    > f) <a href="src/Proarrow.Category.Bicategory.Prof.html#ProfSq" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L200" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L202" class="link"
 	    >Comments</a
 	    > <a href="#t:ProfSq" class="selflink"
 	    >#</a
@@ -11726,9 +11792,9 @@
 	    >isCotabulator</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {j} {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > j k). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k} {j} (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > p =&gt; <a href="Proarrow-Category-Bicategory-Prof.html#t:ProfSq" title="Proarrow.Category.Bicategory.Prof"
 	    >ProfSq</a
@@ -11746,7 +11812,7 @@
 	    >InjL</a
 	    > p) <a href="src/Proarrow.Category.Bicategory.Prof.html#isCotabulator" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L210" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L212" class="link"
 	    >Comments</a
 	    > <a href="#v:isCotabulator" class="selflink"
 	    >#</a
@@ -11780,7 +11846,7 @@ K-InjL-Col</pre
 	    >where</span
 	    > <a href="src/Proarrow.Category.Bicategory.Prof.html#CotabulatorFactorizer" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L220" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L222" class="link"
 	    >Comments</a
 	    > <a href="#t:CotabulatorFactorizer" class="selflink"
 	    >#</a
@@ -11847,26 +11913,26 @@ K--g--H    K-Inj2-CG--X--H</pre
 		      >Representable</a
 		      > f, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 		      >Representable</a
-		      > g, <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.12.2-ea3d/rflctn-2.1.9-53023f1e/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
+		      > g, <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.10.2-b8ed/rflctn-2.1.9-c2d2a80f/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
 		      >Reifies</a
 		      > s (<a href="Proarrow-Category-Bicategory-Prof.html#t:ProfSq" title="Proarrow.Category.Bicategory.Prof"
 		      >ProfSq</a
 		      > p (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
 		      >Id</a
-		      > :: j2 -&gt; j2 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > :: k2 -&gt; k2 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >) f g)) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > (<a href="Proarrow-Category-Bicategory-Prof.html#t:CotabulatorFactorizer" title="Proarrow.Category.Bicategory.Prof"
 		      >CotabulatorFactorizer</a
-		      > s p f g :: j2 -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+		      > s p f g :: k2 -&gt; <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
 		      >COLLAGE</a
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-224" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-226" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L224" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L226" class="link"
 		    >Comments</a
 		    > <a href="#t:CotabulatorFactorizer" class="selflink"
 		    >#</a
@@ -11891,7 +11957,7 @@ K--g--H    K-Inj2-CG--X--H</pre
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: j2) (a :: j2) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  > (c :: k2) (a :: k2) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
 			  >COLLAGE</a
 			  > p) (d :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
 			  >COLLAGE</a
@@ -11915,7 +11981,7 @@ K--g--H    K-Inj2-CG--X--H</pre
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: j2) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
+			  > (a :: k2) (b :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
 			  >COLLAGE</a
 			  > p) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -11945,7 +12011,7 @@ K--g--H    K-Inj2-CG--X--H</pre
 		      >Representable</a
 		      > f, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
 		      >Representable</a
-		      > g, <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.12.2-ea3d/rflctn-2.1.9-53023f1e/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
+		      > g, <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.10.2-b8ed/rflctn-2.1.9-c2d2a80f/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
 		      >Reifies</a
 		      > s (<a href="Proarrow-Category-Bicategory-Prof.html#t:ProfSq" title="Proarrow.Category.Bicategory.Prof"
 		      >ProfSq</a
@@ -11962,9 +12028,9 @@ K--g--H    K-Inj2-CG--X--H</pre
 		      > p -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-230" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-232" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L230" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L232" class="link"
 		    >Comments</a
 		    > <a href="#t:CotabulatorFactorizer" class="selflink"
 		    >#</a
@@ -12082,9 +12148,9 @@ K--g--H    K-Inj2-CG--X--H</pre
 		      > a :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
 		      >COLLAGE</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-234" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-236" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L234" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L236" class="link"
 		    >Comments</a
 		    > <a href="#t:CotabulatorFactorizer" class="selflink"
 		    >#</a
@@ -12142,9 +12208,9 @@ K--g--H    K-Inj2-CG--X--H</pre
 		      > a :: <a href="Proarrow-Category-Instance-Collage.html#t:COLLAGE" title="Proarrow.Category.Instance.Collage"
 		      >COLLAGE</a
 		      > p)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-233" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-235" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L233" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L235" class="link"
 		    >Comments</a
 		    > <a href="#t:CotabulatorFactorizer" class="selflink"
 		    >#</a
@@ -12192,9 +12258,9 @@ K--g--H    K-Inj2-CG--X--H</pre
 	    >cotabulatorFactorize</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {h} {j} {k} (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > h j) (f :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    > {j} {h} {k} (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > h) (f :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	    >+-&gt;</a
 	    > k) (g :: h <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	    >+-&gt;</a
@@ -12212,7 +12278,7 @@ K--g--H    K-Inj2-CG--X--H</pre
 	    >Type</a
 	    >) f g -&gt; (<span class="keyword"
 	    >forall</span
-	    > s. <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.12.2-ea3d/rflctn-2.1.9-53023f1e/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
+	    > s. <a href="file:///Users/sjoerdvisscher/.cabal/store/ghc-9.10.2-b8ed/rflctn-2.1.9-c2d2a80f/share/doc/html/Data-Reflection.html#t:Reifies" title="Data.Reflection"
 	    >Reifies</a
 	    > s (<a href="Proarrow-Category-Bicategory-Prof.html#t:ProfSq" title="Proarrow.Category.Bicategory.Prof"
 	    >ProfSq</a
@@ -12240,7 +12306,7 @@ K--g--H    K-Inj2-CG--X--H</pre
 	    >CotabulatorFactorizer</a
 	    > s p f g) -&gt; r) -&gt; r <a href="src/Proarrow.Category.Bicategory.Prof.html#cotabulatorFactorize" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L253" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Bicategory/Prof.hs#L255" class="link"
 	    >Comments</a
 	    > <a href="#v:cotabulatorFactorize" class="selflink"
 	    >#</a
@@ -12252,7 +12318,7 @@ K--g--H    K-Inj2-CG--X--H</pre
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.31.0</p
       ></div
     ></body
   ></html
