@@ -1,0 +1,4494 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><link rel="stylesheet" type="text/css" href="style.css"
+     /><script type="text/javascript" src="highlight.js"
+    ></script
+    ></head
+  ><body
+  ><pre
+    ><span class="hs-keyword"
+      >module</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html"
+	><span class="hs-identifier"
+	  >Proarrow.Category.Instance.Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-2"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-3"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Control.Applicative</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>liftA3</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-4"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Data.Kind</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Type</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-5"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>Prelude</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >qualified</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >as</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>P</span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-6"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-7"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html"
+	><span class="hs-identifier"
+	  >Proarrow.Core</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#CategoryOf"
+	><span class="hs-identifier"
+	  >CategoryOf</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier"
+	  >Is</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Profunctor"
+	><span class="hs-identifier"
+	  >Profunctor</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Promonad"
+	><span class="hs-identifier"
+	  >Promonad</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier"
+	  >UN</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#%2B-%3E"
+	><span class="hs-operator"
+	  >(+-&gt;)</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-8"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryProduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	><span class="hs-identifier"
+	  >HasBinaryProducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-9"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Initial</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	><span class="hs-identifier"
+	  >HasInitialObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-10"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.Terminal</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	><span class="hs-identifier"
+	  >HasTerminalObject</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-11"
+      ></span
+      ><span class="hs-keyword"
+      >import</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html"
+	><span class="hs-identifier"
+	  >Proarrow.Object.BinaryCoproduct</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	><span class="hs-identifier"
+	  >HasBinaryCoproducts</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="hs-glyph"
+      >..</span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-12"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-13"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="AP"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Ap.html#AP"
+	  ><span class="hs-identifier hs-var"
+	    >AP</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span id="local-6989586621679522276"
+      ><span class="annot"
+	><a href="#local-6989586621679522276"
+	  ><span class="hs-identifier hs-type"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Type</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="hs-identifier hs-type"
+	>Type</span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522277"
+      ><span class="annot"
+	><a href="#local-6989586621679522277"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span id="A"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Ap.html#A"
+	  ><span class="hs-identifier hs-var"
+	    >A</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522277"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-14"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="UN"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#UN"
+	  ><span class="hs-identifier hs-var"
+	    >UN</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522278"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Ap.html#A"
+	  ><span class="hs-identifier hs-type"
+	    >A</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="hs-special"
+	>(</span
+	><span class="annot"
+	><a href="Proarrow.Category.Instance.Ap.html#A"
+	  ><span class="hs-identifier hs-type"
+	    >A</span
+	    ></a
+	  ></span
+	><span
+	> </span
+	><span class="annot"
+	><a href="#local-6989586621679522278"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	><span class="hs-special"
+	>)</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522278"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-15"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-16"
+      ></span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522279"
+      ><span id="local-6989586621679522280"
+	><span id="local-6989586621679522281"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522279"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#%2B-%3E"
+	      ><span class="hs-operator hs-type"
+		>+-&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522280"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >-&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	      ><span class="hs-identifier hs-type"
+		>AP</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522281"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522279"
+	      ><span class="hs-identifier hs-type"
+		>j</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#%2B-%3E"
+	      ><span class="hs-operator hs-type"
+		>+-&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	      ><span class="hs-identifier hs-type"
+		>AP</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522281"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522280"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      >
+</span
+      ><span id="line-17"
+      ></span
+      ><span class="hs-keyword"
+      >data</span
+      ><span
+      > </span
+      ><span id="Ap"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	  ><span class="hs-identifier hs-var"
+	    >Ap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522282"
+      ><span class="annot"
+	><a href="#local-6989586621679522282"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522283"
+      ><span class="annot"
+	><a href="#local-6989586621679522283"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522284"
+      ><span class="annot"
+	><a href="#local-6989586621679522284"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-18"
+      ></span
+      ><span
+      >  </span
+      ><span id="Ap"
+      ><span class="annot"
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	  ><span class="hs-identifier hs-var"
+	    >Ap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >forall</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679522087"
+      ><span class="annot"
+	><a href="#local-6989586621679522087"
+	  ><span class="hs-identifier hs-type"
+	    >j</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="local-6989586621679522088"
+      ><span class="annot"
+	><a href="#local-6989586621679522088"
+	  ><span class="hs-identifier hs-type"
+	    >k</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522286"
+      ><span class="annot"
+	><a href="#local-6989586621679522286"
+	  ><span class="hs-identifier hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522287"
+      ><span class="annot"
+	><a href="#local-6989586621679522287"
+	  ><span class="hs-identifier hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522090"
+      ><span class="annot"
+	><a href="#local-6989586621679522090"
+	  ><span class="hs-identifier hs-type"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522091"
+      ><span class="annot"
+	><a href="#local-6989586621679522091"
+	  ><span class="hs-identifier hs-type"
+	    >p</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-operator"
+      >.</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522286"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522287"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=&gt;</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >{</span
+      ><span id="unAp"
+      ><span class="annot"
+	><span class="annottext"
+	  >forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+Ap p (A a) (A b) -&gt; f (p a b)
+</span
+	  ><a href="Proarrow.Category.Instance.Ap.html#unAp"
+	  ><span class="hs-identifier hs-var hs-var"
+	    >unAp</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522090"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522091"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522286"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522287"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >-&gt;</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522091"
+	><span class="hs-identifier hs-type"
+	  >p</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522286"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	><span class="hs-identifier hs-type"
+	  >AP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522090"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522087"
+	><span class="hs-identifier hs-type"
+	  >j</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522287"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >::</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	><span class="hs-identifier hs-type"
+	  >AP</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522090"
+	><span class="hs-identifier hs-type"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522088"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-19"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-20"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522125"
+      ><span id="local-6989586621679522126"
+	><span id="local-6989586621679522127"
+	  ><span id="local-6989586621679522128"
+	    ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><span class="hs-identifier hs-type"
+		>P.Applicative</span
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522127"
+		><span class="hs-identifier hs-type"
+		  >f</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >,</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Core.html#Profunctor"
+		><span class="hs-identifier hs-type"
+		  >Profunctor</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522128"
+		><span class="hs-identifier hs-type"
+		  >p</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >=&gt;</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Core.html#Profunctor"
+		><span class="hs-identifier hs-type"
+		  >Profunctor</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+		><span class="hs-identifier hs-type"
+		  >Ap</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-special"
+	      >(</span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522128"
+		><span class="hs-identifier hs-type"
+		  >p</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >::</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522125"
+		><span class="hs-identifier hs-type"
+		  >j</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Core.html#%2B-%3E"
+		><span class="hs-operator hs-type"
+		  >+-&gt;</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522126"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ><span
+	      > </span
+	      ><span class="hs-glyph"
+	      >::</span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Instance.Ap.html#AP"
+		><span class="hs-identifier hs-type"
+		  >AP</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522127"
+		><span class="hs-identifier hs-type"
+		  >f</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522125"
+		><span class="hs-identifier hs-type"
+		  >j</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Core.html#%2B-%3E"
+		><span class="hs-operator hs-type"
+		  >+-&gt;</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="Proarrow.Category.Instance.Ap.html#AP"
+		><span class="hs-identifier hs-type"
+		  >AP</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522127"
+		><span class="hs-identifier hs-type"
+		  >f</span
+		  ></a
+		></span
+	      ><span
+	      > </span
+	      ><span class="annot"
+	      ><a href="#local-6989586621679522126"
+		><span class="hs-identifier hs-type"
+		  >k</span
+		  ></a
+		></span
+	      ><span class="hs-special"
+	      >)</span
+	      ></span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-21"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522312"
+      ><span class="annot"
+	><span class="annottext"
+	  >dimap :: forall (c :: AP f k) (a :: AP f k) (b :: AP f j) (d :: AP f j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; Ap p a b -&gt; Ap p c d
+</span
+	  ><a href="#local-6989586621679522312"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >dimap</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522318"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (a ~&gt; b)
+</span
+	  ><a href="#local-6989586621679522318"
+	  ><span class="hs-identifier hs-var"
+	    >l</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522323"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (a ~&gt; b)
+</span
+	  ><a href="#local-6989586621679522323"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522338"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (p a b)
+</span
+	  ><a href="#local-6989586621679522338"
+	  ><span class="hs-identifier hs-var"
+	    >x</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (p a b) -&gt; Ap p (A a) (A b)
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ~&gt; b) -&gt; (a ~&gt; b) -&gt; p a b -&gt; p a b)
+-&gt; f (a ~&gt; b) -&gt; f (a ~&gt; b) -&gt; f (p a b) -&gt; f (p a b)
+forall (f :: Type -&gt; Type) a b c d.
+Applicative f =&gt;
+(a -&gt; b -&gt; c -&gt; d) -&gt; f a -&gt; f b -&gt; f c -&gt; f d
+</span
+	><span class="hs-identifier hs-var"
+	>liftA3</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; p a b -&gt; p a b
+(a ~&gt; a) -&gt; (b ~&gt; b) -&gt; p a b -&gt; p a b
+forall (c :: k) (a :: k) (b :: j) (d :: j).
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+forall {j} {k} (p :: j +-&gt; k) (c :: k) (a :: k) (b :: j) (d :: j).
+Profunctor p =&gt;
+(c ~&gt; a) -&gt; (b ~&gt; d) -&gt; p a b -&gt; p c d
+</span
+	><a href="Proarrow.Core.html#dimap"
+	><span class="hs-identifier hs-var"
+	  >dimap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (a ~&gt; b)
+</span
+	><a href="#local-6989586621679522318"
+	><span class="hs-identifier hs-var"
+	  >l</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (a ~&gt; b)
+</span
+	><a href="#local-6989586621679522323"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (p a b)
+</span
+	><a href="#local-6989586621679522338"
+	><span class="hs-identifier hs-var"
+	  >x</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-22"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522339"
+      ><span class="annot"
+	><span class="annottext"
+	  >(Ob a, Ob b) =&gt; r
+</span
+	  ><a href="#local-6989586621679522339"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522340"
+      ><span class="annot"
+	><span class="annottext"
+	  >\\ :: forall (a :: AP f k) (b :: AP f j) r.
+((Ob a, Ob b) =&gt; r) -&gt; Ap p a b -&gt; r
+</span
+	  ><a href="#local-6989586621679522340"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >\\</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >{</span
+      ><span class="hs-special"
+      >}</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+(Ob a, Ob b) =&gt; r
+</span
+	><a href="#local-6989586621679522339"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-23"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522162"
+      ><span id="local-6989586621679522163"
+	><span id="local-6989586621679522164"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><span class="hs-identifier hs-type"
+	      >P.Applicative</span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522163"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Promonad"
+	      ><span class="hs-identifier hs-type"
+		>Promonad</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522164"
+	      ><span class="hs-identifier hs-type"
+		>p</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#Promonad"
+	      ><span class="hs-identifier hs-type"
+		>Promonad</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	      ><span class="hs-identifier hs-type"
+		>Ap</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522164"
+	      ><span class="hs-identifier hs-type"
+		>p</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522162"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#%2B-%3E"
+	      ><span class="hs-operator hs-type"
+		>+-&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522162"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >::</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	      ><span class="hs-identifier hs-type"
+		>AP</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522163"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522162"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Core.html#%2B-%3E"
+	      ><span class="hs-operator hs-type"
+		>+-&gt;</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	      ><span class="hs-identifier hs-type"
+		>AP</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522163"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522162"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-24"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522375"
+      ><span class="annot"
+	><span class="annottext"
+	  >id :: forall (a :: AP f k). Ob a =&gt; Ap p a a
+</span
+	  ><a href="#local-6989586621679522375"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >id</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (p (UN A a) (UN A a)) -&gt; Ap p (A (UN A a)) (A (UN A a))
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>p (UN A a) (UN A a) -&gt; f (p (UN A a) (UN A a))
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span
+	><span class="hs-identifier hs-var"
+	>P.pure</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p (UN A a) (UN A a)
+forall (a :: k). Ob a =&gt; p a a
+forall {k} (p :: k +-&gt; k) (a :: k). (Promonad p, Ob a) =&gt; p a a
+</span
+	><a href="Proarrow.Core.html#id"
+	><span class="hs-identifier hs-var"
+	  >id</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-25"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522381"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (p a b)
+</span
+	  ><a href="#local-6989586621679522381"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522382"
+      ><span class="annot"
+	><span class="annottext"
+	  >. :: forall (b :: AP f k) (c :: AP f k) (a :: AP f k).
+Ap p b c -&gt; Ap p a b -&gt; Ap p a c
+</span
+	  ><a href="#local-6989586621679522382"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >.</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522395"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (p a b)
+</span
+	  ><a href="#local-6989586621679522395"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (p a b) -&gt; Ap p (A a) (A b)
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(p a b -&gt; p a a -&gt; p a b) -&gt; f (p a b) -&gt; f (p a a) -&gt; f (p a b)
+forall a b c. (a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+forall (f :: Type -&gt; Type) a b c.
+Applicative f =&gt;
+(a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+</span
+	><span class="hs-identifier hs-var"
+	>P.liftA2</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>p a b -&gt; p a a -&gt; p a b
+forall (b :: k) (c :: k) (a :: k). p b c -&gt; p a b -&gt; p a c
+forall {k} (p :: k +-&gt; k) (b :: k) (c :: k) (a :: k).
+Promonad p =&gt;
+p b c -&gt; p a b -&gt; p a c
+</span
+	><a href="Proarrow.Core.html#."
+	><span class="hs-operator hs-var"
+	  >(.)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (p a b)
+</span
+	><a href="#local-6989586621679522381"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (p a a)
+f (p a b)
+</span
+	><a href="#local-6989586621679522395"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-26"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522123"
+      ><span id="local-6989586621679522124"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><span class="hs-identifier hs-type"
+	    >P.Applicative</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522123"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522124"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Core.html#CategoryOf"
+	    ><span class="hs-identifier hs-type"
+	      >CategoryOf</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	    ><span class="hs-identifier hs-type"
+	      >AP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522123"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522124"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-27"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="~%3E"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#~%3E"
+	  ><span class="hs-operator hs-var"
+	    >(~&gt;)</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#~%3E"
+	><span class="hs-operator hs-type"
+	  >(~&gt;)</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-28"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="Ob"
+      ><span class="annot"
+	><a href="Proarrow.Core.html#Ob"
+	  ><span class="hs-identifier hs-var"
+	    >Ob</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522405"
+      ><span class="annot"
+	><a href="#local-6989586621679522405"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Is"
+	><span class="hs-identifier hs-type"
+	  >Is</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522405"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >,</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#Ob"
+	><span class="hs-identifier hs-type"
+	  >Ob</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522405"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-29"
+      ></span
+      ><span
+      >
+</span
+      ><span id="line-30"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522188"
+      ><span id="local-6989586621679522189"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><span class="hs-identifier hs-type"
+	    >P.Applicative</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522188"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	    ><span class="hs-identifier hs-type"
+	      >HasInitialObject</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522189"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Initial.html#HasInitialObject"
+	    ><span class="hs-identifier hs-type"
+	      >HasInitialObject</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	    ><span class="hs-identifier hs-type"
+	      >AP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522188"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522189"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-31"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="InitialObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Initial.html#InitialObject"
+	  ><span class="hs-identifier hs-var"
+	    >InitialObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Initial.html#InitialObject"
+	><span class="hs-identifier hs-type"
+	  >InitialObject</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-32"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522433"
+      ><span class="annot"
+	><span class="annottext"
+	  >initiate :: forall (a :: AP f k). Ob a =&gt; InitialObject ~&gt; a
+</span
+	  ><a href="#local-6989586621679522433"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >initiate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (InitialObject ~&gt; UN A a)
+-&gt; Ap (~&gt;) (A InitialObject) (A (UN A a))
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(InitialObject ~&gt; UN A a) -&gt; f (InitialObject ~&gt; UN A a)
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span
+	><span class="hs-identifier hs-var"
+	>P.pure</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>InitialObject ~&gt; UN A a
+forall (a :: k). Ob a =&gt; InitialObject ~&gt; a
+forall k (a :: k). (HasInitialObject k, Ob a) =&gt; InitialObject ~&gt; a
+</span
+	><a href="Proarrow.Object.Initial.html#initiate"
+	><span class="hs-identifier hs-var"
+	  >initiate</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-33"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522197"
+      ><span id="local-6989586621679522198"
+	><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><span class="hs-identifier hs-type"
+	    >P.Applicative</span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522197"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >,</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	    ><span class="hs-identifier hs-type"
+	      >HasTerminalObject</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522198"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ><span
+	  > </span
+	  ><span class="hs-glyph"
+	  >=&gt;</span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="Proarrow.Object.Terminal.html#HasTerminalObject"
+	    ><span class="hs-identifier hs-type"
+	      >HasTerminalObject</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="hs-special"
+	  >(</span
+	  ><span class="annot"
+	  ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	    ><span class="hs-identifier hs-type"
+	      >AP</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522197"
+	    ><span class="hs-identifier hs-type"
+	      >f</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522198"
+	    ><span class="hs-identifier hs-type"
+	      >k</span
+	      ></a
+	    ></span
+	  ><span class="hs-special"
+	  >)</span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-34"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="TerminalObject"
+      ><span class="annot"
+	><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	  ><span class="hs-identifier hs-var"
+	    >TerminalObject</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.Terminal.html#TerminalObject"
+	><span class="hs-identifier hs-type"
+	  >TerminalObject</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-35"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522462"
+      ><span class="annot"
+	><span class="annottext"
+	  >terminate :: forall (a :: AP f k). Ob a =&gt; a ~&gt; TerminalObject
+</span
+	  ><a href="#local-6989586621679522462"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >terminate</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (UN A a ~&gt; TerminalObject)
+-&gt; Ap (~&gt;) (A (UN A a)) (A TerminalObject)
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN A a ~&gt; TerminalObject) -&gt; f (UN A a ~&gt; TerminalObject)
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span
+	><span class="hs-identifier hs-var"
+	>P.pure</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>UN A a ~&gt; TerminalObject
+forall (a :: k). Ob a =&gt; a ~&gt; TerminalObject
+forall k (a :: k).
+(HasTerminalObject k, Ob a) =&gt;
+a ~&gt; TerminalObject
+</span
+	><a href="Proarrow.Object.Terminal.html#terminate"
+	><span class="hs-identifier hs-var"
+	  >terminate</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-36"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522219"
+      ><span id="local-6989586621679522220"
+	><span id="local-6989586621679522474"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><span class="hs-identifier hs-type"
+	      >P.Applicative</span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522219"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	      ><span class="hs-identifier hs-type"
+		>HasBinaryProducts</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522220"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#HasBinaryProducts"
+	      ><span class="hs-identifier hs-type"
+		>HasBinaryProducts</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	      ><span class="hs-identifier hs-type"
+		>AP</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522219"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522220"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-37"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522479"
+      ><span id="local-6989586621679522480"
+	><span class="annot"
+	  ><a href="#local-6989586621679522479"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%26%26"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	      ><span class="hs-operator hs-var"
+		>&amp;&amp;</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522480"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522479"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryProduct.html#%26%26"
+	><span class="hs-operator hs-type"
+	  >&amp;&amp;</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522480"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-38"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522496"
+      ><span class="annot"
+	><span class="annottext"
+	  >withObProd :: forall (a :: AP f k) (b :: AP f k) r.
+(Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679522496"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withObProd</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522498"
+      ><span class="annot"
+	><a href="#local-6989586621679522498"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522499"
+      ><span class="annot"
+	><a href="#local-6989586621679522499"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522500"
+      ><span class="annot"
+	><span class="annottext"
+	  >Ob (a &amp;&amp; b) =&gt; r
+</span
+	  ><a href="#local-6989586621679522500"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#withObProd"
+	><span class="hs-identifier hs-var"
+	  >withObProd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522220"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522498"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522499"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+Ob (UN A a &amp;&amp; UN A b) =&gt; r
+Ob (a &amp;&amp; b) =&gt; r
+</span
+	><a href="#local-6989586621679522500"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-39"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522521"
+      ><span class="annot"
+	><span class="annottext"
+	  >fst :: forall (a :: AP f k) (b :: AP f k). (Ob a, Ob b) =&gt; (a &amp;&amp; b) ~&gt; a
+</span
+	  ><a href="#local-6989586621679522521"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >fst</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522523"
+      ><span class="annot"
+	><a href="#local-6989586621679522523"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522524"
+      ><span class="annot"
+	><a href="#local-6989586621679522524"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#withObProd"
+	><span class="hs-identifier hs-var"
+	  >withObProd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522220"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522523"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522524"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (UN A a &amp;&amp; UN A b) =&gt; (a &amp;&amp; b) ~&gt; a) -&gt; (a &amp;&amp; b) ~&gt; a)
+-&gt; (Ob (UN A a &amp;&amp; UN A b) =&gt; (a &amp;&amp; b) ~&gt; a) -&gt; (a &amp;&amp; b) ~&gt; a
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f ((UN A a &amp;&amp; UN A b) ~&gt; UN A a)
+-&gt; Ap (~&gt;) (A (UN A a &amp;&amp; UN A b)) (A (UN A a))
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN A a &amp;&amp; UN A b) ~&gt; UN A a) -&gt; f ((UN A a &amp;&amp; UN A b) ~&gt; UN A a)
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span
+	><span class="hs-identifier hs-var"
+	>P.pure</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#fst"
+	><span class="hs-identifier hs-var"
+	  >fst</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522523"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522524"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-40"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522547"
+      ><span class="annot"
+	><span class="annottext"
+	  >snd :: forall (a :: AP f k) (b :: AP f k). (Ob a, Ob b) =&gt; (a &amp;&amp; b) ~&gt; b
+</span
+	  ><a href="#local-6989586621679522547"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >snd</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522549"
+      ><span class="annot"
+	><a href="#local-6989586621679522549"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522550"
+      ><span class="annot"
+	><a href="#local-6989586621679522550"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#withObProd"
+	><span class="hs-identifier hs-var"
+	  >withObProd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522220"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522549"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522550"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (UN A a &amp;&amp; UN A b) =&gt; (a &amp;&amp; b) ~&gt; b) -&gt; (a &amp;&amp; b) ~&gt; b)
+-&gt; (Ob (UN A a &amp;&amp; UN A b) =&gt; (a &amp;&amp; b) ~&gt; b) -&gt; (a &amp;&amp; b) ~&gt; b
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f ((UN A a &amp;&amp; UN A b) ~&gt; UN A b)
+-&gt; Ap (~&gt;) (A (UN A a &amp;&amp; UN A b)) (A (UN A b))
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((UN A a &amp;&amp; UN A b) ~&gt; UN A b) -&gt; f ((UN A a &amp;&amp; UN A b) ~&gt; UN A b)
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span
+	><span class="hs-identifier hs-var"
+	>P.pure</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(a &amp;&amp; b) ~&gt; b
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#snd"
+	><span class="hs-identifier hs-var"
+	  >snd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522549"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522550"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-41"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522562"
+      ><span class="annot"
+	><a href="#local-6989586621679522562"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >al</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522563"
+      ><span class="annot"
+	><a href="#local-6989586621679522563"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >bl</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522564"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (a ~&gt; b)
+</span
+	  ><a href="#local-6989586621679522564"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522565"
+      ><span class="annot"
+	><span class="annottext"
+	  >&amp;&amp;&amp; :: forall (a :: AP f k) (x :: AP f k) (y :: AP f k).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	  ><a href="#local-6989586621679522565"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >&amp;&amp;&amp;</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522577"
+      ><span class="annot"
+	><a href="#local-6989586621679522577"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >ar</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522578"
+      ><span class="annot"
+	><a href="#local-6989586621679522578"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >br</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522579"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (a ~&gt; b)
+</span
+	  ><a href="#local-6989586621679522579"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#withObProd"
+	><span class="hs-identifier hs-var"
+	  >withObProd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522220"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522562"
+	><span class="hs-identifier hs-type"
+	  >al</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522577"
+	><span class="hs-identifier hs-type"
+	  >ar</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (a &amp;&amp; a) =&gt; a ~&gt; (x &amp;&amp; y)) -&gt; a ~&gt; (x &amp;&amp; y))
+-&gt; (Ob (a &amp;&amp; a) =&gt; a ~&gt; (x &amp;&amp; y)) -&gt; a ~&gt; (x &amp;&amp; y)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryProducts k, Ob a, Ob b) =&gt;
+(Ob (a &amp;&amp; b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#withObProd"
+	><span class="hs-identifier hs-var"
+	  >withObProd</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522220"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522563"
+	><span class="hs-identifier hs-type"
+	  >bl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522578"
+	><span class="hs-identifier hs-type"
+	  >br</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (b &amp;&amp; b) =&gt; a ~&gt; (x &amp;&amp; y)) -&gt; a ~&gt; (x &amp;&amp; y))
+-&gt; (Ob (b &amp;&amp; b) =&gt; a ~&gt; (x &amp;&amp; y)) -&gt; a ~&gt; (x &amp;&amp; y)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (a ~&gt; (b &amp;&amp; b)) -&gt; Ap (~&gt;) (A a) (A (b &amp;&amp; b))
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ~&gt; b) -&gt; (a ~&gt; b) -&gt; a ~&gt; (b &amp;&amp; b))
+-&gt; f (a ~&gt; b) -&gt; f (a ~&gt; b) -&gt; f (a ~&gt; (b &amp;&amp; b))
+forall a b c. (a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+forall (f :: Type -&gt; Type) a b c.
+Applicative f =&gt;
+(a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+</span
+	><span class="hs-identifier hs-var"
+	>P.liftA2</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; a ~&gt; (b &amp;&amp; b)
+(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; a ~&gt; (b &amp;&amp; b)
+forall (a :: k) (x :: k) (y :: k).
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+forall k (a :: k) (x :: k) (y :: k).
+HasBinaryProducts k =&gt;
+(a ~&gt; x) -&gt; (a ~&gt; y) -&gt; a ~&gt; (x &amp;&amp; y)
+</span
+	><a href="Proarrow.Object.BinaryProduct.html#%26%26%26"
+	><span class="hs-operator hs-var"
+	  >(&amp;&amp;&amp;)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (a ~&gt; b)
+</span
+	><a href="#local-6989586621679522564"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (a ~&gt; b)
+</span
+	><a href="#local-6989586621679522579"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-42"
+      ></span
+      ><span class="hs-keyword"
+      >instance</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522258"
+      ><span id="local-6989586621679522259"
+	><span id="local-6989586621679522599"
+	  ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><span class="hs-identifier hs-type"
+	      >P.Applicative</span
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522258"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >,</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	      ><span class="hs-identifier hs-type"
+		>HasBinaryCoproducts</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522259"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ><span
+	    > </span
+	    ><span class="hs-glyph"
+	    >=&gt;</span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#HasBinaryCoproducts"
+	      ><span class="hs-identifier hs-type"
+		>HasBinaryCoproducts</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="hs-special"
+	    >(</span
+	    ><span class="annot"
+	    ><a href="Proarrow.Category.Instance.Ap.html#AP"
+	      ><span class="hs-identifier hs-type"
+		>AP</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522258"
+	      ><span class="hs-identifier hs-type"
+		>f</span
+		></a
+	      ></span
+	    ><span
+	    > </span
+	    ><span class="annot"
+	    ><a href="#local-6989586621679522259"
+	      ><span class="hs-identifier hs-type"
+		>k</span
+		></a
+	      ></span
+	    ><span class="hs-special"
+	    >)</span
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-keyword"
+      >where</span
+      ><span
+      >
+</span
+      ><span id="line-43"
+      ></span
+      ><span
+      >  </span
+      ><span class="hs-keyword"
+      >type</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522604"
+      ><span id="local-6989586621679522605"
+	><span class="annot"
+	  ><a href="#local-6989586621679522604"
+	    ><span class="hs-identifier hs-type"
+	      >a</span
+	      ></a
+	    ></span
+	  ><span
+	  > </span
+	  ><span id="%7C%7C"
+	  ><span class="annot"
+	    ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	      ><span class="hs-operator hs-var"
+		>||</span
+		></a
+	      ></span
+	    ></span
+	  ><span
+	  > </span
+	  ><span class="annot"
+	  ><a href="#local-6989586621679522605"
+	    ><span class="hs-identifier hs-type"
+	      >b</span
+	      ></a
+	    ></span
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522604"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C"
+	><span class="hs-operator hs-type"
+	  >||</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Core.html#UN"
+	><span class="hs-identifier hs-type"
+	  >UN</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="#local-6989586621679522605"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-44"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522621"
+      ><span class="annot"
+	><span class="annottext"
+	  >withObCoprod :: forall (a :: AP f k) (b :: AP f k) r.
+(Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	  ><a href="#local-6989586621679522621"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >withObCoprod</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522623"
+      ><span class="annot"
+	><a href="#local-6989586621679522623"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522624"
+      ><span class="annot"
+	><a href="#local-6989586621679522624"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span id="local-6989586621679522625"
+      ><span class="annot"
+	><span class="annottext"
+	  >Ob (a || b) =&gt; r
+</span
+	  ><a href="#local-6989586621679522625"
+	  ><span class="hs-identifier hs-var"
+	    >r</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#withObCoprod"
+	><span class="hs-identifier hs-var"
+	  >withObCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522259"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522623"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522624"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>r
+Ob (UN A a || UN A b) =&gt; r
+Ob (a || b) =&gt; r
+</span
+	><a href="#local-6989586621679522625"
+	><span class="hs-identifier hs-var"
+	  >r</span
+	  ></a
+	></span
+      ><span
+      >
+</span
+      ><span id="line-45"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522646"
+      ><span class="annot"
+	><span class="annottext"
+	  >lft :: forall (a :: AP f k) (b :: AP f k). (Ob a, Ob b) =&gt; a ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679522646"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >lft</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522648"
+      ><span class="annot"
+	><a href="#local-6989586621679522648"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522649"
+      ><span class="annot"
+	><a href="#local-6989586621679522649"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#withObCoprod"
+	><span class="hs-identifier hs-var"
+	  >withObCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522259"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522648"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522649"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (UN A a || UN A b) =&gt; a ~&gt; (a || b)) -&gt; a ~&gt; (a || b))
+-&gt; (Ob (UN A a || UN A b) =&gt; a ~&gt; (a || b)) -&gt; a ~&gt; (a || b)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (UN A a ~&gt; (UN A a || UN A b))
+-&gt; Ap (~&gt;) (A (UN A a)) (A (UN A a || UN A b))
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN A a ~&gt; (UN A a || UN A b)) -&gt; f (UN A a ~&gt; (UN A a || UN A b))
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span
+	><span class="hs-identifier hs-var"
+	>P.pure</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+a ~&gt; (a || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#lft"
+	><span class="hs-identifier hs-var"
+	  >lft</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522648"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522649"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-46"
+      ></span
+      ><span
+      >  </span
+      ><span id="local-6989586621679522672"
+      ><span class="annot"
+	><span class="annottext"
+	  >rgt :: forall (a :: AP f k) (b :: AP f k). (Ob a, Ob b) =&gt; b ~&gt; (a || b)
+</span
+	  ><a href="#local-6989586621679522672"
+	  ><span class="hs-identifier hs-var hs-var hs-var"
+	    >rgt</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522674"
+      ><span class="annot"
+	><a href="#local-6989586621679522674"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >a</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#A"
+	><span class="hs-identifier hs-type"
+	  >A</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522675"
+      ><span class="annot"
+	><a href="#local-6989586621679522675"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >b</span
+	    ></a
+	  ></span
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#withObCoprod"
+	><span class="hs-identifier hs-var"
+	  >withObCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522259"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522674"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522675"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (UN A a || UN A b) =&gt; b ~&gt; (a || b)) -&gt; b ~&gt; (a || b))
+-&gt; (Ob (UN A a || UN A b) =&gt; b ~&gt; (a || b)) -&gt; b ~&gt; (a || b)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (UN A b ~&gt; (UN A a || UN A b))
+-&gt; Ap (~&gt;) (A (UN A b)) (A (UN A a || UN A b))
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>(UN A b ~&gt; (UN A a || UN A b)) -&gt; f (UN A b ~&gt; (UN A a || UN A b))
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span
+	><span class="hs-identifier hs-var"
+	>P.pure</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k).
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+b ~&gt; (a || b)
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#rgt"
+	><span class="hs-identifier hs-var"
+	  >rgt</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><span class="hs-identifier"
+	>_</span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522674"
+	><span class="hs-identifier hs-type"
+	  >a</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522675"
+	><span class="hs-identifier hs-type"
+	  >b</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ><span class="hs-special"
+      >)</span
+      ><span
+      >
+</span
+      ><span id="line-47"
+      ></span
+      ><span
+      >  </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522687"
+      ><span class="annot"
+	><a href="#local-6989586621679522687"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >al</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522688"
+      ><span class="annot"
+	><a href="#local-6989586621679522688"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >bl</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522689"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (a ~&gt; b)
+</span
+	  ><a href="#local-6989586621679522689"
+	  ><span class="hs-identifier hs-var"
+	    >f</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522690"
+      ><span class="annot"
+	><span class="annottext"
+	  >||| :: forall (x :: AP f k) (a :: AP f k) (y :: AP f k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	  ><a href="#local-6989586621679522690"
+	  ><span class="hs-operator hs-var hs-var hs-var"
+	    >|||</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-type"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522701"
+      ><span class="annot"
+	><a href="#local-6989586621679522701"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >ar</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span id="local-6989586621679522702"
+      ><span class="annot"
+	><a href="#local-6989586621679522702"
+	  ><span class="hs-identifier hs-type hs-type"
+	    >br</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span id="local-6989586621679522703"
+      ><span class="annot"
+	><span class="annottext"
+	  >f (a ~&gt; b)
+</span
+	  ><a href="#local-6989586621679522703"
+	  ><span class="hs-identifier hs-var"
+	    >g</span
+	    ></a
+	  ></span
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >=</span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#withObCoprod"
+	><span class="hs-identifier hs-var"
+	  >withObCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522259"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522687"
+	><span class="hs-identifier hs-type"
+	  >al</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522701"
+	><span class="hs-identifier hs-type"
+	  >ar</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (a || a) =&gt; (x || y) ~&gt; a) -&gt; (x || y) ~&gt; a)
+-&gt; (Ob (a || a) =&gt; (x || y) ~&gt; a) -&gt; (x || y) ~&gt; a
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>forall k (a :: k) (b :: k) r.
+(HasBinaryCoproducts k, Ob a, Ob b) =&gt;
+(Ob (a || b) =&gt; r) -&gt; r
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#withObCoprod"
+	><span class="hs-identifier hs-var"
+	  >withObCoprod</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522259"
+	><span class="hs-identifier hs-type"
+	  >k</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522688"
+	><span class="hs-identifier hs-type"
+	  >bl</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-glyph"
+      >@</span
+      ><span class="annot"
+      ><a href="#local-6989586621679522702"
+	><span class="hs-identifier hs-type"
+	  >br</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>((Ob (b || b) =&gt; (x || y) ~&gt; a) -&gt; (x || y) ~&gt; a)
+-&gt; (Ob (b || b) =&gt; (x || y) ~&gt; a) -&gt; (x || y) ~&gt; a
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span
+	><span class="hs-operator hs-var"
+	>P.$</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f ((a || a) ~&gt; b) -&gt; Ap (~&gt;) (A (a || a)) (A b)
+forall {j} {k} (a :: j) (b :: k) (f :: Type -&gt; Type)
+       (p :: k +-&gt; j).
+(Ob a, Ob b) =&gt;
+f (p a b) -&gt; Ap p (A a) (A b)
+</span
+	><a href="Proarrow.Category.Instance.Ap.html#Ap"
+	><span class="hs-identifier hs-var"
+	  >Ap</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="hs-special"
+      >(</span
+      ><span class="annot"
+      ><span class="annottext"
+	>((a ~&gt; b) -&gt; (a ~&gt; b) -&gt; (a || a) ~&gt; b)
+-&gt; f (a ~&gt; b) -&gt; f (a ~&gt; b) -&gt; f ((a || a) ~&gt; b)
+forall a b c. (a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+forall (f :: Type -&gt; Type) a b c.
+Applicative f =&gt;
+(a -&gt; b -&gt; c) -&gt; f a -&gt; f b -&gt; f c
+</span
+	><span class="hs-identifier hs-var"
+	>P.liftA2</span
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; (a || a) ~&gt; b
+(a ~&gt; b) -&gt; (a ~&gt; b) -&gt; (a || a) ~&gt; b
+forall (x :: k) (a :: k) (y :: k).
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+forall k (x :: k) (a :: k) (y :: k).
+HasBinaryCoproducts k =&gt;
+(x ~&gt; a) -&gt; (y ~&gt; a) -&gt; (x || y) ~&gt; a
+</span
+	><a href="Proarrow.Object.BinaryCoproduct.html#%7C%7C%7C"
+	><span class="hs-operator hs-var"
+	  >(|||)</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (a ~&gt; b)
+</span
+	><a href="#local-6989586621679522689"
+	><span class="hs-identifier hs-var"
+	  >f</span
+	  ></a
+	></span
+      ><span
+      > </span
+      ><span class="annot"
+      ><span class="annottext"
+	>f (a ~&gt; b)
+</span
+	><a href="#local-6989586621679522703"
+	><span class="hs-identifier hs-var"
+	  >g</span
+	  ></a
+	></span
+      ><span class="hs-special"
+      >)</span
+      ></pre
+    ></body
+  ></html
+>
