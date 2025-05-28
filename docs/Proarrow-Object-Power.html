@@ -1,0 +1,1515 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Object.Power</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow-0: Category theory with a central role for profunctors</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Object.Power.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >Haskell2010</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Object.Power</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	      >CategoryOf</a
+	      > k =&gt; <a href="#t:Powered"
+	      >Powered</a
+	      > k <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > (a :: k) <a href="#t:-94-"
+		  >^</a
+		  > n :: k</li
+		><li
+		><a href="#v:withObPower"
+		  >withObPower</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+		  >^</a
+		  > n) =&gt; r) -&gt; r</li
+		><li
+		><a href="#v:power"
+		  >power</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: k) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+		  >^</a
+		  > n)</li
+		><li
+		><a href="#v:unpower"
+		  >unpower</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (b :: k) (a :: k) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+		  >^</a
+		  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > b</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:mapBase"
+	      >mapBase</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: k) (b :: k) n. <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+	      >Powered</a
+	      > k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	      >^</a
+	      > n) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	      >^</a
+	      > n)</li
+	    ><li class="src short"
+	    ><a href="#v:mapPower"
+	      >mapPower</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > k (a :: k) n m. (<a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+	      >Powered</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a) =&gt; (n -&gt; m) -&gt; (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	      >^</a
+	      > m) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	      >^</a
+	      > n)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >data</span
+	      > ((p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) <a href="#t::-94-:"
+	      >:^:</a
+	      > n) (a :: k) (b :: k1) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:Power"
+		  >Power</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > {k} {k1} (a :: k) (b :: k1) n (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		  >Type</a
+		  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b) =&gt; {..} -&gt; (p <a href="Proarrow-Object-Power.html#t::-94-:" title="Proarrow.Object.Power"
+		  >:^:</a
+		  > n) a b</li
+		></ul
+	      ></li
+	    ></ul
+	  ></details
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+	    >CategoryOf</a
+	    > k =&gt; <a id="t:Powered" class="def"
+	    >Powered</a
+	    > k <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Object.Power.html#Powered" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L13" class="link"
+	    >Comments</a
+	    > <a href="#t:Powered" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >Categories powered over Hask.</p
+	    ></div
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > (a :: k) <a id="t:-94-" class="def"
+	      >^</a
+	      > n :: k <a href="src/Proarrow.Object.Power.html#%5E" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:-94-" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:withObPower" class="def"
+	      >withObPower</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	      >^</a
+	      > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L13" class="link"
+	      >Comments</a
+	      > <a href="#v:withObPower" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:power" class="def"
+	      >power</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k) (b :: k) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	      >^</a
+	      > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L13" class="link"
+	      >Comments</a
+	      > <a href="#v:power" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:unpower" class="def"
+	      >unpower</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (b :: k) (a :: k) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	      >^</a
+	      > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L13" class="link"
+	      >Comments</a
+	      > <a href="#v:unpower" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:Powered"
+	    >Instances</h4
+	    ><details id="i:Powered" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:1"
+		      ></span
+		      > <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+		      >LINEAR</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Linear.html#line-180" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L180" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Linear.html"
+			>Proarrow.Category.Instance.Linear</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-94-LINEARLn:-94-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> ('<a href="Proarrow-Category-Instance-Linear.html#v:L" title="Proarrow.Category.Instance.Linear"
+				>L</a
+				> a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+				>LINEAR</a
+				>) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				>^</a
+				> n</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-94-LINEARLn:-94-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-Linear.html"
+				  >Proarrow.Category.Instance.Linear</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > ('<a href="Proarrow-Category-Instance-Linear.html#v:L" title="Proarrow.Category.Instance.Linear"
+				  >L</a
+				  > a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+				  >LINEAR</a
+				  >) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				  >^</a
+				  > n = '<a href="Proarrow-Category-Instance-Linear.html#v:L" title="Proarrow.Category.Instance.Linear"
+				  >L</a
+				  > (n -&gt; a)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:2"
+		      ></span
+		      > <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+		      >POINTED</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.PointedHask.html#line-94" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L94" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-PointedHask.html"
+			>Proarrow.Category.Instance.PointedHask</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-94-POINTEDPn:-94-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				>P</a
+				> a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+				>POINTED</a
+				>) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				>^</a
+				> n</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-94-POINTEDPn:-94-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Instance-PointedHask.html"
+				  >Proarrow.Category.Instance.PointedHask</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > ('<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				  >P</a
+				  > a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+				  >POINTED</a
+				  >) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				  >^</a
+				  > n = '<a href="Proarrow-Category-Instance-PointedHask.html#t:P" title="Proarrow.Category.Instance.PointedHask"
+				  >P</a
+				  > (n -&gt; <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+				  >Maybe</a
+				  > a)</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) (a :: <a href="Proarrow-Category-Instance-PointedHask.html#t:POINTED" title="Proarrow.Category.Instance.PointedHask"
+			  >POINTED</a
+			  >) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:3"
+		      ></span
+		      > <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > ()</span
+		    > <a href="src/Proarrow.Object.Power.html#line-31" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L31" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Power.html"
+			>Proarrow.Object.Power</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-94-Unitan:-94-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> (a :: ()) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				>^</a
+				> n</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-94-Unitan:-94-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Object-Power.html"
+				  >Proarrow.Object.Power</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > (a :: ()) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				  >^</a
+				  > n = '()</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: ()) (a :: ()) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:4"
+		      ></span
+		      > <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      ></span
+		    > <a href="src/Proarrow.Object.Power.html#line-25" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L25" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Power.html"
+			>Proarrow.Object.Power</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:-94-TYPEan:-94-:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				>^</a
+				> n</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:-94-TYPEan:-94-:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Object-Power.html"
+				  >Proarrow.Object.Power</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > (a :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+				  >^</a
+				  > n = n -&gt; a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:5"
+		      ></span
+		      > <a href="Proarrow-Object-Copower.html#t:Copowered" title="Proarrow.Object.Copower"
+		      >Copowered</a
+		      > k =&gt; <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > (<a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+		      >OPPOSITE</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Opposite.html#line-118" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L118" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Opposite.html"
+			>Proarrow.Category.Opposite</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  >OPPOSITE</a
+			  > k) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:6"
+		      ></span
+		      > (<a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > j, <a href="Proarrow-Core.html#t:CategoryOf" title="Proarrow.Core"
+		      >CategoryOf</a
+		      > k) =&gt; <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Object.Power.html#line-48" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L48" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Power.html"
+			>Proarrow.Object.Power</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (b :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) (a :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:7"
+		      ></span
+		      > (<a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > j, <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > k) =&gt; <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > (j, k)</span
+		    > <a href="src/Proarrow.Object.Power.html#line-37" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L37" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Power.html"
+			>Proarrow.Object.Power</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (j, k)) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: (j, k)) (b :: (j, k)) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: (j, k)) (a :: (j, k)) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Powered:Powered:8"
+		      ></span
+		      > <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+		      >Powered</a
+		      > (k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Instance.Nat.html#line-147" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L147" class="link"
+		    >Comments</a
+		    > <a href="#t:Powered" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Powered:Powered:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Instance-Nat.html"
+			>Proarrow.Category.Instance.Nat</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:withObPower"
+			  >withObPower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) n r. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) =&gt; r) -&gt; r <a href="src/Proarrow.Object.Power.html#withObPower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:withObPower" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:power"
+			  >power</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) (b :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) n. (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; (n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n) <a href="src/Proarrow.Object.Power.html#power" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:power" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:unpower"
+			  >unpower</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) (a :: k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >) n. <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+			  >^</a
+			  > n)) -&gt; n -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Object.Power.html#unpower" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:unpower" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mapBase" class="def"
+	    >mapBase</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > k (a :: k) (b :: k) n. <a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+	    >Powered</a
+	    > k =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > b) -&gt; (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	    >^</a
+	    > n) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (b <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	    >^</a
+	    > n) <a href="src/Proarrow.Object.Power.html#mapBase" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L20" class="link"
+	    >Comments</a
+	    > <a href="#v:mapBase" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mapPower" class="def"
+	    >mapPower</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > k (a :: k) n m. (<a href="Proarrow-Object-Power.html#t:Powered" title="Proarrow.Object.Power"
+	    >Powered</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > a) =&gt; (n -&gt; m) -&gt; (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	    >^</a
+	    > m) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (a <a href="Proarrow-Object-Power.html#t:-94-" title="Proarrow.Object.Power"
+	    >^</a
+	    > n) <a href="src/Proarrow.Object.Power.html#mapPower" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L23" class="link"
+	    >Comments</a
+	    > <a href="#v:mapPower" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >data</span
+	    > ((p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) <a id="t::-94-:" class="def"
+	    >:^:</a
+	    > n) (a :: k) (b :: k1) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Object.Power.html#%3A%5E%3A" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L43" class="link"
+	    >Comments</a
+	    > <a href="#t::-94-:" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:Power" class="def"
+		  >Power</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			>:: <span class="keyword"
+			  >forall</span
+			  > {k} {k1} (a :: k) (b :: k1) n (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b)</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>=&gt; { <a id="v:unPower" class="def"
+			  >unPower</a
+			  > :: n -&gt; p a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ><li
+		      ><dfn class="src"
+			>&nbsp;&nbsp;&nbsp;} -&gt; (p <a href="Proarrow-Object-Power.html#t::-94-:" title="Proarrow.Object.Power"
+			  >:^:</a
+			  > n) a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i::-94-:"
+	    >Instances</h4
+	    ><details id="i::-94-:" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id::-94-::Profunctor:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (p <a href="Proarrow-Object-Power.html#t::-94-:" title="Proarrow.Object.Power"
+		      >:^:</a
+		      > n :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Object.Power.html#line-45" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Object/Power.hs#L45" class="link"
+		    >Comments</a
+		    > <a href="#t::-94-:" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id::-94-::Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Object-Power.html"
+			>Proarrow.Object.Power</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; (p <a href="Proarrow-Object-Power.html#t::-94-:" title="Proarrow.Object.Power"
+			  >:^:</a
+			  > n) a b -&gt; (p <a href="Proarrow-Object-Power.html#t::-94-:" title="Proarrow.Object.Power"
+			  >:^:</a
+			  > n) c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L38" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; (p <a href="Proarrow-Object-Power.html#t::-94-:" title="Proarrow.Object.Power"
+			  >:^:</a
+			  > n) a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L39" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.28.0</p
+      ></div
+    ></body
+  ></html
+>

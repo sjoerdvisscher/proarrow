@@ -187,7 +187,7 @@
 		      >Rift</a
 		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 		      >OP</a
-		      > j2) p :: j1 -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > j2) p :: k -&gt; j1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
 		    > <a href="src/Proarrow.Profunctor.Rift.html#line-32" class="link"
@@ -217,7 +217,7 @@
 			  >dimap</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (c :: j1) (a :: j1) (b :: k) (d :: k). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (c :: k) (a :: k) (b :: j1) (d :: j1). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -241,7 +241,7 @@
 			  >(\\)</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: j1) (b :: k) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: k) (b :: j1) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -265,7 +265,7 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Rift:Promonad:2"
 		      ></span
-		      > (p <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
+		      > (p <a href="${pkgroot}/../../../share/doc/ghc-9.10.1/html/libraries/base-4.20.0.0-380b/Data-Type-Equality.html#t:-126-" title="Data.Type.Equality"
 		      >~</a
 		      > j, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
@@ -648,7 +648,7 @@
 	    >runRift</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {i} {k} {j1} j2 (x :: i) (a :: k) p (b :: j1). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k} {i} {j1} j2 (x :: i) (a :: k) p (b :: j1). <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > j2 =&gt; j2 x a -&gt; <a href="Proarrow-Profunctor-Rift.html#t:Rift" title="Proarrow.Profunctor.Rift"
 	    >Rift</a
@@ -668,9 +668,9 @@
 	    >flipRift</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k} {j1} {i} (j2 :: k -&gt; j1) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > j1 i). (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    > {k} {j1} {i} (j2 :: k -&gt; j1) (p :: i <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j1). (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
 	    >Functor</a
 	    > j2, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
@@ -698,9 +698,9 @@
 	    >flipRiftInv</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {k} {k2} {j1} (j2 :: k -&gt; k2) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k2 j1). (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+	    > {k} {k2} {j1} (j2 :: k -&gt; k2) (p :: j1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k2). (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
 	    >Functor</a
 	    > j2, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
@@ -728,13 +728,13 @@
 	    >riftCompose</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {j1} {k1} {k2} {j2} (i :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > j1 k1) (j3 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k2 j1) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > k2 j2). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k1} {j1} {k2} {j2} (i :: k1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > j1) (j3 :: j1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k2) (p :: j2 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k2). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > i, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
@@ -764,13 +764,13 @@
 	    >riftComposeInv</a
 	    > :: <span class="keyword"
 	    >forall</span
-	    > {i1} {k} {i2} {j1} (i3 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > i1 k) (j2 :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > i2 i1) (p :: <a href="Proarrow-Core.html#t:PRO" title="Proarrow.Core"
-	    >PRO</a
-	    > i2 j1). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	    > {k} {i1} {i2} {j1} (i3 :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > i1) (j2 :: i1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > i2) (p :: j1 <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > i2). (<a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
 	    > i3, <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 	    >Profunctor</a
@@ -800,7 +800,7 @@
     ><p
       >Produced by <a href="http://www.haskell.org/haddock/"
 	>Haddock</a
-	> version 2.30.0</p
+	> version 2.28.0</p
       ></div
     ></body
   ></html
