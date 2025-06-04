@@ -7,12 +7,16 @@ import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Maybe (Maybe (..), fromMaybe)
 import Data.Semigroup (Semigroup (..))
-import Prelude (($), type (~))
+import Prelude (($))
 import Prelude qualified as P
 
 import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
+import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Applicative (Applicative (..))
+import Proarrow.Category.Monoidal.Strictified (Fold)
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -20,6 +24,7 @@ import Proarrow.Core
   , OB
   , Profunctor (..)
   , Promonad (..)
+  , UN
   , arr
   , lmap
   , rmap
@@ -29,16 +34,10 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), fst, snd, (&&&), HasBinaryProducts (..))
-import Proarrow.Object.Terminal (terminate)
 import Proarrow.Profunctor.Forget (Forget (..))
-import Proarrow.Profunctor.Product ((:*:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), repObj, dimapRep)
+import Proarrow.Profunctor.List (LIST (..), List (..))
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj)
 import Proarrow.Profunctor.Star (Star (..))
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
-import Proarrow.Category.Instance.Nat (Nat(..))
-import Proarrow.Category.Monoidal.Applicative (Applicative (..))
-import Proarrow.Category.Monoidal (Monoidal (..))
 
 type HasFree :: forall {k}. (k -> Constraint) -> Constraint
 class (CategoryOf k, Representable (Free ob), forall b. (Ob b) => ob (Free ob % b)) => HasFree (ob :: k -> Constraint) where
@@ -146,72 +145,16 @@ instance HasFree Promonad where
     Unit f -> arr f
     Comp q r -> q . unProf (retract @Promonad) r
 
-class (Ob (Lift c f a)) => ObLift c f k (a :: k)
-instance (Ob (Lift c f a)) => ObLift c f k a
-class (Ob (Retract c f a)) => ObRetract c f k (a :: f k)
-instance (Ob (Retract c f a)) => ObRetract c f k (a :: f k)
-class (forall a. ObLift c f k a, forall a. ObRetract c f k a) => ObLiftRetract c f k
-instance (forall a. ObLift c f k a, forall a. ObRetract c f k a) => ObLiftRetract c f k
-
-class
-  (forall k. (CategoryOf k) => c (f k), forall k. ObLiftRetract c f k) =>
-  HasFreeK (c :: Kind -> Constraint) (f :: Kind -> Kind)
-    | c -> f
-  where
+class (forall k. (CategoryOf k) => c (f k)) => HasFreeK (c :: Kind -> Constraint) (f :: Kind -> Kind) | c -> f where
   type Lift c f (a :: k) :: f k
   type Retract c f (a :: f k) :: k
   liftK :: (CategoryOf k) => (a :: k) ~> b -> Lift c f a ~> Lift c f b
   retractK :: (c k) => (a :: f k) ~> b -> Retract c f a ~> Retract c f b
 
--- instance HasFreeK Monoidal [] where
---   type Lift Monoidal [] a = '[a]
---   type Retract Monoidal [] a = Fold a
---   liftK = singleton
---   retractK (Str f) = f
-
-type FreeMonoid :: k +-> k -> k +-> k
-data FreeMonoid p a b where
-  Nil :: (Ob a, Ob b) => FreeMonoid p a b
-  Cons :: p a b -> FreeMonoid p a b -> FreeMonoid p a b
-
-instance (Profunctor p) => Monoid (PR (FreeMonoid p) :: PROD (k +-> k)) where
-  mempty = Prod (Prof \t -> Nil \\ t)
-  mappend = Prod $ Prof \case
-    Nil :*: r -> r
-    Cons f t :*: r -> Cons f (unProf (unProd mappend) (t :*: r))
-
-data family FreeMonoidF (b :: k) :: k
-instance
-  ( Cartesian k
-  , Representable (FreeMonoid (~>) :: k +-> k)
-  , Ob (b :: k)
-  , FreeMonoid (~>) % b ~ FreeMonoidF b
-  , Ob (FreeMonoid (~>) % b)
-  )
-  => Monoid (FreeMonoidF b :: k)
-  where
-  mempty = index @(FreeMonoid (~>)) @_ @b (unProf (unProd mempty) TerminalProfunctor)
-  mappend =
-    index @(FreeMonoid (~>)) @_ @b
-      ( unProf
-          (unProd mappend)
-          ( tabulate (fst @_ @(FreeMonoid (~>) % b) @(FreeMonoid (~>) % b))
-              :*: tabulate (snd @_ @(FreeMonoid (~>) % b) @(FreeMonoid (~>) % b))
-          )
-      )
-instance (Profunctor p) => Profunctor (FreeMonoid p :: k +-> k) where
-  dimap l r Nil = Nil \\ l \\ r
-  dimap l r (Cons h t) = Cons (dimap l r h) (dimap l r t)
-  r \\ Nil = r
-  r \\ Cons h _ = r \\ h
-
-class (Monoid (FreeMonoid (~>) % b)) => FreeMonoidIsMonoid b
-instance (Monoid (FreeMonoid (~>) % b)) => FreeMonoidIsMonoid b
-instance
-  (Representable (FreeMonoid (~>) :: k +-> k), forall (b :: k). (Ob b) => FreeMonoidIsMonoid b, Cartesian k)
-  => HasFree (Monoid :: k -> Constraint)
-  where
-  type Free Monoid = FreeMonoid (~>)
-  lift' f = Cons f Nil \\ f
-  retract' Nil = mempty . terminate
-  retract' (Cons h t) = mappend . (h &&& retract' @Monoid t)
+instance HasFreeK Monoidal LIST where
+  type Lift Monoidal LIST a = L '[a]
+  type Retract Monoidal LIST (a :: LIST k) = Fold (UN L a)
+  liftK f = Cons f Nil
+  retractK Nil = par0
+  retractK (Cons f Nil) = f
+  retractK (Cons f fs@Cons{}) = f `par` retractK @Monoidal fs

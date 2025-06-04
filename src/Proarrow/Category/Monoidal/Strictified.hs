@@ -25,7 +25,7 @@ type family (as :: [k]) ++ (bs :: [k]) :: [k] where
 data SList as where
   SNil :: SList '[]
   SSing :: (Ob a) => SList '[a]
-  SCons :: (Ob a, Ob as, as ~ b ': bs) => SList (a ': as)
+  SCons :: (Ob a, Ob as, Ob bs, as ~ b ': bs) => SList (a ': as)
 
 class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
 instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
