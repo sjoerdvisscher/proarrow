@@ -12,10 +12,10 @@ infixl 1 \\
 infixr 0 //
 infixr 9 .
 
-type PRO j k = j -> k -> Type
-type j +-> k = PRO k j
+-- | The kind of profunctors. Note that `j` and `k` swap places.
+type j +-> k = k -> j -> Type
 
-type CAT k = PRO k k
+type CAT k = k +-> k
 type BI k = (k, k) -> k
 type OB k = k -> Constraint
 type Kind = Type
@@ -33,8 +33,8 @@ instance (Promonad cat, CategoryOf k, cat ~ (~>) @k) => Category (cat :: CAT k)
 
 type p :~> q = forall a b. p a b -> q a b
 
-type Profunctor :: forall {j} {k}. PRO j k -> Constraint
-class (CategoryOf j, CategoryOf k) => Profunctor (p :: PRO j k) where
+type Profunctor :: forall {j} {k}. j +-> k -> Constraint
+class (CategoryOf j, CategoryOf k) => Profunctor (p :: j +-> k) where
   dimap :: c ~> a -> b ~> d -> p a b -> p c d
   (\\) :: ((Ob a, Ob b) => r) -> p a b -> r
   default (\\) :: (Ob a, Ob b) => ((Ob a, Ob b) => r) -> p a b -> r

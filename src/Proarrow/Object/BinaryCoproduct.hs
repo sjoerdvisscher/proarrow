@@ -10,7 +10,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), Costrong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, PRO, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -77,7 +77,7 @@ instance HasBinaryCoproducts () where
   rgt = U.Unit
   U.Unit ||| U.Unit = U.Unit
 
-instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (PRO j k) where
+instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (j +-> k) where
   type p || q = p :+: q
   withObCoprod r = r
   lft = Prof InjL

@@ -1,10 +1,10 @@
 module Proarrow.Profunctor.Product where
 
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (PRO, Profunctor (..), (:~>))
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
+import Proarrow.Core (Profunctor (..), (:~>), type (+->))
 
-type (:*:) :: PRO j k -> PRO j k -> PRO j k
+type (:*:) :: (j +-> k) -> (j +-> k) -> (j +-> k)
 data (p :*: q) a b where
   (:*:) :: {fstP :: p a b, sndP :: q a b} -> (p :*: q) a b
 
