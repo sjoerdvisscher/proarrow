@@ -17,7 +17,7 @@ import Proarrow.Category.Monoidal
   , rightUnitor'
   , second
   )
-import Proarrow.Core (CategoryOf (..), Is, Kind, PRO, Profunctor (..), Promonad (..), UN, obj, (//))
+import Proarrow.Core (CategoryOf (..), Is, Kind, type (+->), Profunctor (..), Promonad (..), UN, obj, (//))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
 
 type BIPARAK :: Kind -> () -> Kind
@@ -25,8 +25,8 @@ data BIPARAK k ext where
   BIPARA :: k -> BIPARAK k i
 type instance UN BIPARA (BIPARA a) = a
 
-type instance V (BIPARAK k) = MonK (PRO k k)
-type instance Arr (MonK (PRO k k)) (BIPARA a) (BIPARA b) = MK (Bipara a b)
+type instance V (BIPARAK k) = MonK (k +-> k)
+type instance Arr (MonK (k +-> k)) (BIPARA a) (BIPARA b) = MK (Bipara a b)
 
 type Bipara :: k -> k -> k -> k -> Type
 data Bipara a b p q where

@@ -10,7 +10,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), PRO, Profunctor (..), Promonad (..), UN, (//))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, (//), type (+->))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag)
@@ -68,7 +68,7 @@ instance Closed () where
   uncurry U.Unit = U.Unit
   U.Unit ^^^ U.Unit = U.Unit
 
-instance (CategoryOf j, CategoryOf k) => Closed (PROD (PRO j k)) where
+instance (CategoryOf j, CategoryOf k) => Closed (PROD (j +-> k)) where
   type p ~~> q = PR (UN PR p :~>: UN PR q)
   withObExp r = r
   curry (Prod (Prof n)) = Prod (Prof \p -> p // Exp \ca bd q -> n (dimap ca bd p :*: q))
@@ -82,15 +82,15 @@ instance (Closed j, Closed k) => Closed (j, k) where
   uncurry @'(a1, a2) @'(b1, b2) (f1 :**: f2) = uncurry @j @a1 @b1 f1 :**: uncurry @k @a2 @b2 f2
   (f1 :**: f2) ^^^ (g1 :**: g2) = (f1 ^^^ g1) :**: (f2 ^^^ g2)
 
-type ExponentialFunctor :: PRO k (OPPOSITE k, k)
+type ExponentialFunctor :: (OPPOSITE k, k) +-> k
 data ExponentialFunctor a b where
   ExponentialFunctor :: (Ob c, Ob d) => a ~> (c ~~> d) -> ExponentialFunctor a '(OP c, d)
 
-instance (Closed k) => Profunctor (ExponentialFunctor :: PRO k (OPPOSITE k, k)) where
+instance (Closed k) => Profunctor (ExponentialFunctor :: (OPPOSITE k, k) +-> k) where
   dimap = dimapRep
   r \\ ExponentialFunctor f = r \\ f
 
-instance (Closed k) => Representable (ExponentialFunctor :: PRO k (OPPOSITE k, k)) where
+instance (Closed k) => Representable (ExponentialFunctor :: (OPPOSITE k, k) +-> k) where
   type ExponentialFunctor % '(OP a, b) = a ~~> b
   index (ExponentialFunctor f) = f
   tabulate = ExponentialFunctor
@@ -104,7 +104,7 @@ instance (CCC k, HasCoproducts k) => BiCCC k
 
 ap
   :: forall {j} {k} y a x p
-   . (Cartesian j, Closed k, MonoidalProfunctor (p :: PRO j k), Ob y)
+   . (Closed j, Cartesian k, MonoidalProfunctor (p :: j +-> k), Ob y)
   => p a (x ~~> y)
   -> p a x
   -> p a y

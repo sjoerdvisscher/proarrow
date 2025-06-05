@@ -1,5 +1,5 @@
 module Proarrow.Profunctor
-  ( PRO
+  ( type (+->)
   , Profunctor (..)
   , lmap
   , rmap

@@ -15,7 +15,7 @@ import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, swap)
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
 import Proarrow.Category.Opposite (OPPOSITE (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, PRO, Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Object (src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
@@ -35,12 +35,12 @@ data Optic m a b s t where
 
 type IsOptic m c d = (MonoidalAction m c, MonoidalAction m d)
 
-instance (CategoryOf c, CategoryOf d) => Profunctor (Optic w a b :: PRO c d) where
+instance (CategoryOf c, CategoryOf d) => Profunctor (Optic w a b :: c +-> d) where
   dimap l r (Optic f w g) = Optic (f . l) w (r . g)
   r \\ Optic f _ g = r \\ f \\ g
 
-instance (IsOptic m c d) => Strong m (Optic m a b :: PRO c d) where
-  act :: forall (a1 :: m) (b1 :: m) (s :: c) (t :: d). a1 ~> b1 -> Optic m a b s t -> Optic m a b (Act a1 s) (Act b1 t)
+instance (IsOptic m c d) => Strong m (Optic m a b :: c +-> d) where
+  act :: forall (a1 :: m) (b1 :: m) (s :: d) (t :: c). a1 ~> b1 -> Optic m a b s t -> Optic m a b (Act a1 s) (Act b1 t)
   act w (Optic @x @x' f w' g) =
     Optic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
       \\ w
@@ -142,10 +142,10 @@ infixl 8 .~
 type KlCat m = KLEISLI (Star (Prelude m))
 data Updating a b s t where
   Update :: {unUpdate :: b -> s -> m t} -> Updating a (KL b :: KlCat m) s (KL t :: KlCat m)
-instance (Monad m) => Profunctor (Updating a b :: PRO Type (KlCat m)) where
+instance (Monad m) => Profunctor (Updating a b :: KlCat m +-> Type) where
   dimap l (Kleisli (Star r)) (Update u) = Update (\b x -> u b (l x) >>= unPrelude . r)
   r \\ Update u = r \\ u
-instance (Monad m) => Strong Type (Updating a b :: PRO Type (KlCat m)) where
+instance (Monad m) => Strong Type (Updating a b :: KlCat m +-> Type) where
   act f (Update u) = Update (\b (a, x) -> (f a,) `fmap` u b x)
 
 mupdate

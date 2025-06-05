@@ -1,9 +1,9 @@
 module Proarrow.Profunctor.Coproduct where
 
-import Proarrow.Core (PRO, Profunctor (..), (:~>))
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Core (Profunctor (..), (:~>), type (+->))
 
-type (:+:) :: PRO j k -> PRO j k -> PRO j k
+type (:+:) :: (j +-> k) -> (j +-> k) -> (j +-> k)
 data (p :+: q) a b where
   InjL :: p a b -> (p :+: q) a b
   InjR :: q a b -> (p :+: q) a b

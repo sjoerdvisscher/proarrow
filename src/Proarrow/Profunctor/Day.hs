@@ -9,7 +9,6 @@ import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
-  , PRO
   , Profunctor (..)
   , Promonad (..)
   , lmap
@@ -29,7 +28,7 @@ import Proarrow.Profunctor.Coproduct ((:+:) (..))
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
 
-instance (CategoryOf j, CategoryOf k) => Profunctor (DayUnit :: PRO j k) where
+instance (CategoryOf j, CategoryOf k) => Profunctor (DayUnit :: j +-> k) where
   dimap l r (DayUnit f g) = DayUnit (f . l) (r . g)
   r \\ DayUnit f g = r \\ f \\ g
 
@@ -46,7 +45,7 @@ instance (Profunctor p) => Functor (Day p) where
 instance Functor Day where
   map (Prof n) = Nat (Prof \(Day f p q g) -> Day f (n p) q g)
 
-instance (SymMonoidal j, SymMonoidal k, MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (Day p q :: PRO j k) where
+instance (SymMonoidal j, SymMonoidal k, MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (Day p q :: j +-> k) where
   par0 = Day leftUnitorInv par0 par0 leftUnitor \\ unitObj @j \\ unitObj @k
   Day f1 p1 q1 g1 `par` Day f2 p2 q2 g2 =
     let f = swapInner' (src p1) (src q1) (src p2) (src q2) . (f1 `par` f2)
@@ -57,7 +56,7 @@ instance (Monoidal j, Monoidal k) => MonoidalProfunctor (Prof :: CAT (j +-> k)) 
   par0 = id
   Prof m `par` Prof n = Prof \(Day f p q g) -> Day f (m p) (n q) g
 
-instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
+instance (Monoidal j, Monoidal k) => Monoidal (j +-> k) where
   type Unit = DayUnit
   type p ** q = Day p q
   withOb2 r = r
@@ -76,10 +75,10 @@ instance (Monoidal j, Monoidal k) => Monoidal (PRO j k) where
     (g1 . (tgt p1 `par` g2) . associator @_ @d1 @d2 @f2)
     \\ p1 \\ p2 \\ q2
 
-instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (PRO j k) where
+instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j +-> k) where
   swap = Prof \(Day @c @d @e @f f p q g) -> Day (swap @_ @c @e . f) q p (g . swap @_ @f @d) \\ p \\ q
 
-instance (Monoidal j, Monoidal k) => Distributive (PRO j k) where
+instance (Monoidal j, Monoidal k) => Distributive (j +-> k) where
   distL = Prof \(Day l a bc r) -> case bc of
     InjL b -> InjL (Day l a b r)
     InjR c -> InjR (Day l a c r)
@@ -90,7 +89,7 @@ instance (Monoidal j, Monoidal k) => Distributive (PRO j k) where
   distR0 = Prof \case {}
 
 duoidal
-  :: (Monoidal k, Profunctor (p :: PRO i k), Profunctor p', Profunctor q, Profunctor q')
+  :: (Monoidal j, Profunctor (p :: j +-> k), Profunctor p', Profunctor q, Profunctor q')
   => (p :.: p') `Day` (q :.: q') ~> (p `Day` q) :.: (p' `Day` q')
 duoidal = Prof \(Day f (p :.: p') (q :.: q') g) -> let b = tgt p `par` tgt q in Day f p q b :.: Day b p' q' g
 
@@ -98,7 +97,7 @@ instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
   mempty = Prof \(DayUnit f g) -> dimap f g par0
   mappend = Prof \(Day f p q g) -> dimap f g (p `par` q)
 
--- instance Monoidal k => Comonoid (E (PK (DayUnit :: PRO k k))) where
+-- instance Monoidal k => Comonoid (E (PK (DayUnit :: k +-> k))) where
 --   counit = Endo (Bi.Prof \(DayUnit f g) -> g . f)
 --   comult = Endo (Bi.Prof \(DayUnit f g) -> DayUnit f id :.: DayUnit id g)
 
@@ -106,11 +105,11 @@ data DayExp p q a b where
   DayExp
     :: forall p q a b. (Ob a, Ob b) => (forall c d e f. e ~> a ** c -> b ** d ~> f -> p c d -> q e f) -> DayExp p q a b
 
-instance (Monoidal j, Monoidal k, Profunctor p, Profunctor q) => Profunctor (DayExp (p :: PRO j k) q) where
+instance (Monoidal j, Monoidal k, Profunctor p, Profunctor q) => Profunctor (DayExp (p :: j +-> k) q) where
   dimap l r (DayExp n) = l // r // DayExp \f g p -> n ((l `par` src p) . f) (g . (r `par` tgt p)) p
   r \\ DayExp n = r \\ n
 
-instance (Monoidal j, Monoidal k) => Closed (PRO j k) where
+instance (Monoidal j, Monoidal k) => Closed (j +-> k) where
   type p ~~> q = DayExp p q
   withObExp r = r
   curry (Prof n) = Prof \p -> p // DayExp \f g q -> n (Day f p q g)
@@ -118,7 +117,7 @@ instance (Monoidal j, Monoidal k) => Closed (PRO j k) where
   (^^^) (Prof n) (Prof m) = Prof \(DayExp k) -> DayExp \f g p -> n (k f g (m p))
 
 multDayExp
-  :: (SymMonoidal j, SymMonoidal k, Profunctor (p :: PRO j k), Profunctor q, Profunctor p', Profunctor q')
+  :: (SymMonoidal j, SymMonoidal k, Profunctor (p :: j +-> k), Profunctor q, Profunctor p', Profunctor q')
   => (p ~~> q) `Day` (p' ~~> q') ~> (p `Day` p') ~~> (q `Day` q')
 multDayExp = Prof \(Day @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
   g
