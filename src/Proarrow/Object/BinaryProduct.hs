@@ -17,6 +17,7 @@ import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 infixl 5 &&
 infixl 5 &&&
@@ -121,6 +122,12 @@ instance (Promonad p) => Promonad (Prod p) where
 instance (CategoryOf k) => CategoryOf (PROD k) where
   type (~>) = Prod (~>)
   type Ob a = (Is PR a, Ob (UN PR a))
+
+instance (Representable p) => Representable (Prod p) where
+  type Prod p % PR a = PR (p % a)
+  index (Prod p) = Prod (index p)
+  tabulate (Prod f) = Prod (tabulate f)
+  repMap (Prod f) = Prod (repMap @p f)
 
 instance (HasTerminalObject k) => HasTerminalObject (PROD k) where
   type TerminalObject = PR TerminalObject
