@@ -1,25 +1,27 @@
 module Proarrow.Category.Instance.PointedHask where
 
 import Data.Kind (Type)
-import Prelude (Maybe (..), type (~), const, ($), (>>=))
+import Prelude (Maybe (..), const, ($), (>>=), type (~))
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
-import Proarrow.Object.Terminal (HasTerminalObject(..))
 import Data.Void (Void, absurd)
-import Proarrow.Category.Monoidal (Monoidal(..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Applicative (liftA2)
-import Proarrow.Monoid (Monoid (..), Comonoid (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Power (Powered (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 type data POINTED = P Type
 type instance UN P (P a) = a
 
 type Pointed :: CAT POINTED
 data Pointed a b where
-  Pt :: (a -> Maybe b) -> Pointed (P a) (P b)
+  Pt :: {unPt :: a -> Maybe b} -> Pointed (P a) (P b)
 
 toHask :: P a ~> P b -> (Maybe a -> Maybe b)
 toHask (Pt f) = (>>= f)
@@ -30,6 +32,7 @@ instance Profunctor Pointed where
 instance Promonad Pointed where
   id = Pt Just
   Pt f . Pt g = Pt (\a -> g a >>= f)
+
 -- | The category of types with an added point and point-preserving morphisms.
 instance CategoryOf POINTED where
   type (~>) = Pointed
@@ -41,11 +44,14 @@ instance HasBinaryProducts POINTED where
   withObProd r = r
   fst = Pt (\case This a -> Just a; That _ -> Nothing; These a _ -> Just a)
   snd = Pt (\case This _ -> Nothing; That b -> Just b; These _ b -> Just b)
-  Pt f &&& Pt g = Pt (\a -> case (f a, g a) of
-    (Just a', Just b') -> Just (These a' b')
-    (Just a', Nothing) -> Just (This a')
-    (Nothing, Just b') -> Just (That b')
-    (Nothing, Nothing) -> Nothing)
+  Pt f &&& Pt g =
+    Pt
+      ( \a -> case (f a, g a) of
+          (Just a', Just b') -> Just (These a' b')
+          (Just a', Nothing) -> Just (This a')
+          (Nothing, Just b') -> Just (That b')
+          (Nothing, Nothing) -> Nothing
+      )
 instance HasTerminalObject POINTED where
   type TerminalObject = P Void
   terminate = Pt (const Nothing)
@@ -63,6 +69,7 @@ instance HasInitialObject POINTED where
 instance MonoidalProfunctor Pointed where
   par0 = Pt Just
   Pt f `par` Pt g = Pt (\(a, b) -> liftA2 id (f a, g b))
+
 -- | The smash product of pointed sets.
 -- Monoids relative to the smash product are absorption monoids.
 instance Monoidal POINTED where
@@ -75,6 +82,7 @@ instance Monoidal POINTED where
   rightUnitorInv = Pt (Just . (,()))
   associator = Pt (\((a, b), c) -> Just (a, (b, c)))
   associatorInv = Pt (\(a, (b, c)) -> Just ((a, b), c))
+
 instance SymMonoidal POINTED where
   swap = Pt (Just . swap)
 instance Closed POINTED where
@@ -83,15 +91,27 @@ instance Closed POINTED where
   curry (Pt f) = Pt (\a -> Just (\b -> f (a, b)))
   uncurry (Pt f) = Pt (\(a, b) -> f a >>= ($ b))
 
+instance Powered POINTED where
+  type P a ^ n = P (n -> Maybe a)
+  withObPower r = r
+  power f = Pt (\a -> Just \n -> unPt (f n) a)
+  unpower (Pt f) n = Pt \a -> f a >>= ($ n)
+
+instance Copowered POINTED where
+  type n *. P a = P (n, a)
+  withObCopower r = r
+  copower f = Pt \(n, a) -> unPt (f n) a
+  uncopower (Pt f) n = Pt \a -> f (n, a)
+
 instance Monoid (P Void) where
   mempty = Pt (const Nothing)
   mappend = Pt (Just . fst)
 
 -- | Lift Hask monoids.
-memptyDefault :: Monoid a => Unit ~> P a
+memptyDefault :: (Monoid a) => Unit ~> P a
 memptyDefault = Pt (Just . mempty)
 
-mappendDefault :: Monoid a => P a ** P a ~> P a
+mappendDefault :: (Monoid a) => P a ** P a ~> P a
 mappendDefault = Pt (Just . mappend)
 
 -- | Conjunction with False = Nothing, True = Just ()

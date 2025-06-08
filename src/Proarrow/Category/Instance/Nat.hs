@@ -11,16 +11,18 @@ import Data.Kind (Type)
 import Data.Void (Void, absurd)
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, (//))
 import Proarrow.Functor (Functor (..), type (.~>))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..))
 import Proarrow.Object.Coexponential (Coclosed (..))
+import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -135,6 +137,26 @@ instance Coclosed (Type -> Type) where
   withObCoExp r = r
   coeval = Nat (Compose . Lan id)
   coevalUniv (Nat n) = Nat \(Lan k f) -> map k (getCompose (n f))
+
+data (f :^: n) a where
+  Power :: (Ob a) => {unPower :: n -> f a} -> (f :^: n) a
+instance (Functor f) => Functor (f :^: n) where
+  map g (Power k) = g // Power \n -> map g (k n)
+instance Powered (k -> Type) where
+  type f ^ n = f :^: n
+  withObPower r = r
+  power f = Nat \g -> Power \n -> unNat (f n) g
+  unpower (Nat f) n = Nat \g -> unPower (f g) n
+
+data (n :*.: f) a where
+  Copower :: (Ob a) => {unCopower :: (n, f a)} -> (n :*.: f) a
+instance (Functor f) => Functor (n :*.: f) where
+  map g (Copower (n, f)) = g // Copower (n, map g f)
+instance Copowered (k -> Type) where
+  type n *. f = n :*.: f
+  withObCopower r = r
+  copower f = Nat \(Copower (n, g)) -> unNat (f n) g
+  uncopower (Nat f) n = Nat \p -> f (Copower (n, p))
 
 data CatAsComonoid k a where
   CatAsComonoid :: forall {k} (c :: k) a. (Ob c) => (forall c'. c ~> c' -> a) -> CatAsComonoid k a

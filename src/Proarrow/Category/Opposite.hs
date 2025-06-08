@@ -1,16 +1,18 @@
 module Proarrow.Category.Opposite where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k
@@ -102,12 +104,24 @@ instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +
   dimap l r = UnOp . dimap (Op r) (Op l) . unUnOp
   r \\ UnOp f = r \\ f
 
-instance Strong k p => Strong (OPPOSITE k) (Op p) where
+instance (Strong k p) => Strong (OPPOSITE k) (Op p) where
   act (Op w) (Op p) = Op (act w p)
-instance MonoidalAction m k => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
+instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   type Act (OP a) (OP b) = OP (Act a b)
   withObAct @(OP a) @(OP b) = withObAct @m @k @a @b
   unitor = Op (unitorInv @m)
   unitorInv = Op (unitor @m)
   multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @m @k @a @b @x)
   multiplicatorInv @(OP a) @(OP b) @(OP x) = Op (multiplicator @m @k @a @b @x)
+
+instance (Copowered k) => Powered (OPPOSITE k) where
+  type OP a ^ n = OP (n *. a)
+  withObPower @(OP a) @n = withObCopower @k @a @n
+  power f = Op (copower (unOp . f))
+  unpower (Op f) n = Op (uncopower f n)
+
+instance (Powered k) => Copowered (OPPOSITE k) where
+  type n *. OP a = OP (a ^ n)
+  withObCopower @(OP a) @n = withObPower @k @a @n
+  copower f = Op (power (unOp . f))
+  uncopower (Op f) n = Op (unpower f n)

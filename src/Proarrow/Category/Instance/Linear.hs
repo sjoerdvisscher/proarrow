@@ -9,21 +9,23 @@ import Prelude (Either (..), undefined)
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), COPROD, Coprod (..))
+import Proarrow.Object.BinaryCoproduct (COPROD, Coprod (..), HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Dual (StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep)
 import System.IO.Unsafe (unsafeDupablePerformIO)
 import Unsafe.Coerce (unsafeCoerce)
-import Proarrow.Category.Monoidal.Action (Costrong (..))
-import Proarrow.Profunctor.Identity (Id (..))
 
 data LINEAR = L Type
 type instance UN L (L a) = a
@@ -174,6 +176,18 @@ instance HasBinaryProducts LINEAR where
   snd = Linear \(With x _ xb) -> xb x
   Linear f &&& Linear g = Linear \x -> With x f g
 
+instance Powered LINEAR where
+  type L a ^ n = L (n -> a)
+  withObPower r = r
+  power f = Linear \x n -> unLinear (f n) x
+  unpower (Linear f) n = Linear \x -> f x n
+
+instance Copowered LINEAR where
+  type n *. L a = L (Ur n, a)
+  withObCopower r = r
+  copower f = Linear \(Ur n, a) -> unLinear (f n) a
+  uncopower (Linear f) n = Linear \x -> f (Ur n, x)
+
 type Not a = a %1 -> ()
 
 not :: (Not b %1 -> Not a) %1 -> a %1 -> b
@@ -240,7 +254,6 @@ unit = Linear \() -> Par \(na, nna) -> nna na
 
 counit :: L (Not a, a) ~> L ()
 counit = Linear \(na, a) -> na a
-
 
 type p !~> q = forall a b. p a b %1 -> q a b
 
