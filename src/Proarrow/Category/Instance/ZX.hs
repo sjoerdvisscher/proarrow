@@ -144,7 +144,7 @@ instance Closed Nat where
   type x ~~> y = ExpSA x y
   withObExp @a @b r = withOb2 @_ @a @b r
   curry @x @y = currySA @x @y
-  uncurry @y @z = uncurrySA @_ @y @z
+  uncurry @y @z = uncurrySA @y @z
   (^^^) = expSA
 
 instance StarAutonomous Nat where

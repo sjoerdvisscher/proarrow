@@ -196,7 +196,7 @@ instance (P.Num a) => Closed (MatK a) where
   type x ~~> y = ExpSA x y
   withObExp @(M x) @(M y) r = withMultNat @y @x r
   curry @x @y = currySA @x @y
-  uncurry @y @z = uncurrySA @_ @y @z
+  uncurry @y @z = uncurrySA @y @z
   (^^^) = expSA
 
 instance (P.Num a) => StarAutonomous (MatK a) where

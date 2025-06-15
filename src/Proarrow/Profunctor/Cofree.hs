@@ -10,7 +10,7 @@ import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Forget (Forget (..))
-import Proarrow.Profunctor.Representable (Representable (..), repObj)
+import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
 import Proarrow.Profunctor.Star (Star (..))
 
 type HasCofree :: forall {k}. (k -> Constraint) -> Constraint
@@ -23,7 +23,7 @@ class
   section' :: (ob a) => a ~> b -> Cofree ob a b
 
 lower :: forall ob a. (HasCofree ob, Ob a) => Cofree ob % a ~> a
-lower = lower' @ob (tabulate @(Cofree ob) (repObj @(Cofree ob) @a))
+lower = lower' @ob trivialRep
 
 section :: forall ob a. (HasCofree ob, ob a, Ob a) => a ~> Cofree ob % a
 section = index @(Cofree ob) (section' @ob id)

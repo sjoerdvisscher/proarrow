@@ -42,7 +42,7 @@ type ExpSA a b = Dual (a ** Dual b)
 currySA :: forall {k} (a :: k) b c. (StarAutonomous k, Ob a, Ob b) => a ** b ~> c -> a ~> ExpSA b c
 currySA f = linDist @k @a @b @(Dual c) (doubleNegInv @c . f) \\ f
 
-uncurrySA :: forall {k} (a :: k) b c. (StarAutonomous k, Ob b, Ob c) => a ~> ExpSA b c -> a ** b ~> c
+uncurrySA :: forall {k} b c (a :: k). (StarAutonomous k, Ob b, Ob c) => a ~> ExpSA b c -> a ** b ~> c
 uncurrySA f = doubleNeg @c . linDistInv @k @a @b @(Dual c) f \\ f
 
 expSA :: forall {k} (a :: k) b x y. (StarAutonomous k) => b ~> y -> x ~> a -> ExpSA a b ~> ExpSA x y

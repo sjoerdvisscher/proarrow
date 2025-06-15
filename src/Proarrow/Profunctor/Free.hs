@@ -36,7 +36,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Forget (Forget (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, trivialRep)
 import Proarrow.Profunctor.Star (Star (..))
 
 type HasFree :: forall {k}. (k -> Constraint) -> Constraint
@@ -49,7 +49,10 @@ lift :: forall ob a. (HasFree ob, Ob a) => a ~> Free ob % a
 lift = index @(Free ob) (lift' @ob id)
 
 retract :: forall ob a. (HasFree ob, ob a, Ob a) => Free ob % a ~> a
-retract = retract' @ob (tabulate @(Free ob) (repObj @(Free ob) @a))
+retract = retract' @ob trivialRep
+
+fold :: forall ob a b. (HasFree ob, ob b) => (a ~> b) -> Free ob % a ~> b
+fold f = retract' @ob (rmap f trivialRep) \\ f
 
 type FreeSub :: forall (ob :: OB k) -> k +-> SUBCAT ob
 data FreeSub ob a b where

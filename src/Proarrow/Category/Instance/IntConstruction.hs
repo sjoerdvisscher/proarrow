@@ -99,7 +99,7 @@ instance (TracedMonoidal k, Ob (Unit :: k)) => Closed (INT k) where
   type a ~~> b = ExpSA a b
   withObExp @a @b r = withOb2 @k @(IntMinus a) @(IntPlus b) (withOb2 @k @(IntPlus a) @(IntMinus b) r)
   curry @a @b @c = currySA @a @b @c
-  uncurry @b @c = uncurrySA @_ @b @c
+  uncurry @b @c = uncurrySA @b @c
   (^^^) = expSA
 
 instance (TracedMonoidal k, Ob (Unit :: k)) => StarAutonomous (INT k) where

@@ -15,9 +15,9 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Object.Dual (ExpSA, StarAutonomous (..))
+import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), currySA, uncurrySA)
 import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..), initiate, initiate')
+import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 
@@ -144,22 +144,8 @@ instance Closed BOOL where
   withObExp @a r = case obj @a of
     Fls -> r
     Tru -> r
-  curry @a @b f = case (obj @a, obj @b, f) of
-    (Fls, Fls, _) -> F2T
-    (Fls, Tru, Fls) -> Fls
-    (Fls, Tru, F2T) -> F2T
-    (Tru, Fls, _) -> Tru
-    (Tru, Tru, Tru) -> Tru
-  uncurry @b @c f = case (obj @b, obj @c) of
-    (Fls, c) -> initiate' c
-    (Tru, Fls) -> f
-    (Tru, Tru) -> f
-  _ ^^^ Fls = Tru
-  Tru ^^^ _ = Tru
-  Fls ^^^ Tru = Fls
-  Fls ^^^ F2T = F2T
-  F2T ^^^ F2T = F2T
-  F2T ^^^ Tru = F2T
+  curry @a @b = currySA @a @b
+  uncurry @b @c = uncurrySA @b @c
 
 instance StarAutonomous BOOL where
   type Dual FLS = TRU

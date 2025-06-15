@@ -40,7 +40,7 @@ instance Cast i i where
   cast f = f
 
 pattern Uncurry :: (IsFK (a :: FK k), IsFK (b :: FK k), IsFKs (i :: [FK k]), Closed k) => Free i (a --> b) -> Free (a : i) b
-pattern Uncurry f = Apply (Tail f) (Head Id)
+pattern Uncurry f = Apply (Tail f) Head
 
 lam
   :: forall {k} a b i
@@ -50,7 +50,7 @@ lam
 lam f = Curry (f xa)
   where
     xa :: forall (x :: [FK k]). (Cast x (a ': i)) => Free x a
-    xa = cast @x @(a ': i) (Head Id)
+    xa = cast @x @(a ': i) Head
 
 infixr 0 $
 ($) :: (IsFK a, IsFK b, IsFKs i) => Free i (a --> b) -> Free i a -> Free i b
@@ -98,7 +98,7 @@ type family Mul as where
 data Free :: MultiCat (FK k) where
   Id :: (IsFK a) => Free '[a] a
   L :: a ~> b -> Free i (F a) -> Free i (F b)
-  Head :: (IsFK a, IsFK b, IsFKs i) => Free '[a] b -> Free (a ': i) b
+  Head :: (IsFK a, IsFKs i) => Free (a ': i) a
   Tail :: (IsFK a, IsFK b, IsFKs i) => Free i b -> Free (a ': i) b
   Ini :: (IsFK a, IsFKs i) => Free i InitF -> Free i a
   Ter :: (IsFKs i) => Free i TermF
@@ -115,7 +115,7 @@ instance P.Show (Free a b) where
   show Id = "fst"
   show (L _ Id) = "<arrow>"
   show (L _ f) = "(<arrow> . " P.++ P.show f P.++ ")"
-  show (Head f) = "(" P.++ P.show f P.++ " . snd)"
+  show Head = "snd"
   show (Tail f) = "(" P.++ P.show f P.++ " . fst)"
   show (Ini f) = "(initiate . " P.++ P.show f P.++ ")"
   show Ter = "terminate"
@@ -164,7 +164,7 @@ instance (IsFKs i, IsFK (a :: FK k)) => IsFKs (a : i) where
 fromFree :: (BiCCC k) => Free (i :: [FK k]) a -> FromFree (Mul i) ~> FromFree a
 fromFree (Id @a) = head @'[] @a
 fromFree (L f g) = f . fromFree g
-fromFree (Head @a @_ @i f) = fromFree f . head @i @a
+fromFree (Head @a @i) = head @i @a
 fromFree (Tail @a @_ @i f) = fromFree f . tail @i @a
 fromFree (Ini @a f) = initiate @_ @(FromFree a) . fromFree f \\ fromFreeObj @a
 fromFree (Ter @i) = terminate' (fromFreeObjs @i)

@@ -63,7 +63,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep)
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep, repObj, trivialRep)
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 
@@ -116,11 +116,11 @@ instance HasCompanions PROFK FUNK where
 
 instance Equipment PROFK FUNK where
   type Conjoint PROFK p = PK (RepCostar (UNFUN p))
-  mapConjoint (Sub (Prof @p n)) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (tabulate @p @a (repMap @p @a id))))
+  mapConjoint (Sub (Prof @p n)) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (trivialRep @p @a)))
   withObConjoint r = r
   conjToId = Prof (Id . unRepCostar)
   conjFromId = Prof \(Id f) -> RepCostar f \\ f
-  conjToCompose (Sub Prof{}) (Sub (Prof @g _)) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repMap @g (obj @b)
+  conjToCompose (Sub Prof{}) (Sub (Prof @g _)) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repObj @g @b
   conjFromCompose (Sub (Prof @f _)) (Sub Prof{}) = Prof \(RepCostar f :.: RepCostar g) -> RepCostar (g . repMap @f f)
 
 instance (Promonad p) => Monad (PK p :: PROFK k k) where
@@ -238,7 +238,7 @@ instance
     Col.InL f -> repMap @g f
     Col.InR f -> repMap @f f
     Col.L2R p ->
-      p // case reflect ([] @s) of Sq (Prof n) -> case n (tabulate @g (repMap @g (src p)) :.: p) of Id g :.: f -> index f . g
+      p // case reflect ([] @s) of Sq (Prof n) -> case n (trivialRep :.: p) of Id g :.: f -> index f . g
 
 cotabulatorFactorize
   :: forall p f g r

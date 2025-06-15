@@ -21,7 +21,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepOb)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepOb, repObj)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 
@@ -114,11 +114,11 @@ instance (Representable d, Powered k) => Representable (PowerLimit n d :: () +->
   type PowerLimit n d % '() = (d % '()) ^ n
   index (PowerLimit f) = f
   tabulate = PowerLimit
-  repMap Unit = withObPower @k @(d % '()) @n id \\ repMap @d Unit
+  repMap Unit = withObPower @k @(d % '()) @n id \\ repObj @d @'()
 instance (Powered k) => HasLimits (HaskValue n :: () +-> ()) k where
   type Limit (HaskValue n) d = PowerLimit n d
-  limit @d (PowerLimit f :.: HaskValue n) = tabulate (unpower f n) \\ repMap @d Unit
-  limitUniv @d m p = PowerLimit (power \n -> index (m (p :.: HaskValue n))) \\ p \\ repMap @d Unit
+  limit @d (PowerLimit f :.: HaskValue n) = tabulate (unpower f n) \\ repObj @d @'()
+  limitUniv @d m p = PowerLimit (power \n -> index (m (p :.: HaskValue n))) \\ p \\ repObj @d @'()
 
 newtype End d = End {unEnd :: forall a b. a ~> b -> d % '(OP a, b)}
 

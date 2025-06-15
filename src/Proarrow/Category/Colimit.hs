@@ -32,7 +32,15 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Representable (..), dimapRep, withRepOb)
+import Proarrow.Profunctor.Representable
+  ( CorepStar (..)
+  , RepCostar (..)
+  , Representable (..)
+  , dimapRep
+  , repObj
+  , trivialRep
+  , withRepOb
+  )
 import Proarrow.Profunctor.Star (Star)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
@@ -71,7 +79,7 @@ class (Profunctor j, forall (d :: i +-> k). (Representable d) => IsRepresentable
             . unCorepStar
               ( colimitUniv @j @k @d @(CorepStar p)
                   (\(d :.: j) -> j // CorepStar (unRepCostar (n (j :.: cotabulate @p (corepMap @p (tgt j)))) . index d))
-                  (tabulate @(Colimit j d) @b (repMap @(Colimit j d) @b id))
+                  (trivialRep @(Colimit j d) @b)
               )
         )
 
@@ -146,12 +154,12 @@ instance (Representable d, Copowered k) => Representable (CopowerLimit n d :: ()
   type CopowerLimit n d % '() = n *. (d % '())
   index (CopowerLimit f) = f
   tabulate = CopowerLimit
-  repMap Unit = withObCopower @k @(d % '()) @n id \\ repMap @d Unit
+  repMap Unit = withObCopower @k @(d % '()) @n id \\ repObj @d @'()
 
 instance (Copowered k) => HasColimits (HaskValue n :: () +-> ()) k where
   type Colimit (HaskValue n) d = CopowerLimit n d
-  colimit @d (d :.: HaskValue n) = withObCopower @k @(d % '()) @n (CopowerLimit (uncopower id n . index d)) \\ repMap @d Unit
-  colimitUniv' @d m p = RepCostar (copower (\n -> case m (HaskValue n :.: p) of RepCostar f -> f)) \\ p \\ repMap @d Unit
+  colimit @d (d :.: HaskValue n) = withObCopower @k @(d % '()) @n (CopowerLimit (uncopower id n . index d)) \\ repObj @d @'()
+  colimitUniv' @d m p = RepCostar (copower (\n -> case m (HaskValue n :.: p) of RepCostar f -> f)) \\ p \\ repObj @d @'()
 
 instance (CategoryOf j) => HasColimits (Id :: CAT j) k where
   type Colimit Id d = d

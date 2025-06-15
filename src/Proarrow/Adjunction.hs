@@ -7,15 +7,15 @@ import Data.Kind (Constraint)
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
+import Proarrow.Category.Opposite (Op (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repObj)
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repObj, trivialRep)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Promonad (Procomonad (..))
-import Proarrow.Category.Opposite (Op (..))
 
 type Adjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
 
@@ -39,7 +39,7 @@ rightAdjunct
    . (Adjunction l r, Representable l, Representable r, Ob b)
   => r a b
   -> (l % a ~> b)
-rightAdjunct f = counit (tabulate @l (repMap @l @a id) :.: f) \\ f
+rightAdjunct f = counit (trivialRep @l @a :.: f) \\ f
 
 unitFromRepUnit
   :: forall l r a. (Representable l, Representable r, Ob a) => (a ~> r % (l % a)) -> (r :.: l) a a
@@ -79,7 +79,7 @@ instance (CategoryOf k) => Adjunction (Id :: CAT k) Id where
   unit = Id id :.: Id id
   counit (Id f :.: Id g) = g . f
 
-instance Adjunction q p => Adjunction (Op p) (Op q) where
+instance (Adjunction q p) => Adjunction (Op p) (Op q) where
   unit = case unit @q @p of q :.: p -> Op p :.: Op q
   counit (Op q :.: Op p) = Op (counit (p :.: q))
 
@@ -95,7 +95,8 @@ instance
   (MonoidalProfunctor r, Adjunction l r, Representable l, Representable r, Monoidal j, Monoidal k)
   => MonoidalProfunctor (RepCostar l :: j +-> k)
   where
-  par0 = RepCostar (counit @l @r (tabulate (repMap @l @Unit id) :.: par0)) \\ (par0 :: Obj (Unit :: k))
+  par0 = RepCostar (counit @l @r (trivialRep :.: par0))
   RepCostar @x1 fx `par` RepCostar @y1 fy =
-    (fx `par` fy) // withOb2 @_ @x1 @y1 $
-      RepCostar (rightAdjunct @l @r (leftAdjunct @l @r @x1 fx `par` leftAdjunct @l @r @y1 fy))
+    (fx `par` fy) //
+      withOb2 @_ @x1 @y1 $
+        RepCostar (rightAdjunct @l @r (leftAdjunct @l @r @x1 fx `par` leftAdjunct @l @r @y1 fy))
