@@ -11,14 +11,18 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), type (+->))
+import Proarrow.Functor (Functor)
 import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepOb)
+import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 
 class (Representable (Limit j d)) => IsRepresentableLimit j d
@@ -142,3 +146,18 @@ instance (CategoryOf k) => HasLimits (Hom :: (OPPOSITE k, k) +-> ()) Type where
   type Limit Hom d = EndLimit d
   limit (EndLimit f :.: Hom k) = k // tabulate (\a -> unEnd (f a) k)
   limitUniv n p = p // EndLimit \a -> End \x -> index (n (p :.: Hom x)) a
+
+instance (CategoryOf j) => HasLimits (Id :: CAT j) k where
+  type Limit Id d = d
+  limit (d :.: Id f) = rmap f d
+  limitUniv n p = n (p :.: Id id) \\ p
+
+instance (Representable j1, HasLimits j1 k, HasLimits j2 k) => HasLimits (j1 :.: j2) k where
+  type Limit (j1 :.: j2) d = Limit j1 (Limit j2 d)
+  limit @d (l :.: (j1 :.: j2)) = limit @j2 @k @d (limit @j1 @k @(Limit j2 d) (l :.: j1) :.: j2)
+  limitUniv @d n p = limitUniv @j1 @k @(Limit j2 d) (limitUniv @j2 @k @d (\((p' :.: j1) :.: j2) -> n (p' :.: (j1 :.: j2)))) p
+
+instance (Functor j) => HasLimits (Costar j) k where
+  type Limit (Costar j) d = d :.: Star j
+  limit ((d :.: Star f) :.: Costar g) = rmap (g . f) d
+  limitUniv n p = p // n (p :.: Costar id) :.: Star id

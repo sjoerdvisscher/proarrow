@@ -9,14 +9,31 @@ import Proarrow.Adjunction (Adjunction (..), unit')
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
-import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, src, (//), (:~>), type (+->))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Kind
+  , Profunctor (..)
+  , Promonad (..)
+  , lmap
+  , rmap
+  , src
+  , tgt
+  , (//)
+  , (:~>)
+  , type (+->)
+  )
+import Proarrow.Functor (Functor)
 import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
-import Proarrow.Object.Initial (HasInitialObject (..), initiate')
+import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepOb)
+import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Representable (..), dimapRep, withRepOb)
+import Proarrow.Profunctor.Star (Star)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type Unweighted = TerminalProfunctor
@@ -32,6 +49,31 @@ class (Profunctor j, forall (d :: i +-> k). (Representable d) => IsRepresentable
 
   -- Note: can't simplify this to Colimit j d :~> d :.: j because j is not necessarily representable.
   colimitUniv :: (Representable (d :: i +-> k), Representable p) => (d :.: j :~> p) -> Colimit j d :~> p
+  colimitUniv @d @p n c =
+    c // case h c of
+      (ic, p) ->
+        tabulate @p
+          ( unRepCostar
+              (colimitUniv' @j @k @d (\(j :.: RepCostar f) -> j // RepCostar (f . index (n (tabulate (repMap @d (src j)) :.: j)))) p)
+              . ic
+          )
+    where
+      h :: (Ob b) => Colimit j d a1 b -> (a1 ~> Colimit j d % b, RepCostar p b (p % b))
+      h c' = (index c', RepCostar (repMap @p (tgt c')))
+
+  -- | The same as `colimitUniv`, but with `Corepresentable`s, which is easier to work with.
+  colimitUniv'
+    :: (Representable (d :: i +-> k), Corepresentable p) => (j :.: p :~> RepCostar d) -> p b c -> RepCostar (Colimit j d) b c
+  colimitUniv' @d @p @b n p =
+    p //
+      RepCostar
+        ( coindex p
+            . unCorepStar
+              ( colimitUniv @j @k @d @(CorepStar p)
+                  (\(d :.: j) -> j // CorepStar (unRepCostar (n (j :.: cotabulate @p (corepMap @p (tgt j)))) . index d))
+                  (tabulate @(Colimit j d) @b (repMap @(Colimit j d) @b id))
+              )
+        )
 
 leftAdjointPreservesColimits
   :: forall {k} {k'} {i} {a} (f :: k +-> k') g (d :: i +-> k) (j :: a +-> i)
@@ -64,7 +106,7 @@ instance (HasInitialObject k) => Representable (InitialLimit (d :: VOID +-> k)) 
 instance (HasInitialObject k) => HasColimits (Unweighted :: () +-> VOID) k where
   type Colimit Unweighted d = InitialLimit d
   colimit = \case {}
-  colimitUniv @_ @p _ (InitialLimit f) = tabulate @p (initiate' (repMap @p Unit) . f)
+  colimitUniv' _ p = p // RepCostar initiate
 
 type CoproductColimit :: COPRODUCT () () +-> k -> () +-> k
 data CoproductColimit d a b where
@@ -81,10 +123,9 @@ instance (HasBinaryCoproducts k, Representable d) => Representable (CoproductCol
 instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: () +-> COPRODUCT () ()) k where
   type Colimit Unweighted d = CoproductColimit d
   colimit @d (d :.: TerminalProfunctor' b Unit) = CoproductColimit (cochoose @k @d b . index d)
-  colimitUniv @d @p n (CoproductColimit f) =
-    let l = index @p (n (tabulate @d (repMap @d (InjL Unit)) :.: TerminalProfunctor' (InjL Unit) Unit))
-        r = index @p (n (tabulate @d (repMap @d (InjR Unit)) :.: TerminalProfunctor' (InjR Unit) Unit))
-    in tabulate @p ((l ||| r) . f)
+  colimitUniv' n p =
+    p // case (n (TerminalProfunctor' (InjL Unit) Unit :.: p), n (TerminalProfunctor' (InjR Unit) Unit :.: p)) of
+      (RepCostar l, RepCostar r) -> RepCostar (l ||| r)
 
 cochoose
   :: forall k (d :: COPRODUCT () () +-> k) b
@@ -110,7 +151,19 @@ instance (Representable d, Copowered k) => Representable (CopowerLimit n d :: ()
 instance (Copowered k) => HasColimits (HaskValue n :: () +-> ()) k where
   type Colimit (HaskValue n) d = CopowerLimit n d
   colimit @d (d :.: HaskValue n) = withObCopower @k @(d % '()) @n (CopowerLimit (uncopower id n . index d)) \\ repMap @d Unit
-  colimitUniv @d @p m (CopowerLimit f) =
-    tabulate @p (copower @k @(d % '()) @_ @n (\n -> index @p (m (tabulate @d id :.: HaskValue n))) . f)
-      \\ repMap @d Unit
-      \\ repMap @p Unit
+  colimitUniv' @d m p = RepCostar (copower (\n -> case m (HaskValue n :.: p) of RepCostar f -> f)) \\ p \\ repMap @d Unit
+
+instance (CategoryOf j) => HasColimits (Id :: CAT j) k where
+  type Colimit Id d = d
+  colimit (d :.: Id f) = rmap f d
+  colimitUniv' n p = n (Id id :.: p) \\ p
+
+instance (Corepresentable j2, HasColimits j1 k, HasColimits j2 k) => HasColimits (j1 :.: j2) k where
+  type Colimit (j1 :.: j2) d = Colimit j2 (Colimit j1 d)
+  colimit (d :.: (j1 :.: j2)) = colimit @j2 @k (colimit @j1 @k (d :.: j1) :.: j2)
+  colimitUniv' @d n = colimitUniv' @j2 @k @(Colimit j1 d) (colimitUniv' @j1 @k @d (\(j1 :.: (j2 :.: p1)) -> n ((j1 :.: j2) :.: p1)))
+
+instance (Functor j) => HasColimits (Star j) k where
+  type Colimit (Star j) d = d :.: Star j
+  colimit = id
+  colimitUniv n = n
