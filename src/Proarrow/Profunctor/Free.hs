@@ -11,12 +11,13 @@ import Prelude (($))
 import Prelude qualified as P
 
 import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
+import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), TracedMonoidal', toInt)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
-import Proarrow.Category.Monoidal.Strictified (Fold)
+import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==), (||))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -27,6 +28,7 @@ import Proarrow.Core
   , UN
   , arr
   , lmap
+  , obj
   , rmap
   , src
   , (//)
@@ -34,6 +36,7 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
+import Proarrow.Object.Dual (CompactClosed, Dual, dualityCounit, dualityUnit)
 import Proarrow.Profunctor.Forget (Forget (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep, trivialRep)
@@ -148,16 +151,30 @@ instance HasFree Promonad where
     Unit f -> arr f
     Comp q r -> q . unProf (retract @Promonad) r
 
-class (forall k. (CategoryOf k) => c (f k)) => HasFreeK (c :: Kind -> Constraint) (f :: Kind -> Kind) | c -> f where
-  type Lift c f (a :: k) :: f k
-  type Retract c f (a :: f k) :: k
-  liftK :: (CategoryOf k) => (a :: k) ~> b -> Lift c f a ~> Lift c f b
-  retractK :: (c k) => (a :: f k) ~> b -> Retract c f a ~> Retract c f b
+class
+  (forall k. (b k) => c (f k)) =>
+  HasFreeK (b :: Kind -> Constraint) (c :: Kind -> Constraint) (f :: Kind -> Kind)
+    | b c -> f
+  where
+  type Lift b c f (a :: k) :: f k
+  type Retract b c f (a :: f k) :: k
+  liftK :: (b k) => (x :: k) ~> y -> Lift b c f x ~> Lift b c f y
+  retractK :: (c k) => (x :: f k) ~> y -> Retract b c f x ~> Retract b c f y
 
-instance HasFreeK Monoidal LIST where
-  type Lift Monoidal LIST a = L '[a]
-  type Retract Monoidal LIST (a :: LIST k) = Fold (UN L a)
+instance HasFreeK CategoryOf Monoidal LIST where
+  type Lift CategoryOf Monoidal LIST a = L '[a]
+  type Retract CategoryOf Monoidal LIST (a :: LIST k) = Fold (UN L a)
   liftK f = Cons f Nil
   retractK Nil = par0
   retractK (Cons f Nil) = f
-  retractK (Cons f fs@Cons{}) = f `par` retractK @Monoidal fs
+  retractK (Cons f fs@Cons{}) = f `par` retractK @CategoryOf @Monoidal fs
+
+instance HasFreeK TracedMonoidal' CompactClosed INT where
+  type Lift TracedMonoidal' CompactClosed INT (a :: k) = I a Unit
+  type Retract TracedMonoidal' CompactClosed INT (I a b :: INT k) = a ** Dual b
+  liftK = toInt
+  retractK (Int @ap @am @bp @bm f) =
+    unStr $
+      Str @[ap, Dual am] @[Dual am, ap] (swap @_ @ap @(Dual am)) || Str @'[] @[bm, Dual bm] (dualityUnit @bm)
+        == obj @'[Dual am] || Str @[ap, bm] @[am, bp] f || obj @'[Dual bm]
+        == Str @[Dual am, am] @'[] (dualityCounit @am) || obj @'[bp] || obj @'[Dual bm]

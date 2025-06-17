@@ -98,7 +98,7 @@ splitFold =
 
 type Strictified :: CAT [k]
 data Strictified as bs where
-  Str :: (Ob as, Ob bs) => Fold as ~> Fold bs -> Strictified as bs
+  Str :: (Ob as, Ob bs) => { unStr :: Fold as ~> Fold bs } -> Strictified as bs
 
 singleton :: (CategoryOf k) => (a :: k) ~> b -> '[a] ~> '[b]
 singleton a = Str a \\ a
