@@ -115,6 +115,7 @@ instance MonoidalProfunctor Booleans where
   par0 = id
   f `par` g = f *** g
 
+-- | Products as monoidal structure.
 instance Monoidal BOOL where
   type Unit = TerminalObject
   type a ** b = a && b

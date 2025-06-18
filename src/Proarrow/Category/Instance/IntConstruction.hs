@@ -67,6 +67,7 @@ instance (TracedMonoidal' k) => MonoidalProfunctor (IntConstruction :: CAT (INT 
       \\ obj2 @(I ap am) @(I cp cm)
       \\ obj2 @(I bp bm) @(I dp dm)
 
+-- | The monoidal tensor is pointwise, tensoring of the plus and minus parts.
 instance (TracedMonoidal' k) => Monoidal (INT k) where
   type Unit = I Unit Unit
   type a ** b = I (IntPlus a ** IntPlus b) (IntMinus a ** IntMinus b)

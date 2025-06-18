@@ -18,6 +18,7 @@ instance (Promonad p) => Promonad (Rev p) where
   id = Rev id
   Rev f . Rev g = Rev (f . g)
 
+-- | The reverse of the category of @k@, i.e. with the tensor flipped.
 instance (CategoryOf k) => CategoryOf (REV k) where
   type (~>) = Rev (~>)
   type Ob a = (Is R a, Ob (UN R a))
@@ -26,6 +27,7 @@ instance (MonoidalProfunctor p) => MonoidalProfunctor (Rev p) where
   par0 = Rev par0
   Rev f `par` Rev g = Rev (g `par` f)
 
+-- | The flipped tensor.
 instance (Monoidal k) => Monoidal (REV k) where
   type Unit = R Unit
   type R a ** R b = R (b ** a)

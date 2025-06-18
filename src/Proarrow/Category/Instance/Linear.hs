@@ -50,6 +50,7 @@ instance MonoidalProfunctor Linear where
   par0 = id
   Linear f `par` Linear g = Linear \(x, y) -> (f x, g y)
 
+-- | Tuples as monoidal tensor. Note that tuples are not the binary product in LINEAR.
 instance Monoidal LINEAR where
   type Unit = L ()
   type L a ** L b = L (a, b)

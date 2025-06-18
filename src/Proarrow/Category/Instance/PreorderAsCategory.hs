@@ -26,6 +26,7 @@ instance (PreorderOf k) => Profunctor (PoAsCat :: CAT (POCATK k)) where
 instance (PreorderOf k) => Promonad (PoAsCat :: CAT (POCATK k)) where
   id @a = PoAsCat \\ cid @((<=) @k) @(UN PC a)
   (.) @b @c @a PoAsCat PoAsCat = PoAsCat \\ ccomp @((<=) @k) @(UN PC a) @(UN PC b) @(UN PC c)
+-- | The preorder as a category.
 instance (PreorderOf k) => CategoryOf (POCATK k) where
   type (~>) = PoAsCat
   type Ob a = (Is PC a, COb (UN PC a))
@@ -50,6 +51,7 @@ instance MonoidalProfunctor (PoAsCat :: CAT (POCATK Constraint)) where
   par0 = id
   f `par` g = f *** g
 
+-- | Products as monoidal structure.
 instance Monoidal (POCATK Constraint) where
   type Unit = TerminalObject
   type a ** b = a && b

@@ -29,10 +29,12 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :++: q) where
   dimap InjR{} InjL{} q = case q of
   r \\ InjL p = r \\ p
   r \\ InjR q = r \\ q
+-- | The coproduct of two promonads.
 instance (Promonad p, Promonad q) => Promonad (p :++: q) where
   id = lrId
   InjL p . InjL q = InjL (p . q)
   InjR q . InjR r = InjR (q . r)
+-- | The coproduct of two categories.
 instance (CategoryOf j, CategoryOf k) => CategoryOf (COPRODUCT j k) where
   type (~>) @(COPRODUCT j k) = (~>) @j :++: (~>) @k
   type Ob (a :: COPRODUCT j k) = IsLR a

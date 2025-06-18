@@ -34,6 +34,7 @@ data Nat f g where
 (!) :: Nat f g -> a ~> b -> f a ~> g b
 Nat f ! ab = f . map ab \\ ab
 
+-- | The category of functors with target category Hask.
 instance CategoryOf (k1 -> Type) where
   type (~>) = Nat
   type Ob f = Functor f
@@ -97,6 +98,7 @@ instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
   par0 = id
   Nat n `par` Nat m = Nat (\(Compose fg) -> Compose (n (map m fg)))
 
+-- | Composition as monoidal tensor.
 instance Monoidal (Type -> Type) where
   type Unit = Identity
   type f ** g = Compose f g
@@ -183,6 +185,8 @@ instance (Comonoid w) => Promonad (ComonoidAsCat w) where
   id = ComonoidAsCat (runIdentity . unNat counit)
   ComonoidAsCat f . ComonoidAsCat g = ComonoidAsCat (f . map g . getCompose . unNat comult)
 
+-- | The category of functors with target category @k2 -> k3 -> Type@.
+-- Note that @CategoryOf (k1 -> k2 -> Type)@ is reserved for profunctors.
 instance CategoryOf (k1 -> k2 -> k3 -> Type) where
   type (~>) = Nat
   type Ob f = Functor f
@@ -198,6 +202,7 @@ instance Profunctor (Nat :: CAT (k1 -> k2 -> k3 -> Type)) where
   dimap f g h = g . h . f
   r \\ Nat{} = r
 
+-- | The category of functors with target category k2 -> k3 -> k4 -> Type.
 instance CategoryOf (k1 -> k2 -> k3 -> k4 -> Type) where
   type (~>) = Nat
   type Ob f = Functor f
@@ -222,6 +227,7 @@ data Nat' f g where
     => {unNat' :: f .~> g}
     -> Nat' (NT f) (NT g)
 
+-- | The category of functors and natural transformations.
 instance CategoryOf (NatK j k) where
   type (~>) = Nat'
   type Ob f = (Is NT f, Functor (UN NT f))

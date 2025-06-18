@@ -119,6 +119,7 @@ instance (Profunctor p) => Profunctor (Prod p) where
 instance (Promonad p) => Promonad (Prod p) where
   id = Prod id
   Prod f . Prod g = Prod (f . g)
+-- | The same category as the category of @k@, but with products as the tensor.
 instance (CategoryOf k) => CategoryOf (PROD k) where
   type (~>) = Prod (~>)
   type Ob a = (Is PR a, Ob (UN PR a))
@@ -147,6 +148,7 @@ instance (HasProducts k, Category cat) => MonoidalProfunctor (Prod cat :: CAT (P
   par0 = id
   f `par` g = f *** g
 
+-- | Products as monoidal structure.
 instance (HasProducts k) => Monoidal (PROD k) where
   type Unit = TerminalObject
   type a ** b = a && b
@@ -165,6 +167,7 @@ instance MonoidalProfunctor (->) where
   par0 = id
   f `par` g = f *** g
 
+-- | Products as monoidal structure.
 instance Monoidal Type where
   type Unit = TerminalObject
   type a ** b = a && b
@@ -196,6 +199,7 @@ instance MonoidalProfunctor U.Unit where
   par0 = id
   f `par` g = f *** g
 
+-- | Products as monoidal structure.
 instance Monoidal () where
   type Unit = TerminalObject
   type a ** b = a && b

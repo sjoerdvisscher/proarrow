@@ -77,6 +77,7 @@ instance Promonad (->) where
   id = \a -> a
   f . g = \x -> f (g x)
 
+-- | The category of Haskell types (a.k.a `Hask`), where the arrows are functions.
 instance CategoryOf Type where
   type (~>) = (->)
 

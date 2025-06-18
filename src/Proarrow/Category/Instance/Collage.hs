@@ -49,6 +49,7 @@ instance (Profunctor p) => Promonad (Collage :: CAT (COLLAGE p)) where
   L2R p . InL f = L2R (lmap f p)
   InR g . InR f = InR (g . f)
 
+-- | The collage of a profunctor.
 instance (Profunctor p) => CategoryOf (COLLAGE p) where
   type (~>) = Collage
   type Ob a = IsLR a

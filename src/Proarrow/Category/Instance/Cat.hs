@@ -187,6 +187,7 @@ instance MonoidalProfunctor Cat where
   par0 = id
   Cat @p `par` Cat @q = Cat @(p :**: q)
 
+-- | Products as monoidal structure.
 instance Monoidal KIND where
   type Unit = K ()
   type l ** r = K (UN K l, UN K r)

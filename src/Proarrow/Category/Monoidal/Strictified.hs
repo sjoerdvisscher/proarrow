@@ -117,6 +117,7 @@ instance (Monoidal k) => Promonad (Strictified :: CAT [k]) where
   id = Str (fold (sList @as))
   Str f . Str g = Str (f . g)
 
+-- | The strictified monoidal category, making the unitors and associators identities.
 instance (Monoidal k) => CategoryOf [k] where
   type (~>) = Strictified
   type Ob as = IsList as
@@ -129,6 +130,7 @@ instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
       withOb2 @[k] @bs @ds $
         Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)
 
+-- | List concattenation as monoidal tensor.
 instance (Monoidal k) => Monoidal [k] where
   type Unit = '[]
   type as ** bs = as ++ bs

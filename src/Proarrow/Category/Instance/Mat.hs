@@ -142,6 +142,7 @@ instance (P.Num a) => Profunctor (Mat :: CAT (MatK a)) where
 instance (P.Num a) => Promonad (Mat :: CAT (MatK a)) where
   id = Mat matId
   Mat m . n = case dagger n of Mat nT -> Mat (P.fmap (apply nT) m)
+-- | The category of matrices with entries in a type @a@, where the objects are natural numbers and the arrows @n ~> m@ are matrices of dimension @n@ by @m@.
 instance (P.Num a) => CategoryOf (MatK a) where
   type (~>) = Mat
   type Ob n = (Is M n, IsNat (UN M n))
@@ -174,6 +175,7 @@ instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
         Mat $
           concatMap (\grow -> P.fmap (\frow -> concatMap (\a -> P.fmap (a P.*) frow) grow) f) g
 
+-- | Products of the dimensions of the matrices as the tensor. This is the Kronecker product of matrices.
 instance (P.Num a) => Monoidal (MatK a) where
   type Unit = M (S Z)
   type M x ** M y = M (y * x)

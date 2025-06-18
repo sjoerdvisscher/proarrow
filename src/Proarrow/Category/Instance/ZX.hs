@@ -119,6 +119,8 @@ instance MonoidalProfunctor ZX where
             | ((no, ni), nv) <- Map.toList n
             , ((mo, mi), mv) <- Map.toList m
             ]
+
+-- | Addition of the number of qubits as monoidal tensor. This is the Kronecker product of the matrices.
 instance Monoidal Nat where
   type Unit = 0
   type p ** q = p + q

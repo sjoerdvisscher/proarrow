@@ -22,6 +22,7 @@ type (:**:) :: j1 +-> k1 -> j2 +-> k2 -> (j1, j2) +-> (k1, k2)
 data (c :**: d) a b where
   (:**:) :: { fstK :: c a1 b1, sndK :: d a2 b2 } -> (c :**: d) '(a1, a2) '(b1, b2)
 
+-- | The product of two categories.
 instance (CategoryOf k1, CategoryOf k2) => CategoryOf (k1, k2) where
   type (~>) = (~>) :**: (~>)
   type Ob a = (a ~ '(Fst a, Snd a), Ob (Fst a), Ob (Snd a))

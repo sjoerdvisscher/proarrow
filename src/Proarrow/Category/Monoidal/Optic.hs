@@ -64,6 +64,7 @@ instance (IsOptic w c d) => Profunctor (OpticCat :: CAT (OPTIC w c d)) where
 instance (IsOptic w c d) => Promonad (OpticCat :: CAT (OPTIC w c d)) where
   id = OpticCat (prof2ex id)
   OpticCat l@Optic{} . OpticCat r@Optic{} = OpticCat $ prof2ex (ex2prof l . ex2prof r)
+-- | The category of optics.
 instance (IsOptic w c d) => CategoryOf (OPTIC w c d) where
   type (~>) = OpticCat
   type Ob a = (a ~ OPT (OptL a) (OptR a), Ob (OptL a), Ob (OptR a))
@@ -203,6 +204,7 @@ instance (IsChart m c d) => Promonad (ChartCat :: CAT (CHART m c d)) where
       Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `act` obj @t))
         \\ lw
         \\ rw
+-- | The category of charts.
 instance (IsChart m c d) => CategoryOf (CHART m c d) where
   type (~>) = ChartCat
   type Ob a = (a ~ CHA (ChaL a) (ChaR a), Ob (ChaL a), Ob (ChaR a))

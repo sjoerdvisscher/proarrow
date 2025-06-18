@@ -104,6 +104,7 @@ instance (Profunctor p) => Profunctor (Coprod p) where
 instance (Promonad p) => Promonad (Coprod p) where
   id = Coprod id
   Coprod f . Coprod g = Coprod (f . g)
+-- | The same category as the category of @k@, but with coproducts as the tensor.
 instance (CategoryOf k) => CategoryOf (COPROD k) where
   type (~>) = Coprod Id
   type Ob a = (Is COPR a, Ob (UN COPR a))
@@ -123,6 +124,7 @@ copar0 = unCoprod par0
 copar :: (MonoidalProfunctor (Coprod p)) => p a b -> p c d -> p (a || c) (b || d)
 copar p q = unCoprod (Coprod p `par` Coprod q)
 
+-- | Coproducts as monoidal tensor.
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)

@@ -60,6 +60,7 @@ instance Promonad LTE where
   ZLT b . ZEQ = ZLT b
   SLT ab . ZLT za = ZLT (ab . za)
   SLT ab . SLT bc = SLT (ab . bc)
+-- | The (thin) category of finite ordinals. An arrow from a to b means that a is less than or equal to b.
 instance CategoryOf (FIN n) where
   type (~>) = LTE
   type Ob a = IsFin a

@@ -34,6 +34,7 @@ data Simplex a b where
 suc :: Simplex a b -> Simplex (S a) (S b)
 suc = X . Y
 
+-- | The (augmented) simplex category is the category of finite ordinals and order preserving maps.
 instance CategoryOf Nat where
   type (~>) = Simplex
   type Ob a = IsNat a
@@ -96,6 +97,7 @@ instance MonoidalProfunctor Simplex where
   Y f `par` g = Y (f `par` g)
   X f `par` g = X (f `par` g)
 
+-- | Addition as monoidal tensor.
 instance Monoidal Nat where
   type Unit = Z
   type a ** b = a + b

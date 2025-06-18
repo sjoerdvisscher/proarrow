@@ -88,6 +88,7 @@ instance (Promonad p, MonoidalProfunctor p) => MonoidalProfunctor (Kleisli :: CA
   par0 = Kleisli par0
   Kleisli f `par` Kleisli g = Kleisli (f `par` g)
 
+-- | If the promonad is a monoidal profunctor, then its Kleisli category is a monoidal category.
 instance (Promonad p, MonoidalProfunctor p) => Monoidal (KLEISLI (p :: k +-> k)) where
   type Unit @(KLEISLI (p :: k +-> k)) = KL (Unit :: k)
   type a ** b = KL (UN KL a ** UN KL b)

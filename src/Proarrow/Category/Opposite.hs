@@ -63,6 +63,7 @@ instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where
   par0 = Op par0
   Op l `par` Op r = Op (l `par` r)
 
+-- | The opposite of a monoidal category is also monoidal, with the same tensor product.
 instance (Monoidal k) => Monoidal (OPPOSITE k) where
   type Unit = OP Unit
   type a ** b = OP (UN OP a ** UN OP b)
