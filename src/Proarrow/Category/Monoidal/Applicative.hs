@@ -9,11 +9,13 @@ import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Distributive (Distributive)
+import Proarrow.Category.Monoidal.Distributive (Distributive, DistributiveProfunctor)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), COPROD(..), copar, copar0, unCoprod)
+import Proarrow.Profunctor.Identity (Id (..))
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
 class (Monoidal j, Monoidal k, Functor f) => Applicative (f :: j -> k) where
@@ -37,9 +39,15 @@ deriving via Prelude P.Maybe instance Applicative P.Maybe
 deriving via Prelude P.NonEmpty instance Applicative P.NonEmpty
 
 type Alternative :: forall {j} {k}. (j -> k) -> Constraint
-class (Distributive j, Applicative f) => Alternative (f :: j -> k) where
+class (Distributive j, Functor f) => Alternative (f :: j -> k) where
   empty :: (Ob a) => Unit ~> f a
   alt :: (Ob a, Ob b) => (a || b ~> c) -> f a ** f b ~> f c
+
+-- Note: Comonoid (COPR x) means we need x ~> InitialObject.
+instance (DistributiveProfunctor (p :: j +-> k), Distributive j, Comonoid (COPR x)) => Alternative (FromProfunctor p x) where
+  empty () = FromProfunctor (dimap (unId (unCoprod (counit @(COPR x)))) initiate (copar0 @p))
+  alt abc (FromProfunctor pxa, FromProfunctor pyb) =
+    FromProfunctor $ dimap (unId (unCoprod (comult @(COPR x)))) abc (pxa `copar` pyb)
 
 instance (P.Alternative f) => Alternative (Prelude f) where
   empty () = Prelude P.empty
