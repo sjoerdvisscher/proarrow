@@ -15,7 +15,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), currySA, uncurrySA)
+import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
@@ -146,7 +146,7 @@ instance Closed BOOL where
     Fls -> r
     Tru -> r
   curry @a @b = currySA @a @b
-  uncurry @b @c = uncurrySA @b @c
+  apply @b @c = applySA @b @c
 
 instance StarAutonomous BOOL where
   type Dual FLS = TRU

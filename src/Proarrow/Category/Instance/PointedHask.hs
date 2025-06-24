@@ -89,7 +89,7 @@ instance Closed POINTED where
   type P a ~~> P b = P (a -> Maybe b)
   withObExp r = r
   curry (Pt f) = Pt (\a -> Just (\b -> f (a, b)))
-  uncurry (Pt f) = Pt (\(a, b) -> f a >>= ($ b))
+  apply = Pt (\(f, b) -> f b)
 
 instance Powered POINTED where
   type P a ^ n = P (n -> Maybe a)

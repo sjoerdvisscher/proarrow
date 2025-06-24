@@ -32,7 +32,10 @@ type instance UN L (L a) = a
 
 type Linear :: CAT LINEAR
 data Linear a b where
-  Linear :: {unLinear :: a %1 -> b} -> Linear (L a) (L b)
+  Linear :: (a %1 -> b) %1 -> Linear (L a) (L b)
+
+unLinear :: (L a ~> L b) %1 -> (a %1 -> b)
+unLinear (Linear f) = f
 
 instance Profunctor Linear where
   dimap = dimapDefault
@@ -69,7 +72,7 @@ instance Closed LINEAR where
   type a ~~> b = L (UN L a %1 -> UN L b)
   withObExp r = r
   curry (Linear f) = Linear \a b -> f (a, b)
-  uncurry (Linear f) = Linear \(a, b) -> f a b
+  apply = Linear \(f, a) -> f a
   Linear f ^^^ Linear g = Linear \h x -> f (h (g x))
 
 type Forget :: LINEAR +-> Type

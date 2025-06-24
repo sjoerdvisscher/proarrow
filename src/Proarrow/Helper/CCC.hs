@@ -25,7 +25,7 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft', rgt')
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), fst', snd')
-import Proarrow.Object.Exponential (BiCCC, Closed (..), eval)
+import Proarrow.Object.Exponential (BiCCC, Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
 
@@ -182,7 +182,7 @@ fromFree (Snd @a @b f) = snd' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
 fromFree (Prd f g) = fromFree f &&& fromFree g
 fromFree (Curry @a @b @i f) =
   curry @_ @(FromFree (Mul i)) @(FromFree a) @(FromFree b) (fromFree f . snoc @i @a) \\ fromFreeObj @a \\ fromFreeObjs @i
-fromFree (Apply @a @b f g) = eval @(FromFree a) @(FromFree b) . (fromFree f &&& fromFree g) \\ fromFreeObj @a \\ fromFreeObj @b
+fromFree (Apply @a @b f g) = apply @_ @(FromFree a) @(FromFree b) . (fromFree f &&& fromFree g) \\ fromFreeObj @a \\ fromFreeObj @b
 
 type IsFK :: forall {k}. FK k -> Constraint
 class IsFK (a :: FK k) where

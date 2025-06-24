@@ -226,7 +226,7 @@ instance Closed KIND where
   type K a ~~> K b = K (OPPOSITE a, b)
   withObExp r = r
   curry (Cat @p) = Cat @(Curry p)
-  uncurry (Cat @p) = Cat @(Uncurry p)
+  apply = Cat @(Uncurry Id)
   Cat @p ^^^ Cat @q = Cat @(Op q :**: p)
 
 instance StarAutonomous KIND where

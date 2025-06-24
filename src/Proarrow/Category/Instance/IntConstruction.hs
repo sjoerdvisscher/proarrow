@@ -1,6 +1,6 @@
 module Proarrow.Category.Instance.IntConstruction where
 
-import Prelude (type (~), ($))
+import Prelude (($), type (~))
 
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
@@ -13,10 +13,10 @@ import Proarrow.Category.Monoidal
   , swapInner
   , swapOuter
   )
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Object.Dual (CompactClosed (..), Dual, ExpSA, StarAutonomous (..), currySA, expSA, uncurrySA)
-import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Category.Monoidal.Action (TracedMonoidal, trace)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Object.Dual (CompactClosed (..), Dual, ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Object.Exponential (Closed (..))
 
 data INT k = I k k
 
@@ -51,6 +51,7 @@ instance (TracedMonoidal k) => Promonad (IntConstruction :: CAT (INT k)) where
       \\ obj2 @ap @cm
       \\ obj2 @am @cp
       \\ obj2 @bp @bm
+
 -- | The Int construction, a.k.a. the geometry of interaction,
 -- the free compact closed category on a traced monoidal category.
 instance (TracedMonoidal k) => CategoryOf (INT k) where
@@ -98,14 +99,18 @@ instance (TracedMonoidal' k) => Monoidal (INT k) where
       \\ obj @(I ap am) `par` obj2 @(I bp bm) @(I cp cm)
 
 instance (TracedMonoidal' k) => SymMonoidal (INT k) where
-  swap @(I ap am) @(I bp bm) = withOb2 @k @ap @bp $ withOb2 @k @am @bm $ withOb2 @k @bp @ap $ withOb2 @k @bm @am $
-    Int ((swap @k @bm @am `par` swap @k @ap @bp) . swap @k @(ap ** bp) @(bm ** am))
+  swap @(I ap am) @(I bp bm) =
+    withOb2 @k @ap @bp $
+      withOb2 @k @am @bm $
+        withOb2 @k @bp @ap $
+          withOb2 @k @bm @am $
+            Int ((swap @k @bm @am `par` swap @k @ap @bp) . swap @k @(ap ** bp) @(bm ** am))
 
 instance (TracedMonoidal' k) => Closed (INT k) where
   type a ~~> b = ExpSA a b
   withObExp @a @b r = withOb2 @k @(IntMinus a) @(IntPlus b) (withOb2 @k @(IntPlus a) @(IntMinus b) r)
   curry @a @b @c = currySA @a @b @c
-  uncurry @b @c = uncurrySA @b @c
+  apply @b @c = applySA @b @c
   (^^^) = expSA
 
 instance (TracedMonoidal' k) => StarAutonomous (INT k) where

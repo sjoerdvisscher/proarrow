@@ -19,7 +19,7 @@ import Prelude hiding (id, (.))
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), currySA, expSA, uncurrySA)
+import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Object.Exponential (Closed (..))
 
 newtype Bitstring (n :: Nat) = BS Int
@@ -100,6 +100,7 @@ instance Promonad ZX where
           , ((b2, a), nv) <- Map.toList m
           , b1 == b2
           ]
+
 -- | The category of qubits, to implement ZX calculus from quantum computing.
 instance CategoryOf Nat where
   type (~>) = ZX
@@ -131,6 +132,7 @@ instance Monoidal Nat where
   rightUnitorInv = id
   associator @a @b @c = withOb2 @_ @a @b $ withOb2 @_ @(a + b) @c $ unsafeCoerce (obj @(a + b + c))
   associatorInv @a @b @c = withOb2 @_ @a @b $ withOb2 @_ @(a + b) @c $ unsafeCoerce (obj @(a + b + c))
+
 instance SymMonoidal Nat where
   swap @m @n =
     withOb2 @_ @m @n $
@@ -146,7 +148,7 @@ instance Closed Nat where
   type x ~~> y = ExpSA x y
   withObExp @a @b r = withOb2 @_ @a @b r
   curry @x @y = currySA @x @y
-  uncurry @y @z = uncurrySA @y @z
+  apply @y @z = applySA @y @z
   (^^^) = expSA
 
 instance StarAutonomous Nat where

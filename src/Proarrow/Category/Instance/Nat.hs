@@ -91,7 +91,7 @@ instance (CategoryOf k1) => Closed (PROD (k1 -> Type)) where
   type f ~~> g = PR (UN PR f :~>: UN PR g)
   withObExp r = r
   curry (Prod (Nat n)) = Prod (Nat \f -> Exp \ab g -> n (Pair (map ab f) g) \\ ab)
-  uncurry (Prod (Nat n)) = Prod (Nat \(Pair f g) -> case n f of Exp k -> k id g)
+  apply = Prod (Nat \(Pair (Exp k) g) -> k id g)
   Prod (Nat m) ^^^ Prod (Nat n) = Prod (Nat \(Exp k) -> Exp \cd h -> m (k cd (n h)) \\ cd)
 
 instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
@@ -127,7 +127,7 @@ instance Closed (Type -> Type) where
   type j ~~> h = HaskRan j h
   withObExp r = r
   curry (Nat n) = Nat \fa -> Ran \ajb -> n (Compose (map ajb fa))
-  uncurry (Nat n) = Nat \(Compose fja) -> runRan (n fja) id
+  apply = Nat \(Compose fja) -> runRan fja id
   (^^^) (Nat by) (Nat xa) = Nat \h -> Ran \x -> by (runRan h (xa . x))
 
 data HaskLan j f a where
