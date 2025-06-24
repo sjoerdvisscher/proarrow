@@ -10,8 +10,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, (//), type (+->))
-import Proarrow.Object (Obj, obj)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, obj, (//), type (+->))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag)
 import Proarrow.Profunctor.Exponential ((:~>:) (..))
@@ -24,62 +23,56 @@ class (Monoidal k) => Closed k where
   type (a :: k) ~~> (b :: k) :: k
   withObExp :: (Ob (a :: k), Ob b) => ((Ob (a ~~> b)) => r) -> r
   curry :: (Ob (a :: k), Ob b) => a ** b ~> c -> a ~> b ~~> c
-  uncurry :: (Ob (b :: k), Ob c) => a ~> b ~~> c -> a ** b ~> c
+  apply :: (Ob (a :: k), Ob b) => (a ~~> b) ** a ~> b
   (^^^) :: forall (a :: k) b x y. b ~> y -> x ~> a -> a ~~> b ~> x ~~> y
   f ^^^ g =
     f //
       g //
         withObExp @k @a @b P.$
-          let ab = obj @(a ~~> b) in curry @k @(a ~~> b) @x (f . uncurry @_ @a @b ab . (ab `par` g))
+          let ab = obj @(a ~~> b) in curry @k @(a ~~> b) @x (f . apply @k @a @b . (ab `par` g))
 
-curry' :: forall {k} a b c. (Closed k) => Obj (a :: k) -> Obj b -> a ** b ~> c -> a ~> b ~~> c
-curry' a b = curry @k @a @b \\ a \\ b
-
-uncurry' :: forall {k} b c a. (Closed k) => Obj (b :: k) -> Obj c -> a ~> b ~~> c -> a ** b ~> c
-uncurry' b c = uncurry @k @b @c \\ b \\ c
+uncurry :: forall {k} b c (a :: k). (Closed k) => (Ob b, Ob c) => a ~> b ~~> c -> a ** b ~> c
+uncurry f = apply @k @b @c . (f `par` obj @b)
 
 comp :: forall {k} (a :: k) b c. (Closed k, Ob a, Ob b, Ob c) => (b ~~> c) ** (a ~~> b) ~> a ~~> c
 comp =
   withObExp @k @b @c P.$
     withObExp @k @a @b P.$
       withOb2 @k @(b ~~> c) @(a ~~> b) P.$
-        curry @_ @_ @a (eval @b @c . (obj @(b ~~> c) `par` eval @a @b) . associator @k @(b ~~> c) @(a ~~> b) @a)
+        curry @_ @_ @a (apply @k @b @c . (obj @(b ~~> c) `par` apply @k @a @b) . associator @k @(b ~~> c) @(a ~~> b) @a)
 
 mkExponential :: forall {k} a b. (Closed k) => (a :: k) ~> b -> Unit ~> (a ~~> b)
 mkExponential ab = curry @_ @_ @a (ab . leftUnitor) \\ ab
 
 lower :: forall {k} (a :: k) b. (Closed k, Ob a, Ob b) => (Unit ~> (a ~~> b)) -> a ~> b
-lower f = uncurry @k @a @b f . leftUnitorInv
-
-eval :: forall {k} a b. (Closed k, Ob a, Ob b) => ((a :: k) ~~> b) ** a ~> b
-eval = withObExp @k @a @b (uncurry @k @a @b @(a ~~> b) id)
+lower f = uncurry @a @b f . leftUnitorInv
 
 instance Closed Type where
   type a ~~> b = a -> b
   withObExp r = r
   curry = P.curry
-  uncurry = P.uncurry
+  apply = P.uncurry id
   (^^^) = P.flip dimap
 
 instance Closed () where
   type '() ~~> '() = '()
   withObExp r = r
   curry U.Unit = U.Unit
-  uncurry U.Unit = U.Unit
+  apply = U.Unit
   U.Unit ^^^ U.Unit = U.Unit
 
 instance (CategoryOf j, CategoryOf k) => Closed (PROD (j +-> k)) where
   type p ~~> q = PR (UN PR p :~>: UN PR q)
   withObExp r = r
   curry (Prod (Prof n)) = Prod (Prof \p -> p // Exp \ca bd q -> n (dimap ca bd p :*: q))
-  uncurry (Prod (Prof n)) = Prod (Prof \(p :*: q) -> case n p of Exp f -> f id id q \\ q)
+  apply = Prod (Prof \(Exp f :*: q) -> f id id q \\ q)
   Prod (Prof m) ^^^ Prod (Prof n) = Prod (Prof \(Exp f) -> Exp \ca bd p -> m (f ca bd (n p)))
 
 instance (Closed j, Closed k) => Closed (j, k) where
   type '(a1, a2) ~~> '(b1, b2) = '(a1 ~~> b1, a2 ~~> b2)
   withObExp @'(a1, a2) @'(b1, b2) r = withObExp @j @a1 @b1 (withObExp @k @a2 @b2 r)
   curry @'(a1, a2) @'(b1, b2) (f1 :**: f2) = curry @j @a1 @b1 f1 :**: curry @k @a2 @b2 f2
-  uncurry @'(a1, a2) @'(b1, b2) (f1 :**: f2) = uncurry @j @a1 @b1 f1 :**: uncurry @k @a2 @b2 f2
+  apply @'(a1, a2) @'(b1, b2) = apply @j @a1 @b1 :**: apply @k @a2 @b2
   (f1 :**: f2) ^^^ (g1 :**: g2) = (f1 ^^^ g1) :**: (f2 ^^^ g2)
 
 type ExponentialFunctor :: (OPPOSITE k, k) +-> k
@@ -108,4 +101,4 @@ ap
   => p a (x ~~> y)
   -> p a x
   -> p a y
-ap pf px = dimap diag (eval @x @y) (pf `par` px) \\ px
+ap pf px = dimap diag (apply @j @x @y) (pf `par` px) \\ px

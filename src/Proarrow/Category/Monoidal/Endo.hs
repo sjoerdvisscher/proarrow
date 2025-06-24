@@ -54,7 +54,7 @@ instance
   type E f ~~> E g = E (Ran f g)
   withObExp @(E a) @(E b) r = r \\ dimapRan (obj @a) (obj @b)
   curry @(E g) @(E j) (Endo h) = Endo (ranUniv @j @_ @g h) \\ h
-  uncurry @(E j) @(E f) (Endo h) = Endo (ran @j @f . (h `o` obj @j))
+  apply @(E j) @(E f) = Endo (ran @j @f)
   (^^^) (Endo f) (Endo g) = Endo (dimapRan g f) \\ f \\ g
 
 instance

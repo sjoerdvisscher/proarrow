@@ -89,10 +89,7 @@ instance Closed CONSTRAINT where
   withObExp r = r
   Entails f ^^^ Entails g = Entails \r -> f (g r)
   curry (Entails f) = Entails f
-  uncurry @b @c @a (Entails f) = Entails (h @(UN CNSTRNT a) @(UN CNSTRNT b) @(UN CNSTRNT c) f)
-    where
-      h :: ((((x) => y :=> z) => r) -> r) -> (((x, y) => z) => r) -> r
-      h g = g
+  apply = Entails \r -> r
 
 -- I am solving the constraint ‘Eq a’ in a way that might turn out to loop at runtime.
 -- See § Undecidable instances and loopy superclasses.

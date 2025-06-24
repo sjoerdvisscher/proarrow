@@ -20,7 +20,7 @@ import Proarrow.Object.Dual
   , compactClosedCoact
   , currySA
   , expSA
-  , uncurrySA
+  , applySA
   )
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -66,8 +66,8 @@ data Mat :: CAT (MatK a) where
     => Vec n (Vec m a)
     -> Mat m' n'
 
-apply :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
-apply m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
+app :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
+app m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
 
 class (P.Applicative (Vec n), n + Z ~ n, n * Z ~ Z, n * S Z ~ n) => IsNat (n :: Nat) where
   matId :: (P.Num a) => Vec n (Vec n a)
@@ -141,7 +141,7 @@ instance (P.Num a) => Profunctor (Mat :: CAT (MatK a)) where
   r \\ Mat{} = r
 instance (P.Num a) => Promonad (Mat :: CAT (MatK a)) where
   id = Mat matId
-  Mat m . n = case dagger n of Mat nT -> Mat (P.fmap (apply nT) m)
+  Mat m . n = case dagger n of Mat nT -> Mat (P.fmap (app nT) m)
 -- | The category of matrices with entries in a type @a@, where the objects are natural numbers and the arrows @n ~> m@ are matrices of dimension @n@ by @m@.
 instance (P.Num a) => CategoryOf (MatK a) where
   type (~>) = Mat
@@ -198,7 +198,7 @@ instance (P.Num a) => Closed (MatK a) where
   type x ~~> y = ExpSA x y
   withObExp @(M x) @(M y) r = withMultNat @y @x r
   curry @x @y = currySA @x @y
-  uncurry @y @z = uncurrySA @y @z
+  apply @y @z = applySA @y @z
   (^^^) = expSA
 
 instance (P.Num a) => StarAutonomous (MatK a) where

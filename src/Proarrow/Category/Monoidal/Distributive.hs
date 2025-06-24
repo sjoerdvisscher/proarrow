@@ -7,7 +7,7 @@ import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), first, second)
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Core
   ( CAT
@@ -32,7 +32,7 @@ import Proarrow.Object.BinaryProduct
   , snd'
   , swapProd
   )
-import Proarrow.Object.Exponential (BiCCC, Closed (..))
+import Proarrow.Object.Exponential (BiCCC, Closed (..), uncurry)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
@@ -48,6 +48,12 @@ class (Monoidal k, HasCoproducts k, DistributiveProfunctor (Id :: CAT k)) => Dis
   distR :: (Ob (a :: k), Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
   distL0 :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
   distR0 :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
+
+distLInv :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
+distLInv = second @a (lft @k @b @c) ||| second @a (rgt @k @b @c)
+
+distRInv :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** c || b ** c) ~> ((a || b) ** c)
+distRInv = first @c (lft @k @a @b) ||| first @c (rgt @k @a @b)
 
 instance Distributive Type where
   distL (a, e) = bimap (a,) (a,) e
@@ -75,7 +81,7 @@ distRProd =
   withObProd @k @a @c $
     withObProd @k @b @c $
       withObCoprod @k @(a && c) @(b && c) $
-        uncurry @k @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
+        uncurry @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
 
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where

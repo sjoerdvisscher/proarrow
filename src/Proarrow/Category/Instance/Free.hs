@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE LinearTypes #-}
 
 module Proarrow.Category.Instance.Free where
 
@@ -9,11 +10,10 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Constraint (type (:=>))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Core (Any, CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), UN, dimapDefault, (:~>))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Exponential (Closed (..), eval)
+import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Initial (InitialProfunctor)
@@ -24,13 +24,11 @@ type instance UN EMB (EMB a) = a
 type Free :: CAT (FREE c p)
 data Free a b where
   Id :: (Ob a) => Free a a
-  Emb :: (Ob a, Ob b, Typeable a, Typeable b) => p a b -> Free (i :: FREE c p) (EMB a) -> Free i (EMB b)
+  Emb :: (Ob a, Ob b, Typeable a, Typeable b) => p a b %1 -> Free (i :: FREE c p) (EMB a) %1 -> Free i (EMB b)
   Str
     :: forall {k} {c} {p :: CAT k} (str :: CAT (FREE c p)) a b i
      . (c :=> HasStructure str k, Structure str, Ob a, Ob b)
-    => str a b
-    -> Free i a
-    -> Free i b
+    => str a b %1 -> Free i a %1 -> Free i b
 
 class (forall x y. Eq (p x y)) => Eq2 p
 instance (forall x y. Eq (p x y)) => Eq2 p
@@ -235,13 +233,13 @@ data Exponential i o where
 deriving instance (WithEq i, WithEq o) => Eq (Exponential i o)
 instance Structure (Exponential :: CAT (FREE c (p :: CAT k))) where
   type HasStructure Exponential = Closed
-  foldStructure _ (Apply @a @b) = withLowerOb @a (withLowerOb @b (eval @(Lower a) @(Lower b)))
+  foldStructure _ (Apply @a @b) = withLowerOb @a (withLowerOb @b (apply @_ @(Lower a) @(Lower b)))
   foldStructure go (Curry @a @i f) = withLowerOb @a (withLowerOb @i (curry @_ @(Lower i) @(Lower a) (go f)))
 instance (Closed k, Ok c p k) => Closed (FREE c (p :: CAT k)) where
   type a ~~> b = a --> b
   withObExp r = r
   curry f = Str (Curry f) Id \\ f
-  uncurry f = Str Apply (M.first f)
+  apply = Str Apply Id
 
 data Test a b where
   Show :: Test P.Int P.String
@@ -249,19 +247,19 @@ data Test a b where
   Succ :: Test P.Int P.Int
   Dup :: Test P.String P.String
 
-show :: (i :: FREE () Test) ~> EMB P.Int -> i ~> EMB P.String
+show :: (i :: FREE () Test) ~> EMB P.Int %1 -> i ~> EMB P.String
 show = Emb Show
 
-read :: (i :: FREE () Test) ~> EMB P.String -> i ~> EMB P.Int
+read :: (i :: FREE () Test) ~> EMB P.String %1 -> i ~> EMB P.Int
 read = Emb Read
 
-succ :: (i :: FREE () Test) ~> EMB P.Int -> i ~> EMB P.Int
+succ :: (i :: FREE () Test) ~> EMB P.Int %1 -> i ~> EMB P.Int
 succ = Emb Succ
 
-dup :: (i :: FREE () Test) ~> EMB P.String -> i ~> EMB P.String
+dup :: (i :: FREE () Test) ~> EMB P.String %1 -> i ~> EMB P.String
 dup = Emb Dup
 
-test :: (i :: FREE () Test) ~> EMB P.String -> i ~> EMB P.String
+test :: (i :: FREE () Test) ~> EMB P.String %1 -> i ~> EMB P.String
 test x = dup (show (succ (read x)))
 
 test2 :: (i :: FREE () Test) ~> EMB P.String -> i ~> (EMB P.String *! EMB P.String)
