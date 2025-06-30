@@ -36,7 +36,7 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object.Dual (CompactClosed, Dual, dualityCounit, dualityUnit)
+import Proarrow.Object.Dual (CompactClosed, Dual, dualObj, dualityCounit, dualityUnit)
 import Proarrow.Profunctor.Forget (Forget (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep, trivialRep)
@@ -174,7 +174,9 @@ instance HasFreeK TracedMonoidal' CompactClosed INT where
   type Retract TracedMonoidal' CompactClosed INT (I a b :: INT k) = a ** Dual b
   liftK = toInt
   retractK (Int @ap @am @bp @bm f) =
-    unStr $
-      Str @[ap, Dual am] @[Dual am, ap] (swap @_ @ap @(Dual am)) || Str @'[] @[bm, Dual bm] (dualityUnit @bm)
-        == obj @'[Dual am] || Str @[ap, bm] @[am, bp] f || obj @'[Dual bm]
-        == Str @[Dual am, am] @'[] (dualityCounit @am) || obj @'[bp] || obj @'[Dual bm]
+    dualObj @am //
+      dualObj @bm //
+        unStr $
+          Str @[ap, Dual am] @[Dual am, ap] (swap @_ @ap @(Dual am)) || Str @'[] @[bm, Dual bm] (dualityUnit @bm)
+            == obj @'[Dual am] || Str @[ap, bm] @[am, bp] f || obj @'[Dual bm]
+            == Str @[Dual am, am] @'[] (dualityCounit @am) || obj @'[bp] || obj @'[Dual bm]
