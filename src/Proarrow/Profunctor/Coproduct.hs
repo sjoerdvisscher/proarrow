@@ -1,7 +1,8 @@
 module Proarrow.Profunctor.Coproduct where
 
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
-import Proarrow.Core (Profunctor (..), (:~>), type (+->))
+import Proarrow.Core (Profunctor (..), type (+->))
+import Proarrow.Category.Monoidal.Action (Strong (..))
 
 type (:+:) :: (j +-> k) -> (j +-> k) -> (j +-> k)
 data (p :+: q) a b where
@@ -14,10 +15,14 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :+: q) where
   r \\ InjL p = r \\ p
   r \\ InjR q = r \\ q
 
-coproduct :: (p :~> r) -> (q :~> r) -> p :+: q :~> r
+coproduct :: (p x y -> r) -> (q x y -> r) -> (p :+: q) x y -> r
 coproduct l _ (InjL p) = l p
 coproduct _ r (InjR q) = r q
 
 instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :+: q) where
   dagger (InjL p) = InjL (dagger p)
   dagger (InjR q) = InjR (dagger q)
+
+instance (Strong m p, Strong m q) => Strong m (p :+: q) where
+  act f (InjL p) = InjL (act f p)
+  act f (InjR q) = InjR (act f q)

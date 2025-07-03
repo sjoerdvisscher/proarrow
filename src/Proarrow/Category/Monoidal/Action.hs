@@ -42,6 +42,12 @@ instance
   )
   => SelfAction k
 
+toSelfAct :: forall {k} (a :: k) b. (SelfAction k, Ob a, Ob b) => a ** b ~> Act a b
+toSelfAct = obj @a `act` obj @b
+
+fromSelfAct :: forall {k} (a :: k) b. (SelfAction k, Ob a, Ob b) => Act a b ~> a ** b
+fromSelfAct = obj @a `act` obj @b
+
 composeActs
   :: forall {m} {k} (x :: m) y (c :: k) a b
    . (MonoidalAction m k, Ob x, Ob y, Ob c)

@@ -1,13 +1,19 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE ImpredicativeTypes #-}
+
 module Proarrow.Category.Equipment.Stateful where
+
+import Prelude (($))
 
 import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..))
 import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
 import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
 import Proarrow.Category.Instance.Prof (unProf)
-import Proarrow.Category.Monoidal (par)
+import Proarrow.Category.Monoidal (MonoidalProfunctor, par)
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), toSelfAct)
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core
   ( CAT
@@ -28,9 +34,13 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (map)
+import Proarrow.Object (pattern Obj, type Obj)
+import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), HasCoproducts, codiag, copar)
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Promonad.Reader (Reader)
+import Proarrow.Profunctor.Product ((:*:) (..))
+import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Promonad.Writer (Writer (..))
 
 type STT :: Kind -> Kind -> CAT ()
@@ -66,7 +76,7 @@ instance (MonoidalAction m k) => Bicategory (STT m k) where
 -- | Stateful transformers.
 -- https://arxiv.org/pdf/2305.16899 definition 6
 -- Generalized to any monoidal action.
-instance (MonoidalAction m k, M.SymMonoidal m, Ob (M.Unit @m)) => HasCompanions (STT m k) (MonK m) where
+instance (MonoidalAction m k, M.SymMonoidal m) => HasCompanions (STT m k) (MonK m) where
   type Companion (STT m k) (MK a) = ST (Writer a)
   mapCompanion (Mon2 f) = StT (unProf (map f)) \\ f
   withObCompanion r = r
@@ -86,7 +96,7 @@ instance
   unit = StT (case unit @(PK l) @(PK r) of Prof f -> f)
   counit = StT (case counit @(PK l) @(PK r) of Prof f -> f)
 
-instance (MonoidalAction m k, M.SymMonoidal m, Ob (M.Unit @m)) => Equipment (STT m k) (MonK m) where
+instance (MonoidalAction m k, M.SymMonoidal m) => Equipment (STT m k) (MonK m) where
   type Conjoint (STT m k) (MK a) = ST (Reader (OP a))
   mapConjoint (Mon2 f) = StT (unProf (map (Op f))) \\ f
   withObConjoint r = r
@@ -94,13 +104,74 @@ instance (MonoidalAction m k, M.SymMonoidal m, Ob (M.Unit @m)) => Equipment (STT
 type STSq (p :: k +-> k) (q :: k +-> k) (a :: m) (b :: m) =
   Sq '(ST p :: STT m k '() '(), MK a :: MonK m '() '()) '(ST q, MK b :: MonK m '() '())
 
+unSTSq
+  :: forall {m} {k} p q (a :: m) b
+   . (M.SymMonoidal m)
+  => STSq p q a b
+  -> (forall x y. p x y -> q (Act a x) (Act b y), Obj a, Obj b, Obj (ST p :: STT m k '() '()), Obj (ST q :: STT m k '() '()))
+unSTSq (Sq (StT f)) = (\p -> p // case f (Writer (obj @a `act` src p) :.: p) of q :.: Writer g -> rmap g q, Obj, Obj, Obj, Obj)
+
+pattern STSq
+  :: forall {m} {k} (p :: k +-> k) q (a :: m) b
+   . (M.SymMonoidal m, MonoidalAction m k)
+  => (Strong m p, Strong m q, Ob a, Ob b)
+  => (forall x y. p x y -> q (Act a x) (Act b y)) -> STSq p q a b
+pattern STSq f <- (unSTSq -> (f, Obj, Obj, Obj, Obj))
+  where
+    STSq f = Sq (StT (\(Writer g :.: p) -> lmap g (f p) :.: Writer (obj @b `act` tgt p) \\ p))
+
+{-# COMPLETE STSq #-}
+
 crossing
-  :: forall {k} {m} p a. (Strong m (p :: k +-> k), Ob (a :: m), MonoidalAction m k, M.SymMonoidal m) => STSq p p a a
-crossing =
-  Sq
-    ( StT \(Writer @_ @_ @w f :.: p) ->
-        lmap f ((act (obj @a) p)) :.: Writer id
-          \\ f
-          \\ p
-          \\ obj @w `act` tgt p
-    )
+  :: forall {k} {m} p a. (Strong m (p :: k +-> k), Ob (a :: m), M.SymMonoidal m) => STSq p p a a
+crossing = STSq (act (obj @a))
+
+pi0
+  :: forall {m} {k} p q. (Strong m (p :: k +-> k), Strong m q, M.SymMonoidal m) => STSq (p :*: q) p (M.Unit :: m) M.Unit
+pi0 = STSq \(p :*: _) -> act (obj @(M.Unit :: m)) p
+
+pi1
+  :: forall {m} {k} p q. (Strong m (p :: k +-> k), Strong m q, M.SymMonoidal m) => STSq (p :*: q) q (M.Unit :: m) M.Unit
+pi1 = STSq \(_ :*: q) -> act (obj @(M.Unit :: m)) q
+
+mult
+  :: forall {m} {k} (p :: k +-> k) q r (a :: m) b
+   . (Strong m p, Strong m q, Strong m r, M.SymMonoidal m, Ob a, Ob b)
+  => STSq p q a b -> STSq p r a b -> STSq p (q :*: r) a b
+STSq n `mult` STSq m = STSq (\p -> n p :*: m p)
+
+ip0
+  :: forall {m} {k} p q. (Strong m (p :: k +-> k), Strong m q, M.SymMonoidal m) => STSq p (p :+: q) (M.Unit :: m) M.Unit
+ip0 = STSq \p -> act (obj @(M.Unit :: m)) (InjL p)
+
+ip1
+  :: forall {m} {k} p q. (Strong m (p :: k +-> k), Strong m q, M.SymMonoidal m) => STSq q (p :+: q) (M.Unit :: m) M.Unit
+ip1 = STSq \p -> act (obj @(M.Unit :: m)) (InjR p)
+
+plus
+  :: forall {m} {k} (p :: k +-> k) q r (a :: m) b
+   . (Strong m p, Strong m q, Strong m r, M.SymMonoidal m, Ob a, Ob b)
+  => STSq p r a b -> STSq q r a b -> STSq (p :+: q) r a b
+STSq n `plus` STSq m = STSq (coproduct n m)
+
+sigma0
+  :: forall {m} {k} (a :: m) b
+   . (Ob a, Ob b, M.SymMonoidal m, MonoidalAction m k, HasCoproducts m) => STSq (Id :: k +-> k) Id a (a || b)
+sigma0 = withObCoprod @m @a @b $ STSq \(Id f) -> Id (act (lft @m @a @b) f)
+
+sigma1
+  :: forall {m} {k} (a :: m) b
+   . (Ob a, Ob b, M.SymMonoidal m, MonoidalAction m k, HasCoproducts m) => STSq (Id :: k +-> k) Id b (a || b)
+sigma1 = withObCoprod @m @a @b $ STSq \(Id f) -> Id (act (rgt @m @a @b) f)
+
+copair
+  :: forall {k} (p :: k +-> k) q (a :: k) b c
+   . (Strong k p, Strong k q, M.SymMonoidal k, Distributive k, SelfAction k, MonoidalProfunctor (Coprod q), Ob a, Ob b, Ob c)
+  => STSq p q a c -> STSq p q b c -> STSq p q (a || b) c
+STSq n `copair` STSq m =
+  withObCoprod @k @a @b $
+    STSq
+      ( \(p :: p x y) ->
+          dimap ((toSelfAct @a @x +++ toSelfAct @b @x) . distR @k @a @b @x) (withObAct @k @k @c @y codiag) ((n p `copar` m p))
+            \\ p
+      )

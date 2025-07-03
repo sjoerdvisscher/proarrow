@@ -10,6 +10,7 @@ import Proarrow.Core (Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Category.Monoidal.Action (Strong (..))
 
 type Fix :: k +-> k -> k +-> k
 data Fix p a b where
@@ -35,6 +36,9 @@ instance (Traversable p) => Traversable (Fix p) where
 
 instance (Cotraversable p) => Cotraversable (Fix p) where
   cotraverse (r :.: In pfp) = case cotraverse (r :.: pfp) of pfp' :.: r' -> In pfp' :.: r'
+
+instance (Strong m p) => Strong m (Fix p) where
+  act f (In p) = In (act f p)
 
 hylo :: (Profunctor p, Profunctor a, Profunctor b) => (p :.: b :~> b) -> (a :~> p :.: a) -> a :~> b
 hylo alg coalg = unProf go where go = Prof alg . map go . Prof coalg
