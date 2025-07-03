@@ -29,6 +29,7 @@ instance (Bicategory kk) => Bicategory (QKK kk) where
   type I = QK I
   type O a b = QK (UN QK a `O` UN QK b)
   withOb2 @(QK a) @(QK b) = withOb2 @kk @a @b
+  withOb0s @(QK a) = withOb0s @kk @a
   r \\\ Q2 f = r \\\ f
   Q2 f `o` Q2 g = Q2 (f `o` g)
   leftUnitor = Q2 leftUnitor

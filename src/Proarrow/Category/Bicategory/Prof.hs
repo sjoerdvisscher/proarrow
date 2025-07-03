@@ -15,7 +15,7 @@ import Proarrow.Category.Bicategory
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
 import Proarrow.Category.Bicategory.Limit qualified as Bi
-import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..))
+import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..), IsOb0)
 import Proarrow.Category.Colimit qualified as L
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..), vArr)
 import Proarrow.Category.Equipment.Limit
@@ -89,6 +89,7 @@ instance Bicategory PROFK where
   type I = PK Id
   type p `O` q = PK (UN PK p :.: UN PK q)
   withOb2 r = r
+  withOb0s r = r
   Prof m `o` Prof n = Prof \(p :.: q) -> m p :.: n q
   r \\\ Prof{} = r
   leftUnitor = Prof \(Id h :.: q) -> lmap h q
@@ -100,6 +101,7 @@ instance Bicategory PROFK where
 
 data ProfRep
 type instance IsOb ProfRep p = Representable (UN PK p)
+type instance IsOb0 ProfRep k = ()
 
 type FUNK = SUBCAT ProfRep PROFK
 type FUN p = SUB @ProfRep (PK p)
