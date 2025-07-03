@@ -74,6 +74,9 @@ class (Locally CategoryOf kk, CategoryOf s, forall i. (Ob0 kk i) => ObUnit kk i)
     => ((Ob (a `O` b)) => r)
     -> r
 
+  -- | Get proof that the source and target of a 1-cell are 0-cells.
+  withOb0s :: forall {j} {k} a r. (Ob (a :: kk j k)) => ((Ob0 kk j, Ob0 kk k) => r) -> r
+
   -- | Observe constraints from a 2-cell value.
   (\\\) :: ((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) => r) -> (ps :: kk i j) ~> qs -> r
 

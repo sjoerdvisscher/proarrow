@@ -192,6 +192,9 @@ instance (Bicategory kk) => Bicategory (Path kk) where
   type I = Nil
   type O ps qs = qs +++ ps
   withOb2 @ps @qs = withIsPath2 @qs @ps
+  withOb0s @ps r = case singPath @ps of
+    SNil -> r
+    SCons @p p ps -> withOb0s @kk @p (withIsPath ps r) \\\ p
   r \\\ Str ps qs _ = withIsPath ps $ withIsPath qs r
   Str cs ds qs `o` Str as bs ps = Str (append as cs) (append bs ds) (concatFold bs ds . (qs `o` ps) . splitFold as cs)
   leftUnitor = id

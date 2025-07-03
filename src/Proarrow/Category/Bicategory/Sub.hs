@@ -7,14 +7,15 @@ import Proarrow.Category.Bicategory (Bicategory (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type family IsOb (tag :: Type) (a :: k) :: Constraint
+type family IsOb0 (tag :: Type) (k :: s) :: Constraint
 
-type SUBCAT :: forall {k}. Type -> CAT k -> CAT k
+type SUBCAT :: forall {s}. Type -> CAT s -> CAT s
 type data SUBCAT tag kk i j = SUB (kk i j)
 type instance UN SUB (SUB p) = p
 
 type Sub :: CAT (SUBCAT ob kk i j)
 data Sub a b where
-  Sub :: (IsOb tag a, IsOb tag b) => a ~> b -> Sub (SUB a :: SUBCAT tag kk i j) (SUB b)
+  Sub :: (IsOb tag a, IsOb tag b, IsOb0 tag i, IsOb0 tag j) => a ~> b -> Sub (SUB a :: SUBCAT tag kk i j) (SUB b)
 
 instance (Profunctor ((~>) :: CAT (kk i j))) => Profunctor (Sub :: CAT (SUBCAT tag kk i j)) where
   dimap = dimapDefault
@@ -27,7 +28,7 @@ instance (Promonad ((~>) :: CAT (kk i j))) => Promonad (Sub :: CAT (SUBCAT tag k
 -- | The subcategory with objects with instances of the given constraint `IsOb tag`.
 instance (CategoryOf (kk i j)) => CategoryOf (SUBCAT tag kk i j) where
   type (~>) = Sub
-  type Ob (a :: SUBCAT tag kk i j) = (Is SUB a, Ob (UN SUB a), IsOb tag (UN SUB a))
+  type Ob (a :: SUBCAT tag kk i j) = (Is SUB a, Ob (UN SUB a), IsOb tag (UN SUB a), IsOb0 tag i, IsOb0 tag j)
 
 class (IsOb tag (a `O` b)) => IsObO tag kk i j k (a :: kk j k) (b :: kk i j)
 instance (IsOb tag (a `O` b)) => IsObO tag kk i j k (a :: kk j k) (b :: kk i j)
@@ -42,10 +43,11 @@ instance
   )
   => Bicategory (SUBCAT tag kk)
   where
-  type Ob0 (SUBCAT tag kk) k = Ob0 kk k
+  type Ob0 (SUBCAT tag kk) k = (Ob0 kk k, IsOb0 tag k)
   type I = SUB I
   type p `O` q = SUB (UN SUB p `O` UN SUB q)
   withOb2 @(SUB a) @(SUB b) r = withOb2 @kk @a @b r
+  withOb0s @(SUB a) r = withOb0s @kk @a r
   Sub m `o` Sub n = Sub $ m `o` n
   r \\\ Sub f = r \\\ f
   leftUnitor = Sub leftUnitor

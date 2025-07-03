@@ -38,6 +38,7 @@ instance (M.Monoidal k) => Bicategory (MonK k) where
   type I = MK M.Unit
   type MK a `O` MK b = MK (a M.** b)
   withOb2 @(MK a) @(MK b) = M.withOb2 @k @a @b
+  withOb0s r = r
   Mon2 f `o` Mon2 g = Mon2 (f `M.par` g)
   r \\\ Mon2 f = r \\ f
   leftUnitor = Mon2 M.leftUnitor

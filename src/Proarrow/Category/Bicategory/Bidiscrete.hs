@@ -28,6 +28,7 @@ instance CategoryOf c => Bicategory (DiscreteK (ob :: OB c)) where
   type I = DK
   type DK `O` DK = DK
   withOb2 r = r
+  withOb0s r = r
   Bidiscrete `o` Bidiscrete = Bidiscrete
   r \\\ Bidiscrete = r
   leftUnitor = Bidiscrete

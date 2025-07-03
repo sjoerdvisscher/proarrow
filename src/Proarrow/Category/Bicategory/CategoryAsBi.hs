@@ -20,13 +20,14 @@ instance (CategoryOf k, Ob i, Ob j) => Promonad (Category :: CAT (PLAINK k i j))
   Id f . Id g = Id (f >> g) -- f and g should be the same, but this isn't checked by the type system
 instance (CategoryOf k, Ob i, Ob j) => CategoryOf (PLAINK k i j) where
   type (~>) = Category
-  type Ob a = (a ~ PLAIN)
+  type Ob (a :: PLAINK k i j) = (a ~ PLAIN, Ob i, Ob j)
 
 instance (CategoryOf k) => Bicategory (PLAINK k) where
   type Ob0 (PLAINK k) a = Ob a
   type I = PLAIN
   type O PLAIN PLAIN = PLAIN
   withOb2 r = r
+  withOb0s r = r
   r \\\ Id{} = r
   Id f `o` Id g = Id (liftA2 (.) f g)
   leftUnitor = id
