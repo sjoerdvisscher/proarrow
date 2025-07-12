@@ -4,7 +4,7 @@ import Proarrow.Category.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (pattern Obj, type Obj)
-import Proarrow.Preorder.ThinCategory (Codiscrete, ThinProfunctor (..))
+import Proarrow.Preorder.ThinCategory (Thin, ThinProfunctor (..))
 
 type TerminalProfunctor :: j +-> k
 data TerminalProfunctor a b where
@@ -31,8 +31,6 @@ pattern TerminalProfunctor = TerminalProfunctor' Obj Obj
 
 {-# COMPLETE TerminalProfunctor #-}
 
-instance (CategoryOf j, CategoryOf k) => ThinProfunctor (TerminalProfunctor :: j +-> k) where
+instance (Thin j, Thin k) => ThinProfunctor (TerminalProfunctor :: j +-> k) where
   arr = TerminalProfunctor
   withArr TerminalProfunctor r = r
-
-instance (CategoryOf j, CategoryOf k) => Codiscrete (TerminalProfunctor :: j +-> k)

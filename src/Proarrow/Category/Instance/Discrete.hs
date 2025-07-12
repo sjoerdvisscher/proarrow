@@ -27,8 +27,8 @@ instance Thin.ThinProfunctor Discrete where
   arr = Refl
   withArr Refl r = r
 
-instance Thin.Discrete Discrete where
-  withEq Refl r = r
+withEq :: Discrete a b -> (a ~ b => r) -> r
+withEq = Thin.withEq
 
 instance DaggerProfunctor Discrete where
   dagger Refl = Refl
@@ -54,8 +54,8 @@ instance Thin.ThinProfunctor Codiscrete where
   arr = Arr
   withArr Arr r = r
 
-instance Thin.Codiscrete Codiscrete where
-  anyArr = Arr
+anyArr :: Codiscrete a b
+anyArr = Thin.anyArr
 
 instance DaggerProfunctor Codiscrete where
   dagger Arr = Arr

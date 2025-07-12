@@ -8,7 +8,7 @@ import Proarrow.Category.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal(..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Preorder.ThinCategory (Codiscrete, Discrete (..), ThinProfunctor (..), anyArr)
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type Fst :: (a, b) -> a
@@ -43,12 +43,6 @@ instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :**: q) where
   type HasArrow (p :**: q) '(a1, a2) '(b1, b2) = (HasArrow p a1 b1, HasArrow q a2 b2)
   arr = arr :**: arr
   withArr (f :**: g) r = withArr f (withArr g r)
-
-instance (Codiscrete p, Codiscrete q) => Codiscrete (p :**: q) where
-  anyArr = anyArr :**: anyArr
-
-instance (Discrete p, Discrete q) => Discrete (p :**: q) where
-  withEq (f :**: g) r = withEq f (withEq g r)
 
 instance (Representable p, Representable q) => Representable (p :**: q) where
   type (p :**: q) % '(a, b) = '(p % a, q % b)

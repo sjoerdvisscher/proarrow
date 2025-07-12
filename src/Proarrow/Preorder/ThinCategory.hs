@@ -7,7 +7,7 @@ import Proarrow.Core (CategoryOf(..), UN, Is, obj, Promonad (..), Profunctor (..
 import Proarrow.Preorder (CProfunctor (..), POS, cdimapDefault, CPromonad (..), PreorderOf(..), type (:-) (..), Dict (..))
 
 type ThinProfunctor :: forall {j} {k}. j +-> k -> Constraint
-class Profunctor p => ThinProfunctor (p :: j +-> k) where
+class (Profunctor p, Thin j, Thin k) => ThinProfunctor (p :: j +-> k) where
   type HasArrow (p :: j +-> k) (a :: k) (b :: j) :: Constraint
   type HasArrow p a b = ()
   arr :: (Ob a, Ob b, HasArrow p a b) => p a b
@@ -19,14 +19,16 @@ instance (ThinProfunctor ((~>) :: CAT k)) => Thin k
 class HasArrow p a b => HasArrow' p a b
 instance HasArrow p a b => HasArrow' p a b
 
-class (ThinProfunctor p) => Codiscrete p where
+type Codiscrete :: forall {j} {k}. j +-> k -> Constraint
+class (ThinProfunctor p, forall c d. (Ob c, Ob d) => HasArrow' p c d) => Codiscrete (p :: j +-> k) where
   anyArr :: (Ob a, Ob b) => p a b
-  default anyArr :: (Ob a, Ob b, forall c d. (Ob c, Ob d) => HasArrow' p c d) => p a b
+instance (ThinProfunctor p, forall c d. (Ob c, Ob d) => HasArrow' p c d) => Codiscrete (p :: j +-> k) where
   anyArr = arr
 
-class (ThinProfunctor p) => Discrete p where
+type Discrete :: forall {k}. k +-> k -> Constraint
+class (ThinProfunctor p, forall c d. HasArrow p c d => c ~ d) => Discrete (p :: k +-> k) where
   withEq :: p a b -> (a ~ b => r) -> r
-  default withEq :: (forall c d. HasArrow' p c d => c ~ d) => p a b -> (a ~ b => r) -> r
+instance (ThinProfunctor p, forall c d. HasArrow p c d => c ~ d) => Discrete (p :: k +-> k) where
   withEq = withArr
 
 newtype THIN k = T k
