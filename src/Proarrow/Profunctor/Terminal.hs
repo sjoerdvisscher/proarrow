@@ -1,8 +1,8 @@
 module Proarrow.Profunctor.Terminal (TerminalProfunctor (.., TerminalProfunctor)) where
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), type (+->), Promonad (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (pattern Obj, type Obj)
 import Proarrow.Preorder.ThinCategory (Codiscrete, ThinProfunctor (..))
 
@@ -22,10 +22,11 @@ instance (Monoidal j, Monoidal k) => MonoidalProfunctor (TerminalProfunctor :: j
   par0 = TerminalProfunctor' par0 par0
   TerminalProfunctor' a1 b1 `par` TerminalProfunctor' a2 b2 = TerminalProfunctor' (a1 `par` a2) (b1 `par` b2)
 
-instance (CategoryOf k) => DaggerProfunctor (TerminalProfunctor :: k +-> k) where
+instance (Dagger k) => DaggerProfunctor (TerminalProfunctor :: k +-> k) where
   dagger TerminalProfunctor = TerminalProfunctor
 
-pattern TerminalProfunctor :: forall {j} {k} a b. (CategoryOf j, CategoryOf k) => (Ob (a :: j), Ob (b :: k)) => TerminalProfunctor a b
+pattern TerminalProfunctor
+  :: forall {j} {k} a b. (CategoryOf j, CategoryOf k) => (Ob (a :: j), Ob (b :: k)) => TerminalProfunctor a b
 pattern TerminalProfunctor = TerminalProfunctor' Obj Obj
 
 {-# COMPLETE TerminalProfunctor #-}

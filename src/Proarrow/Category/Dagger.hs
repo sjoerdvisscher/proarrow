@@ -1,8 +1,8 @@
 module Proarrow.Category.Dagger where
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor, type (+->))
 
-class (Profunctor p) => DaggerProfunctor p where
+class (Dagger k, Profunctor p) => DaggerProfunctor (p :: k +-> k) where
   dagger :: p a b -> p b a
 
 class (DaggerProfunctor ((~>) :: CAT k)) => Dagger k
