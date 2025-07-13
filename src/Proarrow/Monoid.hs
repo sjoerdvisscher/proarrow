@@ -5,14 +5,14 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), par)
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CategoryOf (..), Promonad (..), arr, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasCoproducts, codiag)
 import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Object.Terminal (terminate)
-import Proarrow.Profunctor.Identity (Id(..))
+import Proarrow.Profunctor.Identity (Id (..))
 
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
@@ -62,3 +62,18 @@ counitAct = unitor @m . act (counit @a) (obj @n)
 
 comultAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> Act a (Act a n)
 comultAct = multiplicatorInv @m @c @a @a @n . act (comult @a) (obj @n)
+
+type data MONOIDK (m :: k) = M
+data Mon a b where
+  Mon :: Unit ~> m -> Mon (M :: MONOIDK m) M
+instance (Monoid m) => Profunctor (Mon :: CAT (MONOIDK m)) where
+  dimap = dimapDefault
+  r \\ Mon{} = r
+instance (Monoid m) => Promonad (Mon :: CAT (MONOIDK m)) where
+  id = Mon mempty
+  Mon f . Mon g = Mon (mappend . (f `par` g) . leftUnitorInv)
+
+-- | A monoid as a one object category.
+instance (Monoid m) => CategoryOf (MONOIDK m) where
+  type (~>) = Mon
+  type Ob a = a P.~ M

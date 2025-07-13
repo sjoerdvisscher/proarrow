@@ -3,64 +3,63 @@
 module Proarrow.Category.Enriched where
 
 import Data.Kind (Constraint, Type)
-import Prelude (($), type (~))
+import Prelude (Maybe (..))
 
-import Proarrow.Category.Bicategory (Bicategory (I, O), Monad (..))
-import Proarrow.Category.Bicategory.MonoidalAsBi (Mon2 (..), MonK (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Promonad (..), UN)
+import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
+import Proarrow.Category.Instance.PointedHask (POINTED (..), Pointed (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
+import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Core (Any, CAT, CategoryOf (..), Kind, Profunctor (..), type (+->))
+import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 import Proarrow.Object.BinaryProduct ()
--- import Proarrow.Preorder (PreorderOf(..), CPromonad(..), (\\), POS)
--- import Proarrow.Category.Instance.PreorderAsCategory (POCATK(..), PoAsCat (..))
+import Proarrow.Object.Exponential (Closed (..), lower, mkExponential)
+import Proarrow.Object.Initial (HasZeroObject (..))
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Wrapped (Wrapped (..))
 
-type family V (vk :: k -> Type) :: CAT k
-type family Arr (v :: CAT k) (a :: vk exta) (b :: vk extb) :: v exta extb
-type (a :: vk exta) %~> (b :: vk extb) = Arr (V vk) a b
+-- | Working with enriched categories and profunctors in Haskell is hard.
+-- Instead we encode them using the underlying regular category/profunctor,
+-- and show that the enriched structure can be recovered.
+type Enriched :: forall {j} {k}. Kind -> j +-> k -> Constraint
+class (Monoidal v, Profunctor p) => Enriched v (p :: j +-> k) where
+  type Hom v (p :: j +-> k) (a :: k) (b :: j) :: v
+  underlying :: p a b -> Unit ~> Hom v p a b
+  enriched :: (Ob a, Ob b) => Unit ~> Hom v p a b -> p a b
 
-class (Bicategory (V vk)) => ECategory (vk :: k -> Type) where
-  type EOb (a :: vk exta) :: Constraint
-  eid :: (EOb (a :: vk exta)) => I ~> a %~> a
-  ecomp
-    :: (EOb (a :: vk exta), EOb (b :: vk extb), EOb (c :: vk extc))
-    => ((b :: vk extb) %~> c) `O` (a %~> b) ~> a %~> c
+-- abusing SUBCAT Any as a cheap wrapper to prevent overlapping instances
+type Self k = SUBCAT (Any :: k -> Constraint)
 
-type CATK :: Kind -> () -> Kind
-data CATK k ext where
-  CK :: k -> CATK k i
-type instance UN CK (CK a) = a
+-- | Closed monoidal categories are enriched in themselves.
+instance (Closed k) => Enriched (Self k) (Id :: k +-> k) where
+  type Hom (Self k) (Id :: k +-> k) (a :: k) (b :: k) = SUB (a ~~> b)
+  underlying (Id f) = Sub (mkExponential f)
+  enriched (Sub f) = Id (lower f)
 
-type instance V (CATK k) = MonK Type
-type instance Arr (MonK Type) (CK a) (CK b) = MK (a ~> b)
+instance (Profunctor p) => Enriched Type (Wrapped p) where
+  type Hom Type (Wrapped p) a b = p a b
+  underlying (Wrapped p) () = p
+  enriched f = Wrapped (f ())
 
--- | A regular category as a Type-enriched category
-instance (CategoryOf k) => ECategory (CATK k) where
-  type EOb (a :: CATK k exta) = (Is CK a, Ob (UN CK a))
-  eid = Mon2 $ \() -> id
-  ecomp = Mon2 $ \(f, g) -> f . g
+instance (DaggerProfunctor p) => Enriched (Type, Type) (Wrapped p) where
+  type Hom (Type, Type) (Wrapped p) a b = '(p a b, p b a)
+  underlying (Wrapped p) = (\() -> p) :**: (\() -> dagger p)
+  enriched (f :**: _) = Wrapped (f ())
 
--- type POSK :: Kind -> () -> Kind
--- data POSK k ext where
---   PK :: k -> POSK k i
--- type instance UN PK (PK a) = a
+instance (ThinProfunctor p) => Enriched CONSTRAINT (Wrapped p) where
+  type Hom CONSTRAINT (Wrapped p) a b = CNSTRNT (HasArrow p a b)
+  underlying (Wrapped p) = Entails (withArr p)
+  enriched (Entails f) = Wrapped (f arr)
 
--- type instance V (POSK k) = MonK (POCATK Constraint)
--- type instance Arr (MonK (POCATK Constraint)) a b = MK (PC (UN PK a <= UN PK b))
+instance (HasZeroObject k) => Enriched POINTED (Id :: k +-> k) where
+  type Hom POINTED (Id :: k +-> k) (a :: k) (b :: k) = P (a ~> b)
+  underlying (Id f) = Pt \() -> Just f
+  enriched (Pt f) = Id (case f () of Just g -> g; Nothing -> zero)
 
--- -- | A poset as a Constraint-enriched category
--- instance (PreorderOf k) => ECategory (POSK k) where
---   type EOb (a :: POSK k exta) = (Is PK a, COb (UN PK a))
---   eid @_ @a = Mon2 $ PoAsCat \\ (cid @((<=) :: POS k) @(UN PK a))
---   ecomp @_ @a @_ @b @_ @c = Mon2 $ _ -- PoAsCat \\ (ccomp @((<=) :: POS k) @(UN PK a) @(UN PK b) @(UN PK c))
-
-
-type MONADK :: forall {k} {kk} {a}. kk (a :: k) a -> k -> Type
-data MONADK t ext where
-  MDK :: () -> MONADK (t :: kk a a) exta
-
-type instance V (MONADK (t :: kk a a)) = kk
-type instance Arr kk (m :: MONADK (t :: kk a a) a) (n :: MONADK t a) = t
-
--- | A monad in a bicategory as a one object enriched category
-instance (Monad t) => ECategory (MONADK (t :: kk a a)) where
-  type EOb (m :: MONADK (t :: kk a a) exta) = (Is MDK m, exta ~ a)
-  eid = eta
-  ecomp = mu
+-- | A monoid is a one object enriched category.
+instance (Monoid (m :: k)) => Enriched k (Mon :: CAT (MONOIDK m)) where
+  type Hom k (Mon :: MONOIDK m +-> MONOIDK m) M M = m
+  underlying (Mon f) = f
+  enriched f = Mon f
