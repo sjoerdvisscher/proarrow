@@ -4,13 +4,13 @@
 module Proarrow.Profunctor.List where
 
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Strictified qualified as Str
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
-import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Category.Monoidal.Action (Strong (..), MonoidalAction (..))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 type data LIST k = L [k]
 type instance UN L (L as) = as
@@ -22,6 +22,11 @@ data List p as bs where
 
 mkCons :: (Profunctor p) => p a b -> List p (L as) (L bs) -> List p (L (a ': as)) (L (b ': bs))
 mkCons f fs = Cons f fs \\ fs
+
+foldList :: (MonoidalProfunctor p) => List p as bs -> p (Str.Fold (UN L as)) (Str.Fold (UN L bs))
+foldList Nil = par0
+foldList (Cons p Nil) = p
+foldList (Cons p ps@Cons{}) = p `par` foldList ps
 
 instance Functor List where
   map (Prof n) = Prof \case
@@ -88,7 +93,7 @@ instance (DaggerProfunctor p) => DaggerProfunctor (List p) where
   dagger Nil = Nil
   dagger (Cons f fs) = Cons (dagger f) (dagger fs)
 
-instance MonoidalAction m k => MonoidalAction m (LIST k) where
+instance (MonoidalAction m k) => MonoidalAction m (LIST k) where
   type Act (a :: m) (L '[] :: LIST k) = L '[]
   type Act (a :: m) (L (b ': bs) :: LIST k) = L (Act a b ': UN L (Act a (L bs)))
   withObAct @a @(L xs) r = case Str.sList @xs of
