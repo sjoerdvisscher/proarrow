@@ -2,7 +2,10 @@
 
 module Proarrow.Squares where
 
+import Data.Functor.Const (Const (..))
+import Data.Kind (Type)
 import Proarrow.Category.Bicategory (Bicategory (..), Ob')
+import Proarrow.Category.Bicategory.Prof (FUN, PROFK (..), Prof (..))
 import Proarrow.Category.Bicategory.Strictified
   ( Fold
   , IsPath (..)
@@ -19,7 +22,11 @@ import Proarrow.Category.Bicategory.Strictified
   )
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
 import Proarrow.Category.Equipment qualified as E
-import Proarrow.Core (CategoryOf (..), Obj, Promonad ((.)), (\\))
+import Proarrow.Core (CategoryOf (..), Obj, Promonad ((.)), id, obj, (:~>), (\\))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable)
+import Proarrow.Profunctor.Star (Star (..))
+import Prelude (Either, either)
 
 infixl 6 |||
 infixl 5 ===
@@ -318,3 +325,29 @@ hSplitAll
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
   => Sq '(Fold ps ::: Nil, Nil :: Path vk k k) '(ps, Nil)
 hSplitAll = let ps = singPath @ps; fps = fold ps in Sq (Str (SCons fps SNil) ps fps) \\\ fps
+
+-- | Optics in proarrow equipments.
+--
+-- > J-------J
+-- > s>-\ /->a
+-- > |   @   |
+-- > t<-/ \-<b
+-- > K-------K
+type Optic hk (s :: vk x j) (t :: vk x k) (a :: vk z j) (b :: vk z k) =
+  Sq '(Conjoint hk t ::: Companion hk s ::: Nil, Nil :: Path vk j j) '(Conjoint hk b ::: Companion hk a ::: Nil, Nil)
+
+type ProfOptic s t a b = Optic PROFK (FUN s) (FUN t) (FUN a) (FUN b)
+mkProfOptic
+  :: (Representable s, Representable t, Representable a, Representable b)
+  => s :.: RepCostar t :~> a :.: RepCostar b -> ProfOptic s t a b
+mkProfOptic n = Sq (Str (SCons obj (SCons obj SNil)) (SCons obj (SCons obj SNil)) (Prof n))
+
+type HaskOptic s t a b = ProfOptic (Star (Const s :: Type -> Type)) (Star (Const t)) (Star a) (Star b)
+
+type Lens s t a b = HaskOptic s t ((,) a) ((,) b)
+mkLens :: (s -> (a, b -> t)) -> Lens s t a b
+mkLens f = mkProfOptic \(Star s :.: RepCostar t) -> Star (f . getConst . s) :.: RepCostar (\(b, bt) -> t (Const (bt b)))
+
+type Prism s t a b = HaskOptic s t (Either a) (Either b)
+mkPrism :: (b -> t) -> (s -> Either a t) -> Prism s t a b
+mkPrism to from = mkProfOptic \(Star s :.: RepCostar t) -> Star (from . getConst . s) :.: RepCostar (t . Const . either to id)
