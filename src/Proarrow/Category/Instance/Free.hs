@@ -1,16 +1,29 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE LinearTypes #-}
+{-# LANGUAGE RebindableSyntax #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Category.Instance.Free where
 
 import Data.Kind (Constraint, Type)
 import Data.Typeable (Typeable, eqT, (:~:) (..))
-import Prelude (Bool (..), Eq (..), Maybe (..), (&&))
+import GHC.Exts qualified as GHC
+import Prelude (Bool (..), Eq (..), Maybe (..), and, (&&), (<$>))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Discrete qualified as D
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
+import Proarrow.Core
+  ( CAT
+  , Category
+  , CategoryOf (..)
+  , Kind
+  , Profunctor (..)
+  , Promonad (..)
+  , UN
+  , dimapDefault
+  , type (+->)
+  )
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Exponential (Closed (..))
@@ -39,8 +52,14 @@ data Free a b where
      . ((All cs k) => c k, cs `Includes` c, HasStructure k cs p c, Ob a, Ob b)
     => Struct c a b %1 -> Free i a %1 -> Free i b
 
+emb :: (Ob a, Ob b, Typeable a, Typeable b, Ok cs p k) => p a b %1 -> Free (EMB a :: FREE cs p k) (EMB b)
+emb p = Emb p Id
+
 class (forall x y. Eq (p x y)) => Eq2 p
 instance (forall x y. Eq (p x y)) => Eq2 p
+
+class (forall x y. P.Show (p x y)) => Show2 p
+instance (forall x y. P.Show (p x y)) => Show2 p
 
 class (Typeable p, Typeable c, Typeable k, Typeable j) => Ok c (p :: CAT j) k
 instance (Typeable p, Typeable c, Typeable k, Typeable j) => Ok c (p :: CAT j) k
@@ -92,6 +111,71 @@ fold pn = go
 retract
   :: forall {k} cs f a b. (All cs k, Representable f) => (a :: FREE cs InitialProfunctor k) ~> b -> Lower f a ~> Lower f b
 retract = fold @cs @f (\case {})
+
+type Req (c :: Type -> Constraint) (lut :: [(GHC.Symbol, k)]) (a :: FREE cs p k) (b :: FREE cs p k)
+  =() :: Constraint --( (Lower (Lookup lut) a) (Lower (Lookup lut) b), Show (Lower (Lookup lut) a), Show (Lower (Lookup lut) b))
+infix 0 :=:
+type AssertEqs :: (Kind -> Constraint) -> Kind -> Type
+data AssertEqs c k  where
+  NoLaws :: AssertEqs c k
+  (:>>:) :: AssertEqs c k -> AssertEqs c k -> AssertEqs c k
+  (:=:) :: forall {k} {c} (a :: FREE '[c] (Var c) k) (b :: FREE '[c] (Var c) k). (forall r lut. ((Req Eq lut a b, Req P.Show lut a b) => Free a b -> Free a b -> r) -> r) -> AssertEqs c k
+
+(>>) :: AssertEqs c k -> AssertEqs c k -> AssertEqs c k
+(>>) = (:>>:)
+
+class Laws (c :: Kind -> Constraint) where
+  data Var c (a :: GHC.Symbol) (b :: GHC.Symbol)
+  laws :: (c k, Typeable k) => AssertEqs c k
+
+type family AssocLookup (lut :: [(GHC.Symbol, k)]) (a :: GHC.Symbol) :: k where
+  AssocLookup '[] a = GHC.Any
+  AssocLookup ('(s, k) ': lut) s = k
+  AssocLookup ('(s, k) ': lut) a = AssocLookup lut a
+
+type family AllOb (lut :: [(GHC.Symbol, k)]) :: Constraint where
+  AllOb '[] = ()
+  AllOb ('(s, k) ': lut) = (Ob k, AllOb lut)
+
+type Lookup :: [(GHC.Symbol, k)] -> GHC.Symbol +-> k
+data Lookup lut a b where
+  Lookup :: forall lut b a. (Ob b) => a ~> Lookup lut % b -> Lookup lut a b
+instance (CategoryOf k, AllOb lut) => Profunctor (Lookup lut :: GHC.Symbol +-> k) where
+  dimap = dimapRep
+  r \\ Lookup f = r \\ f
+instance (CategoryOf k, AllOb lut) => Representable (Lookup lut :: GHC.Symbol +-> k) where
+  type Lookup lut % a = AssocLookup lut a
+  index (Lookup f) = f
+  tabulate f = Lookup f
+  -- We can't prove Ob (AssocLookup lut a), since `a` might not occur in `lut`, so we can't implement repMap.
+  -- But Lookup is only for use with props, and props doesn't use repMap.
+  -- Also the `pn` argument to props proves that all the symbols used in Var are in lut.
+  repMap = P.error "repMap should not be used with Lookup"
+
+instance Profunctor ((:~:) :: CAT GHC.Symbol) where
+  dimap = dimapDefault
+  r \\ Refl = r
+instance Promonad ((:~:) :: CAT GHC.Symbol) where
+  id = Refl
+  Refl . Refl = Refl
+instance CategoryOf GHC.Symbol where
+  type (~>) = (:~:)
+  type Ob a = ()
+
+-- props
+--   :: forall {k} (lut :: [(GHC.Symbol, k)]) c (cat :: CAT k)
+--    . (c k, Laws c, Ok c (Var c) k, Eq2 cat, Category cat, AllOb lut)
+--   => (forall x y. Var c x y -> Lookup lut % x ~> Lookup lut % y) -> Bool
+-- props pn = and ((\(l :=: r) -> let f g = fold @'[c] (Lookup @lut . pn) g \\ g in f l == f r) <$> laws @c @k)
+
+instance Laws HasBinaryProducts where
+  data Var HasBinaryProducts a b where
+    F :: Var HasBinaryProducts "A" "B"
+    G :: Var HasBinaryProducts "A" "C"
+  laws = NoLaws
+    -- let f = emb F; g = emb G
+    -- fst . (f &&& g) :=: f
+    -- snd . (f &&& g) :=: g
 
 instance (Ok c p k) => CategoryOf (FREE c p k) where
   type (~>) = Free

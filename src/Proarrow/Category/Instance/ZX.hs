@@ -23,7 +23,8 @@ import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), app
 import Proarrow.Object.Exponential (Closed (..))
 
 newtype Bitstring (n :: Nat) = BS Int
-  deriving (Eq, Ord, Num)
+  deriving (Eq, Ord)
+  deriving newtype (Num)
 
 instance (KnownNat n) => Bounded (Bitstring n) where
   minBound = BS 0
