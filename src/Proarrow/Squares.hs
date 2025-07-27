@@ -2,8 +2,7 @@
 
 module Proarrow.Squares where
 
-import Data.Functor.Const (Const (..))
-import Data.Kind (Type)
+import Data.Functor.Compose (Compose (..))
 import Proarrow.Category.Bicategory (Bicategory (..), Ob')
 import Proarrow.Category.Bicategory.Prof (FUN, PROFK (..), Prof (..))
 import Proarrow.Category.Bicategory.Strictified
@@ -22,11 +21,13 @@ import Proarrow.Category.Bicategory.Strictified
   )
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
 import Proarrow.Category.Equipment qualified as E
+import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Core (CategoryOf (..), Obj, Promonad ((.)), id, obj, (:~>), (\\))
+import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable)
 import Proarrow.Profunctor.Star (Star (..))
-import Prelude (Either, either)
+import Prelude (Either (..), Traversable, either)
 
 infixl 6 |||
 infixl 5 ===
@@ -329,25 +330,70 @@ hSplitAll = let ps = singPath @ps; fps = fold ps in Sq (Str (SCons fps SNil) ps 
 -- | Optics in proarrow equipments.
 --
 -- > J-------J
+-- > s>--@-->a
+-- > |   @   |
+-- > t<--@--<b
+-- > K-------K
+type Optic hk (a :: vk z j) (b :: vk z k) (s :: vk x j) (t :: vk x k) =
+  Sq '(Conjoint hk t ::: Companion hk s ::: Nil, Nil :: Path vk j j) '(Conjoint hk b ::: Companion hk a ::: Nil, Nil)
+
+-- > J-------J
 -- > s>-\ /->a
+-- > |   @   |
+-- > |   v   |
+-- > X---m---Z
+
+-- > X---m---Z
+-- > |   v   |
 -- > |   @   |
 -- > t<-/ \-<b
 -- > K-------K
-type Optic hk (s :: vk x j) (t :: vk x k) (a :: vk z j) (b :: vk z k) =
-  Sq '(Conjoint hk t ::: Companion hk s ::: Nil, Nil :: Path vk j j) '(Conjoint hk b ::: Companion hk a ::: Nil, Nil)
 
-type ProfOptic s t a b = Optic PROFK (FUN s) (FUN t) (FUN a) (FUN b)
+
+-- > J-------J     J-------J
+-- > a>--@   |     s>--@   |
+-- > |   @---p ==> |   @---p
+-- > b<--@   |     t<--@   |
+-- > K-------K     K-------K
+
+-- > J-------J     J-------J
+-- > a>----->a     s>--@-->a
+-- > |       | ==> |   @   |
+-- > b<-----<b     t<--@--<b
+-- > K-------K     K-------K
+
+-- > J-------J     J-------J
+-- > |   @-->a     |   @-->a
+-- > |   @   |     |   @-->m
+-- > p---@   | ==> p---@   |
+-- > |   @   |     |   @--<m
+-- > |   @--<b     |   @--<b
+-- > K-------K     K-------K
+
+
+type ProfOptic a b s t = Optic PROFK (FUN a) (FUN b) (FUN s) (FUN t)
 mkProfOptic
   :: (Representable s, Representable t, Representable a, Representable b)
-  => s :.: RepCostar t :~> a :.: RepCostar b -> ProfOptic s t a b
+  => s :.: RepCostar t :~> a :.: RepCostar b -> ProfOptic a b s t
 mkProfOptic n = Sq (Str (SCons obj (SCons obj SNil)) (SCons obj (SCons obj SNil)) (Prof n))
 
-type HaskOptic s t a b = ProfOptic (Star (Const s :: Type -> Type)) (Star (Const t)) (Star a) (Star b)
+type HaskOptic a b s t = ProfOptic (Star a) (Star b) (Star s) (Star t)
+mkHaskOptic
+  :: (Functor a, Functor b, Functor s, Functor t)
+  => (forall x r. (Ob x) => (forall y. (Ob y) => (s x ~> a y) -> (b y ~> t x) -> r) -> r) -> HaskOptic a b s t
+mkHaskOptic k = mkProfOptic \(Star @y s :.: RepCostar t) -> k @y \get put -> Star (get . s) :.: RepCostar (t . put)
 
-type Lens s t a b = HaskOptic s t ((,) a) ((,) b)
-mkLens :: (s -> (a, b -> t)) -> Lens s t a b
-mkLens f = mkProfOptic \(Star s :.: RepCostar t) -> Star (f . getConst . s) :.: RepCostar (\(b, bt) -> t (Const (bt b)))
+type Lens s t a b = HaskOptic ((,) a) ((,) b) ((,) s) ((,) t)
+mkLens :: (s -> a) -> (s -> b -> t) -> Lens s t a b
+mkLens f g = mkHaskOptic (\k -> k (\(s, x) -> (f s, (g s, x))) (\(b, (bt, x)) -> (bt b, x)))
 
-type Prism s t a b = HaskOptic s t (Either a) (Either b)
-mkPrism :: (b -> t) -> (s -> Either a t) -> Prism s t a b
-mkPrism to from = mkProfOptic \(Star s :.: RepCostar t) -> Star (from . getConst . s) :.: RepCostar (t . Const . either to id)
+type Prism s t a b = HaskOptic (Either a) (Either b) (Either s) (Either t)
+mkPrism :: (s -> Either a t) -> (b -> t) -> Prism s t a b
+mkPrism f g = mkHaskOptic (\k -> k (either (either Left (Right . Left) . f) (Right . Right)) (either (Left . g) id))
+
+data FlipApp a f = FlipApp {unFlipApp :: f a}
+instance (Ob a) => Functor (FlipApp a) where
+  map (Nat f) (FlipApp x) = FlipApp (f x)
+type Traversal s t a b = HaskOptic (FlipApp a) (FlipApp b) (FlipApp s) (FlipApp t)
+mkTraversal :: (Traversable f, Functor f) => Traversal (f a) (f b) a b
+mkTraversal = mkHaskOptic (\k -> k (FlipApp . Compose . unFlipApp) (FlipApp . getCompose . unFlipApp))

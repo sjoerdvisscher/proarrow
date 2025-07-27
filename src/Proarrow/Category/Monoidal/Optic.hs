@@ -35,7 +35,7 @@ data Optic m a b s t where
 
 type IsOptic m c d = (MonoidalAction m c, MonoidalAction m d)
 
-instance (CategoryOf c, CategoryOf d) => Profunctor (Optic w a b :: c +-> d) where
+instance (CategoryOf c, CategoryOf d) => Profunctor (Optic m a b :: c +-> d) where
   dimap l r (Optic f w g) = Optic (f . l) w (r . g)
   r \\ Optic f _ g = r \\ f \\ g
 
@@ -56,22 +56,22 @@ type family OptR (p :: OPTIC w c d) where
   OptR (OPT c d) = d
 type OpticCat :: CAT (OPTIC w c d)
 data OpticCat ab st where
-  OpticCat :: Optic w a b s t -> OpticCat (OPT a b :: OPTIC w c d) (OPT s t)
+  OpticCat :: Optic m a b s t -> OpticCat (OPT a b :: OPTIC m c d) (OPT s t)
 
-instance (IsOptic w c d) => Profunctor (OpticCat :: CAT (OPTIC w c d)) where
+instance (IsOptic m c d) => Profunctor (OpticCat :: CAT (OPTIC m c d)) where
   dimap = dimapDefault
   r \\ OpticCat (Optic f _ g) = r \\ f \\ g
-instance (IsOptic w c d) => Promonad (OpticCat :: CAT (OPTIC w c d)) where
+instance (IsOptic m c d) => Promonad (OpticCat :: CAT (OPTIC m c d)) where
   id = OpticCat (prof2ex id)
   OpticCat l@Optic{} . OpticCat r@Optic{} = OpticCat $ prof2ex (ex2prof l . ex2prof r)
 -- | The category of optics.
-instance (IsOptic w c d) => CategoryOf (OPTIC w c d) where
+instance (IsOptic m c d) => CategoryOf (OPTIC m c d) where
   type (~>) = OpticCat
   type Ob a = (a ~ OPT (OptL a) (OptR a), Ob (OptL a), Ob (OptR a))
 
-type MixedOptic w a b s t = forall p. (Strong w p) => p a b -> p s t
+type MixedOptic m a b s t = forall p. (Strong m p) => p a b -> p s t
 
-ex2prof :: forall w a b s t. Optic w a b s t -> MixedOptic w a b s t
+ex2prof :: forall m a b s t. Optic m a b s t -> MixedOptic m a b s t
 ex2prof (Optic l w r) p = dimap l r (act w p)
 
 prof2ex
@@ -128,18 +128,6 @@ infixl 8 ?.
   :: s -> (Previewing (COPR a) (COPR b) (COPR a) (COPR b) -> Previewing (COPR a) (COPR b) (COPR s) (COPR t)) -> Maybe a
 (?.) s l = unPreview (l $ Previewing Just) s
 
-newtype Setting a b s t = Setting {unSet :: (a -> b) -> (s -> t)}
-instance Profunctor (Setting a b) where
-  dimap l r (Setting f) = Setting (\u -> r . f u . l)
-instance Strong Type (Setting a b) where
-  act w (Setting f) = Setting (\u -> bimap w (f u))
-instance Strong (COPROD Type) (Setting a b) where
-  act (Coprod (Id w)) (Setting f) = Setting (\u -> bimap w (f u))
-
-infixl 8 .~
-(.~) :: (Setting a b a b -> Setting a b s t) -> b -> s -> t
-(.~) l b = unSet (l $ Setting id) (const b)
-
 type KlCat m = KLEISLI (Star (Prelude m))
 data Updating a b s t where
   Update :: {unUpdate :: b -> s -> m t} -> Updating a (KL b :: KlCat m) s (KL t :: KlCat m)
@@ -170,6 +158,10 @@ instance Strong (Type -> Type) (Replacing a b) where
 infixl 8 %~
 (%~) :: (Replacing a b a b -> Replacing a b s t) -> (a -> b) -> (s -> t)
 (%~) l = unReplace (l $ Replace id)
+
+infixl 8 .~
+(.~) :: (Replacing a b a b -> Replacing a b s t) -> b -> s -> t
+l .~ b = l %~ const b
 
 newtype Classifying m a b s t = Classifying
   {unClassify :: (Monad m) => m s -> b -> t}
