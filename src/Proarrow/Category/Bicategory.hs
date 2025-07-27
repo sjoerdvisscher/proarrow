@@ -40,7 +40,6 @@ infixl 1 \\\
 
 -- | A bicategory is locally "something" if each hom-category is "something".
 class (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
-
 instance (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
 
 class (Ob0 kk j) => Ob0' kk j

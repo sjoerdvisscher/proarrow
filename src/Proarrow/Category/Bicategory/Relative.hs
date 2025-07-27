@@ -22,7 +22,7 @@ class (Bicategory kk, Ob0 kk a, Ob0 kk b, Ob0 kk e, Ob j, Ob t) => Opalgebra (j 
   opact :: car `O` j `O` t ~> car
 
 type Adjunction :: forall {s} {kk :: CAT s} {a} {c} {e}. kk e a -> kk a c -> kk c e -> Constraint
-class (Bicategory kk, Ob0 kk a, Ob0 kk c, Ob0 kk e) => Adjunction (j :: kk e a) (l :: kk a c) (r :: kk c e) where
+class (Bicategory kk, Ob0 kk a, Ob0 kk c, Ob0 kk e, Ob j, Ob l, Ob r) => Adjunction (j :: kk e a) (l :: kk a c) (r :: kk c e) where
   eta :: I ~> j `O` r `O` l
   epsilon :: l `O` j `O` r ~> I
 
