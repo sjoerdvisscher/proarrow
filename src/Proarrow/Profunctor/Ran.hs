@@ -41,7 +41,7 @@ instance (Profunctor j) => Functor (Ran (OP j)) where
 instance Functor Ran where
   map (Op (Prof n)) = Nat (Prof \(Ran k) -> Ran (k . n))
 
-instance (p ~ j, Profunctor p) => Promonad (Ran (OP p) p) where
+instance (p ~ j, Profunctor p) => Promonad (Ran (OP j) p) where
   id = Ran id
   Ran l . Ran r = Ran (r . l)
 

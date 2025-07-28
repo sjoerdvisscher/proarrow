@@ -13,6 +13,7 @@ import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k
@@ -126,3 +127,8 @@ instance (Powered k) => Copowered (OPPOSITE k) where
   withObCopower @(OP a) @n = withObPower @k @a @n
   copower f = Op (power (unOp . f))
   uncopower (Op f) n = Op (unpower f n)
+
+instance (ThinProfunctor p) => ThinProfunctor (Op p) where
+  type HasArrow (Op p) (OP a) (OP b) = HasArrow p b a
+  arr = Op arr
+  withArr (Op f) r = withArr f r

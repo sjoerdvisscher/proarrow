@@ -11,12 +11,13 @@ import Proarrow.Core
   , Promonad (..)
   , dimapDefault
   , lmap
+  , obj
   , rmap
-  , type (+->), obj
+  , type (+->)
   )
 import Proarrow.Object.Initial (HasInitialObject (..), initiate')
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
-import Proarrow.Preorder.ThinCategory (Codiscrete (..), Thin, ThinProfunctor (..))
+import Proarrow.Preorder.ThinCategory (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind
@@ -54,13 +55,13 @@ instance (Profunctor p) => CategoryOf (COLLAGE p) where
   type (~>) = Collage
   type Ob a = IsLR a
 
-instance (HasInitialObject j, CategoryOf k, Codiscrete p) => HasInitialObject (COLLAGE (p :: k +-> j)) where
+instance (HasInitialObject j, CategoryOf k, CodiscreteProfunctor p) => HasInitialObject (COLLAGE (p :: k +-> j)) where
   type InitialObject = L InitialObject
   initiate @a = case obj @a of
     InL a -> InL (initiate' a)
     InR b -> L2R anyArr \\ b
 
-instance (HasTerminalObject k, CategoryOf j, Codiscrete p) => HasTerminalObject (COLLAGE (p :: k +-> j)) where
+instance (HasTerminalObject k, CategoryOf j, CodiscreteProfunctor p) => HasTerminalObject (COLLAGE (p :: k +-> j)) where
   type TerminalObject = R TerminalObject
   terminate @a = case obj @a of
     InL a -> L2R anyArr \\ a

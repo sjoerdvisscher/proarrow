@@ -3,12 +3,12 @@ module Proarrow.Profunctor.Composition where
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->), tgt)
+import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, tgt, type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Object.BinaryCoproduct (Coprod (..), copar, copar0)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
 import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
-import Proarrow.Category.Monoidal.Action (Strong (..))
-import Proarrow.Object.BinaryCoproduct (Coprod (..), copar0, copar)
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
@@ -45,12 +45,17 @@ instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :
   par0 = par0 :.: par0
   (p :.: q) `par` (r :.: s) = (p `par` r) :.: (q `par` s)
 
-instance (Profunctor f, Profunctor g, MonoidalProfunctor (Coprod f), MonoidalProfunctor (Coprod g)) => MonoidalProfunctor (Coprod (f :.: g)) where
+instance
+  (Profunctor f, Profunctor g, MonoidalProfunctor (Coprod f), MonoidalProfunctor (Coprod g))
+  => MonoidalProfunctor (Coprod (f :.: g))
+  where
   par0 = Coprod (copar0 :.: copar0)
   Coprod (f :.: g) `par` Coprod (h :.: i) = Coprod ((f `copar` h) :.: (g `copar` i))
 
 instance (Strong m p, Strong m q) => Strong m (p :.: q) where
   act f (p :.: q) = act f p :.: act (tgt f) q
+
+-- No instance for ThinProfunctor (p :.: q) because you can't do existentials in constraints.
 
 -- | Horizontal composition
 o

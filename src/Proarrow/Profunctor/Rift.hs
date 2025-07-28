@@ -43,7 +43,7 @@ instance (Profunctor j) => Adjunction (Star ((:.:) j)) (Star (Rift (OP j))) wher
   unit = unitFromRepUnit (Prof \p -> p // Rift (:.: p))
   counit = counitFromRepCounit (Prof \(j :.: r) -> runRift j r)
 
-instance (p ~ j, Profunctor p) => Promonad (Rift (OP p) p) where
+instance (p ~ j, Profunctor p) => Promonad (Rift (OP j) p) where
   id = Rift id
   Rift l . Rift r = Rift (l . r)
 

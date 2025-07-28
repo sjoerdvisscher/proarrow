@@ -6,15 +6,12 @@ import Data.Kind (Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Product ((:**:) (..))
-import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, obj, (//), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
-import Proarrow.Object.BinaryProduct (Cartesian, PROD (..), Prod (..), diag)
-import Proarrow.Profunctor.Exponential ((:~>:) (..))
-import Proarrow.Profunctor.Product ((:*:) (..))
+import Proarrow.Object.BinaryProduct (Cartesian, diag)
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 infixr 2 ~~>
@@ -60,13 +57,6 @@ instance Closed () where
   curry U.Unit = U.Unit
   apply = U.Unit
   U.Unit ^^^ U.Unit = U.Unit
-
-instance (CategoryOf j, CategoryOf k) => Closed (PROD (j +-> k)) where
-  type p ~~> q = PR (UN PR p :~>: UN PR q)
-  withObExp r = r
-  curry (Prod (Prof n)) = Prod (Prof \p -> p // Exp \ca bd q -> n (dimap ca bd p :*: q))
-  apply = Prod (Prof \(Exp f :*: q) -> f id id q \\ q)
-  Prod (Prof m) ^^^ Prod (Prof n) = Prod (Prof \(Exp f) -> Exp \ca bd p -> m (f ca bd (n p)))
 
 instance (Closed j, Closed k) => Closed (j, k) where
   type '(a1, a2) ~~> '(b1, b2) = '(a1 ~~> b1, a2 ~~> b2)

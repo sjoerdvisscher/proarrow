@@ -16,9 +16,10 @@ import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 import Proarrow.Object.BinaryProduct ()
 import Proarrow.Object.Exponential (Closed (..), lower, mkExponential)
 import Proarrow.Object.Initial (HasZeroObject (..))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), CodiscreteProfunctor (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Wrapped (Wrapped (..))
+import qualified Proarrow.Category.Instance.Unit as U
 
 -- | Working with enriched categories and profunctors in Haskell is hard.
 -- Instead we encode them using the underlying regular category/profunctor,
@@ -52,6 +53,11 @@ instance (ThinProfunctor p) => Enriched CONSTRAINT (Wrapped p) where
   type Hom CONSTRAINT (Wrapped p) a b = CNSTRNT (HasArrow p a b)
   underlying (Wrapped p) = Entails (withArr p)
   enriched (Entails f) = Wrapped (f arr)
+
+instance (CodiscreteProfunctor p) => Enriched () (Wrapped p) where
+  type Hom () (Wrapped p) a b = '()
+  underlying _ = U.Unit
+  enriched U.Unit = Wrapped anyArr
 
 instance (HasZeroObject k) => Enriched POINTED (Id :: k +-> k) where
   type Hom POINTED (Id :: k +-> k) (a :: k) (b :: k) = P (a ~> b)

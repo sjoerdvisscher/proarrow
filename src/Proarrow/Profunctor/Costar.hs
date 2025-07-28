@@ -15,6 +15,7 @@ import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Category.Monoidal.Distributive (Traversable (..), Cotraversable (..))
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Discrete, Thin, withEq)
 
 type Costar :: (j -> k) -> k +-> j
 data Costar f a b where
@@ -44,6 +45,11 @@ instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor
 
 instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
   cotraverse (p :.: Costar f) = p // Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p'
+
+instance (Functor f, Discrete j, Thin k) => ThinProfunctor (Costar f :: j +-> k) where
+  type HasArrow (Costar f) a b = f a P.~ b
+  arr = Costar id
+  withArr (Costar f) = withEq f
 
 costrength :: forall {m} f a b. (Functor f, Strong m (Costar f), Ob (a :: m), Ob b) => f (Act a b) ~> Act a (f b)
 costrength = unCostar (act (obj @a) (Costar (obj @(f b))))
