@@ -4,7 +4,7 @@ module Proarrow.Category.Bicategory.Kan where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Bicategory (Bicategory (..), (==), (||))
+import Proarrow.Category.Bicategory (Bicategory (..), (==), (||), Monad (..), rightUnitorInvWith, Comonad (..), rightUnitorWith)
 import Proarrow.Category.Equipment
   ( Equipment (..)
   , HasCompanions (..)
@@ -30,14 +30,23 @@ rebaseLan ij = lanUniv @j ((obj @(Lan i f) `o` ij) . lan @i @f)
 dimapLan :: forall i j f g. (LeftKanExtension j f, LeftKanExtension i g) => (i ~> j) -> (f ~> g) -> (Lan j f ~> Lan i g)
 dimapLan ij fg = lanUniv @j ((obj @(Lan i g) `o` ij) . lan @i . fg) \\ ij
 
-lanComonadEpsilon :: forall {kk} {c} {d} (p :: kk c d). (LeftKanExtension p p) => Lan p p ~> I
+type Density p = Lan p p
+
+lanComonadEpsilon :: forall {kk} {c} {d} (p :: kk c d). (LeftKanExtension p p) => Density p ~> I
 lanComonadEpsilon = lanUniv @p @p leftUnitorInv
 
-lanComonadDelta :: forall {kk} {c} {d} (p :: kk c d). (LeftKanExtension p p) => Lan p p ~> Lan p p `O` Lan p p
+lanComonadDelta :: forall {kk} {c} {d} (p :: kk c d). (LeftKanExtension p p) => Density p ~> Density p `O` Density p
 lanComonadDelta =
   let lpp = obj @(Lan p p)
   in lanUniv @p @p (associatorInv @_ @(Lan p p) @(Lan p p) @p . (lpp `o` lan @p @p) . lan @p @p)
       \\ (lpp `o` lpp)
+
+-- | Density is the "mother of all comonads"
+coinj :: forall p. (Comonad p, LeftKanExtension p p) => p ~> Density p
+coinj = rightUnitorWith (epsilon @p) id . lan @p @p
+
+corun :: forall p. (Comonad p, LeftKanExtension p p) => Density p ~> p
+corun = lanUniv @p @p delta
 
 idLan :: forall f. (LeftKanExtension I f, Ob f) => f ~> Lan I f
 idLan = rightUnitor . lan @I @f
@@ -78,13 +87,22 @@ dimapRan
   :: forall i j f g. (RightKanExtension j f, RightKanExtension i g) => (i ~> j) -> (f ~> g) -> (Ran j f ~> Ran i g)
 dimapRan ij fg = ranUniv @i (fg . ran @j . (obj @(Ran j f) `o` ij)) \\ ij
 
-ranMonadEta :: forall {kk} {c} {d} (p :: kk c d). (RightKanExtension p p) => I ~> Ran p p
+type Codensity p = Ran p p
+
+ranMonadEta :: forall {kk} {c} {d} (p :: kk c d). (RightKanExtension p p) => I ~> Codensity p
 ranMonadEta = ranUniv @p @p leftUnitor
 
-ranMonadMu :: forall {kk} {c} {d} (p :: kk c d). (RightKanExtension p p) => Ran p p `O` Ran p p ~> Ran p p
+ranMonadMu :: forall {kk} {c} {d} (p :: kk c d). (RightKanExtension p p) => Codensity p `O` Codensity p ~> Codensity p
 ranMonadMu =
   let rpp = obj @(Ran p p)
   in ranUniv @p @p (ran @p @p . (rpp `o` ran @p @p) . associator @_ @(Ran p p) @(Ran p p) @p) \\ (rpp `o` rpp)
+
+-- | Codensity is the "mother of all monads"
+inj :: forall p. (Monad p, RightKanExtension p p) => p ~> Codensity p
+inj = ranUniv @p @p mu
+
+run :: forall p. (Monad p, RightKanExtension p p) => Codensity p ~> p
+run = ran @p @p . rightUnitorInvWith (eta @p) id
 
 composeRan
   :: forall i j f

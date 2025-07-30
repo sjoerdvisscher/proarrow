@@ -135,12 +135,12 @@ rightUnitorInvWith c ab = ((ab `o` c) . rightUnitorInv) \\\ ab
 f == g = g . f
 
 type Monad :: forall {kk} {a}. kk a a -> Constraint
-class (Bicategory kk, Ob0 kk a) => Monad (t :: kk a a) where
+class (Bicategory kk, Ob0 kk a, Ob t) => Monad (t :: kk a a) where
   eta :: I ~> t
   mu :: t `O` t ~> t
 
 type Comonad :: forall {kk} {a}. kk a a -> Constraint
-class (Bicategory kk, Ob0 kk a) => Comonad (t :: kk a a) where
+class (Bicategory kk, Ob0 kk a, Ob t) => Comonad (t :: kk a a) where
   epsilon :: t ~> I
   delta :: t ~> t `O` t
 
