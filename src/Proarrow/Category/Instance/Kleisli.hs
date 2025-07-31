@@ -29,15 +29,13 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
-import Proarrow.Functor (Functor)
-import Proarrow.Object (pattern Obj, type Obj)
+import Proarrow.Object (pattern Obj, type Obj, tgt)
 import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, copar)
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Costar (Costar (..))
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Representable (RepCostar(..), Representable(..), trivialRep)
 
 newtype KLEISLI (p :: CAT k) = KL k
 type instance UN KL (KL k) = k -- test
@@ -136,15 +134,15 @@ instance (Promonad p) => Adjunction (KleisliFree p) (KleisliForget p) where
   unit = KleisliForget id :.: KleisliFree id
   counit (KleisliFree p :.: KleisliForget q) = Kleisli (q . p)
 
--- | Categories lifted by a functor: @f a ~> f b@.
-type LIFTEDF (f :: j -> k) = KLEISLI (Costar f :.: Star f)
+-- | Categories lifted by a representable profunctor: @f % a ~> f % b@ are kleisli categories on promonads induced by @f@.
+type LIFTEDF (f :: j +-> k) = KLEISLI (RepCostar f :.: f)
 
-unlift :: (Functor f) => Kleisli (KL a :: LIFTEDF f) (KL b) -> (f a ~> f b, Obj a, Obj b)
-unlift (Kleisli (Costar f :.: Star g)) = (g . f, Obj, Obj)
+unlift :: (Representable f) => Kleisli (KL a :: LIFTEDF f) (KL b) -> (f % a ~> f % b, Obj a, Obj b)
+unlift (Kleisli (RepCostar f :.: g)) = (index g . f, Obj, tgt g)
 
-pattern LiftF :: (Functor f) => (Ob a, Ob b) => (f a ~> f b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
+pattern LiftF :: (Representable f) => (Ob a, Ob b) => (f % a ~> f % b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
 pattern LiftF f <- (unlift -> (f, Obj, Obj))
   where
-    LiftF f = Kleisli (Costar f :.: Star id)
+    LiftF f = Kleisli (RepCostar f :.: trivialRep)
 
 {-# COMPLETE LiftF #-}
