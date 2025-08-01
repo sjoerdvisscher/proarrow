@@ -51,7 +51,7 @@ instance (DaggerProfunctor p) => Enriched (Type, Type) (Wrapped p) where
 
 instance (ThinProfunctor p) => Enriched CONSTRAINT (Wrapped p) where
   type Hom CONSTRAINT (Wrapped p) a b = CNSTRNT (HasArrow p a b)
-  underlying (Wrapped p) = Entails (withArr p)
+  underlying (Wrapped p)= Entails (\r -> withArr p r)
   enriched (Entails f) = Wrapped (f arr)
 
 instance (CodiscreteProfunctor p) => Enriched () (Wrapped p) where

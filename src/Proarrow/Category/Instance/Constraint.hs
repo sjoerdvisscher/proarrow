@@ -88,7 +88,7 @@ instance Closed CONSTRAINT where
   type CNSTRNT a ~~> CNSTRNT b = CNSTRNT (a :=> b)
   withObExp r = r
   Entails f ^^^ Entails g = Entails \r -> f (g r)
-  curry (Entails f) = Entails f
+  curry (Entails f) = Entails \r -> f r
   apply = Entails \r -> r
 
 -- I am solving the constraint ‘Eq a’ in a way that might turn out to loop at runtime.

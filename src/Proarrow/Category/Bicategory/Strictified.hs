@@ -59,7 +59,7 @@ instance (Bicategory kk, Ob0 kk k) => IsPath (Nil :: Path kk k k) where
   withIsPath2 r = r
 instance (Ob0 kk i, Ob (p :: kk i j), IsPath (ps :: Path kk j k)) => IsPath (p ::: ps) where
   singPath = let p = obj @p in SCons p singPath
-  withIsPath2 @qs = withIsPath2 @ps @qs
+  withIsPath2 @qs r = withIsPath2 @ps @qs r
 
 withIsPath :: (Bicategory kk) => SPath (ps :: Path kk j k) -> ((IsPath ps, Ob0 kk j, Ob0 kk k) => r) -> r
 withIsPath SNil r = r
@@ -237,7 +237,7 @@ instance (HasCompanions hk vk) => HasCompanions (Path hk) (Path vk) where
   mapCompanion (Str fs gs n) =
     Str (mapCompanionSPath @hk fs) (mapCompanionSPath @hk gs) $ companionFold gs . mapCompanion @hk @vk n . foldCompanion fs
 
-  withObCompanion @p = withIsPath (mapCompanionSPath @hk (singPath @p))
+  withObCompanion @p r = withIsPath (mapCompanionSPath @hk (singPath @p)) r
 
   compToId = Str SNil SNil id
   compFromId = Str SNil SNil id
@@ -285,7 +285,7 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
         . ((cfs `o` compN) `o` cgs)
         . leftUnitorInvWith (comConUnit fs) cgs
 
-  withObConjoint @p = withIsPath (mapConjointSPath @hk (singPath @p))
+  withObConjoint @p r = withIsPath (mapConjointSPath @hk (singPath @p)) r
 
   comConUnit fs' = case asSPath fs' of
     SNil -> id

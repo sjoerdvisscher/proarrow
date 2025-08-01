@@ -37,7 +37,7 @@ instance (CategoryOf k) => CategoryOf (MonK k i j) where
 instance (M.Monoidal k) => Bicategory (MonK k) where
   type I = MK M.Unit
   type MK a `O` MK b = MK (a M.** b)
-  withOb2 @(MK a) @(MK b) = M.withOb2 @k @a @b
+  withOb2 @(MK a) @(MK b) r = M.withOb2 @k @a @b r
   withOb0s r = r
   Mon2 f `o` Mon2 g = Mon2 (f `M.par` g)
   r \\\ Mon2 f = r \\ f
@@ -88,7 +88,7 @@ instance (Closed k, Ob j) => HasLimits (MonK k) (MK (j :: k)) '() where
 
 instance (M.Monoidal k, Ob j) => HasColimits (MonK k) (MK (j :: k)) '() where
   type Colimit (MK j) (MK d) = MK (d M.** j)
-  withObColimit @(MK d) = M.withOb2 @k @d @j
+  withObColimit @(MK d) r = M.withOb2 @k @d @j r
   colimit @(MK d) = Mon2 (obj @d `M.par` obj @j)
   colimitUniv (Mon2 f) = Mon2 f
 

@@ -48,14 +48,14 @@ instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
 
 instance (HasBinaryCoproducts k) => HasBinaryProducts (OPPOSITE k) where
   type a && b = OP (UN OP a || UN OP b)
-  withObProd @(OP a) @(OP b) = withObCoprod @k @a @b
+  withObProd @(OP a) @(OP b) r = withObCoprod @k @a @b r
   fst @(OP a) @(OP b) = Op (lft @_ @a @b)
   snd @(OP a) @(OP b) = Op (rgt @_ @a @b)
   Op a &&& Op b = Op (a ||| b)
 
 instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
   type a || b = OP (UN OP a && UN OP b)
-  withObCoprod @(OP a) @(OP b) = withObProd @k @a @b
+  withObCoprod @(OP a) @(OP b) r = withObProd @k @a @b r
   lft @(OP a) @(OP b) = Op (fst @_ @a @b)
   rgt @(OP a) @(OP b) = Op (snd @_ @a @b)
   Op a ||| Op b = Op (a &&& b)
@@ -68,7 +68,7 @@ instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where
 instance (Monoidal k) => Monoidal (OPPOSITE k) where
   type Unit = OP Unit
   type a ** b = OP (UN OP a ** UN OP b)
-  withOb2 @(OP a) @(OP b) = withOb2 @k @a @b
+  withOb2 @(OP a) @(OP b) r = withOb2 @k @a @b r
   leftUnitor = Op leftUnitorInv
   leftUnitorInv = Op leftUnitor
   rightUnitor = Op rightUnitorInv
@@ -110,7 +110,7 @@ instance (Strong k p) => Strong (OPPOSITE k) (Op p) where
   act (Op w) (Op p) = Op (act w p)
 instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   type Act (OP a) (OP b) = OP (Act a b)
-  withObAct @(OP a) @(OP b) = withObAct @m @k @a @b
+  withObAct @(OP a) @(OP b) r = withObAct @m @k @a @b r
   unitor = Op (unitorInv @m)
   unitorInv = Op (unitor @m)
   multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @m @k @a @b @x)
@@ -118,13 +118,13 @@ instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
 
 instance (Copowered k) => Powered (OPPOSITE k) where
   type OP a ^ n = OP (n *. a)
-  withObPower @(OP a) @n = withObCopower @k @a @n
+  withObPower @(OP a) @n r = withObCopower @k @a @n r
   power f = Op (copower (unOp . f))
   unpower (Op f) n = Op (uncopower f n)
 
 instance (Powered k) => Copowered (OPPOSITE k) where
   type n *. OP a = OP (a ^ n)
-  withObCopower @(OP a) @n = withObPower @k @a @n
+  withObCopower @(OP a) @n r = withObPower @k @a @n r
   copower f = Op (power (unOp . f))
   uncopower (Op f) n = Op (unpower f n)
 
