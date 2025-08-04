@@ -5,7 +5,7 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), par)
+import Proarrow.Category.Monoidal (Monoidal (..), par, MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasCoproducts, codiag)
@@ -13,6 +13,10 @@ import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), Prod (.
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Object.Terminal (terminate)
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Object.Dual (StarAutonomous (..), CompactClosed (..))
+
 
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
@@ -77,3 +81,44 @@ instance (Monoid m) => Promonad (Mon :: CAT (MONOIDK m)) where
 instance (Monoid m) => CategoryOf (MONOIDK m) where
   type (~>) = Mon
   type Ob a = a P.~ M
+
+class (Monoid m) => CommutativeMonoid (m :: k)
+
+instance (CommutativeMonoid m) => MonoidalProfunctor (Mon :: CAT (MONOIDK m)) where
+  par0 = Mon mempty
+  Mon f `par` Mon g = Mon (mappend . (f `par` g) . leftUnitorInv)
+instance (CommutativeMonoid m) => Monoidal (MONOIDK m) where
+  type Unit = M
+  type M ** M = M
+  withOb2 r = r
+  leftUnitor = Mon mempty
+  leftUnitorInv = Mon mempty
+  rightUnitor = Mon mempty
+  rightUnitorInv = Mon mempty
+  associator = Mon mempty
+  associatorInv = Mon mempty
+instance (CommutativeMonoid m) => SymMonoidal (MONOIDK m) where
+  swap = Mon mempty
+
+instance (CommutativeMonoid m) => StarAutonomous (MONOIDK m) where
+  type Dual (M :: MONOIDK m) = M
+  dual f@Mon{} = f
+  dualInv f = f
+  linDist _ = id
+  linDistInv _ = id
+instance (CommutativeMonoid m) => CompactClosed (MONOIDK m) where
+  distribDual = Mon mempty
+  dualUnit = Mon mempty
+instance (CommutativeMonoid m) => Closed (MONOIDK m) where
+  type a ~~> b = M
+  withObExp r = r
+  curry (Mon m) = Mon m
+  apply = Mon mempty
+
+instance (Comonoid c) => Monoid (OP c) where
+  mempty = Op counit
+  mappend = Op comult
+
+instance (Monoid c) => Comonoid (OP c) where
+  counit = Op mempty
+  comult = Op mappend
