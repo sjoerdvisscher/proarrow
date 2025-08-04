@@ -12,7 +12,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
@@ -126,3 +126,13 @@ instance Monoid (P [a]) where
 instance Comonoid (P x) where
   counit = Pt (Just . counit)
   comult = Pt (Just . comult)
+
+-- | Categories with a zero object can be seen as categories enriched in Pointed.
+underlyingPt :: HasZeroObject k => (a :: k) ~> b -> Unit ~> P (a ~> b)
+underlyingPt f = Pt \() -> Just f
+
+enrichedPt :: (Ob (a :: k), Ob b, HasZeroObject k) => Unit ~> P (a ~> b) -> a ~> b
+enrichedPt (Pt f) = case f () of Just g -> g; Nothing -> zero
+
+compPt :: (Ob (a :: k), Ob b, Ob c, HasZeroObject k) => P (b ~> c) ** P (a ~> b) ~> P (a ~> c)
+compPt = Pt \(bc, ab) -> Just (bc . ab)
