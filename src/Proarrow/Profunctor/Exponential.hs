@@ -3,11 +3,11 @@ module Proarrow.Profunctor.Exponential where
 
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), UN, type (+->))
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Discrete, withEq)
-import Proarrow.Category.Instance.Constraint ((:=>))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Category.Instance.Constraint ((:=>) (..), reifyExp, type (:-) (..))
 
 data (p :~>: q) a b where
   Exp :: (Ob a, Ob b) => (forall c d. c ~> a -> b ~> d -> p c d -> q c d) -> (p :~>: q) a b
@@ -25,5 +25,5 @@ instance (CategoryOf j, CategoryOf k) => Closed (PROD (j +-> k)) where
 
 instance (ThinProfunctor p, ThinProfunctor q, Discrete j, Discrete k) => ThinProfunctor (p :~>: q :: j +-> k) where
   type HasArrow (p :~>: q) a b = (HasArrow p a b :=> HasArrow q a b)
-  arr = Exp \ca bd p -> withEq ca (withEq bd (withArr p arr))
-  withArr = withArr -- (Exp f) r = withArr (f id id arr) r -- Impossible?
+  arr @a @b = Exp \ca bd p -> withEq ca (withEq bd (withArr p (unEntails (entails @(HasArrow p a b) @(HasArrow q a b)) arr)))
+  withArr @a @b (Exp f) = reifyExp (Entails @(HasArrow p a b) @(HasArrow q a b) (withArr (f id id arr)))

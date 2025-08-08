@@ -1,10 +1,5 @@
-{-# HLINT ignore "Use id" #-}
-{-# HLINT ignore "Avoid lambda" #-}
-{-# HLINT ignore "Use const" #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
-module Proarrow.Category.Instance.Constraint where
+module Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..), (:=>) (..), reifyExp, eqIsSuperOrd, maybeLiftsSemigroup) where
 
 import Data.Kind (Constraint)
 import Prelude qualified as P
@@ -17,12 +12,13 @@ import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Unsafe.Coerce (unsafeCoerce)
 
 newtype CONSTRAINT = CNSTRNT Constraint
 type instance UN CNSTRNT (CNSTRNT a) = a
 
 data (:-) a b where
-  Entails :: {unEntails :: forall r. (((a) => b) => r) -> r} -> CNSTRNT a :- CNSTRNT b
+  Entails :: {unEntails :: forall r. (a) => ((b) => r) -> r} -> CNSTRNT a :- CNSTRNT b
 
 -- | The category of type class constraints. An arrow from constraint a to constraint b
 -- | means that a implies b, i.e. if a holds then b holds.
@@ -32,16 +28,16 @@ instance CategoryOf CONSTRAINT where
 
 instance Promonad (:-) where
   id = Entails \r -> r
-  Entails f . Entails g = Entails \r -> f (g r)
+  Entails f . Entails g = Entails \r -> g (f r)
 
 instance Profunctor (:-) where
   dimap = dimapDefault
   r \\ Entails{} = r
 
 instance ThinProfunctor (:-) where
-  type HasArrow (:-) (CNSTRNT a) (CNSTRNT b) = a :=> b
-  arr = Entails \r -> r
-  withArr (Entails f) r = f r
+  type HasArrow (:-) a b = UN CNSTRNT a :=> UN CNSTRNT b
+  arr @(CNSTRNT a) @(CNSTRNT b) = Entails \r -> unEntails (entails @a @b) r
+  withArr p@Entails{} = reifyExp p
 
 instance HasTerminalObject CONSTRAINT where
   type TerminalObject = CNSTRNT ()
@@ -81,20 +77,26 @@ instance Comonoid (CNSTRNT a) where
   counit = Entails \r -> r
   comult = Entails \r -> r
 
-class ((b) => c) => b :=> c
-instance ((b) => c) => b :=> c
+class b :=> c where
+  entails :: CNSTRNT b :- CNSTRNT c
+instance (b => c) => (b :=> c) where
+  entails = Entails \r -> r
+
+-- magic from reflection library
+newtype Magic b c r = Magic ((b :=> c) => r)
+
+reifyExp :: forall b c r. CNSTRNT b :- CNSTRNT c -> ((b :=> c) => r) -> r
+reifyExp bc k = unsafeCoerce (Magic k :: Magic b c r) bc
+{-# INLINE reifyExp #-}
 
 instance Closed CONSTRAINT where
-  type CNSTRNT a ~~> CNSTRNT b = CNSTRNT (a :=> b)
+  type a ~~> b = CNSTRNT (UN CNSTRNT a :=> UN CNSTRNT b)
   withObExp r = r
-  Entails f ^^^ Entails g = Entails \r -> f (g r)
-  curry (Entails f) = Entails \r -> f r
-  apply = Entails \r -> r
+  curry @_ @(CNSTRNT b) (Entails @_ @c f) = Entails \r -> reifyExp (Entails @b @c f) r
+  apply @(CNSTRNT a) @(CNSTRNT b) = Entails \r -> unEntails (entails @a @b) r
 
--- I am solving the constraint ‘Eq a’ in a way that might turn out to loop at runtime.
--- See § Undecidable instances and loopy superclasses.
--- eqIsSuperOrd :: CNSTRNT (P.Ord a) :- CNSTRNT (P.Eq a)
--- eqIsSuperOrd = Entails \r -> r
+eqIsSuperOrd :: CNSTRNT (P.Ord a) :- CNSTRNT (P.Eq a)
+eqIsSuperOrd = Entails \r -> r
 
 maybeLiftsSemigroup :: CNSTRNT (P.Semigroup a) :- CNSTRNT (Monoid (P.Maybe a))
 maybeLiftsSemigroup = Entails \r -> r
