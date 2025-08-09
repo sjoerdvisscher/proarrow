@@ -16,9 +16,9 @@ import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, obj)
 import Proarrow.Monoid qualified as M
 import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
+import Proarrow.Object.Dual (dualObj)
 import Proarrow.Object.Dual qualified as M
 import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Dual (dualObj)
 
 type MonK :: Kind -> CAT ()
 newtype MonK k i j = MK k
@@ -86,11 +86,18 @@ instance (Closed k, Ob j) => HasLimits (MonK k) (MK (j :: k)) '() where
   limit @(MK d) = Mon2 (apply @_ @j @d)
   limitUniv @_ @(MK p) (Mon2 pj2d) = Mon2 (curry @_ @p @j pj2d)
 
-instance (M.Monoidal k, Ob j) => HasColimits (MonK k) (MK (j :: k)) '() where
-  type Colimit (MK j) (MK d) = MK (d M.** j)
-  withObColimit @(MK d) r = M.withOb2 @k @d @j r
-  colimit @(MK d) = Mon2 (obj @d `M.par` obj @j)
-  colimitUniv (Mon2 f) = Mon2 f
+instance (M.CompactClosed k, Ob j) => HasColimits (MonK k) (MK (j :: k)) '() where
+  type Colimit (MK j) (MK d) = MK (j M.** d)
+  withObColimit @(MK d) r = M.withOb2 @k @j @d r
+  colimit @(MK d) =
+    Mon2
+      ( M.leftUnitorWith (M.dualityCounit @j . M.swap @k @j @(M.Dual j))
+          . M.associatorInv @k @j @(M.Dual j) @(M.Dual d)
+          . (obj @j `M.par` M.distribDual @k @j @d)
+      )
+      \\ dualObj @d
+      \\ dualObj @j
+  colimitUniv @(MK d) @(MK p) (Mon2 f) = Mon2 (M.linDist @k @p @j @d (f . M.swap @k @p @j))
 
 instance (Closed k, Ob (p ~~> q), Ob p, Ob q) => RightKanExtension (MK (p :: k)) (MK (q :: k)) where
   type Ran (MK p) (MK q) = MK (p ~~> q)

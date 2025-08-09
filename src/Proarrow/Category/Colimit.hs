@@ -5,173 +5,163 @@ module Proarrow.Category.Colimit where
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Adjunction (Adjunction (..), unit')
-import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
+import Proarrow.Adjunction (Adjunction (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), type (:++:) (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
-import Proarrow.Core
-  ( CAT
-  , CategoryOf (..)
-  , Kind
-  , Profunctor (..)
-  , Promonad (..)
-  , lmap
-  , rmap
-  , src
-  , tgt
-  , (//)
-  , (:~>)
-  , type (+->)
-  )
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor)
 import Proarrow.Object (Obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepObj, dimapCorep, withCorepOb)
+import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable
-  ( CorepStar (..)
-  , RepCostar (..)
-  , Representable (..)
-  , dimapRep
-  , repObj
-  , trivialRep
-  , withRepOb
-  )
-import Proarrow.Profunctor.Star (Star)
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
+import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 
 type Unweighted = TerminalProfunctor
 
-class (Representable (Colimit j d)) => IsRepresentableColimit j d
-instance (Representable (Colimit j d)) => IsRepresentableColimit j d
+class (Corepresentable (Colimit j d)) => IsCorepresentableColimit j d
+instance (Corepresentable (Colimit j d)) => IsCorepresentableColimit j d
 
 -- | profunctor-weighted colimits
 type HasColimits :: forall {i} {a}. a +-> i -> Kind -> Constraint
-class (Profunctor j, forall (d :: i +-> k). (Representable d) => IsRepresentableColimit j d) => HasColimits (j :: a +-> i) k where
-  type Colimit (j :: a +-> i) (d :: i +-> k) :: a +-> k
-  colimit :: (Representable (d :: i +-> k)) => d :.: j :~> Colimit j d
-
-  -- Note: can't simplify this to Colimit j d :~> d :.: j because j is not necessarily representable.
-  colimitUniv :: (Representable (d :: i +-> k), Representable p) => (d :.: j :~> p) -> Colimit j d :~> p
-  colimitUniv @d @p n c =
-    c // case h c of
-      (ic, p) ->
-        tabulate @p
-          ( unRepCostar
-              (colimitUniv' @j @k @d (\(j :.: RepCostar f) -> j // RepCostar (f . index (n (tabulate (repMap @d (src j)) :.: j)))) p)
-              . ic
-          )
-    where
-      h :: (Ob b) => Colimit j d a1 b -> (a1 ~> Colimit j d % b, RepCostar p b (p % b))
-      h c' = (index c', RepCostar (repMap @p (tgt c')))
-
-  -- | The same as `colimitUniv`, but with `Corepresentable`s, which is easier to work with.
-  colimitUniv'
-    :: (Representable (d :: i +-> k), Corepresentable p) => (j :.: p :~> RepCostar d) -> p b c -> RepCostar (Colimit j d) b c
-  colimitUniv' @d @p @b n p =
-    p //
-      RepCostar
-        ( coindex p
-            . unCorepStar
-              ( colimitUniv @j @k @d @(CorepStar p)
-                  (\(d :.: j) -> j // CorepStar (unRepCostar (n (j :.: cotabulate @p (corepMap @p (tgt j)))) . index d))
-                  (trivialRep @(Colimit j d) @b)
-              )
-        )
+class
+  (Profunctor j, forall (d :: k +-> i). (Corepresentable d) => IsCorepresentableColimit j d) =>
+  HasColimits (j :: a +-> i) k
+  where
+  type Colimit (j :: a +-> i) (d :: k +-> i) :: k +-> a
+  colimit :: (Corepresentable (d :: k +-> i)) => j :.: Colimit j d :~> d
+  colimitUniv :: (Corepresentable (d :: k +-> i), Profunctor p) => (j :.: p :~> d) -> p :~> Colimit j d
 
 leftAdjointPreservesColimits
-  :: forall {k} {k'} {i} {a} (f :: k +-> k') g (d :: i +-> k) (j :: a +-> i)
-   . (Adjunction f g, Representable d, Representable f, Representable g, HasColimits j k, HasColimits j k')
-  => f :.: Colimit j d :~> Colimit j (f :.: d)
-leftAdjointPreservesColimits (f :.: colim) =
-  colim // case colimitUniv @j @k @d @(g :.: Colimit j (f :.: d))
-    (\(d :.: j) -> case unit' @f @g (src d) of g :.: f' -> g :.: colimit @j @k' @(f :.: d) ((f' :.: d) :.: j))
-    colim of
-    g :.: colim' -> lmap (counit (f :.: g)) colim'
+  :: forall {k} {k'} {i} {a} (f :: k' +-> k) g (d :: k +-> i) (j :: a +-> i)
+   . (Adjunction f g, Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
+  => Colimit j (d :.: f) :~> Colimit j d :.: f
+leftAdjointPreservesColimits colim =
+  colim // case unit @f @g of
+    g :.: f ->
+      colimitUniv @j @k @d
+        (\(j :.: (colim' :.: g')) -> case colimit @j @k' @(d :.: f) (j :.: colim') of d :.: f' -> rmap (counit (f' :.: g')) d)
+        (colim :.: g)
+        :.: f
 
 leftAdjointPreservesColimitsInv
-  :: forall {k} {k'} {i} {a} (f :: k +-> k') (d :: i +-> k) (j :: a +-> i)
-   . (Representable d, Representable f, HasColimits j k, HasColimits j k')
-  => Colimit j (f :.: d) :~> f :.: Colimit j d
-leftAdjointPreservesColimitsInv = colimitUniv @j @k' @(f :.: d) (\((f :.: d) :.: j) -> f :.: colimit (d :.: j))
+  :: forall {k} {k'} {i} {a} (f :: k' +-> k) (d :: k +-> i) (j :: a +-> i)
+   . (Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
+  => Colimit j d :.: f :~> Colimit j (d :.: f)
+leftAdjointPreservesColimitsInv = colimitUniv @j @k' @(d :.: f) (\(j :.: (colim :.: f)) -> colimit (j :.: colim) :.: f)
 
-type InitialLimit :: VOID +-> k -> () +-> k
+type InitialLimit :: k +-> VOID -> k +-> ()
 data InitialLimit d a b where
-  InitialLimit :: forall {k} d a. a ~> InitialLimit d % '() -> InitialLimit (d :: VOID +-> k) a '()
-instance (HasInitialObject k) => Profunctor (InitialLimit (d :: VOID +-> k)) where
-  dimap = dimapRep
-  r \\ InitialLimit f = r \\ f
-instance (HasInitialObject k) => Representable (InitialLimit (d :: VOID +-> k)) where
-  type InitialLimit d % '() = InitialObject
-  index (InitialLimit f) = f
-  tabulate = InitialLimit
-  repMap Unit = id
+  InitialLimit :: forall d a. InitialObject ~> a -> InitialLimit d '() a
 
+instance (HasInitialObject k) => Profunctor (InitialLimit (d :: k +-> VOID)) where
+  dimap = dimapCorep
+  r \\ InitialLimit f = r \\ f
+instance (HasInitialObject k) => Corepresentable (InitialLimit (d :: k +-> VOID)) where
+  type InitialLimit d %% '() = InitialObject
+  coindex (InitialLimit f) = f
+  cotabulate = InitialLimit
+  corepMap Unit = id
 instance (HasInitialObject k) => HasColimits (Unweighted :: () +-> VOID) k where
   type Colimit Unweighted d = InitialLimit d
   colimit = \case {}
-  colimitUniv' _ p = p // RepCostar initiate
+  colimitUniv _ p = p // InitialLimit initiate
 
-type CoproductColimit :: COPRODUCT () () +-> k -> () +-> k
+type CoproductColimit :: k +-> COPRODUCT () () -> k +-> ()
 data CoproductColimit d a b where
-  CoproductColimit :: forall d a. a ~> CoproductColimit d % '() -> CoproductColimit d a '()
-instance (HasBinaryCoproducts k, Representable d) => Profunctor (CoproductColimit d :: () +-> k) where
-  dimap = dimapRep
-  r \\ CoproductColimit f = r \\ f
-instance (HasBinaryCoproducts k, Representable d) => Representable (CoproductColimit d :: () +-> k) where
-  type CoproductColimit d % '() = (d % L '()) || (d % R '())
-  index (CoproductColimit f) = f
-  tabulate = CoproductColimit
-  repMap Unit = (+++) @_ @(d % L '()) @(d % R '()) (repMap @d (InjL Unit)) (repMap @d (InjR Unit))
+  CoproductColimit :: forall d b. ((d %% L '()) || (d %% R '())) ~> b -> CoproductColimit d '() b
+
+instance (CategoryOf k) => Profunctor (CoproductColimit d :: k +-> ()) where
+  dimap Unit r (CoproductColimit f) = CoproductColimit (r . f) \\ r
+  r \\ (CoproductColimit f) = r \\ f
+
+instance (HasBinaryCoproducts k, Corepresentable d) => Corepresentable (CoproductColimit d :: k +-> ()) where
+  type CoproductColimit d %% '() = (d %% L '()) || (d %% R '())
+  coindex (CoproductColimit f) = f
+  cotabulate = CoproductColimit
+  corepMap Unit = (+++) @_ @(d %% L '()) @(d %% R '()) (corepMap @d (InjL Unit)) (corepMap @d (InjR Unit))
 
 instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: () +-> COPRODUCT () ()) k where
   type Colimit Unweighted d = CoproductColimit d
-  colimit @d (d :.: TerminalProfunctor' b Unit) = CoproductColimit (cochoose @k @d b . index d)
-  colimitUniv' n p =
-    p // case (n (TerminalProfunctor' (InjL Unit) Unit :.: p), n (TerminalProfunctor' (InjR Unit) Unit :.: p)) of
-      (RepCostar l, RepCostar r) -> RepCostar (l ||| r)
+  colimit (TerminalProfunctor' o _ :.: CoproductColimit @d f) = o // cotabulate $ f . cochoose @_ @d o
+  colimitUniv n p =
+    p //
+      let l = n (TerminalProfunctor' (InjL Unit) Unit :.: p)
+          r = n (TerminalProfunctor' (InjR Unit) Unit :.: p)
+      in CoproductColimit $ coindex l ||| coindex r
 
 cochoose
-  :: forall k (d :: COPRODUCT () () +-> k) b
-   . (HasBinaryCoproducts k, Representable d)
+  :: forall k (d :: k +-> COPRODUCT () ()) b
+   . (HasBinaryCoproducts k, Corepresentable d)
   => Obj b
-  -> (d % b) ~> ((d % L '()) || (d % R '()))
-cochoose b = withRepOb @d @(L '()) $ withRepOb @d @(R '()) $ case b of
-  (InjL Unit) -> lft @_ @(d % L '()) @(d % R '())
-  (InjR Unit) -> rgt @_ @(d % L '()) @(d % R '())
+  -> (d %% b) ~> ((d %% L '()) || (d %% R '()))
+cochoose b = withCorepOb @d @(L '()) $ withCorepOb @d @(R '()) $ case b of
+  (InjL Unit) -> lft @_ @(d %% L '()) @(d %% R '())
+  (InjR Unit) -> rgt @_ @(d %% L '()) @(d %% R '())
 
-type CopowerLimit :: Type -> () +-> k -> () +-> k
+type CopowerLimit :: Type -> k +-> () -> k +-> ()
 data CopowerLimit n d a b where
-  CopowerLimit :: forall n d a. (Ob n) => (a ~> CopowerLimit n d % '()) -> CopowerLimit n d a '()
-instance (Representable d, Copowered k) => Profunctor (CopowerLimit n d :: () +-> k) where
-  dimap = dimapRep
+  CopowerLimit :: forall n d b. (Ob n) => (CopowerLimit n d %% '() ~> b) -> CopowerLimit n d '() b
+instance (Corepresentable d, Copowered Type k) => Profunctor (CopowerLimit n d :: k +-> ()) where
+  dimap = dimapCorep
   r \\ CopowerLimit f = r \\ f
-instance (Representable d, Copowered k) => Representable (CopowerLimit n d :: () +-> k) where
-  type CopowerLimit n d % '() = n *. (d % '())
-  index (CopowerLimit f) = f
-  tabulate = CopowerLimit
-  repMap Unit = withObCopower @k @(d % '()) @n id \\ repObj @d @'()
-
-instance (Copowered k) => HasColimits (HaskValue n :: () +-> ()) k where
+instance (Corepresentable d, Copowered Type k) => Corepresentable (CopowerLimit n d :: k +-> ()) where
+  type CopowerLimit n d %% '() = n *. (d %% '())
+  coindex (CopowerLimit f) = f
+  cotabulate = CopowerLimit
+  corepMap Unit = withObCopower @Type @k @(d %% '()) @n id \\ corepObj @d @'()
+instance (Copowered Type k) => HasColimits (HaskValue n :: () +-> ()) k where
   type Colimit (HaskValue n) d = CopowerLimit n d
-  colimit @d (d :.: HaskValue n) = withObCopower @k @(d % '()) @n (CopowerLimit (uncopower id n . index d)) \\ repObj @d @'()
-  colimitUniv' @d m p = RepCostar (copower (\n -> case m (HaskValue n :.: p) of RepCostar f -> f)) \\ p \\ repObj @d @'()
+  colimit @d (HaskValue n :.: CopowerLimit f) = cotabulate (uncopower f n) \\ corepObj @d @'()
+  colimitUniv @d m p = CopowerLimit (copower \n -> coindex (m (HaskValue n :.: p))) \\ p \\ corepObj @d @'()
+
+data Coend d where
+  Coend :: a ~> b -> d %% '(OP b, a) -> Coend d
+
+type CoendLimit :: Type +-> (OPPOSITE k, k) -> Type +-> ()
+data CoendLimit d a b where
+  CoendLimit :: forall d b. (Coend d -> b) -> CoendLimit d '() b
+
+instance (Corepresentable d) => Profunctor (CoendLimit (d :: Type +-> (OPPOSITE k, k))) where
+  dimap = dimapCorep
+  r \\ CoendLimit f = r \\ f
+instance (Corepresentable d) => Corepresentable (CoendLimit (d :: Type +-> (OPPOSITE k, k))) where
+  type CoendLimit d %% '() = Coend d
+  coindex (CoendLimit f) = f
+  cotabulate = CoendLimit
+  corepMap Unit = id
+
+type Hom :: () +-> (OPPOSITE k, k)
+data Hom a b where
+  Hom :: a ~> b -> Hom '(OP b, a) '()
+instance (CategoryOf k) => Profunctor (Hom :: () +-> (OPPOSITE k, k)) where
+  dimap (Op l :**: r) Unit (Hom f) = Hom (l . f . r) \\ l \\ r
+  r \\ Hom f = r \\ f
+
+instance (CategoryOf k) => HasColimits (Hom :: () +-> (OPPOSITE k, k)) Type where
+  type Colimit Hom d = CoendLimit d
+  colimit (Hom f :.: CoendLimit g) = f // cotabulate (\d -> g (Coend f d))
+  colimitUniv n p = p // CoendLimit \(Coend f d) -> coindex (n (Hom f :.: p)) d
 
 instance (CategoryOf j) => HasColimits (Id :: CAT j) k where
   type Colimit Id d = d
-  colimit (d :.: Id f) = rmap f d
-  colimitUniv' n p = n (Id id :.: p) \\ p
+  colimit (Id f :.: d) = lmap f d
+  colimitUniv n p = n (Id id :.: p) \\ p
 
 instance (Corepresentable j2, HasColimits j1 k, HasColimits j2 k) => HasColimits (j1 :.: j2) k where
   type Colimit (j1 :.: j2) d = Colimit j2 (Colimit j1 d)
-  colimit (d :.: (j1 :.: j2)) = colimit @j2 @k (colimit @j1 @k (d :.: j1) :.: j2)
-  colimitUniv' @d n = colimitUniv' @j2 @k @(Colimit j1 d) (colimitUniv' @j1 @k @d (\(j1 :.: (j2 :.: p1)) -> n ((j1 :.: j2) :.: p1)))
+  colimit @d ((j1 :.: j2) :.: c) = colimit @j1 @k @d (j1 :.: colimit @j2 @k @(Colimit j1 d) (j2 :.: c))
+  colimitUniv @d n = colimitUniv @j2 @k @(Colimit j1 d) (colimitUniv @j1 @k @d (\(j1 :.: (j2 :.: p')) -> n ((j1 :.: j2) :.: p')))
 
 instance (Functor j) => HasColimits (Star j) k where
-  type Colimit (Star j) d = d :.: Star j
-  colimit = id
-  colimitUniv n = n
+  type Colimit (Star j) d = Costar j :.: d
+  colimit (Star f :.: (Costar g :.: d)) = lmap (g . f) d
+  colimitUniv n p = p // Costar id :.: n (Star id :.: p)
