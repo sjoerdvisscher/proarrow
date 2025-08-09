@@ -21,7 +21,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepOb, repObj)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj, withRepOb)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 
@@ -33,7 +33,7 @@ type HasLimits :: forall {a} {i}. i +-> a -> Kind -> Constraint
 class (Profunctor j, forall (d :: i +-> k). (Representable d) => IsRepresentableLimit j d) => HasLimits (j :: i +-> a) k where
   type Limit (j :: i +-> a) (d :: i +-> k) :: a +-> k
   limit :: (Representable (d :: i +-> k)) => Limit j d :.: j :~> d
-  limitUniv :: (Representable (d :: i +-> k), Representable p) => p :.: j :~> d -> p :~> Limit j d
+  limitUniv :: (Representable (d :: i +-> k), Profunctor p) => p :.: j :~> d -> p :~> Limit j d
 
 rightAdjointPreservesLimits
   :: forall {k} {k'} {i} {a} (f :: k' +-> k) (g :: k +-> k') (d :: i +-> k) (j :: i +-> a)
@@ -104,18 +104,18 @@ choose b = withRepOb @d @(L '()) $ withRepOb @d @(R '()) $ case b of
   (InjL Unit) -> fst @_ @(d % L '()) @(d % R '())
   (InjR Unit) -> snd @_ @(d % L '()) @(d % R '())
 
-type PowerLimit :: Type -> () +-> k -> () +-> k
+type PowerLimit :: v -> () +-> k -> () +-> k
 data PowerLimit n d a b where
-  PowerLimit :: forall n d a. (Ob n) => (a ~> PowerLimit n d % '()) -> PowerLimit n d a '()
-instance (Representable d, Powered k) => Profunctor (PowerLimit n d :: () +-> k) where
+  PowerLimit :: forall n d a. (a ~> PowerLimit n d % '()) -> PowerLimit n d a '()
+instance (Representable d, Powered v k, Ob n) => Profunctor (PowerLimit (n :: v) d :: () +-> k) where
   dimap = dimapRep
   r \\ PowerLimit f = r \\ f
-instance (Representable d, Powered k) => Representable (PowerLimit n d :: () +-> k) where
+instance (Representable d, Powered v k, Ob n) => Representable (PowerLimit (n :: v) d :: () +-> k) where
   type PowerLimit n d % '() = (d % '()) ^ n
   index (PowerLimit f) = f
   tabulate = PowerLimit
-  repMap Unit = withObPower @k @(d % '()) @n id \\ repObj @d @'()
-instance (Powered k) => HasLimits (HaskValue n :: () +-> ()) k where
+  repMap Unit = withObPower @v @k @(d % '()) @n id \\ repObj @d @'()
+instance (Powered Type k) => HasLimits (HaskValue n :: () +-> ()) k where
   type Limit (HaskValue n) d = PowerLimit n d
   limit @d (PowerLimit f :.: HaskValue n) = tabulate (unpower f n) \\ repObj @d @'()
   limitUniv @d m p = PowerLimit (power \n -> index (m (p :.: HaskValue n))) \\ p \\ repObj @d @'()
@@ -155,7 +155,7 @@ instance (CategoryOf j) => HasLimits (Id :: CAT j) k where
 instance (Representable j1, HasLimits j1 k, HasLimits j2 k) => HasLimits (j1 :.: j2) k where
   type Limit (j1 :.: j2) d = Limit j1 (Limit j2 d)
   limit @d (l :.: (j1 :.: j2)) = limit @j2 @k @d (limit @j1 @k @(Limit j2 d) (l :.: j1) :.: j2)
-  limitUniv @d n p = limitUniv @j1 @k @(Limit j2 d) (limitUniv @j2 @k @d (\((p' :.: j1) :.: j2) -> n (p' :.: (j1 :.: j2)))) p
+  limitUniv @d n = limitUniv @j1 @k @(Limit j2 d) (limitUniv @j2 @k @d (\((p' :.: j1) :.: j2) -> n (p' :.: (j1 :.: j2))))
 
 instance (Functor j) => HasLimits (Costar j) k where
   type Limit (Costar j) d = d :.: Star j

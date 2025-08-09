@@ -16,11 +16,15 @@ import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), COPROD(..), copar, copar0, unCoprod)
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Object.Exponential (Closed (..))
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
 class (Monoidal j, Monoidal k, Functor f) => Applicative (f :: j -> k) where
   pure :: Unit ~> a -> Unit ~> f a
   liftA2 :: (Ob a, Ob b) => (a ** b ~> c) -> f a ** f b ~> f c
+
+ap :: forall {j} {k} f a b. (Applicative (f :: j -> k), Closed j, Closed k, Ob a, Ob b) => f (a ~~> b) ~> f a ~~> f b
+ap = withObExp @j @a @b $ curry @k @_ @(f a) @(f b) (liftA2 @f @(a ~~> b) @a (apply @j @a))
 
 instance (MonoidalProfunctor (p :: j +-> k), Comonoid x) => Applicative (FromProfunctor p x) where
   pure a () = FromProfunctor $ dimap counit a par0

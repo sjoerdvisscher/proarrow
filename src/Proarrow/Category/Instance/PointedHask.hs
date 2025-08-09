@@ -91,13 +91,13 @@ instance Closed POINTED where
   curry (Pt f) = Pt (\a -> Just (\b -> f (a, b)))
   apply = Pt (\(f, b) -> f b)
 
-instance Powered POINTED where
+instance Powered Type POINTED where
   type P a ^ n = P (n -> Maybe a)
   withObPower r = r
   power f = Pt (\a -> Just \n -> unPt (f n) a)
   unpower (Pt f) n = Pt \a -> f a >>= ($ n)
 
-instance Copowered POINTED where
+instance Copowered Type POINTED where
   type n *. P a = P (n, a)
   withObCopower r = r
   copower f = Pt \(n, a) -> unPt (f n) a

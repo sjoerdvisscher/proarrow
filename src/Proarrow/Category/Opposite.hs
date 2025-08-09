@@ -4,12 +4,9 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
@@ -79,14 +76,6 @@ instance (Monoidal k) => Monoidal (OPPOSITE k) where
 instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
   swap @(OP a) @(OP b) = Op (swap @k @b @a)
 
-instance (Comonoid c) => Monoid (OP c) where
-  mempty = Op counit
-  mappend = Op comult
-
-instance (Monoid c) => Comonoid (OP c) where
-  counit = Op mempty
-  comult = Op mappend
-
 instance (Representable p) => Corepresentable (Op p) where
   type Op p %% OP a = OP (p % a)
   coindex (Op f) = Op (index f)
@@ -115,18 +104,6 @@ instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   unitorInv = Op (unitor @m)
   multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @m @k @a @b @x)
   multiplicatorInv @(OP a) @(OP b) @(OP x) = Op (multiplicator @m @k @a @b @x)
-
-instance (Copowered k) => Powered (OPPOSITE k) where
-  type OP a ^ n = OP (n *. a)
-  withObPower @(OP a) @n r = withObCopower @k @a @n r
-  power f = Op (copower (unOp . f))
-  unpower (Op f) n = Op (uncopower f n)
-
-instance (Powered k) => Copowered (OPPOSITE k) where
-  type n *. OP a = OP (a ^ n)
-  withObCopower @(OP a) @n r = withObPower @k @a @n r
-  copower f = Op (power (unOp . f))
-  uncopower (Op f) n = Op (unpower f n)
 
 instance (ThinProfunctor p) => ThinProfunctor (Op p) where
   type HasArrow (Op p) (OP a) (OP b) = HasArrow p b a
