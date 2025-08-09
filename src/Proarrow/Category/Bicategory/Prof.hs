@@ -63,9 +63,10 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep, repObj, trivialRep)
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep, repObj, trivialRep, CorepStar (..))
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
 
 type data PROFK j k = PK (j +-> k)
 type instance UN PK (PK p) = p
@@ -158,13 +159,13 @@ instance (L.HasLimits j k, Ob j) => HasLimits FUNK (PK j) k where
   type Limit (PK j) d = FUN (L.Limit j (UNFUN d))
   withObLimit r = r
   limit = Prof L.limit
-  limitUniv (Prof n) = Sub (Prof (L.limitUniv n))
+  limitUniv (Prof n) = Prof (L.limitUniv n)
 
 instance (L.HasColimits j k, Ob j) => HasColimits FUNK (PK j) k where
-  type Colimit (PK j) d = FUN (L.Colimit j (UNFUN d))
+  type Colimit (PK j) d = FUN (CorepStar (L.Colimit j (RepCostar (UNFUN d))))
   withObColimit r = r
-  colimit = Prof L.colimit
-  colimitUniv (Prof n) = Sub (Prof (L.colimitUniv n))
+  colimit = Prof \(j :.: RepCostar c) -> L.colimit (j :.: cotabulate c)
+  colimitUniv (Prof n) = Prof \p -> p // RepCostar (coindex (L.colimitUniv n p))
 
 class
   ( forall (s :: COK sk h i) (t :: tk j k). (Ob s, Ob t) => Profunctor (p s t)

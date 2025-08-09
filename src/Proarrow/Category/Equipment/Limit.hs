@@ -5,7 +5,7 @@ module Proarrow.Category.Equipment.Limit where
 import Data.Kind (Constraint)
 
 import Proarrow.Category.Bicategory (Bicategory (..))
-import Proarrow.Category.Equipment (HasCompanions (..), Sq)
+import Proarrow.Category.Equipment (HasCompanions (..), Sq, Equipment (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj)
 
 -- | weighted limits
@@ -14,15 +14,15 @@ class (HasCompanions hk vk, Ob j) => HasLimits vk (j :: hk i a) k where
   type Limit (j :: hk i a) (d :: vk i k) :: vk a k
   withObLimit :: (Ob (d :: vk i k)) => ((Ob (Limit j d)) => r) -> r
   limit :: (Ob (d :: vk i k)) => Companion hk (Limit j d) `O` j ~> Companion hk d
-  limitUniv :: (Ob (d :: vk i k), Ob p) => Companion hk p `O` j ~> Companion hk d -> p ~> Limit j d
+  limitUniv :: (Ob (d :: vk i k), Ob p) => p `O` j ~> Companion hk d -> p ~> Companion hk (Limit j d)
 
 -- | weighted colimits
 type HasColimits :: forall {s} {hk :: CAT s} {a :: s} {i :: s}. CAT s -> hk a i -> s -> Constraint
-class (HasCompanions hk vk, Ob j) => HasColimits vk (j :: hk a i) k where
+class (Equipment hk vk, Ob j) => HasColimits vk (j :: hk a i) k where
   type Colimit (j :: hk a i) (d :: vk i k) :: vk a k
   withObColimit :: (Ob (d :: vk i k)) => (Ob (Colimit j d) => r) -> r
-  colimit :: (Ob (d :: vk i k)) => Companion hk d `O` j ~> Companion hk (Colimit j d)
-  colimitUniv :: (Ob (d :: vk i k), Ob p) => Companion hk d `O` j ~> Companion hk p -> Colimit j d ~> p
+  colimit :: (Ob (d :: vk i k)) => j `O` Conjoint hk (Colimit j d) ~> Conjoint hk d
+  colimitUniv :: (Ob (d :: vk i k), Ob p) => (j `O` p ~> Conjoint hk d) -> p ~> Conjoint hk (Colimit j d)
 
 type family TerminalObject (hk :: CAT s) (vk :: CAT s) :: s
 type HasTerminalObject :: forall {s}. CAT s -> CAT s -> Constraint

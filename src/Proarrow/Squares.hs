@@ -64,7 +64,9 @@ hArr = E.hArr . singleton
 -- > |     |
 -- > K-----K
 hId
-  :: (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (p :: hk k j)) => Sq '(p ::: Nil, Nil :: Path vk j j) '(p ::: Nil, Nil)
+  :: forall {hk} {vk} {j} {k} (p :: hk k j)
+   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob p)
+  => Sq '(p ::: Nil, Nil :: Path vk j j) '(p ::: Nil, Nil)
 hId = E.hId
 
 -- | A horizontal identity square for a companion.
@@ -349,7 +351,6 @@ type Optic hk (a :: vk z j) (b :: vk z k) (s :: vk x j) (t :: vk x k) =
 -- > t<-/ \-<b
 -- > K-------K
 
-
 -- > J-------J     J-------J
 -- > a>--@   |     s>--@   |
 -- > |   @---p ==> |   @---p
@@ -369,7 +370,6 @@ type Optic hk (a :: vk z j) (b :: vk z k) (s :: vk x j) (t :: vk x k) =
 -- > |   @   |     |   @--<m
 -- > |   @--<b     |   @--<b
 -- > K-------K     K-------K
-
 
 type ProfOptic a b s t = Optic PROFK (FUN a) (FUN b) (FUN s) (FUN t)
 mkProfOptic
