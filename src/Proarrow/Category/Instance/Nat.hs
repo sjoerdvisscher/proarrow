@@ -144,7 +144,7 @@ data (f :^: n) a where
   Power :: (Ob a) => {unPower :: n -> f a} -> (f :^: n) a
 instance (Functor f) => Functor (f :^: n) where
   map g (Power k) = g // Power \n -> map g (k n)
-instance Powered (k -> Type) where
+instance Powered Type (k -> Type) where
   type f ^ n = f :^: n
   withObPower r = r
   power f = Nat \g -> Power \n -> unNat (f n) g
@@ -154,7 +154,7 @@ data (n :*.: f) a where
   Copower :: (Ob a) => {unCopower :: (n, f a)} -> (n :*.: f) a
 instance (Functor f) => Functor (n :*.: f) where
   map g (Copower (n, f)) = g // Copower (n, map g f)
-instance Copowered (k -> Type) where
+instance Copowered Type (k -> Type) where
   type n *. f = n :*.: f
   withObCopower r = r
   copower f = Nat \(Copower (n, g)) -> unNat (f n) g

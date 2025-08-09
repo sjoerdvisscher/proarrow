@@ -180,13 +180,13 @@ instance HasBinaryProducts LINEAR where
   snd = Linear \(With x _ xb) -> xb x
   Linear f &&& Linear g = Linear \x -> With x f g
 
-instance Powered LINEAR where
+instance Powered Type LINEAR where
   type L a ^ n = L (n -> a)
   withObPower r = r
   power f = Linear \x n -> unLinear (f n) x
   unpower (Linear f) n = Linear \x -> f x n
 
-instance Copowered LINEAR where
+instance Copowered Type LINEAR where
   type n *. L a = L (Ur n, a)
   withObCopower r = r
   copower f = Linear \(Ur n, a) -> unLinear (f n) a

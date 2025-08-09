@@ -5,7 +5,7 @@ module Proarrow.Profunctor.Corepresentable where
 import Data.Kind (Constraint)
 
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Object (obj)
+import Proarrow.Object (obj, Obj)
 
 infixl 8 %%
 
@@ -21,6 +21,9 @@ instance Corepresentable (->) where
   coindex f = f
   cotabulate f = f
   corepMap f = f
+
+corepObj :: forall p a. (Corepresentable p, Ob a) => Obj (p %% a)
+corepObj = corepMap @p (obj @a)
 
 withCorepOb :: forall p a r. (Corepresentable p, Ob a) => ((Ob (p %% a)) => r) -> r
 withCorepOb r = r \\ corepMap @p (obj @a)
