@@ -357,7 +357,7 @@ toLeft =
       \\\ mapConjoint @hk @vk f
 
 flipCompanion
-  :: forall {j} {k} hk vk (f :: vk j k) p q
+  :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
    . (Equipment hk vk, Ob p)
   => Obj f
   -> Companion hk f `O` p ~> q
@@ -367,7 +367,7 @@ flipCompanion f n =
   in ((conF `o` n) . associator' conF comF (obj @p) . leftUnitorInvWith (comConUnit f) id) \\\ n \\\ f
 
 flipCompanionInv
-  :: forall {j} {k} hk vk (f :: vk j k) p q
+  :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
    . (Equipment hk vk, Ob q)
   => Obj f
   -> p ~> Conjoint hk f `O` q
@@ -377,7 +377,7 @@ flipCompanionInv f n =
   in (leftUnitorWith (comConCounit f) id . associatorInv' comF conF (obj @q) . (comF `o` n)) \\\ n \\\ f
 
 flipConjoint
-  :: forall {j} {k} hk vk (f :: vk j k) p q
+  :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
    . (Equipment hk vk, Ob p)
   => Obj f
   -> p `O` Conjoint hk f ~> q
@@ -387,7 +387,7 @@ flipConjoint f n =
   in ((n `o` comF) . associatorInv' (obj @p) conF comF . rightUnitorInvWith (comConUnit f) id) \\\ n \\\ f
 
 flipConjointInv
-  :: forall {j} {k} hk vk (f :: vk j k) p q
+  :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
    . (Equipment hk vk, Ob q)
   => Obj f
   -> p ~> q `O` Companion hk f

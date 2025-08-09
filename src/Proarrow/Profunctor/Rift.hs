@@ -3,13 +3,16 @@ module Proarrow.Profunctor.Rift where
 import Prelude (type (~))
 
 import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
+import Proarrow.Category.Colimit (HasColimits (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Costar (Costar (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Profunctor.Star (Star (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
@@ -18,7 +21,7 @@ type p <| j = Rift (OP j) p
 
 type Rift :: OPPOSITE (k +-> i) -> j +-> i -> j +-> k
 data Rift j p a b where
-  Rift :: (Ob a, Ob b) => {unRift :: forall x. (Ob x) => j x a -> p x b} -> Rift (OP j) p a b
+  Rift :: (Ob a, Ob b) => {unRift :: forall x. j x a -> p x b} -> Rift (OP j) p a b
 
 runRift :: (Profunctor j) => j x a -> Rift (OP j) p a b -> p x b
 runRift j (Rift k) = k j \\ j
@@ -47,8 +50,22 @@ instance (p ~ j, Profunctor p) => Promonad (Rift (OP j) p) where
   id = Rift id
   Rift l . Rift r = Rift (l . r)
 
+instance (HasColimits j k, Corepresentable d) => Corepresentable (Rift (OP j) (d :: k +-> i)) where
+  type Rift (OP j) d %% a = Colimit j d %% a
+  coindex = coindex @(Colimit j d) . colimitUniv @j @k @d (\(j :.: Rift k') -> k' j)
+  cotabulate f = Rift (\j -> colimit (j :.: cotabulate f)) \\ f
+  corepMap = corepMap @(Colimit j d)
+
+type PWLan j p a = (p <| j) %% a
+class (Corepresentable j, Corepresentable p, Corepresentable (p <| j)) => PointwiseLeftKanExtension j p
+instance (Corepresentable j, Corepresentable p, Corepresentable (p <| j)) => PointwiseLeftKanExtension j p
+
+type PWRift j p a = (p <| j) % a
+class (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
+instance (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
+
 riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => (p <| j) <| i ~> p <| (j :.: i)
 riftCompose = Prof \k -> k // Rift \(j :.: i) -> runRift j (runRift i k)
 
 riftComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => p <| (j :.: i) ~> (p <| j) <| i
-riftComposeInv = Prof \k -> k // Rift \i -> Rift \j -> runRift (j :.: i) k
+riftComposeInv = Prof \k -> k // Rift \i -> i // Rift \j -> runRift (j :.: i) k

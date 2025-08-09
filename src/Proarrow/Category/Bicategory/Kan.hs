@@ -68,7 +68,7 @@ lanAlongCompanionInv
    . (LeftKanExtension (Companion hk j) f, Equipment hk vk)
   => Obj j
   -> f `O` Conjoint hk j ~> Lan (Companion hk j) f
-lanAlongCompanionInv j = flipConjointInv @hk @vk @j @f @(Lan (Companion hk j) f) j (lan @(Companion hk j))
+lanAlongCompanionInv j = flipConjointInv @j @f @(Lan (Companion hk j) f) j (lan @(Companion hk j))
 
 type j |> p = Ran j p
 type RightKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
@@ -120,7 +120,7 @@ ranAlongConjoint
    . (RightKanExtension (Conjoint hk j) f, Equipment hk vk)
   => Obj j
   -> Ran (Conjoint hk j) f ~> f `O` Companion hk j
-ranAlongConjoint j = flipConjoint @hk @vk @j @(Ran (Conjoint hk j) f) @f j (ran @(Conjoint hk j))
+ranAlongConjoint j = flipConjoint @j @(Ran (Conjoint hk j) f) @f j (ran @(Conjoint hk j))
 
 ranAlongConjointInv
   :: forall {i} {k} hk vk (j :: vk i k) f
@@ -177,9 +177,9 @@ liftAlongConjointInv
    . (LeftKanLift (Conjoint hk j) f, Equipment hk vk)
   => Obj j
   -> Companion hk j `O` f ~> Lift (Conjoint hk j) f
-liftAlongConjointInv j = flipCompanionInv @hk @vk @j @f @(Lift (Conjoint hk j) f) j (lift @(Conjoint hk j))
+liftAlongConjointInv j = flipCompanionInv @j @f @(Lift (Conjoint hk j) f) j (lift @(Conjoint hk j))
 
-type p <| j = Rift j p
+type f <| j = Rift j f
 type RightKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Rift j f)) => RightKanLift (j :: kk d c) (f :: kk e c) where
   type Rift j f :: kk e d
@@ -220,7 +220,7 @@ riftAlongCompanion
    . (RightKanLift (Companion hk j) f, Equipment hk vk)
   => Obj j
   -> Rift (Companion hk j) f ~> Conjoint hk j `O` f
-riftAlongCompanion j = flipCompanion @hk @vk @j @(Rift (Companion hk j) f) @f j (rift @(Companion hk j))
+riftAlongCompanion j = flipCompanion @j @(Rift (Companion hk j) f) @f j (rift @(Companion hk j))
 
 riftAlongCompanionInv
   :: forall {i} {k} hk vk (j :: vk i k) f

@@ -6,6 +6,8 @@ import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 newtype Wrapped p a b = Wrapped {unWrapped :: p a b}
 
@@ -31,3 +33,15 @@ instance (Comonoid c, Monoid m, MonoidalProfunctor p) => Monoid (Wrapped p c m) 
 instance (MonoidalProfunctor p) => Monoid (Wrapped p) where
   mempty = Prof \(DayUnit f g) -> Wrapped (dimap f g par0)
   mappend = Prof \(Day f (Wrapped p) (Wrapped q) g) -> Wrapped (dimap f g (p `par` q))
+
+instance (Representable p) => Representable (Wrapped p) where
+  type Wrapped p % a = p % a
+  tabulate f = Wrapped (tabulate f)
+  index (Wrapped p) = index p
+  repMap = repMap @p
+
+instance (Corepresentable p) => Corepresentable (Wrapped p) where
+  type Wrapped p %% a = p %% a
+  coindex (Wrapped p) = coindex p
+  cotabulate f = Wrapped (cotabulate f)
+  corepMap = corepMap @p

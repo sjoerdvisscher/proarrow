@@ -12,18 +12,17 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), type (+->))
-import Proarrow.Functor (Functor)
-import Proarrow.Object (Obj)
+import Proarrow.Object (Obj, src)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepObj, dimapCorep, withCorepOb)
-import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
+import Proarrow.Profunctor.Wrapped (Wrapped (..))
+import Proarrow.Profunctor.Representable
 
 type Unweighted = TerminalProfunctor
 
@@ -161,7 +160,7 @@ instance (Corepresentable j2, HasColimits j1 k, HasColimits j2 k) => HasColimits
   colimit @d ((j1 :.: j2) :.: c) = colimit @j1 @k @d (j1 :.: colimit @j2 @k @(Colimit j1 d) (j2 :.: c))
   colimitUniv @d n = colimitUniv @j2 @k @(Colimit j1 d) (colimitUniv @j1 @k @d (\(j1 :.: (j2 :.: p')) -> n ((j1 :.: j2) :.: p')))
 
-instance (Functor j) => HasColimits (Star j) k where
-  type Colimit (Star j) d = Costar j :.: d
-  colimit (Star f :.: (Costar g :.: d)) = lmap (g . f) d
-  colimitUniv n p = p // Costar id :.: n (Star id :.: p)
+instance (Representable j) => HasColimits (Wrapped j) k where
+  type Colimit (Wrapped j) d = RepCostar j :.: d
+  colimit (j :.: (RepCostar g :.: d)) = lmap (g . index j) d
+  colimitUniv n p = p // RepCostar (repMap @j (src p)) :.: n (trivialRep :.: p)

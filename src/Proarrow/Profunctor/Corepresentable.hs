@@ -31,6 +31,9 @@ withCorepOb r = r \\ corepMap @p (obj @a)
 dimapCorep :: forall p a b c d. (Corepresentable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapCorep l r = cotabulate @p . dimap (corepMap @p l) r . coindex \\ l
 
+trivialCorep :: forall p a. (Corepresentable p, Ob a) => p a (p %% a)
+trivialCorep = cotabulate (corepObj @p @a)
+
 type Corep :: (j +-> k) -> (j +-> k)
 data Corep p a b where
   Corep :: Ob a => { getCorep :: p %% a ~> b } -> Corep p a b

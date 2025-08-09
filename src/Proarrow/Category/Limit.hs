@@ -12,18 +12,17 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), type (+->))
-import Proarrow.Functor (Functor)
-import Proarrow.Object (Obj)
+import Proarrow.Object (Obj, tgt)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj, withRepOb)
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj, withRepOb, CorepStar (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
+import Proarrow.Profunctor.Wrapped (Wrapped)
 
 class (Representable (Limit j d)) => IsRepresentableLimit j d
 instance (Representable (Limit j d)) => IsRepresentableLimit j d
@@ -157,7 +156,7 @@ instance (Representable j1, HasLimits j1 k, HasLimits j2 k) => HasLimits (j1 :.:
   limit @d (l :.: (j1 :.: j2)) = limit @j2 @k @d (limit @j1 @k @(Limit j2 d) (l :.: j1) :.: j2)
   limitUniv @d n = limitUniv @j1 @k @(Limit j2 d) (limitUniv @j2 @k @d (\((p' :.: j1) :.: j2) -> n (p' :.: (j1 :.: j2))))
 
-instance (Functor j) => HasLimits (Costar j) k where
-  type Limit (Costar j) d = d :.: Star j
-  limit ((d :.: Star f) :.: Costar g) = rmap (g . f) d
-  limitUniv n p = p // n (p :.: Costar id) :.: Star id
+instance (Corepresentable j) => HasLimits (Wrapped j) k where
+  type Limit (Wrapped j) d = d :.: CorepStar j
+  limit ((d :.: CorepStar f) :.: g) = rmap (coindex g . f) d
+  limitUniv n p = p // n (p :.: trivialCorep) :.: CorepStar (corepMap @j (tgt p))

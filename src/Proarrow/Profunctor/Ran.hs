@@ -13,6 +13,9 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Category.Limit (HasLimits (..))
+import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -20,7 +23,9 @@ type j |> p = Ran (OP j) p
 
 type Ran :: OPPOSITE (i +-> j) -> i +-> k -> j +-> k
 data Ran j p a b where
-  Ran :: (Ob a, Ob b) => {unRan :: forall x. (Ob x) => j b x -> p a x} -> Ran (OP j) p a b
+  Ran :: (Ob a, Ob b) => {unRan :: forall x. j b x -> p a x} -> Ran (OP j) p a b
+
+
 
 runRan :: (Profunctor j) => j b x -> Ran (OP j) p a b -> p a x
 runRan j (Ran k) = k j \\ j
@@ -45,6 +50,20 @@ instance (p ~ j, Profunctor p) => Promonad (Ran (OP j) p) where
   id = Ran id
   Ran l . Ran r = Ran (r . l)
 
+instance (HasLimits j k, Representable d) => Representable (Ran (OP j) (d :: i +-> k)) where
+  type Ran (OP j) d % a = Limit j d % a
+  index = index @(Limit j d) . limitUniv @j @k @d (\(Ran k' :.: j) -> k' j)
+  tabulate f = Ran (\j -> limit (tabulate f :.: j)) \\ f
+  repMap = repMap @(Limit j d)
+
+type PWRan j p a = (j |> p) % a
+class (Representable p, Representable j, Representable (j |> p)) => PointwiseRightKanExtension j p
+instance (Representable p, Representable j, Representable (j |> p)) => PointwiseRightKanExtension j p
+
+type PWLift j p a = (j |> p) %% a
+class (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
+instance (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
+
 newtype Precompose j p a b = Precompose {unPrecompose :: (p :.: j) a b}
 instance (Profunctor j, Profunctor p) => Profunctor (Precompose j p) where
   dimap l r (Precompose pj) = Precompose (dimap l r pj)
@@ -60,7 +79,7 @@ ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (i 
 ranCompose = Prof \k -> k // Ran \(i :.: j) -> runRan j (runRan i k)
 
 ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (i :.: j) |> p ~> i |> (j |> p)
-ranComposeInv = Prof \k -> k // Ran \i -> Ran \j -> runRan (i :.: j) k
+ranComposeInv = Prof \k -> k // Ran \i -> i // Ran \j -> runRan (i :.: j) k
 
 ranHom :: Profunctor p => p ~> (~>) |> p
 ranHom = Prof \p -> p // Ran \j -> rmap j p
