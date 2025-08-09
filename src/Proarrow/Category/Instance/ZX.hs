@@ -10,8 +10,7 @@ import Data.Complex (Complex (..), conjugate, magnitude, mkPolar)
 import Data.List (intercalate, sort)
 import Data.Map.Strict qualified as Map
 import Data.Proxy (Proxy (..))
-import GHC.TypeLits.Witnesses ((%+))
-import GHC.TypeNats (KnownNat, Nat, natVal, pattern SNat, type (+))
+import GHC.TypeNats (KnownNat, Nat, natVal, type SNat, pattern SNat, type (+), withSomeSNat)
 import Numeric (showFFloat)
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude hiding (id, (.))
@@ -126,7 +125,10 @@ instance MonoidalProfunctor ZX where
 instance Monoidal Nat where
   type Unit = 0
   type p ** q = p + q
-  withOb2 @a @b r = case (SNat @a) %+ (SNat @b) of SNat -> r
+  withOb2 @a @b r = case ab of SNat -> r
+    where
+      ab :: SNat (a + b)
+      ab = withSomeSNat (natVal (Proxy :: Proxy a) + natVal (Proxy :: Proxy b)) unsafeCoerce
   leftUnitor = id
   leftUnitorInv = id
   rightUnitor = id
