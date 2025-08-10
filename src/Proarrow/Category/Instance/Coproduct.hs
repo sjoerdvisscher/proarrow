@@ -2,10 +2,8 @@ module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CategoryOf (..), type (+->), Profunctor, Promonad)
 import Proarrow.Category.Dagger (DaggerProfunctor (..))
-import Proarrow (Profunctor(..))
-import Proarrow.Promonad (Promonad(..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 
 type data COPRODUCT j k = L j | R k
 
@@ -25,15 +23,17 @@ instance (Ob a) => IsLR (R a :: COPRODUCT j k) where
 instance (Profunctor p, Profunctor q) => Profunctor (p :++: q) where
   dimap (InjL f) (InjL g) (InjL p) = InjL (dimap f g p)
   dimap (InjR f) (InjR g) (InjR q) = InjR (dimap f g q)
-  dimap InjL{} InjR{} p = case p of
-  dimap InjR{} InjL{} q = case q of
+  dimap InjL{} InjR{} p = case p of {}
+  dimap InjR{} InjL{} q = case q of {}
   r \\ InjL p = r \\ p
   r \\ InjR q = r \\ q
+
 -- | The coproduct of two promonads.
 instance (Promonad p, Promonad q) => Promonad (p :++: q) where
   id = lrId
   InjL p . InjL q = InjL (p . q)
   InjR q . InjR r = InjR (q . r)
+
 -- | The coproduct of two categories.
 instance (CategoryOf j, CategoryOf k) => CategoryOf (COPRODUCT j k) where
   type (~>) @(COPRODUCT j k) = (~>) @j :++: (~>) @k

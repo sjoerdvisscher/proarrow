@@ -1,13 +1,11 @@
 module Proarrow
-  ( module Proarrow.Category
-  , module Proarrow.Profunctor
-  , module Proarrow.Object
-  , module Proarrow.Functor
-  , module Proarrow.Adjunction
+  ( module Export
   ) where
 
-import Proarrow.Adjunction
-import Proarrow.Category
-import Proarrow.Functor
-import Proarrow.Object
-import Proarrow.Profunctor
+import Proarrow.Category as Export
+import Proarrow.Functor as Export
+import Proarrow.Monoid as Export
+import Proarrow.Object as Export
+import Proarrow.Profunctor as Export
+import Proarrow.Promonad as Export
+import Proarrow.Squares as Export
