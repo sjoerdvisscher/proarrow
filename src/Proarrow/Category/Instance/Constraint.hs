@@ -6,7 +6,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..), CopyDiscard)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
@@ -76,6 +76,7 @@ instance Monoid (CNSTRNT ()) where
 instance Comonoid (CNSTRNT a) where
   counit = Entails \r -> r
   comult = Entails \r -> r
+instance CopyDiscard CONSTRAINT
 
 class b :=> c where
   entails :: CNSTRNT b :- CNSTRNT c

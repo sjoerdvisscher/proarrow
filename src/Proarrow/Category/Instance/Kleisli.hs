@@ -36,6 +36,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar(..), Representable(..), trivialRep)
+import Proarrow.Monoid (CopyDiscard (..))
 
 newtype KLEISLI (p :: CAT k) = KL k
 type instance UN KL (KL k) = k -- test
@@ -99,6 +100,9 @@ instance (Promonad p, MonoidalProfunctor p) => Monoidal (KLEISLI (p :: k +-> k))
   associatorInv @(KL a) @(KL b) @(KL c) = arr (associatorInv @k @a @b @c)
 instance (Promonad p, MonoidalProfunctor p, SymMonoidal k) => SymMonoidal (KLEISLI (p :: k +-> k)) where
   swap @(KL a) @(KL b) = arr (swap @k @a @b)
+instance (Promonad p, MonoidalProfunctor p, CopyDiscard k) => CopyDiscard (KLEISLI (p :: k +-> k)) where
+  copy = arr copy
+  discard = arr discard
 
 instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive (KLEISLI (p :: k +-> k)) where
   distL @(KL a) @(KL b) @(KL c) = arr (distL @k @a @b @c)

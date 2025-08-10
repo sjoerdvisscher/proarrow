@@ -7,7 +7,7 @@ import Data.Void (Void, absurd)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Applicative (liftA2)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..), CopyDiscard)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Copower (Copowered (..))
@@ -126,6 +126,7 @@ instance Monoid (P [a]) where
 instance Comonoid (P x) where
   counit = Pt (Just . counit)
   comult = Pt (Just . comult)
+instance CopyDiscard POINTED
 
 -- | Categories with a zero object can be seen as categories enriched in Pointed.
 underlyingPt :: HasZeroObject k => (a :: k) ~> b -> Unit ~> P (a ~> b)

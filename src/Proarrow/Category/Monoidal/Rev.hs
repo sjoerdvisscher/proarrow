@@ -2,6 +2,7 @@ module Proarrow.Category.Monoidal.Rev where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Monoid (Monoid (..), Comonoid (..), CopyDiscard (..))
 
 type data REV k = R k
 type instance UN R (R a) = a
@@ -41,3 +42,15 @@ instance (Monoidal k) => Monoidal (REV k) where
 
 instance (SymMonoidal k) => SymMonoidal (REV k) where
   swap @(R a) @(R b) = Rev (swap @k @b @a)
+
+instance (Monoid a) => Monoid (R a) where
+  mempty = Rev mempty
+  mappend = Rev mappend
+
+instance (Comonoid a) => Comonoid (R a) where
+  counit = Rev counit
+  comult = Rev comult
+
+instance (CopyDiscard k) => CopyDiscard (REV k) where
+  copy = Rev copy
+  discard = Rev discard

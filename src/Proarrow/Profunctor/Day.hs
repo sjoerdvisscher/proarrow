@@ -21,12 +21,13 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Monoid (Monoid (..))
+import Proarrow.Monoid (Comonoid (..),Monoid (..), CopyDiscard (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
-import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
+import Proarrow.Adjunction qualified as Adj
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Category (Supplies)
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -83,6 +84,10 @@ instance (Monoidal j, Monoidal k) => Monoidal (j +-> k) where
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j +-> k) where
   swap = Prof \(Day @c @d @e @f f p q g) -> Day (swap @_ @c @e . f) q p (g . swap @_ @f @d) \\ p \\ q
 
+instance (CopyDiscard k, Monoidal j, j `Supplies` Monoid) => CopyDiscard (j +-> k) where
+  copy = Prof \p -> p // Day copy p p mappend
+  discard = Prof \p -> p // DayUnit discard mempty
+
 instance (Monoidal j, Monoidal k) => Distributive (j +-> k) where
   distL = Prof \(Day l a bc r) -> case bc of
     InjL b -> InjL (Day l a b r)
@@ -101,6 +106,10 @@ duoidal = Prof \(Day f (p :.: p') (q :.: q') g) -> let b = tgt p `par` tgt q in 
 instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
   mempty = Prof \(DayUnit f g) -> dimap f g par0
   mappend = Prof \(Day f p q g) -> dimap f g (p `par` q)
+
+instance (Monoidal j, Monoidal k, k `Supplies` Comonoid, j `Supplies` Monoid, Profunctor p) => Comonoid (p :: j +-> k) where
+  counit = Prof \p -> p // DayUnit counit mempty
+  comult = Prof \p -> p // Day comult p p mappend
 
 -- instance Monoidal k => Comonoid (E (PK (DayUnit :: k +-> k))) where
 --   counit = Endo (Bi.Prof \(DayUnit f g) -> g . f)
@@ -124,9 +133,9 @@ instance (Monoidal j, Monoidal k) => Closed (j +-> k) where
   apply = Prof \(Day f (DayExp h) q g) -> h f g q
   (^^^) (Prof n) (Prof m) = Prof \(DayExp k) -> DayExp \f g p -> n (k f g (m p))
 
-instance (SymMonoidal j, SymMonoidal k, Profunctor (p :: j +-> k)) => Adjunction (Star (Day p)) (Star (DayExp p)) where
-  unit = unitFromRepUnit (curry swap)
-  counit = counitFromRepCounit (apply . swap)
+instance (SymMonoidal j, SymMonoidal k, Profunctor (p :: j +-> k)) => Adj.Adjunction (Star (Day p)) (Star (DayExp p)) where
+  unit = Adj.unitFromRepUnit (curry swap)
+  counit = Adj.counitFromRepCounit (apply . swap)
 
 multDayExp
   :: (SymMonoidal j, SymMonoidal k, Profunctor (p :: j +-> k), Profunctor q, Profunctor p', Profunctor q')
