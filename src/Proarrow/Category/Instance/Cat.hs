@@ -26,7 +26,7 @@ import Proarrow.Object.BinaryProduct
   , leftUnitorProd
   , leftUnitorProdInv
   , rightUnitorProd
-  , rightUnitorProdInv
+  , rightUnitorProdInv, diag
   )
 import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedCoact)
 import Proarrow.Object.Exponential (Closed (..))
@@ -35,6 +35,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id)
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Monoid (Comonoid (..), CopyDiscard)
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
@@ -207,6 +208,11 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Swap :: (j, k) +-> (k, j)) 
   r \\ Swap p q = r \\ p \\ q
 instance SymMonoidal KIND where
   swap @(K j) @(K k) = Cat @(Swap :: (j, k) +-> (k, j))
+
+instance (Ob a) => Comonoid (a :: KIND) where
+  counit = terminate
+  comult = diag
+instance CopyDiscard KIND
 
 type Curry :: (i, j) +-> k -> i +-> (OPPOSITE j, k)
 data Curry p a b where

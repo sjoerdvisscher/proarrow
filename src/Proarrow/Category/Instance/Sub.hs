@@ -5,6 +5,7 @@ import Data.Kind (Constraint, Type)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN)
+import Proarrow.Monoid (CopyDiscard (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type SUBCAT :: forall {k}. OB k -> Type
@@ -35,14 +36,14 @@ instance (c (UN SUB a)) => (c `On` ob) a
 class (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
 instance (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
 
-instance
-  (MonoidalProfunctor p, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b)
-  => MonoidalProfunctor (Sub p :: CAT (SUBCAT (ob :: OB k)))
-  where
+instance (MonoidalProfunctor p, SubMonoidal ob) => MonoidalProfunctor (Sub p :: CAT (SUBCAT (ob :: OB k))) where
   par0 = Sub par0
   Sub f `par` Sub g = Sub (f `par` g)
 
-instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => Monoidal (SUBCAT (ob :: OB k)) where
+class (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SubMonoidal (ob :: OB k)
+instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SubMonoidal (ob :: OB k)
+
+instance (SubMonoidal ob) => Monoidal (SUBCAT (ob :: OB k)) where
   type Unit = SUB Unit
   type a ** b = SUB (UN SUB a ** UN SUB b)
   withOb2 @(SUB a) @(SUB b) r = withOb2 @k @a @b r
@@ -53,8 +54,12 @@ instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => M
   associator @(SUB a) @(SUB b) @(SUB c) = Sub (associator @_ @a @b @c)
   associatorInv @(SUB a) @(SUB b) @(SUB c) = Sub (associatorInv @_ @a @b @c)
 
-instance (SymMonoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SymMonoidal (SUBCAT (ob :: OB k)) where
+instance (SymMonoidal k, SubMonoidal ob) => SymMonoidal (SUBCAT (ob :: OB k)) where
   swap @(SUB a) @(SUB b) = Sub (swap @k @a @b)
+
+instance (SubMonoidal ob, CopyDiscard k) => CopyDiscard (SUBCAT (ob :: OB k)) where
+  copy = Sub copy
+  discard = Sub discard
 
 instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub p :: CAT (SUBCAT (ob :: OB k))) where
   type Sub p % a = SUB (p % UN SUB a)

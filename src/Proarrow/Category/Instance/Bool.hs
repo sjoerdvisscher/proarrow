@@ -3,7 +3,7 @@ module Proarrow.Category.Instance.Bool where
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
@@ -174,10 +174,12 @@ instance Monoid TRU where
   mempty = Tru
   mappend = Tru
 
-instance Comonoid TRU where
-  counit = Tru
-  comult = Tru
+instance (Ob a) => Comonoid (a :: BOOL) where
+  counit = case obj @a of
+    Fls -> F2T
+    Tru -> Tru
+  comult = case obj @a of
+    Fls -> Fls
+    Tru -> Tru
 
-instance Comonoid FLS where
-  counit = F2T
-  comult = Fls
+instance CopyDiscard BOOL

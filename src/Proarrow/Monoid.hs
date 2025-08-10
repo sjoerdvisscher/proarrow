@@ -15,13 +15,17 @@ import Proarrow.Object.Terminal (terminate)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Object.Dual (StarAutonomous (..), CompactClosed (..))
+import Proarrow.Category (Supplies)
 
 
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
   mempty :: Unit ~> m
   mappend :: m ** m ~> m
+
+class (Monoid m) => CommutativeMonoid (m :: k)
 
 instance (P.Monoid m) => Monoid (m :: Type) where
   mempty () = P.mempty
@@ -57,6 +61,10 @@ instance Comonoid (a :: Type) where
   counit _ = ()
   comult a = (a, a)
 
+instance Comonoid '() where
+  counit = id
+  comult = id
+
 instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
   counit = Prod terminate
   comult = Prod diag
@@ -66,6 +74,21 @@ counitAct = unitor @m . act (counit @a) (obj @n)
 
 comultAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> Act a (Act a n)
 comultAct = multiplicatorInv @m @c @a @a @n . act (comult @a) (obj @n)
+
+class Monoidal k => CopyDiscard k where
+  copy :: (Ob (a :: k)) => a ~> a ** a
+  default copy :: k `Supplies` Comonoid => (Ob (a :: k)) => a ~> a ** a
+  copy = comult
+  discard :: (Ob (a :: k)) => a ~> Unit
+  default discard :: k `Supplies` Comonoid => (Ob (a :: k)) => a ~> Unit
+  discard = counit
+
+instance (HasProducts k) => CopyDiscard (PROD k)
+instance CopyDiscard Type
+instance CopyDiscard ()
+instance (CopyDiscard j, CopyDiscard k) => CopyDiscard (j, k) where
+  copy = copy :**: copy
+  discard = discard :**: discard
 
 type data MONOIDK (m :: k) = M
 data Mon a b where
@@ -81,8 +104,6 @@ instance (Monoid m) => Promonad (Mon :: CAT (MONOIDK m)) where
 instance (Monoid m) => CategoryOf (MONOIDK m) where
   type (~>) = Mon
   type Ob a = a P.~ M
-
-class (Monoid m) => CommutativeMonoid (m :: k)
 
 instance (CommutativeMonoid m) => MonoidalProfunctor (Mon :: CAT (MONOIDK m)) where
   par0 = Mon mempty

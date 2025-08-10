@@ -8,6 +8,7 @@ import Prelude (($), type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), associatorInv', associator')
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Monoid (CopyDiscard (..))
 
 infixl 8 ||
 infixl 7 ==
@@ -144,3 +145,13 @@ instance (Monoidal k) => Monoidal [k] where
 
 instance (SymMonoidal k) => SymMonoidal [k] where
   swap @as @bs = swap' @as @bs
+
+instance (SymMonoidal k, CopyDiscard k) => CopyDiscard [k] where
+  copy @as0 = case sList @as0 of
+    SNil -> id
+    SSing @a -> Str @'[a] @'[a, a] copy
+    SCons @a @as -> (obj @'[a] `par` (associator @_ @as @'[a] @as . (swap @[k] @'[a] @as `par` obj @as))) . (Str @'[a] @'[a, a] copy `par` copy)
+  discard @as = case sList @as of
+    SNil -> id
+    SSing @a -> Str @'[a] @'[] discard
+    SCons @a -> Str @'[a] @'[] discard `par` discard
