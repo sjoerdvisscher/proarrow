@@ -62,17 +62,17 @@ rightUnitorInvWith f = (obj @a `par` f) . rightUnitorInv
 unitObj :: (Monoidal k) => Obj (Unit :: k)
 unitObj = par0
 
-class (Monoidal k) => SymMonoidal k where
-  swap :: (Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
-
-swap' :: forall {k} (a :: k) a' b b'. (SymMonoidal k) => a ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
-swap' f g = swap @k @a' @b' . (f `par` g) \\ f \\ g
-
 first :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (a ** c) ~> (b ** c)
 first f = f `par` obj @c
 
 second :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (c ** a) ~> (c ** b)
 second f = obj @c `par` f
+
+class (Monoidal k) => SymMonoidal k where
+  swap :: (Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
+
+swap' :: forall {k} (a :: k) a' b b'. (SymMonoidal k) => a ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
+swap' f g = swap @k @a' @b' . (f `par` g) \\ f \\ g
 
 swapInner'
   :: (SymMonoidal k)

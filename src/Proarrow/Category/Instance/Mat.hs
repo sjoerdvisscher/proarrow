@@ -71,7 +71,7 @@ app m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
 
 class (P.Applicative (Vec n), n + Z ~ n, n * Z ~ Z, n * S Z ~ n) => IsNat (n :: Nat) where
   matId :: (P.Num a) => Vec n (Vec n a)
-  zero :: (P.Num a) => Vec n a
+  repeat :: a -> Vec n a
   append :: Vec n a -> Vec m a -> Vec (n + m) a
   split :: Vec (n + m) a -> (Vec n a, Vec m a)
   concatMap :: (IsNat m) => (a -> Vec m b) -> Vec n a -> Vec (n * m) b
@@ -87,7 +87,7 @@ class (P.Applicative (Vec n), n + Z ~ n, n * Z ~ Z, n * S Z ~ n) => IsNat (n :: 
   withDist :: (IsNat m, IsNat o) => (((n + m) * o ~ (n * o) + (m * o)) => r) -> r
 instance IsNat Z where
   matId = Nil
-  zero = Nil
+  repeat _ = Nil
   append Nil ys = ys
   split ys = (Nil, ys)
   concatMap _ Nil = Nil
@@ -103,7 +103,7 @@ instance IsNat Z where
   withDist r = r
 instance (IsNat n) => IsNat (S n) where
   matId = Cons (Cons 1 zero) (P.fmap (Cons 0) matId)
-  zero = Cons 0 zero
+  repeat a = Cons a (repeat a)
   append (Cons x xs) ys = Cons x (append xs ys)
   split (Cons x xs) = case split xs of (ys, zs) -> (Cons x ys, zs)
   concatMap f (Cons x xs) = f x `append` concatMap f xs
@@ -123,6 +123,9 @@ instance (IsNat n) => IsNat (S n) where
   withAssocMult @m @o r = withMultNat @n @m $ withAssocMult @n @m @o (withDist @m @(n * m) @o r)
   withDist @m @o r = withMultNat @n @o $ withMultNat @m @o $ withAssocPlus @o @(n * o) @(m * o) $ withDist @n @m @o r
 
+zero :: (P.Num a, IsNat n) => Vec n a
+zero = repeat 0
+
 withNat :: Vec n a -> ((IsNat n) => r) -> r
 withNat Nil r = r
 withNat (Cons _ xs) r = withNat xs r
@@ -134,7 +137,7 @@ instance {-# OVERLAPPABLE #-} (P.Num a) => DaggerProfunctor (Mat :: CAT (MatK a)
   dagger (Mat m) = Mat (P.sequenceA m)
 
 instance {-# OVERLAPS #-} (P.RealFloat a) => DaggerProfunctor (Mat :: CAT (MatK (Complex a))) where
-  dagger (Mat m) = Mat (P.fmap (P.fmap conjugate) (P.sequenceA m))
+  dagger (Mat m) = Mat (P.traverse (P.fmap conjugate) m)
 
 instance (P.Num a) => Profunctor (Mat :: CAT (MatK a)) where
   dimap = dimapDefault
@@ -225,3 +228,5 @@ instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a)) where
 
 instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
   coact @x = compactClosedCoact @x
+
+-- Monoids are associative, unital algebras.

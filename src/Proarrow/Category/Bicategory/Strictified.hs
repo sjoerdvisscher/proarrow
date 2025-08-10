@@ -11,14 +11,12 @@ import Proarrow.Category.Bicategory
   , Monad (..)
   , associator'
   , associatorInv'
-  , iObj
   , leftUnitorInvWith
   , leftUnitorWith
   , rightUnitorWith
-  , (==)
   , (||)
   )
-import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), RetroSq (..), Sq (..))
+import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, src, tgt)
 import Proarrow.Object (Obj, obj)
 import Prelude (($), type (~))
@@ -81,21 +79,7 @@ asObj (SCons p SNil) = singleton p
 asObj (SCons p ps@SCons{}) = asObj ps `o` singleton p \\ p
 
 asSPath :: (Bicategory kk) => Obj (ps :: Path kk i j) -> SPath ps
-asSPath (Str p _ _) = p
-
-withAssoc
-  :: forall {kk} {h} {i} {j} {k} (a :: Path kk h i) (b :: Path kk i j) (c :: Path kk j k) r
-   . (Bicategory kk)
-  => Obj a
-  -> Obj b
-  -> Obj c
-  -> (((a +++ b) +++ c ~ a +++ (b +++ c)) => r)
-  -> r
-withAssoc as@Str{} Str{} Str{} = go (asSPath as)
-  where
-    go :: forall a'. SPath a' -> (((a' +++ b) +++ c ~ a' +++ (b +++ c)) => r) -> r
-    go SNil r = r
-    go (SCons _ a) r = go a r
+asSPath @_ @_ @_ @ps p = singPath @ps \\\ p
 
 concatFold
   :: forall {kk} {i} {j} {k} (as :: Path kk i j) (bs :: Path kk j k)
@@ -150,10 +134,7 @@ data Strictified ps qs where
     -> Strictified ps qs
 
 st :: forall {kk} {i} {j} (ps :: Path kk i j) qs. (Bicategory kk, Ob ps, Ob qs) => (Fold ps ~> Fold qs) -> Strictified ps qs
-st = str (obj @ps) (obj @qs)
-
-str :: (Bicategory kk) => Obj (ps :: Path kk j k) -> Obj qs -> (Fold ps ~> Fold qs) -> Strictified ps qs
-str ps qs f = Str (asSPath ps) (asSPath qs) f \\\ f
+st = Str (singPath @ps) (singPath @qs)
 
 unStr :: Strictified ps qs -> Fold ps ~> Fold qs
 unStr (Str _ _ f) = f
@@ -162,8 +143,8 @@ instance (CategoryOf (kk j k), Bicategory kk) => Profunctor (Strictified :: CAT 
   dimap = dimapDefault
   r \\ Str ps qs _ = withIsPath ps (withIsPath qs r)
 instance (CategoryOf (kk j k), Bicategory kk) => Promonad (Strictified :: CAT (Path kk j k)) where
-  id :: forall (a :: Path kk j k). (Ob a) => Strictified a a
-  id = let a = singPath @a in Str a a (fold a)
+  id :: forall (as :: Path kk j k). (Ob as) => Strictified as as
+  id = st @as @as (fold (singPath @as))
   Str _ r m . Str p _ n = Str p r (m . n)
 instance (CategoryOf (kk j k), Bicategory kk) => CategoryOf (Path kk j k) where
   type (~>) = Strictified
@@ -325,106 +306,22 @@ instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
           \\\ rs
           \\\ l
           \\\ r
-
-adjVK
-  :: forall hk vk i j k f g v w x y
-   . (Adjunction x v, Adjunction y w, HasCompanions hk vk, Ob v, Ob w)
-  => RetroSq '(y :: hk i k, g) '(x, f :: vk j k)
-  -> Sq '(v, g) '(w, f)
-adjVK (RetroSq sq) =
-  let cf = mapCompanion @(Path hk) (obj1 @f)
-      cg = mapCompanion @(Path hk) (obj1 @g)
-      v = obj1 @v
-      w = obj1 @w
-      x = obj1 @x
-      y = obj1 @y
-      counit' = str (x || v) iObj (counit @x @v)
-      unit' = str iObj (w || y) (unit @y @w)
-      sq' = str (y || cg) (cf || x) sq
-  in Sq
-      ( unStr
-          ( unit' || cg || v
-              == w || sq' || v
-              == w || cf || counit'
-          )
-      )
-      \\\ sq
-
-adjHK
-  :: forall hk vk i j k e f g h v w
-   . (Adjunction f h, Adjunction g e, HasCompanions hk vk, Ob f, Ob g)
-  => RetroSq '(v :: hk i k, h) '(w, e :: vk j k)
-  -> Sq '(v, g) '(w, f)
-adjHK (RetroSq sq) =
-  let v = obj1 @v
-      w = obj1 @w
-      e = obj1 @e
-      f = obj1 @f
-      g = obj1 @g
-      h = obj1 @h
-      ce = mapCompanion @(Path hk) e
-      cf = mapCompanion @(Path hk) f
-      cg = mapCompanion @(Path hk) g
-      ch = mapCompanion @(Path hk) h
-      counit' = mapCompanion @(Path hk) (str (g || e) iObj (counit @g @e))
-      unit' = mapCompanion @(Path hk) (str iObj (h || f) (unit @f @h))
-      sq' = str (v || ch) (ce || w) sq
-  in Sq
-      ( unStr
-          ( cg || v || unit'
-              == cg || sq' || cf
-              == counit' || w || cf
-          )
-      )
-      \\\ sq
-
--- adj4Sq
---   :: forall hk vk i j k e f g h v w x y
---    . (Adjunction v x, Adjunction w y, Adjunction h f, Adjunction e g, HasCompanions hk vk)
---   => Sq '(v :: hk k j, g) '(w, f :: vk k i)
---   -> Sq '(y, h) '(x, e)
--- adj4Sq (Sq sq) =
---   let v = obj1 @v
---       w = obj1 @w
---       x = obj1 @x
---       y = obj1 @y
---       e = obj1 @e
---       f = obj1 @f
---       g = obj1 @g
---       h = obj1 @h
---       ce = mapCompanion @(Path hk) e
---       cf = mapCompanion @(Path hk) f
---       cg = mapCompanion @(Path hk) g
---       ch = mapCompanion @(Path hk) h
---       unitV = mapCompanion @(Path hk) (str iObj (f || h) (unit @h @f))
---       counitV = mapCompanion @(Path hk) (str (e || g) iObj (counit @e @g))
---       unitH = str iObj (x || v) (unit @v @x)
---       counitH = str (w || y) iObj (counit @w @y)
---       sq' = str (cg || v) (w || cf) sq
---   in Sq
---       ( unStr
---           ( (unitH == x || counitV || v) || ch || y
---               == x || ce || sq' || ch || y
---               == x || ce || (w || unitV || y == counitH)
---           )
---       )
-
 instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
   eta = id
   mu = id
 
 instance (Monad s, Ob s) => Monad (s ::: Nil) where
-  eta = str iObj (obj1 @s) eta
-  mu = str (obj1 @s || obj1 @s) (obj1 @s) mu
+  eta = st @Nil @(s ::: Nil) eta
+  mu = st @(s ::: s ::: Nil) @(s ::: Nil) mu
 
 instance (Bicategory kk, Ob0 kk a) => Comonad (Nil :: Path kk a a) where
   epsilon = id
   delta = id
 
 instance (Adjunction l r, Ob r, Ob l) => Monad (l ::: r ::: Nil) where
-  eta = str iObj (obj1 @r || obj1 @l) (unit @l @r)
-  mu = let r = obj1 @r; l = obj1 @l in r || str (l || r) iObj (counit @l @r) || l
+  eta = st @Nil @(l ::: r ::: Nil) (unit @l @r)
+  mu = obj1 @r || st @(r ::: l ::: Nil) @Nil (counit @l @r) || obj1 @l
 
 instance (Adjunction l r, Ob r, Ob l) => Comonad (r ::: l ::: Nil) where
-  epsilon = str (obj1 @l || obj1 @r) iObj (counit @l @r)
-  delta = let r = obj1 @r; l = obj1 @l in l || str iObj (r || l) (unit @l @r) || r
+  epsilon = st @(r ::: l ::: Nil) @Nil (counit @l @r)
+  delta = obj1 @l || st @Nil @(l ::: r ::: Nil) (unit @l @r) || obj1 @r
