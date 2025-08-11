@@ -15,7 +15,7 @@ import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Category.Monoidal.Distributive (Traversable (..), Cotraversable (..))
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Discrete, Thin, withEq)
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Discrete, Thin, withEq)
 
 type Costar :: (j -> k) -> k +-> j
 data Costar f a b where

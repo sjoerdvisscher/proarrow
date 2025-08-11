@@ -7,7 +7,7 @@ import Data.Kind (Type)
 import Prelude (($), type (~))
 import Prelude qualified as P
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)

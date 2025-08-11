@@ -15,7 +15,7 @@ import Numeric (showFFloat)
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude hiding (id, (.))
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, currySA, expSA)

@@ -1,10 +1,10 @@
 module Proarrow.Profunctor.Product where
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (Profunctor (..), (:~>), type (+->))
 import Proarrow.Category.Monoidal.Action (Strong (..))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 
 type (:*:) :: (j +-> k) -> (j +-> k) -> (j +-> k)
 data (p :*: q) a b where

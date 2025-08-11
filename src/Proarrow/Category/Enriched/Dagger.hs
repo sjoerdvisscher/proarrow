@@ -1,4 +1,4 @@
-module Proarrow.Category.Dagger where
+module Proarrow.Category.Enriched.Dagger where
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor, type (+->))
 

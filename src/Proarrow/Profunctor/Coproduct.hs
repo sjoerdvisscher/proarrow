@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Coproduct where
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Core (Profunctor (..), type (+->))
 import Proarrow.Category.Monoidal.Action (Strong (..))
 

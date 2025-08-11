@@ -10,7 +10,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k

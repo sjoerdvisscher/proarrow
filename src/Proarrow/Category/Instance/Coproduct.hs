@@ -2,7 +2,7 @@ module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 
 type data COPRODUCT j k = L j | R k

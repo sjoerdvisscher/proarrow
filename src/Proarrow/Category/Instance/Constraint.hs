@@ -11,7 +11,7 @@ import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 import Unsafe.Coerce (unsafeCoerce)
 
 newtype CONSTRAINT = CNSTRNT Constraint

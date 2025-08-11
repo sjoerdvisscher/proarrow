@@ -2,9 +2,9 @@ module Proarrow.Category.Instance.Discrete where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Preorder.ThinCategory qualified as Thin
+import Proarrow.Category.Enriched.ThinCategory qualified as Thin
 
 newtype DISCRETE k = D k
 type instance UN D (D a) = a
