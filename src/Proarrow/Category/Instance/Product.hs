@@ -4,11 +4,11 @@ module Proarrow.Category.Instance.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal(..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type Fst :: (a, b) -> a

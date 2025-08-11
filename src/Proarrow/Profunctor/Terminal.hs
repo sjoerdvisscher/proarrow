@@ -1,10 +1,10 @@
 module Proarrow.Profunctor.Terminal (TerminalProfunctor (.., TerminalProfunctor)) where
 
-import Proarrow.Category.Dagger (Dagger, DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (pattern Obj, type Obj)
-import Proarrow.Preorder.ThinCategory (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.ThinCategory (Thin, ThinProfunctor (..))
 
 type TerminalProfunctor :: j +-> k
 data TerminalProfunctor a b where

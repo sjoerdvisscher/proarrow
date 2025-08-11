@@ -7,7 +7,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 
 type data NAT = Z | S NAT
 

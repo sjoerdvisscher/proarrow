@@ -1,8 +1,8 @@
 module Proarrow.Profunctor.Initial where
 
-import Proarrow.Category.Dagger (Dagger, DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
 import Proarrow.Category.Instance.Zero (Bottom (..))
 
 type InitialProfunctor :: j +-> k

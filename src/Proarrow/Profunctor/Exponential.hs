@@ -2,7 +2,7 @@
 module Proarrow.Profunctor.Exponential where
 
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), UN, type (+->))
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Discrete, withEq)
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Discrete, withEq)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Profunctor.Product ((:*:) (..))

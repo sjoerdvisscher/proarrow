@@ -8,7 +8,7 @@ import Prelude (type (~))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Discrete, withEq, Thin)
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Discrete, withEq, Thin)
 
 infixl 8 %
 

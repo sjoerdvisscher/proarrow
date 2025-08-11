@@ -4,9 +4,9 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Category.Dagger (DaggerProfunctor (..), Dagger)
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..), Dagger)
 import Proarrow.Category.Monoidal.Action (Strong (..), MonoidalAction)
-import Proarrow.Preorder.ThinCategory (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
 
 type Id :: CAT k
 newtype Id a b = Id {unId :: a ~> b}

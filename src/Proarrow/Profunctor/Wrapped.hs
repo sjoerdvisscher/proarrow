@@ -5,7 +5,7 @@ import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
-import Proarrow.Category.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 

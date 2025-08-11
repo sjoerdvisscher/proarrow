@@ -1,19 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-module Proarrow.Preorder.ThinCategory where
+module Proarrow.Category.Enriched.ThinCategory where
 
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, obj, type (+->))
-import Proarrow.Preorder
-  ( CProfunctor (..)
-  , CPromonad (..)
-  , Dict (..)
-  , POS
-  , PreorderOf (..)
-  , cdimapDefault
-  , type (:-) (..)
-  )
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), type (+->))
 
 type ThinProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (Profunctor p, Thin j, Thin k) => ThinProfunctor (p :: j +-> k) where
@@ -56,21 +47,3 @@ instance (ThinProfunctor p, forall c d. ArrowIsId p c d, Discrete k) => Discrete
 
 class (DiscreteProfunctor ((~>) :: CAT k)) => Discrete k
 instance (DiscreteProfunctor ((~>) :: CAT k)) => Discrete k
-
-newtype THIN k = T k
-type instance UN T (T a) = a
-
-class (Thin k, HasArrow (~>) (UN T a) (UN T b), COb a, COb b) => ThinCategory (a :: THIN k) b
-instance (Thin k, HasArrow (~>) (UN T a) (UN T b), COb a, COb b) => ThinCategory (a :: THIN k) b
-
-instance (Thin k) => CProfunctor (ThinCategory :: POS (THIN k)) where
-  cdimap = cdimapDefault
-  obs = Sub Dict
-instance (Thin k) => CPromonad (ThinCategory :: POS (THIN k)) where
-  cid @(T a) = Sub (withArr (obj @a) Dict)
-  ccomp @a @b @c = Sub (withArr (arr @(~>) @(UN T b) @(UN T c) . arr @(~>) @(UN T a) @(UN T b)) Dict)
-
--- | A thin category as a preorder.
-instance (Thin k) => PreorderOf (THIN k) where
-  type (<=) = ThinCategory
-  type COb a = (Is T a, Ob (UN T a))

@@ -17,7 +17,7 @@ import Proarrow.Core
   )
 import Proarrow.Object.Initial (HasInitialObject (..), initiate')
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
-import Proarrow.Preorder.ThinCategory (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
+import Proarrow.Category.Enriched.ThinCategory (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind

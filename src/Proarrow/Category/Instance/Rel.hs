@@ -4,11 +4,11 @@ module Proarrow.Category.Instance.Rel where
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), src, (:~>), type (+->), Promonad (..))
-import Proarrow.Preorder.ThinCategory (Discrete, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.ThinCategory (Discrete, ThinProfunctor (..), withEq)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Category.Dagger (DaggerProfunctor)
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor)
 
 class (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
 instance (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
