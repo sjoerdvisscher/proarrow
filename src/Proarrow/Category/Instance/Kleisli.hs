@@ -37,6 +37,8 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar(..), Representable(..), trivialRep)
 import Proarrow.Monoid (CopyDiscard (..))
+import Proarrow.Category.Enriched.ThinCategory qualified as T
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 
 newtype KLEISLI (p :: CAT k) = KL k
 type instance UN KL (KL k) = k -- test
@@ -120,6 +122,14 @@ instance (Strong k p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p ::
   multiplicator @a @b @(KL c) = arr (multiplicator @k @k @a @b @c)
   multiplicatorInv @a @b @(KL c) = arr (multiplicatorInv @k @k @a @b @c)
 
+instance (DaggerProfunctor p, Promonad p) => DaggerProfunctor (Kleisli :: CAT (KLEISLI p)) where
+  dagger (Kleisli p) = Kleisli (dagger p)
+
+instance (T.ThinProfunctor p, Promonad p) => T.ThinProfunctor (Kleisli :: CAT (KLEISLI p)) where
+  type HasArrow (Kleisli :: CAT (KLEISLI p)) (KL a) (KL b) = T.HasArrow p a b
+  arr = Kleisli T.arr
+  withArr (Kleisli p) = T.withArr p
+
 type KleisliFree :: forall (p :: k +-> k) -> k +-> KLEISLI p
 data KleisliFree p a b where
   KleisliFree :: p a b -> KleisliFree p (KL a) b
@@ -144,7 +154,7 @@ type LIFTEDF (f :: j +-> k) = KLEISLI (RepCostar f :.: f)
 unlift :: (Representable f) => Kleisli (KL a :: LIFTEDF f) (KL b) -> (f % a ~> f % b, Obj a, Obj b)
 unlift (Kleisli (RepCostar f :.: g)) = (index g . f, Obj, tgt g)
 
-pattern LiftF :: (Representable f) => (Ob a, Ob b) => (f % a ~> f % b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
+pattern LiftF :: (Representable (f :: j +-> k)) => (Ob (a :: j), Ob b) => (f % a ~> f % b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
 pattern LiftF f <- (unlift -> (f, Obj, Obj))
   where
     LiftF f = Kleisli (RepCostar f :.: trivialRep)
