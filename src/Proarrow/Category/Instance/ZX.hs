@@ -64,6 +64,12 @@ enumAll = [minBound .. maxBound]
 nat :: (KnownNat n) => Int
 nat @n = fromIntegral $ natVal (Proxy :: Proxy n)
 
+withPlusIsNat :: forall a b r. (KnownNat a, KnownNat b) => (KnownNat (a + b) => r) -> r
+withPlusIsNat r = case ab of SNat -> r
+    where
+      ab :: SNat (a + b)
+      ab = withSomeSNat (natVal (Proxy :: Proxy a) + natVal (Proxy :: Proxy b)) unsafeCoerce
+
 type ZX :: CAT Nat
 data ZX i o where
   ZX :: (KnownNat i, KnownNat o) => SparseMatrix o i -> ZX i o
@@ -125,16 +131,13 @@ instance MonoidalProfunctor ZX where
 instance Monoidal Nat where
   type Unit = 0
   type p ** q = p + q
-  withOb2 @a @b r = case ab of SNat -> r
-    where
-      ab :: SNat (a + b)
-      ab = withSomeSNat (natVal (Proxy :: Proxy a) + natVal (Proxy :: Proxy b)) unsafeCoerce
+  withOb2 @a @b r = withPlusIsNat @a @b r
   leftUnitor = id
   leftUnitorInv = id
   rightUnitor = id
   rightUnitorInv = id
-  associator @a @b @c = withOb2 @_ @a @b $ withOb2 @_ @(a + b) @c $ unsafeCoerce (obj @(a + b + c))
-  associatorInv @a @b @c = withOb2 @_ @a @b $ withOb2 @_ @(a + b) @c $ unsafeCoerce (obj @(a + b + c))
+  associator @a @b @c = unsafeCoerce (withOb2 @_ @a @b (withOb2 @_ @(a + b) @c (obj @(a + b + c))))
+  associatorInv @a @b @c = unsafeCoerce (withOb2 @_ @a @b (withOb2 @_ @(a + b) @c (obj @(a + b + c))))
 
 instance SymMonoidal Nat where
   swap @m @n =
