@@ -57,10 +57,15 @@ instance (HasLimits j k, Representable d) => Representable (Ran (OP j) (d :: i +
   repMap = repMap @(Limit j d)
 
 type PWRan j p a = (j |> p) % a
+-- a ~> PWRan j p b = forall x. (b ~> j x) -> a ~> p x
+-- a ~> PWRan j p b = forall x. a ~> (p x ^ (b ~> j x))
+-- PWRan j p b = forall x. p x ^ (b ~> j x)
 class (Representable p, Representable j, Representable (j |> p)) => PointwiseRightKanExtension j p
 instance (Representable p, Representable j, Representable (j |> p)) => PointwiseRightKanExtension j p
 
 type PWLift j p a = (j |> p) %% a
+-- PWLift j p a ~> b = forall x. (j b ~> x) -> p a ~> x
+-- PWLift j p a ~> b = p a ~> j b
 class (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 instance (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 

@@ -120,22 +120,24 @@ instance MonoidalAction (Type -> Type) Type where
   multiplicator = Compose
   multiplicatorInv = getCompose
 
-newtype HaskRan j h a = Ran {runRan :: forall b. (a -> j b) -> h b}
-instance Functor (HaskRan j h) where
+type Ran :: (j -> k) -> (j -> Type) -> k -> Type
+newtype Ran j h a = Ran {runRan :: forall b. (a ~> j b) -> h b}
+instance CategoryOf k => Functor (Ran j h :: k -> Type) where
   map f (Ran k) = Ran \j -> k (j . f)
 instance Closed (Type -> Type) where
-  type j ~~> h = HaskRan j h
+  type j ~~> h = Ran j h
   withObExp r = r
   curry (Nat n) = Nat \fa -> Ran \ajb -> n (Compose (map ajb fa))
   apply = Nat \(Compose fja) -> runRan fja id
   (^^^) (Nat by) (Nat xa) = Nat \h -> Ran \x -> by (runRan h (xa . x))
 
-data HaskLan j f a where
-  Lan :: (j b -> a) -> f b -> HaskLan j f a
-instance Functor (HaskLan j f) where
+type Lan :: (j -> k) -> (j -> Type) -> k -> Type
+data Lan j f a where
+  Lan :: (j b ~> a) -> f b -> Lan j f a
+instance CategoryOf k => Functor (Lan j f :: k -> Type) where
   map g (Lan k f) = Lan (g . k) f
 instance Coclosed (Type -> Type) where
-  type f <~~ j = HaskLan j f
+  type f <~~ j = Lan j f
   withObCoExp r = r
   coeval = Nat (Compose . Lan id)
   coevalUniv (Nat n) = Nat \(Lan k f) -> map k (getCompose (n f))

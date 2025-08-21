@@ -17,8 +17,8 @@ import Proarrow.Object.BinaryProduct
   )
 import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..), initiate)
-import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 
 data BOOL = FLS | TRU

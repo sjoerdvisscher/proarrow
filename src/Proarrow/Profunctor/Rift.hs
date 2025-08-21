@@ -57,10 +57,15 @@ instance (HasColimits j k, Corepresentable d) => Corepresentable (Rift (OP j) (d
   corepMap = corepMap @(Colimit j d)
 
 type PWLan j p a = (p <| j) %% a
+-- PWLan j p a ~> b = forall x. j x ~> a -> p x ~> b
+-- PWLan j p a ~> b = forall x. ((j x ~> a) .* p x) ~> b
+-- PWLan j p a = exists x. ((j x ~> a) .* p x)
 class (Corepresentable j, Corepresentable p, Corepresentable (p <| j)) => PointwiseLeftKanExtension j p
 instance (Corepresentable j, Corepresentable p, Corepresentable (p <| j)) => PointwiseLeftKanExtension j p
 
 type PWRift j p a = (p <| j) % a
+-- a ~> PWRift j p b = forall x. x ~> j a -> x ~> p b
+-- a ~> PWRift j p b = j a ~> p b
 class (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
 instance (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
 
