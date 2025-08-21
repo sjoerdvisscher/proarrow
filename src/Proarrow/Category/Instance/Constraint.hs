@@ -2,6 +2,7 @@
 module Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..), (:=>) (..), reifyExp, eqIsSuperOrd, maybeLiftsSemigroup) where
 
 import Data.Kind (Constraint)
+import GHC.Exts (withDict)
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -12,7 +13,6 @@ import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
-import Unsafe.Coerce (unsafeCoerce)
 
 newtype CONSTRAINT = CNSTRNT Constraint
 type instance UN CNSTRNT (CNSTRNT a) = a
@@ -83,12 +83,8 @@ class b :=> c where
 instance (b => c) => (b :=> c) where
   entails = Entails \r -> r
 
--- magic from reflection library
-newtype Magic b c r = Magic ((b :=> c) => r)
-
 reifyExp :: forall b c r. CNSTRNT b :- CNSTRNT c -> ((b :=> c) => r) -> r
-reifyExp bc k = unsafeCoerce (Magic k :: Magic b c r) bc
-{-# INLINE reifyExp #-}
+reifyExp = withDict @(b :=> c)
 
 instance Closed CONSTRAINT where
   type a ~~> b = CNSTRNT (UN CNSTRNT a :=> UN CNSTRNT b)
