@@ -1,21 +1,18 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE LinearTypes #-}
-{-# LANGUAGE RebindableSyntax #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Category.Instance.Free where
 
 import Data.Kind (Constraint, Type)
 import Data.Typeable (Typeable, eqT, (:~:) (..))
-import GHC.Exts qualified as GHC
-import Prelude (Bool (..), Eq (..), Maybe (..), and, (&&), (<$>))
+import Prelude (Bool (..), Eq (..), Maybe (..), (&&))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Discrete qualified as D
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core
   ( CAT
-  , Category
   , CategoryOf (..)
   , Kind
   , Profunctor (..)
@@ -39,9 +36,17 @@ type family All (cs :: [Kind -> Constraint]) (k :: Kind) :: Constraint where
   All '[] k = ()
   All (c ': cs) k = (c k, All cs k)
 
-class cs `Includes` (c :: Kind -> Constraint)
-instance {-# OVERLAPPABLE #-} (cs `Includes` c) => (d ': cs) `Includes` c
-instance (c ': cs) `Includes` c
+data Place as a where
+  Here :: Place (a ': as) a
+  There :: b `Elem` as => Place (a ': as) b
+
+type Elem :: forall {a}. a -> [a] -> Constraint
+class (c :: a) `Elem` (cs :: [a]) where
+  place :: Place cs c
+instance {-# OVERLAPPABLE #-} (c `Elem` cs) => c `Elem` (d ': cs) where
+  place = There
+instance c `Elem` (c ': cs) where
+  place = Here
 
 type Free :: CAT (FREE cs p k)
 data Free a b where
@@ -49,7 +54,7 @@ data Free a b where
   Emb :: (Ob a, Ob b, Typeable a, Typeable b) => p a b %1 -> Free (i :: FREE cs p k) (EMB a) %1 -> Free i (EMB b)
   Str
     :: forall {j} {k} {cs} {p :: CAT j} (c :: Kind -> Constraint) (a :: FREE cs p k) b i
-     . ((All cs k) => c k, cs `Includes` c, HasStructure k cs p c, Ob a, Ob b)
+     . ((All cs k) => c k, c `Elem` cs, HasStructure k cs p c, Ob a, Ob b)
     => Struct c a b %1 -> Free i a %1 -> Free i b
 
 emb :: (Ob a, Ob b, Typeable a, Typeable b, Ok cs p k) => p a b %1 -> Free (EMB a :: FREE cs p k) (EMB b)
@@ -112,71 +117,6 @@ retract
   :: forall {k} cs f a b. (All cs k, Representable f) => (a :: FREE cs InitialProfunctor k) ~> b -> Lower f a ~> Lower f b
 retract = fold @cs @f (\case {})
 
-type Req (c :: Type -> Constraint) (lut :: [(GHC.Symbol, k)]) (a :: FREE cs p k) (b :: FREE cs p k)
-  =() :: Constraint --( (Lower (Lookup lut) a) (Lower (Lookup lut) b), Show (Lower (Lookup lut) a), Show (Lower (Lookup lut) b))
-infix 0 :=:
-type AssertEqs :: (Kind -> Constraint) -> Kind -> Type
-data AssertEqs c k  where
-  NoLaws :: AssertEqs c k
-  (:>>:) :: AssertEqs c k -> AssertEqs c k -> AssertEqs c k
-  (:=:) :: forall {k} {c} (a :: FREE '[c] (Var c) k) (b :: FREE '[c] (Var c) k). (forall r lut. ((Req Eq lut a b, Req P.Show lut a b) => Free a b -> Free a b -> r) -> r) -> AssertEqs c k
-
-(>>) :: AssertEqs c k -> AssertEqs c k -> AssertEqs c k
-(>>) = (:>>:)
-
-class Laws (c :: Kind -> Constraint) where
-  data Var c (a :: GHC.Symbol) (b :: GHC.Symbol)
-  laws :: (c k, Typeable k) => AssertEqs c k
-
-type family AssocLookup (lut :: [(GHC.Symbol, k)]) (a :: GHC.Symbol) :: k where
-  AssocLookup '[] a = GHC.Any
-  AssocLookup ('(s, k) ': lut) s = k
-  AssocLookup ('(s, k) ': lut) a = AssocLookup lut a
-
-type family AllOb (lut :: [(GHC.Symbol, k)]) :: Constraint where
-  AllOb '[] = ()
-  AllOb ('(s, k) ': lut) = (Ob k, AllOb lut)
-
-type Lookup :: [(GHC.Symbol, k)] -> GHC.Symbol +-> k
-data Lookup lut a b where
-  Lookup :: forall lut b a. (Ob b) => a ~> Lookup lut % b -> Lookup lut a b
-instance (CategoryOf k, AllOb lut) => Profunctor (Lookup lut :: GHC.Symbol +-> k) where
-  dimap = dimapRep
-  r \\ Lookup f = r \\ f
-instance (CategoryOf k, AllOb lut) => Representable (Lookup lut :: GHC.Symbol +-> k) where
-  type Lookup lut % a = AssocLookup lut a
-  index (Lookup f) = f
-  tabulate f = Lookup f
-  -- We can't prove Ob (AssocLookup lut a), since `a` might not occur in `lut`, so we can't implement repMap.
-  -- But Lookup is only for use with props, and props doesn't use repMap.
-  -- Also the `pn` argument to props proves that all the symbols used in Var are in lut.
-  repMap = P.error "repMap should not be used with Lookup"
-
-instance Profunctor ((:~:) :: CAT GHC.Symbol) where
-  dimap = dimapDefault
-  r \\ Refl = r
-instance Promonad ((:~:) :: CAT GHC.Symbol) where
-  id = Refl
-  Refl . Refl = Refl
-instance CategoryOf GHC.Symbol where
-  type (~>) = (:~:)
-  type Ob a = ()
-
--- props
---   :: forall {k} (lut :: [(GHC.Symbol, k)]) c (cat :: CAT k)
---    . (c k, Laws c, Ok c (Var c) k, Eq2 cat, Category cat, AllOb lut)
---   => (forall x y. Var c x y -> Lookup lut % x ~> Lookup lut % y) -> Bool
--- props pn = and ((\(l :=: r) -> let f g = fold @'[c] (Lookup @lut . pn) g \\ g in f l == f r) <$> laws @c @k)
-
-instance Laws HasBinaryProducts where
-  data Var HasBinaryProducts a b where
-    F :: Var HasBinaryProducts "A" "B"
-    G :: Var HasBinaryProducts "A" "C"
-  laws = NoLaws
-    -- let f = emb F; g = emb G
-    -- fst . (f &&& g) :=: f
-    -- snd . (f &&& g) :=: g
-
 instance (Ok c p k) => CategoryOf (FREE c p k) where
   type (~>) = Free
   type Ob a = (IsFreeOb a, Typeable a)
@@ -203,7 +143,7 @@ instance HasStructure k cs p HasTerminalObject where
     Terminal :: (Ob a) => Struct HasTerminalObject a TermF
   foldStructure @f _ (Terminal @a) = withLowerOb @a @f (terminate)
 deriving instance Eq (Struct HasTerminalObject a b)
-instance (HasTerminalObject k, Ok cs p k, cs `Includes` HasTerminalObject) => HasTerminalObject (FREE cs p k) where
+instance (HasTerminalObject k, Ok cs p k, HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs p k) where
   type TerminalObject = TermF
   terminate = Str Terminal Id
 
@@ -216,7 +156,7 @@ instance HasStructure k cs p HasInitialObject where
     Initial :: (Ob b) => Struct HasInitialObject InitF b
   foldStructure @f _ (Initial @b) = withLowerOb @b @f initiate
 deriving instance Eq (Struct HasInitialObject a b)
-instance (HasInitialObject k, Ok cs p k, cs `Includes` HasInitialObject) => HasInitialObject (FREE cs p k) where
+instance (HasInitialObject k, Ok cs p k, HasInitialObject `Elem` cs) => HasInitialObject (FREE cs p k) where
   type InitialObject = InitF
   initiate = Str Initial Id
 
@@ -233,7 +173,7 @@ instance HasStructure k cs p HasBinaryProducts where
   foldStructure @f _ (Snd @a @b) = withLowerOb @a @f (withLowerOb @b @f (snd @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Prd f g) = go f &&& go g
 deriving instance (WithEq a) => Eq (Struct HasBinaryProducts a b)
-instance (HasBinaryProducts k, Ok cs p k, cs `Includes` HasBinaryProducts) => HasBinaryProducts (FREE cs p k) where
+instance (HasBinaryProducts k, Ok cs p k, HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs p k) where
   type a && b = a *! b
   withObProd r = r
   fst = Str Fst Id
@@ -253,7 +193,7 @@ instance HasStructure k cs p HasBinaryCoproducts where
   foldStructure @f _ (Rgt @a @b) = withLowerOb @a @f (withLowerOb @b @f (rgt @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Sum g h) = (go g ||| go h)
 deriving instance (WithEq a) => Eq (Struct HasBinaryCoproducts a b)
-instance (HasBinaryCoproducts k, Ok cs p k, cs `Includes` HasBinaryCoproducts) => HasBinaryCoproducts (FREE cs p k) where
+instance (HasBinaryCoproducts k, Ok cs p k, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE cs p k) where
   type a || b = a + b
   withObCoprod r = r
   lft = Str Lft Id
@@ -287,10 +227,10 @@ instance HasStructure k cs p Monoidal where
   foldStructure @f _ (Associator @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
   foldStructure @f _ (AssociatorInv @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
 deriving instance (WithEq a) => Eq (Struct Monoidal a b)
-instance (Monoidal k, Ok cs p k, cs `Includes` Monoidal) => MonoidalProfunctor (Free :: CAT (FREE cs p k)) where
+instance (Monoidal k, Ok cs p k, Monoidal `Elem` cs) => MonoidalProfunctor (Free :: CAT (FREE cs p k)) where
   par0 = Str Par0 Id
   f `par` g = Str (Par f g) Id \\ f \\ g
-instance (Monoidal k, Ok cs p k, cs `Includes` Monoidal) => Monoidal (FREE cs p k) where
+instance (Monoidal k, Ok cs p k, Monoidal `Elem` cs) => Monoidal (FREE cs p k) where
   type Unit = UnitF
   type a ** b = a **! b
   withOb2 r = r
@@ -312,7 +252,7 @@ instance HasStructure k cs p Closed where
   foldStructure @f _ (Apply @a @b) = withLowerOb @a @f (withLowerOb @b @f (apply @_ @(Lower f a) @(Lower f b)))
   foldStructure @f go (Curry @a @b f) = withLowerOb @a @f (withLowerOb @b @f (curry @_ @(Lower f a) @(Lower f b) (go f)))
 deriving instance (WithEq a) => Eq (Struct Closed a b)
-instance (Closed k, Ok cs p k, cs `Includes` Closed, cs `Includes` Monoidal) => Closed (FREE cs p k) where
+instance (Closed k, Ok cs p k, Closed `Elem` cs, Monoidal `Elem` cs) => Closed (FREE cs p k) where
   type a ~~> b = a --> b
   withObExp r = r
   curry f = Str (Curry f) Id \\ f
