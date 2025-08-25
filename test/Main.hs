@@ -5,8 +5,10 @@
 
 module Main where
 
+import Control.Monad (when)
 import Data.Data (Proxy (..), Typeable, (:~:) (..))
 import Data.Kind (Constraint, Type)
+import Data.Monoid (Ap (..))
 import GHC.Exts qualified as GHC
 import GHC.Generics (Generic)
 import Test.Falsify.Generator qualified as Gen
@@ -14,35 +16,33 @@ import Test.Tasty
 import Test.Tasty.Falsify
 import Prelude hiding (fst, id, snd, (.), (>>))
 
-import Data.Monoid (Ap (..))
-import Proarrow.Category.Instance.Free (Elem (..), FREE (..), Free (..), Lower, Place (..), emb, fold)
+import Proarrow.Category.Instance.Free (FREE (..), Free (..), Lower, Show2, emb, fold, foldConst)
 import Proarrow.Core (CAT, Category, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, type (+->))
 import Proarrow.Object (Ob')
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 import Test.Falsify.GenDefault (GenDefault (..), ViaGeneric (..))
 import Test.Falsify.GenDefault.Std (Std)
+import Proarrow.Monoid (MONOIDK)
 
 class (forall a b. (TestOb a, TestOb b) => c (p a b)) => AllTest c p
 instance (forall a b. (TestOb a, TestOb b) => c (p a b)) => AllTest c p
 class (Testable j, Testable k, Profunctor p, AllTest Show p) => TestableProfunctor (p :: j +-> k) where
   genP :: (TestOb (a :: k), TestOb (b :: j)) => Property (p a b)
-  eqP :: (TestOb (a :: k), TestOb (b :: j)) => p a b -> p a b -> Property ()
+  eqP :: (TestOb (a :: k), TestOb (b :: j)) => p a b -> p a b -> Property Bool
 
 class (Typeable k, forall (a :: k). (TestOb a) => Ob' a) => Testable k where
   type TestOb (a :: k) :: GHC.Constraint
 
 instance Testable Type where
   type TestOb (a :: Type) = (Typeable a, Eq a, Show a, GenDefault Std a, Gen.Function a)
-instance Show (a -> b) where
+instance (TestOb a, TestOb b) => Show (a -> b) where
   show _ = "<function>"
 instance TestableProfunctor (->) where
   genP = def
   eqP l r = do
     a <- def
-    if l a == r a
-      then pure ()
-      else testFailed $ "Expected: " ++ show (r a) ++ ", but got: " ++ show (l a)
+    pure $ l a == r a
 
 instance (Gen.Function a, GenDefault tag b) => GenDefault tag (a -> b) where
   genDefault tag = Gen.applyFun <$> Gen.fun (genDefault tag)
@@ -69,20 +69,33 @@ propBinaryProducts f g =
     @'[ '("A", a), '("B", b), '("C", c)]
     \case F -> f; G -> g
 
-type family Reqs c (tys :: [FREE '[c] (Var c) k]) (lut :: [(GHC.Symbol, k)]) :: GHC.Constraint where
+type family Reqs c (tys :: [FREE '[c] (Var c)]) (lut :: [(GHC.Symbol, k)]) :: GHC.Constraint where
   Reqs c '[] lut = ()
   Reqs c (ty ': tys) (lut :: [(GHC.Symbol, k)]) = (TestOb (Lower (Lookup lut) ty), Reqs c tys lut)
 
+data Place as a where
+  Here :: Place (a ': as) a
+  There :: (b `Elem` as) => Place (a ': as) b
+
+type Elem :: forall {a}. a -> [a] -> Constraint
+class c `Elem` cs where
+  place :: Place cs c
+instance {-# OVERLAPPABLE #-} (c `Elem` cs) => c `Elem` (d ': cs) where
+  place = There
+instance c `Elem` (c ': cs) where
+  place = Here
+
 infix 0 :=:
-type AssertEq :: (Kind -> Constraint) -> Kind -> [FREE '[c] (Var c) k] -> Type
-data AssertEq c k tys where
+type AssertEq :: (Kind -> Constraint) -> [FREE '[c] (Var c)] -> Type
+data AssertEq c tys where
   (:=:)
-    :: forall {k} {c} {tys} (a :: FREE '[c] (Var c) k) (b :: FREE '[c] (Var c) k)
-     . (a `Elem` tys, b `Elem` tys) => Free a b -> Free a b -> AssertEq c k tys
+    :: forall {c} {tys} (a :: FREE '[c] (Var c)) (b :: FREE '[c] (Var c))
+     . (a `Elem` tys, b `Elem` tys) => Free a b -> Free a b -> AssertEq c tys
+deriving instance (Show2 (Var c)) => Show (AssertEq c tys)
 
 data family Var (c :: Kind -> Constraint) (a :: GHC.Symbol) (b :: GHC.Symbol)
-class Laws (c :: Kind -> Constraint) (tys :: [FREE '[c] (Var c) k]) | c k -> tys where
-  laws :: (c k, Typeable k) => [AssertEq c k tys]
+class Laws (c :: Kind -> Constraint) (tys :: [FREE '[c] (Var c)]) | c -> tys where
+  laws :: [AssertEq c tys]
 
 type family AssocLookup (lut :: [(GHC.Symbol, k)]) (a :: GHC.Symbol) :: k where
   AssocLookup '[] a = GHC.Any
@@ -118,6 +131,7 @@ instance CategoryOf GHC.Symbol where
 data instance Var HasBinaryProducts a b where
   F :: Var HasBinaryProducts "A" "B"
   G :: Var HasBinaryProducts "A" "C"
+deriving instance Show (Var HasBinaryProducts a b)
 instance Laws HasBinaryProducts [EMB "A", EMB "B", EMB "C"] where
   laws =
     let f = emb F; g = emb G
@@ -132,21 +146,27 @@ elem2testOb r = case place @a @tys of
 
 props
   :: forall {k} c {tys} (lut :: [(GHC.Symbol, k)]) (cat :: CAT k)
-   . (c k, Laws c tys, Testable k, Typeable c, Category cat, TestableProfunctor cat, Reqs c tys lut)
+   . (c k, c (FREE '[c] (Var c)), Laws c tys, Testable k, Typeable c, Category cat, TestableProfunctor cat, Reqs c tys lut, Show2 (Var c), c (MONOIDK [String]))
   => (forall x y. Var c x y -> Lookup lut % x ~> Lookup lut % y) -> Property ()
 props pn = getAp (foldMap (Ap . go) laws)
   where
-    go :: AssertEq c k tys -> Property ()
+    f :: forall (a :: FREE '[c] (Var c)) b. a ~> b -> Lower (Lookup lut) a ~> Lower (Lookup lut) b
+    f g = fold @'[c] @(Lookup lut) pn g \\ g
+    vars :: forall (a :: FREE '[c] (Var c)) b. a ~> b -> [String]
+    vars g = foldConst @'[c] (\p -> [show p]) g
+    go :: AssertEq c tys -> Property ()
     go ((:=:) @a @b l r) = do
-      let f g = fold @'[c] (Lookup @lut . pn) g \\ g
       elem2testOb @c @a @tys @lut $
-        elem2testOb @c @b @tys @lut $
-          eqP (f l) (f r)
+        elem2testOb @c @b @tys @lut $ do
+          isEq <- eqP (f l) (f r)
+          when (isEq) $
+            testFailed $
+              "Expected: " ++ show (vars r) ++ show (f r) ++ ", but got: " ++ show (vars l) ++ show (f l)
 
 main :: IO ()
 main =
   defaultMain $
     testGroup
       "Profunctor Laws"
-      [ testProperty "Hask has binary products" prop_hask_binary_products
+      [ testProperty (show (laws @HasBinaryProducts)) prop_hask_binary_products
       ]

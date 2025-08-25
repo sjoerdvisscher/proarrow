@@ -5,25 +5,27 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), par, MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj)
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasCoproducts, codiag)
-import Proarrow.Object.BinaryProduct (Cartesian, HasProducts, PROD (..), Prod (..), diag, (&&&))
-import Proarrow.Object.Initial (initiate)
-import Proarrow.Object.Terminal (terminate)
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Instance.Product ((:**:) (..))
-import Proarrow.Object.Dual (StarAutonomous (..), CompactClosed (..))
 import Proarrow.Category (Supplies)
-
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), par)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj)
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag)
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..))
+import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Identity (Id (..))
 
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
   mempty :: Unit ~> m
   mappend :: m ** m ~> m
+
+combine :: (Monoid m) => Unit ~> m -> Unit ~> m -> Unit ~> m
+combine f g = mappend . (f `par` g) . leftUnitorInv
 
 class (Monoid m) => CommutativeMonoid (m :: k)
 
@@ -75,12 +77,12 @@ counitAct = unitor @m . act (counit @a) (obj @n)
 comultAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> Act a (Act a n)
 comultAct = multiplicatorInv @m @c @a @a @n . act (comult @a) (obj @n)
 
-class Monoidal k => CopyDiscard k where
+class (Monoidal k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a
-  default copy :: k `Supplies` Comonoid => (Ob (a :: k)) => a ~> a ** a
+  default copy :: (k `Supplies` Comonoid) => (Ob (a :: k)) => a ~> a ** a
   copy = comult
   discard :: (Ob (a :: k)) => a ~> Unit
-  default discard :: k `Supplies` Comonoid => (Ob (a :: k)) => a ~> Unit
+  default discard :: (k `Supplies` Comonoid) => (Ob (a :: k)) => a ~> Unit
   discard = counit
 
 instance (HasProducts k) => CopyDiscard (PROD k)
@@ -98,16 +100,35 @@ instance (Monoid m) => Profunctor (Mon :: CAT (MONOIDK m)) where
   r \\ Mon{} = r
 instance (Monoid m) => Promonad (Mon :: CAT (MONOIDK m)) where
   id = Mon mempty
-  Mon f . Mon g = Mon (mappend . (f `par` g) . leftUnitorInv)
+  Mon f . Mon g = Mon (combine f g)
 
 -- | A monoid as a one object category.
 instance (Monoid m) => CategoryOf (MONOIDK m) where
   type (~>) = Mon
   type Ob a = a P.~ M
 
+instance (Monoid m) => HasInitialObject (MONOIDK m) where
+  type InitialObject = M
+  initiate = Mon mempty
+instance (Monoid m) => HasTerminalObject (MONOIDK m) where
+  type TerminalObject = M
+  terminate = Mon mempty
+instance (Monoid m) => HasBinaryProducts (MONOIDK m) where
+  type a && b = M
+  withObProd @M @M r = r
+  fst @M @M = Mon mempty
+  snd @M @M = Mon mempty
+  Mon f &&& Mon g = Mon (combine f g)
+instance (Monoid m) => HasBinaryCoproducts (MONOIDK m) where
+  type a || b = M
+  withObCoprod @M @M r = r
+  lft @M @M = Mon mempty
+  rgt @M @M = Mon mempty
+  Mon f ||| Mon g = Mon (combine f g)
+
 instance (CommutativeMonoid m) => MonoidalProfunctor (Mon :: CAT (MONOIDK m)) where
   par0 = Mon mempty
-  Mon f `par` Mon g = Mon (mappend . (f `par` g) . leftUnitorInv)
+  Mon f `par` Mon g = Mon (combine f g)
 instance (CommutativeMonoid m) => Monoidal (MONOIDK m) where
   type Unit = M
   type M ** M = M
