@@ -52,7 +52,7 @@ data Free a b where
   Emb :: (Ob a, Ob b, Typeable a, Typeable b) => p a b %1 -> Free (i :: FREE cs p) (EMB a) %1 -> Free i (EMB b)
   Str
     :: forall {j} {cs} {p :: CAT j} (c :: Kind -> Constraint) (a :: FREE cs p) b i
-     . (c `Elem` cs, HasStructure cs p c, Ob a, Ob b)
+     . (HasStructure cs p c, Ob a, Ob b)
     => Struct c a b %1 -> Free i a %1 -> Free i b
 
 emb :: (Ob a, Ob b, Typeable a, Typeable b, Ok cs p) => p a b %1 -> Free (EMB a :: FREE cs p) (EMB b)
