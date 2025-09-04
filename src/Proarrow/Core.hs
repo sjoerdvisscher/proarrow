@@ -12,7 +12,6 @@ infixr 9 .
 type j +-> k = k -> j -> Type
 
 type CAT k = k +-> k
-type BI k = (k, k) -> k
 type OB k = k -> Constraint
 type Kind = Type
 

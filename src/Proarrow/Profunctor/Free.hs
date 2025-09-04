@@ -12,7 +12,7 @@ import Prelude qualified as P
 
 import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
 import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), TracedMonoidal', toInt)
-import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Nat (Nat (..), first)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
@@ -105,7 +105,7 @@ instance Functor Ap where
   map (Nat n) = Nat $ \case
     Pure a -> Pure a
     Eff fa -> Eff (n fa)
-    LiftA2 k x y -> LiftA2 k (unNat (map (Nat n)) x) (unNat (map (Nat n)) y)
+    LiftA2 k x y -> LiftA2 k (first (Nat n) x) (first (Nat n) y)
 
 instance (Monoidal k, Functor f) => Applicative (Ap (f :: k -> Type)) where
   pure a () = Pure a

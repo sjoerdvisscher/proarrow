@@ -9,6 +9,8 @@ import Data.Functor.Product (Product (..))
 import Data.Functor.Sum (Sum (..))
 import Data.Kind (Type)
 import Data.Void (Void, absurd)
+import Prelude qualified as P
+import qualified Data.Bifunctor as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
@@ -40,10 +42,7 @@ instance CategoryOf (k1 -> Type) where
   type Ob f = Functor f
 
 instance Promonad (Nat :: CAT (j -> Type)) where
-  id = n
-    where
-      n :: forall f. (Functor f) => Nat f f
-      n = Nat (map @f id)
+  id @f = Nat (map @f id)
   Nat f . Nat g = Nat (f . g)
 
 instance Profunctor (Nat :: CAT (k1 -> Type)) where
@@ -244,3 +243,12 @@ instance Promonad (Nat' :: CAT (NatK j k)) where
 instance Profunctor (Nat' :: CAT (NatK j k)) where
   dimap = dimapDefault
   r \\ Nat'{} = r
+
+instance Functor P.Either where map f = Nat (P.first f)
+instance Functor (,) where map f = Nat (P.first f)
+
+first :: (Functor f, Ob c) => (a ~> b) -> f a c -> f b c
+first f = unNat (map f)
+
+bimap :: (Functor f, Functor (f a)) => a ~> c -> b ~> d -> f a b -> f c d
+bimap l r = first l . map r \\ l \\ r
