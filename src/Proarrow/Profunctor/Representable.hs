@@ -67,3 +67,22 @@ instance (Representable p, Discrete j, Thin k) => ThinProfunctor (RepCostar p ::
 
 flipRep :: forall p q. (Representable p, Corepresentable q) => RepCostar p :~> q -> CorepStar q :~> p
 flipRep n (CorepStar @b q) = tabulate @p (coindex @q @b (n (RepCostar (repMap @p (obj @b)))) . q)
+
+-- | A perfectly valid functor definition, but hard to use.
+-- So we only use it to easily make representable profunctors with @Rep@.
+type FunctorForRep :: forall {j} {k}. (j +-> k) -> Constraint
+class (CategoryOf j, CategoryOf k) => FunctorForRep (f :: j +-> k) where
+  type f @ (a :: j) :: k
+  fmap :: (a ~> b) -> f @ a ~> f @ b
+
+type Rep :: (j +-> k) -> j +-> k
+data Rep f a b where
+  Rep :: forall f a b. (Ob b) => {unRep :: a ~> f @ b} -> Rep f a b
+instance (FunctorForRep f) => Profunctor (Rep f) where
+  dimap = dimapRep
+  r \\ Rep f = r \\ f
+instance (FunctorForRep f) => Representable (Rep f) where
+  type Rep f % a = f @ a
+  index (Rep f) = f
+  tabulate = Rep
+  repMap = fmap @f

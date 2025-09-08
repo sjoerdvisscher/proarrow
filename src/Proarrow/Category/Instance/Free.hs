@@ -29,6 +29,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep, withRepOb)
 import Proarrow.Monoid (Mon(Mon), MONOIDK (..))
+import Data.Char (toLower)
 
 type family All (cs :: [Kind -> Constraint]) (k :: Kind) :: Constraint where
   All '[] k = ()
@@ -82,8 +83,8 @@ instance (Show2 p) => WithShow (a :: FREE c (p :: CAT j))
 
 instance (WithShow a) => Show (Free a b) where
   showsPrec _ Id = P.showString "id"
-  showsPrec d (Emb p g) = showPostComp d p g
-  showsPrec d (Str s g) = showPostComp d s g
+  showsPrec d (Emb p g) = P.map toLower . showPostComp d p g
+  showsPrec d (Str s g) = P.map toLower . showPostComp d s g
 
 showPostComp :: (Show p, WithShow a) => P.Int -> p -> Free a b -> P.ShowS
 showPostComp d p Id = P.showsPrec d p
@@ -199,7 +200,11 @@ instance (HasBinaryProducts `Elem` cs) => HasStructure cs p HasBinaryProducts wh
   foldStructure @f _ (Snd @a @b) = withLowerOb @a @f (withLowerOb @b @f (snd @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Prd f g) = go f &&& go g
 deriving instance (WithEq a) => Eq (Struct HasBinaryProducts a b)
-deriving instance (WithShow a) => Show (Struct HasBinaryProducts a b)
+instance (WithShow a) => Show (Struct HasBinaryProducts a b) where
+  showsPrec _ Fst = P.showString "fst"
+  showsPrec _ Snd = P.showString "snd"
+  showsPrec d (Prd f g) = P.showParen (d P.> 5) P.$
+    P.showsPrec 6 f . P.showString " &&& " . P.showsPrec 6 g
 instance (Ok cs p, HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs p) where
   type a && b = a *! b
   withObProd r = r
@@ -220,7 +225,11 @@ instance (HasBinaryCoproducts `Elem` cs) => HasStructure cs p HasBinaryCoproduct
   foldStructure @f _ (Rgt @a @b) = withLowerOb @a @f (withLowerOb @b @f (rgt @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Sum g h) = (go g ||| go h)
 deriving instance (WithEq a) => Eq (Struct HasBinaryCoproducts a b)
-deriving instance (WithShow a) => Show (Struct HasBinaryCoproducts a b)
+instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
+  showsPrec _ Lft = P.showString "lft"
+  showsPrec _ Rgt = P.showString "rgt"
+  showsPrec d (Sum f g) = P.showParen (d P.> 4) P.$
+    P.showsPrec 5 f . P.showString " ||| " . P.showsPrec 5 g
 instance (Ok cs p, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE cs p) where
   type a || b = a + b
   withObCoprod r = r

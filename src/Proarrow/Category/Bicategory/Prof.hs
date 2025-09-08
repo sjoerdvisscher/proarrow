@@ -63,7 +63,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep, repObj, trivialRep, CorepStar (..))
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep, repObj, trivialRep, CorepStar (..), Rep (..))
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
@@ -257,7 +257,7 @@ cotabulatorFactorize sq f = reify sq \(Proxy @s) -> f (vArr (obj @(FUN (Cotabula
 
 type instance Bi.TerminalObject FUNK = ()
 instance Bi.HasTerminalObject FUNK where
-  type Terminate FUNK j = FUN C.Terminate
+  type Terminate FUNK j = FUN (Rep C.Terminate)
   terminate = Sub (Prof id)
   termUniv @_ @_ @g = Sub (Prof \f -> tabulate U.Unit \\ f \\ repMap @(UNFUN g) (tgt f))
 
@@ -283,13 +283,13 @@ instance Bi.HasBinaryProducts FUNK where
 
 type instance TerminalObject PROFK FUNK = ()
 instance HasTerminalObject PROFK FUNK where
-  type Terminate PROFK FUNK j = FUN C.Terminate
+  type Terminate PROFK FUNK j = FUN (Rep C.Terminate)
   terminate = Sub (Prof id)
-  termUniv = Sq (Prof \(C.Terminate :.: f) -> (Id U.Unit :.: C.Terminate) \\ f)
+  termUniv = Sq (Prof \(Rep U.Unit :.: f) -> (Id U.Unit :.: Rep U.Unit) \\ f)
 
 type instance InitialObject PROFK FUNK = VOID
 instance HasInitialObject PROFK FUNK where
-  type Initiate PROFK FUNK j = FUN C.Initiate
+  type Initiate PROFK FUNK j = FUN (Rep C.Initiate)
   initiate = Sub (Prof id)
   initUniv = Sq (Prof \case {})
 

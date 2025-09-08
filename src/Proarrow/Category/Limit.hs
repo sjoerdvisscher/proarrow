@@ -19,7 +19,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repObj, withRepOb, CorepStar (..))
+import Proarrow.Profunctor.Representable (Representable (..), repObj, withRepOb, CorepStar (..), FunctorForRep (..), Rep (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Wrapped (Wrapped)
@@ -54,45 +54,29 @@ rightAdjointPreservesLimitsInv = limitUniv @j @k' @(g :.: d) (\((g :.: lim) :.: 
 
 type Unweighted = TerminalProfunctor
 
-type TerminalLimit :: VOID +-> k -> () +-> k
-data TerminalLimit d a b where
-  TerminalLimit :: forall d a. a ~> TerminalObject -> TerminalLimit d a '()
-
-instance (HasTerminalObject k) => Profunctor (TerminalLimit (d :: VOID +-> k)) where
-  dimap = dimapRep
-  r \\ TerminalLimit f = r \\ f
-instance (HasTerminalObject k) => Representable (TerminalLimit (d :: VOID +-> k)) where
-  type TerminalLimit d % '() = TerminalObject
-  index (TerminalLimit f) = f
-  tabulate = TerminalLimit
-  repMap Unit = id
+data family TerminalLimit :: VOID +-> k -> () +-> k
+instance (HasTerminalObject k) => FunctorForRep (TerminalLimit d :: () +-> k) where
+  type TerminalLimit d @ a = TerminalObject
+  fmap Unit = id
 
 instance (HasTerminalObject k) => HasLimits (Unweighted :: VOID +-> ()) k where
-  type Limit Unweighted d = TerminalLimit d
+  type Limit Unweighted d = Rep (TerminalLimit d)
   limit = \case {}
-  limitUniv _ p = p // TerminalLimit terminate
+  limitUniv _ p = p // Rep terminate
 
-type ProductLimit :: COPRODUCT () () +-> k -> () +-> k
-data ProductLimit d a b where
-  ProductLimit :: forall d a. a ~> ProductLimit d % '() -> ProductLimit d a '()
-
-instance (HasBinaryProducts k, Representable d) => Profunctor (ProductLimit d :: () +-> k) where
-  dimap = dimapRep
-  r \\ (ProductLimit f) = r \\ f
-instance (HasBinaryProducts k, Representable d) => Representable (ProductLimit d :: () +-> k) where
-  type ProductLimit d % '() = (d % L '()) && (d % R '())
-  index (ProductLimit f) = f
-  tabulate = ProductLimit
-  repMap Unit = (***) @_ @(d % L '()) @(d % R '()) (repMap @d (InjL Unit)) (repMap @d (InjR Unit))
+data family ProductLimit :: COPRODUCT () () +-> k -> () +-> k
+instance (HasBinaryProducts k, Representable d) => FunctorForRep (ProductLimit d :: () +-> k) where
+  type ProductLimit d @ '() = (d % L '()) && (d % R '())
+  fmap Unit = (***) @_ @(d % L '()) @(d % R '()) (repMap @d (InjL Unit)) (repMap @d (InjR Unit))
 
 instance (HasBinaryProducts k) => HasLimits (Unweighted :: COPRODUCT () () +-> ()) k where
-  type Limit Unweighted d = ProductLimit d
-  limit (ProductLimit @d f :.: TerminalProfunctor' _ o) = o // tabulate $ choose @_ @d o . f
+  type Limit Unweighted d = Rep (ProductLimit d)
+  limit (Rep @(ProductLimit d) f :.: TerminalProfunctor' _ o) = o // tabulate $ choose @_ @d o . f
   limitUniv n p =
     p //
       let l = n (p :.: TerminalProfunctor' Unit (InjL Unit))
           r = n (p :.: TerminalProfunctor' Unit (InjR Unit))
-      in ProductLimit $ index l &&& index r
+      in Rep $ index l &&& index r
 
 choose
   :: forall k (d :: COPRODUCT () () +-> k) b
@@ -103,36 +87,21 @@ choose b = withRepOb @d @(L '()) $ withRepOb @d @(R '()) $ case b of
   (InjL Unit) -> fst @_ @(d % L '()) @(d % R '())
   (InjR Unit) -> snd @_ @(d % L '()) @(d % R '())
 
-type PowerLimit :: v -> () +-> k -> () +-> k
-data PowerLimit n d a b where
-  PowerLimit :: forall n d a. (a ~> PowerLimit n d % '()) -> PowerLimit n d a '()
-instance (Representable d, Powered v k, Ob n) => Profunctor (PowerLimit (n :: v) d :: () +-> k) where
-  dimap = dimapRep
-  r \\ PowerLimit f = r \\ f
-instance (Representable d, Powered v k, Ob n) => Representable (PowerLimit (n :: v) d :: () +-> k) where
-  type PowerLimit n d % '() = (d % '()) ^ n
-  index (PowerLimit f) = f
-  tabulate = PowerLimit
-  repMap Unit = withObPower @v @k @(d % '()) @n id \\ repObj @d @'()
+data family PowerLimit :: v -> () +-> k -> () +-> k
+instance (Representable d, Powered v k, Ob n) => FunctorForRep (PowerLimit (n :: v) d :: () +-> k) where
+  type PowerLimit n d @ '() = (d % '()) ^ n
+  fmap Unit = withObPower @v @k @(d % '()) @n id \\ repObj @d @'()
 instance (Powered Type k) => HasLimits (HaskValue n :: () +-> ()) k where
-  type Limit (HaskValue n) d = PowerLimit n d
-  limit @d (PowerLimit f :.: HaskValue n) = tabulate (unpower f n) \\ repObj @d @'()
-  limitUniv @d m p = PowerLimit (power \n -> index (m (p :.: HaskValue n))) \\ p \\ repObj @d @'()
+  type Limit (HaskValue n) d = Rep (PowerLimit n d)
+  limit @d (Rep f :.: HaskValue n) = tabulate (unpower f n) \\ repObj @d @'()
+  limitUniv @d m p = Rep (power \n -> index (m (p :.: HaskValue n))) \\ p \\ repObj @d @'()
 
 newtype End d = End {unEnd :: forall a b. a ~> b -> d % '(OP a, b)}
 
-type EndLimit :: (OPPOSITE k, k) +-> Type -> () +-> Type
-data EndLimit d a b where
-  EndLimit :: forall d a. (a -> End d) -> EndLimit d a '()
-
-instance (Representable d) => Profunctor (EndLimit (d :: (OPPOSITE k, k) +-> Type)) where
-  dimap = dimapRep
-  r \\ EndLimit f = r \\ f
-instance (Representable d) => Representable (EndLimit (d :: (OPPOSITE k, k) +-> Type)) where
-  type EndLimit d % '() = End d
-  index (EndLimit f) = f
-  tabulate = EndLimit
-  repMap Unit = id
+data family EndLimit :: (OPPOSITE k, k) +-> Type -> () +-> Type
+instance (Representable d) => FunctorForRep (EndLimit (d :: (OPPOSITE k, k) +-> Type)) where
+  type EndLimit d @ '() = End d
+  fmap Unit = id
 
 type Hom :: (OPPOSITE k, k) +-> ()
 data Hom a b where
@@ -142,9 +111,9 @@ instance (CategoryOf k) => Profunctor (Hom :: (OPPOSITE k, k) +-> ()) where
   r \\ Hom f = r \\ f
 
 instance (CategoryOf k) => HasLimits (Hom :: (OPPOSITE k, k) +-> ()) Type where
-  type Limit Hom d = EndLimit d
-  limit (EndLimit f :.: Hom k) = k // tabulate (\a -> unEnd (f a) k)
-  limitUniv n p = p // EndLimit \a -> End \x -> index (n (p :.: Hom x)) a
+  type Limit Hom d = Rep (EndLimit d)
+  limit (Rep f :.: Hom k) = k // tabulate (\a -> unEnd (f a) k)
+  limitUniv n p = p // Rep \a -> End \x -> index (n (p :.: Hom x)) a
 
 instance (CategoryOf j) => HasLimits (Id :: CAT j) k where
   type Limit Id d = d

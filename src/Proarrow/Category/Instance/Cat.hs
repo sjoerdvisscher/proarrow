@@ -2,13 +2,12 @@
 
 module Proarrow.Category.Instance.Cat where
 
-import Data.Void (Void)
 import GHC.Base (Any)
 
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Instance.Zero (VOID, no)
+import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
@@ -34,7 +33,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id)
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Representable (Representable (..), FunctorForRep (..), Rep)
 import Proarrow.Monoid (Comonoid (..), CopyDiscard)
 
 newtype KIND = K Kind
@@ -57,36 +56,22 @@ instance Profunctor Cat where
   dimap = dimapDefault
   r \\ Cat = r
 
-type Terminate :: k +-> ()
-data Terminate a b where
-  Terminate :: (Ob b) => Terminate '() b
-instance (CategoryOf k) => Profunctor (Terminate :: k +-> ()) where
-  dimap Unit r Terminate = Terminate \\ r
-  r \\ Terminate = r
-instance (CategoryOf k) => Representable (Terminate :: k +-> ()) where
-  type Terminate % a = '()
-  tabulate Unit = Terminate
-  index Terminate = Unit
-  repMap _ = Unit
+data family Terminate :: k +-> ()
+instance (CategoryOf k) => FunctorForRep (Terminate :: k +-> ()) where
+  type Terminate @ a = '()
+  fmap _ = Unit
 instance HasTerminalObject KIND where
   type TerminalObject = K ()
-  terminate = Cat @Terminate
+  terminate = Cat @(Rep Terminate)
 
-type Initiate :: VOID +-> k
-data Initiate a b where
-  Initiate :: (Ob a, Ob b) => Void -> Initiate a b
-instance (CategoryOf k) => Profunctor (Initiate :: VOID +-> k) where
-  dimap _ _ = \case {}
-  (\\) _ = \case {}
-instance (CategoryOf k) => Representable (Initiate :: VOID +-> k) where
-  type Initiate % a = Any
-  tabulate = no
-  index = \case {}
-  repMap = \case {}
+data family Initiate :: VOID +-> k
+instance (CategoryOf k) => FunctorForRep (Initiate :: VOID +-> k) where
+  type Initiate @ a = Any
+  fmap = \case {}
 
 instance HasInitialObject KIND where
   type InitialObject = K VOID
-  initiate = Cat @Initiate
+  initiate = Cat @(Rep Initiate)
 
 type FstCat :: (j, k) +-> j
 data FstCat a b where
