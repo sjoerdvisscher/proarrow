@@ -5,9 +5,19 @@ module Proarrow.Object.Exponential where
 import Data.Kind (Type)
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Free
+  ( Elem
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Ok
+  , WithEq
+  , WithShow
+  )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor, type (**!))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
@@ -92,3 +102,21 @@ ap
   -> p a x
   -> p a y
 ap pf px = dimap diag (apply @j @x @y) (pf `par` px) \\ px
+
+data family (-->) (a :: k) (b :: k) :: k
+instance (Ob (a :: FREE cs p), Ob b, Closed `Elem` cs, Monoidal `Elem` cs) => IsFreeOb (a --> b) where
+  type Lower f (a --> b) = Lower f a ~~> Lower f b
+  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withObExp @_ @(Lower f a) @(Lower f b) r))
+instance (Closed `Elem` cs, Monoidal `Elem` cs) => HasStructure cs p Closed where
+  data Struct Closed a b where
+    Apply :: (Ob a, Ob b) => Struct Closed ((a --> b) **! a) b
+    Curry :: forall a b c. (Ob a, Ob b) => (a **! b) ~> c -> Struct Closed a (b --> c)
+  foldStructure @f _ (Apply @a @b) = withLowerOb @a @f (withLowerOb @b @f (apply @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f go (Curry @a @b f) = withLowerOb @a @f (withLowerOb @b @f (curry @_ @(Lower f a) @(Lower f b) (go f)))
+deriving instance (WithEq a) => P.Eq (Struct Closed a b)
+deriving instance (WithShow a) => P.Show (Struct Closed a b)
+instance (Ok cs p, Closed `Elem` cs, Monoidal `Elem` cs) => Closed (FREE cs p) where
+  type a ~~> b = a --> b
+  withObExp r = r
+  curry f = Str (Curry f) Id \\ f
+  apply = Str Apply Id

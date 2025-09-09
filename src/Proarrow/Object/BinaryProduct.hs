@@ -4,9 +4,20 @@
 module Proarrow.Object.BinaryProduct where
 
 import Data.Kind (Type)
-import Prelude (type (~))
+import Prelude (Eq, Show, type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Free
+  ( Elem
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Ok
+  , WithEq
+  , WithShow
+  , emb
+  )
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
@@ -18,6 +29,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
 
 infixl 5 &&
 infixl 5 &&&
@@ -119,6 +131,7 @@ instance (Profunctor p) => Profunctor (Prod p) where
 instance (Promonad p) => Promonad (Prod p) where
   id = Prod id
   Prod f . Prod g = Prod (f . g)
+
 -- | The same category as the category of @k@, but with products as the tensor.
 instance (CategoryOf k) => CategoryOf (PROD k) where
   type (~>) = Prod (~>)
@@ -247,3 +260,43 @@ instance
   => ProdAction k
 class (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
 instance (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
+
+data family (*!) (a :: k) (b :: k) :: k
+instance (Ob (a :: FREE cs p), Ob b, HasBinaryProducts `Elem` cs) => IsFreeOb (a *! b) where
+  type Lower f (a *! b) = Lower f a && Lower f b
+  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withObProd @_ @(Lower f a) @(Lower f b) r))
+instance (HasBinaryProducts `Elem` cs) => HasStructure cs p HasBinaryProducts where
+  data Struct HasBinaryProducts i o where
+    Fst :: (Ob a, Ob b) => Struct HasBinaryProducts (a *! b) a
+    Snd :: (Ob a, Ob b) => Struct HasBinaryProducts (a *! b) b
+    Prd :: i ~> a -> i ~> b -> Struct HasBinaryProducts i (a *! b)
+  foldStructure @f _ (Fst @a @b) = withLowerOb @a @f (withLowerOb @b @f (fst @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Snd @a @b) = withLowerOb @a @f (withLowerOb @b @f (snd @_ @(Lower f a) @(Lower f b)))
+  foldStructure go (Prd f g) = go f &&& go g
+deriving instance (WithEq a) => Eq (Struct HasBinaryProducts a b)
+instance (WithShow a) => Show (Struct HasBinaryProducts a b) where
+  showsPrec _ Fst = P.showString "fst"
+  showsPrec _ Snd = P.showString "snd"
+  showsPrec d (Prd f g) =
+    P.showParen (d P.> 5) P.$
+      P.showsPrec 6 f . P.showString " &&& " . P.showsPrec 6 g
+instance (Ok cs p, HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs p) where
+  type a && b = a *! b
+  withObProd r = r
+  fst = Str Fst Id
+  snd = Str Snd Id
+  f &&& g = Str (Prd f g) Id \\ f \\ g
+
+data instance Var '[HasBinaryProducts] a b where
+  F :: Var '[HasBinaryProducts] "A" "B"
+  G :: Var '[HasBinaryProducts] "A" "C"
+  H :: Var '[HasBinaryProducts] "Z" "A"
+deriving instance Show (Var '[HasBinaryProducts] a b)
+instance Laws '[HasBinaryProducts] where
+  type EqTypes '[HasBinaryProducts] = '[EMB "A", EMB "B", EMB "C", EMB "Z", EMB "B" *! EMB "C"]
+  laws =
+    let f = emb F; g = emb G; h = emb H
+    in [ fst . (f &&& g) :=: f
+       , snd . (f &&& g) :=: g
+       , (f . h) &&& (g . h) :=: (f &&& g) . h
+       ]

@@ -17,15 +17,17 @@ import Proarrow.Category.Monoidal
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
+import Proarrow.Monoid (Comonoid (..), CopyDiscard)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
+  , diag
   , leftUnitorProd
   , leftUnitorProdInv
   , rightUnitorProd
-  , rightUnitorProdInv, diag
+  , rightUnitorProdInv
   )
 import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedCoact)
 import Proarrow.Object.Exponential (Closed (..))
@@ -33,8 +35,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id)
-import Proarrow.Profunctor.Representable (Representable (..), FunctorForRep (..), Rep)
-import Proarrow.Monoid (Comonoid (..), CopyDiscard)
+import Proarrow.Profunctor.Representable (FunctorForRep (..), Rep, Representable (..))
 
 newtype KIND = K Kind
 type instance UN K (K k) = k

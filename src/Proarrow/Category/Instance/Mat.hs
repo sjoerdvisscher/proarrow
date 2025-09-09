@@ -38,6 +38,7 @@ type family (*) (a :: Nat) (b :: Nat) :: Nat where
 data Vec :: Nat -> Type -> Type where
   Nil :: Vec Z a
   Cons :: a -> Vec n a -> Vec (S n) a
+deriving instance (P.Eq a) => P.Eq (Vec n a)
 
 instance P.Functor (Vec n) where
   fmap _ Nil = Nil

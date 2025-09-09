@@ -1,7 +1,7 @@
 module Proarrow.Category.Instance.PointedHask where
 
 import Data.Kind (Type)
-import Prelude (Maybe (..), const, ($), (>>=), type (~))
+import Prelude (Maybe (..), const, ($), (>>=), type (~), Eq, Show)
 
 import Data.Void (Void, absurd)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -39,6 +39,7 @@ instance CategoryOf POINTED where
   type Ob a = (a ~ P (UN P a))
 
 data These a b = This a | That b | These a b
+  deriving (Eq, Show)
 instance HasBinaryProducts POINTED where
   type P a && P b = P (These a b)
   withObProd r = r

@@ -3,20 +3,33 @@
 module Proarrow.Object.BinaryCoproduct where
 
 import Data.Kind (Type)
-import Prelude (($), type (~))
+import Prelude (Eq, Show, ($), type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Free
+  ( Elem
+  , FREE (..)
+  , Free (Str)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Ok
+  , WithEq
+  , WithShow
+  , emb
+  )
+import Proarrow.Category.Instance.Free qualified as F
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), Costrong (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
+import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
 
 infixl 4 ||
 infixl 4 |||
@@ -104,6 +117,7 @@ instance (Profunctor p) => Profunctor (Coprod p) where
 instance (Promonad p) => Promonad (Coprod p) where
   id = Coprod id
   Coprod f . Coprod g = Coprod (f . g)
+
 -- | The same category as the category of @k@, but with coproducts as the tensor.
 instance (CategoryOf k) => CategoryOf (COPROD k) where
   type (~>) = Coprod Id
@@ -142,9 +156,9 @@ instance (HasCoproducts k) => SymMonoidal (COPROD k) where
 instance Costrong (COPROD Type) (Coprod (Id :: CAT Type)) where
   coact (Coprod (Id uxuy)) = Coprod (Id (let loop ux = P.either (loop . P.Left) id (uxuy ux) in loop . P.Right))
 
-instance HasCoproducts k => Strong (COPROD k) (Coprod (Id :: CAT k)) where
+instance (HasCoproducts k) => Strong (COPROD k) (Coprod (Id :: CAT k)) where
   act = par
-instance HasCoproducts k => MonoidalAction (COPROD k) (COPROD k) where
+instance (HasCoproducts k) => MonoidalAction (COPROD k) (COPROD k) where
   type Act p x = p ** x
   withObAct @(COPR a) @(COPR b) r = withObCoprod @k @a @b r
   unitor = leftUnitor
@@ -184,3 +198,43 @@ left' p = dimap (swapCoprod @_ @a @c) (swapCoprod @_ @c @b) (right' @_ @c p) \\ 
 
 right' :: forall {k} (p :: CAT k) c a b. (StrongCoprod p, Ob c) => p a b -> p (c || a) (c || b)
 right' p = act (obj @(COPR c)) p
+
+data family (+) (a :: k) (b :: k) :: k
+instance (Ob (a :: FREE cs p), Ob b, HasBinaryCoproducts `Elem` cs) => IsFreeOb (a + b) where
+  type Lower f (a + b) = Lower f a || Lower f b
+  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withObCoprod @_ @(Lower f a) @(Lower f b) r))
+instance (HasBinaryCoproducts `Elem` cs) => HasStructure cs p HasBinaryCoproducts where
+  data Struct HasBinaryCoproducts i o where
+    Lft :: (Ob a, Ob b) => Struct HasBinaryCoproducts a (a + b)
+    Rgt :: (Ob a, Ob b) => Struct HasBinaryCoproducts b (a + b)
+    Sum :: a ~> o -> b ~> o -> Struct HasBinaryCoproducts (a + b) o
+  foldStructure @f _ (Lft @a @b) = withLowerOb @a @f (withLowerOb @b @f (lft @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Rgt @a @b) = withLowerOb @a @f (withLowerOb @b @f (rgt @_ @(Lower f a) @(Lower f b)))
+  foldStructure go (Sum g h) = (go g ||| go h)
+deriving instance (WithEq a) => Eq (Struct HasBinaryCoproducts a b)
+instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
+  showsPrec _ Lft = P.showString "lft"
+  showsPrec _ Rgt = P.showString "rgt"
+  showsPrec d (Sum f g) =
+    P.showParen (d P.> 4) P.$
+      P.showsPrec 5 f . P.showString " ||| " . P.showsPrec 5 g
+instance (Ok cs p, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE cs p) where
+  type a || b = a + b
+  withObCoprod r = r
+  lft = Str Lft F.Id
+  rgt = Str Rgt F.Id
+  f ||| g = Str (Sum f g) F.Id \\ f \\ g
+
+data instance Var '[HasBinaryCoproducts] a b where
+  F :: Var '[HasBinaryCoproducts] "A" "C"
+  G :: Var '[HasBinaryCoproducts] "B" "C"
+  H :: Var '[HasBinaryCoproducts] "C" "Z"
+deriving instance Show (Var '[HasBinaryCoproducts] a b)
+instance Laws '[HasBinaryCoproducts] where
+  type EqTypes '[HasBinaryCoproducts] = '[EMB "A", EMB "B", EMB "C", EMB "Z", EMB "A" + EMB "B"]
+  laws =
+    let f = emb F; g = emb G; h = emb H
+    in [ (f ||| g) . lft :=: f
+       , (f ||| g) . rgt :=: g
+       , (h . f) ||| (h . g) :=: h . (f ||| g)
+       ]

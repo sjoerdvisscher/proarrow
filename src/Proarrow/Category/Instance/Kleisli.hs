@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE RequiredTypeArguments #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Category.Instance.Kleisli
@@ -41,7 +40,7 @@ import Proarrow.Category.Enriched.ThinCategory qualified as T
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 
 newtype KLEISLI (p :: CAT k) = KL k
-type instance UN KL (KL k) = k -- test
+type instance UN KL (KL k) = k
 
 type Kleisli :: CAT (KLEISLI p)
 data Kleisli (a :: KLEISLI p) b where
@@ -63,14 +62,17 @@ instance (Promonad p) => Promonad (Kleisli :: CAT (KLEISLI p)) where
   id = Kleisli id
   Kleisli f . Kleisli g = Kleisli (f . g)
 
+-- TODO: Only valid for certain promonads, which ones?
 instance (HasTerminalObject k, Promonad p) => HasTerminalObject (KLEISLI (p :: k +-> k)) where
   type TerminalObject @(KLEISLI (p :: k +-> k)) = KL (TerminalObject :: k)
   terminate = arr terminate
 
+-- TODO: Only valid for certain promonads, which ones?
 instance (HasInitialObject k, Promonad p) => HasInitialObject (KLEISLI (p :: k +-> k)) where
   type InitialObject @(KLEISLI (p :: k +-> k)) = KL (InitialObject :: k)
   initiate = arr initiate
 
+-- TODO: Only valid for certain promonads, which ones?
 instance (Cartesian k, Promonad p, MonoidalProfunctor p) => HasBinaryProducts (KLEISLI (p :: k +-> k)) where
   type a && b = KL (UN KL a && UN KL b)
   withObProd @(KL a) @(KL b) r = withObProd @k @a @b r
@@ -78,6 +80,7 @@ instance (Cartesian k, Promonad p, MonoidalProfunctor p) => HasBinaryProducts (K
   snd @(KL a) @(KL b) = arr (snd @_ @a @b)
   Kleisli f &&& Kleisli g = Kleisli (lmap diag (f `par` g)) \\ f
 
+-- TODO: Only valid for certain promonads, which ones?
 instance (HasBinaryCoproducts k, Promonad p, MonoidalProfunctor (Coprod p)) => HasBinaryCoproducts (KLEISLI (p :: k +-> k)) where
   type a || b = KL (UN KL a || UN KL b)
   withObCoprod @(KL a) @(KL b) r = withObCoprod @k @a @b r

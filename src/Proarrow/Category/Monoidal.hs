@@ -3,8 +3,18 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
-import Prelude (($))
+import Prelude (($), Show, Eq)
 
+import Proarrow.Category.Instance.Free
+  ( Elem
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Ok
+  , WithEq
+  , WithShow
+  )
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
 
 -- This is equal to a monoidal functor for Star
@@ -106,3 +116,45 @@ swapSnd = (obj2 @a @d `par` swap @k @b @c) . swapInner @a @b @d @c . (obj2 @a @b
 swapOuter
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((d ** b) ** (c ** a))
 swapOuter = (obj2 @d @b `par` swap @k @a @c) . swapFst @a @b @d @c . (obj2 @a @b `par` swap @k @c @d)
+
+data family UnitF :: k
+instance (Monoidal `Elem` cs) => IsFreeOb (UnitF :: FREE cs p) where
+  type Lower f UnitF = Unit
+  withLowerOb r = r
+data family (**!) (a :: k) (b :: k) :: k
+instance (Ob (a :: FREE cs p), Ob b, Monoidal `Elem` cs) => IsFreeOb (a **! b) where
+  type Lower f (a **! b) = Lower f a ** Lower f b
+  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withOb2 @_ @(Lower f a) @(Lower f b) r))
+instance (Monoidal `Elem` cs) => HasStructure cs p Monoidal where
+  data Struct Monoidal i o where
+    Par0 :: Struct Monoidal UnitF UnitF
+    Par :: a ~> b -> c ~> d -> Struct Monoidal (a **! c) (b **! d)
+    LeftUnitor :: (Ob a) => Struct Monoidal (UnitF **! a) a
+    LeftUnitorInv :: (Ob a) => Struct Monoidal a (UnitF **! a)
+    RightUnitor :: (Ob a) => Struct Monoidal (a **! UnitF) a
+    RightUnitorInv :: (Ob a) => Struct Monoidal a (a **! UnitF)
+    Associator :: (Ob a, Ob b, Ob c) => Struct Monoidal ((a **! b) **! c) (a **! (b **! c))
+    AssociatorInv :: (Ob a, Ob b, Ob c) => Struct Monoidal (a **! (b **! c)) ((a **! b) **! c)
+  foldStructure _ Par0 = par0
+  foldStructure go (Par f g) = go f `par` go g
+  foldStructure @f _ (LeftUnitor @a) = withLowerOb @a @f leftUnitor
+  foldStructure @f _ (LeftUnitorInv @a) = withLowerOb @a @f leftUnitorInv
+  foldStructure @f _ (RightUnitor @a) = withLowerOb @a @f rightUnitor
+  foldStructure @f _ (RightUnitorInv @a) = withLowerOb @a @f rightUnitorInv
+  foldStructure @f _ (Associator @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+  foldStructure @f _ (AssociatorInv @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+deriving instance (WithEq a) => Eq (Struct Monoidal a b)
+deriving instance (WithShow a) => Show (Struct Monoidal a b)
+instance (Ok cs p, Monoidal `Elem` cs) => MonoidalProfunctor (Free :: CAT (FREE cs p)) where
+  par0 = Str Par0 Id
+  f `par` g = Str (Par f g) Id \\ f \\ g
+instance (Ok cs p, Monoidal `Elem` cs) => Monoidal (FREE cs p) where
+  type Unit = UnitF
+  type a ** b = a **! b
+  withOb2 r = r
+  leftUnitor = Str LeftUnitor Id
+  leftUnitorInv = Str LeftUnitorInv Id
+  rightUnitor = Str RightUnitor Id
+  rightUnitorInv = Str RightUnitorInv Id
+  associator = Str Associator Id
+  associatorInv = Str AssociatorInv Id

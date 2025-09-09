@@ -1,19 +1,21 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Instance.Cost where
 
 import Data.Proxy (Proxy (..))
-import GHC.TypeNats (KnownNat, Nat, withSomeSNat, natVal, withKnownNat, type SNat, type (+), cmpNat)
-import Data.Type.Ord (type Max, type Min, OrderingI (..), type (<=))
+import Data.Type.Ord (OrderingI (..), type Max, type Min, type (<=))
+import GHC.TypeNats (KnownNat, Nat, cmpNat, natVal, withKnownNat, withSomeSNat, type SNat, type (+))
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude (Num ((+)), error, ($))
 
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, (//), obj)
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts(..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts(..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (//))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 type data COST = C Nat | INF
 
@@ -62,10 +64,24 @@ instance Promonad GTE where
     SC -> GTE
   f . Inf = Inf \\ f
   GTE @b @c . GTE @a = lteTrans @c @b @a GTE
+
 -- | Cost category. Categories enriched in the cost category are lawvere metric spaces.
 instance CategoryOf COST where
   type (~>) = GTE
   type Ob a = (IsCost a)
+
+class HasCostArrow (a :: COST) b where
+  costArr :: a ~> b
+instance (IsCost b) => HasCostArrow INF b where
+  costArr = Inf
+instance (KnownNat a, KnownNat b, b <= a) => HasCostArrow (C a) (C b) where
+  costArr = GTE
+
+instance ThinProfunctor GTE where
+  type HasArrow GTE a b = (HasCostArrow a b)
+  arr = costArr
+  withArr Inf r = r
+  withArr GTE r = r
 
 instance HasTerminalObject COST where
   type TerminalObject = C 0
@@ -198,23 +214,25 @@ instance Distributive COST where
     (SINF, _, _) -> Inf
     (_, SINF, _) -> withOb2 @_ @a @c id
     (_, _, SINF) -> withOb2 @_ @a @b id
-    (SC @a', SC @b', SC @c') -> withPlusIsNat @a' @b' $ withPlusIsNat @a' @c' $
-      case (cmpNat (Proxy :: Proxy b') (Proxy :: Proxy c'), cmpNat (Proxy :: Proxy (a' + b')) (Proxy :: Proxy (a' + c'))) of
-        (LTI, LTI) -> id
-        (LTI, GTI) -> error "distL: b is less than c, but a + b is greater than a + c"
-        (EQI, _) -> id
-        (GTI, LTI) -> error "distL: b is greater than c, but a + b is less than a + c"
-        (GTI, GTI) -> id
+    (SC @a', SC @b', SC @c') -> withPlusIsNat @a' @b' $
+      withPlusIsNat @a' @c' $
+        case (cmpNat (Proxy :: Proxy b') (Proxy :: Proxy c'), cmpNat (Proxy :: Proxy (a' + b')) (Proxy :: Proxy (a' + c'))) of
+          (LTI, LTI) -> id
+          (LTI, GTI) -> error "distL: b is less than c, but a + b is greater than a + c"
+          (EQI, _) -> id
+          (GTI, LTI) -> error "distL: b is greater than c, but a + b is less than a + c"
+          (GTI, GTI) -> id
   distR @a @b @c = case (sing @a, sing @b, sing @c) of
     (SINF, _, _) -> withOb2 @_ @b @c id
     (_, SINF, _) -> withOb2 @_ @a @c id
     (_, _, SINF) -> Inf
-    (SC @a', SC @b', SC @c') -> withPlusIsNat @a' @c' $ withPlusIsNat @b' @c' $
-      case (cmpNat (Proxy :: Proxy a') (Proxy :: Proxy b'), cmpNat (Proxy :: Proxy (a' + c')) (Proxy :: Proxy (b' + c'))) of
-        (LTI, LTI) -> id
-        (LTI, GTI) -> error "distR: a is less than b, but a + c is greater than b + c"
-        (EQI, _) -> id
-        (GTI, LTI) -> error "distR: a is greater than b, but a + c is less than b + c"
-        (GTI, GTI) -> id
+    (SC @a', SC @b', SC @c') -> withPlusIsNat @a' @c' $
+      withPlusIsNat @b' @c' $
+        case (cmpNat (Proxy :: Proxy a') (Proxy :: Proxy b'), cmpNat (Proxy :: Proxy (a' + c')) (Proxy :: Proxy (b' + c'))) of
+          (LTI, LTI) -> id
+          (LTI, GTI) -> error "distR: a is less than b, but a + c is greater than b + c"
+          (EQI, _) -> id
+          (GTI, LTI) -> error "distR: a is greater than b, but a + c is less than b + c"
+          (GTI, GTI) -> id
   distL0 = Inf
   distR0 = Inf

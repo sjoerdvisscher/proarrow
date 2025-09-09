@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Helper.CCC
+module Proarrow.Tools.CCC
   ( toCCC
   , lam
   , ($)
