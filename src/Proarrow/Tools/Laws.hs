@@ -7,27 +7,13 @@ import Data.Kind (Constraint, Type)
 import GHC.TypeLits (KnownSymbol, Symbol)
 import Prelude (Show)
 
-import Proarrow.Category.Instance.Free (FREE (..), Free, Show2, emb)
+import Proarrow.Category.Instance.Free (FREE (..), Free, Show2)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault)
 
 data family Var (cs :: [Kind -> Constraint]) (a :: Symbol) (b :: Symbol)
 class Laws (cs :: [Kind -> Constraint]) where
   type EqTypes cs :: [FREE cs (Var cs)]
   laws :: [AssertEq cs]
-
-data instance Var '[] a b where
-  F :: Var '[] "A" "B"
-  G :: Var '[] "B" "C"
-  H :: Var '[] "C" "D"
-deriving instance Show (Var '[] a b)
-instance Laws '[] where
-  type EqTypes '[] = '[EMB "A", EMB "B", EMB "C", EMB "D"]
-  laws =
-    let f = emb F; g = emb G; h = emb H
-    in [ id . f :=: f
-       , f . id :=: f
-       , (h . g) . f :=: h . (g . f)
-       ]
 
 infix 0 :=:
 type AssertEq :: [Kind -> Constraint] -> Type

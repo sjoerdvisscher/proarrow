@@ -20,14 +20,13 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Instance.Ap (A, AP, Ap (..))
 import Proarrow.Category.Instance.Free (All, FREE (..), Lower, Show2, emb, fold)
-import Proarrow.Core (CategoryOf (..), Is, Obj, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Obj, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Object.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Object.BinaryProduct qualified as BinaryProduct
 import Proarrow.Object.Initial qualified as Initial
 import Proarrow.Object.Terminal qualified as Terminal
 import Proarrow.Profunctor.Representable (FunctorForRep (..), Rep)
 import Proarrow.Tools.Laws (AssertEq (..), Elem (..), Laws (..), Place (..), Sym (..), Var)
-import Proarrow.Tools.Laws qualified as Cat
 
 import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor (..))
 
@@ -121,6 +120,7 @@ props pn = P.getAp (foldMap (P.Ap . go) laws)
                 ++ "\nRHS = "
                 ++ showP fr
 
+-- Can't use @Laws@ here, because the free category automatically satisfy these laws.
 propCategory
   :: forall k
    . (Testable k, CategoryOf k)
@@ -128,13 +128,35 @@ propCategory
 propCategory = testProperty "Category" $ do
   Some @a <- genOb @k
   Some @b <- genOb
+  f <- genP @((~>) :: CAT k) @a @b
+  isEqIdL <- eqP (id . f) f
+  when (not isEqIdL) $
+    testFailed $
+      "Failed left identity: \n"
+        ++ "id . f = "
+        ++ showP (id . f)
+        ++ "\nf = "
+        ++ showP f
+  isEqIdR <- eqP (f . id) f
+  when (not isEqIdR) $
+    testFailed $
+      "Failed right identity: \n"
+        ++ "f . id = "
+        ++ showP (f . id)
+        ++ "\nf = "
+        ++ showP f
   Some @c <- genOb
   Some @d <- genOb
-  f <- genP @_ @a @b
   g <- genP @_ @b @c
   h <- genP @_ @c @d
-  props @'[] @'[ '("A", a), '("B", b), '("C", c), '("D", d)]
-    \case Cat.F -> Wrap f; Cat.G -> Wrap g; Cat.H -> Wrap h
+  isEq <- eqP ((h . g) . f) (h . (g . f))
+  when (not isEq) $
+    testFailed $
+      "Failed associativity: \n"
+        ++ "(h . g) . f = "
+        ++ showP ((h . g) . f)
+        ++ "\nh . (g . f) = "
+        ++ showP (h . (g . f))
 
 propTerminalObject
   :: forall k
