@@ -5,7 +5,7 @@ module Proarrow.Category.Instance.Linear where
 import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Kind (Type)
 import Data.Void (Void)
-import Prelude (Either (..), undefined)
+import Prelude (Bool (..), Either (..), Eq (..), Show (..), showParen, showString, undefined, (&&), (>))
 
 import Proarrow.Adjunction (Adjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -159,9 +159,17 @@ instance Costrong (COPROD LINEAR) (Coprod (Id :: CAT LINEAR)) where
 
 data Top where
   Top :: a %1 -> Top
+instance Show Top where
+  showsPrec _ _ = showString "⊤"
+instance Eq Top where
+  _ == _ = True
 
 data With a b where
   With :: x %1 -> (x %1 -> a) -> (x %1 -> b) -> With a b
+instance (Show a, Show b) => Show (With a b) where
+  showsPrec d (With x f g) = showParen (d > 9) (showString "With " . showsPrec 10 (f x) . showString " " . showsPrec 10 (g x))
+instance (Eq a, Eq b) => Eq (With a b) where
+  With x fa fb == With y ga gb = (fa x == ga y) && (fb x == gb y)
 
 urWith :: Ur (With a b) %1 -> (Ur a, Ur b)
 urWith (Ur (With x f g)) = (Ur (f x), Ur (g x))
