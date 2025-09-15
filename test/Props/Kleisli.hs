@@ -69,4 +69,4 @@ instance (forall a. (TestOb a) => TestOb' (f a), Functor f, Typeable f) => Testa
 
 instance Promonad (Costar (Prelude Pair)) where
   id = Costar \(Prelude (Pair x _)) -> x
-  Costar f . Costar g = Costar (\(Prelude (Pair a b)) -> f (Prelude (Pair (g (Prelude (Pair a a))) (g (Prelude (Pair b b))))))
+  Costar f . Costar g = Costar (\(Prelude (Pair a b)) -> f (Prelude (Pair (g (Prelude (Pair a b))) (g (Prelude (Pair b b))))))
