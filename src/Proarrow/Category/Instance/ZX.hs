@@ -10,7 +10,7 @@ import Data.Complex (Complex (..), conjugate, magnitude, mkPolar)
 import Data.List (intercalate, sort)
 import Data.Map.Strict qualified as Map
 import Data.Proxy (Proxy (..))
-import GHC.TypeNats (KnownNat, Nat, natVal, type SNat, pattern SNat, type (+), withSomeSNat)
+import GHC.TypeNats (KnownNat, Nat, natVal, withSomeSNat, pattern SNat, type SNat, type (+))
 import Numeric (showFFloat)
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude hiding (id, (.))
@@ -20,6 +20,8 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 newtype Bitstring (n :: Nat) = BS Int
   deriving (Eq, Ord)
@@ -46,8 +48,11 @@ type SparseMatrix o i = Map.Map (Bitstring o, Bitstring i) (Complex Double)
 epsilon :: Double
 epsilon = 1e-12
 
+isZero :: Complex Double -> Bool
+isZero z = magnitude z <= epsilon
+
 filterSparse :: SparseMatrix o i -> SparseMatrix o i
-filterSparse = Map.filter (\z -> epsilon < magnitude z)
+filterSparse = Map.filter (Prelude.not . isZero)
 
 transpose :: SparseMatrix o i -> SparseMatrix i o
 transpose = Map.mapKeys \(o, i) -> (i, o)
@@ -64,11 +69,11 @@ enumAll = [minBound .. maxBound]
 nat :: (KnownNat n) => Int
 nat @n = fromIntegral $ natVal (Proxy :: Proxy n)
 
-withPlusIsNat :: forall a b r. (KnownNat a, KnownNat b) => (KnownNat (a + b) => r) -> r
+withPlusIsNat :: forall a b r. (KnownNat a, KnownNat b) => ((KnownNat (a + b)) => r) -> r
 withPlusIsNat r = case ab of SNat -> r
-    where
-      ab :: SNat (a + b)
-      ab = withSomeSNat (natVal (Proxy :: Proxy a) + natVal (Proxy :: Proxy b)) unsafeCoerce
+  where
+    ab :: SNat (a + b)
+    ab = withSomeSNat (natVal (Proxy :: Proxy a) + natVal (Proxy :: Proxy b)) unsafeCoerce
 
 type ZX :: CAT Nat
 data ZX i o where
@@ -171,6 +176,14 @@ instance StarAutonomous Nat where
 instance CompactClosed Nat where
   distribDual @a @b = withOb2 @_ @a @b id
   dualUnit = ZX Map.empty
+
+instance HasTerminalObject Nat where
+  type TerminalObject = 0
+  terminate = ZX Map.empty
+
+instance HasInitialObject Nat where
+  type InitialObject = 0
+  initiate = ZX Map.empty
 
 zSpider :: (KnownNat i, KnownNat o) => Double -> ZX i o
 zSpider alpha = ZX $ Map.fromList $ [(minBound, 1), (maxBound, mkPolar 1 alpha)]
