@@ -11,6 +11,7 @@ import Props.Linear qualified as Linear
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
 import Props.PointedHask qualified as PointedHask
+import Props.ZX qualified as ZX
 
 main :: IO ()
 main =
@@ -23,4 +24,5 @@ main =
       , Kleisli.test
       , Mat.test
       , PointedHask.test
+      , ZX.test
       ]
