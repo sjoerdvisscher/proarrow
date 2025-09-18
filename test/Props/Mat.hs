@@ -21,6 +21,7 @@ test =
     , propInitialObject @(MatK Int)
     , propBinaryProducts_ @(MatK Int)
     , propBinaryCoproducts_ @(MatK Int)
+    , propMonoidal_ @(MatK Int)
     ]
 
 instance Testable (MatK Int) where
@@ -29,7 +30,7 @@ instance Testable (MatK Int) where
       go :: Vec n () -> Int
       go Nil = 0
       go (Cons () n) = 1 + go n
-  genOb = genObDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z))), M (S (S (S (S Z))))]
+  genOb = genObDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z)))]
 
 instance TestableProfunctor (Mat :: CAT (MatK Int)) where
   genP @(M a) @(M b) = Mat <$> traverse (traverse \() -> liftA2 (*) (someElem [1, -1]) (someElem [0 .. 9])) (repeat @b (repeat @a ()))

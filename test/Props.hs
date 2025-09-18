@@ -27,6 +27,7 @@ import Proarrow.Object.Terminal qualified as Terminal
 import Proarrow.Profunctor.Representable (FunctorForRep (..), Rep)
 import Proarrow.Tools.Laws (AssertEq (..), Elem (..), Laws (..), Place (..), Sym (..), Var)
 
+import Proarrow.Category.Monoidal qualified as Monoidal
 import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor (..))
 
 type family Reqs (tys :: [FREE cs (Var cs)]) (lut :: [(Symbol, k)]) :: Constraint where
@@ -255,3 +256,38 @@ propBinaryCoproducts_
    . (Testable k, BinaryCoproduct.HasBinaryCoproducts k, TestObIsOb k)
   => TestTree
 propBinaryCoproducts_ = propBinaryCoproducts @k (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
+
+propMonoidal
+  :: forall k
+   . (Testable k, Monoidal.Monoidal k, TestOb (Monoidal.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Monoidal.** b)) => r) -> r)
+  -> TestTree
+propMonoidal withTestOb2 = testProperty "Monoidal" $
+  genObs @'["A", "B", "C", "D"] \ @lut -> do
+    f <- genP
+    g <- genP
+    h <- genP
+    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B") $
+      withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C") $
+        withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "D") $
+          withTestOb2 @Monoidal.Unit @(AssocLookup lut "A") $
+            withTestOb2 @Monoidal.Unit @(AssocLookup lut "B") $
+              withTestOb2 @(AssocLookup lut "A") @Monoidal.Unit $
+                withTestOb2 @(AssocLookup lut "B") @Monoidal.Unit $
+                  withTestOb2 @(AssocLookup lut "A" Monoidal.** Monoidal.Unit) @(AssocLookup lut "B") $
+                    withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C") $
+                      withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C") $
+                        withTestOb2 @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C") @(AssocLookup lut "D") $
+                          withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "D") $
+                            withTestOb2 @(AssocLookup lut "A")
+                              @(AssocLookup lut "B" Monoidal.** (AssocLookup lut "C" Monoidal.** AssocLookup lut "D")) $
+                              withTestOb2 @((AssocLookup lut "A" Monoidal.** AssocLookup lut "B") Monoidal.** AssocLookup lut "C")
+                                @(AssocLookup lut "D") $
+                                props @'[Monoidal.Monoidal] @lut
+                                  \case Monoidal.F -> Wrap f; Monoidal.G -> Wrap g; Monoidal.H -> Wrap h
+
+propMonoidal_
+  :: forall k
+   . (Testable k, Monoidal.Monoidal k, TestOb (Monoidal.Unit @k), TestObIsOb k)
+  => TestTree
+propMonoidal_ = propMonoidal @k (\ @a @b r -> Monoidal.withOb2 @k @a @b r)

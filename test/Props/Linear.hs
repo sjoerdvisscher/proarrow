@@ -22,6 +22,7 @@ test =
     , propInitialObject @LINEAR
     , propBinaryProducts @LINEAR (\r -> r)
     , propBinaryCoproducts @LINEAR (\r -> r)
+    , propMonoidal @LINEAR (\r -> r)
     ]
 
 instance TestableProfunctor Linear where

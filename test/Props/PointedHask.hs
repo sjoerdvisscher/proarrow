@@ -22,6 +22,7 @@ test =
     , propInitialObject @POINTED
     , propBinaryProducts @POINTED (\r -> r)
     , propBinaryCoproducts @POINTED (\r -> r)
+    , propMonoidal @POINTED (\r -> r)
     ]
 
 instance TestableProfunctor Pointed where

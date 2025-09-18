@@ -19,11 +19,12 @@ test =
     [ propCategory @Nat
     , propTerminalObject @Nat
     , propInitialObject @Nat
+    , propMonoidal_ @Nat
     ]
 
 instance Testable Nat where
   showOb @n = show $ nat @n
-  genOb = genObDef @'[0, 1, 2, 3]
+  genOb = genObDef @'[0, 1, 2]
 
 values :: [Double]
 values = [-1, -sqrt 2, -0.5, 0, 0.5, sqrt 2, 1]

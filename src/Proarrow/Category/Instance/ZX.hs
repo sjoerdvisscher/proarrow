@@ -121,7 +121,7 @@ instance DaggerProfunctor ZX where
   dagger (ZX m) = ZX $ Map.fromList [((i, o), conjugate v) | ((o, i), v) <- Map.toList m]
 
 instance MonoidalProfunctor ZX where
-  par0 = ZX Map.empty
+  par0 = id
   ZX @ni @no n `par` ZX @mi @mo m =
     withOb2 @_ @ni @mi $
       withOb2 @_ @no @mo $

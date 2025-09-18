@@ -2,12 +2,12 @@
 
 module Proarrow.Tools.Laws where
 
-import Data.Data ((:~:) (..))
+import Data.Data ((:~:) (..), Typeable)
 import Data.Kind (Constraint, Type)
 import GHC.TypeLits (KnownSymbol, Symbol)
 import Prelude (Show)
 
-import Proarrow.Category.Instance.Free (FREE (..), Free, Show2)
+import Proarrow.Category.Instance.Free (FREE (..), Free, Show2, All)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault)
 
 data family Var (cs :: [Kind -> Constraint]) (a :: Symbol) (b :: Symbol)
@@ -46,3 +46,8 @@ instance Promonad (Sym :: CAT Symbol) where
 instance CategoryOf Symbol where
   type (~>) = Sym
   type Ob a = (KnownSymbol a)
+
+iso :: forall {cs} (a :: FREE cs (Var cs)) (b :: FREE cs (Var cs))
+     . (a `Elem` EqTypes cs, b `Elem` EqTypes cs, All cs (FREE cs (Var cs)), Typeable cs)
+     => Free a b -> Free b a -> [AssertEq cs]
+iso f g = [f . g :=: id, g . f :=: id] \\ f \\ g

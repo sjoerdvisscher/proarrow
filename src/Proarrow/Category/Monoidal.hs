@@ -3,7 +3,7 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
-import Prelude (($), Show, Eq)
+import Prelude (Eq, Show, ($), (++))
 
 import Proarrow.Category.Instance.Free
   ( Elem
@@ -14,8 +14,10 @@ import Proarrow.Category.Instance.Free
   , Ok
   , WithEq
   , WithShow
+  , emb
   )
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
+import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var, iso)
 
 -- This is equal to a monoidal functor for Star
 -- and to an oplax monoidal functor for Costar
@@ -158,3 +160,44 @@ instance (Ok cs p, Monoidal `Elem` cs) => Monoidal (FREE cs p) where
   rightUnitorInv = Str RightUnitorInv Id
   associator = Str Associator Id
   associatorInv = Str AssociatorInv Id
+
+data instance Var '[Monoidal] a b where
+  F :: Var '[Monoidal] "A" "B"
+  G :: Var '[Monoidal] "B" "C"
+  H :: Var '[Monoidal] "C" "D"
+deriving instance Show (Var '[Monoidal] a b)
+instance Laws '[Monoidal] where
+  type
+    EqTypes '[Monoidal] =
+      '[ EMB "A"
+       , EMB "B"
+       , UnitF **! EMB "A"
+       , UnitF **! EMB "B"
+       , EMB "A" **! UnitF
+       , EMB "B" **! UnitF
+       , EMB "A" **! EMB "B"
+       , (EMB "A" **! UnitF) **! EMB "B"
+       , (EMB "A" **! EMB "B") **! EMB "C"
+       , EMB "A" **! (EMB "B" **! EMB "C")
+       , (EMB "B" **! EMB "C") **! EMB "D"
+       , EMB "B" **! (EMB "C" **! EMB "D")
+       , EMB "A" **! (EMB "B" **! (EMB "C" **! EMB "D"))
+       , ((EMB "A" **! EMB "B") **! EMB "C") **! EMB "D"
+       ]
+  laws =
+    let f = emb F; g = emb G; h = emb H
+    in iso @((EMB "A" **! EMB "B") **! EMB "C") @(EMB "A" **! (EMB "B" **! EMB "C")) associator associatorInv
+         ++ iso @(UnitF **! EMB "A") @(EMB "A") leftUnitor leftUnitorInv
+         ++ iso @(EMB "A" **! UnitF) @(EMB "A") rightUnitor rightUnitorInv
+         ++ [ associator . ((f `par` g) `par` h) :=: (f `par` (g `par` h)) . associator
+            , associatorInv . (f `par` (g `par` h)) :=: ((f `par` g) `par` h) . associatorInv
+            , leftUnitor . (par0 `par` f) :=: f . leftUnitor
+            , leftUnitorInv . f :=: (par0 `par` f) . leftUnitorInv
+            , rightUnitor . (f `par` par0) :=: f . rightUnitor
+            , rightUnitorInv . f :=: (f `par` par0) . rightUnitorInv
+            , (id `par` leftUnitor) . associator @_ @(EMB "A") @_ @(EMB "B") :=: rightUnitor `par` id
+            , (id `par` associator @_ @(EMB "B") @(EMB "C") @(EMB "D"))
+                . associator
+                . (associator @_ @(EMB "A") @(EMB "B") @(EMB "C") `par` id)
+                :=: (associator . associator)
+            ]
