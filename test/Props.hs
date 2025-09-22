@@ -29,7 +29,7 @@ import Proarrow.Tools.Laws (AssertEq (..), Elem (..), Laws (..), Place (..), Sym
 
 import Proarrow.Category.Monoidal qualified as Monoidal
 import Proarrow.Object.Exponential qualified as Exponential
-import Testable (Some (..), TestObIsOb, Testable (..), TestableType (..), TestableProfunctor, genP)
+import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor, TestableType (..), genP)
 
 type family Reqs (tys :: [FREE cs (Var cs)]) (lut :: [(Symbol, k)]) :: Constraint where
   Reqs '[] lut = ()
@@ -144,21 +144,27 @@ props pn = P.getAp (foldMap (P.Ap . go) laws)
     go ((:=:) @a @b l r) = do
       elem2testOb @a @(EqTypes cs) @lut $
         elem2testOb @b @(EqTypes cs) @lut $ do
-          let Ap (Pair (Identity fl) (Const vl)) = f l
-              Ap (Pair (Identity fr) (Const vr)) = f r
-          isEq <- eqP fl fr
-          when (not isEq) $
-            testFailed $
-              "Failed law "
-                ++ show l
-                ++ " = "
-                ++ show r
-                ++ ", with: \n"
-                ++ unlines (nub (vl ++ vr))
-                ++ "LHS = "
-                ++ showP fl
-                ++ "\nRHS = "
-                ++ showP fr
+          case (f l, f r) of
+            (Ap (Pair (Identity fl) (Const vl)), Ap (Pair (Identity fr) (Const vr))) -> do
+              isEq <- eqP fl fr
+              when (not isEq) $
+                testFailed $
+                  "Failed law "
+                    ++ show l
+                    ++ " = "
+                    ++ show r
+                    ++ ", with: \n"
+                    ++ unlines (nub (vl ++ vr))
+                    ++ "LHS = "
+                    ++ showP fl
+                    ++ "\nRHS = "
+                    ++ showP fr
+
+genVar
+  :: forall {k} (lut :: [(Symbol, k)]) a b
+   . (TestableType (AssocLookup lut a ~> AssocLookup lut b))
+  => Property (AssocLookup lut a ~> AssocLookup lut b)
+genVar = genP
 
 -- Can't use @Laws@ here, because the free category automatically satisfy these laws.
 propCategory :: forall k. (Testable k) => TestTree
@@ -201,7 +207,7 @@ propTerminalObject
   => TestTree
 propTerminalObject = testProperty "Terminal object" $
   genObs @'["A", "B"] @k \ @lut -> do
-    f <- genP
+    f <- genVar @lut @"A" @"B"
     props @'[Terminal.HasTerminalObject] @lut
       \case Terminal.F -> Wrap f
 
@@ -211,7 +217,7 @@ propInitialObject
   => TestTree
 propInitialObject = testProperty "Initial object" $
   genObs @'["A", "B"] @k \ @lut -> do
-    f <- genP
+    f <- genVar @lut @"A" @"B"
     props @'[Initial.HasInitialObject] @lut
       \case Initial.F -> Wrap f
 
@@ -222,9 +228,9 @@ propBinaryProducts
   -> TestTree
 propBinaryProducts withTestObProd = testProperty "Binary products" $
   genObs @'["A", "B", "C", "Z"] \ @lut -> do
-    f <- genP
-    g <- genP
-    h <- genP
+    f <- genVar @lut @"A" @"B"
+    g <- genVar @lut @"A" @"C"
+    h <- genVar @lut @"Z" @"A"
     withTestObProd @(AssocLookup lut "B") @(AssocLookup lut "C") $
       props @'[BinaryProduct.HasBinaryProducts] @lut
         \case BinaryProduct.F -> Wrap f; BinaryProduct.G -> Wrap g; BinaryProduct.H -> Wrap h
@@ -242,9 +248,9 @@ propBinaryCoproducts
   -> TestTree
 propBinaryCoproducts withTestObCoprod = testProperty "Binary coproducts" $
   genObs @'["A", "B", "C", "Z"] \ @lut -> do
-    f <- genP
-    g <- genP
-    h <- genP
+    f <- genVar @lut @"A" @"C"
+    g <- genVar @lut @"B" @"C"
+    h <- genVar @lut @"C" @"Z"
     withTestObCoprod @(AssocLookup lut "A") @(AssocLookup lut "B") $
       props @'[BinaryCoproduct.HasBinaryCoproducts] @lut
         \case BinaryCoproduct.F -> Wrap f; BinaryCoproduct.G -> Wrap g; BinaryCoproduct.H -> Wrap h
@@ -262,9 +268,9 @@ propMonoidal
   -> TestTree
 propMonoidal withTestOb2 = testProperty "Monoidal" $
   genObs @'["A", "B", "C", "D"] \ @lut -> do
-    f <- genP
-    g <- genP
-    h <- genP
+    f <- genVar @lut @"A" @"B"
+    g <- genVar @lut @"B" @"C"
+    h <- genVar @lut @"C" @"D"
     withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B")
       $ withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C")
       $ withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "D")
@@ -297,11 +303,11 @@ propSymMonoidal
   -> TestTree
 propSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $
   genObs @'["A", "B", "C"] \ @lut -> do
-    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B")
-      $ withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "A")
-      $ withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C")
-      $ withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "A")
-      $ props @'[Monoidal.Monoidal, Monoidal.SymMonoidal] @lut \case
+    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B") $
+      withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "A") $
+        withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C") $
+          withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "A") $
+            props @'[Monoidal.Monoidal, Monoidal.SymMonoidal] @lut \case {}
 
 propSymMonoidal_
   :: forall k

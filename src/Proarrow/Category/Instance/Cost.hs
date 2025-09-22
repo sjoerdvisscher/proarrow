@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE CPP #-}
 
 module Proarrow.Category.Instance.Cost where
 
@@ -222,6 +223,9 @@ instance Distributive COST where
           (EQI, _) -> id
           (GTI, LTI) -> error "distL: b is greater than c, but a + b is less than a + c"
           (GTI, GTI) -> id
+#if !(MIN_VERSION_GLASGOW_HASKELL(9,12,1,0))
+          _ -> error "redundant case"
+#endif
   distR @a @b @c = case (sing @a, sing @b, sing @c) of
     (SINF, _, _) -> withOb2 @_ @b @c id
     (_, SINF, _) -> withOb2 @_ @a @c id
@@ -234,5 +238,8 @@ instance Distributive COST where
           (EQI, _) -> id
           (GTI, LTI) -> error "distR: a is greater than b, but a + c is less than b + c"
           (GTI, GTI) -> id
+#if !(MIN_VERSION_GLASGOW_HASKELL(9,12,1,0))
+          _ -> error "redundant case"
+#endif
   distL0 = Inf
   distR0 = Inf
