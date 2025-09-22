@@ -290,6 +290,25 @@ propMonoidal_
   => TestTree
 propMonoidal_ = propMonoidal @k (\ @a @b r -> Monoidal.withOb2 @k @a @b r)
 
+propSymMonoidal
+  :: forall k
+   . (Testable k, Monoidal.SymMonoidal k, TestOb (Monoidal.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Monoidal.** b)) => r) -> r)
+  -> TestTree
+propSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $
+  genObs @'["A", "B", "C"] \ @lut -> do
+    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B")
+      $ withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "A")
+      $ withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C")
+      $ withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "A")
+      $ props @'[Monoidal.Monoidal, Monoidal.SymMonoidal] @lut \case
+
+propSymMonoidal_
+  :: forall k
+   . (Testable k, Monoidal.SymMonoidal k, TestOb (Monoidal.Unit @k), TestObIsOb k)
+  => TestTree
+propSymMonoidal_ = propSymMonoidal @k (\ @a @b r -> Monoidal.withOb2 @k @a @b r)
+
 propClosed
   :: forall k
    . (Testable k, Exponential.Closed k, TestOb (Monoidal.Unit @k))

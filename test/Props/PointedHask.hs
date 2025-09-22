@@ -25,6 +25,7 @@ test =
     , propBinaryProducts @POINTED (\r -> r)
     , propBinaryCoproducts @POINTED (\r -> r)
     , propMonoidal @POINTED (\r -> r)
+    , propSymMonoidal @POINTED (\r -> r)
     -- , propClosed @POINTED (\r -> r) (\r -> r)
     ]
 

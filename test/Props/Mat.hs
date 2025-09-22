@@ -24,6 +24,7 @@ test =
     , propBinaryProducts_ @(MatK Int)
     , propBinaryCoproducts_ @(MatK Int)
     , propMonoidal_ @(MatK Int)
+    , propSymMonoidal_ @(MatK Int)
     , propClosed_ @(MatK Int)
     ]
 

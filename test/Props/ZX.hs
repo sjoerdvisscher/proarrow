@@ -22,6 +22,7 @@ test =
     , propTerminalObject @Nat
     , propInitialObject @Nat
     , propMonoidal_ @Nat
+    , propSymMonoidal_ @Nat
     , propClosed_ @Nat
     ]
 

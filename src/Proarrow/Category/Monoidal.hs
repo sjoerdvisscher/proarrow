@@ -161,6 +161,15 @@ instance (Ok cs p, Monoidal `Elem` cs) => Monoidal (FREE cs p) where
   associator = Str Associator Id
   associatorInv = Str AssociatorInv Id
 
+instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
+  data Struct SymMonoidal i o where
+    Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
+  foldStructure @f _ (Swap @a @b) = withLowerOb @a @f (withLowerOb @b @f (swap @_ @(Lower f a) @(Lower f b)))
+deriving instance (WithEq a) => Eq (Struct SymMonoidal a b)
+deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
+instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
+  swap = Str Swap Id
+
 data instance Var '[Monoidal] a b where
   F :: Var '[Monoidal] "A" "B"
   G :: Var '[Monoidal] "B" "C"
@@ -199,5 +208,20 @@ instance Laws '[Monoidal] where
             , (id `par` associator @_ @(EMB "B") @(EMB "C") @(EMB "D"))
                 . associator
                 . (associator @_ @(EMB "A") @(EMB "B") @(EMB "C") `par` id)
-                :=: (associator . associator)
+                :=: associator . associator
             ]
+
+data instance Var '[Monoidal, SymMonoidal] a b
+deriving instance Show (Var '[Monoidal, SymMonoidal] a b)
+instance Laws '[Monoidal, SymMonoidal] where
+  type
+    EqTypes '[Monoidal, SymMonoidal] =
+      '[ EMB "A" **! EMB "B"
+       , (EMB "A" **! EMB "B") **! EMB "C"
+       , EMB "B" **! (EMB "C" **! EMB "A")
+       ]
+  laws =
+    [ swap @_ @(EMB "B") @(EMB "A") . swap :=: id
+    , (id `par` swap) . associator . (swap `par` id)
+        :=: associator . swap . associator @_ @(EMB "A") @(EMB "B") @(EMB "C")
+    ]

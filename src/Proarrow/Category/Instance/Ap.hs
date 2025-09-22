@@ -9,7 +9,7 @@ import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 
 type data AP (f :: Type -> Type) k = A k
 type instance UN A (A k) = k
@@ -64,3 +64,5 @@ instance (Applicative f, Monoidal k) => Monoidal (AP f k) where
   associatorInv @(A a) @(A b) @(A c) = withOb2 @_ @a @b $ withOb2 @_ @b @c $ withOb2 @_ @a @(b ** c) $ withOb2 @_ @(a ** b) @c $
     Ap (pure (associatorInv @_ @a @b @c))
 
+instance (Applicative f, SymMonoidal k) => SymMonoidal (AP f k) where
+  swap @(A a) @(A b) = withOb2 @_ @a @b $ withOb2 @_ @b @a $ Ap (pure (swap @_ @a @b))

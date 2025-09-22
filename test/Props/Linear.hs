@@ -24,6 +24,7 @@ test =
     , propBinaryProducts @LINEAR (\r -> r)
     , propBinaryCoproducts @LINEAR (\r -> r)
     , propMonoidal @LINEAR (\r -> r)
+    , propSymMonoidal @LINEAR (\r -> r)
     , propClosed @LINEAR (\r -> r) (\r -> r)
     ]
 
