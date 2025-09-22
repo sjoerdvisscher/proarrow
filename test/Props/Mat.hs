@@ -1,16 +1,18 @@
+{-# LANGUAGE OverloadedLists #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Props.Mat where
 
 import Data.Foldable (toList)
+import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
-import Prelude hiding (repeat)
+import Prelude hiding (repeat, elem)
 
 import Proarrow.Category.Instance.Mat (Mat (..), MatK (..), Nat (..), Vec (..), repeat)
-import Proarrow.Core (CAT)
+import Proarrow.Core (UN)
 
 import Props
-import Testable (Testable (..), TestableProfunctor (..), genObDef, someElem)
+import Testable (Testable (..), TestableType (..), genObDef)
 
 test :: TestTree
 test =
@@ -22,6 +24,7 @@ test =
     , propBinaryProducts_ @(MatK Int)
     , propBinaryCoproducts_ @(MatK Int)
     , propMonoidal_ @(MatK Int)
+    , propClosed_ @(MatK Int)
     ]
 
 instance Testable (MatK Int) where
@@ -32,7 +35,7 @@ instance Testable (MatK Int) where
       go (Cons () n) = 1 + go n
   genOb = genObDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z)))]
 
-instance TestableProfunctor (Mat :: CAT (MatK Int)) where
-  genP @(M a) @(M b) = Mat <$> traverse (traverse \() -> liftA2 (*) (someElem [1, -1]) (someElem [0 .. 9])) (repeat @b (repeat @a ()))
+instance (TestOb (a :: MatK Int), TestOb b) => TestableType (Mat a b) where
+  gen = Just $ Mat <$> traverse (traverse \() -> liftA2 (*) (elem [1, -1]) (elem [0 .. 9])) (repeat @(UN M b) (repeat @(UN M a) ()))
   eqP (Mat l) (Mat r) = pure $ l == r
   showP (Mat m) = show (toList <$> toList m)

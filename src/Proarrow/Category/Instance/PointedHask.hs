@@ -1,17 +1,17 @@
 module Proarrow.Category.Instance.PointedHask where
 
 import Data.Kind (Type)
-import Prelude (Maybe (..), const, ($), (>>=), type (~), Eq, Show)
+import GHC.Generics (Generic)
+import Prelude (Eq, Maybe (..), Show, const, ($), (>>=), type (~))
 
 import Data.Void (Void, absurd)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Applicative (liftA2)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Monoid (Comonoid (..), Monoid (..), CopyDiscard)
+import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Copower (Copowered (..))
-import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -39,7 +39,7 @@ instance CategoryOf POINTED where
   type Ob a = (a ~ P (UN P a))
 
 data These a b = This a | That b | These a b
-  deriving (Eq, Show)
+  deriving (Eq, Show, Generic)
 instance HasBinaryProducts POINTED where
   type P a && P b = P (These a b)
   withObProd r = r
@@ -86,11 +86,15 @@ instance Monoidal POINTED where
 
 instance SymMonoidal POINTED where
   swap = Pt (Just . swap)
-instance Closed POINTED where
-  type P a ~~> P b = P (a -> Maybe b)
-  withObExp r = r
-  curry (Pt f) = Pt (\a -> Just (\b -> f (a, b)))
-  apply = Pt (\(f, b) -> f b)
+
+-- This doesn't quite work, see tests.
+-- There should be a closed structure, not sure if that can be done in Haskell.
+-- https://ncatlab.org/nlab/show/pointed+object#ClosedMonoidalStructure
+-- instance Closed POINTED where
+--   type P a ~~> P b = P (a -> Maybe b)
+--   withObExp r = r
+--   curry (Pt f) = Pt (\a -> Just (\b -> f (a, b)))
+--   apply = Pt (\(f, b) -> f b)
 
 instance Powered Type POINTED where
   type P a ^ n = P (n -> Maybe a)
@@ -130,7 +134,7 @@ instance Comonoid (P x) where
 instance CopyDiscard POINTED
 
 -- | Categories with a zero object can be seen as categories enriched in Pointed.
-underlyingPt :: HasZeroObject k => (a :: k) ~> b -> Unit ~> P (a ~> b)
+underlyingPt :: (HasZeroObject k) => (a :: k) ~> b -> Unit ~> P (a ~> b)
 underlyingPt f = Pt \() -> Just f
 
 enrichedPt :: (Ob (a :: k), Ob b, HasZeroObject k) => Unit ~> P (a ~> b) -> a ~> b

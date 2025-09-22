@@ -3,14 +3,13 @@
 module Props.Bool where
 
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (discard)
 import Prelude
 
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Core (obj)
 
 import Props
-import Testable (Testable (..), TestableProfunctor (..), genObDef)
+import Testable (Testable (..), genObDef, TestableType (..), optGen)
 
 test :: TestTree
 test =
@@ -21,6 +20,7 @@ test =
     , propInitialObject @BOOL
     , propBinaryProducts_ @BOOL
     , propBinaryCoproducts_ @BOOL
+    , propClosed_ @BOOL
     ]
 
 instance Testable BOOL where
@@ -29,12 +29,12 @@ instance Testable BOOL where
     Tru -> "TRU"
   genOb = genObDef @'[FLS, TRU]
 
-instance TestableProfunctor Booleans where
-  genP @a @b = case (obj @a, obj @b) of
-    (Fls, Fls) -> pure Fls
-    (Fls, Tru) -> pure F2T
-    (Tru, Tru) -> pure Tru
-    (Tru, Fls) -> discard
+instance (TestOb a, TestOb b) => TestableType (Booleans a b) where
+  gen = optGen $ case (obj @a, obj @b) of
+    (Fls, Fls) -> [Fls]
+    (Fls, Tru) -> [F2T]
+    (Tru, Tru) -> [Tru]
+    (Tru, Fls) -> []
   eqP _ _ = pure True
   showP Fls = "F->F"
   showP F2T = "F->T"

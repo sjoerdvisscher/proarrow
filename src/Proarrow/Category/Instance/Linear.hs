@@ -167,7 +167,7 @@ instance Eq Top where
 data With a b where
   With :: x %1 -> (x %1 -> a) -> (x %1 -> b) -> With a b
 instance (Show a, Show b) => Show (With a b) where
-  showsPrec d (With x f g) = showParen (d > 9) (showString "With " . showsPrec 10 (f x) . showString " " . showsPrec 10 (g x))
+  showsPrec d (With x f g) = showParen (d > 9) (showString "mkWith " . showsPrec 10 (f x) . showString " " . showsPrec 10 (g x))
 instance (Eq a, Eq b) => Eq (With a b) where
   With x fa fb == With y ga gb = (fa x == ga y) && (fb x == gb y)
 
@@ -258,8 +258,8 @@ dn nna =
   where
     fill ref x = unsafeDupablePerformIO (writeIORef ref x)
 
-unsafeLinear :: (a -> b) %1 -> (a %1 -> b)
-unsafeLinear = unsafeCoerce unsafeCoerce
+unsafeLinear :: (a -> b) -> (a %1 -> b)
+unsafeLinear = unsafeCoerce
 
 unit :: L () ~> L (Par a (Not a))
 unit = Linear \() -> Par \(na, nna) -> nna na

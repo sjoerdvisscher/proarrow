@@ -19,7 +19,7 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Instance.Ap (A, AP, Ap (..))
 import Proarrow.Category.Instance.Free (All, FREE (..), Lower, Show2, emb, fold)
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, obj, rmap, type (+->))
 import Proarrow.Object.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Object.BinaryProduct qualified as BinaryProduct
 import Proarrow.Object.Initial qualified as Initial
@@ -28,7 +28,8 @@ import Proarrow.Profunctor.Representable (FunctorForRep (..), Rep)
 import Proarrow.Tools.Laws (AssertEq (..), Elem (..), Laws (..), Place (..), Sym (..), Var)
 
 import Proarrow.Category.Monoidal qualified as Monoidal
-import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor (..))
+import Proarrow.Object.Exponential qualified as Exponential
+import Testable (Some (..), TestObIsOb, Testable (..), TestableType (..), TestableProfunctor, genP)
 
 type family Reqs (tys :: [FREE cs (Var cs)]) (lut :: [(Symbol, k)]) :: Constraint where
   Reqs '[] lut = ()
@@ -160,34 +161,31 @@ props pn = P.getAp (foldMap (P.Ap . go) laws)
                 ++ showP fr
 
 -- Can't use @Laws@ here, because the free category automatically satisfy these laws.
-propCategory
-  :: forall k
-   . (Testable k, CategoryOf k)
-  => TestTree
+propCategory :: forall k. (Testable k) => TestTree
 propCategory = testProperty "Category" $ do
   Some @a <- genOb @k
   Some @b <- genOb
-  f <- genP @((~>) :: CAT k) @a @b
+  f <- genP @(a ~> b)
   isEqIdL <- eqP (id . f) f
   when (not isEqIdL) $
     testFailed $
-      "Failed left identity: \n"
-        ++ "id . f = "
+      "Failed left identity:"
+        ++ "\nid . f = "
         ++ showP (id . f)
         ++ "\nf = "
         ++ showP f
   isEqIdR <- eqP (f . id) f
   when (not isEqIdR) $
     testFailed $
-      "Failed right identity: \n"
-        ++ "f . id = "
+      "Failed right identity:"
+        ++ "\nf . id = "
         ++ showP (f . id)
         ++ "\nf = "
         ++ showP f
   Some @c <- genOb
   Some @d <- genOb
-  g <- genP @_ @b @c
-  h <- genP @_ @c @d
+  g <- genP @(b ~> c)
+  h <- genP @(c ~> d)
   isEq <- eqP ((h . g) . f) (h . (g . f))
   when (not isEq) $
     testFailed $
@@ -267,27 +265,133 @@ propMonoidal withTestOb2 = testProperty "Monoidal" $
     f <- genP
     g <- genP
     h <- genP
-    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B") $
-      withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C") $
-        withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "D") $
-          withTestOb2 @Monoidal.Unit @(AssocLookup lut "A") $
-            withTestOb2 @Monoidal.Unit @(AssocLookup lut "B") $
-              withTestOb2 @(AssocLookup lut "A") @Monoidal.Unit $
-                withTestOb2 @(AssocLookup lut "B") @Monoidal.Unit $
-                  withTestOb2 @(AssocLookup lut "A" Monoidal.** Monoidal.Unit) @(AssocLookup lut "B") $
-                    withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C") $
-                      withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C") $
-                        withTestOb2 @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C") @(AssocLookup lut "D") $
-                          withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "D") $
-                            withTestOb2 @(AssocLookup lut "A")
-                              @(AssocLookup lut "B" Monoidal.** (AssocLookup lut "C" Monoidal.** AssocLookup lut "D")) $
-                              withTestOb2 @((AssocLookup lut "A" Monoidal.** AssocLookup lut "B") Monoidal.** AssocLookup lut "C")
-                                @(AssocLookup lut "D") $
-                                props @'[Monoidal.Monoidal] @lut
-                                  \case Monoidal.F -> Wrap f; Monoidal.G -> Wrap g; Monoidal.H -> Wrap h
+    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B")
+      $ withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C")
+      $ withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "D")
+      $ withTestOb2 @Monoidal.Unit @(AssocLookup lut "A")
+      $ withTestOb2 @Monoidal.Unit @(AssocLookup lut "B")
+      $ withTestOb2 @(AssocLookup lut "A") @Monoidal.Unit
+      $ withTestOb2 @(AssocLookup lut "B") @Monoidal.Unit
+      $ withTestOb2 @(AssocLookup lut "A" Monoidal.** Monoidal.Unit) @(AssocLookup lut "B")
+      $ withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C")
+      $ withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C")
+      $ withTestOb2 @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C") @(AssocLookup lut "D")
+      $ withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "D")
+      $ withTestOb2 @(AssocLookup lut "A")
+        @(AssocLookup lut "B" Monoidal.** (AssocLookup lut "C" Monoidal.** AssocLookup lut "D"))
+      $ withTestOb2 @((AssocLookup lut "A" Monoidal.** AssocLookup lut "B") Monoidal.** AssocLookup lut "C")
+        @(AssocLookup lut "D")
+      $ props @'[Monoidal.Monoidal] @lut
+        \case Monoidal.F -> Wrap f; Monoidal.G -> Wrap g; Monoidal.H -> Wrap h
 
 propMonoidal_
   :: forall k
    . (Testable k, Monoidal.Monoidal k, TestOb (Monoidal.Unit @k), TestObIsOb k)
   => TestTree
 propMonoidal_ = propMonoidal @k (\ @a @b r -> Monoidal.withOb2 @k @a @b r)
+
+propClosed
+  :: forall k
+   . (Testable k, Exponential.Closed k, TestOb (Monoidal.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Monoidal.** b)) => r) -> r)
+  -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Exponential.~~> b)) => r) -> r)
+  -> TestTree
+propClosed withTestOb2 withTestObExp = testProperty "Closed" $ do
+  Some @a <- genOb @k
+  Some @b <- genOb
+  Some @c <- genOb
+  -- TODO: test the naturality conditions
+  withTestOb2 @a @b $ withTestObExp @b @c $ do
+    propIsoP @_ @_ @(a Monoidal.** b) @c @a @(b Exponential.~~> c)
+      (Exponential.curry @k @a @b @c)
+      (Exponential.uncurry @b @c)
+
+propClosed_
+  :: forall k
+   . (Testable k, Exponential.Closed k, TestOb (Monoidal.Unit @k), TestObIsOb k)
+  => TestTree
+propClosed_ =
+  propClosed @k
+    (\ @a @b r -> Monoidal.withOb2 @k @a @b r)
+    (\ @a @b r -> Exponential.withObExp @k @a @b r)
+
+propProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
+propProfunctor = testProperty "Profunctor" $ do
+  Some @a <- genOb @k
+  Some @b <- genOb @j
+  p <- genP @(p a b)
+  isEqId <- eqP (dimap id id p) p
+  when (not isEqId) $
+    testFailed $
+      "Failed identity:"
+        ++ "\ndimap id id p = "
+        ++ showP (dimap id id p)
+        ++ "\nf = "
+        ++ showP p
+  Some @c <- genOb @k
+  Some @d <- genOb @j
+  f <- genP @(c ~> a)
+  g <- genP @(b ~> d)
+  isEqInterchange <- eqP (lmap f (rmap g p)) (rmap g (lmap f p))
+  when (not isEqInterchange) $
+    testFailed $
+      "Failed interchange:"
+        ++ "\nlmap f (rmap g p) = "
+        ++ showP (lmap f (rmap g p))
+        ++ "\nrmap g (lmap f p) = "
+        ++ showP (rmap g (lmap f p))
+  Some @e <- genOb @k
+  Some @h <- genOb @j
+  f' <- genP @(e ~> c)
+  g' <- genP @(d ~> h)
+  isEqComp <- eqP (dimap (f . f') (g' . g) p) (dimap f' g' (dimap f g p))
+  when (not isEqComp) $
+    testFailed $
+      "Failed composition:"
+        ++ "\ndimap (f . f') (g' . g) p = "
+        ++ showP (dimap (f . f') (g' . g) p)
+        ++ "\ndimap f' g' (dimap f g p) = "
+        ++ showP (dimap f' g' (dimap f g p))
+
+propIso :: forall {k} (a :: k) b. (Testable k, TestOb a, TestOb b) => a ~> b -> b ~> a -> Property ()
+propIso f g = do
+  isEq1 <- eqP (f . g) id
+  when (not isEq1) $
+    testFailed $
+      "Failed isomorphism:"
+        ++ "\nf . g = "
+        ++ showP (f . g)
+        ++ "\nid = "
+        ++ showP (obj @b)
+  isEq2 <- eqP (g . f) id
+  when (not isEq2) $
+    testFailed $
+      "Failed isomorphism:"
+        ++ "\ng . f = "
+        ++ showP (g . f)
+        ++ "\nid = "
+        ++ showP (obj @a)
+
+propIsoP
+  :: forall p q a b c d
+   . (TestableProfunctor p, TestableProfunctor q, TestOb a, TestOb b, TestOb c, TestOb d)
+  => (p a b -> q c d) -> (q c d -> p a b) -> Property ()
+propIsoP f g = do
+  p <- genP @(p a b)
+  isEq1 <- eqP (g (f p)) p
+  when (not isEq1) $
+    testFailed $
+      "Failed isomorphism:"
+        ++ "\ng (f p) = "
+        ++ showP (g (f p))
+        ++ "\np= "
+        ++ showP p
+  q <- genP @(q c d)
+  isEq2 <- eqP (f (g q)) q
+  when (not isEq2) $
+    testFailed $
+      "Failed isomorphism:"
+        ++ "\nf (g q) = "
+        ++ showP (f (g q))
+        ++ "\nq = "
+        ++ showP q
