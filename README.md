@@ -1,3 +1,5 @@
+[![Haskell-CI](https://github.com/sjoerdvisscher/proarrow/actions/workflows/haskell-ci.yml/badge.svg)](https://github.com/sjoerdvisscher/proarrow/actions/workflows/haskell-ci.yml)
+
 # proarrow
 
 A Haskell library for doing category theory with a central role for profunctors.
