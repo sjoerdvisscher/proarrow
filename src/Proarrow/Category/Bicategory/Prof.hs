@@ -35,7 +35,7 @@ import Proarrow.Category.Instance.Collage qualified as Col
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
-import Proarrow.Category.Instance.Prof (unProf)
+import Proarrow.Category.Instance.Prof qualified as Prof
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Limit qualified as L
@@ -84,6 +84,9 @@ instance Promonad Prof where
 instance CategoryOf (PROFK j k) where
   type (~>) = Prof
   type Ob p = (Is PK p, Profunctor (UN PK p))
+
+instance Functor PK where
+  map (Prof.Prof f) = Prof f
 
 instance Bicategory PROFK where
   type Ob0 PROFK k = CategoryOf k
@@ -194,7 +197,7 @@ class
   laxComp :: P sk tk kk s0 t0 :.: P sk tk kk s1 t1 :~> P sk tk kk (s0 `O` s1) (t0 `O` t1)
 
 dimapLax :: (LaxProfunctor sk tk kk) => (s' ~> s) -> (t ~> t') -> P sk tk kk (CO s) t :~> P sk tk kk (CO s') t'
-dimapLax f g = (unProf (unNat (map (Co f))) . unProf (map g)) \\\ f \\\ g
+dimapLax f g = (Prof.unProf (unNat (map (Co f))) . Prof.unProf (map g)) \\\ f \\\ g
 
 instance (Monad m, Comonad c, LaxProfunctor sk tk kk, Ob c, Ob m) => Monad (PK (P sk tk kk (CO c) m)) where
   eta = Prof (dimapLax epsilon eta . laxId)

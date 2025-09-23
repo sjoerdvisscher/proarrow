@@ -24,6 +24,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Core (CAT, Category, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, src, type (+->))
+import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
@@ -124,6 +125,9 @@ type instance UN PR (PR k) = k
 type Prod :: j +-> k -> PROD j +-> PROD k
 data Prod p (a :: PROD k) b where
   Prod :: {unProd :: p a b} -> Prod p (PR a) (PR b)
+
+instance (CategoryOf k) => Functor (PR :: k -> PROD k) where
+  map f = Prod f
 
 instance (Profunctor p) => Profunctor (Prod p) where
   dimap (Prod l) (Prod r) (Prod p) = Prod (dimap l r p)
