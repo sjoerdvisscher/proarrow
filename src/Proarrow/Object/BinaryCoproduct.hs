@@ -30,6 +30,7 @@ import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
+import Proarrow.Functor (Functor (..))
 
 infixl 4 ||
 infixl 4 |||
@@ -110,6 +111,9 @@ type instance UN COPR (COPR k) = k
 type Coprod :: j +-> k -> COPROD j +-> COPROD k
 data Coprod p a b where
   Coprod :: {unCoprod :: p a b} -> Coprod p (COPR a) (COPR b)
+
+instance (CategoryOf k) => Functor (COPR :: k -> COPROD k) where
+  map f = Coprod (Id f)
 
 instance (Profunctor p) => Profunctor (Coprod p) where
   dimap (Coprod (Id l)) (Coprod (Id r)) (Coprod p) = Coprod (dimap l r p)

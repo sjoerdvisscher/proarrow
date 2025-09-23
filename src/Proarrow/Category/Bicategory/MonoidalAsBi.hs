@@ -19,6 +19,7 @@ import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
 import Proarrow.Object.Dual (dualObj)
 import Proarrow.Object.Dual qualified as M
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Functor (Functor (..))
 
 type MonK :: Kind -> CAT ()
 newtype MonK k i j = MK k
@@ -32,6 +33,9 @@ data Mon2 a b where
 instance (CategoryOf k) => CategoryOf (MonK k i j) where
   type (~>) = Mon2
   type Ob a = (Is MK a, Ob (UN MK a))
+
+instance (CategoryOf k) => Functor (MK :: k -> MonK k i j) where
+  map = Mon2
 
 -- | A monoidal category as a bicategory.
 instance (M.Monoidal k) => Bicategory (MonK k) where
