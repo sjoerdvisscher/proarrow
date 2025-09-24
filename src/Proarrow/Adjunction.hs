@@ -8,7 +8,7 @@ import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Opposite (Op (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Costar (Costar (..))
@@ -59,7 +59,7 @@ instance (Representable f) => Adjunction f (RepCostar f) where
 
 instance (Functor f, Functor g, Adjunction (Star f) (Star g)) => Adjunction (Costar f) (Costar g) where
   unit :: forall a. (Ob a) => (Costar g :.: Costar f) a a
-  unit = Costar id :.: Costar (counit (Star (map id) :.: Star id))
+  unit = Costar id :.: Costar (counit (Star (map id) :.: Star id)) \\ map @g (obj @a)
   counit :: forall a b. (Costar f :.: Costar g) a b -> a ~> b
   counit (Costar f :.: Costar g) = case unit @(Star f) @(Star g) @a of Star g' :.: Star f' -> g . map (f . f') . g'
 

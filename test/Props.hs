@@ -231,9 +231,9 @@ propBinaryProducts withTestObProd = testProperty "Binary products" $
     f <- genVar @lut @"A" @"B"
     g <- genVar @lut @"A" @"C"
     h <- genVar @lut @"Z" @"A"
-    withTestObProd @(AssocLookup lut "B") @(AssocLookup lut "C") $
+    withTestObProd @(AssocLookup lut "B") @(AssocLookup lut "C") (
       props @'[BinaryProduct.HasBinaryProducts] @lut
-        \case BinaryProduct.F -> Wrap f; BinaryProduct.G -> Wrap g; BinaryProduct.H -> Wrap h
+        \case BinaryProduct.F -> Wrap f; BinaryProduct.G -> Wrap g; BinaryProduct.H -> Wrap h)
 
 propBinaryProducts_
   :: forall k
@@ -251,9 +251,9 @@ propBinaryCoproducts withTestObCoprod = testProperty "Binary coproducts" $
     f <- genVar @lut @"A" @"C"
     g <- genVar @lut @"B" @"C"
     h <- genVar @lut @"C" @"Z"
-    withTestObCoprod @(AssocLookup lut "A") @(AssocLookup lut "B") $
+    withTestObCoprod @(AssocLookup lut "A") @(AssocLookup lut "B") (
       props @'[BinaryCoproduct.HasBinaryCoproducts] @lut
-        \case BinaryCoproduct.F -> Wrap f; BinaryCoproduct.G -> Wrap g; BinaryCoproduct.H -> Wrap h
+        \case BinaryCoproduct.F -> Wrap f; BinaryCoproduct.G -> Wrap g; BinaryCoproduct.H -> Wrap h)
 
 propBinaryCoproducts_
   :: forall k
@@ -272,23 +272,23 @@ propMonoidal withTestOb2 = testProperty "Monoidal" $
     g <- genVar @lut @"B" @"C"
     h <- genVar @lut @"C" @"D"
     withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B")
-      $ withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C")
-      $ withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "D")
-      $ withTestOb2 @Monoidal.Unit @(AssocLookup lut "A")
-      $ withTestOb2 @Monoidal.Unit @(AssocLookup lut "B")
-      $ withTestOb2 @(AssocLookup lut "A") @Monoidal.Unit
-      $ withTestOb2 @(AssocLookup lut "B") @Monoidal.Unit
-      $ withTestOb2 @(AssocLookup lut "A" Monoidal.** Monoidal.Unit) @(AssocLookup lut "B")
-      $ withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C")
-      $ withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C")
-      $ withTestOb2 @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C") @(AssocLookup lut "D")
-      $ withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "D")
-      $ withTestOb2 @(AssocLookup lut "A")
+      ( withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C")
+      ( withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "D")
+      ( withTestOb2 @Monoidal.Unit @(AssocLookup lut "A")
+      ( withTestOb2 @Monoidal.Unit @(AssocLookup lut "B")
+      ( withTestOb2 @(AssocLookup lut "A") @Monoidal.Unit
+      ( withTestOb2 @(AssocLookup lut "B") @Monoidal.Unit
+      ( withTestOb2 @(AssocLookup lut "A" Monoidal.** Monoidal.Unit) @(AssocLookup lut "B")
+      ( withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C")
+      ( withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C")
+      ( withTestOb2 @(AssocLookup lut "B" Monoidal.** AssocLookup lut "C") @(AssocLookup lut "D")
+      ( withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "D")
+      ( withTestOb2 @(AssocLookup lut "A")
         @(AssocLookup lut "B" Monoidal.** (AssocLookup lut "C" Monoidal.** AssocLookup lut "D"))
-      $ withTestOb2 @((AssocLookup lut "A" Monoidal.** AssocLookup lut "B") Monoidal.** AssocLookup lut "C")
+      ( withTestOb2 @((AssocLookup lut "A" Monoidal.** AssocLookup lut "B") Monoidal.** AssocLookup lut "C")
         @(AssocLookup lut "D")
-      $ props @'[Monoidal.Monoidal] @lut
-        \case Monoidal.F -> Wrap f; Monoidal.G -> Wrap g; Monoidal.H -> Wrap h
+      ( props @'[Monoidal.Monoidal] @lut
+        \case Monoidal.F -> Wrap f; Monoidal.G -> Wrap g; Monoidal.H -> Wrap h ))))))))))))))
 
 propMonoidal_
   :: forall k
@@ -303,11 +303,11 @@ propSymMonoidal
   -> TestTree
 propSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $
   genObs @'["A", "B", "C"] \ @lut -> do
-    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B") $
-      withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "A") $
-        withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C") $
-          withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "A") $
-            props @'[Monoidal.Monoidal, Monoidal.SymMonoidal] @lut \case {}
+    withTestOb2 @(AssocLookup lut "A") @(AssocLookup lut "B") (
+      withTestOb2 @(AssocLookup lut "C") @(AssocLookup lut "A") (
+        withTestOb2 @(AssocLookup lut "A" Monoidal.** AssocLookup lut "B") @(AssocLookup lut "C") (
+          withTestOb2 @(AssocLookup lut "B") @(AssocLookup lut "C" Monoidal.** AssocLookup lut "A") (
+            props @'[Monoidal.Monoidal, Monoidal.SymMonoidal] @lut \case {}))))
 
 propSymMonoidal_
   :: forall k
@@ -326,10 +326,10 @@ propClosed withTestOb2 withTestObExp = testProperty "Closed" $ do
   Some @b <- genOb
   Some @c <- genOb
   -- TODO: test the naturality conditions
-  withTestOb2 @a @b $ withTestObExp @b @c $ do
+  withTestOb2 @a @b (withTestObExp @b @c (do
     propIsoP @_ @_ @(a Monoidal.** b) @c @a @(b Exponential.~~> c)
       (Exponential.curry @k @a @b @c)
-      (Exponential.uncurry @b @c)
+      (Exponential.uncurry @b @c)))
 
 propClosed_
   :: forall k
@@ -345,12 +345,12 @@ propProfunctor = testProperty "Profunctor" $ do
   Some @a <- genOb @k
   Some @b <- genOb @j
   p <- genP @(p a b)
-  isEqId <- eqP (dimap id id p) p
+  isEqId <- eqP (dimap id id p) p \\ p
   when (not isEqId) $
     testFailed $
       "Failed identity:"
         ++ "\ndimap id id p = "
-        ++ showP (dimap id id p)
+        ++ showP (dimap id id p \\ p)
         ++ "\nf = "
         ++ showP p
   Some @c <- genOb @k

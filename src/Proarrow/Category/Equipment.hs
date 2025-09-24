@@ -142,7 +142,7 @@ instance (HasCompanions hk vk, Ob0 vk h, Ob0 vk i, Ob0 vk j, Ob0 vk k) => Profun
 -- > |     |
 -- > |     |
 -- > k-----k
-object :: (HasCompanions hk vk, Ob0 vk k) => Sq '(I :: hk k k, I :: vk k k) '(I, I)
+object :: (HasCompanions hk vk, Ob (I :: hk k k), Ob (I :: vk k k), Ob0 vk k) => Sq '(I :: hk k k, I :: vk k k) '(I, I)
 object = hArr id
 
 -- | Make a square from a horizontal arrow
@@ -154,7 +154,7 @@ object = hArr id
 -- > j-----j
 hArr
   :: forall {hk} {vk} {j} {k} (p :: hk j k) q
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
+   . (HasCompanions hk vk, Ob (I :: vk j j), Ob (I :: vk k k), Ob0 vk j, Ob0 vk k)
   => p ~> q
   -> Sq '(p, I :: vk k k) '(q, I :: vk j j)
 hArr n =
@@ -166,7 +166,7 @@ hArr n =
 -- > p-----p
 -- > |     |
 -- > k-----k
-hId :: (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (p :: hk k j)) => Sq '(p, I :: vk j j) '(p, I :: vk k k)
+hId :: (HasCompanions hk vk, Ob (I :: vk j j), Ob (I :: vk k k), Ob0 vk j, Ob0 vk k, Ob (p :: hk k j)) => Sq '(p, I :: vk j j) '(p, I :: vk k k)
 hId = hArr id
 
 -- > k-----k
@@ -176,7 +176,7 @@ hId = hArr id
 -- > j-----j
 compId
   :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
+   . (HasCompanions hk vk, Ob (I :: vk j j), Ob (I :: vk k k), Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(Companion hk f, I :: vk k k) '(Companion hk f, I :: vk j j)
 compId = hArr (mapCompanion @hk (obj @f))
 
@@ -187,7 +187,7 @@ compId = hArr (mapCompanion @hk (obj @f))
 -- > k-----k
 conjId
   :: forall {hk} {vk} {j} {k} f
-   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
+   . (Equipment hk vk, Ob (I :: vk j j), Ob (I :: vk k k), Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(Conjoint hk f, I :: vk j j) '(Conjoint hk f, I :: vk k k)
 conjId = hArr (mapConjoint @hk (obj @f))
 
@@ -200,7 +200,7 @@ conjId = hArr (mapConjoint @hk (obj @f))
 -- > j--g--k
 vArr
   :: forall {hk} {vk} {j} {k} (f :: vk j k) g
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
+   . (HasCompanions hk vk, Ob (I :: hk j j), Ob (I :: hk k k), Ob0 vk j, Ob0 vk k)
   => f ~> g
   -> Sq '(I :: hk j j, f) '(I :: hk k k, g)
 vArr n =
@@ -214,7 +214,7 @@ vArr n =
 -- > j--f--k
 vId
   :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
+   . (HasCompanions hk vk, Ob (I :: hk j j), Ob (I :: hk k k), Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(I :: hk j j, f) '(I :: hk k k, f)
 vId = vArr id
 
@@ -313,7 +313,7 @@ Sq sqL === Sq sqR =
 -- > j-----j
 toRight
   :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, Ob' (f :: vk j k))
+   . (HasCompanions hk vk, Ob (I :: hk j j), Ob (I :: vk j j), Ob' (f :: vk j k))
   => Sq '(I :: hk j j, f) '(Companion hk f, I :: vk j j)
 toRight = let comp = mapCompanion @hk @vk (obj @f) in Sq (comp `o` compFromId) \\ comp
 
@@ -324,7 +324,7 @@ toRight = let comp = mapCompanion @hk @vk (obj @f) in Sq (comp `o` compFromId) \
 -- > j--f--k
 fromLeft
   :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, Ob' (f :: vk j k))
+   . (HasCompanions hk vk, Ob (I :: hk k k), Ob (I :: vk k k), Ob' (f :: vk j k))
   => Sq '(Companion hk f, I :: vk k k) '(I :: hk k k, f)
 fromLeft = let comp = mapCompanion @hk @vk (obj @f) in Sq (compToId `o` comp) \\ comp
 
@@ -335,7 +335,7 @@ fromLeft = let comp = mapCompanion @hk @vk (obj @f) in Sq (compToId `o` comp) \\
 -- > j--f--k
 fromRight
   :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob f)
+   . (Equipment hk vk, Ob (I :: hk j j), Ob (I :: vk j j),Ob0 vk j, Ob0 vk k, Ob f)
   => Sq '(I :: hk j j, I :: vk j j) '(Conjoint hk f, f)
 fromRight =
   let f = obj @f
@@ -349,7 +349,7 @@ fromRight =
 -- > k-----k
 toLeft
   :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
+   . (Equipment hk vk, Ob (I :: hk k k), Ob (I :: vk k k), Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(Conjoint hk f, f) '(I :: hk k k, I :: vk k k)
 toLeft =
   let f = obj @f

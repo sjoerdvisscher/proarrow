@@ -127,9 +127,9 @@ instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
   par0 = id
   par :: (as :: [k]) ~> bs -> cs ~> ds -> as ++ cs ~> bs ++ ds
   par (Str @as @bs f) (Str @cs @ds g) =
-    withOb2 @[k] @as @cs $
-      withOb2 @[k] @bs @ds $
-        Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)
+    withOb2 @[k] @as @cs (
+      withOb2 @[k] @bs @ds (
+        Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)))
 
 -- | List concattenation as monoidal tensor.
 instance (Monoidal k) => Monoidal [k] where

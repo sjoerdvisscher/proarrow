@@ -16,8 +16,10 @@ class (Profunctor p, Thin j, Thin k) => ThinProfunctor (p :: j +-> k) where
 class (ThinProfunctor ((~>) :: CAT k)) => Thin k
 instance (ThinProfunctor ((~>) :: CAT k)) => Thin k
 
-class (HasArrow p a b) => HasArrow' p a b
-instance (HasArrow p a b) => HasArrow' p a b
+class (HasArrow p a b, ThinProfunctor p) => HasArrow' p a b where
+  arr' :: (Ob a, Ob b) => p a b
+instance (HasArrow p a b, ThinProfunctor p) => HasArrow' p a b where
+  arr' = arr
 
 type CodiscreteProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class
@@ -29,7 +31,7 @@ instance
   (ThinProfunctor p, forall c d. (Ob c, Ob d) => HasArrow' p c d, Codiscrete j, Codiscrete k)
   => CodiscreteProfunctor (p :: j +-> k)
   where
-  anyArr = arr
+  anyArr @a @b = arr' @p @a @b
 
 class (CodiscreteProfunctor ((~>) :: CAT k)) => Codiscrete k
 instance (CodiscreteProfunctor ((~>) :: CAT k)) => Codiscrete k
