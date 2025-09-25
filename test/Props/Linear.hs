@@ -12,7 +12,7 @@ import Proarrow.Core (CategoryOf (..), UN)
 import Props
 import Props.Hask ()
 import Test.Falsify.Generator (Function (..))
-import Testable (EnumAll (..), Testable (..), TestableType (..), genObDef)
+import Testable (EnumAll (..), GenTotal (..), Testable (..), TestableType (..), genObDef, invmap, one)
 
 test :: TestTree
 test =
@@ -29,7 +29,7 @@ test =
     ]
 
 instance (TestOb a, TestOb b) => TestableType (Linear a b) where
-  gen = fmap Linear <$> gen
+  gen = invmap Linear (\(Linear f) -> f) gen
   eqP (Linear l) (Linear r) = eqP l r
   showP (Linear f) = showP f
 
@@ -47,15 +47,18 @@ instance (EnumAll a, EnumAll b) => EnumAll (With a b) where
 instance EnumAll Top where
   enumAll = [Top ()]
 instance (TestOb a, TestOb b) => TestableType (a %1 -> b) where
-  gen = fmap unsafeLinear <$> gen @(a -> b)
+  gen = invmap unsafeLinear (\f a -> f a) gen
   eqP l r = eqP (\a -> l a) (\a -> r a)
   showP f = showP (\a -> f a)
 instance (TestableType a, TestableType b) => TestableType (With a b) where
-  gen = liftA2 (liftA2 mkWith) (gen @a) (gen @b)
+  gen = case (gen @a, gen @b) of
+    (GenEmpty absurd, _) -> GenEmpty \(With x xa _) -> absurd (xa x)
+    (_, GenEmpty absurd) -> GenEmpty \(With x _ xb) -> absurd (xb x)
+    (GenNonEmpty x ga, GenNonEmpty y gb) -> GenNonEmpty (mkWith x y) (mkWith <$> ga <*> gb)
   eqP (With x fa fb) (With y ga gb) = liftA2 (&&) (eqP (fa x) (ga y)) (eqP (fb x) (gb y))
   showP (With x fa fb) = "mkWith " ++ showP (fa x) ++ " " ++ showP (fb x)
 instance TestableType Top where
-  gen = Just (pure (Top ()))
+  gen = one (Top ())
   eqP _ _ = pure True
   showP (Top _) = "⊤"
 

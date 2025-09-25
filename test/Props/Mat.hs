@@ -6,13 +6,13 @@ module Props.Mat where
 import Data.Foldable (toList)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
-import Prelude hiding (repeat, elem)
+import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.Mat (Mat (..), MatK (..), Nat (..), Vec (..), repeat)
 import Proarrow.Core (UN)
 
 import Props
-import Testable (Testable (..), TestableType (..), genObDef)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef)
 
 test :: TestTree
 test =
@@ -37,6 +37,8 @@ instance Testable (MatK Int) where
   genOb = genObDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z)))]
 
 instance (TestOb (a :: MatK Int), TestOb b) => TestableType (Mat a b) where
-  gen = Just $ Mat <$> traverse (traverse \() -> liftA2 (*) (elem [1, -1]) (elem [0 .. 9])) (repeat @(UN M b) (repeat @(UN M a) ()))
+  gen =
+    GenNonEmpty (Mat (pure (pure 0))) $
+      Mat <$> traverse (traverse \() -> liftA2 (*) (elem [1, -1]) (elem [0 .. 9])) (repeat @(UN M b) (repeat @(UN M a) ()))
   eqP (Mat l) (Mat r) = pure $ l == r
   showP (Mat m) = show (toList <$> toList m)

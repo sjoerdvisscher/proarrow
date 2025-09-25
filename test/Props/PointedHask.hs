@@ -13,7 +13,7 @@ import Proarrow.Core (CategoryOf (..), UN)
 
 import Props
 import Props.Hask ()
-import Testable (EnumAll (..), Testable (..), TestableType (..), genObDef)
+import Testable (EnumAll (..), GenTotal (..), Testable (..), TestableType (..), genObDef, invmap)
 
 test :: TestTree
 test =
@@ -30,7 +30,7 @@ test =
     ]
 
 instance (TestOb a, TestOb b) => TestableType (Pointed a b) where
-  gen = fmap Pt <$> gen
+  gen = invmap Pt unPt gen
   eqP (Pt l) (Pt r) = eqP l r
   showP (Pt f) = intercalate "," [showP x ++ "->" ++ maybe "*" showP (f x) | x <- enumAll]
 
@@ -43,10 +43,13 @@ instance (EnumAll a, EnumAll b) => EnumAll (These a b) where
   enumAll = (This <$> enumAll) ++ (That <$> enumAll) ++ (These <$> enumAll <*> enumAll)
 instance (TestableType a, TestableType b) => TestableType (These a b) where
   gen = case (gen @a, gen @b) of
-    (Nothing, Nothing) -> Nothing
-    (Just ga, Nothing) -> Just $ This <$> ga
-    (Nothing, Just gb) -> Just $ That <$> gb
-    (Just ga, Just gb) -> Just $ oneof [This <$> ga, That <$> gb, These <$> ga <*> gb]
+    (GenEmpty l, GenEmpty r) -> GenEmpty \case
+      This x -> l x
+      That y -> r y
+      These x _ -> l x
+    (GenNonEmpty a ga, GenEmpty _) -> GenNonEmpty (This a) (This <$> ga)
+    (GenEmpty _, GenNonEmpty b gb) -> GenNonEmpty (That b) (That <$> gb)
+    (GenNonEmpty a ga, GenNonEmpty b gb) -> GenNonEmpty (These a b) (oneof [This <$> ga, That <$> gb, These <$> ga <*> gb])
   eqP (This l) (This r) = eqP l r
   eqP (That l) (That r) = eqP l r
   eqP (These l1 l2) (These r1 r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
