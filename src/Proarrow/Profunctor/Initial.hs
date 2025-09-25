@@ -1,5 +1,7 @@
 module Proarrow.Profunctor.Initial where
 
+import Prelude (Show, Eq)
+
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
@@ -7,6 +9,7 @@ import Proarrow.Category.Instance.Zero (Bottom (..))
 
 type InitialProfunctor :: j +-> k
 data InitialProfunctor a b
+  deriving (Show, Eq)
 
 instance (CategoryOf j, CategoryOf k) => Profunctor (InitialProfunctor :: j +-> k) where
   dimap _ _ = \case {}

@@ -5,19 +5,24 @@ module Testable where
 import Data.Kind (Constraint)
 import Data.List.NonEmpty (NonEmpty (..))
 import GHC.Exts qualified as GHC
-import Test.Falsify.Generator (elem, Gen)
+import Test.Falsify.Generator (Gen, elem)
 import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
-import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), Profunctor (..), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (Ob')
 
 class EnumAll a where
   enumAll :: [a]
 
+data GenTotal a = GenEmpty ~(forall x. a -> x) | GenNonEmpty a (Gen a)
+invmap :: (a -> b) -> (b -> a) -> GenTotal a -> GenTotal b
+invmap _ f' (GenEmpty g) = GenEmpty (g . f')
+invmap f _ (GenNonEmpty x g) = GenNonEmpty (f x) (fmap f g)
+
 class TestableType a where
-  gen :: Maybe (Gen a)
-  default gen :: (EnumAll a) => Maybe (Gen a)
+  gen :: GenTotal a
+  default gen :: (EnumAll a) => GenTotal a
   gen = optGen enumAll
   eqP :: a -> a -> Property Bool
   default eqP :: (Eq a) => a -> a -> Property Bool
@@ -26,14 +31,18 @@ class TestableType a where
   default showP :: (Show a) => a -> String
   showP = show
 
-genP :: TestableType a => Property a
+genP :: (TestableType a) => Property a
 genP = case gen of
-  Just g -> genWith (Just . showP) g
-  Nothing -> discard
+  GenNonEmpty _ g -> genWith (Just . showP) g
+  GenEmpty _ -> discard
 
 type TestableProfunctor :: forall {j} {k}. j +-> k -> Constraint
-class (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b)) => TestableProfunctor (p :: j +-> k)
-instance (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b)) => TestableProfunctor (p :: j +-> k)
+class
+  (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b)) =>
+  TestableProfunctor (p :: j +-> k)
+instance
+  (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b))
+  => TestableProfunctor (p :: j +-> k)
 
 class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor ((~>) :: CAT k), CategoryOf k) => Testable k where
   type TestOb (a :: k) :: GHC.Constraint
@@ -69,6 +78,9 @@ someElemWith f (x : xs) = genWith (Just . f) (elem (x :| xs))
 genObDef :: forall {k} (obs :: [k]). (Testable k, MkSomeList obs) => Property (Some k)
 genObDef = someElem (mkSomeList @k @obs)
 
-optGen :: [a] -> Maybe (Gen a)
-optGen [] = Nothing
-optGen (x : xs) = Just (elem (x :| xs))
+optGen :: [a] -> GenTotal a
+optGen [] = GenEmpty \a -> a `seq` error "There are should be no values of this type"
+optGen (x : xs) = GenNonEmpty x (elem (x :| xs))
+
+one :: a -> GenTotal a
+one x = GenNonEmpty x (pure x)
