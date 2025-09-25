@@ -6,14 +6,14 @@ import Control.Monad (replicateM)
 import Data.Kind (Type)
 import Data.List (intercalate)
 import Data.Void (Void)
-import Test.Falsify.Generator (Function, applyFun, choose, fromShrinkTree, fun, function, toShrinkTree)
+import Test.Falsify.Generator (Function, applyFun, choose, fun, function)
 import Test.Falsify.Property (genWith)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Prelude
 
 import Props
-import Testable (EnumAll (..), Testable (..), TestableType (..), genObDef)
+import Testable (EnumAll (..), GenTotal (..), Testable (..), TestableType (..), genObDef, one)
 
 test :: TestTree
 test =
@@ -28,7 +28,7 @@ test =
     ]
 
 instance Testable Type where
-  type TestOb (a :: Type) = (TestableType a, Typeable a, EnumAll a, Function a, Eq a)
+  type TestOb a = (TestableType a, Typeable a, EnumAll a, Function a, Eq a)
   showOb @a = show (typeRep @a)
   genOb = genObDef @'[Bool, (Bool, Bool), Maybe Bool]
 
@@ -54,30 +54,40 @@ instance (Eq a, EnumAll a, EnumAll b) => EnumAll (a -> b) where
 instance (Eq b, EnumAll a) => Eq (a -> b) where
   l == r = all id [l a == r a | a <- enumAll @a]
 instance (TestOb a, TestOb b) => TestableType (a -> b) where
-  gen = ((>>= fmap applyFun . fromShrinkTree) . toShrinkTree . fun @a) <$> gen @b
+  gen = case gen @a of
+    GenEmpty absurd -> one absurd
+    GenNonEmpty a _ -> case gen @b of
+      GenEmpty absurd -> GenEmpty \ab -> absurd (ab a)
+      GenNonEmpty b gb -> GenNonEmpty (const b) (fmap applyFun (fun gb))
   eqP l r =
     case gen of
-      Nothing -> pure True -- There can only be one function of a type with no values
-      Just ga -> do
+      GenEmpty _ -> pure True -- There can only be one function of a type with no values
+      GenNonEmpty _ ga -> do
         a <- genWith (Just . showP) ga
         eqP (l a) (r a)
   showP f = intercalate "," [showP x ++ "->" ++ showP (f x) | x <- enumAll]
 
 instance TestableType Bool
 instance TestableType ()
-instance TestableType Void
+instance TestableType Void where
+  gen = GenEmpty \case {}
+  eqP = \case {}
+  showP = \case {}
 
 instance (TestableType a, TestableType b) => TestableType (a, b) where
-  gen = liftA2 (liftA2 (,)) gen gen
+  gen = case (gen @a, gen @b) of
+    (GenEmpty f, _) -> GenEmpty (f . fst)
+    (_, GenEmpty g) -> GenEmpty (g . snd)
+    (GenNonEmpty a ga, GenNonEmpty b gb) -> GenNonEmpty (a, b) (liftA2 (,) ga gb)
   eqP (l1, l2) (r1, r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
   showP (a, b) = "(" ++ showP a ++ ", " ++ showP b ++ ")"
 
 instance (TestableType a, TestableType b) => TestableType (Either a b) where
   gen = case (gen @a, gen @b) of
-    (Nothing, Nothing) -> Nothing
-    (Just ga, Nothing) -> Just (Left <$> ga)
-    (Nothing, Just gb) -> Just (Right <$> gb)
-    (Just ga, Just gb) -> Just (choose (Left <$> ga) (Right <$> gb))
+    (GenEmpty f, GenEmpty g) -> GenEmpty (either f g)
+    (GenNonEmpty a ga, GenEmpty _) -> GenNonEmpty (Left a) (Left <$> ga)
+    (GenEmpty _, GenNonEmpty b gb) -> GenNonEmpty (Right b) (Right <$> gb)
+    (GenNonEmpty _ ga, GenNonEmpty b gb) -> GenNonEmpty (Right b) (choose (Left <$> ga) (Right <$> gb))
   eqP (Left l) (Left r) = eqP l r
   eqP (Right l) (Right r) = eqP l r
   eqP _ _ = pure False
@@ -86,8 +96,8 @@ instance (TestableType a, TestableType b) => TestableType (Either a b) where
 
 instance (TestableType a) => TestableType (Maybe a) where
   gen = case gen @a of
-    Nothing -> Just (pure Nothing)
-    Just ga -> Just (choose (pure Nothing) (Just <$> ga))
+    GenEmpty _ -> one Nothing
+    GenNonEmpty a ga -> GenNonEmpty (Just a) (choose (pure Nothing) (Just <$> ga))
   eqP Nothing Nothing = pure True
   eqP (Just l) (Just r) = eqP l r
   eqP _ _ = pure False

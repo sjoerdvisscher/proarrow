@@ -42,13 +42,13 @@ instance (HasTerminalObject `Elem` cs) => IsFreeOb (TermF :: FREE cs p) where
   withLowerOb r = r
 instance (HasTerminalObject `Elem` cs) => HasStructure cs p HasTerminalObject where
   data Struct HasTerminalObject a b where
-    Terminal :: (Ob a) => Struct HasTerminalObject a TermF
-  foldStructure @f _ (Terminal @a) = withLowerOb @a @f (terminate)
+    Terminate :: (Ob a) => Struct HasTerminalObject a TermF
+  foldStructure @f _ (Terminate @a) = withLowerOb @a @f (terminate)
 deriving instance Eq (Struct HasTerminalObject a b)
 deriving instance Show (Struct HasTerminalObject a b)
 instance (Ok cs p, HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs p) where
   type TerminalObject = TermF
-  terminate = Str Terminal Id
+  terminate = Str Terminate Id
 
 data instance Var '[HasTerminalObject] a b where
   F :: Var '[HasTerminalObject] "A" "B"

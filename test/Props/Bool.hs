@@ -9,7 +9,7 @@ import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Core (obj)
 
 import Props
-import Testable (Testable (..), genObDef, TestableType (..), optGen)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one)
 
 test :: TestTree
 test =
@@ -30,11 +30,11 @@ instance Testable BOOL where
   genOb = genObDef @'[FLS, TRU]
 
 instance (TestOb a, TestOb b) => TestableType (Booleans a b) where
-  gen = optGen $ case (obj @a, obj @b) of
-    (Fls, Fls) -> [Fls]
-    (Fls, Tru) -> [F2T]
-    (Tru, Tru) -> [Tru]
-    (Tru, Fls) -> []
+  gen = case (obj @a, obj @b) of
+    (Fls, Fls) -> one Fls
+    (Fls, Tru) -> one F2T
+    (Tru, Tru) -> one Tru
+    (Tru, Fls) -> GenEmpty \case {}
   eqP _ _ = pure True
   showP Fls = "F->F"
   showP F2T = "F->T"

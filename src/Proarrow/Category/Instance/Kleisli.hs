@@ -44,7 +44,7 @@ type instance UN KL (KL k) = k
 
 type Kleisli :: CAT (KLEISLI p)
 data Kleisli (a :: KLEISLI p) b where
-  Kleisli :: {runKleisli :: p a b} -> Kleisli (KL a :: KLEISLI p) (KL b)
+  Kleisli :: {unKleisli :: p a b} -> Kleisli (KL a :: KLEISLI p) (KL b)
 
 instance (Promonad p) => Profunctor (Kleisli :: CAT (KLEISLI p)) where
   dimap = dimapDefault
