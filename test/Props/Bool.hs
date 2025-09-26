@@ -34,7 +34,7 @@ instance (TestOb a, TestOb b) => TestableType (Booleans a b) where
     (Fls, Fls) -> one Fls
     (Fls, Tru) -> one F2T
     (Tru, Tru) -> one Tru
-    (Tru, Fls) -> GenEmpty \case {}
+    (Tru, Fls) -> GenEmpty \p -> error (showP p) -- empty case crashes???
   eqP _ _ = pure True
   showP Fls = "F->F"
   showP F2T = "F->T"

@@ -79,7 +79,7 @@ genObDef :: forall {k} (obs :: [k]). (Testable k, MkSomeList obs) => Property (S
 genObDef = someElem (mkSomeList @k @obs)
 
 optGen :: [a] -> GenTotal a
-optGen [] = GenEmpty \a -> a `seq` error "There are should be no values of this type"
+optGen [] = error "optGen: empty list"
 optGen (x : xs) = GenNonEmpty x (elem (x :| xs))
 
 one :: a -> GenTotal a
