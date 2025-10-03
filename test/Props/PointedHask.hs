@@ -4,6 +4,7 @@
 module Props.PointedHask where
 
 import Data.List (intercalate)
+import Data.Void (Void)
 import Test.Falsify.Generator (Function, oneof)
 import Test.Tasty (TestTree, testGroup)
 import Prelude
@@ -26,7 +27,9 @@ test =
     , propBinaryCoproducts @POINTED (\r -> r)
     , propMonoidal @POINTED (\r -> r)
     , propSymMonoidal @POINTED (\r -> r)
-    -- , propClosed @POINTED (\r -> r) (\r -> r)
+    , propMonoid @(P Void) (\r -> r)
+    , propMonoid @(P ()) (\r -> r)
+    , propMonoid @(P [()]) (\r -> r)
     ]
 
 instance (TestOb a, TestOb b) => TestableType (Pointed a b) where

@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedLists #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Props.Hask where
@@ -6,11 +7,11 @@ import Control.Monad (replicateM)
 import Data.Kind (Type)
 import Data.List (intercalate)
 import Data.Void (Void)
-import Test.Falsify.Generator (Function, applyFun, choose, fun, function)
+import Test.Falsify.Generator (Function, applyFun, choose, elem, fun, function)
 import Test.Falsify.Property (genWith)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
-import Prelude
+import Prelude hiding (elem)
 
 import Props
 import Testable (EnumAll (..), GenTotal (..), Testable (..), TestableType (..), genObDef, one)
@@ -25,6 +26,7 @@ test =
     , propBinaryProducts @Type (\r -> r)
     , propBinaryCoproducts @Type (\r -> r)
     , propClosed @Type (\r -> r) (\r -> r)
+    , propMonoid @[()] (\r -> r)
     ]
 
 instance Testable Type where
@@ -44,6 +46,8 @@ instance (EnumAll a, EnumAll b) => EnumAll (Either a b) where
   enumAll = [Left a | a <- enumAll] ++ [Right b | b <- enumAll]
 instance (EnumAll a) => EnumAll (Maybe a) where
   enumAll = Nothing : map Just enumAll
+instance EnumAll [()] where
+  enumAll = [[], [()], [(), ()], [(), (), ()]]
 instance (Eq a, EnumAll a, EnumAll b) => EnumAll (a -> b) where
   enumAll = do
     let as = enumAll
@@ -103,6 +107,9 @@ instance (TestableType a) => TestableType (Maybe a) where
   eqP _ _ = pure False
   showP Nothing = "Nothing"
   showP (Just a) = "Just " ++ showP a
+
+instance TestableType [()] where
+  gen = GenNonEmpty [] (elem [[], [()], [(), ()], [(), (), ()]])
 
 -- Hard to write and also unused instances.
 instance Function (a -> b) where

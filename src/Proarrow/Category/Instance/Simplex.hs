@@ -4,24 +4,27 @@ module Proarrow.Category.Instance.Simplex where
 
 import Data.Kind (Type)
 
-import Prelude (type (~))
+import Prelude (Eq, Show (..), (++), type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Profunctor.Representable (FunctorForRep (..), Representable (..), dimapRep)
 
 type data Nat = Z | S Nat
 data SNat :: Nat -> Type where
   SZ :: SNat Z
   SS :: (IsNat n) => SNat (S n)
+instance Show (SNat n) where
+  show SZ = "Z"
+  show (SS @n') = "S" ++ show (singNat @n')
 
-class ((a + b) + c ~ a + (b + c)) => Assoc a b c
-instance ((a + b) + c ~ a + (b + c)) => Assoc a b c
+class (a + Z ~ a, a + S b ~ S (a + b), (a + b) + c ~ a + (b + c)) => Rules a b c
+instance (a + Z ~ a, a + S b ~ S (a + b), (a + b) + c ~ a + (b + c)) => Rules a b c
 
-class (a + Z ~ a, forall b c. Assoc a b c) => IsNat (a :: Nat) where singNat :: SNat a
+class (forall b c. Rules a b c) => IsNat (a :: Nat) where singNat :: SNat a
 instance IsNat Z where singNat = SZ
 instance (IsNat a) => IsNat (S a) where singNat = SS
 
@@ -30,6 +33,8 @@ data Simplex a b where
   ZZ :: Simplex Z Z
   Y :: Simplex x y -> Simplex x (S y)
   X :: Simplex x (S y) -> Simplex (S x) (S y)
+deriving instance Eq (Simplex a b)
+deriving instance Show (Simplex a b)
 
 suc :: Simplex a b -> Simplex (S a) (S b)
 suc = X . Y
@@ -70,22 +75,14 @@ data Fin :: Nat -> Type where
   Fz :: Fin (S n)
   Fs :: Fin n -> Fin (S n)
 
-type Forget :: Nat +-> Type
-data Forget a b where
-  Forget :: (Ob b) => {unForget :: a -> Fin b} -> Forget a b
-
-instance Profunctor Forget where
-  dimap = dimapRep
-  r \\ Forget f = r \\ f
-instance Representable Forget where
-  type Forget % n = Fin n
-  index = unForget
-  tabulate = Forget
-  repMap ZZ = id
-  repMap (Y f) = Fs . repMap @Forget f
-  repMap (X f) = \case
+data family Forget :: Nat +-> Type
+instance FunctorForRep Forget where
+  type Forget @ n = Fin n
+  fmap ZZ = id
+  fmap (Y f) = Fs . fmap @Forget f
+  fmap (X f) = \case
     Fz -> Fz
-    Fs n -> repMap @Forget f n
+    Fs n -> fmap @Forget f n
 
 type family (a :: Nat) + (b :: Nat) :: Nat where
   Z + b = b
@@ -110,6 +107,10 @@ instance Monoidal Nat where
   rightUnitorInv = id
   associator @a @b @c = withOb2 @_ @a @b (withOb2 @_ @(a ** b) @c (id @Simplex))
   associatorInv @a @b @c = withOb2 @_ @b @c (withOb2 @_ @a @(b ** c) (id @Simplex))
+
+instance Monoid Z where
+  mempty = ZZ
+  mappend = ZZ
 
 instance Monoid (S Z) where
   mempty = Y ZZ
