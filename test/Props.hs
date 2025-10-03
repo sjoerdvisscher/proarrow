@@ -28,6 +28,7 @@ import Proarrow.Profunctor.Representable (FunctorForRep (..), Rep)
 import Proarrow.Tools.Laws (AssertEq (..), Elem (..), Laws (..), Place (..), Sym (..), Var)
 
 import Proarrow.Category.Monoidal qualified as Monoidal
+import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object.Exponential qualified as Exponential
 import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor, TestableType (..), genP)
 
@@ -166,40 +167,35 @@ genVar
   => Property (AssocLookup lut a ~> AssocLookup lut b)
 genVar = genP
 
+testEq :: (TestableType a) => String -> String -> a -> String -> a -> Property ()
+testEq nm sl l sr r = do
+  isEq <- eqP l r
+  when (not isEq) $
+    testFailed $
+      "Failed "
+        ++ nm
+        ++ ":\n"
+        ++ sl
+        ++ " = "
+        ++ showP l
+        ++ "\n"
+        ++ sr
+        ++ " = "
+        ++ showP r
+
 -- Can't use @Laws@ here, because the free category automatically satisfy these laws.
 propCategory :: forall k. (Testable k) => TestTree
 propCategory = testProperty "Category" $ do
   Some @a <- genOb @k
   Some @b <- genOb
   f <- genP @(a ~> b)
-  isEqIdL <- eqP (id . f) f
-  when (not isEqIdL) $
-    testFailed $
-      "Failed left identity:"
-        ++ "\nid . f = "
-        ++ showP (id . f)
-        ++ "\nf = "
-        ++ showP f
-  isEqIdR <- eqP (f . id) f
-  when (not isEqIdR) $
-    testFailed $
-      "Failed right identity:"
-        ++ "\nf . id = "
-        ++ showP (f . id)
-        ++ "\nf = "
-        ++ showP f
+  testEq "left identity" "id . f" (id . f) "f" f
+  testEq "right identity" "f . id" (f . id) "f" f
   Some @c <- genOb
   Some @d <- genOb
   g <- genP @(b ~> c)
   h <- genP @(c ~> d)
-  isEq <- eqP ((h . g) . f) (h . (g . f))
-  when (not isEq) $
-    testFailed $
-      "Failed associativity: \n"
-        ++ "(h . g) . f = "
-        ++ showP ((h . g) . f)
-        ++ "\nh . (g . f) = "
-        ++ showP (h . (g . f))
+  testEq "associativity" "(h . g) . f" ((h . g) . f) "h . (g . f)" (h . (g . f))
 
 propTerminalObject
   :: forall k
@@ -345,57 +341,27 @@ propProfunctor = testProperty "Profunctor" $ do
   Some @a <- genOb @k
   Some @b <- genOb @j
   p <- genP @(p a b)
-  isEqId <- eqP (dimap id id p) p
-  when (not isEqId) $
-    testFailed $
-      "Failed identity:"
-        ++ "\ndimap id id p = "
-        ++ showP (dimap id id p)
-        ++ "\nf = "
-        ++ showP p
+  testEq "identity" "dimap id id p" (dimap id id p) "p" p
   Some @c <- genOb @k
   Some @d <- genOb @j
   f <- genP @(c ~> a)
   g <- genP @(b ~> d)
-  isEqInterchange <- eqP (lmap f (rmap g p)) (rmap g (lmap f p))
-  when (not isEqInterchange) $
-    testFailed $
-      "Failed interchange:"
-        ++ "\nlmap f (rmap g p) = "
-        ++ showP (lmap f (rmap g p))
-        ++ "\nrmap g (lmap f p) = "
-        ++ showP (rmap g (lmap f p))
+  testEq "interchange" "lmap f (rmap g p)" (lmap f (rmap g p)) "rmap g (lmap f p)" (rmap g (lmap f p))
   Some @e <- genOb @k
   Some @h <- genOb @j
   f' <- genP @(e ~> c)
   g' <- genP @(d ~> h)
-  isEqComp <- eqP (dimap (f . f') (g' . g) p) (dimap f' g' (dimap f g p))
-  when (not isEqComp) $
-    testFailed $
-      "Failed composition:"
-        ++ "\ndimap (f . f') (g' . g) p = "
-        ++ showP (dimap (f . f') (g' . g) p)
-        ++ "\ndimap f' g' (dimap f g p) = "
-        ++ showP (dimap f' g' (dimap f g p))
+  testEq
+    "composition"
+    "dimap (f . f') (g' . g) p"
+    (dimap (f . f') (g' . g) p)
+    "dimap f' g' (dimap f g p)"
+    (dimap f' g' (dimap f g p))
 
 propIso :: forall {k} (a :: k) b. (Testable k, TestOb a, TestOb b) => a ~> b -> b ~> a -> Property ()
 propIso f g = do
-  isEq1 <- eqP (f . g) id
-  when (not isEq1) $
-    testFailed $
-      "Failed isomorphism:"
-        ++ "\nf . g = "
-        ++ showP (f . g)
-        ++ "\nid = "
-        ++ showP (obj @b)
-  isEq2 <- eqP (g . f) id
-  when (not isEq2) $
-    testFailed $
-      "Failed isomorphism:"
-        ++ "\ng . f = "
-        ++ showP (g . f)
-        ++ "\nid = "
-        ++ showP (obj @a)
+  testEq "right inverse" "f . g" (f . g) "id" id
+  testEq "left inverse" "g . f" (g . f) "id" id
 
 propIsoP
   :: forall p q a b c d
@@ -403,20 +369,40 @@ propIsoP
   => (p a b -> q c d) -> (q c d -> p a b) -> Property ()
 propIsoP f g = do
   p <- genP @(p a b)
-  isEq1 <- eqP (g (f p)) p
-  when (not isEq1) $
-    testFailed $
-      "Failed isomorphism:"
-        ++ "\ng (f p) = "
-        ++ showP (g (f p))
-        ++ "\np= "
-        ++ showP p
+  testEq "left inverse" "g (f p)" (g (f p)) "p" p
   q <- genP @(q c d)
-  isEq2 <- eqP (f (g q)) q
-  when (not isEq2) $
-    testFailed $
-      "Failed isomorphism:"
-        ++ "\nf (g q) = "
-        ++ showP (f (g q))
-        ++ "\nq = "
-        ++ showP q
+  testEq "right inverse" "f (g q)" (f (g q)) "q" q
+
+propMonoid
+  :: forall {k} m
+   . (Testable k, Monoid.Monoid (m :: k), TestOb m, TestOb (Monoidal.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Monoidal.** b)) => r) -> r)
+  -> TestTree
+propMonoid withTestOb2 = testProperty ("Monoid " ++ showOb @k @m) $
+  withTestOb2 @Monoidal.Unit @m $
+    withTestOb2 @m @Monoidal.Unit $ do
+      testEq
+        "left identity"
+        "μ . (η ⊗ 1)"
+        (Monoid.mappend . (Monoid.mempty @m `Monoidal.par` obj @m))
+        "λ"
+        (Monoidal.leftUnitor @k @m)
+      testEq
+        "right identity"
+        "μ . (1 ⊗ η)"
+        (Monoid.mappend . (obj @m `Monoidal.par` Monoid.mempty @m))
+        "ρ"
+        (Monoidal.rightUnitor @k @m)
+      withTestOb2 @m @m $ withTestOb2 @(m Monoidal.** m) @m $ do
+        testEq
+          "associativity"
+          "μ . (μ ⊗ 1)"
+          (Monoid.mappend @m . (Monoid.mappend @m `Monoidal.par` obj @m))
+          "μ . (1 ⊗ μ) . α"
+          (Monoid.mappend . (obj @m `Monoidal.par` Monoid.mappend @m) . Monoidal.associator @k @m @m @m)
+
+propMonoid_
+  :: forall {k} m
+   . (Testable k, Monoid.Monoid (m :: k), TestOb m, TestOb (Monoidal.Unit @k), TestObIsOb k)
+  => TestTree
+propMonoid_ = propMonoid @m (\ @a @b r -> Monoidal.withOb2 @k @a @b r)
