@@ -4,6 +4,9 @@ module Props.Kleisli where
 
 import Data.Kind (Type)
 import Data.Typeable (Typeable)
+import Data.Void (Void)
+import GHC.Generics (Generic)
+import Test.Falsify.Generator (Function (..), functionMap)
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (id, (.))
 
@@ -13,11 +16,10 @@ import Proarrow.Core (CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Promonad.Cont (Cont(..))
 
-import GHC.Generics (Generic)
 import Props
 import Props.Hask ()
-import Test.Falsify.Generator (Function (..), functionMap)
 import Testable
   ( EnumAll (..)
   , GenTotal (..)
@@ -40,6 +42,15 @@ test =
         , propInitialObject @(KLEISLI (Star (Prelude Maybe)))
         , propMonoidal @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
         , propBinaryCoproducts @(KLEISLI (Star (Prelude Maybe))) (\r -> r)
+        ]
+    , testGroup
+        "Continuation promonad"
+        [ propCategory @(KLEISLI (Cont Void))
+        , propTerminalObject @(KLEISLI (Cont Void))
+        , propInitialObject @(KLEISLI (Cont Void))
+        , propBinaryProducts @(KLEISLI (Cont Void)) (\r -> r)
+        , propBinaryCoproducts @(KLEISLI (Cont Void)) (\r -> r)
+        , propClosed @(KLEISLI (Cont Void)) (\r -> r) (\r -> r)
         ]
     , testGroup
         "Pair comonad"
@@ -97,3 +108,8 @@ instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => Testable
 instance Promonad (Costar (Prelude Pair)) where
   id = Costar \(Prelude (Pair (x, _))) -> x
   Costar f . Costar g = Costar (\(Prelude (Pair (a, b))) -> f (Prelude (Pair (g (Prelude (Pair (a, b))), g (Prelude (Pair (b, b)))))))
+
+instance (TestOb a, TestOb b) => TestableType (Cont Void a b) where
+  gen = invmap Cont runCont gen
+  eqP (Cont l) (Cont r) = eqP l r
+  showP (Cont f) = "Cont (" ++ showP f ++ ")"

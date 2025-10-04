@@ -7,7 +7,7 @@ import Control.Monad (replicateM)
 import Data.Kind (Type)
 import Data.List (intercalate)
 import Data.Void (Void)
-import Test.Falsify.Generator (Function, applyFun, choose, elem, fun, function)
+import Test.Falsify.Generator (Function, applyFun, choose, elem, fun, function, functionMap)
 import Test.Falsify.Property (genWith)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
@@ -69,7 +69,7 @@ instance (TestOb a, TestOb b) => TestableType (a -> b) where
       GenNonEmpty _ ga -> do
         a <- genWith (Just . showP) ga
         eqP (l a) (r a)
-  showP f = intercalate "," [showP x ++ "->" ++ showP (f x) | x <- enumAll]
+  showP f = "(" ++ intercalate "," [showP x ++ "->" ++ showP (f x) | x <- enumAll] ++ ")"
 
 instance TestableType Bool
 instance TestableType ()
@@ -112,7 +112,14 @@ instance TestableType [()] where
   gen = GenNonEmpty [] (elem [[], [()], [(), ()], [(), (), ()]])
 
 -- Hard to write and also unused instances.
-instance Function (a -> b) where
-  function = undefined
+instance (EnumAll a, Eq a, Function a, Function b) => Function (a -> b) where
+  function = fmap (functionMap tabulate index) . function
+    where
+      tabulate :: (a -> b) -> [(a, b)]
+      tabulate f = [(a, f a) | a <- enumAll]
+      index :: [(a, b)] -> a -> b
+      index table a = case lookup a table of
+        Just b -> b
+        Nothing -> error "Function @(a -> b): value of type a passed that is not in enumAll @a"
 instance Function Void where
   function = undefined
