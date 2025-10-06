@@ -323,7 +323,7 @@ propClosed withTestOb2 withTestObExp = testProperty "Closed" $ do
   Some @c <- genOb
   -- TODO: test the naturality conditions
   withTestOb2 @a @b $ withTestObExp @b @c $ do
-    propIsoP @_ @_ @(a Monoidal.** b) @c @a @(b Exponential.~~> c)
+    propIsoP
       (Exponential.curry @k @a @b @c)
       (Exponential.uncurry @b @c)
 
