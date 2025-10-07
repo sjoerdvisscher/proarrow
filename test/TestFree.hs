@@ -7,8 +7,9 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Discrete (DISCRETE(..), Discrete (..))
 import Proarrow.Category.Instance.Free (FREE(..), Free(..), fold)
 import Proarrow.Core (CategoryOf(..), type (+->), Promonad (..))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts, type (*!), (&&&))
-import Proarrow.Profunctor.Representable (Representable (..), Rep, FunctorForRep (..))
+import Proarrow.Profunctor.Representable (Representable (..), Rep)
 
 type data TestTy = IntTy' | StringTy'
 type IntTy = D IntTy'

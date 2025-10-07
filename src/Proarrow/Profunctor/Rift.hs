@@ -2,7 +2,6 @@ module Proarrow.Profunctor.Rift where
 
 import Prelude (type (~))
 
-import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
 import Proarrow.Category.Colimit (HasColimits (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -42,9 +41,11 @@ instance (Profunctor j) => Functor (Rift (OP j)) where
 instance Functor Rift where
   map (Op (Prof n)) = Nat (Prof \(Rift k) -> Rift (k . n))
 
-instance (Profunctor j) => Adjunction (Star ((:.:) j)) (Star (Rift (OP j))) where
-  unit = unitFromRepUnit (Prof \p -> p // Rift (:.: p))
-  counit = counitFromRepCounit (Prof \(j :.: r) -> runRift j r)
+instance (Profunctor j) => Corepresentable (Star (Rift (OP j))) where
+  type Star (Rift (OP j)) %% p = j :.: p
+  coindex (Star (Prof f)) = Prof \(j :.: p) -> runRift j (f p)
+  cotabulate (Prof f) = Star (Prof \p -> p // Rift \q -> f (q :.: p))
+  corepMap (Prof f) = Prof \(j :.: p) -> j :.: f p
 
 instance (p ~ j, Profunctor p) => Promonad (Rift (OP j) p) where
   id = Rift id

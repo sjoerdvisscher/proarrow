@@ -2,7 +2,7 @@ module Proarrow.Promonad.Reader where
 
 import Prelude (($))
 
-import Proarrow.Adjunction (Adjunction (..))
+import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
@@ -74,6 +74,6 @@ instance (Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor 
 instance (Comonoid (r :: k), SelfAction k) => Cotraversable (Reader (OP r) :: k +-> k) where
   cotraverse (p :.: Reader f) = let rp = strongPar0 @r `act` p in Reader (src rp) :.: rmap f rp \\ rp \\ p
 
-instance (Ob (r :: m), MonoidalAction m k) => Adjunction (Writer r :: k +-> k) (Reader (OP r)) where
+instance (Ob (r :: m), MonoidalAction m k) => Proadjunction (Writer r :: k +-> k) (Reader (OP r)) where
   unit @a = Reader id :.: Writer id \\ act (obj @r) (obj @a)
   counit (Writer f :.: Reader g) = g . f

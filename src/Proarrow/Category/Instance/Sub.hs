@@ -4,7 +4,8 @@ import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN)
+import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (CopyDiscard (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -76,3 +77,8 @@ instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => MonoidalActi
   unitorInv = unitorInv @m
   multiplicator @(SUB p) @(SUB q) @x = multiplicator @_ @_ @p @q @x
   multiplicatorInv @(SUB p) @(SUB q) @x = multiplicatorInv @_ @_ @p @q @x
+
+data family Forget :: forall (ob :: OB k) -> SUBCAT ob +-> k
+instance (CategoryOf k) => FunctorForRep (Forget (ob :: OB k)) where
+  type Forget ob @ (SUB a) = a
+  fmap (Sub f) = f

@@ -2,7 +2,7 @@
 -- Collected from https://www.clowderproject.com/tag/01D0.html
 module Proarrow.Category.Instance.Rel where
 
-import Proarrow.Adjunction (Adjunction (..))
+import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), src, (:~>), type (+->), Promonad (..))
 import Proarrow.Category.Enriched.ThinCategory (Discrete, ThinProfunctor (..), withEq)
 import Proarrow.Profunctor.Composition ((:.:) (..))
@@ -54,10 +54,10 @@ class (Relation p) => Surjective p where
 class (Relation p) => Reflexive p where
   isReflexive :: (~>) :~> p
 
-adjToConverse :: forall p q. (Relation p, Relation q, Adjunction p q) => q :~> Converse p
+adjToConverse :: forall p q. (Relation p, Relation q, Proadjunction p q) => q :~> Converse p
 adjToConverse q = Converse (case unit @p @q of _ :.: p -> withEq (counit (p :.: q)) p) \\ q
 
-adjFromConverse :: forall p q. (Relation p, Relation q, Adjunction p q) => Converse p :~> q
+adjFromConverse :: forall p q. (Relation p, Relation q, Proadjunction p q) => Converse p :~> q
 adjFromConverse (Converse @_ @_ @a p) = (case unit @p @q @a of q :.: _ -> withEq (counit (p :.: q)) q) \\ p
 
 class (Relation p, Promonad p) => Preorder p

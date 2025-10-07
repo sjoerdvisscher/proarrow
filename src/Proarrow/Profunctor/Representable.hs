@@ -5,10 +5,11 @@ module Proarrow.Profunctor.Representable where
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
+import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Discrete, withEq, Thin)
 
 infixl 8 %
 
@@ -67,13 +68,6 @@ instance (Representable p, Discrete j, Thin k) => ThinProfunctor (RepCostar p ::
 
 flipRep :: forall p q. (Representable p, Corepresentable q) => RepCostar p :~> q -> CorepStar q :~> p
 flipRep n (CorepStar @b q) = tabulate @p (coindex @q @b (n (RepCostar (repMap @p (obj @b)))) . q)
-
--- | A perfectly valid functor definition, but hard to use.
--- So we only use it to easily make representable profunctors with @Rep@.
-type FunctorForRep :: forall {j} {k}. (j +-> k) -> Constraint
-class (CategoryOf j, CategoryOf k) => FunctorForRep (f :: j +-> k) where
-  type f @ (a :: j) :: k
-  fmap :: (a ~> b) -> f @ a ~> f @ b
 
 type Rep :: (j +-> k) -> j +-> k
 data Rep f a b where

@@ -20,11 +20,12 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 import Proarrow.Category.Instance.Ap (A, AP, Ap (..))
 import Proarrow.Category.Instance.Free (All, FREE (..), Lower, Show2, emb, fold)
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, obj, rmap, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Object.BinaryProduct qualified as BinaryProduct
 import Proarrow.Object.Initial qualified as Initial
 import Proarrow.Object.Terminal qualified as Terminal
-import Proarrow.Profunctor.Representable (FunctorForRep (..), Rep)
+import Proarrow.Profunctor.Representable (Rep)
 import Proarrow.Tools.Laws (AssertEq (..), Elem (..), Laws (..), Place (..), Sym (..), Var)
 
 import Proarrow.Category.Monoidal qualified as Monoidal

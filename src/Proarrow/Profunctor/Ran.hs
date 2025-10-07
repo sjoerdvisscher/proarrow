@@ -4,18 +4,17 @@ module Proarrow.Profunctor.Ran where
 
 import Prelude (type (~))
 
-import Proarrow.Adjunction (Adjunction (..), counitFromRepCounit, unitFromRepUnit)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Limit (HasLimits (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Costar (Costar (..))
-import Proarrow.Profunctor.Star (Star (..))
-import Proarrow.Category.Limit (HasLimits (..))
-import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Costar (Costar (..))
+import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Star (Star (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -24,8 +23,6 @@ type j |> p = Ran (OP j) p
 type Ran :: OPPOSITE (i +-> j) -> i +-> k -> j +-> k
 data Ran j p a b where
   Ran :: (Ob a, Ob b) => {unRan :: forall x. j b x -> p a x} -> Ran (OP j) p a b
-
-
 
 runRan :: (Profunctor j) => j b x -> Ran (OP j) p a b -> p a x
 runRan j (Ran k) = k j \\ j
@@ -57,6 +54,7 @@ instance (HasLimits j k, Representable d) => Representable (Ran (OP j) (d :: i +
   repMap = repMap @(Limit j d)
 
 type PWRan j p a = (j |> p) % a
+
 -- a ~> PWRan j p b = forall x. (b ~> j x) -> a ~> p x
 -- a ~> PWRan j p b = forall x. a ~> (p x ^ (b ~> j x))
 -- PWRan j p b = forall x. p x ^ (b ~> j x)
@@ -64,21 +62,17 @@ class (Representable p, Representable j, Representable (j |> p)) => PointwiseRig
 instance (Representable p, Representable j, Representable (j |> p)) => PointwiseRightKanExtension j p
 
 type PWLift j p a = (j |> p) %% a
+
 -- PWLift j p a ~> b = forall x. (j b ~> x) -> p a ~> x
 -- PWLift j p a ~> b = p a ~> j b
 class (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 instance (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 
-newtype Precompose j p a b = Precompose {unPrecompose :: (p :.: j) a b}
-instance (Profunctor j, Profunctor p) => Profunctor (Precompose j p) where
-  dimap l r (Precompose pj) = Precompose (dimap l r pj)
-  r \\ Precompose pj = r \\ pj
-instance (Profunctor j) => Functor (Precompose j) where
-  map f = f // Prof \(Precompose pj) -> Precompose (unProf (unNat (map f)) pj)
-
-instance (Profunctor j) => Adjunction (Star (Precompose j)) (Star (Ran (OP j))) where
-  unit = unitFromRepUnit (Prof \p -> p // Ran \j -> Precompose (p :.: j))
-  counit = counitFromRepCounit (Prof \(Precompose (r :.: j)) -> runRan j r)
+instance (Profunctor j) => Corepresentable (Star (Ran (OP j))) where
+  type Star (Ran (OP j)) %% p = p :.: j
+  coindex (Star (Prof f)) = Prof \(p :.: j) -> runRan j (f p)
+  cotabulate (Prof f) = Star (Prof \p -> p // Ran \q -> f (p :.: q))
+  corepMap (Prof f) = Prof \(p :.: j) -> f p :.: j
 
 ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (i :.: j) |> p
 ranCompose = Prof \k -> k // Ran \(i :.: j) -> runRan j (runRan i k)
@@ -86,8 +80,8 @@ ranCompose = Prof \k -> k // Ran \(i :.: j) -> runRan j (runRan i k)
 ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (i :.: j) |> p ~> i |> (j |> p)
 ranComposeInv = Prof \k -> k // Ran \i -> i // Ran \j -> runRan (i :.: j) k
 
-ranHom :: Profunctor p => p ~> (~>) |> p
+ranHom :: (Profunctor p) => p ~> (~>) |> p
 ranHom = Prof \p -> p // Ran \j -> rmap j p
 
-ranHomInv :: Profunctor p => (~>) |> p ~> p
+ranHomInv :: (Profunctor p) => (~>) |> p ~> p
 ranHomInv = Prof \(Ran k) -> k id

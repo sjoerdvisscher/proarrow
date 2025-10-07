@@ -8,10 +8,11 @@ import Prelude (Eq, Show (..), (++), type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Representable (FunctorForRep (..), Representable (..), dimapRep)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type data Nat = Z | S Nat
 data SNat :: Nat -> Type where

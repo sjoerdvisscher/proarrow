@@ -4,66 +4,58 @@
 module Proarrow.Adjunction where
 
 import Data.Kind (Constraint)
-import Prelude (($))
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Opposite (Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
-import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepObj, trivialCorep)
 import Proarrow.Profunctor.Costar (Costar (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repObj, trivialRep)
+import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Representable (..), repObj, trivialRep)
 import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Promonad (Procomonad (..))
 
-type Adjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
+-- | Adjunctions as heteromorphisms.
+class (Representable p, Corepresentable p) => Adjunction p
+
+instance (Representable p, Corepresentable p) => Adjunction p
+
+leftAdjunct :: forall p a b. (Adjunction p, Ob a) => (p %% a ~> b) -> a ~> p % b
+leftAdjunct = index . cotabulate @p
+
+rightAdjunct :: forall p a b. (Adjunction p, Ob b) => a ~> p % b -> (p %% a ~> b)
+rightAdjunct = coindex . tabulate @p
+
+-- | The left adjoint of @((->) a)@ is @(,) a@.
+instance Corepresentable (Star ((->) a)) where
+  type Star ((->) a) %% b = (a, b)
+  cotabulate f = Star \a b -> f (b, a)
+  coindex (Star f) (a, b) = f b a
+  corepMap f (a, b) = (a, f b)
+
+-- | The right adjoint of @(,) a@ is @((->) a)@.
+instance Representable (Costar ((,) a)) where
+  type Costar ((,) a) % b = a -> b
+  tabulate f = Costar \(a, b) -> f b a
+  index (Costar g) a b = g (b, a)
+  repMap f g = f . g
+
+type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
 
 -- | Adjunctions between two profunctors.
-class (Profunctor p, Profunctor q) => Adjunction (p :: j +-> k) (q :: k +-> j) where
+class (Profunctor p, Profunctor q) => Proadjunction (p :: j +-> k) (q :: k +-> j) where
   unit :: (Ob a) => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)
 
-unit' :: forall p q a b. (Adjunction p q) => a ~> b -> (q :.: p) a b
-unit' f = rmap f (unit @p @q @a) \\ f
-
-leftAdjunct
-  :: forall l r a b
-   . (Adjunction l r, Representable l, Representable r, Ob a)
-  => (l % a ~> b)
-  -> r a b
-leftAdjunct f = case unit @l @r of r :.: l -> rmap (f . index l) r
-
-rightAdjunct
-  :: forall l r a b
-   . (Adjunction l r, Representable l, Representable r, Ob b)
-  => r a b
-  -> (l % a ~> b)
-rightAdjunct f = counit (trivialRep @l @a :.: f) \\ f
-
-unitFromRepUnit
-  :: forall l r a. (Representable l, Representable r, Ob a) => (a ~> r % (l % a)) -> (r :.: l) a a
-unitFromRepUnit f = tabulate f :.: tabulate id \\ repObj @l @a
-
-counitFromRepCounit
-  :: forall l r. (Representable l, Representable r) => (forall c. (Ob c) => l % (r % c) ~> c) -> (l :.: r) :~> (~>)
-counitFromRepCounit f (l :.: r) = f . repMap @l (index r) . index l \\ r
-
-instance (Functor f) => Adjunction (Star f) (Costar f) where
-  unit = Costar (map id) :.: Star (map id)
-  counit (Star f :.: Costar g) = g . f
-
-instance (Representable f) => Adjunction f (RepCostar f) where
-  unit @a = let fa = repMap @f @a id in RepCostar fa :.: tabulate fa
+instance (Representable f) => Proadjunction f (RepCostar f) where
+  unit @a = RepCostar (repObj @f @a) :.: trivialRep
   counit (f :.: RepCostar g) = g . index f
 
-instance (Functor f, Functor g, Adjunction (Star f) (Star g)) => Adjunction (Costar f) (Costar g) where
-  unit :: forall a. (Ob a) => (Costar g :.: Costar f) a a
-  unit = Costar id :.: Costar (counit (Star (map id) :.: Star id))
-  counit :: forall a b. (Costar f :.: Costar g) a b -> a ~> b
-  counit (Costar f :.: Costar g) = case unit @(Star f) @(Star g) @a of Star g' :.: Star f' -> g . map (f . f') . g'
+instance (Corepresentable f) => Proadjunction (CorepStar f) f where
+  unit @a = trivialCorep :.: CorepStar (corepObj @f @a)
+  counit (CorepStar f :.: g) = coindex g . f
 
-instance (Adjunction l1 r1, Adjunction l2 r2) => Adjunction (l1 :.: l2) (r2 :.: r1) where
+instance (Proadjunction l1 r1, Proadjunction l2 r2) => Proadjunction (l1 :.: l2) (r2 :.: r1) where
   unit :: forall a. (Ob a) => ((r2 :.: r1) :.: (l1 :.: l2)) a a
   unit = case unit @l2 @r2 @a of
     r2 :.: l2 ->
@@ -71,32 +63,18 @@ instance (Adjunction l1 r1, Adjunction l2 r2) => Adjunction (l1 :.: l2) (r2 :.: 
         r1 :.: l1 -> (r2 :.: r1) :.: (l1 :.: l2)
   counit ((l1 :.: l2) :.: (r2 :.: r1)) = counit (rmap (counit (l2 :.: r2)) l1 :.: r1)
 
-instance Adjunction (Star ((,) a)) (Star ((->) a)) where
-  unit = unitFromRepUnit \a b -> (b, a)
-  counit = counitFromRepCounit \(a, f) -> f a
-
-instance (CategoryOf k) => Adjunction (Id :: CAT k) Id where
+instance (CategoryOf k) => Proadjunction (Id :: CAT k) Id where
   unit = Id id :.: Id id
   counit (Id f :.: Id g) = g . f
 
-instance (Adjunction q p) => Adjunction (Op p) (Op q) where
+instance (Proadjunction q p) => Proadjunction (Op p) (Op q) where
   unit = case unit @q @p of q :.: p -> Op p :.: Op q
   counit (Op q :.: Op p) = Op (counit (p :.: q))
 
-instance (Adjunction p q) => Promonad (q :.: p) where
+instance (Proadjunction p q) => Promonad (q :.: p) where
   id = unit
   (q :.: p) . (q' :.: p') = rmap (counit (p' :.: q)) q' :.: p
 
-instance (Adjunction p q) => Procomonad (p :.: q) where
+instance (Proadjunction p q) => Procomonad (p :.: q) where
   extract = counit
   duplicate (p :.: q) = p // case unit of q' :.: p' -> (p :.: q') :.: (p' :.: q)
-
-instance
-  (MonoidalProfunctor r, Adjunction l r, Representable l, Representable r, Monoidal j, Monoidal k)
-  => MonoidalProfunctor (RepCostar l :: j +-> k)
-  where
-  par0 = RepCostar (counit @l @r (trivialRep :.: par0))
-  RepCostar @x1 fx `par` RepCostar @y1 fy =
-    (fx `par` fy) //
-      withOb2 @_ @x1 @y1 $
-        RepCostar (rightAdjunct @l @r (leftAdjunct @l @r @x1 fx `par` leftAdjunct @l @r @y1 fy))

@@ -18,11 +18,13 @@ import Proarrow.Category.Instance.Free
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor, type (**!))
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, diag)
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 
 infixr 2 ~~>
 
@@ -75,19 +77,17 @@ instance (Closed j, Closed k) => Closed (j, k) where
   apply @'(a1, a2) @'(b1, b2) = apply @j @a1 @b1 :**: apply @k @a2 @b2
   (f1 :**: f2) ^^^ (g1 :**: g2) = (f1 ^^^ g1) :**: (f2 ^^^ g2)
 
-type ExponentialFunctor :: (OPPOSITE k, k) +-> k
-data ExponentialFunctor a b where
-  ExponentialFunctor :: (Ob c, Ob d) => a ~> (c ~~> d) -> ExponentialFunctor a '(OP c, d)
+data family Exponential :: OPPOSITE k -> k +-> k
+instance (Closed k, Ob (a :: k)) => FunctorForRep (Exponential (OP a)) where
+  type Exponential (OP a) @ b = a ~~> b
+  fmap f = f ^^^ obj @a
 
-instance (Closed k) => Profunctor (ExponentialFunctor :: (OPPOSITE k, k) +-> k) where
-  dimap = dimapRep
-  r \\ ExponentialFunctor f = r \\ f
-
-instance (Closed k) => Representable (ExponentialFunctor :: (OPPOSITE k, k) +-> k) where
-  type ExponentialFunctor % '(OP a, b) = a ~~> b
-  index (ExponentialFunctor f) = f
-  tabulate = ExponentialFunctor
-  repMap (Op f :**: g) = g ^^^ f
+-- | The curry/uncurry adjunction.
+instance (Closed k, Ob (a :: k)) => Corepresentable (Rep (Exponential (OP a))) where
+  type Rep (Exponential (OP a)) %% b = b ** a
+  coindex (Rep f) = uncurry @a f
+  cotabulate @c f = Rep (curry @k @c @a f) \\ f
+  corepMap f = f `par` obj @a
 
 class (Cartesian k, Closed k) => CCC k
 instance (Cartesian k, Closed k) => CCC k

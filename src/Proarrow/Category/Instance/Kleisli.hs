@@ -11,7 +11,7 @@ module Proarrow.Category.Instance.Kleisli
   , pattern LiftF
   ) where
 
-import Proarrow.Adjunction (Adjunction)
+import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
@@ -147,7 +147,7 @@ instance (Promonad p) => Profunctor (KleisliForget p) where
   dimap l (Kleisli r) (KleisliForget p) = KleisliForget (r . lmap l p)
   r \\ KleisliForget p = r \\ p
 
-instance (Promonad p) => Adjunction (KleisliFree p) (KleisliForget p) where
+instance (Promonad p) => Proadjunction (KleisliFree p) (KleisliForget p) where
   unit = KleisliForget id :.: KleisliFree id
   counit (KleisliFree p :.: KleisliForget q) = Kleisli (q . p)
 

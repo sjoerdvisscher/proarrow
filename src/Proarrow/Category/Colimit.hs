@@ -5,7 +5,7 @@ module Proarrow.Category.Colimit where
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Adjunction (Adjunction (..))
+import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), type (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
@@ -20,9 +20,9 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepObj, dimapCorep, withCorepOb)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Representable
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 import Proarrow.Profunctor.Wrapped (Wrapped (..))
-import Proarrow.Profunctor.Representable
 
 type Unweighted = TerminalProfunctor
 
@@ -41,7 +41,7 @@ class
 
 leftAdjointPreservesColimits
   :: forall {k} {k'} {i} {a} (f :: k' +-> k) g (d :: k +-> i) (j :: a +-> i)
-   . (Adjunction f g, Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
+   . (Proadjunction f g, Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
   => Colimit j (d :.: f) :~> Colimit j d :.: f
 leftAdjointPreservesColimits colim =
   colim // case unit @f @g of

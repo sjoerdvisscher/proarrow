@@ -1,5 +1,5 @@
 {-|
-Description: <<===================================== Start here!
+Description: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Start here!
 -}
 module Proarrow.Core
   ( -- * Type Infrastructure
@@ -100,7 +100,7 @@ type Profunctor :: forall {j} {k}. j +-> k -> Constraint
 class (CategoryOf j, CategoryOf k) => Profunctor (p :: j +-> k) where
   -- | Map contravariantly over the first argument and covariantly over the second.
   dimap :: c ~> a -> b ~> d -> p a b -> p c d
-  -- | Constraint elimination, extracts object constraints from a profunctor heteromorphism..
+  -- | Constraint elimination, extracts object constraints from a profunctor heteromorphism.
   (\\) :: ((Ob a, Ob b) => r) -> p a b -> r
   default (\\) :: (Ob a, Ob b) => ((Ob a, Ob b) => r) -> p a b -> r
   r \\ _ = r
@@ -135,6 +135,8 @@ dimapDefault f g h = g . h . f
 -- ** Promonad Class
 
 -- | A promonad is a category-like profunctor with identity morphisms and composition.
+--
+-- This is also known as a category structure, or an identity-on-objects functor.
 --
 -- __Laws:__
 --

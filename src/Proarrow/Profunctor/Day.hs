@@ -25,8 +25,6 @@ import Proarrow.Monoid (Comonoid (..),Monoid (..), CopyDiscard (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
-import Proarrow.Adjunction qualified as Adj
-import Proarrow.Profunctor.Star (Star (..))
 import Proarrow.Category (Supplies)
 
 data DayUnit a b where
@@ -132,10 +130,6 @@ instance (Monoidal j, Monoidal k) => Closed (j +-> k) where
   curry (Prof n) = Prof \p -> p // DayExp \f g q -> n (Day f p q g)
   apply = Prof \(Day f (DayExp h) q g) -> h f g q
   (^^^) (Prof n) (Prof m) = Prof \(DayExp k) -> DayExp \f g p -> n (k f g (m p))
-
-instance (SymMonoidal j, SymMonoidal k, Profunctor (p :: j +-> k)) => Adj.Adjunction (Star (Day p)) (Star (DayExp p)) where
-  unit = Adj.unitFromRepUnit (curry swap)
-  counit = Adj.counitFromRepCounit (apply . swap)
 
 multDayExp
   :: (SymMonoidal j, SymMonoidal k, Profunctor (p :: j +-> k), Profunctor q, Profunctor p', Profunctor q')

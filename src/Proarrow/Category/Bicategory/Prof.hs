@@ -144,7 +144,7 @@ instance
   leftAction = Prof \(f :.: p) -> lmap f p
   rightAction = Prof \(p :.: f) -> rmap f p
 
-instance (A.Adjunction l r) => Adjunction (PK l :: PROFK c d) (PK r) where
+instance (A.Proadjunction l r) => Adjunction (PK l :: PROFK c d) (PK r) where
   unit = Prof \(Id f) -> lmap f A.unit \\ f
   counit = Prof (Id . A.counit)
 

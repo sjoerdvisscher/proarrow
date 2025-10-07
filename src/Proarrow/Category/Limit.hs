@@ -5,13 +5,14 @@ module Proarrow.Category.Limit where
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Adjunction (Adjunction (..))
+import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT, L, R, pattern InjL, pattern InjR)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object (Obj, tgt)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Power (Powered (..))
@@ -19,7 +20,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), repObj, withRepOb, CorepStar (..), FunctorForRep (..), Rep (..))
+import Proarrow.Profunctor.Representable (Representable (..), repObj, withRepOb, CorepStar (..), Rep (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Wrapped (Wrapped)
@@ -36,7 +37,7 @@ class (Profunctor j, forall (d :: i +-> k). (Representable d) => IsRepresentable
 
 rightAdjointPreservesLimits
   :: forall {k} {k'} {i} {a} (f :: k' +-> k) (g :: k +-> k') (d :: i +-> k) (j :: i +-> a)
-   . (Adjunction f g, Representable d, Representable f, Representable g, HasLimits j k, HasLimits j k')
+   . (Proadjunction f g, Representable d, Representable f, Representable g, HasLimits j k, HasLimits j k')
   => Limit j (g :.: d) :~> g :.: Limit j d
 rightAdjointPreservesLimits lim =
   lim // case unit @f @g of

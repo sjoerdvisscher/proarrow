@@ -1,3 +1,4 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Functor where
 
 import Data.Functor.Compose (Compose (..))
@@ -48,3 +49,10 @@ instance (Profunctor p) => P.Functor (FromProfunctor p a) where
 type Presheaf k = () +-> k
 -- | Copresheaves are functors but it makes more sense in proarrow to represent them as profunctors into the unit category.
 type Copresheaf k = k +-> ()
+
+-- | A perfectly valid functor definition, but hard to use.
+-- So we only use it to easily make representable profunctors with @Rep@.
+type FunctorForRep :: forall {j} {k}. (j +-> k) -> Constraint
+class (CategoryOf j, CategoryOf k) => FunctorForRep (f :: j +-> k) where
+  type f @ (a :: j) :: k
+  fmap :: (a ~> b) -> f @ a ~> f @ b
