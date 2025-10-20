@@ -8,7 +8,7 @@ import Data.Kind (Type)
 import Data.List (intercalate)
 import Data.Void (Void)
 import Test.Falsify.Generator (Function, applyFun, choose, elem, fun, function, functionMap)
-import Test.Falsify.Property (genWith)
+import Test.Falsify.Property (genWith, Property)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Prelude hiding (elem)
@@ -63,13 +63,16 @@ instance (TestOb a, TestOb b) => TestableType (a -> b) where
     GenNonEmpty a _ -> case gen @b of
       GenEmpty absurd -> GenEmpty \ab -> absurd (ab a)
       GenNonEmpty b gb -> GenNonEmpty (const b) (fmap applyFun (fun gb))
-  eqP l r =
-    case gen of
-      GenEmpty _ -> pure True -- There can only be one function of a type with no values
-      GenNonEmpty _ ga -> do
-        a <- genWith (Just . showP) ga
-        eqP (l a) (r a)
+  eqP = eqHask
   showP f = "(" ++ intercalate "," [showP x ++ "->" ++ showP (f x) | x <- enumAll] ++ ")"
+
+eqHask :: (TestableType a, TestableType b) => (a -> b) -> (a -> b) -> Property Bool
+eqHask l r =
+  case gen of
+    GenEmpty _ -> pure True -- There can only be one function of a type with no values
+    GenNonEmpty _ ga -> do
+      a <- genWith (Just . showP) ga
+      eqP (l a) (r a)
 
 instance TestableType Bool
 instance TestableType ()

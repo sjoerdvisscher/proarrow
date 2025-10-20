@@ -1,6 +1,5 @@
 module Proarrow.Profunctor.Composition where
 
-import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
@@ -20,9 +19,6 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :.: q) where
 
 instance (Profunctor p) => Functor ((:.:) p) where
   map (Prof n) = Prof \(p :.: q) -> p :.: n q
-
-instance Functor (:.:) where
-  map (Prof n) = Nat (Prof \(p :.: q) -> n p :.: q)
 
 instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)

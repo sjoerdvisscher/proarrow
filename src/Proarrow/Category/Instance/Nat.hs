@@ -2,6 +2,7 @@
 
 module Proarrow.Category.Instance.Nat where
 
+import Data.Bifunctor qualified as P
 import Data.Functor.Compose (Compose (..))
 import Data.Functor.Const (Const (..))
 import Data.Functor.Identity (Identity (..))
@@ -10,8 +11,8 @@ import Data.Functor.Sum (Sum (..))
 import Data.Kind (Type)
 import Data.Void (Void, absurd)
 import Prelude qualified as P
-import qualified Data.Bifunctor as P
 
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, (//))
@@ -25,6 +26,7 @@ import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Composition ((:.:) (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -48,6 +50,9 @@ instance Promonad (Nat :: CAT (j -> Type)) where
 instance Profunctor (Nat :: CAT (k1 -> Type)) where
   dimap = dimapDefault
   r \\ Nat{} = r
+
+instance Functor (:.:) where
+  map (Prof n) = Nat (Prof \(p :.: q) -> n p :.: q)
 
 instance (CategoryOf k1) => HasTerminalObject (k1 -> Type) where
   type TerminalObject = Const ()
@@ -121,7 +126,7 @@ instance MonoidalAction (Type -> Type) Type where
 
 type Ran :: (j -> k) -> (j -> Type) -> k -> Type
 newtype Ran j h a = Ran {runRan :: forall b. (a ~> j b) -> h b}
-instance CategoryOf k => Functor (Ran j h :: k -> Type) where
+instance (CategoryOf k) => Functor (Ran j h :: k -> Type) where
   map f (Ran k) = Ran \j -> k (j . f)
 instance Closed (Type -> Type) where
   type j ~~> h = Ran j h
@@ -133,7 +138,7 @@ instance Closed (Type -> Type) where
 type Lan :: (j -> k) -> (j -> Type) -> k -> Type
 data Lan j f a where
   Lan :: (j b ~> a) -> f b -> Lan j f a
-instance CategoryOf k => Functor (Lan j f :: k -> Type) where
+instance (CategoryOf k) => Functor (Lan j f :: k -> Type) where
   map g (Lan k f) = Lan (g . k) f
 instance Coclosed (Type -> Type) where
   type f <~~ j = Lan j f
