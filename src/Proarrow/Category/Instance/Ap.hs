@@ -50,13 +50,15 @@ instance (Applicative f, HasBinaryProducts k) => HasBinaryProducts (AP f k) wher
   withObProd @(A a) @(A b) r = withObProd @k @a @b r
   fst @(A a) @(A b) = arr (fst @_ @a @b)
   snd @(A a) @(A b) = arr (snd @_ @a @b)
-  Ap @al @bl f &&& Ap @ar @br g = withObProd @k @al @ar $ withObProd @k @bl @br $ Ap (liftA2 (&&&) f g)
+  Ap @_ @bl f &&& Ap @_ @br g = withObProd @k @bl @br $ Ap (liftA2 (&&&) f g)
+  Ap @al @bl f *** Ap @ar @br g = withObProd @k @al @ar $ withObProd @k @bl @br $ Ap (liftA2 (***) f g)
 instance (Applicative f, HasBinaryCoproducts k) => HasBinaryCoproducts (AP f k) where
   type a || b = A (UN A a || UN A b)
   withObCoprod @(A a) @(A b) r = withObCoprod @k @a @b r
   lft @(A a) @(A b) = map (lft @_ @a @b)
   rgt @(A a) @(A b) = map (rgt @_ @a @b)
-  Ap @al @bl f ||| Ap @ar @br g = withObCoprod @k @al @ar $ withObCoprod @k @bl @br $ Ap (liftA2 (|||) f g)
+  Ap @al f ||| Ap @ar g = withObCoprod @k @al @ar $ Ap (liftA2 (|||) f g)
+  Ap @al @bl f +++ Ap @ar @br g = withObCoprod @k @al @ar $ withObCoprod @k @bl @br $ Ap (liftA2 (+++) f g)
 
 instance (Applicative f, MonoidalProfunctor p) => MonoidalProfunctor (Ap (p :: j +-> k) :: AP f j +-> AP f k) where
   par0 = arr par0
