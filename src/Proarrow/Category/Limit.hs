@@ -5,24 +5,24 @@ module Proarrow.Category.Limit where
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT, L, R, pattern InjL, pattern InjR)
 import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object (Obj, tgt)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), repObj, withRepOb, CorepStar (..), Rep (..))
+import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), Representable (..), repObj, withRepOb)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Wrapped (Wrapped)
 
 class (Representable (Limit j d)) => IsRepresentableLimit j d
@@ -35,23 +35,9 @@ class (Profunctor j, forall (d :: i +-> k). (Representable d) => IsRepresentable
   limit :: (Representable (d :: i +-> k)) => Limit j d :.: j :~> d
   limitUniv :: (Representable (d :: i +-> k), Profunctor p) => p :.: j :~> d -> p :~> Limit j d
 
-rightAdjointPreservesLimits
-  :: forall {k} {k'} {i} {a} (f :: k' +-> k) (g :: k +-> k') (d :: i +-> k) (j :: i +-> a)
-   . (Proadjunction f g, Representable d, Representable f, Representable g, HasLimits j k, HasLimits j k')
-  => Limit j (g :.: d) :~> g :.: Limit j d
-rightAdjointPreservesLimits lim =
-  lim // case unit @f @g of
-    g :.: f ->
-      g
-        :.: limitUniv @j @k @d
-          (\((f' :.: lim') :.: j) -> case limit @j @k' @(g :.: d) (lim' :.: j) of g' :.: d -> lmap (counit (f' :.: g')) d)
-          (f :.: lim)
-
-rightAdjointPreservesLimitsInv
-  :: forall {k} {k'} {i} {a} (g :: k +-> k') (d :: i +-> k) (j :: i +-> a)
-   . (Representable d, Representable g, HasLimits j k, HasLimits j k')
-  => g :.: Limit j d :~> Limit j (g :.: d)
-rightAdjointPreservesLimitsInv = limitUniv @j @k' @(g :.: d) (\((g :.: lim) :.: j) -> g :.: limit (lim :.: j))
+mapLimit
+  :: forall {i} j k p q. (HasLimits j k, Representable p, Representable q) => (p :: i +-> k) ~> q -> Limit j p ~> Limit j q
+mapLimit (Prof n) = Prof (limitUniv @j (n . limit @j))
 
 type Unweighted = TerminalProfunctor
 

@@ -8,8 +8,9 @@ import Prelude (type (~))
 import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Object (Obj, obj)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
+import Proarrow.Object (Obj, obj, tgt, src)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, trivialCorep)
+import Proarrow.Category.Instance.Prof (Prof(..))
 
 infixl 8 %
 
@@ -50,6 +51,9 @@ instance (Corepresentable p) => Representable (CorepStar p) where
   tabulate = CorepStar
   repMap = corepMap @p
 
+mapCorepStar :: (Corepresentable p, Corepresentable q) => p ~> q -> CorepStar q ~> CorepStar p
+mapCorepStar (Prof n) = Prof \(CorepStar @a f) -> CorepStar (coindex (n (trivialCorep @_ @a)) . f)
+
 type RepCostar :: (k +-> j) -> (j +-> k)
 data RepCostar p a b where
   RepCostar :: (Ob a) => {unRepCostar :: p % a ~> b} -> RepCostar p a b
@@ -66,8 +70,20 @@ instance (Representable p, Discrete j, Thin k) => ThinProfunctor (RepCostar p ::
   arr = RepCostar id
   withArr (RepCostar f) r = withEq f r
 
-flipRep :: forall p q. (Representable p, Corepresentable q) => RepCostar p :~> q -> CorepStar q :~> p
-flipRep n (CorepStar @b q) = tabulate @p (coindex @q @b (n (RepCostar (repMap @p (obj @b)))) . q)
+mapRepCostar :: (Representable p, Representable q) => p ~> q -> RepCostar q ~> RepCostar p
+mapRepCostar (Prof n) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (trivialRep @_ @a)))
+
+flipRep :: forall p. (Representable p) => (~>) :~> p -> RepCostar p :~> (~>)
+flipRep n p = coindex p . index (n (src p))
+
+unflipRep :: forall p. (Representable p) => RepCostar p :~> (~>) -> (~>) :~> p
+unflipRep n f = tabulate (n (RepCostar (repMap @p f))) \\ f
+
+flipCorep :: forall p. (Corepresentable p) => (~>) :~> p -> CorepStar p :~> (~>)
+flipCorep n p = coindex (n (tgt p)) . index p
+
+unflipCorep :: forall p. (Corepresentable p) => CorepStar p :~> (~>) -> (~>) :~> p
+unflipCorep n f = cotabulate (n (CorepStar (corepMap @p f))) \\ f
 
 type Rep :: (j +-> k) -> j +-> k
 data Rep f a b where

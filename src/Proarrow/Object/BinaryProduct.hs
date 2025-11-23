@@ -29,7 +29,7 @@ import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
 import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
 
 infixl 5 &&
@@ -94,6 +94,13 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (j +-> k) where
   fst = Prof fstP
   snd = Prof sndP
   Prof l &&& Prof r = Prof (prod l r)
+
+instance (HasBinaryProducts k, Representable (p :: j +-> k), Representable q) => Representable (p :*: q) where
+  type (p :*: q) % a = (p % a) && (q % a)
+  index (p :*: q) = index p &&& index q
+  tabulate @b f =
+    withRepOb @p @b (withRepOb @q @b (tabulate (fst @_ @(p % b) @(q % b) . f) :*: tabulate (snd @_ @(p % b) @(q % b) . f)))
+  repMap f = repMap @p f *** repMap @q f
 
 leftUnitorProd :: forall {k} (a :: k). (HasProducts k, Ob a) => TerminalObject && a ~> a
 leftUnitorProd = snd @k @TerminalObject

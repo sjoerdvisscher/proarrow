@@ -5,13 +5,13 @@ module Proarrow.Category.Colimit where
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), type (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
 import Proarrow.Object (Obj, src)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
@@ -26,36 +26,20 @@ import Proarrow.Profunctor.Wrapped (Wrapped (..))
 
 type Unweighted = TerminalProfunctor
 
-class (Corepresentable (Colimit j d)) => IsCorepresentableColimit j d
-instance (Corepresentable (Colimit j d)) => IsCorepresentableColimit j d
+class (Corepresentable (Colimit j d)) => IsCorepColimit j d
+instance (Corepresentable (Colimit j d)) => IsCorepColimit j d
 
 -- | profunctor-weighted colimits
 type HasColimits :: forall {i} {a}. a +-> i -> Kind -> Constraint
-class
-  (Profunctor j, forall (d :: k +-> i). (Corepresentable d) => IsCorepresentableColimit j d) =>
-  HasColimits (j :: a +-> i) k
-  where
+class (Profunctor j, forall (d :: k +-> i). (Corepresentable d) => IsCorepColimit j d) => HasColimits (j :: a +-> i) k where
   type Colimit (j :: a +-> i) (d :: k +-> i) :: k +-> a
   colimit :: (Corepresentable (d :: k +-> i)) => j :.: Colimit j d :~> d
   colimitUniv :: (Corepresentable (d :: k +-> i), Profunctor p) => (j :.: p :~> d) -> p :~> Colimit j d
 
-leftAdjointPreservesColimits
-  :: forall {k} {k'} {i} {a} (f :: k' +-> k) g (d :: k +-> i) (j :: a +-> i)
-   . (Proadjunction f g, Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
-  => Colimit j (d :.: f) :~> Colimit j d :.: f
-leftAdjointPreservesColimits colim =
-  colim // case unit @f @g of
-    g :.: f ->
-      colimitUniv @j @k @d
-        (\(j :.: (colim' :.: g')) -> case colimit @j @k' @(d :.: f) (j :.: colim') of d :.: f' -> rmap (counit (f' :.: g')) d)
-        (colim :.: g)
-        :.: f
-
-leftAdjointPreservesColimitsInv
-  :: forall {k} {k'} {i} {a} (f :: k' +-> k) (d :: k +-> i) (j :: a +-> i)
-   . (Corepresentable d, Corepresentable f, HasColimits j k, HasColimits j k')
-  => Colimit j d :.: f :~> Colimit j (d :.: f)
-leftAdjointPreservesColimitsInv = colimitUniv @j @k' @(d :.: f) (\(j :.: (colim :.: f)) -> colimit (j :.: colim) :.: f)
+mapColimit
+  :: forall {i} j k p q
+   . (HasColimits j k, Corepresentable p, Corepresentable q) => (p :: k +-> i) ~> q -> Colimit j p ~> Colimit j q
+mapColimit (Prof n) = Prof (colimitUniv @j (n . colimit @j))
 
 type InitialLimit :: k +-> VOID -> k +-> ()
 data InitialLimit d a b where

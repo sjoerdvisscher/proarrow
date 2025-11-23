@@ -3,10 +3,11 @@
 module Proarrow.Category.Equipment.Limit where
 
 import Data.Kind (Constraint)
+import Prelude (($))
 
 import Proarrow.Category.Bicategory (Bicategory (..))
-import Proarrow.Category.Equipment (HasCompanions (..), Sq, Equipment (..))
-import Proarrow.Core (CAT, CategoryOf (..), Obj)
+import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq, flipCompanion, flipCompanionInv)
+import Proarrow.Core (CAT, CategoryOf (..), Obj, obj, (.))
 
 -- | weighted limits
 type HasLimits :: forall {s} {hk :: CAT s} {a :: s} {i :: s}. CAT s -> hk i a -> s -> Constraint
@@ -16,11 +17,42 @@ class (HasCompanions hk vk, Ob j) => HasLimits vk (j :: hk i a) k where
   limit :: (Ob (d :: vk i k)) => Companion hk (Limit j d) `O` j ~> Companion hk d
   limitUniv :: (Ob (d :: vk i k), Ob p) => p `O` j ~> Companion hk d -> p ~> Companion hk (Limit j d)
 
+toLimitAdj
+  :: forall {hk} {vk} {k} {a} {b} (j :: hk a b) (c :: vk b k) (r :: vk a k)
+   . (Equipment hk vk, HasLimits vk j k, Ob r, Ob c)
+  => Companion hk c ~> Companion hk (Limit j r) -> j ~> Conjoint hk c `O` Companion hk r
+toLimitAdj n =
+  withOb0s @vk @r $
+    withOb0s @vk @c $
+      flipCompanion @c @j @(Companion hk r) (obj @c) (limit @vk @j @k @r . (n `o` obj @j)) \\\ n
+
+fromLimitAdj
+  :: forall {hk} {vk} {k} {a} {b} (j :: hk a b) (c :: vk b k) (r :: vk a k)
+   . (Equipment hk vk, HasLimits vk j k, Ob r, Ob c)
+  => j ~> Conjoint hk c `O` Companion hk r -> Companion hk c ~> Companion hk (Limit j r)
+fromLimitAdj n =
+  withOb0s @vk @r $
+    withOb0s @vk @c $
+      withObCompanion @hk @vk @r $
+        withObCompanion @hk @vk @c $
+          limitUniv @vk @j @k @r (flipCompanionInv @c @j @(Companion hk r) (obj @c) n) \\\ n
+
+mapLimit
+  :: forall {hk} {vk} {i} {a} (j :: hk i a) k p q
+   . (HasLimits vk j k)
+  => (p :: vk i k) ~> q -> Companion hk (Limit j p) ~> Companion hk (Limit j q)
+mapLimit n =
+  ( withObLimit @vk @j @k @p $
+      withObCompanion @hk @vk @(Limit j p) $
+        limitUniv @vk @j @k @q (mapCompanion n . limit @vk @j @k @p)
+  )
+    \\\ n
+
 -- | weighted colimits
 type HasColimits :: forall {s} {hk :: CAT s} {a :: s} {i :: s}. CAT s -> hk a i -> s -> Constraint
 class (Equipment hk vk, Ob j) => HasColimits vk (j :: hk a i) k where
   type Colimit (j :: hk a i) (d :: vk i k) :: vk a k
-  withObColimit :: (Ob (d :: vk i k)) => (Ob (Colimit j d) => r) -> r
+  withObColimit :: (Ob (d :: vk i k)) => ((Ob (Colimit j d)) => r) -> r
   colimit :: (Ob (d :: vk i k)) => j `O` Conjoint hk (Colimit j d) ~> Conjoint hk d
   colimitUniv :: (Ob (d :: vk i k), Ob p) => (j `O` p ~> Conjoint hk d) -> p ~> Conjoint hk (Colimit j d)
 

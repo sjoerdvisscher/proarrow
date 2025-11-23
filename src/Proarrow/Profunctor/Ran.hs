@@ -27,6 +27,9 @@ data Ran j p a b where
 runRan :: (Profunctor j) => j b x -> Ran (OP j) p a b -> p a x
 runRan j (Ran k) = k j \\ j
 
+runRanProf :: (Profunctor j, Profunctor p) => Ran (OP j) p :.: j ~> p
+runRanProf = Prof \(r :.: j) -> runRan j r
+
 flipRan :: (Functor j, Profunctor p) => Costar j |> p ~> p :.: Star j
 flipRan = Prof \(Ran k) -> k (Costar id) :.: Star id
 

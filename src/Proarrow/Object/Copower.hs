@@ -6,24 +6,30 @@ module Proarrow.Object.Copower where
 import Data.Kind (Type)
 import Prelude (type (~))
 
+import Proarrow.Category.Enriched (Enriched, HomObj, comp, underlying)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Object.Power (Powered (..))
+import Proarrow.Category.Monoidal (rightUnitorInvWith)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Enriched (Enriched, HomObj)
+import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), (//), type (+->))
 import Proarrow.Object.Exponential (Closed)
+import Proarrow.Object.Power (Powered (..))
 
--- | Categories copowered over Hask.
+-- | Categories copowered over @v@.
 class (Enriched v k, Closed v) => Copowered v k where
   type (n :: v) *. (a :: k) :: k
   withObCopower :: (Ob (a :: k), Ob (n :: v)) => ((Ob (n *. a)) => r) -> r
   copower :: (Ob (a :: k), Ob b) => n ~> HomObj v a b -> (n *. a) ~> b
   uncopower :: (Ob (a :: k), Ob n) => (n *. a) ~> b -> n ~> HomObj v a b
 
--- mapCobase :: forall {k} {v} (a :: k) b (n :: v). (Copowered v k, Ob n) => a ~> b -> n *. a ~> n *. b
--- mapCobase f = f // withObCopower @v @k @b @n (copower @v @k @a @(n *. b) @n (\n -> uncopower id n . f))
+mapCobase :: forall {k} {v} (a :: k) b (n :: v). (Copowered v k, Ob n) => a ~> b -> n *. a ~> n *. b
+mapCobase f =
+  f //
+    withObCopower @v @k @b @n
+      ( copower @v @k @a @(n *. b) @n
+          (let g = uncopower @v @k @b @n id in g // comp @v @a @b @(n *. b) . rightUnitorInvWith (underlying @v f) . g)
+      )
 
 mapCopower :: forall {k} {v} (a :: k) (n :: v) m. (Copowered v k, Ob a) => (n ~> m) -> n *. a ~> m *. a
 mapCopower f = withObCopower @v @k @a @m (copower @v @k @a @(m *. a) @n (uncopower @v @k @a id . f)) \\ f
@@ -71,4 +77,3 @@ instance (Powered v k, Enriched v (OPPOSITE k), forall (a :: k) b. HomObjOp v a 
   withObCopower @(OP a) @n r = withObPower @v @k @a @n r
   copower @(OP a) @(OP b) f = Op (power @v @k @b @a f)
   uncopower @(OP a) (Op f) = unpower @v @k @a f
-

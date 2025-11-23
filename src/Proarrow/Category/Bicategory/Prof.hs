@@ -15,7 +15,7 @@ import Proarrow.Category.Bicategory
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
 import Proarrow.Category.Bicategory.Limit qualified as Bi
-import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..), IsOb0)
+import Proarrow.Category.Bicategory.Sub (IsOb, IsOb0, SUBCAT (..), Sub (..))
 import Proarrow.Category.Colimit qualified as L
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..), vArr)
 import Proarrow.Category.Equipment.Limit
@@ -61,12 +61,20 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), dimapRep, repObj, trivialRep, CorepStar (..), Rep (..))
+import Proarrow.Profunctor.Representable
+  ( CorepStar (..)
+  , Rep (..)
+  , RepCostar (..)
+  , Representable (..)
+  , dimapRep
+  , repObj
+  , trivialRep
+  )
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable(..))
 
 type data PROFK j k = PK (j +-> k)
 type instance UN PK (PK p) = p
@@ -137,10 +145,7 @@ instance (Procomonad p) => Comonad (PK p :: PROFK k k) where
   epsilon = Prof (Id . extract)
   delta = Prof duplicate
 
-instance
-  (Category (cj :: CAT j), Category (ck :: CAT k), Profunctor p)
-  => Bimodule (PK ck) (PK cj) (PK p :: PROFK j k)
-  where
+instance (Category (cj :: CAT j), Category (ck :: CAT k), Profunctor p) => Bimodule (PK ck) (PK cj) (PK p :: PROFK j k) where
   leftAction = Prof \(f :.: p) -> lmap f p
   rightAction = Prof \(p :.: f) -> rmap f p
 
@@ -266,8 +271,8 @@ instance Bi.HasTerminalObject FUNK where
 
 type instance Bi.Product FUNK a b = (a, b)
 instance Bi.HasBinaryProducts FUNK where
-  type Fst FUNK a b = FUN (C.FstCat)
-  type Snd FUNK a b = FUN (C.SndCat)
+  type Fst FUNK a b = FUN (Rep C.FstCat)
+  type Snd FUNK a b = FUN (Rep C.SndCat)
   fstObj = Sub (Prof id)
   sndObj = Sub (Prof id)
   type f &&& g = FUN (UNFUN f C.:&&&: UNFUN g)
@@ -276,10 +281,10 @@ instance Bi.HasBinaryProducts FUNK where
     Sub
       ( Prof
           ( \h ->
-              h // repMap @(UNFUN k) (tgt h) // case n (C.FstCat id :.: h) of
-                C.FstCat f :.: (index -> k :**: _) ->
-                  case m (C.SndCat id :.: h) of
-                    C.SndCat g :.: (index -> _ :**: k') ->
+              h // repMap @(UNFUN k) (tgt h) // case n (Rep id :.: h) of
+                Rep f :.: (index -> k :**: _) ->
+                  case m (Rep id :.: h) of
+                    Rep g :.: (index -> _ :**: k') ->
                       tabulate ((k . f) :**: (k' . g))
           )
       )
@@ -298,8 +303,8 @@ instance HasInitialObject PROFK FUNK where
 
 type instance Product PROFK FUNK a b = (a, b)
 instance HasBinaryProducts PROFK FUNK where
-  type Fst PROFK FUNK a b = FUN (C.FstCat)
-  type Snd PROFK FUNK a b = FUN (C.SndCat)
+  type Fst PROFK FUNK a b = FUN (Rep C.FstCat)
+  type Snd PROFK FUNK a b = FUN (Rep C.SndCat)
   fstObj = Sub (Prof id)
   sndObj = Sub (Prof id)
   type ProdV PROFK FUNK (SUB (PK f)) (SUB (PK g)) = SUB (PK (f C.:&&&: g))
@@ -313,8 +318,8 @@ instance HasBinaryProducts PROFK FUNK where
 
 type instance Coproduct PROFK FUNK a b = COPRODUCT a b
 instance HasBinaryCoproducts PROFK FUNK where
-  type Lft PROFK FUNK a b = FUN (C.LftCat)
-  type Rgt PROFK FUNK a b = FUN (C.RgtCat)
+  type Lft PROFK FUNK a b = FUN (Rep C.LftCat)
+  type Rgt PROFK FUNK a b = FUN (Rep C.RgtCat)
   lftObj = Sub (Prof id)
   rgtObj = Sub (Prof id)
   type CoprodV PROFK FUNK (SUB (PK f)) (SUB (PK g)) = SUB (PK (f C.:|||: g))

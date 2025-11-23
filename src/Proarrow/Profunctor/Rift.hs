@@ -25,6 +25,9 @@ data Rift j p a b where
 runRift :: (Profunctor j) => j x a -> Rift (OP j) p a b -> p x b
 runRift j (Rift k) = k j \\ j
 
+runRiftProf :: (Profunctor j, Profunctor p) => j :.: Rift (OP j) p ~> p
+runRiftProf = Prof \(j :.: r) -> runRift j r
+
 flipRift :: (Functor j, Profunctor p) => p <| Star j ~> Costar j :.: p
 flipRift = Prof \(Rift k) -> Costar id :.: k (Star id)
 

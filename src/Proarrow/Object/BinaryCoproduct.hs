@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Object.BinaryCoproduct where
 
@@ -23,14 +24,16 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
-import Proarrow.Functor (Functor (..))
 
 infixl 4 ||
 infixl 4 |||
@@ -97,6 +100,14 @@ instance (CategoryOf j, CategoryOf k) => HasBinaryCoproducts (j +-> k) where
   lft = Prof InjL
   rgt = Prof InjR
   Prof l ||| Prof r = Prof (coproduct l r)
+
+instance (HasBinaryCoproducts j, Corepresentable (p :: j +-> k), Corepresentable q) => Corepresentable (p :*: q) where
+  type (p :*: q) %% a = (p %% a) || (q %% a)
+  coindex (p :*: q) = coindex p ||| coindex q
+  cotabulate @a f =
+    withCorepOb @p @a
+      (withCorepOb @q @a (cotabulate (f . lft @_ @(p %% a) @(q %% a)) :*: cotabulate (f . rgt @_ @(p %% a) @(q %% a))))
+  corepMap f = corepMap @p f +++ corepMap @q f
 
 instance (HasBinaryCoproducts k) => HasBinaryCoproducts (PROD k) where
   type PR a || PR b = PR (a || b)

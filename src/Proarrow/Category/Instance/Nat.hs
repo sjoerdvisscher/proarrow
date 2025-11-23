@@ -239,10 +239,7 @@ instance CategoryOf (NatK j k) where
   type Ob f = (Is NT f, Functor (UN NT f))
 
 instance Promonad (Nat' :: CAT (NatK j k)) where
-  id = n
-    where
-      n :: forall f. (Functor f) => Nat' (NT f) (NT f)
-      n = Nat' (map @f id)
+  id @(NT f) = Nat' (map @f id)
   Nat' f . Nat' g = Nat' (f . g)
 
 instance Profunctor (Nat' :: CAT (NatK j k)) where

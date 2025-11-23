@@ -75,29 +75,15 @@ instance HasInitialObject KIND where
   type InitialObject = K VOID
   initiate = Cat @(Rep Initiate)
 
-type FstCat :: (j, k) +-> j
-data FstCat a b where
-  FstCat :: (Ob c) => a ~> b -> FstCat a '(b, c)
-instance (CategoryOf j, CategoryOf k) => Profunctor (FstCat :: (j, k) +-> j) where
-  dimap l (r1 :**: r2) (FstCat f) = FstCat (r1 . f . l) \\ r2
-  r \\ FstCat f = r \\ f
-instance (CategoryOf j, CategoryOf k) => Representable (FstCat :: (j, k) +-> j) where
-  type FstCat % '(a, b) = a
-  tabulate = FstCat
-  index (FstCat f) = f
-  repMap (f :**: _) = f
+data family FstCat :: (j, k) +-> j
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (FstCat :: (j, k) +-> j) where
+  type FstCat @ '(a, b) = a
+  fmap (f :**: _) = f
 
-type SndCat :: (j, k) +-> k
-data SndCat a b where
-  SndCat :: (Ob b) => a ~> c -> SndCat a '(b, c)
-instance (CategoryOf j, CategoryOf k) => Profunctor (SndCat :: (j, k) +-> k) where
-  dimap l (r1 :**: r2) (SndCat f) = SndCat (r2 . f . l) \\ r1
-  r \\ SndCat f = r \\ f
-instance (CategoryOf j, CategoryOf k) => Representable (SndCat :: (j, k) +-> k) where
-  type SndCat % '(a, b) = b
-  tabulate = SndCat
-  index (SndCat f) = f
-  repMap (_ :**: f) = f
+data family SndCat :: (j, k) +-> k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (SndCat :: (j, k) +-> k) where
+  type SndCat @ '(a, b) = b
+  fmap (_ :**: f) = f
 
 type (:&&&:) :: (k +-> i) -> (k +-> j) -> (k +-> (i, j))
 data (p :&&&: q) a b where
@@ -114,35 +100,19 @@ instance (Representable p, Representable q) => Representable (p :&&&: q) where
 instance HasBinaryProducts KIND where
   type l && r = K (UN K l, UN K r)
   withObProd r = r
-  fst = Cat @FstCat
-  snd = Cat @SndCat
+  fst = Cat @(Rep FstCat)
+  snd = Cat @(Rep SndCat)
   Cat @p &&& Cat @q = Cat @(p :&&&: q)
 
-type LftCat :: j +-> COPRODUCT j k
-data LftCat a b where
-  LftCat :: a ~> b -> LftCat (L a) b
-instance (CategoryOf j, CategoryOf k) => Profunctor (LftCat :: j +-> COPRODUCT j k) where
-  dimap (InjL l) r (LftCat f) = LftCat (r . f . l)
-  dimap (InjR _) _ f = case f of {}
-  r \\ LftCat f = r \\ f
-instance (CategoryOf j, CategoryOf k) => Representable (LftCat :: j +-> COPRODUCT j k) where
-  type LftCat % a = L a
-  tabulate (InjL f) = LftCat f
-  index (LftCat f) = InjL f
-  repMap = InjL
+data family LftCat :: j +-> COPRODUCT j k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (LftCat :: j +-> COPRODUCT j k) where
+  type LftCat @ a = L a
+  fmap = InjL
 
-type RgtCat :: k +-> COPRODUCT j k
-data RgtCat a b where
-  RgtCat :: a ~> b -> RgtCat (R a) b
-instance (CategoryOf j, CategoryOf k) => Profunctor (RgtCat :: k +-> COPRODUCT j k) where
-  dimap (InjR l) r (RgtCat f) = RgtCat (r . f . l)
-  dimap (InjL _) _ f = case f of {}
-  r \\ RgtCat f = r \\ f
-instance (CategoryOf j, CategoryOf k) => Representable (RgtCat :: k +-> COPRODUCT j k) where
-  type RgtCat % a = R a
-  tabulate (InjR f) = RgtCat f
-  index (RgtCat f) = InjR f
-  repMap = InjR
+data family RgtCat :: k +-> COPRODUCT j k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (RgtCat :: k +-> COPRODUCT j k) where
+  type RgtCat @ a = R a
+  fmap = InjR
 
 type (:|||:) :: (i +-> k) -> (j +-> k) -> (COPRODUCT i j +-> k)
 data (p :|||: q) a b where
@@ -167,8 +137,8 @@ instance (Representable p, Representable q) => Representable (p :|||: q) where
 instance HasBinaryCoproducts KIND where
   type K l || K r = K (COPRODUCT l r)
   withObCoprod r = r
-  lft = Cat @LftCat
-  rgt = Cat @RgtCat
+  lft = Cat @(Rep LftCat)
+  rgt = Cat @(Rep RgtCat)
   Cat @p ||| Cat @q = Cat @(p :|||: q)
 
 instance MonoidalProfunctor Cat where
@@ -187,14 +157,12 @@ instance Monoidal KIND where
   associator = associatorProd
   associatorInv = associatorProdInv
 
-type Swap :: (j, k) +-> (k, j)
-data Swap a b where
-  Swap :: a ~> b -> c ~> d -> Swap '(a, c) '(d, b)
-instance (CategoryOf j, CategoryOf k) => Profunctor (Swap :: (j, k) +-> (k, j)) where
-  dimap (l1 :**: l2) (r1 :**: r2) (Swap p q) = Swap (dimap l1 r2 p) (dimap l2 r1 q)
-  r \\ Swap p q = r \\ p \\ q
+data family Swap :: (j, k) +-> (k, j)
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (Swap :: (j, k) +-> (k, j)) where
+  type Swap @ '(a, b) = '(b, a)
+  fmap (f1 :**: f2) = f2 :**: f1
 instance SymMonoidal KIND where
-  swap @(K j) @(K k) = Cat @(Swap :: (j, k) +-> (k, j))
+  swap @(K j) @(K k) = Cat @(Rep Swap :: (j, k) +-> (k, j))
 
 instance (Ob a) => Comonoid (a :: KIND) where
   counit = terminate
@@ -226,33 +194,27 @@ instance StarAutonomous KIND where
   type Dual (K a) = K (OPPOSITE a)
   dual (Cat @p) = Cat @(Op p)
   dualInv (Cat @p) = Cat @(UnOp p)
-  linDist (Cat @p) = Cat @(CombineDual :.: Curry p)
-  linDistInv (Cat @p) = Cat @(Uncurry (DistribDual :.: p))
+  linDist (Cat @p) = Cat @(Rep CombineDual :.: Curry p)
+  linDistInv (Cat @p) = Cat @(Uncurry (Rep DistribDual :.: p))
 
-type CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)
-data CombineDual a b where
-  CombineDual :: c ~> a -> d ~> b -> CombineDual (OP '(a, b)) '(OP c, OP d)
-instance (CategoryOf j, CategoryOf k) => Profunctor (CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)) where
-  dimap (Op (l1 :**: l2)) (Op r1 :**: Op r2) (CombineDual f g) = CombineDual (l1 . f . r1) (l2 . g . r2)
-  r \\ CombineDual f g = r \\ f \\ g
+data family CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (CombineDual :: (OPPOSITE j, OPPOSITE k) +-> OPPOSITE (j, k)) where
+  type CombineDual @ '(OP a, OP b) = OP '(a, b)
+  fmap (Op l :**: Op r) = Op (l :**: r)
 
-type DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)
-data DistribDual a b where
-  DistribDual :: c ~> a -> d ~> b -> DistribDual '(OP a, OP b) (OP '(c, d))
-instance (CategoryOf j, CategoryOf k) => Profunctor (DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)) where
-  dimap (Op l1 :**: Op l2) (Op (r1 :**: r2)) (DistribDual f g) = DistribDual (l1 . f . r1) (l2 . g . r2)
-  r \\ DistribDual f g = r \\ f \\ g
+data family DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (DistribDual :: OPPOSITE (j, k) +-> (OPPOSITE j, OPPOSITE k)) where
+  type DistribDual @ OP '(a, b) = '(OP a, OP b)
+  fmap (Op (l :**: r)) = Op l :**: Op r
 
-type DualUnit :: OPPOSITE () +-> ()
-data DualUnit a b where
-  DualUnit :: DualUnit '() (OP '())
-instance Profunctor (DualUnit :: OPPOSITE () +-> ()) where
-  dimap Unit (Op Unit) DualUnit = DualUnit
-  r \\ DualUnit = r
+data family DualUnit :: OPPOSITE () +-> ()
+instance FunctorForRep (DualUnit :: OPPOSITE () +-> ()) where
+  type DualUnit @ OP '() = '()
+  fmap (Op Unit) = Unit
 
 instance CompactClosed KIND where
-  distribDual = Cat @DistribDual
-  dualUnit = Cat @DualUnit
+  distribDual = Cat @(Rep DistribDual)
+  dualUnit = Cat @(Rep DualUnit)
 
 instance MonoidalAction KIND KIND where
   type Act a x = a ** x

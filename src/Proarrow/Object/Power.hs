@@ -16,7 +16,7 @@ import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (TerminalObject, terminate)
 
--- | Categories powered over Hask.
+-- | Categories powered over @v@.
 class (Enriched v k, Closed v) => Powered v k where
   type (a :: k) ^ (n :: v) :: k
   withObPower :: (Ob (a :: k), Ob (n :: v)) => ((Ob (a ^ n)) => r) -> r
