@@ -51,7 +51,7 @@ type Presheaf k = () +-> k
 type Copresheaf k = k +-> ()
 
 -- | A perfectly valid functor definition, but hard to use.
--- So we only use it to easily make representable profunctors with @Rep@.
+-- So we only use it to easily make (co)representable profunctors with @Rep@ and @Corep@.
 type FunctorForRep :: forall {j} {k}. (j +-> k) -> Constraint
 class (CategoryOf j, CategoryOf k) => FunctorForRep (f :: j +-> k) where
   type f @ (a :: j) :: k
