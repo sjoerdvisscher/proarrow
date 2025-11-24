@@ -137,6 +137,98 @@
 		></ul
 	      ></li
 	    ><li class="src short"
+	    ><a href="#v:toLimitAdj"
+	      >toLimitAdj</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {c1} {hk :: c1 -&gt; c1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: c1 -&gt; c1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {k :: c1} {a :: c1} {b :: c1} (j :: hk a b) (c2 :: vk b k) (r :: vk a k). (<a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > r, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c2) =&gt; (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk c2 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j r)) -&gt; j <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk c2) (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk r)</li
+	    ><li class="src short"
+	    ><a href="#v:fromLimitAdj"
+	      >fromLimitAdj</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {s} {hk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {k :: s} {a :: s} {b :: s} (j :: hk a b) (c :: vk b k) (r :: vk a k). (<a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	      >Equipment</a
+	      > hk vk, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > r, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (j <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	      >O</a
+	      > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	      >Conjoint</a
+	      > hk c) (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk r)) -&gt; <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j r)</li
+	    ><li class="src short"
+	    ><a href="#v:mapLimit"
+	      >mapLimit</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {s} {hk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >} {vk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	      >CAT</a
+	      > s} {i :: s} {a :: s} (j :: hk i a) (k :: s) (p :: vk i k) (q :: vk i k). <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	      >HasLimits</a
+	      > vk j k =&gt; (p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > q) -&gt; <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	      >Companion</a
+	      > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	      >Limit</a
+	      > j q)</li
+	    ><li class="src short"
 	    ><span class="keyword"
 	      >class</span
 	      > (<a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
@@ -660,7 +752,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Equipment.Limit.html#HasLimits" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L13" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L14" class="link"
 	    >Comments</a
 	    > <a href="#t:HasLimits" class="selflink"
 	    >#</a
@@ -701,7 +793,7 @@
 	      >Limit</a
 	      > j d) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Equipment.Limit.html#withObLimit" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L13" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L14" class="link"
 	      >Comments</a
 	      > <a href="#v:withObLimit" class="selflink"
 	      >#</a
@@ -725,7 +817,7 @@
 	      >Companion</a
 	      > hk d <a href="src/Proarrow.Category.Equipment.Limit.html#limit" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L13" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L14" class="link"
 	      >Comments</a
 	      > <a href="#v:limit" class="selflink"
 	      >#</a
@@ -753,7 +845,7 @@
 	      >Limit</a
 	      > j d) <a href="src/Proarrow.Category.Equipment.Limit.html#limitUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L13" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L14" class="link"
 	      >Comments</a
 	      > <a href="#v:limitUniv" class="selflink"
 	      >#</a
@@ -786,9 +878,9 @@
 		      > i a) (k :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
 		      >Kind</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-161" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-166" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L161" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L166" class="link"
 		    >Comments</a
 		    > <a href="#t:HasLimits" class="selflink"
 		    >#</a
@@ -825,7 +917,7 @@
 			  >PK</a
 			  > j) d) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Equipment.Limit.html#withObLimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L16" class="link"
 			  >Comments</a
 			  > <a href="#v:withObLimit" class="selflink"
 			  >#</a
@@ -859,7 +951,7 @@
 			  >PROFK</a
 			  > d <a href="src/Proarrow.Category.Equipment.Limit.html#limit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L17" class="link"
 			  >Comments</a
 			  > <a href="#v:limit" class="selflink"
 			  >#</a
@@ -899,7 +991,7 @@
 			  >PK</a
 			  > j) d) <a href="src/Proarrow.Category.Equipment.Limit.html#limitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L17" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:limitUniv" class="selflink"
 			  >#</a
@@ -969,7 +1061,7 @@
 			  >MonK</a
 			  > k i a) d) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Equipment.Limit.html#withObLimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L15" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L16" class="link"
 			  >Comments</a
 			  > <a href="#v:withObLimit" class="selflink"
 			  >#</a
@@ -1007,7 +1099,7 @@
 			  >MonK</a
 			  > k) d <a href="src/Proarrow.Category.Equipment.Limit.html#limit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L16" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L17" class="link"
 			  >Comments</a
 			  > <a href="#v:limit" class="selflink"
 			  >#</a
@@ -1051,7 +1143,7 @@
 			  >MonK</a
 			  > k i a) d) <a href="src/Proarrow.Category.Equipment.Limit.html#limitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L17" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L18" class="link"
 			  >Comments</a
 			  > <a href="#v:limitUniv" class="selflink"
 			  >#</a
@@ -1063,6 +1155,122 @@
 		></table
 	      ></details
 	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:toLimitAdj" class="def"
+	    >toLimitAdj</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {c1} {hk :: c1 -&gt; c1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: c1 -&gt; c1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {k :: c1} {a :: c1} {b :: c1} (j :: hk a b) (c2 :: vk b k) (r :: vk a k). (<a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	    >Equipment</a
+	    > hk vk, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > r, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > c2) =&gt; (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk c2 <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j r)) -&gt; j <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	    >O</a
+	    > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	    >Conjoint</a
+	    > hk c2) (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk r) <a href="src/Proarrow.Category.Equipment.Limit.html#toLimitAdj" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L24" class="link"
+	    >Comments</a
+	    > <a href="#v:toLimitAdj" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:fromLimitAdj" class="def"
+	    >fromLimitAdj</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {s} {hk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {k :: s} {a :: s} {b :: s} (j :: hk a b) (c :: vk b k) (r :: vk a k). (<a href="Proarrow-Category-Equipment.html#t:Equipment" title="Proarrow.Category.Equipment"
+	    >Equipment</a
+	    > hk vk, <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > r, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > c) =&gt; (j <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Bicategory.html#t:O" title="Proarrow.Category.Bicategory"
+	    >O</a
+	    > (<a href="Proarrow-Category-Equipment.html#t:Conjoint" title="Proarrow.Category.Equipment"
+	    >Conjoint</a
+	    > hk c) (<a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk r)) -&gt; <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j r) <a href="src/Proarrow.Category.Equipment.Limit.html#fromLimitAdj" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L33" class="link"
+	    >Comments</a
+	    > <a href="#v:fromLimitAdj" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:mapLimit" class="def"
+	    >mapLimit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {s} {hk :: s -&gt; s -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >} {vk :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > s} {i :: s} {a :: s} (j :: hk i a) (k :: s) (p :: vk i k) (q :: vk i k). <a href="Proarrow-Category-Equipment-Limit.html#t:HasLimits" title="Proarrow.Category.Equipment.Limit"
+	    >HasLimits</a
+	    > vk j k =&gt; (p <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > q) -&gt; <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j p) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Category-Equipment.html#t:Companion" title="Proarrow.Category.Equipment"
+	    >Companion</a
+	    > hk (<a href="Proarrow-Category-Equipment-Limit.html#t:Limit" title="Proarrow.Category.Equipment.Limit"
+	    >Limit</a
+	    > j q) <a href="src/Proarrow.Category.Equipment.Limit.html#mapLimit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L44" class="link"
+	    >Comments</a
+	    > <a href="#v:mapLimit" class="selflink"
+	    >#</a
+	    ></p
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -1080,7 +1288,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Equipment.Limit.html#HasColimits" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L21" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L53" class="link"
 	    >Comments</a
 	    > <a href="#t:HasColimits" class="selflink"
 	    >#</a
@@ -1121,7 +1329,7 @@
 	      >Colimit</a
 	      > j d) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Equipment.Limit.html#withObColimit" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L21" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L53" class="link"
 	      >Comments</a
 	      > <a href="#v:withObColimit" class="selflink"
 	      >#</a
@@ -1145,7 +1353,7 @@
 	      >Conjoint</a
 	      > hk d <a href="src/Proarrow.Category.Equipment.Limit.html#colimit" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L21" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L53" class="link"
 	      >Comments</a
 	      > <a href="#v:colimit" class="selflink"
 	      >#</a
@@ -1173,7 +1381,7 @@
 	      >Colimit</a
 	      > j d) <a href="src/Proarrow.Category.Equipment.Limit.html#colimitUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L21" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L53" class="link"
 	      >Comments</a
 	      > <a href="#v:colimitUniv" class="selflink"
 	      >#</a
@@ -1206,9 +1414,9 @@
 		      > a i) (k :: <a href="Proarrow-Core.html#t:Kind" title="Proarrow.Core"
 		      >Kind</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-167" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-172" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L167" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L172" class="link"
 		    >Comments</a
 		    > <a href="#t:HasColimits" class="selflink"
 		    >#</a
@@ -1245,7 +1453,7 @@
 			  >PK</a
 			  > j) d) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Equipment.Limit.html#withObColimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L23" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L55" class="link"
 			  >Comments</a
 			  > <a href="#v:withObColimit" class="selflink"
 			  >#</a
@@ -1279,7 +1487,7 @@
 			  >PROFK</a
 			  > d <a href="src/Proarrow.Category.Equipment.Limit.html#colimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L24" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L56" class="link"
 			  >Comments</a
 			  > <a href="#v:colimit" class="selflink"
 			  >#</a
@@ -1319,7 +1527,7 @@
 			  >PK</a
 			  > j) d) <a href="src/Proarrow.Category.Equipment.Limit.html#colimitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L25" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L57" class="link"
 			  >Comments</a
 			  > <a href="#v:colimitUniv" class="selflink"
 			  >#</a
@@ -1389,7 +1597,7 @@
 			  >MonK</a
 			  > k a i) d) =&gt; r) -&gt; r <a href="src/Proarrow.Category.Equipment.Limit.html#withObColimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L23" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L55" class="link"
 			  >Comments</a
 			  > <a href="#v:withObColimit" class="selflink"
 			  >#</a
@@ -1427,7 +1635,7 @@
 			  >MonK</a
 			  > k) d <a href="src/Proarrow.Category.Equipment.Limit.html#colimit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L24" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L56" class="link"
 			  >Comments</a
 			  > <a href="#v:colimit" class="selflink"
 			  >#</a
@@ -1471,7 +1679,7 @@
 			  >MonK</a
 			  > k a i) d) <a href="src/Proarrow.Category.Equipment.Limit.html#colimitUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L25" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L57" class="link"
 			  >Comments</a
 			  > <a href="#v:colimitUniv" class="selflink"
 			  >#</a
@@ -1496,7 +1704,7 @@
 	    >CAT</a
 	    > s) :: s <a href="src/Proarrow.Category.Equipment.Limit.html#TerminalObject" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L27" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L59" class="link"
 	    >Comments</a
 	    > <a href="#t:TerminalObject" class="selflink"
 	    >#</a
@@ -1522,9 +1730,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-287" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-292" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L287" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L292" class="link"
 		    >Comments</a
 		    > <a href="#t:TerminalObject" class="selflink"
 		    >#</a
@@ -1574,7 +1782,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Equipment.Limit.html#HasTerminalObject" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L29" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L61" class="link"
 	    >Comments</a
 	    > <a href="#t:HasTerminalObject" class="selflink"
 	    >#</a
@@ -1617,7 +1825,7 @@
 	      >Terminate</a
 	      > hk vk j) <a href="src/Proarrow.Category.Equipment.Limit.html#terminate" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L29" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L61" class="link"
 	      >Comments</a
 	      > <a href="#v:terminate" class="selflink"
 	      >#</a
@@ -1647,7 +1855,7 @@
 	      >Terminate</a
 	      > hk vk i) <a href="src/Proarrow.Category.Equipment.Limit.html#termUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L29" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L61" class="link"
 	      >Comments</a
 	      > <a href="#v:termUniv" class="selflink"
 	      >#</a
@@ -1672,9 +1880,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-288" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-293" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L288" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L293" class="link"
 		    >Comments</a
 		    > <a href="#t:HasTerminalObject" class="selflink"
 		    >#</a
@@ -1769,7 +1977,7 @@
 			  >FUNK</a
 			  > j) <a href="src/Proarrow.Category.Equipment.Limit.html#terminate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L31" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L63" class="link"
 			  >Comments</a
 			  > <a href="#v:terminate" class="selflink"
 			  >#</a
@@ -1823,7 +2031,7 @@
 			  >FUNK</a
 			  > i) <a href="src/Proarrow.Category.Equipment.Limit.html#termUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L32" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L64" class="link"
 			  >Comments</a
 			  > <a href="#v:termUniv" class="selflink"
 			  >#</a
@@ -1848,7 +2056,7 @@
 	    >CAT</a
 	    > s) :: s <a href="src/Proarrow.Category.Equipment.Limit.html#InitialObject" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L34" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L66" class="link"
 	    >Comments</a
 	    > <a href="#t:InitialObject" class="selflink"
 	    >#</a
@@ -1874,9 +2082,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-293" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-298" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L293" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L298" class="link"
 		    >Comments</a
 		    > <a href="#t:InitialObject" class="selflink"
 		    >#</a
@@ -1928,7 +2136,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Equipment.Limit.html#HasInitialObject" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L36" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L68" class="link"
 	    >Comments</a
 	    > <a href="#t:HasInitialObject" class="selflink"
 	    >#</a
@@ -1971,7 +2179,7 @@
 	      >Initiate</a
 	      > hk vk j) <a href="src/Proarrow.Category.Equipment.Limit.html#initiate" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L36" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L68" class="link"
 	      >Comments</a
 	      > <a href="#v:initiate" class="selflink"
 	      >#</a
@@ -2001,7 +2209,7 @@
 	      >Initiate</a
 	      > hk vk i) <a href="src/Proarrow.Category.Equipment.Limit.html#initUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L36" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L68" class="link"
 	      >Comments</a
 	      > <a href="#v:initUniv" class="selflink"
 	      >#</a
@@ -2026,9 +2234,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-294" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-299" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L294" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L299" class="link"
 		    >Comments</a
 		    > <a href="#t:HasInitialObject" class="selflink"
 		    >#</a
@@ -2125,7 +2333,7 @@
 			  >FUNK</a
 			  > j) <a href="src/Proarrow.Category.Equipment.Limit.html#initiate" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L38" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L70" class="link"
 			  >Comments</a
 			  > <a href="#v:initiate" class="selflink"
 			  >#</a
@@ -2179,7 +2387,7 @@
 			  >FUNK</a
 			  > i) <a href="src/Proarrow.Category.Equipment.Limit.html#initUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L39" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L71" class="link"
 			  >Comments</a
 			  > <a href="#v:initUniv" class="selflink"
 			  >#</a
@@ -2204,7 +2412,7 @@
 	    >CAT</a
 	    > s) (a :: s) (b :: s) :: s <a href="src/Proarrow.Category.Equipment.Limit.html#Product" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L41" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L73" class="link"
 	    >Comments</a
 	    > <a href="#t:Product" class="selflink"
 	    >#</a
@@ -2234,9 +2442,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-299" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-304" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L299" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L304" class="link"
 		    >Comments</a
 		    > <a href="#t:Product" class="selflink"
 		    >#</a
@@ -2288,7 +2496,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Equipment.Limit.html#HasBinaryProducts" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L43" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L75" class="link"
 	    >Comments</a
 	    > <a href="#t:HasBinaryProducts" class="selflink"
 	    >#</a
@@ -2389,7 +2597,7 @@
 	      >Fst</a
 	      > hk vk i j) <a href="src/Proarrow.Category.Equipment.Limit.html#fstObj" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L43" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L75" class="link"
 	      >Comments</a
 	      > <a href="#v:fstObj" class="selflink"
 	      >#</a
@@ -2409,7 +2617,7 @@
 	      >Snd</a
 	      > hk vk i j) <a href="src/Proarrow.Category.Equipment.Limit.html#sndObj" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L43" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L75" class="link"
 	      >Comments</a
 	      > <a href="#v:sndObj" class="selflink"
 	      >#</a
@@ -2435,7 +2643,7 @@
 	      >ProdV</a
 	      > hk vk f g) <a href="src/Proarrow.Category.Equipment.Limit.html#prodObj" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L43" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L75" class="link"
 	      >Comments</a
 	      > <a href="#v:prodObj" class="selflink"
 	      >#</a
@@ -2459,7 +2667,7 @@
 	      >ProdV</a
 	      > hk vk f g) <a href="src/Proarrow.Category.Equipment.Limit.html#prodUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L43" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L75" class="link"
 	      >Comments</a
 	      > <a href="#v:prodUniv" class="selflink"
 	      >#</a
@@ -2484,9 +2692,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-300" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-305" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L300" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L305" class="link"
 		    >Comments</a
 		    > <a href="#t:HasBinaryProducts" class="selflink"
 		    >#</a
@@ -2553,11 +2761,13 @@
 				  >Type</a
 				  >) = <a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
 				  >FUN</a
+				  > (<a href="Proarrow-Profunctor-Representable.html#t:Rep" title="Proarrow.Profunctor.Representable"
+				  >Rep</a
 				  > (<a href="Proarrow-Category-Instance-Cat.html#t:FstCat" title="Proarrow.Category.Instance.Cat"
 				  >FstCat</a
-				  > :: a -&gt; (a, b) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-				  >Type</a
-				  >)</div
+				  > :: (a, b) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+				  >+-&gt;</a
+				  > a))</div
 				></details
 			      ></td
 			    ></tr
@@ -2607,11 +2817,13 @@
 				  >Type</a
 				  >) = <a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
 				  >FUN</a
+				  > (<a href="Proarrow-Profunctor-Representable.html#t:Rep" title="Proarrow.Profunctor.Representable"
+				  >Rep</a
 				  > (<a href="Proarrow-Category-Instance-Cat.html#t:SndCat" title="Proarrow.Category.Instance.Cat"
 				  >SndCat</a
-				  > :: b -&gt; (a, b) -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-				  >Type</a
-				  >)</div
+				  > :: (a, b) <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+				  >+-&gt;</a
+				  > b))</div
 				></details
 			      ></td
 			    ></tr
@@ -2793,7 +3005,7 @@
 			  >FUNK</a
 			  > i j) <a href="src/Proarrow.Category.Equipment.Limit.html#fstObj" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L46" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L78" class="link"
 			  >Comments</a
 			  > <a href="#v:fstObj" class="selflink"
 			  >#</a
@@ -2819,7 +3031,7 @@
 			  >FUNK</a
 			  > i j) <a href="src/Proarrow.Category.Equipment.Limit.html#sndObj" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L47" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L79" class="link"
 			  >Comments</a
 			  > <a href="#v:sndObj" class="selflink"
 			  >#</a
@@ -2859,7 +3071,7 @@
 			  >FUNK</a
 			  > f g) <a href="src/Proarrow.Category.Equipment.Limit.html#prodObj" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L50" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L82" class="link"
 			  >Comments</a
 			  > <a href="#v:prodObj" class="selflink"
 			  >#</a
@@ -2909,7 +3121,7 @@
 			  >FUNK</a
 			  > f g) <a href="src/Proarrow.Category.Equipment.Limit.html#prodUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L51" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L83" class="link"
 			  >Comments</a
 			  > <a href="#v:prodUniv" class="selflink"
 			  >#</a
@@ -2934,7 +3146,7 @@
 	    >CAT</a
 	    > s) (a :: s) (b :: s) :: s <a href="src/Proarrow.Category.Equipment.Limit.html#Coproduct" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L56" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L88" class="link"
 	    >Comments</a
 	    > <a href="#t:Coproduct" class="selflink"
 	    >#</a
@@ -2964,9 +3176,9 @@
 		      >) (b :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-314" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-319" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L314" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L319" class="link"
 		    >Comments</a
 		    > <a href="#t:Coproduct" class="selflink"
 		    >#</a
@@ -3020,7 +3232,7 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Equipment.Limit.html#HasBinaryCoproducts" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L58" class="link"
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L90" class="link"
 	    >Comments</a
 	    > <a href="#t:HasBinaryCoproducts" class="selflink"
 	    >#</a
@@ -3121,7 +3333,7 @@
 	      >Lft</a
 	      > hk vk i j) <a href="src/Proarrow.Category.Equipment.Limit.html#lftObj" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L58" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L90" class="link"
 	      >Comments</a
 	      > <a href="#v:lftObj" class="selflink"
 	      >#</a
@@ -3141,7 +3353,7 @@
 	      >Rgt</a
 	      > hk vk i j) <a href="src/Proarrow.Category.Equipment.Limit.html#rgtObj" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L58" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L90" class="link"
 	      >Comments</a
 	      > <a href="#v:rgtObj" class="selflink"
 	      >#</a
@@ -3167,7 +3379,7 @@
 	      >CoprodV</a
 	      > hk vk f g) <a href="src/Proarrow.Category.Equipment.Limit.html#coprodObj" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L58" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L90" class="link"
 	      >Comments</a
 	      > <a href="#v:coprodObj" class="selflink"
 	      >#</a
@@ -3191,7 +3403,7 @@
 	      >CoprodV</a
 	      > hk vk f g) <a href="src/Proarrow.Category.Equipment.Limit.html#coprodUniv" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L58" class="link"
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L90" class="link"
 	      >Comments</a
 	      > <a href="#v:coprodUniv" class="selflink"
 	      >#</a
@@ -3216,9 +3428,9 @@
 		      > <a href="Proarrow-Category-Bicategory-Prof.html#t:FUNK" title="Proarrow.Category.Bicategory.Prof"
 		      >FUNK</a
 		      ></span
-		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-315" class="link"
+		    > <a href="src/Proarrow.Category.Bicategory.Prof.html#line-320" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L315" class="link"
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L320" class="link"
 		    >Comments</a
 		    > <a href="#t:HasBinaryCoproducts" class="selflink"
 		    >#</a
@@ -3285,13 +3497,15 @@
 				  >Type</a
 				  >) = <a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
 				  >FUN</a
+				  > (<a href="Proarrow-Profunctor-Representable.html#t:Rep" title="Proarrow.Profunctor.Representable"
+				  >Rep</a
 				  > (<a href="Proarrow-Category-Instance-Cat.html#t:LftCat" title="Proarrow.Category.Instance.Cat"
 				  >LftCat</a
-				  > :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+				  > :: a <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+				  >+-&gt;</a
+				  > <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 				  >COPRODUCT</a
-				  > a b -&gt; a -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-				  >Type</a
-				  >)</div
+				  > a b))</div
 				></details
 			      ></td
 			    ></tr
@@ -3341,13 +3555,15 @@
 				  >Type</a
 				  >) = <a href="Proarrow-Category-Bicategory-Prof.html#t:FUN" title="Proarrow.Category.Bicategory.Prof"
 				  >FUN</a
+				  > (<a href="Proarrow-Profunctor-Representable.html#t:Rep" title="Proarrow.Profunctor.Representable"
+				  >Rep</a
 				  > (<a href="Proarrow-Category-Instance-Cat.html#t:RgtCat" title="Proarrow.Category.Instance.Cat"
 				  >RgtCat</a
-				  > :: <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
+				  > :: b <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+				  >+-&gt;</a
+				  > <a href="Proarrow-Category-Instance-Coproduct.html#t:COPRODUCT" title="Proarrow.Category.Instance.Coproduct"
 				  >COPRODUCT</a
-				  > a b -&gt; b -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-				  >Type</a
-				  >)</div
+				  > a b))</div
 				></details
 			      ></td
 			    ></tr
@@ -3531,7 +3747,7 @@
 			  >FUNK</a
 			  > i j) <a href="src/Proarrow.Category.Equipment.Limit.html#lftObj" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L61" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L93" class="link"
 			  >Comments</a
 			  > <a href="#v:lftObj" class="selflink"
 			  >#</a
@@ -3557,7 +3773,7 @@
 			  >FUNK</a
 			  > i j) <a href="src/Proarrow.Category.Equipment.Limit.html#rgtObj" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L62" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L94" class="link"
 			  >Comments</a
 			  > <a href="#v:rgtObj" class="selflink"
 			  >#</a
@@ -3597,7 +3813,7 @@
 			  >FUNK</a
 			  > f g) <a href="src/Proarrow.Category.Equipment.Limit.html#coprodObj" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L65" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L97" class="link"
 			  >Comments</a
 			  > <a href="#v:coprodObj" class="selflink"
 			  >#</a
@@ -3647,7 +3863,7 @@
 			  >FUNK</a
 			  > f g) <a href="src/Proarrow.Category.Equipment.Limit.html#coprodUniv" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L66" class="link"
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Limit.hs#L98" class="link"
 			  >Comments</a
 			  > <a href="#v:coprodUniv" class="selflink"
 			  >#</a

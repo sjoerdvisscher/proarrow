@@ -1,0 +1,2309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+><head
+  ><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"
+     /><meta name="viewport" content="width=device-width, initial-scale=1"
+     /><title
+    >Proarrow.Universal</title
+    ><link href="linuwial.css" rel="stylesheet" type="text/css" title="Linuwial"
+     /><link rel="stylesheet" type="text/css" href="quick-jump.css"
+     /><link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400i,700"
+     /><script src="haddock-bundle.min.js" async="async" type="text/javascript"
+    ></script
+    ><script type="text/x-mathjax-config"
+    >MathJax.Hub.Config({ tex2jax: { processClass: "mathjax", ignoreClass: ".*" } });</script
+    ><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"
+    ></script
+    ></head
+  ><body
+  ><div id="package-header"
+    ><span class="caption"
+      >proarrow</span
+      ><ul class="links" id="page-menu"
+      ><li
+	><a href="src/Proarrow.Universal.html"
+	  >Source</a
+	  ></li
+	><li
+	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs"
+	  >User Comments</a
+	  ></li
+	><li
+	><a href="index.html"
+	  >Contents</a
+	  ></li
+	><li
+	><a href="doc-index.html"
+	  >Index</a
+	  ></li
+	></ul
+      ></div
+    ><div id="content"
+    ><div id="module-header"
+      ><table class="info"
+	><tr
+	  ><th
+	    >Safe Haskell</th
+	    ><td
+	    >None</td
+	    ></tr
+	  ><tr
+	  ><th
+	    >Language</th
+	    ><td
+	    >GHC2024</td
+	    ></tr
+	  ></table
+	><p class="caption"
+	>Proarrow.Universal</p
+	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > r =&gt; <a href="#t:InitUniversal"
+	      >InitUniversal</a
+	      > (r :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > <a href="#t:L"
+		  >L</a
+		  > (r :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (a :: k) :: j</li
+		><li
+		><a href="#v:initUnivArr"
+		  >initUnivArr</a
+		  > :: r a (<a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+		  >L</a
+		  > r a)</li
+		><li
+		><a href="#v:initUnivProp"
+		  >initUnivProp</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (b :: j). r a b -&gt; <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+		  >L</a
+		  > r a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > b</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+	      >Corepresentable</a
+	      > l =&gt; <a href="#t:TermUniversal"
+	      >TermUniversal</a
+	      > (l :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (b :: j) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><span class="keyword"
+		  >type</span
+		  > <a href="#t:R"
+		  >R</a
+		  > (l :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k) (b :: j) :: k</li
+		><li
+		><a href="#v:termUnivArr"
+		  >termUnivArr</a
+		  > :: l (<a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+		  >R</a
+		  > l b) b</li
+		><li
+		><a href="#v:termUnivProp"
+		  >termUnivProp</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k). l a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+		  >R</a
+		  > l b</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >newtype</span
+	      > <a href="#t:AsRightAdjoint"
+	      >AsRightAdjoint</a
+	      > (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (a :: k) (b :: k1) = <a href="#v:AsRightAdjoint"
+	      >AsRightAdjoint</a
+	      > {<ul class="subs"
+	      ><li
+		><a href="#v:unAsRightAdjoint"
+		  >unAsRightAdjoint</a
+		  > :: p a b</li
+		></ul
+	      >}</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >newtype</span
+	      > <a href="#t:AsLeftAdjoint"
+	      >AsLeftAdjoint</a
+	      > (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (a :: k) (b :: k1) = <a href="#v:AsLeftAdjoint"
+	      >AsLeftAdjoint</a
+	      > {<ul class="subs"
+	      ><li
+		><a href="#v:unAsLeftAdjoint"
+		  >unAsLeftAdjoint</a
+		  > :: p a b</li
+		></ul
+	      >}</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >newtype</span
+	      > <a href="#t:FromAdjunction"
+	      >FromAdjunction</a
+	      > (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >) (a :: k) (b :: k1) = <a href="#v:FromAdjunction"
+	      >FromAdjunction</a
+	      > {<ul class="subs"
+	      ><li
+		><a href="#v:unFromAdjunction"
+		  >unFromAdjunction</a
+		  > :: p a b</li
+		></ul
+	      >}</li
+	    ></ul
+	  ></details
+	></div
+      ><div id="interface"
+      ><h1
+	>Documentation</h1
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > r =&gt; <a id="t:InitUniversal" class="def"
+	    >InitUniversal</a
+	    > (r :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Universal.html#InitUniversal" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L12" class="link"
+	    >Comments</a
+	    > <a href="#t:InitUniversal" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The initial universal property of a functor <code class="inline-code"
+	      >r</code
+	      > (as a representable profunctor) and an object <code class="inline-code"
+	      >a</code
+	      >.</p
+	    ></div
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:L" class="def"
+	      >L</a
+	      > (r :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) :: j <a href="src/Proarrow.Universal.html#L" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:L" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:initUnivArr" class="def"
+	      >initUnivArr</a
+	      > :: r a (<a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+	      >L</a
+	      > r a) <a href="src/Proarrow.Universal.html#initUnivArr" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L12" class="link"
+	      >Comments</a
+	      > <a href="#v:initUnivArr" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:initUnivProp" class="def"
+	      >initUnivProp</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (b :: j). r a b -&gt; <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+	      >L</a
+	      > r a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > b <a href="src/Proarrow.Universal.html#initUnivProp" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L12" class="link"
+	      >Comments</a
+	      > <a href="#v:initUnivProp" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:InitUniversal"
+	    >Instances</h4
+	    ><details id="i:InitUniversal" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:InitUniversal:InitUniversal:1"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p =&gt; <a href="Proarrow-Universal.html#t:InitUniversal" title="Proarrow.Universal"
+		      >InitUniversal</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (a :: k)</span
+		    > <a href="src/Proarrow.Universal.html#line-42" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L42" class="link"
+		    >Comments</a
+		    > <a href="#t:InitUniversal" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:InitUniversal:InitUniversal:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:LkjFromAdjunctiona:L:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+				>L</a
+				> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				>FromAdjunction</a
+				> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>) (a :: k)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:LkjFromAdjunctiona:L:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Universal.html"
+				  >Proarrow.Universal</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+				  >L</a
+				  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				  >FromAdjunction</a
+				  > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) (a :: k) = p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+				  >%%</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:initUnivArr"
+			  >initUnivArr</a
+			  > :: <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a (<a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+			  >L</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) a) <a href="src/Proarrow.Universal.html#initUnivArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:initUnivArr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:initUnivProp"
+			  >initUnivProp</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: j). <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+			  >L</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Universal.html#initUnivProp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:initUnivProp" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+	    >Corepresentable</a
+	    > l =&gt; <a id="t:TermUniversal" class="def"
+	    >TermUniversal</a
+	    > (l :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (b :: j) <span class="keyword"
+	    >where</span
+	    > <a href="src/Proarrow.Universal.html#TermUniversal" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L19" class="link"
+	    >Comments</a
+	    > <a href="#t:TermUniversal" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >The terminal universal property of a functor <code class="inline-code"
+	      >l</code
+	      > (as a corepresentable profunctor) and an object <code class="inline-code"
+	      >b</code
+	      >.</p
+	    ></div
+	  ><div class="subs associated-types"
+	  ><p class="caption"
+	    >Associated Types</p
+	    ><p class="src"
+	    ><span class="keyword"
+	      >type</span
+	      > <a id="t:R" class="def"
+	      >R</a
+	      > (l :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (b :: j) :: k <a href="src/Proarrow.Universal.html#R" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L" class="link"
+	      >Comments</a
+	      > <a href="#t:R" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs methods"
+	  ><p class="caption"
+	    >Methods</p
+	    ><p class="src"
+	    ><a id="v:termUnivArr" class="def"
+	      >termUnivArr</a
+	      > :: l (<a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+	      >R</a
+	      > l b) b <a href="src/Proarrow.Universal.html#termUnivArr" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L19" class="link"
+	      >Comments</a
+	      > <a href="#v:termUnivArr" class="selflink"
+	      >#</a
+	      ></p
+	    ><p class="src"
+	    ><a id="v:termUnivProp" class="def"
+	      >termUnivProp</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > (a :: k). l a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+	      >R</a
+	      > l b <a href="src/Proarrow.Universal.html#termUnivProp" class="link"
+	      >Source</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L19" class="link"
+	      >Comments</a
+	      > <a href="#v:termUnivProp" class="selflink"
+	      >#</a
+	      ></p
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:TermUniversal"
+	    >Instances</h4
+	    ><details id="i:TermUniversal" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:TermUniversal:TermUniversal:1"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p =&gt; <a href="Proarrow-Universal.html#t:TermUniversal" title="Proarrow.Universal"
+		      >TermUniversal</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (b :: j)</span
+		    > <a href="src/Proarrow.Universal.html#line-46" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L46" class="link"
+		    >Comments</a
+		    > <a href="#t:TermUniversal" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:TermUniversal:TermUniversal:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:RjkFromAdjunctionb:R:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+				>R</a
+				> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				>FromAdjunction</a
+				> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>) (b :: j)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:RjkFromAdjunctionb:R:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Universal.html"
+				  >Proarrow.Universal</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+				  >R</a
+				  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				  >FromAdjunction</a
+				  > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) (b :: j) = p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				  >%</a
+				  > b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:termUnivArr"
+			  >termUnivArr</a
+			  > :: <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p (<a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+			  >R</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) b) b <a href="src/Proarrow.Universal.html#termUnivArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:termUnivArr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:termUnivProp"
+			  >termUnivProp</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k). <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+			  >R</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) b <a href="src/Proarrow.Universal.html#termUnivProp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L22" class="link"
+			  >Comments</a
+			  > <a href="#v:termUnivProp" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >newtype</span
+	    > <a id="t:AsRightAdjoint" class="def"
+	    >AsRightAdjoint</a
+	    > (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) (a :: k) (b :: k1) <a href="src/Proarrow.Universal.html#AsRightAdjoint" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L24" class="link"
+	    >Comments</a
+	    > <a href="#t:AsRightAdjoint" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:AsRightAdjoint" class="def"
+		  >AsRightAdjoint</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			><a id="v:unAsRightAdjoint" class="def"
+			  >unAsRightAdjoint</a
+			  > :: p a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:AsRightAdjoint"
+	    >Instances</h4
+	    ><details id="i:AsRightAdjoint" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsRightAdjoint:Profunctor:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+		      >AsRightAdjoint</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-25" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L25" class="link"
+		    >Comments</a
+		    > <a href="#t:AsRightAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsRightAdjoint:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p a b -&gt; <a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsRightAdjoint:Corepresentable:2"
+		      ></span
+		      > (<span class="keyword"
+		      >forall</span
+		      > (a :: k). <a href="Proarrow-Universal.html#t:InitUniversal" title="Proarrow.Universal"
+		      >InitUniversal</a
+		      > r a) =&gt; <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      >Corepresentable</a
+		      > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+		      >AsRightAdjoint</a
+		      > r :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-26" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L26" class="link"
+		    >Comments</a
+		    > <a href="#t:AsRightAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsRightAdjoint:Corepresentable:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:coindex"
+			  >coindex</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > r a b -&gt; (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > r <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Corepresentable.html#coindex" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:coindex" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:cotabulate"
+			  >cotabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > r <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > r a b <a href="src/Proarrow.Profunctor.Corepresentable.html#cotabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:cotabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:corepMap"
+			  >corepMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > r <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > r <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > b) <a href="src/Proarrow.Profunctor.Corepresentable.html#corepMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:corepMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsRightAdjoint:Representable:3"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > p =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+		      >AsRightAdjoint</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-25" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L25" class="link"
+		    >Comments</a
+		    > <a href="#t:AsRightAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsRightAdjoint:Representable:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: j) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			  >AsRightAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L22" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsRightAdjoint:-37--37-:4"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+		      >AsRightAdjoint</a
+		      > r :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+		      >%%</a
+		      > (a :: k)</span
+		    > <a href="src/Proarrow.Universal.html#line-27" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L27" class="link"
+		    >Comments</a
+		    > <a href="#t:AsRightAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsRightAdjoint:-37--37-:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			>AsRightAdjoint</a
+			> r :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			>%%</a
+			> (a :: k) = <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+			>L</a
+			> r a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsRightAdjoint:-37-:5"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+		      >AsRightAdjoint</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > (a :: j)</span
+		    > <a href="src/Proarrow.Universal.html#line-25" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L25" class="link"
+		    >Comments</a
+		    > <a href="#t:AsRightAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsRightAdjoint:-37-:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Universal.html#t:AsRightAdjoint" title="Proarrow.Universal"
+			>AsRightAdjoint</a
+			> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> (a :: j) = p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> a</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >newtype</span
+	    > <a id="t:AsLeftAdjoint" class="def"
+	    >AsLeftAdjoint</a
+	    > (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) (a :: k) (b :: k1) <a href="src/Proarrow.Universal.html#AsLeftAdjoint" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L32" class="link"
+	    >Comments</a
+	    > <a href="#t:AsLeftAdjoint" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:AsLeftAdjoint" class="def"
+		  >AsLeftAdjoint</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			><a id="v:unAsLeftAdjoint" class="def"
+			  >unAsLeftAdjoint</a
+			  > :: p a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:AsLeftAdjoint"
+	    >Instances</h4
+	    ><details id="i:AsLeftAdjoint" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsLeftAdjoint:Profunctor:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+		      >AsLeftAdjoint</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:AsLeftAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsLeftAdjoint:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p a b -&gt; <a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsLeftAdjoint:Corepresentable:2"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      >Corepresentable</a
+		      > p =&gt; <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      >Corepresentable</a
+		      > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+		      >AsLeftAdjoint</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:AsLeftAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsLeftAdjoint:Corepresentable:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:coindex"
+			  >coindex</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p a b -&gt; (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Corepresentable.html#coindex" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:coindex" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:cotabulate"
+			  >cotabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p a b <a href="src/Proarrow.Profunctor.Corepresentable.html#cotabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:cotabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:corepMap"
+			  >corepMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > b) <a href="src/Proarrow.Profunctor.Corepresentable.html#corepMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:corepMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsLeftAdjoint:Representable:3"
+		      ></span
+		      > (<span class="keyword"
+		      >forall</span
+		      > (b :: j). <a href="Proarrow-Universal.html#t:TermUniversal" title="Proarrow.Universal"
+		      >TermUniversal</a
+		      > l b) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+		      >AsLeftAdjoint</a
+		      > l :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-34" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L34" class="link"
+		    >Comments</a
+		    > <a href="#t:AsLeftAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsLeftAdjoint:Representable:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > l a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > l <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: j) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > l <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > l a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > l <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			  >AsLeftAdjoint</a
+			  > l <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L22" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsLeftAdjoint:-37--37-:4"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+		      >AsLeftAdjoint</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+		      >%%</a
+		      > (a :: k)</span
+		    > <a href="src/Proarrow.Universal.html#line-33" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L33" class="link"
+		    >Comments</a
+		    > <a href="#t:AsLeftAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsLeftAdjoint:-37--37-:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			>AsLeftAdjoint</a
+			> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			>%%</a
+			> (a :: k) = p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			>%%</a
+			> a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:AsLeftAdjoint:-37-:5"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+		      >AsLeftAdjoint</a
+		      > l :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > (b :: j)</span
+		    > <a href="src/Proarrow.Universal.html#line-35" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L35" class="link"
+		    >Comments</a
+		    > <a href="#t:AsLeftAdjoint" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:AsLeftAdjoint:-37-:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Universal.html#t:AsLeftAdjoint" title="Proarrow.Universal"
+			>AsLeftAdjoint</a
+			> l :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> (b :: j) = <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+			>R</a
+			> l b</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >newtype</span
+	    > <a id="t:FromAdjunction" class="def"
+	    >FromAdjunction</a
+	    > (p :: k -&gt; k1 -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	    >Type</a
+	    >) (a :: k) (b :: k1) <a href="src/Proarrow.Universal.html#FromAdjunction" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L40" class="link"
+	    >Comments</a
+	    > <a href="#t:FromAdjunction" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs constructors"
+	  ><p class="caption"
+	    >Constructors</p
+	    ><table
+	    ><tr
+	      ><td class="src"
+		><a id="v:FromAdjunction" class="def"
+		  >FromAdjunction</a
+		  ></td
+		><td class="doc empty"
+		>&nbsp;</td
+		></tr
+	      ><tr
+	      ><td colspan="2"
+		><div class="subs fields"
+		  ><p class="caption"
+		    >Fields</p
+		    ><ul
+		    ><li
+		      ><dfn class="src"
+			><a id="v:unFromAdjunction" class="def"
+			  >unFromAdjunction</a
+			  > :: p a b</dfn
+			><div class="doc empty"
+			>&nbsp;</div
+			></li
+		      ></ul
+		    ></div
+		  ></td
+		></tr
+	      ></table
+	    ></div
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:FromAdjunction"
+	    >Instances</h4
+	    ><details id="i:FromAdjunction" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:Profunctor:1"
+		      ></span
+		      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > p =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      >Profunctor</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-41" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L41" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:Profunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:dimap"
+			  >dimap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (c :: k) (a :: k) (b :: j) (d :: j). (c <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > a) -&gt; (b <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > d) -&gt; <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p c d <a href="src/Proarrow.Core.html#dimap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L102" class="link"
+			  >Comments</a
+			  > <a href="#v:dimap" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:-92--92-"
+			  >(\\)</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j) r. ((<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b) =&gt; r) -&gt; <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; r <a href="src/Proarrow.Core.html#%5C%5C" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L104" class="link"
+			  >Comments</a
+			  > <a href="#v:-92--92-" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:Corepresentable:2"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      >Corepresentable</a
+		      > p =&gt; <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      >Corepresentable</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-41" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L41" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:Corepresentable:2"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:coindex"
+			  >coindex</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Profunctor.Corepresentable.html#coindex" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L16" class="link"
+			  >Comments</a
+			  > <a href="#v:coindex" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:cotabulate"
+			  >cotabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b <a href="src/Proarrow.Profunctor.Corepresentable.html#cotabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L17" class="link"
+			  >Comments</a
+			  > <a href="#v:cotabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:corepMap"
+			  >corepMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  >%%</a
+			  > b) <a href="src/Proarrow.Profunctor.Corepresentable.html#corepMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L18" class="link"
+			  >Comments</a
+			  > <a href="#v:corepMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:Representable:3"
+		      ></span
+		      > <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > p =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+		      >Representable</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Universal.html#line-41" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L41" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:Representable:3"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:index"
+			  >index</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k) (b :: j). <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L20" class="link"
+			  >Comments</a
+			  > <a href="#v:index" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:tabulate"
+			  >tabulate</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: j) (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b)) -&gt; <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:tabulate" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:repMap"
+			  >repMap</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: j) (b :: j). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b) -&gt; (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  >%</a
+			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L22" class="link"
+			  >Comments</a
+			  > <a href="#v:repMap" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:InitUniversal:4"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p =&gt; <a href="Proarrow-Universal.html#t:InitUniversal" title="Proarrow.Universal"
+		      >InitUniversal</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (a :: k)</span
+		    > <a href="src/Proarrow.Universal.html#line-42" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L42" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:InitUniversal:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:LkjFromAdjunctiona:L:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+				>L</a
+				> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				>FromAdjunction</a
+				> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>) (a :: k)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:LkjFromAdjunctiona:L:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Universal.html"
+				  >Proarrow.Universal</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+				  >L</a
+				  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				  >FromAdjunction</a
+				  > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) (a :: k) = p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+				  >%%</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:initUnivArr"
+			  >initUnivArr</a
+			  > :: <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a (<a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+			  >L</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) a) <a href="src/Proarrow.Universal.html#initUnivArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L14" class="link"
+			  >Comments</a
+			  > <a href="#v:initUnivArr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:initUnivProp"
+			  >initUnivProp</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (b :: j). <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+			  >L</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > b <a href="src/Proarrow.Universal.html#initUnivProp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L15" class="link"
+			  >Comments</a
+			  > <a href="#v:initUnivProp" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:TermUniversal:5"
+		      ></span
+		      > <a href="Proarrow-Adjunction.html#t:Adjunction" title="Proarrow.Adjunction"
+		      >Adjunction</a
+		      > p =&gt; <a href="Proarrow-Universal.html#t:TermUniversal" title="Proarrow.Universal"
+		      >TermUniversal</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (b :: j)</span
+		    > <a href="src/Proarrow.Universal.html#line-46" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L46" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:TermUniversal:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:RjkFromAdjunctionb:R:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+				>R</a
+				> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				>FromAdjunction</a
+				> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>) (b :: j)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:RjkFromAdjunctionb:R:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Universal.html"
+				  >Proarrow.Universal</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+				  >R</a
+				  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+				  >FromAdjunction</a
+				  > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) (b :: j) = p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+				  >%</a
+				  > b</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
+			></div
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:termUnivArr"
+			  >termUnivArr</a
+			  > :: <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p (<a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+			  >R</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) b) b <a href="src/Proarrow.Universal.html#termUnivArr" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L21" class="link"
+			  >Comments</a
+			  > <a href="#v:termUnivArr" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:termUnivProp"
+			  >termUnivProp</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: k). <a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+			  >R</a
+			  > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			  >FromAdjunction</a
+			  > p) b <a href="src/Proarrow.Universal.html#termUnivProp" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L22" class="link"
+			  >Comments</a
+			  > <a href="#v:termUnivProp" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:-37--37-:6"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+		      >%%</a
+		      > (a :: k)</span
+		    > <a href="src/Proarrow.Universal.html#line-41" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L41" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:-37--37-:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			>FromAdjunction</a
+			> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			>%%</a
+			> (a :: k) = p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			>%%</a
+			> a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:-37-:7"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+		      >%</a
+		      > (a :: j)</span
+		    > <a href="src/Proarrow.Universal.html#line-41" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L41" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:-37-:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			>FromAdjunction</a
+			> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> (a :: j) = p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:L:8"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+		      >L</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (a :: k)</span
+		    > <a href="src/Proarrow.Universal.html#line-43" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L43" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:L:8"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Universal.html#t:L" title="Proarrow.Universal"
+			>L</a
+			> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			>FromAdjunction</a
+			> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) (a :: k) = p <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			>%%</a
+			> a</div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:FromAdjunction:R:9"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+		      >R</a
+		      > (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+		      >FromAdjunction</a
+		      > p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >) (b :: j)</span
+		    > <a href="src/Proarrow.Universal.html#line-47" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Universal.hs#L47" class="link"
+		    >Comments</a
+		    > <a href="#t:FromAdjunction" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:FromAdjunction:R:9"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Universal.html"
+			>Proarrow.Universal</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Universal.html#t:R" title="Proarrow.Universal"
+			>R</a
+			> (<a href="Proarrow-Universal.html#t:FromAdjunction" title="Proarrow.Universal"
+			>FromAdjunction</a
+			> p :: k -&gt; j -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) (b :: j) = p <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			>%</a
+			> b</div
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
+	  ></div
+	></div
+      ></div
+    ><div id="footer"
+    ><p
+      >Produced by <a href="http://www.haskell.org/haddock/"
+	>Haddock</a
+	> version 2.30.0</p
+      ></div
+    ></body
+  ></html
+>
