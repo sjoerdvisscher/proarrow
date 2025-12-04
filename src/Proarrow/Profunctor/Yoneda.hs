@@ -8,7 +8,7 @@ import Proarrow.Category.Instance.Prof (Prof (Prof))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..))
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Category.Opposite (OPPOSITE(..), Op(..))
 import Proarrow.Category.Instance.Nat (Nat(..))
 

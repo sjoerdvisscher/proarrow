@@ -7,7 +7,7 @@ import Prelude (($), type (~))
 
 import Proarrow.Category.Instance.Cat (FstCat, Initiate, LftCat, RgtCat, SndCat, Terminate, (:&&&:) (..), (:|||:) (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT)
-import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Product ((:**:) (..), Snd, Fst)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
@@ -34,7 +34,7 @@ import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Constant (Constant (..))
+import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep, withRepOb)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
@@ -73,8 +73,8 @@ instance (CategoryOf k) => CategoryOf (FAM k) where
 
 data family Embed :: k +-> FAM k
 instance (CategoryOf k) => FunctorForRep (Embed :: k +-> FAM k) where
-  type Embed @ a = DEP () (Constant a)
-  fmap f = f // Fam @(Constant '()) \(Constant a) -> Constant (f . a) :.: Constant Unit
+  type Embed @ a = DEP () (Rep (Constant a))
+  fmap f = f // Fam @(Rep (Constant '())) \(Rep a) -> Rep (f . a) :.: Rep Unit
 
 type AsPresheaf :: x +-> k -> Presheaf k
 data AsPresheaf dx a u where
@@ -126,7 +126,7 @@ instance (Profunctor l, Profunctor r, CategoryOf k) => Profunctor (l :&&: r :: (
   dimap l (r0 :**: r1) (p :&&: q) = dimap l r0 p :&&: dimap l r1 q
   r \\ (p :&&: q) = r \\ p \\ q
 instance (Representable l, Representable r, HasBinaryProducts k) => Representable (l :&&: r :: (x, y) +-> k) where
-  type (l :&&: r) % '(a, b) = (l % a) && (r % b)
+  type (l :&&: r) % ab = (l % Fst ab) && (r % Snd ab)
   tabulate @'(a, b) f = withRepOb @l @a $ withRepOb @r @b $ tabulate (fst @_ @(l % a) @(r % b) . f) :&&: tabulate (snd @_ @(l % a) @(r % b) . f)
   index (p :&&: q) = index p &&& index q
   repMap (f :**: g) = repMap @l f *** repMap @r g

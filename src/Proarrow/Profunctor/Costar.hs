@@ -1,29 +1,44 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Profunctor.Costar where
 
 import Control.Monad qualified as P
 import Data.Functor.Compose (Compose (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->), (//), rmap, obj)
+import Prelude qualified as P
+
+import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Instance.Nat (Nat' (..), type (.->) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
-import Prelude qualified as P
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
-import Proarrow.Object.Terminal (HasTerminalObject(..))
-import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
-import Proarrow.Category.Monoidal.Distributive (Traversable (..), Cotraversable (..))
-import Proarrow.Profunctor.Star (Star (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Discrete, Thin, withEq)
 
-type Costar :: (j -> k) -> k +-> j
-data Costar f a b where
-  Costar :: (Ob a) => {unCostar :: f a ~> b} -> Costar f a b
+type Costar' :: OPPOSITE (j .-> k) -> k +-> j
+data Costar' f a b where
+  Costar' :: (Ob a) => f a ~> b -> Costar' (OP (NT f)) a b
+
+type Costar f = Costar' (OP (NT f))
+pattern Costar :: () => (Ob a) => (f a ~> b) -> Costar f a b
+pattern Costar f = Costar' f
+{-# COMPLETE Costar #-}
+unCostar :: Costar f a b -> f a ~> b
+unCostar (Costar f) = f
 
 instance (Functor f) => Profunctor (Costar f) where
   dimap = dimapCorep
   r \\ Costar f = r \\ f
+
+instance Functor Costar' where
+  map (Op (Nat' n)) = Prof \(Costar f) -> Costar (f . n)
 
 instance (Functor f) => Corepresentable (Costar f) where
   type Costar f %% a = f a

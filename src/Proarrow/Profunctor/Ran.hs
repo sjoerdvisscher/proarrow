@@ -9,12 +9,11 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Limit (HasLimits (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
-import Proarrow.Functor (Functor (..))
+import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Costar (Costar (..))
-import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), Corep (..), trivialCorep)
+import Proarrow.Profunctor.Representable (Representable (..), Rep (..), trivialRep)
+import Proarrow.Profunctor.Star (Star, pattern Star)
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -27,14 +26,14 @@ data Ran j p a b where
 runRan :: (Profunctor j) => j b x -> Ran (OP j) p a b -> p a x
 runRan j (Ran k) = k j \\ j
 
-runRanProf :: (Profunctor j, Profunctor p) => Ran (OP j) p :.: j ~> p
+runRanProf :: (Profunctor j, Profunctor p) => (j |> p) :.: j ~> p
 runRanProf = Prof \(r :.: j) -> runRan j r
 
-flipRan :: (Functor j, Profunctor p) => Costar j |> p ~> p :.: Star j
-flipRan = Prof \(Ran k) -> k (Costar id) :.: Star id
+flipRan :: (FunctorForRep j, Profunctor p) => Corep j |> p ~> p :.: Rep j
+flipRan = Prof \(Ran k) -> k trivialCorep :.: trivialRep
 
-flipRanInv :: (Functor j, Profunctor p) => p :.: Star j ~> Costar j |> p
-flipRanInv = Prof \(p :.: Star f) -> p // Ran \(Costar g) -> rmap (g . f) p
+flipRanInv :: (FunctorForRep j, Profunctor p) => p :.: Rep j ~> Corep j |> p
+flipRanInv = Prof \(p :.: f) -> p // f // Ran \g -> rmap (coindex g . index f) p
 
 instance (Profunctor p, Profunctor j) => Profunctor (Ran (OP j) p) where
   dimap l r (Ran k) = l // r // Ran (lmap l . k . lmap r)
@@ -71,11 +70,12 @@ type PWLift j p a = (j |> p) %% a
 class (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 instance (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 
+-- | The right Kan extension is the right adjoint of the precomposition functor.
 instance (Profunctor j) => Corepresentable (Star (Ran (OP j))) where
   type Star (Ran (OP j)) %% p = p :.: j
-  coindex (Star (Prof f)) = Prof \(p :.: j) -> runRan j (f p)
-  cotabulate (Prof f) = Star (Prof \p -> p // Ran \q -> f (p :.: q))
-  corepMap (Prof f) = Prof \(p :.: j) -> f p :.: j
+  coindex (Star (Prof n)) = Prof \(p :.: j) -> runRan j (n p)
+  cotabulate (Prof n) = Star (Prof \p -> p // Ran \q -> n (p :.: q))
+  corepMap f = unNat (map f)
 
 ranCompose :: (Profunctor i, Profunctor j, Profunctor p) => i |> (j |> p) ~> (i :.: j) |> p
 ranCompose = Prof \k -> k // Ran \(i :.: j) -> runRan j (runRan i k)

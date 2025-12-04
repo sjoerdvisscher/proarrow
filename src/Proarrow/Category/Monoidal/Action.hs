@@ -9,7 +9,8 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 
 -- | Profuntorial strength for a monoidal action.
--- Gives functorial strength for Star, and functorial costrength for Costar.
+-- Gives functorial strength for representable profunctors,
+-- and functorial costrength for corepresentable profunctors.
 type Strong :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Strong m (p :: c +-> d) where
   act :: forall (a :: m) b x y. a ~> b -> p x y -> p (Act a x) (Act b y)

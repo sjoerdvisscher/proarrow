@@ -20,8 +20,8 @@ has kind `OP k`.
 ### Kind `j -> k -> Type` is reserved for profunctors
 
 If profunctors would have kind `OP j -> k -> Type`, then `(->)` wouldn't be a profunctor
-as is. This would require too many wrapper all over the place. So instead `j -> k -> Type`
-is reserved for profunctors. This means that bifunctors need to use `(j, k) -> Type`.
+as is. This would require too many wrappers all over the place. So instead `j -> k -> Type`
+is reserved for profunctors. So for the category of bifunctors we do need a wrapper.
 
 ### Use constraints to limit which objects are part of a category
 
@@ -46,5 +46,5 @@ an identity representable profunctor!
 
 ### Generalize the category theory to work with profunctors
 
-To make working with representable profunctors instead of functors, the category theory
-should work with profunctors where possible.
+To make working with representable profunctors instead of functors easier,
+the category theory should work with profunctors where possible.

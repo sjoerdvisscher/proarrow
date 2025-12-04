@@ -198,10 +198,7 @@ instance CategoryOf (k1 -> k2 -> k3 -> Type) where
   type Ob f = Functor f
 
 instance Promonad (Nat :: CAT (k1 -> k2 -> k3 -> Type)) where
-  id = n
-    where
-      n :: forall f. (Functor f) => Nat f f
-      n = Nat (map @f id)
+  id @f = Nat (map @f id)
   Nat f . Nat g = Nat (f . g)
 
 instance Profunctor (Nat :: CAT (k1 -> k2 -> k3 -> Type)) where
@@ -214,17 +211,14 @@ instance CategoryOf (k1 -> k2 -> k3 -> k4 -> Type) where
   type Ob f = Functor f
 
 instance Promonad (Nat :: CAT (k1 -> k2 -> k3 -> k4 -> Type)) where
-  id = n
-    where
-      n :: forall f. (Functor f) => Nat f f
-      n = Nat (map @f id)
+  id @f = Nat (map @f id)
   Nat f . Nat g = Nat (f . g)
 
 instance Profunctor (Nat :: CAT (k1 -> k2 -> k3 -> k4 -> Type)) where
   dimap f g h = g . h . f
   r \\ Nat{} = r
 
-newtype NatK j k = NT (j -> k)
+newtype j .-> k = NT (j -> k)
 type instance UN NT (NT f) = f
 
 data Nat' f g where
@@ -234,23 +228,25 @@ data Nat' f g where
     -> Nat' (NT f) (NT g)
 
 -- | The category of functors and natural transformations.
-instance CategoryOf (NatK j k) where
+instance CategoryOf (j .-> k) where
   type (~>) = Nat'
   type Ob f = (Is NT f, Functor (UN NT f))
 
-instance Promonad (Nat' :: CAT (NatK j k)) where
+instance Promonad (Nat' :: CAT (j .-> k)) where
   id @(NT f) = Nat' (map @f id)
   Nat' f . Nat' g = Nat' (f . g)
 
-instance Profunctor (Nat' :: CAT (NatK j k)) where
+instance Profunctor (Nat' :: CAT (j .-> k)) where
   dimap = dimapDefault
   r \\ Nat'{} = r
 
 instance Functor P.Either where map f = Nat (P.first f)
 instance Functor (,) where map f = Nat (P.first f)
 
-first :: (Functor f, Ob c) => (a ~> b) -> f a c -> f b c
+first :: (Functor (f :: i -> j -> k), (~>) P.~ (Nat :: CAT (j -> k)), Ob c) => (a ~> b) -> f a c ~> f b c
 first f = unNat (map f)
 
-bimap :: (Functor f, Functor (f a)) => a ~> c -> b ~> d -> f a b -> f c d
-bimap l r = first l . map r \\ l \\ r
+bimap
+  :: (Functor (f :: i -> j -> k), (~>) P.~ (Nat :: CAT (j -> k)), Functor (f a))
+  => a ~> c -> b ~> d -> f a b ~> f c d
+bimap l r = first l . map r \\ r

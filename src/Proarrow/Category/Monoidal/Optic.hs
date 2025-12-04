@@ -20,7 +20,7 @@ import Proarrow.Functor (Prelude (..))
 import Proarrow.Object (src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
 import Proarrow.Object.BinaryProduct ()
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Profunctor.Identity (Id(..))
 
 type Optic :: Kind -> c -> d -> c -> d -> Type

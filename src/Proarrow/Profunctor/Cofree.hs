@@ -10,7 +10,7 @@ import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), UN, t
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 
 type HasCofree :: forall {k}. (k -> Constraint) -> Constraint
 class

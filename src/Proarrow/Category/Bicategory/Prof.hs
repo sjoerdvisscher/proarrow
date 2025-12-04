@@ -217,8 +217,8 @@ type ProfSq p q f g = Sq '(PK p, FUN g) '(PK q, FUN f)
 -- > p---@   |
 -- > |   v   |
 -- > K-InjL-Col
-isCotabulator :: (Profunctor p) => ProfSq p Col.Collage (Col.InjR p) (Col.InjL p)
-isCotabulator = Sq (Prof \(Col.InjL f :.: p) -> f :.: Col.InjR (Col.L2R p) \\ p)
+isCotabulator :: (Profunctor p) => ProfSq p Col.Collage (Rep (Col.InjR p)) (Rep (Col.InjL p))
+isCotabulator = Sq (Prof \(Rep f :.: p) -> f :.: Rep (Col.L2R p) \\ p)
 
 -- | Any 2-cell of shape p(a, b) -> e(f a, g b) factors through the cotabulator 2-cell.
 --

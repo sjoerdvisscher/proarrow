@@ -5,26 +5,19 @@ module Proarrow.Adjunction where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Colimit (HasColimits (..), mapColimit)
+import Proarrow.Category.Colimit (HasColimits (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (COREP, COREPK, REP, REPK, SUBCAT (..), Sub (..))
-import Proarrow.Category.Limit (HasLimits (..), mapLimit)
+import Proarrow.Category.Limit (HasLimits (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, rmap, (//), (:~>), type (+->))
-import Proarrow.Functor (map)
+import Proarrow.Functor (Functor, FunctorForRep, map)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
-import Proarrow.Profunctor.Costar (Costar (..))
+import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), trivialCorep)
+import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable
-  ( CorepStar (..)
-  , RepCostar (..)
-  , Representable (..)
-  , mapCorepStar
-  , mapRepCostar
-  , trivialRep
-  )
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Representable (CorepStar (..), Rep, RepCostar (..), Representable (..), trivialRep)
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
 
 -- | Adjunctions as heteromorphisms.
@@ -58,9 +51,8 @@ instance Representable (Costar ((,) a)) where
   index (Costar g) a b = g (b, a)
   repMap = map
 
-type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
-
 -- | Adjunctions between two profunctors.
+type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
 class (Profunctor p, Profunctor q) => Proadjunction (p :: j +-> k) (q :: k +-> j) where
   unit :: (Ob a) => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)
@@ -72,6 +64,14 @@ instance (Representable f) => Proadjunction f (RepCostar f) where
 instance (Corepresentable f) => Proadjunction (CorepStar f) f where
   unit = trivialCorep :.: trivialRep
   counit (f :.: g) = coindex g . index f
+
+instance (FunctorForRep f) => Proadjunction (Rep f) (Corep f) where
+  unit = trivialCorep :.: trivialRep
+  counit (f :.: g) = coindex g . index f
+
+instance (Functor f) => Proadjunction (Star f) (Costar f) where
+  unit = Costar id :.: Star id
+  counit (Star f :.: Costar g) = g . f
 
 instance (Proadjunction l1 r1, Proadjunction l2 r2) => Proadjunction (l1 :.: l2) (r2 :.: r1) where
   unit :: forall a. (Ob a) => ((r2 :.: r1) :.: (l1 :.: l2)) a a
@@ -128,7 +128,6 @@ instance (HasLimits j k) => Representable (LimitAdj (j :: a +-> b) :: REPK a k +
           )
       )
   tabulate @(SUB r) (Sub (Op (Prof n))) = LimitAdj (\j -> n (RepCostar (index @r (limit (trivialRep :.: j)))) :.: trivialRep \\ j)
-  repMap (Sub n) = Sub (Op (mapRepCostar (mapLimit @j n)))
 
 instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a k +-> COREPK b k) where
   type LimitAdj j %% c = REP (CorepStar (Colimit j (UN OP (UN SUB c))))
@@ -145,7 +144,6 @@ instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a
                 . l
             )
       )
-  corepMap (Sub (Op n)) = Sub (mapCorepStar (mapColimit @j n))
 
 rightAdjointPreservesLimits
   :: forall {k} {k'} {i} {a} (j :: i +-> a) (p :: k +-> k') (d :: i +-> k)

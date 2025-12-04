@@ -26,7 +26,7 @@ import Proarrow.Core (CategoryOf (..), Obj, Promonad ((.)), id, obj, (:~>), (\\)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable)
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Prelude (Either (..), Traversable, either)
 
 infixl 6 |||

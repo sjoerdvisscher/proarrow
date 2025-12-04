@@ -7,12 +7,11 @@ import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
-import Proarrow.Functor (Functor (..))
+import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Costar (Costar (..))
-import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), Corep (..), trivialCorep)
+import Proarrow.Profunctor.Representable (Representable (..), Rep (..), trivialRep)
+import Proarrow.Profunctor.Star (Star, pattern Star)
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -25,14 +24,14 @@ data Rift j p a b where
 runRift :: (Profunctor j) => j x a -> Rift (OP j) p a b -> p x b
 runRift j (Rift k) = k j \\ j
 
-runRiftProf :: (Profunctor j, Profunctor p) => j :.: Rift (OP j) p ~> p
+runRiftProf :: (Profunctor j, Profunctor p) => j :.: (p <| j) ~> p
 runRiftProf = Prof \(j :.: r) -> runRift j r
 
-flipRift :: (Functor j, Profunctor p) => p <| Star j ~> Costar j :.: p
-flipRift = Prof \(Rift k) -> Costar id :.: k (Star id)
+flipRift :: (FunctorForRep j, Profunctor p) => p <| Rep j ~> Corep j :.: p
+flipRift = Prof \(Rift k) -> trivialCorep :.: k trivialRep
 
-flipRiftInv :: (Functor j, Profunctor p) => Costar j :.: p ~> p <| Star j
-flipRiftInv = Prof \(Costar f :.: p) -> p // Rift \(Star g) -> lmap (f . g) p
+flipRiftInv :: (FunctorForRep j, Profunctor p) => Corep j :.: p ~> p <| Rep j
+flipRiftInv = Prof \(g :.: p) -> g // p // Rift \f -> lmap (coindex g . index f) p
 
 instance (Profunctor p, Profunctor j) => Profunctor (Rift (OP j) p) where
   dimap l r (Rift k) = r // l // Rift (rmap r . k . rmap l)
@@ -44,11 +43,12 @@ instance (Profunctor j) => Functor (Rift (OP j)) where
 instance Functor Rift where
   map (Op (Prof n)) = Nat (Prof \(Rift k) -> Rift (k . n))
 
+-- | The right Kan lift is the right adjoint of the postcomposition functor.
 instance (Profunctor j) => Corepresentable (Star (Rift (OP j))) where
   type Star (Rift (OP j)) %% p = j :.: p
   coindex (Star (Prof f)) = Prof \(j :.: p) -> runRift j (f p)
   cotabulate (Prof f) = Star (Prof \p -> p // Rift \q -> f (q :.: p))
-  corepMap (Prof f) = Prof \(j :.: p) -> j :.: f p
+  corepMap = map
 
 instance (p ~ j, Profunctor p) => Promonad (Rift (OP j) p) where
   id = Rift id

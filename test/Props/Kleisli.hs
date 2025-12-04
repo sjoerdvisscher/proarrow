@@ -14,9 +14,9 @@ import Proarrow.Category.Instance.Free (Show2)
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
-import Proarrow.Profunctor.Costar (Costar (..))
-import Proarrow.Profunctor.Star (Star (..))
-import Proarrow.Promonad.Cont (Cont(..))
+import Proarrow.Profunctor.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
+import Proarrow.Promonad.Cont (Cont (..))
 
 import Props
 import Props.Hask ()

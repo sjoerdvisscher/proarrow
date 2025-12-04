@@ -6,7 +6,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), type (+->), Profunctor (..), Promonad (..), (:~>))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Free (HasFree (..))
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 
 type Coyoneda :: (j +-> k) -> j +-> k
 data Coyoneda p a b where

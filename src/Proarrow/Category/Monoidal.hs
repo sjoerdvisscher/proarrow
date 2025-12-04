@@ -19,8 +19,8 @@ import Proarrow.Category.Instance.Free
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
 import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var, iso)
 
--- This is equal to a monoidal functor for Star
--- and to an oplax monoidal functor for Costar
+-- This is equal to a monoidal functor for representable profunctors
+-- and to an oplax monoidal functor for corepresentable profunctors.
 type MonoidalProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: j +-> k) where
   par0 :: p Unit Unit

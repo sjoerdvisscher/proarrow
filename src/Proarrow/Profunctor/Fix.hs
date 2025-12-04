@@ -9,7 +9,7 @@ import Proarrow.Category.Monoidal.Distributive (Traversable (..), Cotraversable 
 import Proarrow.Core (Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Category.Monoidal.Action (Strong (..))
 
 type Fix :: k +-> k -> k +-> k

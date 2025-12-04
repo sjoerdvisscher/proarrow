@@ -6,28 +6,39 @@ import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Instance.Nat (Nat (..), Nat' (..), type (.->) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
-import Proarrow.Functor (Functor (..), Prelude (..))
+import Proarrow.Functor (Functor (..), FunctorForRep (..), Prelude (..))
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), copar)
 import Proarrow.Object.Initial (initiate)
-import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), dimapRep, trivialRep)
 
-type Star :: (k1 -> k2) -> k1 +-> k2
-data Star f a b where
-  Star :: (Ob b) => {unStar :: a ~> f b} -> Star f a b
+type Star' :: j .-> k -> j +-> k
+data Star' f a b where
+  Star' :: (Ob b) => a ~> f b -> Star' (NT f) a b
+
+type Star f = Star' (NT f)
+pattern Star :: () => (Ob b) => (a ~> f b) -> Star f a b
+pattern Star f = Star' f
+{-# COMPLETE Star #-}
+unStar :: Star f a b -> a ~> f b
+unStar (Star f) = f
 
 instance (Functor f) => Profunctor (Star f) where
   dimap = dimapRep
   r \\ Star f = r \\ f
+
+instance (CategoryOf j, CategoryOf k) => Functor (Star' :: (j .-> k) -> j +-> k) where
+  map (Nat' n) = Prof \(Star f) -> Star (n . f)
 
 instance (Functor f) => Representable (Star f) where
   type Star f % a = f a
@@ -91,5 +102,5 @@ instance (Functor f, Thin j, Discrete k) => ThinProfunctor (Star f :: j +-> k) w
   arr = Star id
   withArr (Star f) = withEq f
 
-strength :: forall {m} f a b. (Functor f, Strong m (Star f), Ob (a :: m), Ob b) => Act a (f b) ~> f (Act a b)
-strength = unStar (act (obj @a) (Star (obj @(f b))))
+strength :: forall {m} f a b. (FunctorForRep f, Strong m (Rep f), Ob (a :: m), Ob b) => Act a (f @ b) ~> f @ Act a b
+strength = unRep @f (act (obj @a) (trivialRep @(Rep f) @b))

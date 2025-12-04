@@ -39,7 +39,7 @@ import Proarrow.Object.Dual (CompactClosed, Dual, dualObj, dualityCounit, dualit
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
 import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
-import Proarrow.Profunctor.Star (Star (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 
 type HasFree :: forall {k}. (k -> Constraint) -> Constraint
 class (CategoryOf k, Representable (Free ob), forall b. (Ob b) => ob (Free ob % b)) => HasFree (ob :: k -> Constraint) where

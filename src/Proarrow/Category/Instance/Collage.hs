@@ -18,7 +18,7 @@ import Proarrow.Core
 import Proarrow.Object.Initial (HasInitialObject (..), initiate')
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
 import Proarrow.Category.Enriched.ThinCategory (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Functor (FunctorForRep (..))
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind
 type data COLLAGE (p :: k +-> j) = L j | R k
@@ -82,26 +82,12 @@ instance (Thin j, Thin k, ThinProfunctor p) => ThinProfunctor (Collage :: CAT (C
   withArr (L2R p) r = withArr p r \\ p
   withArr (InR f) r = withArr f r \\ f
 
-type InjL :: forall (p :: k +-> j) -> j +-> COLLAGE p
-data InjL p a b where
-  InjL :: (Ob b) => {unInL :: a ~> InjL p % b} -> InjL p a b
-instance (Profunctor p) => Profunctor (InjL p) where
-  dimap = dimapRep
-  r \\ InjL p = r \\ p
-instance (Profunctor p) => Representable (InjL p) where
-  type InjL p % a = L a
-  index (InjL f) = f
-  tabulate f = InjL f \\ f
-  repMap = InL
+data family InjL :: forall (p :: k +-> j) -> j +-> COLLAGE p
+instance (Profunctor p) => FunctorForRep (InjL p) where
+  type InjL p @ a = L a
+  fmap = InL
 
-type InjR :: forall (p :: k +-> j) -> k +-> COLLAGE p
-data InjR p a b where
-  InjR :: (Ob b) => {unInjR :: a ~> InjR p % b} -> InjR p a b
-instance (Profunctor p) => Profunctor (InjR p) where
-  dimap = dimapRep
-  r \\ InjR p = r \\ p
-instance (Profunctor p) => Representable (InjR p) where
-  type InjR p % a = R a
-  index (InjR f) = f
-  tabulate f = InjR f \\ f
-  repMap = InR
+data family InjR :: forall (p :: k +-> j) -> k +-> COLLAGE p
+instance (Profunctor p) => FunctorForRep (InjR p) where
+  type InjR p @ a = R a
+  fmap = InR

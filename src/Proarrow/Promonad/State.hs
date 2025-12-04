@@ -11,8 +11,7 @@ instance (Monoidal k, Ob s) => Profunctor (State (s :: k)) where
   r \\ State f = r \\ f
 
 instance (Monoidal k, Ob s) => Promonad (State (s :: k)) where
-  id :: forall a. (Ob a) => State s a a
-  id = State (obj @s `par` obj @a)
+  id @a = State (obj @s `par` obj @a)
   State f . State g = State (f . g)
 
 -- | Note: This is only premonoidal, not monoidal.

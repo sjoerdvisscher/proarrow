@@ -1,33 +1,9 @@
 module Proarrow.Profunctor.Constant where
 
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
+import Proarrow.Core (CategoryOf (..), Promonad (..), type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 
-type Constant :: k -> j +-> k
-data Constant c a b where
-  Constant :: (Ob b) => a ~> c -> Constant c a b
-
-instance (CategoryOf j, CategoryOf k, Ob c) => Profunctor (Constant c :: j +-> k) where
-  dimap = dimapRep
-  r \\ Constant f = r \\ f
-
-instance (CategoryOf j, CategoryOf k, Ob c) => Representable (Constant c :: j +-> k) where
-  type Constant c % a = c
-  index (Constant f) = f
-  tabulate f = Constant f
-  repMap _ = id
-
-type ConstIn :: k -> k +-> j
-data ConstIn c a b where
-  ConstIn :: (Ob a) => c ~> b -> ConstIn c a b
-
-instance (CategoryOf j, CategoryOf k, Ob c) => Profunctor (ConstIn c :: k +-> j) where
-  dimap = dimapCorep
-  r \\ ConstIn f = r \\ f
-
-instance (CategoryOf j, CategoryOf k, Ob c) => Corepresentable (ConstIn c :: k +-> j) where
-  type ConstIn c %% a = c
-  coindex (ConstIn f) = f
-  cotabulate f = ConstIn f
-  corepMap _ = id
+data family Constant :: k -> j +-> k
+instance (CategoryOf j, CategoryOf k, Ob c) => FunctorForRep (Constant c :: j +-> k) where
+  type Constant c @ a = c
+  fmap _ = id
