@@ -4,6 +4,7 @@ module Proarrow.Category.Bicategory
   ( -- * Bicategories
     Bicategory (..)
   , iObj
+  , obj1
   , (==)
   , (||)
   , leftUnitor'
@@ -95,6 +96,9 @@ class (Locally CategoryOf kk, CategoryOf s, forall i. (Ob0 kk i) => ObUnit kk i)
 -- | The identity 1-cell (as represented by an identity 2-cell).
 iObj :: (Bicategory kk, Ob0 kk i) => Obj (I :: kk i i)
 iObj = id
+
+obj1 :: forall {kk} {j} {k} a. (Bicategory kk, Ob (a :: kk j k)) => Obj a
+obj1 = withOb0s @kk @a (obj @a)
 
 leftUnitor' :: (Bicategory kk) => (a :: kk i j) ~> b -> (I `O` a) ~> b
 leftUnitor' f = f . leftUnitor \\\ f

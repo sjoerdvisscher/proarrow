@@ -4,10 +4,10 @@ module Proarrow.Squares.Limit where
 
 import Proarrow.Category.Bicategory (Adjunction, Bicategory (..))
 import Proarrow.Category.Bicategory qualified as Adj
-import Proarrow.Category.Bicategory.Strictified (Path (..), Strictified (..), st)
+import Proarrow.Category.Bicategory.Strictified (Path (..), Strictified (..))
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..), flipCompanionInv, flipConjoint)
 import Proarrow.Category.Equipment.Limit qualified as L
-import Proarrow.Core (CategoryOf (..), obj)
+import Proarrow.Core (CategoryOf (..))
 import Proarrow.Squares
   ( fromLeft
   , fromRight
@@ -41,7 +41,7 @@ limit =
     withObCompanion @hk @vk @d $
       withObCompanion @hk @vk @(L.Limit j d) $
         Sq $
-          st @(j ::: Companion hk (L.Limit j d) ::: Nil) @(Companion hk d ::: Nil)
+          St @(j ::: Companion hk (L.Limit j d) ::: Nil) @(Companion hk d ::: Nil)
             (L.limit @vk @j @k @d)
 
 -- | The universal property of the limit.
@@ -59,7 +59,7 @@ limitUniv
    . (Ob0 vk i, Ob0 vk a, L.HasLimits vk j k, Ob d, Ob p)
   => Sq '(j ::: p ::: Nil, Nil) '(Nil, d ::: Nil)
   -> Sq '(p ::: Nil, Nil) '(Nil, L.Limit j d ::: Nil)
-limitUniv (Sq (Str _ _ n)) =
+limitUniv (Sq (St n)) =
   L.withObLimit @vk @j @k @d $
     hArr (L.limitUniv @vk @j @k @d @p n) ||| fromLeft \\\ n
 
@@ -177,9 +177,9 @@ colimit =
     withObCompanion @hk @vk @d $
       withObCompanion @hk @vk @(L.Colimit j d) $
         Sq $
-          st @(j ::: Companion hk d ::: Nil) @(Companion hk (L.Colimit j d) ::: Nil)
-            ( flipCompanionInv @d @j @(Companion hk (L.Colimit j d)) obj $
-                flipConjoint @(L.Colimit j d) @j @(Conjoint hk d) obj $
+          St @(j ::: Companion hk d ::: Nil) @(Companion hk (L.Colimit j d) ::: Nil)
+            ( flipCompanionInv @d @j @(Companion hk (L.Colimit j d)) $
+                flipConjoint @(L.Colimit j d) @j @(Conjoint hk d) $
                   L.colimit @vk @j @k @d
             )
 
@@ -200,15 +200,16 @@ colimitUniv
   -> Sq '(p ::: Nil, L.Colimit j d ::: Nil) '(Nil, Nil)
 colimitUniv sq = L.withObColimit @vk @j @_ @d $
   case (fromRight === sq) of
-    Sq (Str _ _ n) -> hArr (L.colimitUniv @vk @j @k @d @p n) ||| toLeft \\\ n
+    Sq (St n) -> hArr (L.colimitUniv @vk @j @k @d @p n) ||| toLeft \\\ n
 
 colimitUniv'
   :: forall {hk} {vk} {a} {i} {k} (j :: hk a i) (d :: vk i k) (p :: vk a k)
    . (Ob0 vk i, Ob0 vk a, Ob0 vk k, L.HasColimits vk j k, Ob d, Ob p)
   => Sq '(j ::: Nil, d ::: Nil) '(Nil, p ::: Nil)
   -> Sq '(Nil :: Path hk a a, L.Colimit j d ::: Nil) '(Nil, p ::: Nil)
-colimitUniv' n = withObConjoint @hk @vk @p $
-  fromRight ||| (colimitUniv @j @d @(Conjoint hk p) (n === toLeft))
+colimitUniv' n =
+  withObConjoint @hk @vk @p $
+    fromRight ||| (colimitUniv @j @d @(Conjoint hk p) (n === toLeft))
 
 -- | Preservation of colimits by left adjoints
 --

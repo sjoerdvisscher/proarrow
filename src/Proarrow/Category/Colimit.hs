@@ -5,15 +5,14 @@ module Proarrow.Category.Colimit where
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), type (:++:) (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), IsLR (..), type (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, src, (//), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Object (Obj, src)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
@@ -22,7 +21,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), co
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (TerminalProfunctor'))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Wrapped (Wrapped (..))
 
 type Unweighted = TerminalProfunctor
@@ -58,7 +57,7 @@ instance (HasBinaryCoproducts k, Corepresentable d) => FunctorForRep (CoproductC
 
 instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: () +-> COPRODUCT () ()) k where
   type Colimit Unweighted d = Corep (CoproductColimit d)
-  colimit (TerminalProfunctor' o _ :.: Corep @(CoproductColimit d) f) = o // cotabulate $ f . cochoose @_ @d o
+  colimit (TerminalProfunctor @o :.: Corep @(CoproductColimit d) f) = cotabulate $ f . cochoose @d @o
   colimitUniv n p =
     p //
       let l = n (TerminalProfunctor' (InjL Unit) Unit :.: p)
@@ -66,13 +65,15 @@ instance (HasBinaryCoproducts k) => HasColimits (Unweighted :: () +-> COPRODUCT 
       in Corep $ coindex l ||| coindex r
 
 cochoose
-  :: forall k (d :: k +-> COPRODUCT () ()) b
-   . (HasBinaryCoproducts k, Corepresentable d)
-  => Obj b
-  -> (d %% b) ~> ((d %% L '()) || (d %% R '()))
-cochoose b = withCorepOb @d @(L '()) $ withCorepOb @d @(R '()) $ case b of
-  (InjL Unit) -> lft @_ @(d %% L '()) @(d %% R '())
-  (InjR Unit) -> rgt @_ @(d %% L '()) @(d %% R '())
+  :: forall {k} (d :: k +-> COPRODUCT () ()) b
+   . (HasBinaryCoproducts k, Corepresentable d, Ob b)
+  => (d %% b) ~> ((d %% L '()) || (d %% R '()))
+cochoose =
+  withCorepOb @d @(L '()) $
+    withCorepOb @d @(R '()) $
+      caseLr @b
+        (lft @_ @(d %% L '()) @(d %% R '()))
+        (rgt @_ @(d %% L '()) @(d %% R '()))
 
 data family CopowerLimit :: Type -> k +-> () -> () +-> k
 instance (Corepresentable d, Copowered Type k) => FunctorForRep (CopowerLimit n d :: () +-> k) where

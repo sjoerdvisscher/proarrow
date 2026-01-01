@@ -1,6 +1,8 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)
+import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
@@ -14,11 +16,11 @@ data (:++:) p q a b where
 
 type IsLR :: forall {j} {k}. COPRODUCT j k -> Constraint
 class IsLR (a :: COPRODUCT j k) where
-  lrId :: (Promonad p, Promonad q) => (p :++: q) a a
+  caseLr :: (forall b. (a ~ L b, Ob b) => r) -> (forall b. (a ~ R b, Ob b) => r) -> r
 instance (Ob a) => IsLR (L a :: COPRODUCT j k) where
-  lrId = InjL id
+  caseLr l _ = l
 instance (Ob a) => IsLR (R a :: COPRODUCT j k) where
-  lrId = InjR id
+  caseLr _ r = r
 
 instance (Profunctor p, Profunctor q) => Profunctor (p :++: q) where
   dimap (InjL f) (InjL g) (InjL p) = InjL (dimap f g p)
@@ -30,7 +32,7 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :++: q) where
 
 -- | The coproduct of two promonads.
 instance (Promonad p, Promonad q) => Promonad (p :++: q) where
-  id = lrId
+  id @a = caseLr @a (InjL id) (InjR id)
   InjL p . InjL q = InjL (p . q)
   InjR q . InjR r = InjR (q . r)
 

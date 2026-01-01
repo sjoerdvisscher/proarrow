@@ -4,9 +4,9 @@ module Proarrow.Squares.Relative where
 
 import Proarrow.Category.Bicategory (Bicategory (..))
 import Proarrow.Category.Bicategory.Relative qualified as Rel
-import Proarrow.Category.Bicategory.Strictified (Path (..), SPath (..), Strictified (..), singleton)
+import Proarrow.Category.Bicategory.Strictified (Path (..), Strictified (..))
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..), flipCompanion, flipConjointInv)
-import Proarrow.Core (CategoryOf (..), obj)
+import Proarrow.Core (CategoryOf (..))
 
 -- | The unit square for a @j@-relative monad @t@.
 --
@@ -19,9 +19,7 @@ unit
   :: forall {hk} {vk} {a} {e} {j :: hk e a} {t :: vk a e}
    . (Equipment hk vk, Rel.Monad j (Companion hk t), Ob0 vk a, Ob0 vk e, Ob t, Ob j)
   => Sq '(Nil, Nil :: Path vk a a) '(Companion hk t ::: j ::: Nil, Nil)
-unit =
-  let tc = mapCompanion @hk (obj @t)
-  in Sq (Str SNil (SCons tc (SCons (obj @j) SNil)) (Rel.unit @j @(Companion hk t)))
+unit = Sq (St (Rel.unit @j @(Companion hk t)))
 
 -- | The multiplication square for a @j@-relative monad @t@.
 --
@@ -34,9 +32,7 @@ mult
   :: forall {hk} {vk} {a} {e} {j :: hk e a} {t :: vk a e}
    . (Equipment hk vk, Rel.Monad j (Companion hk t), Ob0 vk a, Ob0 vk e, Ob t, Ob j)
   => Sq '(Companion hk t ::: j ::: Companion hk t ::: Nil, Nil :: Path vk e e) '(Companion hk t ::: Nil, Nil)
-mult =
-  let tc = mapCompanion @hk (obj @t)
-  in Sq (Str (SCons tc (SCons (obj @j) (SCons tc SNil))) (SCons tc SNil) (Rel.mult @j @(Companion hk t)))
+mult = Sq (St (Rel.mult @j @(Companion hk t)))
 
 -- | @j@-relative adjunction
 --
@@ -58,13 +54,12 @@ leftAdjunct
      )
   => Sq '(Conjoint hk l ::: Nil, Nil :: Path vk a a) '(Companion hk r ::: j ::: Nil, Nil :: Path vk c c)
 leftAdjunct =
-  let l = obj @l; lc = mapCompanion @hk l; rc = mapCompanion @hk (obj @r)
-  in Sq
-       ( flipConjointInv
-           (singleton l)
-           (Str SNil (SCons lc (SCons rc (SCons (obj @j) SNil))) (Rel.eta @j @(Companion hk l) @(Companion hk r)))
-       )
-       \\\ mapConjoint @hk l
+  withObConjoint @hk @vk @l
+    ( Sq
+        ( flipConjointInv @(l ::: Nil)
+            (St (Rel.eta @j @(Companion hk l) @(Companion hk r)))
+        )
+    )
 
 -- | @j@-relative adjunction, other direction
 --
@@ -86,10 +81,9 @@ rightAdjunct
      )
   => Sq '(Companion hk r ::: j ::: Nil, Nil :: Path vk a a) '(Conjoint hk l ::: Nil, Nil :: Path vk c c)
 rightAdjunct =
-  let l = obj @l; lc = mapCompanion @hk l; rc = mapCompanion @hk (obj @r)
-  in Sq
-       ( flipCompanion
-           (singleton l)
-           (Str (SCons rc (SCons (obj @j) (SCons lc SNil))) SNil (Rel.epsilon @j @(Companion hk l) @(Companion hk r)))
-       )
-       \\\ mapConjoint @hk l
+  withObConjoint @hk @vk @l
+    ( Sq
+        ( flipCompanion @(l ::: Nil)
+            (St @(Companion hk r ::: j ::: Companion hk l ::: Nil) @Nil (Rel.epsilon @j @(Companion hk l) @(Companion hk r)))
+        )
+    )

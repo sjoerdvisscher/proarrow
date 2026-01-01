@@ -5,9 +5,9 @@ module Proarrow.Category.Equipment.Limit where
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Category.Bicategory (Bicategory (..), obj1)
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq, flipCompanion, flipCompanionInv)
-import Proarrow.Core (CAT, CategoryOf (..), Obj, obj, (.))
+import Proarrow.Core (CAT, CategoryOf (..), Obj, (.))
 
 -- | weighted limits
 type HasLimits :: forall {s} {hk :: CAT s} {a :: s} {i :: s}. CAT s -> hk i a -> s -> Constraint
@@ -23,19 +23,16 @@ toLimitAdj
   => Companion hk c ~> Companion hk (Limit j r) -> j ~> Conjoint hk c `O` Companion hk r
 toLimitAdj n =
   withOb0s @vk @r $
-    withOb0s @vk @c $
-      flipCompanion @c @j @(Companion hk r) (obj @c) (limit @vk @j @k @r . (n `o` obj @j)) \\\ n
+    flipCompanion @c @j @(Companion hk r) (limit @vk @j @k @r . (n `o` obj1 @j)) \\\ n
 
 fromLimitAdj
   :: forall {hk} {vk} {k} {a} {b} (j :: hk a b) (c :: vk b k) (r :: vk a k)
    . (Equipment hk vk, HasLimits vk j k, Ob r, Ob c)
   => j ~> Conjoint hk c `O` Companion hk r -> Companion hk c ~> Companion hk (Limit j r)
 fromLimitAdj n =
-  withOb0s @vk @r $
-    withOb0s @vk @c $
-      withObCompanion @hk @vk @r $
-        withObCompanion @hk @vk @c $
-          limitUniv @vk @j @k @r (flipCompanionInv @c @j @(Companion hk r) (obj @c) n) \\\ n
+  withObCompanion @hk @vk @r $
+    withObCompanion @hk @vk @c $
+      limitUniv @vk @j @k @r (flipCompanionInv @c @j @(Companion hk r) n) \\\ n
 
 mapLimit
   :: forall {hk} {vk} {i} {a} (j :: hk i a) k p q

@@ -7,7 +7,7 @@ import Data.Kind (Constraint)
 import Prelude (($), type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), associatorInv', associator')
-import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Monoid (CopyDiscard (..))
 
 infixl 8 ||
@@ -103,11 +103,6 @@ data Strictified as bs where
 
 singleton :: (CategoryOf k) => (a :: k) ~> b -> '[a] ~> '[b]
 singleton a = Str a \\ a
-
-asObj :: (Monoidal k) => SList (as :: [k]) -> Obj as
-asObj SNil = obj
-asObj SSing = obj
-asObj (SCons @a @as) = obj @'[a] `par` obj @as
 
 instance (Monoidal k) => Profunctor (Strictified :: CAT [k]) where
   dimap = dimapDefault

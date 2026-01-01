@@ -11,18 +11,19 @@ import Proarrow.Category.Bicategory.Strictified
   , Path (..)
   , SPath (..)
   , Strictified (..)
-  , asObj
   , companionFold
   , fold
   , foldCompanion
   , mapCompanionSPath
   , singleton
+  , withIsPath
+  , pattern Str
   , type (+++)
   )
 import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
 import Proarrow.Category.Equipment qualified as E
 import Proarrow.Category.Instance.Nat (Nat (..))
-import Proarrow.Core (CategoryOf (..), Obj, Promonad ((.)), id, obj, (:~>), (\\))
+import Proarrow.Core (CategoryOf (..), Promonad ((.)), id, (:~>), (\\))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable)
@@ -125,13 +126,6 @@ vId
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
   => Sq '(Nil :: Path hk j j, f ::: Nil) '(Nil :: Path hk k k, f ::: Nil)
 vId = E.vId
-
-vId'
-  :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
-  => Obj f
-  -> Sq '(Nil :: Path hk j j, f ::: Nil) '(Nil :: Path hk k k, f ::: Nil)
-vId' f = vId \\ f
 
 -- | Horizontal composition
 --
@@ -301,7 +295,7 @@ vSplitAll
   => Sq '(Nil :: Path hk j j, Fold ps ::: Nil) '(Nil :: Path hk k k, ps)
 vSplitAll =
   let ps = singPath @ps; fps = fold ps; cps = mapCompanionSPath @hk ps
-  in Sq (Str (SCons (mapCompanion fps) SNil) cps (companionFold ps)) \\ fps \\ asObj cps
+  in withIsPath cps (Sq (Str (SCons (mapCompanion fps) SNil) cps (companionFold ps)) \\ fps)
 
 -- | Combine a whole bunch of horizontal proarrows into one composed proarrow.
 --
@@ -314,7 +308,7 @@ hCombineAll
   :: forall {hk} {vk} {j} {k} (ps :: Path hk j k)
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
   => Sq '(ps, Nil :: Path vk k k) '(Fold ps ::: Nil, Nil)
-hCombineAll = let ps = singPath @ps; fps = fold ps in Sq (Str ps (SCons fps SNil) fps) \\\ fps
+hCombineAll = let ps = singPath @ps; fps = fold ps in Sq (St fps) \\\ fps
 
 -- | Split one composed proarrow into a whole bunch of horizontal proarrows.
 --
@@ -327,7 +321,7 @@ hSplitAll
   :: forall {hk} {vk} {j} {k} (ps :: Path hk j k)
    . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
   => Sq '(Fold ps ::: Nil, Nil :: Path vk k k) '(ps, Nil)
-hSplitAll = let ps = singPath @ps; fps = fold ps in Sq (Str (SCons fps SNil) ps fps) \\\ fps
+hSplitAll = let ps = singPath @ps; fps = fold ps in Sq (St fps) \\\ fps
 
 -- | Optics in proarrow equipments.
 --
@@ -375,7 +369,7 @@ type ProfOptic a b s t = Optic PROFK (FUN a) (FUN b) (FUN s) (FUN t)
 mkProfOptic
   :: (Representable s, Representable t, Representable a, Representable b)
   => s :.: RepCostar t :~> a :.: RepCostar b -> ProfOptic a b s t
-mkProfOptic n = Sq (Str (SCons obj (SCons obj SNil)) (SCons obj (SCons obj SNil)) (Prof n))
+mkProfOptic n = Sq (St (Prof n))
 
 type HaskOptic a b s t = ProfOptic (Star a) (Star b) (Star s) (Star t)
 mkHaskOptic

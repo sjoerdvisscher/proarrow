@@ -19,7 +19,7 @@ import Proarrow.Category.Bicategory
   , rightUnitorInvWith
   , rightUnitorWith
   , (==)
-  , (||)
+  , (||), obj1
   )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, src, tgt, (//), (\\), type (+->))
@@ -358,42 +358,38 @@ toLeft =
 
 flipCompanion
   :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
-   . (Equipment hk vk, Ob p)
-  => Obj f
-  -> Companion hk f `O` p ~> q
+   . (Equipment hk vk, Ob f, Ob p)
+  => Companion hk f `O` p ~> q
   -> p ~> Conjoint hk f `O` q
-flipCompanion f n =
-  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+flipCompanion n =
+  let f = obj1 @f; comF = mapCompanion @hk f; conF = mapConjoint @hk f
   in ((conF `o` n) . associator' conF comF (obj @p) . leftUnitorInvWith (comConUnit f) id) \\\ n \\\ f
 
 flipCompanionInv
   :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
-   . (Equipment hk vk, Ob q)
-  => Obj f
-  -> p ~> Conjoint hk f `O` q
+   . (Equipment hk vk, Ob f, Ob q)
+  => p ~> Conjoint hk f `O` q
   -> Companion hk f `O` p ~> q
-flipCompanionInv f n =
-  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+flipCompanionInv n =
+  let f = obj1 @f; comF = mapCompanion @hk f; conF = mapConjoint @hk f
   in (leftUnitorWith (comConCounit f) id . associatorInv' comF conF (obj @q) . (comF `o` n)) \\\ n \\\ f
 
 flipConjoint
   :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
-   . (Equipment hk vk, Ob p)
-  => Obj f
-  -> p `O` Conjoint hk f ~> q
+   . (Equipment hk vk, Ob f, Ob p)
+  => p `O` Conjoint hk f ~> q
   -> p ~> q `O` Companion hk f
-flipConjoint f n =
-  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+flipConjoint n =
+  let f = obj1 @f; comF = mapCompanion @hk f; conF = mapConjoint @hk f
   in ((n `o` comF) . associatorInv' (obj @p) conF comF . rightUnitorInvWith (comConUnit f) id) \\\ n \\\ f
 
 flipConjointInv
   :: forall {j} {k} {hk} {vk} (f :: vk j k) p q
-   . (Equipment hk vk, Ob q)
-  => Obj f
-  -> p ~> q `O` Companion hk f
+   . (Equipment hk vk, Ob f, Ob q)
+  => p ~> q `O` Companion hk f
   -> p `O` Conjoint hk f ~> q
-flipConjointInv f n =
-  let comF = mapCompanion @hk f; conF = mapConjoint @hk f
+flipConjointInv n =
+  let f = obj1 @f; comF = mapCompanion @hk f; conF = mapConjoint @hk f
   in (rightUnitorWith (comConCounit f) id . associator' (obj @q) comF conF . (n `o` conF)) \\\ n \\\ f
 
 -- |
