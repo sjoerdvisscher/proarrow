@@ -16,7 +16,7 @@ import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..
 import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..), Prelude (..))
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), copar)
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), copar, HasCoproducts)
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
@@ -57,7 +57,7 @@ instance (Applicative f, Monoidal j, Monoidal k) => MonoidalProfunctor (Star (f 
   par0 = Star (pure id)
   Star @a f `par` Star @b g = withOb2 @_ @a @b (Star (liftA2 @f @a @b id . (f `par` g)))
 
-instance (Functor f, Distributive j, Distributive k) => MonoidalProfunctor (Coprod (Star (f :: j -> k))) where
+instance (Functor f, HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (Star (f :: j -> k))) where
   par0 = Coprod (Star initiate)
   Coprod (Star @a f) `par` Coprod (Star @b g) = withObCoprod @_ @a @b (Coprod (Star ((map (lft @_ @a @b) . f ||| map (rgt @_ @a @b) . g))))
 
