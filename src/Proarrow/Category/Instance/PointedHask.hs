@@ -1,6 +1,7 @@
 module Proarrow.Category.Instance.PointedHask where
 
 import Data.Kind (Type)
+import Data.Maybe qualified as P
 import GHC.Generics (Generic)
 import Prelude (Eq, Maybe (..), Show, const, ($), (>>=), type (~))
 
@@ -15,6 +16,7 @@ import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Functor (Functor(..))
 
 type data POINTED = P Type
 type instance UN P (P a) = a
@@ -142,3 +144,15 @@ enrichedPt (Pt f) = case f () of Just g -> g; Nothing -> zero
 
 compPt :: (Ob (a :: k), Ob b, Ob c, HasZeroObject k) => P (b ~> c) ** P (a ~> b) ~> P (a ~> c)
 compPt = Pt \(bc, ab) -> Just (bc . ab)
+
+type FromPointed :: (Type -> Type) -> (POINTED -> Type)
+data FromPointed f a where
+  FromPointed :: { unFromPointed :: f a } -> FromPointed f (P a)
+
+type Filterable f = Functor (FromPointed f)
+
+mapMaybe :: Filterable f => (a -> Maybe b) -> f a -> f b
+mapMaybe f = unFromPointed . map (Pt f) . FromPointed
+
+instance Functor (FromPointed []) where
+  map (Pt f) (FromPointed as) = FromPointed (P.mapMaybe f as)
