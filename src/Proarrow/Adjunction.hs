@@ -57,11 +57,11 @@ class (Profunctor p, Profunctor q) => Proadjunction (p :: j +-> k) (q :: k +-> j
   unit :: (Ob a) => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)
 
-instance (Representable f) => Proadjunction f (RepCostar f) where
+instance (Representable p) => Proadjunction p (RepCostar p) where
   unit = trivialCorep :.: trivialRep
   counit (f :.: g) = coindex g . index f
 
-instance (Corepresentable f) => Proadjunction (CorepStar f) f where
+instance (Corepresentable p) => Proadjunction (CorepStar p) p where
   unit = trivialCorep :.: trivialRep
   counit (f :.: g) = coindex g . index f
 

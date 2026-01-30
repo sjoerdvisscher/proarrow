@@ -6,6 +6,7 @@ import Prelude (Eq, Show, type (~))
 import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok, emb)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
@@ -24,6 +25,10 @@ type El a = TerminalObject ~> a
 instance HasTerminalObject Type where
   type TerminalObject = ()
   terminate _ = ()
+
+instance HasTerminalObject () where
+  type TerminalObject = '()
+  terminate = U.Unit
 
 instance (HasTerminalObject j, HasTerminalObject k) => HasTerminalObject (j, k) where
   type TerminalObject = '(TerminalObject, TerminalObject)

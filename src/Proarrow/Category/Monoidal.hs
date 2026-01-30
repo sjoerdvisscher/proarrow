@@ -16,7 +16,10 @@ import Proarrow.Category.Instance.Free
   , WithShow
   , emb
   )
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var, iso)
 
 -- This is equal to a monoidal functor for representable profunctors
@@ -25,6 +28,14 @@ type MonoidalProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: j +-> k) where
   par0 :: p Unit Unit
   par :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
+
+instance MonoidalProfunctor U.Unit where
+  par0 = U.Unit
+  U.Unit `par` U.Unit = U.Unit
+
+instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :**: q) where
+  par0 = par0 :**: par0
+  (f1 :**: f2) `par` (g1 :**: g2) = (f1 `par` g1) :**: (f2 `par` g2)
 
 type Monoidal :: Kind -> Constraint
 class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Monoidal k where
@@ -37,6 +48,28 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Mono
   rightUnitorInv :: (Ob (a :: k)) => a ~> a ** Unit
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
   associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
+
+instance Monoidal () where
+  type Unit = '()
+  type '() ** '() = '()
+  withOb2 @'() @'() r = r
+  leftUnitor = U.Unit
+  leftUnitorInv = U.Unit
+  rightUnitor = U.Unit
+  rightUnitorInv = U.Unit
+  associator = U.Unit
+  associatorInv = U.Unit
+
+instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
+  type Unit = '(Unit, Unit)
+  type '(a1, a2) ** '(b1, b2) = '(a1 ** b1, a2 ** b2)
+  withOb2 @'(a1, a2) @'(b1, b2) r = withOb2 @j @a1 @b1 (withOb2 @k @a2 @b2 r)
+  leftUnitor @'(a1, a2) = leftUnitor @j @a1 :**: leftUnitor @k @a2
+  leftUnitorInv @'(a1, a2) = leftUnitorInv @j @a1 :**: leftUnitorInv @k @a2
+  rightUnitor @'(a1, a2) = rightUnitor @j @a1 :**: rightUnitor @k @a2
+  rightUnitorInv @'(a1, a2) = rightUnitorInv @j @a1 :**: rightUnitorInv @k @a2
+  associator @'(a1, a2) @'(b1, b2) @'(c1, c2) = associator @j @a1 @b1 @c1 :**: associator @k @a2 @b2 @c2
+  associatorInv @'(a1, a2) @'(b1, b2) @'(c1, c2) = associatorInv @j @a1 @b1 @c1 :**: associatorInv @k @a2 @b2 @c2
 
 obj2 :: forall {k} a b. (Monoidal k, Ob (a :: k), Ob b) => Obj (a ** b)
 obj2 = obj @a `par` obj @b
@@ -82,6 +115,12 @@ second f = obj @c `par` f
 
 class (Monoidal k) => SymMonoidal k where
   swap :: (Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
+
+instance SymMonoidal () where
+  swap = U.Unit
+
+instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j, k) where
+  swap @'(a1, a2) @'(b1, b2) = swap @j @a1 @b1 :**: swap @k @a2 @b2
 
 swap' :: forall {k} (a :: k) a' b b'. (SymMonoidal k) => a ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
 swap' f g = swap @k @a' @b' . (f `par` g) \\ f \\ g
@@ -225,3 +264,12 @@ instance Laws '[Monoidal, SymMonoidal] where
     , (id `par` swap) . associator . (swap `par` id)
         :=: associator . swap . associator @_ @(EMB "A") @(EMB "B") @(EMB "C")
     ]
+
+data UnitFtor :: () +-> k
+instance (Monoidal k) => FunctorForRep (UnitFtor :: () +-> k) where
+  type UnitFtor @ '() = Unit
+  fmap U.Unit = unitObj
+data MultFtor :: (k, k) +-> k
+instance (Monoidal k) => FunctorForRep (MultFtor :: (k, k) +-> k) where
+  type MultFtor @ '(a, b) = a ** b
+  fmap (f :**: g) = f `par` g

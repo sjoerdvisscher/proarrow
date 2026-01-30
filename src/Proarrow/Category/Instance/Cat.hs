@@ -11,14 +11,17 @@ import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
+  , MultFtor
   , SymMonoidal (..)
+  , UnitFtor
   , swap
   )
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Strictified ()
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Monoid (Comonoid (..), CopyDiscard)
+import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
@@ -163,6 +166,11 @@ instance (CategoryOf j, CategoryOf k) => FunctorForRep (Swap :: (j, k) +-> (k, j
   fmap (f1 :**: f2) = f2 :**: f1
 instance SymMonoidal KIND where
   swap @(K j) @(K k) = Cat @(Rep Swap :: (j, k) +-> (k, j))
+
+-- | A strictified monoidal category as a monoid in Cat.
+instance (Monoidal k) => Monoid (K [k]) where
+  mempty = Cat @(Rep UnitFtor)
+  mappend = Cat @(Rep MultFtor)
 
 instance (Ob a) => Comonoid (a :: KIND) where
   counit = terminate

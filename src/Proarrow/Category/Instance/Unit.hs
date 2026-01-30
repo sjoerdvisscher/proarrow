@@ -5,8 +5,6 @@ module Proarrow.Category.Instance.Unit where
 import Prelude (type (~))
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 
@@ -34,11 +32,3 @@ instance ThinProfunctor Unit where
   type HasArrow Unit a b = (a ~ b)
   arr = Unit
   withArr Unit r = r
-
-instance HasTerminalObject () where
-  type TerminalObject = '()
-  terminate = Unit
-
-instance HasInitialObject () where
-  type InitialObject = '()
-  initiate = Unit

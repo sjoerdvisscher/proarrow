@@ -1,9 +1,10 @@
 module Proarrow.Category.Bicategory.Co where
 
 import Proarrow.Category.Bicategory
-  ( Bicategory (..)
+  ( Adjunction (..)
+  , Bicategory (..)
   , Comonad (..)
-  , Monad (..), Adjunction (..)
+  , Monad (..)
   )
 import Proarrow.Category.Bicategory.Kan
   ( LeftKanExtension (..)
@@ -11,6 +12,7 @@ import Proarrow.Category.Bicategory.Kan
   , RightKanExtension (..)
   , RightKanLift (..)
   )
+import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type COK :: CAT k -> CAT k
@@ -45,9 +47,21 @@ instance (Bicategory kk) => Bicategory (COK kk) where
   rightUnitor = Co rightUnitorInv
   rightUnitorInv = Co rightUnitor
   associator @(CO p) @(CO q) @(CO r) = Co (associatorInv @kk @p @q @r)
-  associatorInv  @(CO p) @(CO q) @(CO r) = Co (associator @kk @p @q @r)
+  associatorInv @(CO p) @(CO q) @(CO r) = Co (associator @kk @p @q @r)
 
-instance Adjunction f g => Adjunction (CO g) (CO f) where
+type instance IsOb Tight p = IsOb Cotight (UN CO p)
+type instance IsOb Cotight p = IsOb Tight (UN CO p)
+type instance TightAdjoint p = CO (CotightAdjoint (UN CO p))
+type instance CotightAdjoint p = CO (TightAdjoint (UN CO p))
+instance (WithObO2 Cotight kk) => WithObO2 Tight (COK kk) where
+  withObO2 @p @q r = withObO2 @Cotight @kk @(UN CO p) @(UN CO q) r
+instance (WithObO2 Tight kk) => WithObO2 Cotight (COK kk) where
+  withObO2 @p @q r = withObO2 @Tight @kk @(UN CO p) @(UN CO q) r
+instance (Equipment kk) => Equipment (COK kk) where
+  withTightAdjoint @(CO f) r = withCotightAdjoint @kk @f r
+  withCotightAdjoint @(CO f) r = withTightAdjoint @kk @f r
+
+instance (Adjunction f g) => Adjunction (CO g) (CO f) where
   unit = Co (counit @f @g)
   counit = Co (unit @f @g)
 

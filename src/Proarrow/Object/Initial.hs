@@ -7,6 +7,7 @@ import Prelude (Eq, Show, type (~))
 import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok, emb)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Initial (InitialProfunctor)
@@ -22,6 +23,10 @@ initiate' a = a . initiate @k @a' \\ a
 instance HasInitialObject Type where
   type InitialObject = Void
   initiate = absurd
+
+instance HasInitialObject () where
+  type InitialObject = '()
+  initiate = Unit
 
 instance (HasInitialObject j, HasInitialObject k) => HasInitialObject (j, k) where
   type InitialObject = '(InitialObject, InitialObject)

@@ -11,15 +11,12 @@ import Proarrow.Category.Bicategory
   , Monad (..)
   , associator'
   , associatorInv'
-  , leftUnitorInvWith
-  , leftUnitorWith
-  , rightUnitorWith
   , (||)
   )
-import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id, src, tgt)
+import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT, WithObO2 (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id)
 import Proarrow.Object (Obj, obj)
-import Prelude (($), type (~))
+import Prelude (type (~))
 
 infixr 5 :::
 infixl 5 +++
@@ -51,13 +48,16 @@ class
   IsPath (ps :: Path kk j k)
   where
   singPath :: SPath ps
-  withIsPath2 :: IsPath qs => ((Ob (ps +++ qs)) => r) -> r
+  withIsPath2 :: (IsPath qs) => ((Ob (ps +++ qs)) => r) -> r
+  withPathO2 :: (IsOb tag ps, IsOb tag qs, Ob qs) => ((IsOb tag (ps +++ qs), Ob (ps +++ qs)) => r) -> r
 instance (Bicategory kk, Ob0 kk k) => IsPath (Nil :: Path kk k k) where
   singPath = SNil
   withIsPath2 r = r
+  withPathO2 r = r
 instance (Ob0 kk i, Ob (p :: kk i j), IsPath (ps :: Path kk j k)) => IsPath (p ::: ps) where
   singPath = let p = obj @p in SCons p singPath
   withIsPath2 @qs r = withIsPath2 @ps @qs r
+  withPathO2 @tag @qs r = withPathO2 @ps @tag @qs r
 
 withIsPath :: (Bicategory kk) => SPath (ps :: Path kk j k) -> ((Ob ps, Ob0 kk j, Ob0 kk k) => r) -> r
 withIsPath SNil r = r
@@ -120,19 +120,25 @@ fold SNil = id
 fold (SCons p SNil) = p
 fold (SCons p fs@SCons{}) = fold fs `o` p
 
+combineAll :: forall {kk} {i} {j} (as :: Path kk i j). (Bicategory kk, Ob as) => as ~> (Fold as ::: Nil)
+combineAll = let n = fold (singPath @as) in St n \\ n
+
+splitAll :: forall {kk} {i} {j} (as :: Path kk i j). (Bicategory kk, Ob as) => (Fold as ::: Nil) ~> as
+splitAll = let n = fold (singPath @as) in St n \\ n
+
 type Strictified :: CAT (Path kk j k)
 data Strictified ps qs where
   St
     :: forall {kk} {j} {k} (ps :: Path kk j k) qs
-     . (Ob0 kk j, Ob0 kk k, Ob ps, Ob qs)
+     . (Ob ps, Ob qs)
     => Fold ps ~> Fold qs
     -> Strictified ps qs
 
 view :: Strictified (ps :: Path kk j k) qs -> (Strictified ps qs, SPath ps, SPath qs)
 view (St f) = (St f, singPath, singPath)
 
-pattern Str ::
-  forall {kk} {j} {k} (ps :: Path kk j k) (qs :: Path kk j k)
+pattern Str
+  :: forall {kk} {j} {k} (ps :: Path kk j k) (qs :: Path kk j k)
    . (Bicategory kk)
   => (Ob0 kk j, Ob0 kk k)
   => SPath ps
@@ -194,132 +200,25 @@ instance (Bicategory kk) => Bicategory (Path kk) where
   associator @p @q @r = obj @p `o` obj @q `o` obj @r
   associatorInv @p @q @r = obj @p `o` obj @q `o` obj @r
 
-companionFold
-  :: forall {hk} {vk} {j} {k} (fs :: Path vk j k)
-   . (HasCompanions hk vk)
-  => SPath fs
-  -> Companion hk (Fold fs) ~> Fold (Companion (Path hk) fs)
-companionFold SNil = compToId
-companionFold (SCons f SNil) = mapCompanion f
-companionFold (SCons f fs@SCons{}) = let cfs = companionFold fs `o` mapCompanion @hk f in (cfs . compToCompose (fold fs) f) \\\ cfs
+stUnit :: forall {kk} {i} {j} (p :: kk i j) q. (Adjunction p q, Ob p, Ob q) => Nil ~> p ::: q ::: Nil
+stUnit = withOb0s @kk @p (St (unit @p @q))
 
-foldCompanion
-  :: forall {hk} {vk} {j} {k} (fs :: Path vk j k)
-   . (HasCompanions hk vk)
-  => SPath fs
-  -> Fold (Companion (Path hk) fs) ~> Companion hk (Fold fs)
-foldCompanion SNil = compFromId
-foldCompanion (SCons f SNil) = mapCompanion f
-foldCompanion (SCons f fs@SCons{}) = let cfs = foldCompanion fs `o` mapCompanion @hk f in (compFromCompose (fold fs) f . cfs) \\\ cfs
+stCounit :: forall {kk} {i} {j} (p :: kk i j) q. (Adjunction p q, Ob p, Ob q) => q ::: p ::: Nil ~> Nil
+stCounit = withOb0s @kk @p (St (counit @p @q))
 
-mapCompanionSPath
-  :: forall hk {vk} {j} {k} (fs :: Path vk j k)
-   . (HasCompanions hk vk)
-  => SPath fs
-  -> SPath (Companion (Path hk) fs)
-mapCompanionSPath SNil = SNil
-mapCompanionSPath (SCons f fs) = SCons (mapCompanion f) (mapCompanionSPath fs)
+instance (Bicategory kk, Ob0 kk a) => Adjunction (Nil :: Path kk a a) Nil where
+  unit = id
+  counit = id
 
-instance (HasCompanions hk vk) => HasCompanions (Path hk) (Path vk) where
-  type Companion (Path hk) Nil = Nil
-  type Companion (Path hk) (p ::: ps) = Companion hk p ::: Companion (Path hk) ps
+instance (Bicategory kk, Adjunction (l :: kk j k) r, Ob0 kk j, Ob0 kk k) => Adjunction (l ::: Nil) (r ::: Nil) where
+  unit = St (unit @l @r)
+  counit = St (counit @l @r)
 
-  mapCompanion (Str fs gs n) =
-    Str (mapCompanionSPath @hk fs) (mapCompanionSPath @hk gs) $ companionFold gs . mapCompanion @hk @vk n . foldCompanion fs
-
-  withObCompanion @p r = withIsPath (mapCompanionSPath @hk (singPath @p)) r
-
-  compToId = St id
-  compFromId = St id
-  compToCompose (Str fs _ f) (Str gs _ g) =
-    let cfs = mapCompanionSPath fs
-        cgs = mapCompanionSPath gs
-        fgs = append gs fs
-    in Str (mapCompanionSPath fgs) (cgs `append` cfs) $
-        concatFold cgs cfs
-          . (companionFold fs `o` companionFold gs)
-          . compToCompose f g
-          . mapCompanion (splitFold gs fs)
-          . foldCompanion fgs
-  compFromCompose (Str fs _ f) (Str gs _ g) =
-    let cfs = mapCompanionSPath fs
-        cgs = mapCompanionSPath gs
-        fgs = append gs fs
-    in Str (cgs `append` cfs) (mapCompanionSPath fgs) $
-        companionFold fgs
-          . mapCompanion (concatFold gs fs)
-          . compFromCompose f g
-          . (foldCompanion fs `o` foldCompanion gs)
-          . splitFold cgs cfs
-
-mapConjointSPath
-  :: forall hk {vk} {j} {k} (fs :: Path vk j k)
-   . (Equipment hk vk)
-  => SPath fs
-  -> SPath (Conjoint (Path hk) fs)
-mapConjointSPath SNil = SNil
-mapConjointSPath (SCons f fs) = let fc = mapConjoint @hk f in mapConjointSPath fs `append` SCons fc SNil \\\ fc
-
-instance (Equipment hk vk) => Equipment (Path hk) (Path vk) where
-  type Conjoint (Path hk) Nil = Nil
-  type Conjoint (Path hk) (p ::: ps) = Conjoint (Path hk) ps +++ (Conjoint hk p ::: Nil)
-
-  mapConjoint n@(Str fsp gsp _) =
-    let fs = src n
-        gs = tgt n
-        cfs = asObj (mapConjointSPath @hk fsp)
-        cgs = asObj (mapConjointSPath @hk gsp)
-        compN = mapCompanion n
-    in rightUnitorWith (comConCounit @(Path hk) gs) cfs
-        . associator' cfs (tgt compN) cgs
-        . ((cfs `o` compN) `o` cgs)
-        . leftUnitorInvWith (comConUnit fs) cgs
-
-  withObConjoint @p r = withIsPath (mapConjointSPath @hk (singPath @p)) r
-
-  comConUnit (Str fs' _ _) = case fs' of
-    SNil -> id
-    SCons f sfs ->
-      let fs = asObj sfs
-          ls = mapCompanion @(Path hk) fs
-          l = mapCompanion @hk f
-          rs = mapConjoint @(Path hk) fs
-          r = mapConjoint @hk f
-          r' = singleton r
-      in ( ((associatorInv' r' rs ls . (r' `o` comConUnit fs)) `o` singleton l)
-            . elimO
-            . singleton (comConUnit f)
-            . introI
-         )
-          \\\ l
-          \\\ r
-
-  comConCounit (Str fs' _ _) = case fs' of
-    SNil -> id
-    SCons @f f sfs ->
-      let fs = asObj sfs
-          ls = mapCompanion @(Path hk) fs
-          l = mapCompanion @hk f
-          l' = singleton l
-          rs = mapConjoint @(Path hk) fs
-          r = mapConjoint @hk f
-          r' = singleton r
-      in ( comConCounit fs
-            . ( ls
-                  `o` ( leftUnitorWith (elimI . singleton (comConCounit f) . introO @(Conjoint hk f) @(Companion hk f)) rs
-                          . associatorInv' l' r' rs
-                      )
-              )
-            . associator' ls l' (r' `o` rs)
-         )
-          \\\ rs
-          \\\ l
-          \\\ r
 instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
   eta = id
   mu = id
 
-instance (Monad s, Ob s) => Monad (s ::: Nil) where
+instance (Monad s, Ob (s :: kk a a), Ob0 kk a) => Monad (s ::: Nil) where
   eta = St @Nil @(s ::: Nil) eta
   mu = St @(s ::: s ::: Nil) @(s ::: Nil) mu
 
@@ -327,10 +226,23 @@ instance (Bicategory kk, Ob0 kk a) => Comonad (Nil :: Path kk a a) where
   epsilon = id
   delta = id
 
-instance (Adjunction l r, Ob r, Ob l) => Monad (l ::: r ::: Nil) where
+instance (Adjunction l r, Ob (r :: kk i j), Ob l, Ob0 kk i, Ob0 kk j) => Monad (l ::: r ::: Nil) where
   eta = St @Nil @(l ::: r ::: Nil) (unit @l @r)
   mu = obj1 @r || St @(r ::: l ::: Nil) @Nil (counit @l @r) || obj1 @l
 
-instance (Adjunction l r, Ob r, Ob l) => Comonad (r ::: l ::: Nil) where
+instance (Adjunction l r, Ob (r :: kk i j), Ob l, Ob0 kk i, Ob0 kk j) => Comonad (r ::: l ::: Nil) where
   epsilon = St @(r ::: l ::: Nil) @Nil (counit @l @r)
   delta = obj1 @l || St @Nil @(l ::: r ::: Nil) (unit @l @r) || obj1 @r
+
+type instance IsOb tag Nil = ()
+type instance IsOb tag (p ::: ps) = (IsOb tag p, IsOb tag ps)
+instance (WithObO2 tag kk) => WithObO2 tag (Path kk) where
+  withObO2 @a @b r = withPathO2 @b @tag @a r
+
+withIsObTagFold
+  :: forall {kk} {j} {k} tag (ps :: Path kk j k) r
+   . (Bicategory (SUBCAT tag kk), WithObO2 tag kk, IsOb tag ps, Ob ps) => ((IsOb tag (Fold ps), Ob (Fold ps)) => r) -> r
+withIsObTagFold r = case singPath @ps of
+  SNil -> r
+  SCons c SNil -> r \\ c
+  SCons @p @ps' c cs@SCons{} -> withIsObTagFold @tag @ps' (withObO2 @tag @kk @(Fold ps') @p r) \\\ asObj cs \\ c

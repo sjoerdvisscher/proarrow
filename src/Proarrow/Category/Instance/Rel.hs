@@ -54,6 +54,9 @@ class (Relation p) => Surjective p where
 class (Relation p) => Reflexive p where
   isReflexive :: (~>) :~> p
 
+class (Relation p) => Transitive p where
+  isTransitive :: p :.: p :~> p
+
 adjToConverse :: forall p q. (Relation p, Relation q, Proadjunction p q) => q :~> Converse p
 adjToConverse q = Converse (case unit @p @q of _ :.: p -> withEq (counit (p :.: q)) p) \\ q
 

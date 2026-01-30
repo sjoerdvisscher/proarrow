@@ -2,8 +2,9 @@ module Proarrow.Category.Bicategory.Product where
 
 import Prelude (type (~))
 
+import Proarrow.Category.Instance.Product ()
 import Proarrow.Category.Bicategory (Bicategory (..), Adjunction (..), Monad (..), Comonad (..))
-import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..))
+import Proarrow.Category.Equipment (Equipment (..), TightAdjoint, CotightAdjoint, Tight, Cotight, IsOb, WithObO2 (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 type PRODK :: CAT j -> CAT k -> CAT (j, k)
@@ -60,22 +61,14 @@ instance (Comonad (PRODFST m), Comonad (PRODSND m), Ob m) => Comonad m where
   epsilon = Prod epsilon epsilon
   delta = Prod delta delta
 
-instance (HasCompanions hj vj, HasCompanions hk vk) => HasCompanions (PRODK hj hk) (PRODK vj vk) where
-  type Companion (PRODK hj hk) fg = PROD (Companion hj (PRODFST fg)) (Companion hk (PRODSND fg))
-  mapCompanion (Prod f g) = Prod (mapCompanion f) (mapCompanion g)
-  withObCompanion @(PROD f g) r = withObCompanion @hj @vj @f (withObCompanion @hk @vk @g r)
-  compToId = Prod compToId compToId
-  compFromId = Prod compFromId compFromId
-  compToCompose (Prod fl fr) (Prod gl gr) = Prod (compToCompose fl gl) (compToCompose fr gr)
-  compFromCompose (Prod fl fr) (Prod gl gr) = Prod (compFromCompose fl gl) (compFromCompose fr gr)
-
-instance (Equipment hj vj, Equipment hk vk) => Equipment (PRODK hj hk) (PRODK vj vk) where
-  type Conjoint (PRODK hj hk) fg = PROD (Conjoint hj (PRODFST fg)) (Conjoint hk (PRODSND fg))
-  mapConjoint (Prod f g) = Prod (mapConjoint f) (mapConjoint g)
-  withObConjoint @(PROD f g) r = withObConjoint @hj @vj @f (withObConjoint @hk @vk @g r)
-  conjToId = Prod conjToId conjToId
-  conjFromId = Prod conjFromId conjFromId
-  conjToCompose (Prod fl fr) (Prod gl gr) = Prod (conjToCompose fl gl) (conjToCompose fr gr)
-  conjFromCompose (Prod fl fr) (Prod gl gr) = Prod (conjFromCompose fl gl) (conjFromCompose fr gr)
-  comConUnit (Prod f g) = Prod (comConUnit f) (comConUnit g)
-  comConCounit (Prod f g) = Prod (comConCounit f) (comConCounit g)
+type instance IsOb Tight p = (IsOb Tight (PRODFST p), IsOb Tight (PRODSND p))
+type instance IsOb Cotight p = (IsOb Cotight (PRODFST p), IsOb Cotight (PRODSND p))
+type instance TightAdjoint p = PROD (TightAdjoint (PRODFST p)) (TightAdjoint (PRODSND p))
+type instance CotightAdjoint p = PROD (CotightAdjoint (PRODFST p)) (CotightAdjoint (PRODSND p))
+instance (WithObO2 Tight jj, WithObO2 Tight kk) => WithObO2 Tight (PRODK jj kk) where
+  withObO2 @p @q r = withObO2 @Tight @jj @(PRODFST p) @(PRODFST q) (withObO2 @Tight @kk @(PRODSND p) @(PRODSND q) r)
+instance (WithObO2 Cotight jj, WithObO2 Cotight kk) => WithObO2 Cotight (PRODK jj kk) where
+  withObO2 @p @q r = withObO2 @Cotight @jj @(PRODFST p) @(PRODFST q) (withObO2 @Cotight @kk @(PRODSND p) @(PRODSND q) r)
+instance (Equipment jj, Equipment kk) => Equipment (PRODK jj kk) where
+  withTightAdjoint @(PROD p q) r = withTightAdjoint @jj @p (withTightAdjoint @kk @q r)
+  withCotightAdjoint @(PROD p q) r = withCotightAdjoint @jj @p (withCotightAdjoint @kk @q r)

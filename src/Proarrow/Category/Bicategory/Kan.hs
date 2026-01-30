@@ -4,16 +4,18 @@ module Proarrow.Category.Bicategory.Kan where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Bicategory (Bicategory (..), (==), (||), Monad (..), rightUnitorInvWith, Comonad (..), rightUnitorWith, obj1)
-import Proarrow.Category.Equipment
-  ( Equipment (..)
-  , HasCompanions (..)
-  , flipCompanion
-  , flipCompanionInv
-  , flipConjoint
-  , flipConjointInv
+import Proarrow.Category.Bicategory
+  ( Adjunction (..)
+  , Bicategory (..)
+  , Comonad (..)
+  , Monad (..)
+  , rightUnitorInvWith
+  , rightUnitorWith
+  , (==)
+  , (||), flipRightAdjointInv, flipRightAdjoint, flipLeftAdjointInv, flipLeftAdjoint
   )
-import Proarrow.Core (CAT, CategoryOf (..), Ob, Obj, Profunctor (..), Promonad (..), obj, (\\))
+
+import Proarrow.Core (CAT, CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (\\))
 
 type LeftKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lan j f)) => LeftKanExtension (j :: kk c d) (f :: kk c e) where
@@ -39,7 +41,7 @@ lanComonadDelta :: forall {kk} {c} {d} (p :: kk c d). (LeftKanExtension p p) => 
 lanComonadDelta =
   let lpp = obj @(Lan p p)
   in lanUniv @p @p (associatorInv @_ @(Lan p p) @(Lan p p) @p . (lpp `o` lan @p @p) . lan @p @p)
-      \\ (lpp `o` lpp)
+       \\ (lpp `o` lpp)
 
 -- | Density is the "mother of all comonads"
 coinj :: forall p. (Comonad p, LeftKanExtension p p) => p ~> Density p
@@ -51,22 +53,19 @@ corun = lanUniv @p @p delta
 idLan :: forall f. (LeftKanExtension I f, Ob f) => f ~> Lan I f
 idLan = rightUnitor . lan @I @f
 
-lanAlongCompanion
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (LeftKanExtension (Companion hk j) f, Equipment hk vk, Ob j)
-  => Lan (Companion hk j) f ~> f `O` Conjoint hk j
-lanAlongCompanion =
-  let j = obj1 @j; f = obj @f; conJ = mapConjoint @hk j
-  in lanUniv @(Companion hk j) @f
-      (rightUnitorInv == f || comConUnit j == associatorInv @_ @f @(Conjoint hk j) @(Companion hk j))
-      \\ (f `o` conJ)
-      \\ conJ
+lanAlongLeftAdjoint
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (LeftKanExtension j f, Adjunction j j', Ob j, Ob j')
+  => Lan j f ~> f `O` j'
+lanAlongLeftAdjoint =
+  withOb2 @kk @f @j'
+    (lanUniv @j @f (rightUnitorInv == obj @f || unit @j @j' == associatorInv @_ @f @j' @j))
 
-lanAlongCompanionInv
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (LeftKanExtension (Companion hk j) f, Equipment hk vk, Ob j)
-  => f `O` Conjoint hk j ~> Lan (Companion hk j) f
-lanAlongCompanionInv = flipConjointInv @j @f @(Lan (Companion hk j) f) (lan @(Companion hk j))
+lanAlongLeftAdjointInv
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (LeftKanExtension j f, Adjunction j j', Ob j, Ob j')
+  => f `O` j' ~> Lan j f
+lanAlongLeftAdjointInv = flipRightAdjointInv @j @j' (lan @j @f)
 
 type j |> p = Ran j p
 type RightKanExtension :: forall {k} {kk :: CAT k} {c} {d} {e}. kk c d -> kk c e -> Constraint
@@ -113,21 +112,19 @@ composeRan =
 idRan :: forall f. (RightKanExtension I f, Ob f) => f ~> Ran I f
 idRan = ranUniv @I @f rightUnitor
 
-ranAlongConjoint
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (RightKanExtension (Conjoint hk j) f, Equipment hk vk, Ob j)
-  => Ran (Conjoint hk j) f ~> f `O` Companion hk j
-ranAlongConjoint = flipConjoint @j @(Ran (Conjoint hk j) f) @f (ran @(Conjoint hk j))
+ranAlongRightAdjoint
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (RightKanExtension j' f, Adjunction j j', Ob j, Ob j')
+  => Ran j' f ~> f `O` j
+ranAlongRightAdjoint = flipRightAdjoint @j @j' (ran @j' @f)
 
-ranAlongConjointInv
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (RightKanExtension (Conjoint hk j) f, Equipment hk vk, Ob j)
-  => f `O` Companion hk j ~> Ran (Conjoint hk j) f
-ranAlongConjointInv =
-  let j = obj1 @j; f = obj @f; comJ = mapCompanion @hk j
-  in ranUniv @(Conjoint hk j) @f (rightUnitor . (f `o` comConCounit j) . associator @_ @f @(Companion hk j) @(Conjoint hk j))
-      \\ (f `o` comJ)
-      \\ comJ
+ranAlongRightAdjointInv
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (RightKanExtension j' f, Adjunction j j', Ob j, Ob j')
+  => f `O` j ~> Ran j' f
+ranAlongRightAdjointInv =
+  withOb2 @kk @f @j
+    (ranUniv @j' @f (associator @_ @f @j @j' == obj @f || counit @j @j' == rightUnitor))
 
 type LeftKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
 class (Bicategory kk, Ob0 kk c, Ob0 kk d, Ob0 kk e, Ob f, Ob j, Ob (Lift j f)) => LeftKanLift (j :: kk d c) (f :: kk e c) where
@@ -151,27 +148,24 @@ liftComonadDelta :: forall {kk} {c} {d} (p :: kk d c). (LeftKanLift p p) => Lift
 liftComonadDelta =
   let lpp = obj @(Lift p p)
   in liftUniv @p @p (associator @_ @p @(Lift p p) @(Lift p p) . (lift @p @p `o` lpp) . lift @p @p)
-      \\ (lpp `o` lpp)
+       \\ (lpp `o` lpp)
 
 idLift :: forall f. (LeftKanLift I f, Ob f) => f ~> Lift I f
 idLift = leftUnitor . lift @I @f
 
-liftAlongConjoint
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (Ob j, LeftKanLift (Conjoint hk j) f, Equipment hk vk)
-  => Lift (Conjoint hk j) f ~> Companion hk j `O` f
-liftAlongConjoint =
-  let j = obj1 @j; f = obj @f; comJ = mapCompanion @hk j
-  in liftUniv @(Conjoint hk j) @f
-      (associator @_ @(Conjoint hk j) @(Companion hk j) @f . (comConUnit j `o` f) . leftUnitorInv)
-      \\ (comJ `o` f)
-      \\ comJ
+liftAlongRightAdjoint
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (Ob j, Ob j', LeftKanLift j' f, Adjunction j j')
+  => Lift j' f ~> j `O` f
+liftAlongRightAdjoint =
+  withOb2 @kk @j @f
+    (liftUniv @j' @f (leftUnitorInv == unit @j @j' || obj @f == associator @_ @j' @j @f))
 
-liftAlongConjointInv
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (Ob j, LeftKanLift (Conjoint hk j) f, Equipment hk vk)
-  => Companion hk j `O` f ~> Lift (Conjoint hk j) f
-liftAlongConjointInv = flipCompanionInv @j @f @(Lift (Conjoint hk j) f) (lift @(Conjoint hk j))
+liftAlongRightAdjointInv
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (Ob j, Ob j', LeftKanLift j' f, Adjunction j j')
+  => j `O` f ~> Lift j' f
+liftAlongRightAdjointInv = flipLeftAdjointInv @j @j' (lift @j' @f)
 
 type f <| j = Rift j f
 type RightKanLift :: forall {k} {kk :: CAT k} {c} {d} {e}. kk d c -> kk e c -> Constraint
@@ -196,7 +190,7 @@ riftMonadMu :: forall {kk} {c} {d} (p :: kk d c). (RightKanLift p p) => Rift p p
 riftMonadMu =
   let rpp = obj @(Rift p p)
   in riftUniv @p @p (rift @p @p . (rift @p @p `o` rpp) . associatorInv @_ @p @(Rift p p) @(Rift p p))
-      \\ (rpp `o` rpp)
+       \\ (rpp `o` rpp)
 
 composeRift
   :: forall i j f
@@ -209,20 +203,16 @@ composeRift =
 idRift :: forall f. (RightKanLift I f, Ob f) => f ~> Rift I f
 idRift = riftUniv @I @f leftUnitor
 
-riftAlongCompanion
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (Ob j, RightKanLift (Companion hk j) f, Equipment hk vk)
-  => Rift (Companion hk j) f ~> Conjoint hk j `O` f
-riftAlongCompanion = flipCompanion @j @(Rift (Companion hk j) f) @f (rift @(Companion hk j))
+riftAlongLeftAdjoint
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (RightKanLift j f, Adjunction j j', Ob j, Ob j')
+  => Rift j f ~> j' `O` f
+riftAlongLeftAdjoint = flipLeftAdjoint @j @j' (rift @j @f)
 
-riftAlongCompanionInv
-  :: forall {i} {k} hk vk (j :: vk i k) f
-   . (RightKanLift (Companion hk j) f, Equipment hk vk)
-  => Obj j
-  -> Conjoint hk j `O` f ~> Rift (Companion hk j) f
-riftAlongCompanionInv j =
-  let f = obj @f; conJ = mapConjoint @hk j
-  in riftUniv @(Companion hk j) @f
-      (leftUnitor . (comConCounit j `o` f) . associatorInv @_ @(Companion hk j) @(Conjoint hk j) @f)
-      \\ (conJ `o` f)
-      \\ conJ
+riftAlongLeftAdjointInv
+  :: forall {i} {k} kk (j :: kk i k) j' f
+   . (RightKanLift j f, Adjunction j j', Ob j, Ob j')
+  => j' `O` f ~> Rift j f
+riftAlongLeftAdjointInv =
+  withOb2 @kk @j' @f
+    (riftUniv @j @f (associatorInv @_ @j @j' @f == counit @j @j' || obj @f == leftUnitor))

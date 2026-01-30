@@ -10,7 +10,7 @@ import Data.Semigroup (Semigroup (..))
 import Prelude (($))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), TracedMonoidal', toInt)
+import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), toInt)
 import Proarrow.Category.Instance.Nat (Nat (..), first)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..))
@@ -40,6 +40,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
 import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Category.Monoidal.Action (TracedMonoidal)
 
 type HasFree :: forall {k}. (k -> Constraint) -> Constraint
 class (CategoryOf k, Representable (Free ob), forall b. (Ob b) => ob (Free ob % b)) => HasFree (ob :: k -> Constraint) where
@@ -162,9 +163,9 @@ instance HasFreeK CategoryOf Monoidal LIST where
   retractK (Cons f Nil) = f
   retractK (Cons f fs@Cons{}) = f `par` retractK @CategoryOf @Monoidal fs
 
-instance HasFreeK TracedMonoidal' CompactClosed INT where
-  type Lift TracedMonoidal' CompactClosed INT (a :: k) = I a Unit
-  type Retract TracedMonoidal' CompactClosed INT (I a b :: INT k) = a ** Dual b
+instance HasFreeK TracedMonoidal CompactClosed INT where
+  type Lift TracedMonoidal CompactClosed INT (a :: k) = I a Unit
+  type Retract TracedMonoidal CompactClosed INT (I a b :: INT k) = a ** Dual b
   liftK = toInt
   retractK (Int @ap @am @bp @bm f) =
     dualObj @am //

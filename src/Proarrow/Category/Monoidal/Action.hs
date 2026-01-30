@@ -7,6 +7,7 @@ import Prelude (type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 
 -- | Profuntorial strength for a monoidal action.
 -- Gives functorial strength for representable profunctors,
@@ -15,6 +16,8 @@ type Strong :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Strong m (p :: c +-> d) where
   act :: forall (a :: m) b x y. a ~> b -> p x y -> p (Act a x) (Act b y)
 
+instance (Strong m p, Strong m' q) => Strong (m, m') (p :**: q) where
+  act (p :**: q) (x :**: y) = act p x :**: act q y
 class (Monoidal m, CategoryOf k, Strong m ((~>) :: CAT k)) => MonoidalAction m k where
   -- I would like to default Act to `**`, but that doesn't seem possible without GHC thinking `m` and `k` are the same.
   type Act (a :: m) (x :: k) :: k
@@ -24,20 +27,30 @@ class (Monoidal m, CategoryOf k, Strong m ((~>) :: CAT k)) => MonoidalAction m k
   multiplicator :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act a (Act b x) ~> Act (a ** b) x
   multiplicatorInv :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act (a ** b) x ~> Act a (Act b x)
 
+instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
+  type Act '(p, q) '(x, y) = '(Act p x, Act q y)
+  withObAct @'(p, q) @'(x, y) r = withObAct @n @j @p @x (withObAct @m @k @q @y r)
+  unitor = unitor @n :**: unitor @m
+  unitorInv = unitorInv @n :**: unitorInv @m
+  multiplicator @'(p, q) @'(r, s) @'(x, y) = multiplicator @n @j @p @r @x :**: multiplicator @m @k @q @s @y
+  multiplicatorInv @'(p, q) @'(r, s) @'(x, y) = multiplicatorInv @n @j @p @r @x :**: multiplicatorInv @m @k @q @s @y
+
+
+class (MonoidalAction m k, SymMonoidal m) => SymMonoidalAction m k
+instance (MonoidalAction m k, SymMonoidal m) => SymMonoidalAction m k
+
 class (Act a b ~ a ** b) => ActIsTensor a b
 instance (Act a b ~ a ** b) => ActIsTensor a b
 class (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
 instance (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
 class
-  ( MonoidalAction k k
-  , SymMonoidal k
+  ( SymMonoidalAction k k
   , forall (a :: k) (b :: k). ActIsTensor a b
   , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
   ) =>
   SelfAction k
 instance
-  ( MonoidalAction k k
-  , SymMonoidal k
+  ( SymMonoidalAction k k
   , forall (a :: k) (b :: k). ActIsTensor a b
   , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
   )
@@ -87,5 +100,5 @@ class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Costrong m (p ::
 trace :: forall {k} (p :: k +-> k) u x y. (SelfAction k, Costrong k p, Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
 trace p = coact @k @p @u @x @y (dimap (swap @k @u @x) (swap @k @y @u) p) \\ p
 
-class (SelfAction k, Costrong k ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
-instance (SelfAction k, Costrong k ((~>) :: CAT k), SymMonoidal k) => TracedMonoidal k
+class (SelfAction k, Costrong k ((~>) :: CAT k)) => TracedMonoidal k
+instance (SelfAction k, Costrong k ((~>) :: CAT k)) => TracedMonoidal k

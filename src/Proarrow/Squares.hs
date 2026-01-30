@@ -3,32 +3,53 @@
 module Proarrow.Squares where
 
 import Data.Functor.Compose (Compose (..))
-import Proarrow.Category.Bicategory (Bicategory (..), Ob')
-import Proarrow.Category.Bicategory.Prof (FUN, PROFK (..), Prof (..))
+import Prelude (Either (..), Traversable, either, ($))
+
+import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), obj1, (||))
+import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Bicategory.Strictified
   ( Fold
-  , IsPath (..)
   , Path (..)
-  , SPath (..)
   , Strictified (..)
-  , companionFold
-  , fold
-  , foldCompanion
-  , mapCompanionSPath
-  , singleton
-  , withIsPath
-  , pattern Str
+  , combineAll
+  , splitAll
+  , withIsObTagFold
   , type (+++)
   )
-import Proarrow.Category.Equipment (Equipment (..), HasCompanions (..), Sq (..))
-import Proarrow.Category.Equipment qualified as E
+import Proarrow.Category.Bicategory.Sub (SUBCAT (..), Sub (Sub))
+import Proarrow.Category.Equipment (Equipment, IsCotight, IsTight, Tight, TightPair)
 import Proarrow.Category.Instance.Nat (Nat (..))
-import Proarrow.Core (CategoryOf (..), Promonad ((.)), id, (:~>), (\\))
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), (:~>), (\\), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable)
+import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Prelude (Either (..), Traversable, either)
+
+-- | The kind of a square @'(q, f) '(p, g)@.
+--
+-- > h--f--i
+-- > |  v  |
+-- > p--@--q
+-- > |  v  |
+-- > j--g--k
+type SQ' (kk :: CAT c) h i j k = (kk k i, SUBCAT Tight kk j k) +-> (kk j h, SUBCAT Tight kk h i)
+
+type SQ (kk :: CAT c) = forall {h} {i} {j} {k}. SQ' kk h i j k
+
+type Sq' :: forall {c} {kk :: CAT c}. SQ kk
+data Sq' pf qg where
+  Sq
+    :: forall {kk} {h} {i} {j} {k} (p :: Path kk j h) (q :: Path kk k i) (f :: Path kk h i) (g :: Path kk j k)
+     . (Ob p, Ob q, IsTight f, IsTight g)
+    => f `O` p ~> q `O` g
+    -> Sq' '(p, SUB f) '(q, SUB g)
+
+type Sq p q f g = Sq' '(p, SUB f) '(q, SUB g)
+
+instance (Bicategory kk, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k) => Profunctor (Sq' :: SQ' kk h i j k) where
+  dimap (p :**: Sub f) (q :**: Sub g) (Sq sq) = Sq ((q `o` g) . sq . (f `o` p)) \\ p \\ f \\ q \\ g
+  r \\ Sq sq = r \\ sq
 
 infixl 6 |||
 infixl 5 ===
@@ -40,8 +61,8 @@ infixl 5 ===
 -- > |     |
 -- > |     |
 -- > K-----K
-object :: (HasCompanions hk vk, Ob0 vk k) => Sq '(Nil :: Path hk k k, Nil :: Path vk k k) '(Nil, Nil)
-object = E.object
+object :: (Equipment kk, Ob0 kk k) => Sq (Nil :: Path kk k k) (Nil :: Path kk k k) Nil Nil
+object = Sq id
 
 -- | Make a square from a horizontal proarrow
 --
@@ -51,11 +72,11 @@ object = E.object
 -- > |     |
 -- > J-----J
 hArr
-  :: forall {hk} {vk} {j} {k} (p :: hk j k) q
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
+  :: forall {kk} {j} {k} (p :: kk j k) q
+   . (Equipment kk)
   => p ~> q
-  -> Sq '(p ::: Nil, Nil :: Path vk k k) '(q ::: Nil, Nil :: Path vk j j)
-hArr = E.hArr . singleton
+  -> Sq (p ::: Nil) (q ::: Nil) Nil Nil
+hArr pq = Sq (St pq) \\\ pq
 
 -- | A horizontal identity square.
 --
@@ -65,40 +86,10 @@ hArr = E.hArr . singleton
 -- > |     |
 -- > K-----K
 hId
-  :: forall {hk} {vk} {j} {k} (p :: hk k j)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob p)
-  => Sq '(p ::: Nil, Nil :: Path vk j j) '(p ::: Nil, Nil)
-hId = E.hId
-
--- | A horizontal identity square for a companion.
---
--- Requires a type application: @compId \@f@
---
--- > K-----K
--- > |     |
--- > f>--->f
--- > |     |
--- > J-----J
-compId
-  :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
-  => Sq '(Companion hk f ::: Nil, Nil :: Path vk k k) '(Companion hk f ::: Nil, Nil :: Path vk j j)
-compId = E.compId @(f ::: Nil)
-
--- | A horizontal identity square for a conjoint.
---
--- Requires a type application: @conjId \@f@
---
--- > J-----J
--- > |     |
--- > f>--->f
--- > |     |
--- > K-----K
-conjId
-  :: forall {hk} {vk} {j} {k} f
-   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
-  => Sq '(Conjoint hk f ::: Nil, Nil :: Path vk j j) '(Conjoint hk f ::: Nil, Nil :: Path vk k k)
-conjId = E.conjId @(f ::: Nil)
+  :: forall {kk} {j} {k} (p :: kk j k)
+   . (Equipment kk, Ob0 kk j, Ob0 kk k, Ob p)
+  => Sq (p ::: Nil) (p ::: Nil) Nil Nil
+hId = hArr id
 
 -- | Make a square from a vertical arrow
 --
@@ -108,11 +99,11 @@ conjId = E.conjId @(f ::: Nil)
 -- > |  v  |
 -- > J--g--K
 vArr
-  :: forall {hk} {vk} {j} {k} (f :: vk j k) g
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k)
+  :: forall {kk} {j} {k} (f :: kk j k) g
+   . (Equipment kk, IsTight f, IsTight g)
   => f ~> g
-  -> Sq '(Nil :: Path hk j j, f ::: Nil) '(I :: Path hk k k, g ::: Nil)
-vArr = E.vArr . singleton
+  -> Sq Nil Nil (f ::: Nil) (g ::: Nil)
+vArr fg = Sq (St fg) \\\ fg
 
 -- | A vertical identity square.
 --
@@ -122,10 +113,10 @@ vArr = E.vArr . singleton
 -- > |  v  |
 -- > J--f--K
 vId
-  :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
-  => Sq '(Nil :: Path hk j j, f ::: Nil) '(Nil :: Path hk k k, f ::: Nil)
-vId = E.vId
+  :: forall {kk} {j} {k} (f :: kk j k)
+   . (Equipment kk, IsTight f)
+  => Sq Nil Nil (f ::: Nil) (f ::: Nil)
+vId = withOb0s @kk @f (Sq id)
 
 -- | Horizontal composition
 --
@@ -135,12 +126,16 @@ vId = E.vId
 -- > |  v  |     |  v  |     |  v  |
 -- > M--e--J     J--g--K     M-e+g-K
 (|||)
-  :: forall {hk} {vk} {h} {l} {m} (ps :: Path hk m l) qs rs (ds :: Path vk l h) es fs gs
-   . (HasCompanions hk vk)
-  => Sq '(ps, ds) '(qs, es)
-  -> Sq '(qs, fs) '(rs, gs)
-  -> Sq '(ps, ds +++ fs) '(rs, es +++ gs)
-(|||) = (E.|||)
+  :: forall {kk} {h} {l} {m} (ps :: Path kk m l) qs rs (ds :: Path kk l h) es fs gs
+   . (Equipment kk)
+  => Sq ps qs ds es
+  -> Sq qs rs fs gs
+  -> Sq ps rs (ds +++ fs) (es +++ gs)
+Sq l ||| Sq r =
+  withOb2 @(SUBCAT Tight (Path kk)) @(SUB fs) @(SUB ds) $
+    withOb2 @(SUBCAT Tight (Path kk)) @(SUB gs) @(SUB es) $
+      Sq
+        (associator @_ @rs @gs @es . (r || obj1 @es) . associator @_ @fs @qs @es . (obj1 @fs || l) . associator @_ @fs @ds @ps)
 
 -- | Vertical composition
 --
@@ -164,12 +159,16 @@ vId = E.vId
 -- >  |  v  |
 -- >  J--g--K
 (===)
-  :: forall {hk} {vk} {h} {i} {j} {l} (ps :: Path hk l j) qs rs ss (es :: Path vk h i) fs gs
-   . (HasCompanions hk vk)
-  => Sq '(rs, es) '(ss, fs)
-  -> Sq '(ps, fs) '(qs, gs)
-  -> Sq '(ps +++ rs, es) '(qs +++ ss, gs)
-(===) = (E.===)
+  :: forall {kk} {h} {i} {j} {l} (ps :: Path kk l j) qs rs ss (es :: Path kk h i) fs gs
+   . (Equipment kk)
+  => Sq rs ss es fs
+  -> Sq ps qs fs gs
+  -> Sq (ps +++ rs) (qs +++ ss) es gs
+Sq l === Sq r =
+  withOb2 @_ @rs @ps $
+    withOb2 @_ @ss @qs $
+      Sq
+        (associatorInv @_ @ss @qs @gs . (obj1 @ss || r) . associator @_ @ss @fs @ps . (l || obj1 @ps) . associator @_ @es @rs @ps)
 
 -- | Bend a vertical arrow in the companion direction.
 --
@@ -179,10 +178,10 @@ vId = E.vId
 -- > |     |
 -- > J-----J
 toRight
-  :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, Ob' (f :: vk j k))
-  => Sq '(Nil, f ::: Nil) '(Companion hk f ::: Nil, Nil)
-toRight = E.toRight
+  :: forall {kk} {j} {k} (f :: kk j k)
+   . (Equipment kk, IsTight f)
+  => Sq Nil (f ::: Nil) (f ::: Nil) Nil
+toRight = withOb0s @kk @f $ Sq id
 
 -- | Bend a vertical arrow in the conjoint direction.
 --
@@ -192,10 +191,10 @@ toRight = E.toRight
 -- > |     |
 -- > K-----K
 toLeft
-  :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob (f :: vk j k))
-  => Sq '(Conjoint hk f ::: Nil, f ::: Nil) '(Nil, Nil)
-toLeft = E.toLeft
+  :: forall {kk} {j} {k} (f :: kk j k) f'
+   . (Equipment kk, TightPair f f')
+  => Sq (f' ::: Nil) Nil (f ::: Nil) Nil
+toLeft = withOb0s @kk @f $ Sq (St (counit @f @f'))
 
 -- | Bend a companion proarrow back to a vertical arrow.
 --
@@ -205,10 +204,10 @@ toLeft = E.toLeft
 -- > |  v  |
 -- > J--f--K
 fromLeft
-  :: forall {hk} {vk} {j} {k} f
-   . (HasCompanions hk vk, Ob' (f :: vk j k))
-  => Sq '(Companion hk f ::: Nil, Nil) '(Nil, f ::: Nil)
-fromLeft = E.fromLeft
+  :: forall {kk} {j} {k} (f :: kk j k)
+   . (Equipment kk, IsTight f)
+  => Sq (f ::: Nil) Nil Nil (f ::: Nil)
+fromLeft = withOb0s @kk @f $ Sq id
 
 -- | Bend a conjoint proarrow back to a vertical arrow.
 --
@@ -218,10 +217,10 @@ fromLeft = E.fromLeft
 -- > |  v  |
 -- > J--f--K
 fromRight
-  :: forall {hk} {vk} {j} {k} (f :: vk j k)
-   . (Equipment hk vk, Ob0 vk j, Ob0 vk k, Ob f)
-  => Sq '(Nil, Nil) '(Conjoint hk f ::: Nil, f ::: Nil)
-fromRight = E.fromRight
+  :: forall {kk} {j} {k} (f :: kk j k) f'
+   . (Equipment kk, TightPair f f')
+  => Sq Nil (f' ::: Nil) Nil (f ::: Nil)
+fromRight = withOb0s @kk @f $ Sq (St (unit @f @f'))
 
 -- > K--I--K
 -- > |  v  |
@@ -229,9 +228,9 @@ fromRight = E.fromRight
 -- > |     |
 -- > K-----K
 vUnitor
-  :: forall hk vk k
-   . (HasCompanions hk vk, Ob0 vk k)
-  => Sq '(Nil :: Path hk k k, I ::: Nil) '(Nil :: Path hk k k, Nil :: Path vk k k)
+  :: forall kk k
+   . (Equipment kk, Ob0 kk k)
+  => Sq Nil Nil ((I :: kk k k) ::: Nil) Nil
 vUnitor = vSplitAll
 
 -- > K-----K
@@ -240,9 +239,9 @@ vUnitor = vSplitAll
 -- > |  v  |
 -- > K--I--K
 vUnitorInv
-  :: forall hk vk k
-   . (HasCompanions hk vk, Ob0 vk k)
-  => Sq '(Nil :: Path hk k k, Nil :: Path vk k k) '(Nil :: Path hk k k, I ::: Nil)
+  :: forall kk k
+   . (Equipment kk, Ob0 kk k)
+  => Sq Nil Nil Nil ((I :: kk k k) ::: Nil)
 vUnitorInv = vCombineAll
 
 -- > I-f-g-K
@@ -251,10 +250,10 @@ vUnitorInv = vCombineAll
 -- > |  v  |
 -- > I-gof-K
 vCombine
-  :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
-   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob f, Ob g)
-  => Sq '(Nil :: Path hk i i, f ::: g ::: Nil) '(Nil, g `O` f ::: Nil)
-vCombine = vCombineAll
+  :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
+   . (Equipment kk, IsTight p, IsTight q)
+  => Sq Nil Nil (p ::: q ::: Nil) (q `O` p ::: Nil)
+vCombine = withOb0s @kk @p $ withOb0s @kk @q vCombineAll
 
 -- > I-gof-K
 -- > |  v  |
@@ -262,25 +261,23 @@ vCombine = vCombineAll
 -- > | v v |
 -- > I-f-g-K
 vSplit
-  :: forall {hk} {vk} {i} {j} {k} (f :: vk i j) (g :: vk j k)
-   . (HasCompanions hk vk, Ob0 vk i, Ob0 vk j, Ob0 vk k, Ob f, Ob g)
-  => Sq '(Nil :: Path hk i i, g `O` f ::: Nil) '(Nil, f ::: g ::: Nil)
-vSplit = vSplitAll
+  :: forall {kk} {i} {j} {k} (p :: kk i j) (q :: kk j k)
+   . (Equipment kk, IsTight p, IsTight q)
+  => Sq Nil Nil (q `O` p ::: Nil) (p ::: q ::: Nil)
+vSplit = withOb0s @kk @p $ withOb0s @kk @q vSplitAll
 
 -- | Combine a whole bunch of vertical arrows into one composed arrow.
---
+
 -- > J-p..-K
 -- > | vvv |
 -- > | \@/ |
 -- > |  v  |
 -- > J--f--K
 vCombineAll
-  :: forall {hk} {vk} {j} {k} (ps :: Path vk j k)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
-  => Sq '(Nil :: Path hk j j, ps) '(Nil :: Path hk k k, Fold ps ::: Nil)
-vCombineAll =
-  let ps = singPath @ps; fps = fold ps
-  in Sq (Str (mapCompanionSPath ps) (SCons (mapCompanion fps) SNil) (foldCompanion ps)) \\ fps
+  :: forall {kk} {j} {k} (ps :: Path kk j k)
+   . (Equipment kk, IsTight ps)
+  => Sq Nil Nil ps (Fold ps ::: Nil)
+vCombineAll = let n = combineAll @ps in withIsObTagFold @Tight @ps (Sq n \\ n)
 
 -- | Split one composed arrow into a whole bunch of vertical arrows.
 --
@@ -290,38 +287,36 @@ vCombineAll =
 -- > | vvv |
 -- > J-p..-K
 vSplitAll
-  :: forall {hk} {vk} {j} {k} (ps :: Path vk j k)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
-  => Sq '(Nil :: Path hk j j, Fold ps ::: Nil) '(Nil :: Path hk k k, ps)
-vSplitAll =
-  let ps = singPath @ps; fps = fold ps; cps = mapCompanionSPath @hk ps
-  in withIsPath cps (Sq (Str (SCons (mapCompanion fps) SNil) cps (companionFold ps)) \\ fps)
+  :: forall {kk} {j} {k} (ps :: Path kk j k)
+   . (Equipment kk, IsTight ps)
+  => Sq Nil Nil (Fold ps ::: Nil) ps
+vSplitAll = let n = splitAll @ps in withIsObTagFold @Tight @ps (Sq n \\ n)
 
 -- | Combine a whole bunch of horizontal proarrows into one composed proarrow.
 --
 -- > K-----K
 -- > p--\  |
--- > :--@--f
+-- > :--@--F
 -- > :--/  |
 -- > J-----J
 hCombineAll
-  :: forall {hk} {vk} {j} {k} (ps :: Path hk j k)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
-  => Sq '(ps, Nil :: Path vk k k) '(Fold ps ::: Nil, Nil)
-hCombineAll = let ps = singPath @ps; fps = fold ps in Sq (St fps) \\\ fps
+  :: forall {kk} {j} {k} (ps :: Path kk j k)
+   . (Equipment kk, Ob0 kk j, Ob0 kk k, Ob ps)
+  => Sq ps (Fold ps ::: Nil) Nil Nil
+hCombineAll = let n = combineAll @ps in Sq n \\ n
 
 -- | Split one composed proarrow into a whole bunch of horizontal proarrows.
 --
 -- > K-----K
 -- > |  /--p
--- > f--@--:
+-- > F--@--:
 -- > |  \--:
 -- > J-----J
 hSplitAll
-  :: forall {hk} {vk} {j} {k} (ps :: Path hk j k)
-   . (HasCompanions hk vk, Ob0 vk j, Ob0 vk k, Ob ps)
-  => Sq '(Fold ps ::: Nil, Nil :: Path vk k k) '(ps, Nil)
-hSplitAll = let ps = singPath @ps; fps = fold ps in Sq (St fps) \\\ fps
+  :: forall {kk} {j} {k} (ps :: Path kk j k)
+   . (Equipment kk, Ob0 kk j, Ob0 kk k, Ob ps)
+  => Sq (Fold ps ::: Nil) ps Nil Nil
+hSplitAll = let n = splitAll @ps in Sq n \\ n
 
 -- | Optics in proarrow equipments.
 --
@@ -330,8 +325,8 @@ hSplitAll = let ps = singPath @ps; fps = fold ps in Sq (St fps) \\\ fps
 -- > |   @   |
 -- > t<--@--<b
 -- > K-------K
-type Optic hk (a :: vk z j) (b :: vk z k) (s :: vk x j) (t :: vk x k) =
-  Sq '(Conjoint hk t ::: Companion hk s ::: Nil, Nil :: Path vk j j) '(Conjoint hk b ::: Companion hk a ::: Nil, Nil)
+type Optic (a :: kk z j) (b :: kk k z) (s :: kk x j) (t :: kk k x) =
+  (IsTight a, IsCotight b, IsTight s, IsCotight t) => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
 
 -- > J-------J
 -- > s>-\ /->a
@@ -365,17 +360,15 @@ type Optic hk (a :: vk z j) (b :: vk z k) (s :: vk x j) (t :: vk x k) =
 -- > |   @--<b     |   @--<b
 -- > K-------K     K-------K
 
-type ProfOptic a b s t = Optic PROFK (FUN a) (FUN b) (FUN s) (FUN t)
-mkProfOptic
-  :: (Representable s, Representable t, Representable a, Representable b)
-  => s :.: RepCostar t :~> a :.: RepCostar b -> ProfOptic a b s t
+type ProfOptic a b s t = Optic (PK a) (PK b) (PK s) (PK t)
+mkProfOptic :: s :.: t :~> a :.: b -> ProfOptic a b s t
 mkProfOptic n = Sq (St (Prof n))
 
-type HaskOptic a b s t = ProfOptic (Star a) (Star b) (Star s) (Star t)
+type HaskOptic a b s t = ProfOptic (Star a) (Costar b) (Star s) (Costar t)
 mkHaskOptic
   :: (Functor a, Functor b, Functor s, Functor t)
   => (forall x r. (Ob x) => (forall y. (Ob y) => (s x ~> a y) -> (b y ~> t x) -> r) -> r) -> HaskOptic a b s t
-mkHaskOptic k = mkProfOptic \(Star @y s :.: RepCostar t) -> k @y \get put -> Star (get . s) :.: RepCostar (t . put)
+mkHaskOptic k = mkProfOptic \(Star @y s :.: Costar t) -> k @y \get put -> Star (get . s) :.: Costar (t . put)
 
 type Lens s t a b = HaskOptic ((,) a) ((,) b) ((,) s) ((,) t)
 mkLens :: (s -> a) -> (s -> b -> t) -> Lens s t a b

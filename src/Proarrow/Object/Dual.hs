@@ -1,4 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE RequiredTypeArguments #-}
+{-# OPTIONS_GHC -Wno-unused-foralls #-}
 
 module Proarrow.Object.Dual where
 
@@ -12,13 +14,16 @@ import Proarrow.Category.Monoidal
   , leftUnitorWith
   , rightUnitorInvWith
   , rightUnitorWith
-  , swap
+  , swap, unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
+import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj, (//))
 import Proarrow.Object.Exponential (Closed (..))
 
-class (SymMonoidal k, Closed k, Ob (Unit :: k)) => StarAutonomous k where
+class Ob (Dual a) => ObDual a
+instance Ob (Dual a) => ObDual a
+
+class (SymMonoidal k, Closed k, Ob (Unit :: k), forall (a :: k). Ob a => ObDual a) => StarAutonomous k where
   type Dual (a :: k) :: k
   dual :: (a :: k) ~> b -> Dual b ~> Dual a
   dualInv :: (Ob (a :: k), Ob b) => Dual a ~> Dual b -> b ~> a
@@ -73,14 +78,22 @@ class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
   dualUnit :: Dual (Unit :: k) ~> Unit
 
+distribDualInv :: forall {k} (a :: k) b. (CompactClosed k, Ob a, Ob b) => Dual a ** Dual b ~> Dual (a ** b)
+distribDualInv =
+  dualObj @a //
+    dualObj @b //
+      let sw = swap @k @(Dual a) @(Dual b)
+      in linDist @k @(Dual b ** Dual a) @a @b (rightUnitorWith (dualityCounit @a) . associator @k @(Dual b) @(Dual a) @a) . sw
+           \\ sw
+
+dualUnitInv :: forall {k}. (CompactClosed k) => (Unit :: k) ~> Dual Unit
+dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @Unit \\ dualObj @(Unit :: k)
+
 dualityUnit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Unit ~> a ** Dual a
 dualityUnit = let dualA = dualObj @a in (doubleNeg @a `par` dualA) . distribDual @k @(Dual a) @a . dualityUnitSA @a \\ dualA
 
 dualityCounit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ** a ~> Unit
 dualityCounit = dualUnit . dualityCounitSA @a
-
-dualUnitInv :: forall {k}. (CompactClosed k) => (Unit :: k) ~> Dual Unit
-dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @Unit \\ dualObj @(Unit :: k)
 
 combineDual :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => Dual a ** Dual b ~> Dual (a ** b)
 combineDual =
@@ -93,6 +106,9 @@ combineDual =
     )
     \\ dualObj @a
     \\ dualObj @b
+
+dimension :: forall {k} (a :: k). (CompactClosed k, Ob a) => (Unit :: k) ~> Unit
+dimension = compactClosedTrace @Unit (unitObj `par` unitObj)
 
 compactClosedTrace :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** u ~> y ** u -> x ~> y
 compactClosedTrace f =

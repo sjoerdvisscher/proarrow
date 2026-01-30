@@ -24,13 +24,16 @@ module Proarrow.Category.Bicategory
   , Monad (..)
   , Comonad (..)
   , Adjunction (..)
-  , leftAdjunct
-  , rightAdjunct
+  , flipLeftAdjoint
+  , flipLeftAdjointInv
+  , flipRightAdjoint
+  , flipRightAdjointInv
   , Bimodule (..)
   )
 where
 
 import Data.Kind (Constraint)
+import Prelude (($))
 
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), id)
 import Proarrow.Object (Obj, obj)
@@ -41,6 +44,7 @@ infixl 1 \\\
 
 -- | A bicategory is locally "something" if each hom-category is "something".
 class (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
+
 instance (forall j k. (Ob0 kk j, Ob0 kk k) => c (kk j k)) => Locally c kk
 
 class (Ob0 kk j) => Ob0' kk j
@@ -139,12 +143,12 @@ rightUnitorInvWith c ab = ((ab `o` c) . rightUnitorInv) \\\ ab
 f == g = g . f
 
 type Monad :: forall {kk} {a}. kk a a -> Constraint
-class (Bicategory kk, Ob0 kk a, Ob t) => Monad (t :: kk a a) where
+class (Bicategory kk, Ob t) => Monad (t :: kk a a) where
   eta :: I ~> t
   mu :: t `O` t ~> t
 
 type Comonad :: forall {kk} {a}. kk a a -> Constraint
-class (Bicategory kk, Ob0 kk a, Ob t) => Comonad (t :: kk a a) where
+class (Bicategory kk, Ob t) => Comonad (t :: kk a a) where
   epsilon :: t ~> I
   delta :: t ~> t `O` t
 
@@ -158,28 +162,61 @@ instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
   rightAction = mu
 
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
-class (Bicategory kk, Ob0 kk c, Ob0 kk d) => Adjunction (l :: kk c d) (r :: kk d c) where
+class (Bicategory kk, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where
   unit :: I ~> r `O` l
   counit :: l `O` r ~> I
 
-leftAdjunct
+flipLeftAdjoint
   :: forall {kk} {c} {d} {i} (l :: kk c d) (r :: kk d c) (a :: kk i c) b
-   . (Adjunction l r, Ob a, Ob r, Ob l, Ob0 kk i)
+   . (Adjunction l r, Ob a)
   => l `O` a ~> b
   -> a ~> r `O` b
-leftAdjunct f =
-  leftUnitorInv
-    == unit @l @r || obj @a
-    == associator @_ @r @l @a
-    == obj @r || f
+flipLeftAdjoint f =
+  withOb0s @kk @l $
+    withOb0s @kk @a $
+      ( leftUnitorInv
+          == unit @l @r || obj @a
+          == associator @_ @r @l @a
+          == obj @r || f
+      )
 
-rightAdjunct
+flipLeftAdjointInv
   :: forall {kk} {c} {d} {i} (l :: kk c d) (r :: kk d c) (a :: kk i c) b
-   . (Adjunction l r, Ob b, Ob r, Ob l, Ob0 kk i)
+   . (Adjunction l r, Ob b)
   => a ~> r `O` b
   -> l `O` a ~> b
-rightAdjunct f =
-  obj @l || f
-    == associatorInv @_ @l @r @b
-    == counit @l @r || obj @b
-    == leftUnitor
+flipLeftAdjointInv f =
+  withOb0s @kk @r $
+    withOb0s @kk @b $
+      ( obj @l || f
+          == associatorInv @_ @l @r @b
+          == counit @l @r || obj @b
+          == leftUnitor
+      )
+
+flipRightAdjoint
+  :: forall {kk} {c} {d} {i} (l :: kk c d) (r :: kk d c) (a :: kk c i) b
+   . (Adjunction l r, Ob a)
+  => a `O` r ~> b
+  -> a ~> b `O` l
+flipRightAdjoint f =
+  withOb0s @kk @l $
+    withOb0s @kk @a $
+      rightUnitorInv
+        == obj @a || unit @l @r
+        == associatorInv @_ @a @r @l
+        == f || obj @l
+
+flipRightAdjointInv
+  :: forall {kk} {c} {d} {i} (l :: kk c d) (r :: kk d c) a (b :: kk d i)
+   . (Adjunction l r, Ob b)
+  => a ~> b `O` l
+  -> a `O` r ~> b
+flipRightAdjointInv f =
+  withOb0s @kk @r $
+    withOb0s @kk @b $
+      ( f || obj @r
+          == associator @_ @b @l @r
+          == obj @b || counit @l @r
+          == rightUnitor
+      )

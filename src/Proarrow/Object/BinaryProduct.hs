@@ -219,24 +219,7 @@ instance MonoidalAction Type Type where
 instance Costrong Type (->) where
   coact f x = let (u, y) = f (u, x) in y
 
-instance MonoidalProfunctor U.Unit where
-  par0 = id
-  f `par` g = f *** g
-
 -- | Products as monoidal structure.
-instance Monoidal () where
-  type Unit = TerminalObject
-  type a ** b = a && b
-  withOb2 r = r
-  leftUnitor = leftUnitorProd
-  leftUnitorInv = leftUnitorProdInv
-  rightUnitor = rightUnitorProd
-  rightUnitorInv = rightUnitorProdInv
-  associator = associatorProd
-  associatorInv = associatorProdInv
-
-instance SymMonoidal () where
-  swap = swapProd
 
 instance Strong () U.Unit where
   act = par
