@@ -6,7 +6,7 @@ import Data.Kind (Constraint)
 import Prelude (type (~))
 
 import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->), rmap)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->), rmap, Iso, iso)
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object (Obj, obj, tgt, src)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, trivialCorep)
@@ -96,3 +96,6 @@ instance (FunctorForRep f) => Representable (Rep f) where
   index (Rep f) = f
   tabulate = Rep
   repMap = fmap @f
+
+rep :: forall f a b a' b'. Ob b => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
+rep = iso Rep unRep

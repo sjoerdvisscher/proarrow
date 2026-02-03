@@ -26,6 +26,14 @@ module Proarrow.Core
   , Promonad(..)
     -- ** Promonad Utilities
   , arr
+    -- * Isomorphisms
+  , Optic
+  , Iso
+  , Iso'
+  , AnIso
+  , iso
+  , from
+  , Exchange(..)
     -- * Object Identities
   , Obj, obj, src, tgt
     -- * Type Family Utilities
@@ -198,3 +206,22 @@ type family UN (w :: j -> k) (wa :: k) :: j
 
 -- | @Is w a@ checks that the kind @a@ is a kind wrapped by @w@.
 type Is w a = a ~ w (UN w a)
+
+-- * Isomophisms (as optics)
+
+type Optic c s t a b = forall p. c p => p a b -> p s t
+type Iso s t a b = Optic Profunctor s t a b
+type Iso' s a = Iso s s a a
+
+iso :: (s ~> a) -> (b ~> t) -> Iso s t a b
+iso sa bt = dimap sa bt
+
+data Exchange a b s t = Exchange (s ~> a) (b ~> t)
+instance CategoryOf k => Profunctor (Exchange a b :: k +-> k) where
+  dimap l r (Exchange sa bt) = Exchange (sa . l) (r . bt)
+  r \\ Exchange sa bt = r \\ sa \\ bt
+
+type AnIso s t a b = Exchange a b a b -> Exchange a b s t
+
+from :: (CategoryOf k, Ob (a :: k), Ob b) => AnIso s t a b -> Iso b a t s
+from l = case l (Exchange id id) of Exchange sa bt -> iso bt sa

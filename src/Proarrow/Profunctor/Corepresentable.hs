@@ -4,7 +4,7 @@ module Proarrow.Profunctor.Corepresentable where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->), lmap)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->), lmap, Iso, iso)
 import Proarrow.Object (obj, Obj)
 import Proarrow.Functor (FunctorForRep (..))
 
@@ -46,3 +46,6 @@ instance (FunctorForRep f) => Corepresentable (Corep f) where
   coindex (Corep f) = f
   cotabulate = Corep
   corepMap = fmap @f
+
+corep :: forall f a b a' b'. Ob a => Iso (f @ a ~> b) (f @ a' ~> b') (Corep f a b) (Corep f a' b')
+corep = iso Corep unCorep

@@ -2,7 +2,7 @@ module Proarrow.Profunctor.Wrapped where
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (Profunctor (..), Promonad (..))
+import Proarrow.Core (Profunctor (..), Promonad (..), Iso, iso)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Day (Day (..), DayUnit (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
@@ -45,3 +45,6 @@ instance (Corepresentable p) => Corepresentable (Wrapped p) where
   coindex (Wrapped p) = coindex p
   cotabulate f = Wrapped (cotabulate f)
   corepMap = corepMap @p
+
+wrapped :: Iso (p a b) (p a' b') (Wrapped p a b) (Wrapped p a' b')
+wrapped = iso Wrapped unWrapped
