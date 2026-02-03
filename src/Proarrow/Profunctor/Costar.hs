@@ -10,10 +10,9 @@ import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (
 import Proarrow.Category.Instance.Nat (Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -65,6 +64,3 @@ instance (Functor f, Discrete j, Thin k) => ThinProfunctor (Costar f :: j +-> k)
   type HasArrow (Costar f) a b = f a P.~ b
   arr = Costar id
   withArr (Costar f) = withEq f
-
-costrength :: forall {m} f a b. (Functor f, Strong m (Costar f), Ob (a :: m), Ob b) => f (Act a b) ~> Act a (f b)
-costrength = unCostar (act (obj @a) (Costar (obj @(f b))))

@@ -8,7 +8,7 @@ import Prelude qualified as P
 import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), par)
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), actHom)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag)
@@ -45,10 +45,10 @@ instance (HasCoproducts k, Ob a) => Monoid (COPR (a :: k)) where
   mappend = Coprod (Id codiag)
 
 memptyAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => n ~> Act a n
-memptyAct = act (mempty @a) (obj @n) . unitorInv @m
+memptyAct = actHom (mempty @a) (obj @n) . unitorInv @m
 
 mappendAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => Act a (Act a n) ~> Act a n
-mappendAct = act (mappend @a) (obj @n) . multiplicator @m @c @a @a @n
+mappendAct = actHom (mappend @a) (obj @n) . multiplicator @m @c @a @a @n
 
 type ModuleObject :: forall {m} {c}. m -> c -> Constraint
 class (MonoidalAction m c, Monoid a, Ob n) => ModuleObject (a :: m) (n :: c) where
@@ -72,10 +72,10 @@ instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
   comult = Prod diag
 
 counitAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> n
-counitAct = unitor @m . act (counit @a) (obj @n)
+counitAct = unitor @m . actHom (counit @a) (obj @n)
 
 comultAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> Act a (Act a n)
-comultAct = multiplicatorInv @m @c @a @a @n . act (comult @a) (obj @n)
+comultAct = multiplicatorInv @m @c @a @a @n . actHom (comult @a) (obj @n)
 
 class (Monoidal k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a

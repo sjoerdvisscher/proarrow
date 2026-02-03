@@ -25,6 +25,7 @@ import Proarrow.Object.Dual
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Identity (Id(..))
 
 type data Nat = Z | S Nat
 
@@ -224,8 +225,8 @@ instance (P.Num a) => MonoidalAction (MatK a) (MatK a) where
   multiplicator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
   multiplicatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
 
-instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a)) where
-  act = par
+instance (P.Num a) => Strong (MatK a) (Id :: CAT (MatK a)) where
+  act = par . Id
 
 instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
   coact @x = compactClosedCoact @x

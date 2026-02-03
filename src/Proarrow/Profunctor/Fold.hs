@@ -7,7 +7,7 @@ import Data.Kind (Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swapInner)
-import Proarrow.Category.Monoidal.Action (Strong (..), Costrong (..), MonoidalAction (..))
+import Proarrow.Category.Monoidal.Action (Strong (..), Costrong (..), MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (distLProd, distRProd)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), type (+->), obj)
@@ -47,7 +47,7 @@ instance (CoprodAction k, BiCCC k) => Strong (COPROD k) (Fold :: k +-> k) where
       step mult = (lft @k @a @m . fst @k @a @(a || m) ||| (snd @k @m @a +++ mult) . distLProd @m @a @m) . distRProd @a @m @(a || m)
 
 instance (ProdAction k) => Costrong k (Fold :: k +-> k) where
-  coact @a @x @y (Fold f g m z) = Fold (snd @k @a @y . f) (g . act (fst @k @a @y . f . z) (obj @x) . unitorInv @k @k @x) m z
+  coact @a @x @y (Fold f g m z) = Fold (snd @k @a @y . f) (g . actHom (fst @k @a @y . f . z) (obj @x) . unitorInv @k @k @x) m z
 
 trav :: (Applicative f) => Fold a b -> Fold (f a) (f b)
 trav (Fold @m k h m z) = Fold (map k) (map h) (liftA2 @_ @m @m m) (pure z)

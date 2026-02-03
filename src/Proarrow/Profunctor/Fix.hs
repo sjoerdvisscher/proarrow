@@ -1,6 +1,7 @@
 module Proarrow.Profunctor.Fix where
 
 import Data.Functor.Const (Const (..))
+import Data.Kind (Type)
 
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -37,7 +38,7 @@ instance (Traversable p) => Traversable (Fix p) where
 instance (Cotraversable p) => Cotraversable (Fix p) where
   cotraverse (r :.: In pfp) = case cotraverse (r :.: pfp) of pfp' :.: r' -> In pfp' :.: r'
 
-instance (Strong m p) => Strong m (Fix p) where
+instance (Strong Type p) => Strong Type (Fix p) where
   act f (In p) = In (act f p)
 
 hylo :: (Profunctor p, Profunctor a, Profunctor b) => (p :.: b :~> b) -> (a :~> p :.: a) -> a :~> b

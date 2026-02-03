@@ -14,12 +14,13 @@ import Proarrow.Category.Monoidal
   , swap'
   , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), strongPar0)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), actHom, strongPar0)
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, tgt, (//), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid, Monoid (..), comultAct, counitAct, mappendAct, memptyAct)
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 import Proarrow.Promonad (Procomonad (..))
 
@@ -34,14 +35,14 @@ instance (Ob (w :: m), MonoidalAction m k) => Representable (Writer w :: k +-> k
   type Writer w % a = Act w a
   index (Writer f) = f
   tabulate f = Writer f
-  repMap f = act (obj @w) f
+  repMap f = actHom (obj @w) f
 
 instance (MonoidalAction m k) => Functor (Writer :: m -> k +-> k) where
-  map f = f // Prof \(Writer @b g) -> Writer (act f (obj @b) . g)
+  map f = f // Prof \(Writer @b g) -> Writer (actHom f (obj @b) . g)
 
 instance (Monoid (w :: m), MonoidalAction m k) => Promonad (Writer w :: k +-> k) where
   id = Writer (memptyAct @w)
-  Writer @c g . Writer f = Writer (mappendAct @w @c . act (obj @w) g . f)
+  Writer @c g . Writer f = Writer (mappendAct @w @c . actHom (obj @w) g . f)
 
 instance (Comonoid (w :: m), MonoidalAction m k) => Procomonad (Writer w :: k +-> k) where
   extract (Writer f) = counitAct @w . f
@@ -49,9 +50,9 @@ instance (Comonoid (w :: m), MonoidalAction m k) => Procomonad (Writer w :: k +-
 
 instance (Ob (w :: m), MonoidalAction m k, SymMonoidal m) => Strong m (Writer w :: k +-> k) where
   act @a @b @x @y f (Writer g) =
-    Writer (multiplicatorInv @m @k @w @b @y . act (swap @_ @b @w) (obj @y) . multiplicator @m @k @b @w @y . act f g)
-      \\ act (obj @a) (obj @x)
-      \\ act (obj @b) (obj @y)
+    Writer (multiplicatorInv @m @k @w @b @y . actHom (swap @_ @b @w) (obj @y) . multiplicator @m @k @b @w @y . actHom f g)
+      \\ actHom (obj @a) (obj @x)
+      \\ actHom (obj @b) (obj @y)
       \\ f
       \\ g
 
@@ -71,4 +72,4 @@ instance (Monoid (w :: k), SelfAction k) => MonoidalProfunctor (Writer w :: k +-
               )
 
 instance (Monoid (w :: k), SelfAction k) => Traversable (Writer w :: k +-> k) where
-  traverse (Writer f :.: p) = let wp = strongPar0 @w `act` p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p
+  traverse (Writer f :.: p) = let wp = unId (strongPar0 @w) `act` p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p

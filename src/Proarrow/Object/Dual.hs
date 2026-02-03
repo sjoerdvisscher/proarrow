@@ -16,7 +16,7 @@ import Proarrow.Category.Monoidal
   , rightUnitorWith
   , swap, unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), actHom)
 import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj, (//))
 import Proarrow.Object.Exponential (Closed (..))
 
@@ -124,11 +124,11 @@ compactClosedCoact
    . (CompactClosed m, MonoidalAction m k, Ob x, Ob y, Ob u) => Act u x ~> Act u y -> x ~> y
 compactClosedCoact f =
   unitor @m @k @y
-    . act (dualityCounit @u) (obj @y)
+    . actHom (dualityCounit @u) (obj @y)
     . multiplicator @m @k @(Dual u) @u @y
-    . act (obj @(Dual u)) f
+    . actHom (obj @(Dual u)) f
     . multiplicatorInv @m @k @(Dual u) @u @x
-    . act (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
+    . actHom (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
     . unitorInv @m @k @x
     \\ dualObj @u
 

@@ -38,7 +38,7 @@ import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
-import Proarrow.Profunctor.Identity (Id)
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
 
 newtype KIND = K Kind
@@ -232,8 +232,8 @@ instance MonoidalAction KIND KIND where
   multiplicator = associatorInv
   multiplicatorInv = associator
 
-instance Strong KIND Cat where
-  act = par
+instance Strong KIND (Id :: CAT KIND) where
+  act = par . Id
 
 instance Costrong KIND Cat where
   coact @u = compactClosedCoact @u

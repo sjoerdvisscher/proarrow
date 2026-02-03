@@ -1,5 +1,7 @@
 module Proarrow.Profunctor.Product where
 
+import Data.Kind (Type)
+
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (Profunctor (..), (:~>), type (+->))
@@ -29,5 +31,5 @@ instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :*: q) where
   arr = arr :*: arr
   withArr (p :*: q) r = withArr p (withArr q r)
 
-instance (Strong m p, Strong m q) => Strong m (p :*: q) where
+instance (Strong Type p, Strong Type q) => Strong Type (p :*: q) where
   act f (p :*: q) = act f p :*: act f q

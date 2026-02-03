@@ -1,5 +1,7 @@
 module Proarrow.Profunctor.Composition where
 
+import Data.Kind (Type)
+
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
@@ -45,7 +47,7 @@ instance
   par0 = Coprod (copar0 :.: copar0)
   Coprod (f :.: g) `par` Coprod (h :.: i) = Coprod ((f `copar` h) :.: (g `copar` i))
 
-instance (Strong m p, Strong m q) => Strong m (p :.: q) where
+instance (Strong Type p, Strong Type q) => Strong Type (p :.: q) where
   act f (p :.: q) = act f p :.: act (tgt f) q
 
 -- No instance for ThinProfunctor (p :.: q) because you can't do existentials in constraints.

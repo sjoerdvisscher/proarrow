@@ -27,6 +27,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Identity (Id (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -114,8 +115,8 @@ instance Monoidal (Type -> Type) where
   associator = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv = Nat (Compose . Compose . map getCompose . getCompose)
 
-instance Strong (Type -> Type) (->) where
-  act (Nat n) f = n . map f
+instance Strong (Type -> Type) (Id :: CAT Type) where
+  act (Nat n) (Id f) = Id (n . map f)
 instance MonoidalAction (Type -> Type) Type where
   type Act (p :: Type -> Type) (x :: Type) = p x
   withObAct r = r

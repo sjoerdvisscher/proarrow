@@ -12,7 +12,7 @@ import Proarrow.Category.Monoidal.Action (Costrong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryCoproduct (COPROD, Coprod (..), HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (COPROD, HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Dual (StarAutonomous (..))
@@ -22,7 +22,6 @@ import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 import System.IO.Unsafe (unsafeDupablePerformIO)
 import Unsafe.Coerce (unsafeCoerce)
@@ -127,8 +126,8 @@ instance HasInitialObject LINEAR where
   type InitialObject = L Void
   initiate = Linear \case {}
 
-instance Costrong (COPROD LINEAR) (Coprod (Id :: CAT LINEAR)) where
-  coact (Coprod (Id (Linear uxuy))) = Coprod (Id (loop . Linear Right))
+instance Costrong (COPROD LINEAR) Linear where
+  coact (Linear uxuy) = loop . Linear Right
     where
       loop = Linear \ux -> case uxuy ux of Left x -> unLinear loop (Left x); Right b -> b
 

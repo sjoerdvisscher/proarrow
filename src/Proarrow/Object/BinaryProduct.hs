@@ -28,6 +28,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
+import Proarrow.Profunctor.Identity qualified as Id
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
 import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
@@ -206,8 +207,8 @@ instance Monoidal Type where
 instance SymMonoidal Type where
   swap = swapProd
 
-instance Strong Type (->) where
-  act = par
+instance Strong Type (Id.Id :: Type +-> Type) where
+  act f (Id.Id g) = Id.Id (f `par` g)
 instance MonoidalAction Type Type where
   type Act p x = p ** x
   withObAct r = r
@@ -220,19 +221,6 @@ instance Costrong Type (->) where
   coact f x = let (u, y) = f (u, x) in y
 
 -- | Products as monoidal structure.
-
-instance Strong () U.Unit where
-  act = par
-instance MonoidalAction () () where
-  type Act p x = p ** x
-  withObAct r = r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator = associatorInv
-  multiplicatorInv = associator
-
-instance Costrong () U.Unit where
-  coact U.Unit = U.Unit
 
 class (Act a b ~ a && b) => ActIsProd a b
 instance (Act a b ~ a && b) => ActIsProd a b

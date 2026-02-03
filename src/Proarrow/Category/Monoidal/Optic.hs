@@ -1,27 +1,27 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE IncoherentInstances #-}
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -Wno-orphans -fprint-potential-instances #-}
 
 module Proarrow.Category.Monoidal.Optic where
 
 import Data.Bifunctor (bimap)
 import Data.Kind (Type)
-import Prelude (Either, Maybe (..), Monad (..), Traversable, const, either, fmap, fst, snd, uncurry, ($), type (~))
+import Prelude (Either (..), Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($), type (~))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.Nat ((!))
-import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, swap)
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs, actHom)
 import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
+import Proarrow.Core qualified as Core
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Object (src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
-import Proarrow.Object.BinaryProduct ()
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Profunctor.Identity (Id(..))
 
 type Optic :: Kind -> c -> d -> c -> d -> Type
 data Optic m a b s t where
@@ -42,12 +42,9 @@ instance (CategoryOf c, CategoryOf d) => Profunctor (Optic m a b :: c +-> d) whe
 instance (IsOptic m c d) => Strong m (Optic m a b :: c +-> d) where
   act :: forall (a1 :: m) (b1 :: m) (s :: d) (t :: c). a1 ~> b1 -> Optic m a b s t -> Optic m a b (Act a1 s) (Act b1 t)
   act w (Optic @x @x' f w' g) =
-    Optic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
+    Optic (composeActs @a1 @x @a (src w `actHom` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `actHom` tgt g))
       \\ w
       \\ w'
-
-parallel :: Optic m a b s t -> Optic m' c d u v -> Optic (m, m') '(a, c) '(b, d) '(s, u) '(t, v)
-parallel (Optic f w g) (Optic h w' i) = Optic (f :**: h) (w :**: w') (g :**: i)
 
 type data OPTIC m (c :: Kind) (d :: Kind) = OPT c d
 type family OptL (p :: OPTIC w c d) where
@@ -64,30 +61,36 @@ instance (IsOptic m c d) => Profunctor (OpticCat :: CAT (OPTIC m c d)) where
 instance (IsOptic m c d) => Promonad (OpticCat :: CAT (OPTIC m c d)) where
   id = OpticCat (prof2ex id)
   OpticCat l@Optic{} . OpticCat r@Optic{} = OpticCat $ prof2ex (ex2prof l . ex2prof r)
+
 -- | The category of optics.
 instance (IsOptic m c d) => CategoryOf (OPTIC m c d) where
   type (~>) = OpticCat
   type Ob a = (a ~ OPT (OptL a) (OptR a), Ob (OptL a), Ob (OptR a))
 
-type MixedOptic m a b s t = forall p. (Strong m p) => p a b -> p s t
+type MixedOptic m a b s t = Core.Optic (Strong m) s t a b
+
+toIso :: MixedOptic () a b s t -> Core.Iso s t a b
+toIso l p = l p
 
 ex2prof :: forall m a b s t. Optic m a b s t -> MixedOptic m a b s t
 ex2prof (Optic l w r) p = dimap l r (act w p)
 
 prof2ex
-  :: forall {c} {d} m a b s t
+  :: forall {c} {d} m (a :: c) (b :: d) (s :: c) (t :: d)
    . (MonoidalAction m c, MonoidalAction m d, Ob a, Ob b)
-  => MixedOptic m (a :: c) (b :: d) (s :: c) (t :: d)
+  => MixedOptic m a b s t
   -> Optic m a b s t
 prof2ex p2p = p2p (Optic (unitorInv @m) par0 (unitor @m))
 
-type Lens s t a b = MixedOptic Type a b s t
-mkLens :: (s -> a) -> (s -> b -> t) -> Lens s t a b
-mkLens sa sbt = ex2prof (Optic (\s -> (s, sa s)) (src sa) (uncurry sbt))
+type Lens (s :: k) t a b = MixedOptic k a b s t
+mkLens
+  :: (Cartesian k, Act s a ~ (s && a), Act s b ~ (s && b), Ob (b :: k))
+  => (s ~> a) -> ((s && b) ~> t) -> Lens s t a b
+mkLens sa sbt = ex2prof (Optic (id &&& sa) (src sa) sbt) \\ sa
 
-type Prism s t a b = MixedOptic (COPROD Type) (COPR a) (COPR b) (COPR s) (COPR t)
+type Prism (s :: k) t a b = MixedOptic (COPROD k) a b s t
 mkPrism :: (s -> Either t a) -> (b -> t) -> Prism s t a b
-mkPrism sat bt = ex2prof @(COPROD Type) (Optic (Coprod (Id sat)) id (Coprod (Id (either id bt))))
+mkPrism sta bt = ex2prof @(COPROD Type) (Optic sta id (either id bt))
 
 type Traversal s t a b = MixedOptic (SUBCAT Traversable) a b s t
 traversing :: (Traversable f) => Traversal (f a) (f b) a b
@@ -113,10 +116,10 @@ infixl 8 ^.
 (^.) :: s -> (Viewing a b a b -> Viewing a b s t) -> a
 (^.) s l = unView (l $ Viewing id) s
 
-data Previewing a (b :: COPROD Type) s (t :: COPROD Type) where
-  Previewing :: {unPreview :: s -> Maybe a} -> Previewing (COPR a) (COPR b) (COPR s) (COPR t)
+data Previewing a (b :: Type) s (t :: Type) where
+  Previewing :: {unPreview :: s -> Maybe a} -> Previewing a b s t
 instance Profunctor (Previewing a b) where
-  dimap (Coprod (Id l)) Coprod{} (Previewing f) = Previewing (f . l)
+  dimap l _ (Previewing f) = Previewing (f . l)
   r \\ Previewing f = r \\ f
 instance Strong (COPROD Type) (Previewing a b) where
   act _ (Previewing f) = Previewing (either (const Nothing) f)
@@ -125,7 +128,7 @@ instance Strong Type (Previewing a b) where
 
 infixl 8 ?.
 (?.)
-  :: s -> (Previewing (COPR a) (COPR b) (COPR a) (COPR b) -> Previewing (COPR a) (COPR b) (COPR s) (COPR t)) -> Maybe a
+  :: s -> (Previewing a b a b -> Previewing a b s t) -> Maybe a
 (?.) s l = unPreview (l $ Previewing Just) s
 
 type KlCat m = KLEISLI (Star (Prelude m))
@@ -193,9 +196,10 @@ instance (IsChart m c d) => Promonad (ChartCat :: CAT (CHART m c d)) where
   id = ChartCat (prof2ex id)
   ChartCat (Optic @x @x' @_ @t ll lw lr) . ChartCat (Optic @y @y' @a rl rw rr) =
     ChartCat $
-      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `act` obj @t))
+      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `actHom` obj @t))
         \\ lw
         \\ rw
+
 -- | The category of charts.
 instance (IsChart m c d) => CategoryOf (CHART m c d) where
   type (~>) = ChartCat

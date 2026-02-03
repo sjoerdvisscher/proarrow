@@ -5,7 +5,6 @@ import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..), Dagger)
-import Proarrow.Category.Monoidal.Action (Strong (..), MonoidalAction)
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
 
 type Id :: CAT k
@@ -37,9 +36,6 @@ instance (Monoidal k) => MonoidalProfunctor (Id :: CAT k) where
 
 instance (Dagger k) => DaggerProfunctor (Id :: CAT k) where
   dagger (Id p) = Id (dagger p)
-
-instance (Strong m ((~>) :: CAT k), MonoidalAction m k) => Strong m (Id :: CAT k) where
-  act f (Id g) = Id (act f g)
 
 instance (Thin k) => ThinProfunctor (Id :: CAT k) where
   type HasArrow (Id :: CAT k) a b = HasArrow ((~>) :: CAT k) a b

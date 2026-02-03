@@ -3,13 +3,16 @@
 
 module Proarrow.Profunctor.List where
 
+import Data.Kind (Type)
+
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), actHom)
 import Proarrow.Category.Monoidal.Strictified qualified as Str
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type data LIST k = L [k]
@@ -93,31 +96,36 @@ instance (DaggerProfunctor p) => DaggerProfunctor (List p) where
   dagger Nil = Nil
   dagger (Cons f fs) = Cons (dagger f) (dagger fs)
 
-instance (MonoidalAction m k) => MonoidalAction m (LIST k) where
-  type Act (a :: m) (L '[] :: LIST k) = L '[]
-  type Act (a :: m) (L (b ': bs) :: LIST k) = L (Act a b ': UN L (Act a (L bs)))
+instance (MonoidalAction Type k, Strong Type (Id :: k +-> k)) => MonoidalAction Type (LIST k) where
+  type Act (a :: Type) (L '[] :: LIST k) = L '[]
+  type Act (a :: Type) (L (b ': bs) :: LIST k) = L (Act a b ': UN L (Act a (L bs)))
   withObAct @a @(L xs) r = case Str.sList @xs of
     Str.SNil -> r
-    Str.SSing @x -> withObAct @m @k @a @x r
-    Str.SCons @x @(y ': ys) -> withObAct @m @(LIST k) @a @(L ys) (withObAct @m @(LIST k) @a @(L (y ': ys)) (withObAct @m @k @a @x r))
+    Str.SSing @x -> withObAct @Type @k @a @x r
+    Str.SCons @x @(y ': ys) -> withObAct @Type @(LIST k) @a @(L ys) (withObAct @Type @(LIST k) @a @(L (y ': ys)) (withObAct @Type @k @a @x r))
   unitor @(L xs) = case Str.sList @xs of
     Str.SNil -> Nil
-    Str.SSing @x -> Cons (unitor @m @k @x) Nil
-    Str.SCons @x @xs' -> mkCons (unitor @m @k @x) (unitor @m @(LIST k) @(L xs'))
+    Str.SSing @x -> Cons (unitor @Type @k @x) Nil
+    Str.SCons @x @xs' -> mkCons (unitor @Type @k @x) (unitor @Type @(LIST k) @(L xs'))
   unitorInv @(L xs) = case Str.sList @xs of
     Str.SNil -> Nil
-    Str.SSing @x -> Cons (unitorInv @m @k @x) Nil
-    Str.SCons @x @xs' -> mkCons (unitorInv @m @k @x) (unitorInv @m @(LIST k) @(L xs'))
+    Str.SSing @x -> Cons (unitorInv @Type @k @x) Nil
+    Str.SCons @x @xs' -> mkCons (unitorInv @Type @k @x) (unitorInv @Type @(LIST k) @(L xs'))
   multiplicator @a @b @(L xs) = case Str.sList @xs of
     Str.SNil -> Nil
-    Str.SSing @x -> Cons (multiplicator @m @k @a @b @x) Nil
-    Str.SCons @x @xs' -> mkCons (multiplicator @m @k @a @b @x) (multiplicator @m @(LIST k) @a @b @(L xs'))
+    Str.SSing @x -> Cons (multiplicator @Type @k @a @b @x) Nil
+    Str.SCons @x @xs' -> mkCons (multiplicator @Type @k @a @b @x) (multiplicator @Type @(LIST k) @a @b @(L xs'))
   multiplicatorInv @a @b @(L xs) = case Str.sList @xs of
     Str.SNil -> Nil
-    Str.SSing @x -> Cons (multiplicatorInv @m @k @a @b @x) Nil
-    Str.SCons @x @xs' -> mkCons (multiplicatorInv @m @k @a @b @x) (multiplicatorInv @m @(LIST k) @a @b @(L xs'))
+    Str.SSing @x -> Cons (multiplicatorInv @Type @k @a @b @x) Nil
+    Str.SCons @x @xs' -> mkCons (multiplicatorInv @Type @k @a @b @x) (multiplicatorInv @Type @(LIST k) @a @b @(L xs'))
 
-instance (Strong m p) => Strong m (List p) where
+instance (Strong Type p) => Strong Type (List p) where
   act _ Nil = Nil
   act f (Cons g Nil) = Cons (act f g) Nil
   act f (Cons g gs@Cons{}) = mkCons (act f g) (act f gs)
+
+instance (Strong Type (Id :: k +-> k)) => Strong Type (Id :: LIST k +-> LIST k) where
+  act _ (Id Nil) = Id Nil
+  act f (Id (Cons g Nil)) = Id (Cons (actHom f g) Nil)
+  act f (Id (Cons g gs@Cons{})) = Id (mkCons (actHom f g) (actHom f gs))

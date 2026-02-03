@@ -168,21 +168,12 @@ instance (HasCoproducts k) => Monoidal (COPROD k) where
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
   swap @(COPR a) @(COPR b) = Coprod (Id (swapCoprod @k @a @b))
 
-instance Costrong (COPROD Type) (Coprod (Id :: CAT Type)) where
-  coact (Coprod (Id uxuy)) = Coprod (Id (let loop ux = P.either (loop . P.Left) id (uxuy ux) in loop . P.Right))
+instance Costrong (COPROD Type) (Id :: CAT Type) where
+  coact (Id uxuy) = Id (let loop ux = P.either (loop . P.Left) id (uxuy ux) in loop . P.Right)
 
-instance (HasCoproducts k) => Strong (COPROD k) (Coprod (Id :: CAT k)) where
-  act = par
-instance (HasCoproducts k) => MonoidalAction (COPROD k) (COPROD k) where
-  type Act p x = p ** x
-  withObAct @(COPR a) @(COPR b) r = withObCoprod @k @a @b r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator @(COPR a) @(COPR b) @(COPR c) = associatorInv @_ @(COPR a) @(COPR b) @(COPR c)
-  multiplicatorInv @(COPR a) @(COPR b) @(COPR c) = associator @_ @(COPR a) @(COPR b) @(COPR c)
+instance Strong Type (Id :: CAT (COPROD Type)) where
+  l `act` Id (Coprod (Id r)) = Id (Coprod (Id (l `par` r)))
 
-instance Strong Type (Coprod (Id :: CAT Type)) where
-  l `act` Coprod (Id r) = Coprod (Id (l `par` r))
 instance MonoidalAction Type (COPROD Type) where
   type Act p (COPR x) = COPR (p ** x)
   withObAct r = r
@@ -191,15 +182,15 @@ instance MonoidalAction Type (COPROD Type) where
   multiplicator = Coprod (Id associatorInv)
   multiplicatorInv = Coprod (Id associator)
 
-instance Strong (COPROD Type) (->) where
-  Coprod (Id f) `act` g = f +++ g
-instance MonoidalAction (COPROD Type) Type where
-  type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
-  withObAct r = r
+instance (HasCoproducts k) => Strong (COPROD k) (Id :: CAT k) where
+  Coprod (Id f) `act` Id g = Id (f +++ g)
+instance (HasCoproducts k) => MonoidalAction (COPROD k) k where
+  type Act (p :: COPROD k) (x :: k) = UN COPR (p ** COPR x)
+  withObAct @(COPR a) @x r = withObCoprod @k @a @x r
   unitor = unId (unCoprod leftUnitor)
   unitorInv = unId (unCoprod leftUnitorInv)
-  multiplicator = unId (unCoprod associatorInv)
-  multiplicatorInv = unId (unCoprod associator)
+  multiplicator @a @b @x = unId (unCoprod (associatorInv @(COPROD k) @a @b @(COPR x)))
+  multiplicatorInv @a @b @x = unId (unCoprod (associator @(COPROD k) @a @b @(COPR x)))
 
 class (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b
 instance (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b

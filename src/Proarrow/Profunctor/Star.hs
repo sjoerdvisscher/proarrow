@@ -11,16 +11,16 @@ import Proarrow.Category.Instance.Nat (Nat (..), Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
-import Proarrow.Functor (Functor (..), FunctorForRep (..), Prelude (..))
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), copar, HasCoproducts)
+import Proarrow.Functor (Functor (..), Prelude (..))
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), dimapRep, trivialRep)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type Star' :: j .-> k -> j +-> k
 data Star' f a b where
@@ -101,6 +101,3 @@ instance (Functor f, Thin j, Discrete k) => ThinProfunctor (Star f :: j +-> k) w
   type HasArrow (Star f) a b = a P.~ f b
   arr = Star id
   withArr (Star f) = withEq f
-
-strength :: forall {m} f a b. (FunctorForRep f, Strong m (Rep f), Ob (a :: m), Ob b) => Act a (f @ b) ~> f @ Act a b
-strength = unRep @f (act (obj @a) (trivialRep @(Rep f) @b))

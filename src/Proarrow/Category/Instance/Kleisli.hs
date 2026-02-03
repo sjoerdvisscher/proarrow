@@ -11,6 +11,8 @@ module Proarrow.Category.Instance.Kleisli
   , pattern LiftF
   ) where
 
+import Data.Kind (Type)
+
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -38,6 +40,7 @@ import Proarrow.Profunctor.Representable (RepCostar(..), Representable(..), triv
 import Proarrow.Monoid (CopyDiscard (..))
 import Proarrow.Category.Enriched.ThinCategory qualified as T
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Profunctor.Identity (Id (..))
 
 newtype KLEISLI (p :: CAT k) = KL k
 type instance UN KL (KL k) = k
@@ -115,15 +118,15 @@ instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive 
   distL0 @(KL a) = arr (distL0 @k @a)
   distR0 @(KL a) = arr (distR0 @k @a)
 
-instance (Strong k p, Promonad p, Monoidal k) => Strong k (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
-  act f (Kleisli p) = Kleisli (act f p)
-instance (Strong k p, Promonad p, Monoidal k) => MonoidalAction k (KLEISLI (p :: k +-> k)) where
+instance (Strong Type p, Promonad p) => Strong Type (Id :: CAT (KLEISLI (p :: Type +-> Type))) where
+  act f (Id (Kleisli p)) = Id (Kleisli (act f p))
+instance (Strong Type p, Promonad p) => MonoidalAction Type (KLEISLI (p :: Type +-> Type)) where
   type Act y (KL x) = KL (Act y x)
-  withObAct @y @(KL x) r = withObAct @k @k @y @x r
-  unitor = arr (unitor @k)
-  unitorInv = arr (unitorInv @k)
-  multiplicator @a @b @(KL c) = arr (multiplicator @k @k @a @b @c)
-  multiplicatorInv @a @b @(KL c) = arr (multiplicatorInv @k @k @a @b @c)
+  withObAct @y @(KL x) r = withObAct @Type @Type @y @x r
+  unitor = arr (unitor @Type)
+  unitorInv = arr (unitorInv @Type)
+  multiplicator @a @b @(KL c) = arr (multiplicator @Type @Type @a @b @c)
+  multiplicatorInv @a @b @(KL c) = arr (multiplicatorInv @Type @Type @a @b @c)
 
 instance (DaggerProfunctor p, Promonad p) => DaggerProfunctor (Kleisli :: CAT (KLEISLI p)) where
   dagger (Kleisli p) = Kleisli (dagger p)

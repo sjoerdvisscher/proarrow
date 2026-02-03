@@ -1,16 +1,17 @@
 module Proarrow.Category.Opposite where
 
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), actHom)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k
@@ -97,6 +98,8 @@ instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +
 
 instance (Strong k p) => Strong (OPPOSITE k) (Op p) where
   act (Op w) (Op p) = Op (act w p)
+instance (Strong k (Id :: CAT m)) => Strong (OPPOSITE k) (Id :: CAT (OPPOSITE m)) where
+  act (Op w) (Id (Op p)) = Id (Op (actHom w p))
 instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   type Act (OP a) (OP b) = OP (Act a b)
   withObAct @(OP a) @(OP b) r = withObAct @m @k @a @b r
