@@ -5,10 +5,10 @@ module Proarrow.Adjunction where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Colimit (HasColimits (..))
+import Proarrow.Category.Colimit (HasColimits (..), mapColimit)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (COREP, COREPK, REP, REPK, SUBCAT (..), Sub (..))
-import Proarrow.Category.Limit (HasLimits (..))
+import Proarrow.Category.Limit (HasLimits (..), mapLimit)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor, FunctorForRep, map)
@@ -16,7 +16,15 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (CorepStar (..), Rep, RepCostar (..), Representable (..), trivialRep)
+import Proarrow.Profunctor.Representable
+  ( CorepStar (..)
+  , Rep
+  , RepCostar (..)
+  , Representable (..)
+  , mapCorepStar
+  , mapRepCostar
+  , trivialRep
+  )
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
 
@@ -128,6 +136,7 @@ instance (HasLimits j k) => Representable (LimitAdj (j :: a +-> b) :: REPK a k +
           )
       )
   tabulate @(SUB r) (Sub (Op (Prof n))) = LimitAdj (\j -> n (RepCostar (index @r (limit (trivialRep :.: j)))) :.: trivialRep \\ j)
+  repMap (Sub n) = Sub (Op (mapRepCostar (mapLimit @j n)))
 
 instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a k +-> COREPK b k) where
   type LimitAdj j %% c = REP (CorepStar (Colimit j (UN OP (UN SUB c))))
@@ -144,6 +153,7 @@ instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a
                 . l
             )
       )
+  corepMap (Sub (Op n)) = Sub (mapCorepStar (mapColimit @j n))
 
 rightAdjointPreservesLimits
   :: forall {k} {k'} {i} {a} (j :: i +-> a) (p :: k +-> k') (d :: i +-> k)

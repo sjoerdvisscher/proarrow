@@ -11,11 +11,11 @@ import Control.Arrow
   , Kleisli (..)
   , (>>>)
   )
-import Data.Kind (Type)
-import Prelude (Either (..), Monad (..))
-
-import Control.Monad (MonadPlus, fmap)
+import Control.Monad (MonadPlus)
 import Control.Monad.Fix (MonadFix)
+import Data.Kind (Type)
+import Prelude (Either (..), Functor (..), Monad (..))
+
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), Strong (..))
 import Proarrow.Core (CAT, Profunctor (..), Promonad (..))
@@ -54,9 +54,10 @@ instance (ArrowApply arr) => Representable (Arr arr) where
   type Arr arr % a = arr () a
   index (Arr a) b = arr (\() -> b) >>> a
   tabulate f = Arr (arr (\a -> (f a, ())) >>> app)
+  repMap f a = a >>> arr f
 
-instance (Monad m) => Profunctor (Kleisli m) where
-  dimap l r a = arr l >>> a >>> arr r
+instance (Functor m) => Profunctor (Kleisli m) where
+  dimap l r (Kleisli a) = Kleisli (fmap r . a . l)
 
 instance (Monad m) => Promonad (Kleisli m) where
   id = arr id
@@ -81,7 +82,8 @@ instance (MonadPlus m) => MonoidalProfunctor (Coprod (Kleisli m)) where
   par0 = Coprod zeroArrow
   Coprod (Kleisli l) `par` Coprod (Kleisli r) = Coprod (Kleisli ((l >>> fmap Left) ||| (r >>> fmap Right)))
 
-instance (Monad m) => Representable (Kleisli m) where
+instance (Functor m) => Representable (Kleisli m) where
   type Kleisli m % a = m a
   index = runKleisli
   tabulate = Kleisli
+  repMap = fmap
