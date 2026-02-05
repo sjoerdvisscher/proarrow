@@ -49,3 +49,11 @@ instance (FunctorForRep f) => Corepresentable (Corep f) where
 
 corep :: forall f a b a' b'. Ob a => Iso (f @ a ~> b) (f @ a' ~> b') (Corep f a b) (Corep f a' b')
 corep = iso Corep unCorep
+
+type Comonad w = (Promonad w, Corepresentable w)
+
+extract :: forall w a. (Comonad w, Ob a) => w %% a ~> a
+extract = coindex @w id
+
+extend :: forall w a b. (Comonad w, Ob a) => (w %% a ~> b) -> (w %% a ~> w %% b)
+extend f = coindex ((trivialCorep \\ f) . cotabulate @w @a f)

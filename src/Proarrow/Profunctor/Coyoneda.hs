@@ -5,6 +5,7 @@ module Proarrow.Profunctor.Coyoneda where
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), type (+->), Profunctor (..), Promonad (..), (:~>))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Free (HasFree (..))
 import Proarrow.Profunctor.Star (Star, pattern Star)
 
@@ -18,6 +19,14 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Coyoneda (p :: j +-> k)) wh
 
 instance (Functor Coyoneda) where
   map (Prof n) = Prof \(Coyoneda g h p) -> Coyoneda g h (n p)
+
+instance Promonad (Star Coyoneda) where
+  id = Star (Prof \p -> coyoneda p \\ p)
+  Star (Prof l) . Star (Prof r) = Star (Prof (l . unCoyoneda . r))
+
+instance Promonad (Costar Coyoneda) where
+  id = Costar (Prof unCoyoneda)
+  Costar (Prof l) . Costar (Prof r) = Costar (Prof (\p -> (l . (coyoneda \\ p) . r) p))
 
 instance HasFree Profunctor where
   type Free Profunctor = Star Coyoneda

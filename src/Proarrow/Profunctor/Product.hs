@@ -2,11 +2,13 @@ module Proarrow.Profunctor.Product where
 
 import Data.Kind (Type)
 
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (Profunctor (..), (:~>), type (+->))
-import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Core (Profunctor (..), (:~>), type (+->))
+import Proarrow.Functor (Functor (..))
 
 type (:*:) :: (j +-> k) -> (j +-> k) -> (j +-> k)
 data (p :*: q) a b where
@@ -33,3 +35,6 @@ instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :*: q) where
 
 instance (Strong Type p, Strong Type q) => Strong Type (p :*: q) where
   act f (p :*: q) = act f p :*: act f q
+
+instance (Profunctor p) => Functor ((:*:) p) where
+  map (Prof n) = Prof \(p :*: q) -> p :*: n q

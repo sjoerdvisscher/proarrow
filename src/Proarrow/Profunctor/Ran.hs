@@ -14,6 +14,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), Corep (..), trivialCorep)
 import Proarrow.Profunctor.Representable (Representable (..), Rep (..), trivialRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Promonad (Procomonad (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -88,3 +89,7 @@ ranHom = Prof \p -> p // Ran \j -> rmap j p
 
 ranHomInv :: (Profunctor p) => (~>) |> p ~> p
 ranHomInv = Prof \(Ran k) -> k id
+
+instance (Procomonad j) => Promonad (Star (Ran (OP j))) where
+  id = Star (unNat (map (Op (Prof extract))) . ranHom)
+  Star l . Star r = Star (unNat (map (Op (Prof duplicate))) . ranCompose . map l . r)

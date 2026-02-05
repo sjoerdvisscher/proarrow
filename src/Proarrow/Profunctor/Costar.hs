@@ -18,6 +18,7 @@ import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
+import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
 
@@ -44,6 +45,10 @@ instance (Functor f) => Corepresentable (Costar f) where
   coindex = unCostar
   cotabulate = Costar
   corepMap = map
+
+instance (Profunctor p) => Promonad (Costar ((:*:) p)) where
+  id = Costar (Prof \(_ :*: q) -> q)
+  Costar (Prof l) . Costar (Prof r) = Costar (Prof \(p :*: a) -> l (p :*: r (p :*: a)))
 
 instance (P.Monad m) => Procomonad (Costar (Prelude m)) where
   extract (Costar f) = f . Prelude . P.pure

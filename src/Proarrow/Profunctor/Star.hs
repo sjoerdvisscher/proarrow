@@ -21,6 +21,7 @@ import Proarrow.Object.Initial (initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Profunctor.Coproduct ((:+:) (..))
 
 type Star' :: j .-> k -> j +-> k
 data Star' f a b where
@@ -45,6 +46,10 @@ instance (Functor f) => Representable (Star f) where
   index = unStar
   tabulate = Star
   repMap = map
+
+instance (Profunctor p) => Promonad (Star ((:+:) p)) where
+  id = Star (Prof InjR)
+  Star (Prof l) . Star (Prof r) = Star (Prof (\a -> case r a of InjL p -> InjL p; InjR b -> l b))
 
 instance (P.Monad m) => Promonad (Star (Prelude m)) where
   id = Star (Prelude . P.pure)

@@ -56,6 +56,9 @@ mkExponential ab = curry @_ @_ @a (ab . leftUnitor) \\ ab
 lower :: forall {k} (a :: k) b. (Closed k, Ob a, Ob b) => (Unit ~> (a ~~> b)) -> a ~> b
 lower f = uncurry @a @b f . leftUnitorInv
 
+toEl :: forall {k} (a :: k). (Closed k, Ob a) => a ~> Unit ~~> a
+toEl = curry @k @a @Unit @a rightUnitor
+
 instance Closed Type where
   type a ~~> b = a -> b
   withObExp r = r

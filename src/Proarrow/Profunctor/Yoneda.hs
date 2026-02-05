@@ -8,6 +8,7 @@ import Proarrow.Category.Instance.Prof (Prof (Prof))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..))
+import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Category.Opposite (OPPOSITE(..), Op(..))
 import Proarrow.Category.Instance.Nat (Nat(..))
@@ -22,6 +23,14 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Yoneda (p :: j +-> k)) wher
 
 instance Functor Yoneda where
   map (Prof n) = Prof \(Yoneda k) -> Yoneda (n . k)
+
+instance Promonad (Star Yoneda) where
+  id = Star (Prof mkYoneda)
+  Star (Prof l) . Star (Prof r) = Star (Prof (l . yoneda . r))
+
+instance Promonad (Costar Yoneda) where
+  id = Costar (Prof yoneda)
+  Costar (Prof l) . Costar (Prof r) = Costar (Prof (l . mkYoneda . r))
 
 instance HasCofree Profunctor where
   type Cofree Profunctor = Star Yoneda
