@@ -17,7 +17,7 @@ import Proarrow.Category.Monoidal
   , swap, unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), actHom)
-import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj, (//))
+import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj, (//), Iso, iso)
 import Proarrow.Object.Exponential (Closed (..))
 
 class Ob (Dual a) => ObDual a
@@ -40,6 +40,9 @@ doubleNegInv :: forall {k} (a :: k). (StarAutonomous k, Ob a) => a ~> Dual (Dual
 doubleNegInv =
   linDistInv @k @Unit @a @(Dual a) (dual (swap @k @a @(Dual a)) . dualityUnitSA @a) . leftUnitorInv @k @a
     \\ dualObj @a
+
+doubleNegIso :: forall {k} (a :: k) (a' :: k). (StarAutonomous k, Ob a, Ob a') => Iso a a' (Dual (Dual a)) (Dual (Dual a'))
+doubleNegIso = iso doubleNegInv doubleNeg
 
 type ExpSA a b = Dual (a ** Dual b)
 

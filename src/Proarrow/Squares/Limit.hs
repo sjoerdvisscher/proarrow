@@ -17,6 +17,10 @@ import Proarrow.Squares
   ( Sq
   , Sq' (..)
   , fromLeft
+  , hArr
+  , hCombineAll
+  , hId
+  , hSplitAll
   , toRight
   , vArr
   , vCombine
@@ -30,15 +34,15 @@ import Proarrow.Squares
 
 -- | The projection out of the @j@-weighted limit @l@ of @d@.
 --
--- > A--l--K
--- > |  v  |
--- > j--@  |
--- > |  v  |
--- > I--d--K
+-- > K-----K
+-- > l>\   |
+-- > |  @->d
+-- > j-/   |
+-- > I-----I
 limit
   :: forall {kk} {a} {i} {k} (j :: kk i a) (d :: kk i k)
    . (L.HasLimits j k, IsTight d)
-  => Sq (j ::: Nil) Nil (L.Limit j d ::: Nil) (d ::: Nil)
+  => Sq (j ::: L.Limit j d ::: Nil) (d ::: Nil) Nil Nil
 limit = withOb0s @kk @d $ withOb0s @kk @j $ L.withObLimit @j @k @d $ Sq $ St $ L.limit @j
 
 -- | The universal property of the limit.
@@ -111,20 +115,20 @@ rightAdjointPreservesLimits
      , L.HasLimits j k
      , L.HasLimits j k'
      )
-  => Sq Nil Nil (L.Limit j (g `O` d) ::: Nil) (L.Limit j d ::: g ::: Nil)
+  => Sq (L.Limit j (g `O` d) ::: Nil) (L.Limit j d ::: g ::: Nil) Nil Nil
 rightAdjointPreservesLimits =
-  withObO2 @Tight @_ @g @d $
-    L.withObLimit @j @_ @(g `O` d) $
-      withObO2 @Tight @_ @f @(L.Limit j (g `O` d)) $
-        vId ||| unit @f @g
-          === ( vCombine
-                  === limitUniv' @j
-                    ( vSplit
-                        === (limit @j === vSplit) ||| vId
-                        === vId @d ||| counit @f @g
-                    )
-              )
-            ||| vId
+  withOb0s @kk @g $
+    withOb0s @kk @j $
+      withObO2 @Tight @_ @g @d $
+        L.withObLimit @j @_ @(g `O` d) $
+          withObO2 @Tight @_ @f @(L.Limit j (g `O` d)) $
+            (unit @f @g === hId)
+              ||| ( hId
+                      === ( hCombineAll @(L.Limit j (g `O` d) ::: f ::: Nil)
+                              ||| limitUniv @j
+                                ((hSplitAll === hId) ||| (hId === (limit @j ||| hSplitAll @(d ::: g ::: Nil))) ||| (counit @f @g === hId))
+                          )
+                  )
 
 -- | The inverse works for any arrow:
 --
@@ -154,17 +158,19 @@ rightAdjointPreservesLimitsInv
      , L.HasLimits j k
      , L.HasLimits j k'
      )
-  => Sq Nil Nil (L.Limit j d ::: g ::: Nil) (L.Limit j (g `O` d) ::: Nil)
+  => Sq (L.Limit j d ::: g ::: Nil) (L.Limit j (g `O` d) ::: Nil) Nil Nil
 rightAdjointPreservesLimitsInv =
-  L.withObLimit @j @k @d $
-    withObO2 @Tight @_ @g @d $
-      withObO2 @Tight @_ @g @(L.Limit j d) $
-        vCombine
-          === limitUniv' @j @(g `O` d) @(g `O` L.Limit j d)
-            ( vSplit
-                === limit @j @d ||| vId @g
-                === vCombine
-            )
+  withOb0s @kk @g $
+    withOb0s @kk @j $
+      L.withObLimit @j @k @d $
+        withObO2 @Tight @_ @g @d $
+          withObO2 @Tight @_ @g @(L.Limit j d) $
+            hCombineAll
+              ||| limitUniv @j @(g `O` d) @(g `O` L.Limit j d)
+                ( (hSplitAll === hId @j)
+                    ||| (hId @g === limit @j @d)
+                    ||| hCombineAll
+                )
 
 -- | The projection into the @j@-weighted colimit @c@ of @d@.
 --
@@ -297,12 +303,12 @@ colimitUniv (Sq (St n)) = withOb0s @kk @j $ L.withObColimit @j @k @d $ Sq $ St $
 
 unit
   :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
-   . (Adjunction f g, Equipment kk, IsTight f, IsTight g)
-  => Sq Nil Nil Nil (f ::: g ::: Nil)
-unit = withOb0s @kk @f $ withObO2 @Tight @kk @g @f $ vUnitorInv === vArr (Adj.unit @f @g) === vSplit
+   . (Adjunction f g, Equipment kk)
+  => Sq Nil (f ::: g ::: Nil) Nil Nil
+unit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.unit @f @g) ||| hSplitAll
 
 counit
   :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
-   . (Adjunction f g, Equipment kk, IsTight f, IsTight g)
-  => Sq Nil Nil (g ::: f ::: Nil) Nil
-counit = withOb0s @kk @f $ withObO2 @Tight @kk @f @g $ vCombine === vArr (Adj.counit @f @g) === vUnitor
+   . (Adjunction f g, Equipment kk)
+  => Sq (g ::: f ::: Nil) Nil Nil Nil
+counit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.counit @f @g) ||| hSplitAll

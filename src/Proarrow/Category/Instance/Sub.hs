@@ -87,7 +87,7 @@ instance (CategoryOf k) => FunctorForRep (Forget (ob :: OB k)) where
   fmap (Sub f) = f
 
 type REPK j k = SUBCAT (Representable :: j +-> k -> Constraint)
-type REP f = SUB f :: REPK j k
+type REP (f :: j +-> k) = SUB f :: REPK j k
 
 type OpCorepresentable :: OPPOSITE (j +-> k) -> Constraint
 class (Corepresentable (UN OP p)) => OpCorepresentable p

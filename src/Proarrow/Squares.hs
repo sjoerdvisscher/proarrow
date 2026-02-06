@@ -87,9 +87,9 @@ hArr pq = Sq (St pq) \\\ pq
 -- > K-----K
 hId
   :: forall {kk} {j} {k} (p :: kk j k)
-   . (Equipment kk, Ob0 kk j, Ob0 kk k, Ob p)
+   . (Equipment kk, Ob p)
   => Sq (p ::: Nil) (p ::: Nil) Nil Nil
-hId = hArr id
+hId = withOb0s @kk @p (hArr id)
 
 -- | Make a square from a vertical arrow
 --
@@ -301,7 +301,7 @@ vSplitAll = let n = splitAll @ps in withIsObTagFold @Tight @ps (Sq n \\ n)
 -- > J-----J
 hCombineAll
   :: forall {kk} {j} {k} (ps :: Path kk j k)
-   . (Equipment kk, Ob0 kk j, Ob0 kk k, Ob ps)
+   . (Equipment kk, Ob ps)
   => Sq ps (Fold ps ::: Nil) Nil Nil
 hCombineAll = let n = combineAll @ps in Sq n \\ n
 
@@ -314,7 +314,7 @@ hCombineAll = let n = combineAll @ps in Sq n \\ n
 -- > J-----J
 hSplitAll
   :: forall {kk} {j} {k} (ps :: Path kk j k)
-   . (Equipment kk, Ob0 kk j, Ob0 kk k, Ob ps)
+   . (Equipment kk, Ob ps)
   => Sq (Fold ps ::: Nil) ps Nil Nil
 hSplitAll = let n = splitAll @ps in Sq n \\ n
 

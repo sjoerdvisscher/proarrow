@@ -1,5 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FunctionalDependencies #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Profunctor.Free where
 
@@ -13,7 +14,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), toInt)
 import Proarrow.Category.Instance.Nat (Nat (..), first)
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..))
+import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..), Forget)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==), (||))
@@ -33,12 +34,12 @@ import Proarrow.Core
   , (//)
   , type (+->)
   )
-import Proarrow.Functor (Functor (..), FunctorForRep (..))
+import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Dual (CompactClosed, Dual, dualObj, dualityCounit, dualityUnit)
-import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
-import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
+import Proarrow.Profunctor.Representable (Representable (..), trivialRep, Rep (..))
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Category.Monoidal.Action (TracedMonoidal)
 
@@ -57,17 +58,13 @@ retract = retract' @ob trivialRep
 fold :: forall ob a b. (HasFree ob, ob b) => (a ~> b) -> Free ob % a ~> b
 fold f = retract' @ob (rmap f trivialRep) \\ f
 
-data family FreeSub :: forall (ob :: OB k) -> k +-> SUBCAT ob
-instance (HasFree ob) => FunctorForRep (FreeSub ob) where
-  type FreeSub ob @ a = SUB (Free ob % a)
-  fmap f = Sub (repMap @(Free ob) f) \\ f
--- | By creating the right adjoint to the free functor,
+-- | By creating the left adjoint to the forgetful functor,
 -- we obtain the free-forgetful adjunction.
-instance (HasFree ob) => Representable (Corep (FreeSub (ob :: OB k))) where
-  type Corep (FreeSub ob) % a = UN SUB a
-  index (Corep (Sub f)) = f . lift @ob
-  tabulate f = Corep (Sub (retract @ob . repMap @(Free ob) f)) \\ f
-  repMap (Sub f) = f
+instance (HasFree ob) => Corepresentable (Rep (Forget (ob :: OB k))) where
+  type Rep (Forget ob) %% a = SUB (Free ob % a)
+  coindex (Rep f) = Sub (retract @ob . repMap @(Free ob) f) \\ f
+  cotabulate (Sub f) = Rep (f . lift @ob) \\ f
+  corepMap f = Sub (repMap @(Free ob) f) \\ f
 
 instance HasFree P.Monoid where
   type Free P.Monoid = Star []
