@@ -78,8 +78,8 @@ instance (FunctorForRep f) => Proadjunction (Rep f) (Corep f) where
   counit (f :.: g) = coindex g . index f
 
 instance (Functor f) => Proadjunction (Star f) (Costar f) where
-  unit = Costar id :.: Star id
-  counit (Star f :.: Costar g) = g . f
+  unit = trivialCorep :.: trivialRep
+  counit (f :.: g) = coindex g . index f
 
 instance (Proadjunction l1 r1, Proadjunction l2 r2) => Proadjunction (l1 :.: l2) (r2 :.: r1) where
   unit :: forall a. (Ob a) => ((r2 :.: r1) :.: (l1 :.: l2)) a a
