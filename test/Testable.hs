@@ -16,6 +16,7 @@ class EnumAll a where
   enumAll :: [a]
 
 data GenTotal a = GenEmpty ~(forall x. a -> x) | GenNonEmpty a (Gen a)
+
 invmap :: (a -> b) -> (b -> a) -> GenTotal a -> GenTotal b
 invmap _ f' (GenEmpty g) = GenEmpty (g . f')
 invmap f _ (GenNonEmpty x g) = GenNonEmpty (f x) (fmap f g)

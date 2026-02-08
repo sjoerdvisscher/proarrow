@@ -3,7 +3,7 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
-import Prelude (Eq, Show, ($), (++))
+import Prelude (Eq, Show, ($))
 
 import Proarrow.Category.Instance.Free
   ( Elem
@@ -14,13 +14,11 @@ import Proarrow.Category.Instance.Free
   , Ok
   , WithEq
   , WithShow
-  , emb
   )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var, iso)
 
 -- This is equal to a monoidal functor for representable profunctors
 -- and to an oplax monoidal functor for corepresentable profunctors.
@@ -208,62 +206,6 @@ deriving instance (WithEq a) => Eq (Struct SymMonoidal a b)
 deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
 instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
   swap = Str Swap Id
-
-data instance Var '[Monoidal] a b where
-  F :: Var '[Monoidal] "A" "B"
-  G :: Var '[Monoidal] "B" "C"
-  H :: Var '[Monoidal] "C" "D"
-deriving instance Show (Var '[Monoidal] a b)
-instance Laws '[Monoidal] where
-  type
-    EqTypes '[Monoidal] =
-      '[ EMB "A"
-       , EMB "B"
-       , UnitF **! EMB "A"
-       , UnitF **! EMB "B"
-       , EMB "A" **! UnitF
-       , EMB "B" **! UnitF
-       , EMB "A" **! EMB "B"
-       , (EMB "A" **! UnitF) **! EMB "B"
-       , (EMB "A" **! EMB "B") **! EMB "C"
-       , EMB "A" **! (EMB "B" **! EMB "C")
-       , (EMB "B" **! EMB "C") **! EMB "D"
-       , EMB "B" **! (EMB "C" **! EMB "D")
-       , EMB "A" **! (EMB "B" **! (EMB "C" **! EMB "D"))
-       , ((EMB "A" **! EMB "B") **! EMB "C") **! EMB "D"
-       ]
-  laws =
-    let f = emb F; g = emb G; h = emb H
-    in iso @((EMB "A" **! EMB "B") **! EMB "C") @(EMB "A" **! (EMB "B" **! EMB "C")) associator associatorInv
-         ++ iso @(UnitF **! EMB "A") @(EMB "A") leftUnitor leftUnitorInv
-         ++ iso @(EMB "A" **! UnitF) @(EMB "A") rightUnitor rightUnitorInv
-         ++ [ associator . ((f `par` g) `par` h) :=: (f `par` (g `par` h)) . associator
-            , associatorInv . (f `par` (g `par` h)) :=: ((f `par` g) `par` h) . associatorInv
-            , leftUnitor . (par0 `par` f) :=: f . leftUnitor
-            , leftUnitorInv . f :=: (par0 `par` f) . leftUnitorInv
-            , rightUnitor . (f `par` par0) :=: f . rightUnitor
-            , rightUnitorInv . f :=: (f `par` par0) . rightUnitorInv
-            , (id `par` leftUnitor) . associator @_ @(EMB "A") @_ @(EMB "B") :=: rightUnitor `par` id
-            , (id `par` associator @_ @(EMB "B") @(EMB "C") @(EMB "D"))
-                . associator
-                . (associator @_ @(EMB "A") @(EMB "B") @(EMB "C") `par` id)
-                :=: associator . associator
-            ]
-
-data instance Var '[Monoidal, SymMonoidal] a b
-deriving instance Show (Var '[Monoidal, SymMonoidal] a b)
-instance Laws '[Monoidal, SymMonoidal] where
-  type
-    EqTypes '[Monoidal, SymMonoidal] =
-      '[ EMB "A" **! EMB "B"
-       , (EMB "A" **! EMB "B") **! EMB "C"
-       , EMB "B" **! (EMB "C" **! EMB "A")
-       ]
-  laws =
-    [ swap @_ @(EMB "B") @(EMB "A") . swap :=: id
-    , (id `par` swap) . associator . (swap `par` id)
-        :=: associator . swap . associator @_ @(EMB "A") @(EMB "B") @(EMB "C")
-    ]
 
 data UnitFtor :: () +-> k
 instance (Monoidal k) => FunctorForRep (UnitFtor :: () +-> k) where

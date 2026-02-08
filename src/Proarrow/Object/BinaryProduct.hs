@@ -16,7 +16,6 @@ import Proarrow.Category.Instance.Free
   , Ok
   , WithEq
   , WithShow
-  , emb
   )
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -31,7 +30,6 @@ import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Profunctor.Identity qualified as Id
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
-import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
 
 infixl 5 &&
 infixl 5 &&&
@@ -268,17 +266,3 @@ instance (Ok cs p, HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs p)
   fst = Str Fst Id
   snd = Str Snd Id
   f &&& g = Str (Prd f g) Id \\ f \\ g
-
-data instance Var '[HasBinaryProducts] a b where
-  F :: Var '[HasBinaryProducts] "A" "B"
-  G :: Var '[HasBinaryProducts] "A" "C"
-  H :: Var '[HasBinaryProducts] "Z" "A"
-deriving instance Show (Var '[HasBinaryProducts] a b)
-instance Laws '[HasBinaryProducts] where
-  type EqTypes '[HasBinaryProducts] = '[EMB "A", EMB "B", EMB "C", EMB "Z", EMB "B" *! EMB "C"]
-  laws =
-    let f = emb F; g = emb G; h = emb H
-    in [ fst . (f &&& g) :=: f
-       , snd . (f &&& g) :=: g
-       , (f . h) &&& (g . h) :=: (f &&& g) . h
-       ]

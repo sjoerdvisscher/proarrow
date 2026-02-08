@@ -4,14 +4,13 @@ import Data.Kind (Type)
 import Data.Void (Void, absurd)
 import Prelude (Eq, Show, type (~))
 
-import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok, emb)
+import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Initial (InitialProfunctor)
-import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
   type InitialObject :: k
@@ -54,10 +53,3 @@ deriving instance Show (Struct HasInitialObject a b)
 instance (Ok cs p, HasInitialObject `Elem` cs) => HasInitialObject (FREE cs p) where
   type InitialObject = InitF
   initiate = Str Initial Id
-
-data instance Var '[HasInitialObject] a b where
-  F :: Var '[HasInitialObject] "A" "B"
-deriving instance Show (Var '[HasInitialObject] a b)
-instance Laws '[HasInitialObject] where
-  type EqTypes '[HasInitialObject] = '[EMB "B", InitF]
-  laws = [emb F . initiate :=: initiate]

@@ -16,7 +16,6 @@ import Proarrow.Category.Instance.Free
   , Ok
   , WithEq
   , WithShow
-  , emb
   )
 import Proarrow.Category.Instance.Free qualified as F
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -33,7 +32,6 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
-import Proarrow.Tools.Laws (AssertEq (..), Laws (..), Var)
 
 infixl 4 ||
 infixl 4 |||
@@ -230,17 +228,3 @@ instance (Ok cs p, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE c
   lft = Str Lft F.Id
   rgt = Str Rgt F.Id
   f ||| g = Str (Sum f g) F.Id \\ f \\ g
-
-data instance Var '[HasBinaryCoproducts] a b where
-  F :: Var '[HasBinaryCoproducts] "A" "C"
-  G :: Var '[HasBinaryCoproducts] "B" "C"
-  H :: Var '[HasBinaryCoproducts] "C" "Z"
-deriving instance Show (Var '[HasBinaryCoproducts] a b)
-instance Laws '[HasBinaryCoproducts] where
-  type EqTypes '[HasBinaryCoproducts] = '[EMB "A", EMB "B", EMB "C", EMB "Z", EMB "A" + EMB "B"]
-  laws =
-    let f = emb F; g = emb G; h = emb H
-    in [ (f ||| g) . lft :=: f
-       , (f ||| g) . rgt :=: g
-       , (h . f) ||| (h . g) :=: h . (f ||| g)
-       ]

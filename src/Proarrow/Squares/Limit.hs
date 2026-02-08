@@ -22,12 +22,6 @@ import Proarrow.Squares
   , hId
   , hSplitAll
   , toRight
-  , vArr
-  , vCombine
-  , vId
-  , vSplit
-  , vUnitor
-  , vUnitorInv
   , (===)
   , (|||)
   )
