@@ -5,7 +5,9 @@ module Proarrow.Category.Bicategory.Strictified where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Bicategory
-  ( Adjunction (..)
+  ( Adj (..)
+  , Adjunction (..)
+  , Adjunction_ (..)
   , Bicategory (..)
   , Comonad (..)
   , Monad (..)
@@ -206,13 +208,11 @@ stUnit = withOb0s @kk @p (St (unit @p @q))
 stCounit :: forall {kk} {i} {j} (p :: kk i j) q. (Adjunction p q, Ob p, Ob q) => q ::: p ::: Nil ~> Nil
 stCounit = withOb0s @kk @p (St (counit @p @q))
 
-instance (Bicategory kk, Ob0 kk a) => Adjunction (Nil :: Path kk a a) Nil where
-  unit = id
-  counit = id
+instance (Bicategory kk, Ob0 kk a) => Adjunction_ (Nil :: Path kk a a) Nil where
+  adj = Adj id id
 
-instance (Bicategory kk, Adjunction (l :: kk j k) r, Ob0 kk j, Ob0 kk k) => Adjunction (l ::: Nil) (r ::: Nil) where
-  unit = St (unit @l @r)
-  counit = St (counit @l @r)
+instance (Bicategory kk, Adjunction (l :: kk j k) r, Ob0 kk j, Ob0 kk k) => Adjunction_ (l ::: Nil) (r ::: Nil) where
+  adj = Adj{adjUnit = St (unit @l @r), adjCounit = St (counit @l @r)}
 
 instance (Bicategory kk, Ob0 kk a) => Monad (Nil :: Path kk a a) where
   eta = id

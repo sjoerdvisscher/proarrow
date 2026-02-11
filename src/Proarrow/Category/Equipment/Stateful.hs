@@ -7,7 +7,7 @@ import Data.Kind (Type)
 import Prelude (type (~))
 
 import Proarrow.Adjunction (Proadjunction)
-import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..))
+import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Adjunction_ (..), Adj (..))
 import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), SymMonoidalAction)
@@ -67,10 +67,12 @@ instance (MonoidalAction m k, m ~ Type) => Bicategory (STT' m k) where
 
 instance
   (MonoidalAction m k, Adjunction (PK l) (PK r), Ob l, Ob r, Strong m r, Strong m l, m ~ Type)
-  => Adjunction (ST l :: STT' m k i j) (ST r)
+  => Adjunction_ (ST l :: STT' m k i j) (ST r)
   where
-  unit = StT (case unit @(PK l) @(PK r) of Prof f -> f)
-  counit = StT (case counit @(PK l) @(PK r) of Prof f -> f)
+    adj = Adj
+      { adjUnit = StT (case unit @(PK l) @(PK r) of Prof f -> f)
+      , adjCounit = StT (case counit @(PK l) @(PK r) of Prof f -> f)
+      }
 
 class
   ( IsReader m (WithReader m p)

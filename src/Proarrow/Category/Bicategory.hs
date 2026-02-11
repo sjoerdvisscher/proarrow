@@ -23,7 +23,12 @@ module Proarrow.Category.Bicategory
     -- * More
   , Monad (..)
   , Comonad (..)
-  , Adjunction (..)
+  , Adjunction
+  , Adjunction_ (..)
+  , unit
+  , counit
+  , Adj (..)
+  , withAdj
   , flipLeftAdjoint
   , flipLeftAdjointInv
   , flipRightAdjoint
@@ -32,9 +37,10 @@ module Proarrow.Category.Bicategory
   )
 where
 
-import Data.Kind (Constraint)
+import Data.Kind (Constraint, Type)
 import Prelude (($))
 
+import GHC.Exts (WithDict (withDict))
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), id)
 import Proarrow.Object (Obj, obj)
 
@@ -161,10 +167,24 @@ instance {-# OVERLAPPABLE #-} (Monad s) => Bimodule s s s where
   leftAction = mu
   rightAction = mu
 
+type Adj :: forall {kk} {c} {d}. kk c d -> kk d c -> Type
+data Adj (l :: kk c d) (r :: kk d c) where
+  Adj :: (Bicategory kk, Ob l, Ob r) => {adjUnit :: I ~> r `O` l, adjCounit :: l `O` r ~> I} -> Adj (l :: kk c d) r
+
+type Adjunction_ :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
+class Adjunction_ (l :: kk c d) (r :: kk d c) where
+  adj :: Adj l r
+
+withAdj :: forall {kk} {c} {d} (l :: kk c d) (r :: kk d c) s. Adj l r -> ((Adjunction_ l r) => s) -> s
+withAdj a@Adj{} k = withDict @(Adjunction_ l r) a k
+
 type Adjunction :: forall {kk} {c} {d}. kk c d -> kk d c -> Constraint
-class (Bicategory kk, Ob l, Ob r) => Adjunction (l :: kk c d) (r :: kk d c) where
+class (Bicategory kk, Ob l, Ob r, Adjunction_ l r) => Adjunction (l :: kk c d) (r :: kk d c) where
   unit :: I ~> r `O` l
   counit :: l `O` r ~> I
+instance (Bicategory kk, Ob l, Ob r, Adjunction_ l r) => Adjunction (l :: kk c d) (r :: kk d c) where
+  unit = adjUnit (adj @l @r)
+  counit = adjCounit (adj @l @r)
 
 flipLeftAdjoint
   :: forall {kk} {c} {d} {i} (l :: kk c d) (r :: kk d c) (a :: kk i c) b

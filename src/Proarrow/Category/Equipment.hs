@@ -14,7 +14,7 @@ module Proarrow.Category.Equipment
   , TightPair
   ) where
 
-import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..))
+import Proarrow.Category.Bicategory (Adjunction, Bicategory (..), Adjunction_)
 import Proarrow.Category.Bicategory.Sub (IsOb, IsOb0, SUBCAT, WithObO2 (..))
 import Proarrow.Core (Any, CategoryOf (..))
 
@@ -42,9 +42,9 @@ class
   Equipment kk
   where
   withCotightAdjoint
-    :: forall {j} {k} (f :: kk j k) r. (IsTight f) => ((Adjunction f (CotightAdjoint f), IsCotight (CotightAdjoint f)) => r) -> r
+    :: forall {j} {k} (f :: kk j k) r. (IsTight f) => ((Adjunction_ f (CotightAdjoint f), IsCotight (CotightAdjoint f)) => r) -> r
   withTightAdjoint
-    :: forall {j} {k} (f :: kk j k) r. (IsCotight f) => ((Adjunction (TightAdjoint f) f, IsTight (TightAdjoint f)) => r) -> r
+    :: forall {j} {k} (f :: kk j k) r. (IsCotight f) => ((Adjunction_ (TightAdjoint f) f, IsTight (TightAdjoint f)) => r) -> r
 
 class (IsTight f, IsCotight g, Adjunction f g) => TightPair f g
 instance (IsTight f, IsCotight g, Adjunction f g) => TightPair f g

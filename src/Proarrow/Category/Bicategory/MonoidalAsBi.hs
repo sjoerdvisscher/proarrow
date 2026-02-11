@@ -1,9 +1,6 @@
-{-# OPTIONS_GHC -Wno-missing-methods #-}
 module Proarrow.Category.Bicategory.MonoidalAsBi where
 
-import Prelude (type (~))
-
-import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Comonad (..), Monad (..), flipLeftAdjoint)
+import Proarrow.Category.Bicategory (Adj (..), Bicategory (..), Comonad (..), Monad (..), flipLeftAdjoint, withAdj)
 import Proarrow.Category.Bicategory.Kan
   ( LeftKanExtension (..)
   , LeftKanLift (..)
@@ -62,20 +59,29 @@ instance (M.Comonoid m) => Comonad (MK m) where
   epsilon = Mon2 M.counit
   delta = Mon2 M.comult
 
-instance (M.CompactClosed k, Ob (a :: k), b ~ M.Dual a, Ob b) => Adjunction (MK b) (MK a) where
-  unit = Mon2 (M.dualityUnit @a)
-  counit = Mon2 (M.dualityCounit @a)
+dualAdj :: forall {k} a. (M.CompactClosed k, Ob (a :: k)) => Adj (MK (M.Dual a)) (MK a)
+dualAdj = Adj{adjUnit = Mon2 (M.dualityUnit @a), adjCounit = Mon2 (M.dualityCounit @a)}
+
+dualAdj' :: forall {k} a. (M.CompactClosed k, Ob (a :: k)) => Adj (MK a) (MK (M.Dual a))
+dualAdj' =
+  Adj
+    { adjUnit = Mon2 (M.swap @k @a @(M.Dual a) . M.dualityUnit @a)
+    , adjCounit = Mon2 (M.dualityCounit @a . M.swap @k @a @(M.Dual a))
+    }
+
+type Dual a = MK (M.Dual (UN MK a))
 
 type instance IsOb Tight (MK a) = ()
 type instance IsOb Cotight (MK a) = ()
-type instance TightAdjoint (MK a) = MK (M.Dual a)
-type instance CotightAdjoint (MK a) = MK (M.Dual a)
+type instance TightAdjoint a = Dual a
+type instance CotightAdjoint a = Dual a
 instance (M.Monoidal k) => WithObO2 Tight (MonK k) where
   withObO2 @(MK a) @(MK b) r = M.withOb2 @k @a @b r
 instance (M.Monoidal k) => WithObO2 Cotight (MonK k) where
   withObO2 @(MK a) @(MK b) r = M.withOb2 @k @a @b r
 instance (M.CompactClosed k) => Equipment (MonK k) where
-  -- TODO
+  withCotightAdjoint @f k = withAdj @f dualAdj' k
+  withTightAdjoint @f k = withAdj @_ @f dualAdj k
 
 instance (M.CompactClosed k, Ob j) => HasLimits (MK (j :: k)) '() where
   type Limit (MK j) (MK d) = MK (j ~~> d)
@@ -83,11 +89,13 @@ instance (M.CompactClosed k, Ob j) => HasLimits (MK (j :: k)) '() where
   limit @(MK d) = Mon2 (apply @_ @j @d)
   limitUniv @_ @(MK p) (Mon2 pj2d) = Mon2 (curry @_ @p @j pj2d)
 
-instance (M.CompactClosed k, Ob j) => HasColimits (MK (j :: k)) '() where
+instance (M.CompactClosed k, Ob j) => HasColimits (MK (j :: k) :: MonK k i0 i1) '() where
   type Colimit (MK j) (MK d) = MK (M.Dual j M.** d)
   withObColimit @(MK d) r = M.withOb2 @k @(M.Dual j) @d r
   colimit @(MK d) = Mon2 (M.leftUnitorWith (M.dualityCounit @j . M.swap @k @j @(M.Dual j)) . M.associatorInv @k @j @(M.Dual j) @d)
-  colimitUniv @_ @p f = flipLeftAdjoint @(MK (M.Dual (M.Dual j))) @(MK (M.Dual j)) (f . (Mon2 (M.doubleNeg @j) `o` obj @p))
+  colimitUniv @_ @p f =
+    withTightAdjoint @_ @(Dual (MK j) :: MonK k i1 i0)
+      (flipLeftAdjoint @(Dual (Dual (MK j)) :: MonK k i0 i1) @(Dual (MK j)) (f . (Mon2 (M.doubleNeg @j) `o` obj @p)))
 
 instance (Closed k, Ob (p ~~> q), Ob p, Ob q) => RightKanExtension (MK (p :: k)) (MK (q :: k)) where
   type Ran (MK p) (MK q) = MK (p ~~> q)

@@ -1,7 +1,8 @@
 module Proarrow.Category.Bicategory.Co where
 
 import Proarrow.Category.Bicategory
-  ( Adjunction (..)
+  ( Adj (..)
+  , Adjunction_ (..)
   , Bicategory (..)
   , Comonad (..)
   , Monad (..)
@@ -61,9 +62,8 @@ instance (Equipment kk) => Equipment (COK kk) where
   withTightAdjoint @(CO f) r = withCotightAdjoint @kk @f r
   withCotightAdjoint @(CO f) r = withTightAdjoint @kk @f r
 
-instance (Adjunction f g) => Adjunction (CO g) (CO f) where
-  unit = Co (counit @f @g)
-  counit = Co (unit @f @g)
+instance (Adjunction_ f g) => Adjunction_ (CO g) (CO f) where
+  adj = case adj @f @g of Adj un coun -> Adj (Co coun) (Co un)
 
 instance (Comonad m) => Monad (CO m) where
   eta = Co epsilon

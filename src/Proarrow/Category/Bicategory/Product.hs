@@ -3,7 +3,7 @@ module Proarrow.Category.Bicategory.Product where
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.Product ()
-import Proarrow.Category.Bicategory (Bicategory (..), Adjunction (..), Monad (..), Comonad (..))
+import Proarrow.Category.Bicategory (Bicategory (..), Adjunction_ (..), Monad (..), Comonad (..), Adj (..))
 import Proarrow.Category.Equipment (Equipment (..), TightAdjoint, CotightAdjoint, Tight, Cotight, IsOb, WithObO2 (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
@@ -49,9 +49,9 @@ instance (Bicategory jj, Bicategory kk) => Bicategory (PRODK jj kk) where
   associator @(PROD p q) @(PROD r s) @(PROD t u) = Prod (associator @jj @p @r @t) (associator @kk @q @s @u)
   associatorInv @(PROD p q) @(PROD r s) @(PROD t u) = Prod (associatorInv @jj @p @r @t) (associatorInv @kk @q @s @u)
 
-instance (Adjunction (PRODFST l) (PRODFST r), Adjunction (PRODSND l) (PRODSND r), Ob l, Ob r) => Adjunction l r where
-  unit = Prod (unit @(PRODFST l) @(PRODFST r)) (unit @(PRODSND l) @(PRODSND r))
-  counit = Prod (counit @(PRODFST l) @(PRODFST r)) (counit @(PRODSND l) @(PRODSND r))
+instance (Adjunction_ (PRODFST l) (PRODFST r), Adjunction_ (PRODSND l) (PRODSND r), Ob l, Ob r) => Adjunction_ l r where
+  adj = case (adj @(PRODFST l) @(PRODFST r), adj @(PRODSND l) @(PRODSND r)) of
+    (Adj un1 coun1, Adj un2 coun2) -> Adj { adjUnit = Prod un1 un2, adjCounit = Prod coun1 coun2 }
 
 instance (Monad (PRODFST m), Monad (PRODSND m), Ob m) => Monad m where
   eta = Prod eta eta

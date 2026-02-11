@@ -4,7 +4,8 @@ import Data.Kind (Constraint)
 
 import Proarrow.Adjunction qualified as A
 import Proarrow.Category.Bicategory
-  ( Adjunction (..)
+  ( Adj (..)
+  , Adjunction_ (..)
   , Bicategory (..)
   , Bimodule (..)
   , Comonad (..)
@@ -136,9 +137,12 @@ instance (Category (cj :: CAT j), Category (ck :: CAT k), Profunctor p) => Bimod
   leftAction = Prof \(f :.: p) -> lmap f p
   rightAction = Prof \(p :.: f) -> rmap f p
 
-instance (A.Proadjunction l r) => Adjunction (PK l :: PROFK c d) (PK r) where
-  unit = Prof \(Id f) -> lmap f A.unit \\ f
-  counit = Prof (Id . A.counit)
+instance (A.Proadjunction l r) => Adjunction_ (PK l :: PROFK c d) (PK r) where
+  adj =
+    Adj
+      { adjUnit = Prof \(Id f) -> lmap f A.unit \\ f
+      , adjCounit = Prof (Id . A.counit)
+      }
 
 instance (Profunctor f, Profunctor j) => RightKanExtension (PK j :: PROFK c d) (PK f :: PROFK c e) where
   type Ran (PK j) (PK f) = PK (R.Ran (Op.OP j) f)
