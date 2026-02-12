@@ -12,7 +12,6 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type data Nat = Z | S Nat
 data SNat :: Nat -> Type where
@@ -117,21 +116,14 @@ instance Monoid (S Z) where
   mempty = Y ZZ
   mappend = X (X (Y ZZ))
 
-type Replicate :: k -> Nat +-> k
-data Replicate m a b where
-  Replicate :: (Ob b) => a ~> (Replicate m % b) -> Replicate m a b
-instance (Monoid m) => Profunctor (Replicate m) where
-  dimap = dimapRep
-  r \\ Replicate f = r \\ f
-instance (Monoid m) => Representable (Replicate m) where
-  type Replicate m % Z = Unit
-  type Replicate m % S b = m ** (Replicate m % b)
-  index (Replicate f) = f
-  tabulate = Replicate
-  repMap ZZ = par0
-  repMap (Y f) = let g = repMap @(Replicate m) f in (mempty @m `par` g) . leftUnitorInv \\ g
-  repMap (X (Y f)) = obj @m `par` repMap @(Replicate m) f
-  repMap (X (X @x f)) =
-    let g = repMap @(Replicate m) (X f)
-        b = repMap @(Replicate m) (src f)
-    in g . (mappend @m `par` b) . associatorInv @_ @m @m @(Replicate m % x) \\ b
+data family Replicate :: k -> Nat +-> k
+instance (Monoid m) => FunctorForRep (Replicate m) where
+  type Replicate m @ Z = Unit
+  type Replicate m @ S b = m ** (Replicate m @ b)
+  fmap ZZ = par0
+  fmap (Y f) = let g = fmap @(Replicate m) f in (mempty @m `par` g) . leftUnitorInv \\ g
+  fmap (X (Y f)) = obj @m `par` fmap @(Replicate m) f
+  fmap (X (X @x f)) =
+    let g = fmap @(Replicate m) (X f)
+        b = fmap @(Replicate m) (src f)
+    in g . (mappend @m `par` b) . associatorInv @_ @m @m @(Replicate m @ x) \\ b

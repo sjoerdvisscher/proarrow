@@ -1,17 +1,21 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Adj where
 
+import Data.Kind (Constraint, Type)
+import Prelude (type (~))
+
 import Proarrow.Category.Bicategory
-  ( Bicategory (..)
+  ( Adjunction_ (..)
+  , Bicategory (..)
   , Comonad (..)
-  , IsPath (..)
   , Monad (..)
-  , Path (..)
-  , SPath (..)
-  , withUnital
-  , type (+++)
   )
+import Proarrow.Category.Bicategory qualified as Bi
+import Proarrow.Category.Bicategory.Strictified (Assoc, Path (..), type (+++))
+import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Category.Instance.Simplex (Nat (..), Simplex (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Object (src, tgt)
 
 type data AB = A | B
@@ -33,9 +37,25 @@ data Adj ps qs where
   AdjCup :: Adj (AK ps) qs -> Adj (AK (R ::: L ::: ps)) qs
   AdjCap :: Adj ps (AK qs) -> Adj ps (AK (L ::: R ::: qs))
 
-class IsRL rl where rOrL :: Adj (AK ps) (AK qs) -> Adj (AK (rl ::: ps)) (AK (rl ::: qs))
-instance IsRL L where rOrL = AdjL
-instance IsRL R where rOrL = AdjR
+type SAdj :: Path ABK i j -> Type
+data SAdj p where
+  SNil :: SAdj Nil
+  SL :: (IsLRPath ps) => SAdj (L ::: ps)
+  SR :: (IsLRPath ps) => SAdj (R ::: ps)
+
+type IsLRPath :: forall {i} {j}. Path ABK i j -> Constraint
+class (ps +++ Nil ~ ps, forall i h (qs :: Path ABK k h) (rs :: Path ABK h i). Assoc ps qs rs) => IsLRPath (ps :: Path ABK j k) where
+  singPath :: SAdj ps
+  withIsPath2 :: (IsLRPath qs) => ((IsLRPath (ps +++ qs)) => r) -> r
+instance IsLRPath Nil where
+  singPath = SNil
+  withIsPath2 r = r
+instance (IsLRPath ps) => IsLRPath (L ::: ps) where
+  singPath = SL
+  withIsPath2 @qs r = withIsPath2 @ps @qs r
+instance (IsLRPath ps) => IsLRPath (R ::: ps) where
+  singPath = SR
+  withIsPath2 @qs r = withIsPath2 @ps @qs r
 
 instance Profunctor (Adj :: CAT (ADJK a b)) where
   dimap = dimapDefault
@@ -45,12 +65,12 @@ instance Profunctor (Adj :: CAT (ADJK a b)) where
   r \\ AdjCup f = r \\ f
   r \\ AdjCap f = r \\ f
 instance Promonad (Adj :: CAT (ADJK a b)) where
-  id :: forall (ps :: ADJK a b). (Ob ps) => Adj ps ps
-  id = go (singPath @(UN AK ps))
+  id @ps = go (singPath @(UN AK ps))
     where
-      go :: forall ps'. SPath ps' -> Adj (AK ps') (AK ps')
+      go :: forall ps'. SAdj ps' -> Adj (AK ps') (AK ps')
       go SNil = AdjNil
-      go (SCons @rl p ps) = rOrL @rl (go ps) \\ p
+      go SL = AdjL id
+      go SR = AdjR id
   AdjNil . f = f
   f . AdjNil = f
   AdjR f . AdjR g = AdjR (f . g)
@@ -64,28 +84,32 @@ instance Promonad (Adj :: CAT (ADJK a b)) where
 
 instance CategoryOf (ADJK a b) where
   type (~>) = Adj
-  type Ob ps = (Is AK ps)
+  type Ob ps = (Is AK ps, IsLRPath (UN AK ps))
 
 -- | The walking adjunction
 instance Bicategory ADJK where
-  type Ob0 ADJK a = (IsRL a)
   type I = AK Nil
-  type ps `O` qs = AK (UN AK ps +++ UN AK qs)
+  type ps `O` qs = AK (UN AK qs +++ UN AK ps)
+  withOb2 @ps @qs k = withIsPath2 @(UN AK qs) @(UN AK ps) k
+  withOb0s r = r
   r \\\ AdjNil = r
   r \\\ AdjR f = r \\\ f
   r \\\ AdjL f = r \\\ f
   r \\\ AdjCup f = r \\\ f
   r \\\ AdjCap f = r \\\ f
   o :: forall {a} {b} (ps :: ADJK a b) qs rs ss. (ps ~> qs) -> (rs ~> ss) -> (ps `O` rs) ~> (qs `O` ss)
-  o = o
-  -- AdjNil `o` f = f \\ f
-  -- f `o` AdjNil = f -- withUnital @(UN AK ps) (withUnital @(UN AK qs) f) \\ f
-  -- AdjR f `o` g = AdjR (f `o` g)
-  -- AdjL f `o` g = AdjL (f `o` g)
-  -- AdjCup f `o` g = AdjCup (f `o` g)
-  -- AdjCap f `o` g = AdjCap (f `o` g)
-  leftUnitor AdjNil = AdjNil
-  leftUnitor (AdjR f) = AdjR f
+  AdjNil `o` f = f \\ f
+  f `o` AdjNil = f \\ f
+  f `o` AdjR g = AdjR (f `o` g)
+  f `o` AdjL g = AdjL (f `o` g)
+  f `o` AdjCup g = AdjCup (f `o` g)
+  f `o` AdjCap g = AdjCap (f `o` g)
+  leftUnitor = id
+  leftUnitorInv = id
+  rightUnitor = id
+  rightUnitorInv = id
+  associator @p @q @r = obj @p `o` obj @q `o` obj @r
+  associatorInv @p @q @r = obj @p `o` obj @q `o` obj @r
 
 type family RepLR (n :: Nat) :: Path ABK A A where
   RepLR Z = Nil
@@ -141,51 +165,65 @@ toSimplexOp (AdjR f) = go f id
     go (AdjL g) xny = xny (X (Y (toSimplexOp g)))
     go (AdjCap g) xny = go g (xny . X)
 
+instance Adjunction_ (AK Nil) (AK Nil) where
+  adj = Bi.Adj AdjNil AdjNil
+
+instance Adjunction_ (AK (L ::: Nil)) (AK (R ::: Nil)) where
+  adj = Bi.Adj{adjUnit = AdjCap AdjNil, adjCounit = AdjCup AdjNil}
+
+instance Adjunction_ (AK (L ::: R ::: L ::: Nil)) (AK (R ::: L ::: R ::: Nil)) where
+  adj = Bi.Adj{adjUnit = AdjCap (AdjCap (AdjCap AdjNil)), adjCounit = AdjCup (AdjCup (AdjCup AdjNil))}
+
 instance Monad (AK (L ::: R ::: Nil)) where
   eta = AdjCap AdjNil
   mu = AdjL (AdjCup (AdjR AdjNil))
 
--- instance Comonad (R ::: L ::: Nil) where
---   epsilon = AdjCup AdjNil
---   delta = AdjR (AdjCap (AdjL AdjNil))
+instance Comonad (AK (R ::: L ::: Nil)) where
+  epsilon = AdjCup AdjNil
+  delta = AdjR (AdjCap (AdjL AdjNil))
 
-type ARRK :: CAT AB
-type data ARRK a b where
-  IDA :: ARRK A A
-  A2B :: ARRK A B
-  IDB :: ARRK B B
+type SNilOrL :: Path ABK i j -> Type
+data SNilOrL p where
+  SNilL :: SNilOrL Nil
+  SLL :: SNilOrL (L ::: Nil)
+type SNilOrR :: Path ABK i j -> Type
+data SNilOrR p where
+  SNilR :: SNilOrR Nil
+  SRR :: SNilOrR (R ::: Nil)
 
-type Arr :: CAT (ARRK i j)
-data Arr a b where
-  ArrId :: (Ob a) => Arr a a
+type IsTight :: forall {i} {j}. Path ABK i j -> Constraint
+class (IsLRPath ps, IsCotight (CotightAdj ps), Adjunction_ (AK ps) (AK (CotightAdj ps))) => IsTight (ps :: Path ABK i j) where
+  type CotightAdj (ps :: Path ABK i j) :: Path ABK j i
+  isNilOrL :: SNilOrL ps
+instance IsTight Nil where
+  type CotightAdj Nil = Nil
+  isNilOrL = SNilL
+instance IsTight (L ::: Nil) where
+  type CotightAdj (L ::: Nil) = R ::: Nil
+  isNilOrL = SLL
+type IsCotight :: forall {i} {j}. Path ABK i j -> Constraint
+class (IsLRPath ps, IsTight (TightAdj ps), Adjunction_ (AK (TightAdj ps)) (AK ps)) => IsCotight (ps :: Path ABK i j) where
+  type TightAdj (ps :: Path ABK i j) :: Path ABK j i
+  isNilOrR :: SNilOrR ps
+instance IsCotight Nil where
+  type TightAdj Nil = Nil
+  isNilOrR = SNilR
+instance IsCotight (R ::: Nil) where
+  type TightAdj (R ::: Nil) = L ::: Nil
+  isNilOrR = SRR
 
-instance Profunctor (Arr :: CAT (ARRK i j)) where
-  dimap = dimapDefault
-  r \\ ArrId = r
-instance Promonad (Arr :: CAT (ARRK i j)) where
-  id = ArrId
-  ArrId . ArrId = ArrId
-instance CategoryOf (ARRK i j) where
-  type (~>) = Arr
-  type Ob a = ()
-
-instance Bicategory ARRK where
-  type Ob0 ARRK a = ()
-  r \\\ ArrId = r
-  ArrId `o` ArrId = _
-
-type family Arr2Adj (ps :: Path ARRK a b) :: Path ADJK a b
-type instance Arr2Adj (IDA ::: ps) = Arr2Adj ps
-type instance Arr2Adj (IDB ::: ps) = Arr2Adj ps
-type instance Arr2Adj (A2B ::: ps) = AK (L ::: Nil) ::: Arr2Adj ps
-
--- type AdjSq :: DOUBLE ADJK ARRK
--- data AdjSq ps qs fs gs where
---   AdjSq :: ps +++ Arr2Adj gs ~> Arr2Adj fs +++ qs -> AdjSq ps qs fs gs
--- instance Double ADJK ARRK where
---   type Sq ADJK ARRK = AdjSq
---   object = AdjSq id
---   hArr f = AdjSq f
---   AdjSq f ||| AdjSq g = AdjSq (f `o` g)
---   vArr ArrId = AdjSq id
---   AdjSq f === AdjSq g = AdjSq (f `o` g)
+type instance IsOb Tight (AK ps) = IsTight ps
+type instance IsOb Cotight (AK ps) = IsCotight ps
+type instance TightAdjoint (AK ps) = AK (TightAdj ps)
+type instance CotightAdjoint (AK ps) = AK (CotightAdj ps)
+instance WithObO2 Tight ADJK where
+  withObO2 @(AK ps) @(AK qs) r = case (isNilOrL @ps, isNilOrL @qs) of
+    (SNilL, _) -> r
+    (SLL, SNilL) -> r
+instance WithObO2 Cotight ADJK where
+  withObO2 @(AK ps) @(AK qs) r = case (isNilOrR @ps, isNilOrR @qs) of
+    (SNilR, _) -> r
+    (SRR, SNilR) -> r
+instance Equipment ADJK where
+  withTightAdjoint r = r
+  withCotightAdjoint r = r

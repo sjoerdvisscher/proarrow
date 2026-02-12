@@ -68,7 +68,7 @@ instance (Ob (I :: kk i i)) => ObUnit kk i
 -- * 1-cells are types of kind @kk j k@ for any 0-cells @j@ and @k@, satisfying the @Ob@ constraint.
 -- * 2-cells are values of type @p ~> q@, where @p@ and @q@ are 1-cells.
 type Bicategory :: forall {s}. CAT s -> Constraint
-class (Locally CategoryOf kk, CategoryOf s, forall i. (Ob0 kk i) => ObUnit kk i) => Bicategory (kk :: CAT s) where
+class (Locally CategoryOf kk, forall i. (Ob0 kk i) => ObUnit kk i) => Bicategory (kk :: CAT s) where
   type Ob0 kk (j :: k) :: Constraint
   type Ob0 kk j = ()
   type I :: kk i i
@@ -86,6 +86,7 @@ class (Locally CategoryOf kk, CategoryOf s, forall i. (Ob0 kk i) => ObUnit kk i)
 
   -- | Get proof that the source and target of a 1-cell are 0-cells.
   withOb0s :: forall {j} {k} a r. (Ob (a :: kk j k)) => ((Ob0 kk j, Ob0 kk k) => r) -> r
+  -- no default implementation possible since withOb0s has an ambiguous type
 
   -- | Observe constraints from a 2-cell value.
   (\\\) :: ((Ob0 kk i, Ob0 kk j, Ob ps, Ob qs) => r) -> (ps :: kk i j) ~> qs -> r
