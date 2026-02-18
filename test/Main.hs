@@ -6,6 +6,7 @@ import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
 import Props.Bool qualified as Bool
+import Props.Dot qualified as Dot
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
@@ -21,6 +22,7 @@ main =
     testGroup
       "Proarrow"
       [ Bool.test
+      , Dot.test
       , Free.test
       , Hask.test
       , Linear.test

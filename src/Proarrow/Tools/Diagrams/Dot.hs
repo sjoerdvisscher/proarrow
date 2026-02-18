@@ -5,12 +5,13 @@ module Proarrow.Tools.Diagrams.Dot where
 
 import Data.Bifunctor (first)
 import Data.Coerce (coerce)
-import Data.List (cycle, repeat)
+import Data.List (cycle, repeat, sort)
 import Data.Proxy (Proxy (..))
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 import Prelude
-  ( Either (..)
-  , Eq
+  ( Bool (..)
+  , Either (..)
+  , Eq (..)
   , Foldable
   , Functor (..)
   , Int
@@ -18,10 +19,10 @@ import Prelude
   , Ord (..)
   , Show
   , String
+  , Traversable (..)
   , const
   , either
   , foldMap
-  , otherwise
   , show
   , snd
   , splitAt
@@ -43,6 +44,8 @@ type Port = String -- Basically a shown int, but may contain an additional direc
 
 newtype Vec as x = Vec {unVec :: [x]}
   deriving newtype (Show, Eq, Foldable, Functor)
+instance Traversable (Vec as) where
+  traverse f (Vec xs) = fmap Vec (traverse f xs)
 newtype Fin as = Fin {unFin :: Int}
   deriving newtype (Show, Eq, Num)
 (!) :: Vec as x -> Fin as -> x
@@ -82,7 +85,7 @@ shift (Fin i) = Fin (len @as + i)
 eitherF :: forall as bs r. (IsList as) => (Fin as -> r) -> (Fin bs -> r) -> Fin (as ++ bs) -> r
 eitherF f g (Fin i)
   | i < len @as = f (Fin i)
-  | otherwise = g (Fin (i - len @as))
+  | True = g (Fin (i - len @as))
 
 names :: (IsList (as :: [Symbol])) => Vec as String
 names @as = case sList @as of
@@ -93,6 +96,10 @@ names @as = case sList @as of
 type SymRefl :: CAT Symbol
 data SymRefl a b where
   SymRefl :: (KnownSymbol s) => SymRefl s s
+instance Eq (SymRefl a b) where
+  SymRefl == SymRefl = True
+instance Show (SymRefl a b) where
+  show SymRefl = "SymRefl"
 instance Profunctor SymRefl where
   dimap = dimapDefault
   r \\ SymRefl = r
@@ -118,6 +125,11 @@ data DotData as bs = DotData
 type Dot :: CAT DOT
 data Dot a b where
   Dot :: (IsList as, IsList bs) => (Int -> (Int, DotData as bs)) -> Dot (D as) (D bs)
+
+instance Eq (Dot a b) where
+  Dot f == Dot g = normalize (getData (Dot f)) == normalize (getData (Dot g))
+instance Show (Dot a b) where
+  show (Dot f) = show (getData (Dot f))
 
 instance Profunctor Dot where
   dimap = dimapDefault
@@ -253,6 +265,10 @@ line = id
 getData :: Dot (D as) (D bs) -> DotData as bs
 getData (Dot f) = snd (f 0)
 
+normalize :: DotData as bs -> DotData as bs
+normalize (DotData is os es ns) =
+  DotData is os (sort es) (sort ns)
+
 run :: Dot (D as) (D bs) -> String
 run @as @bs (Dot f) =
   let (_, DotData is os es ns) = f 0; as = ixed (names @as); bs = ixed (names @bs)
@@ -279,8 +295,8 @@ run @as @bs (Dot f) =
        ++ foldMap (\(i, s, j) -> "\n  " ++ i ++ " -> " ++ j ++ " [label=\"" ++ s ++ "\"];") es
        ++ "\n}\n"
 
-unitAdj :: Dot (D '[]) (D '["L", "R"])
+unitAdj :: (Ob l, Ob r) => Dot (D '[]) (D '[l, r])
 unitAdj = node' (Vec []) (Vec [":sw", ":se"]) "label=η"
 
-counitAdj :: Dot (D '["R", "L"]) (D '[])
+counitAdj :: (Ob l, Ob r) => Dot (D '[r, l]) (D '[])
 counitAdj = node' (Vec [":nw", ":ne"]) (Vec []) "label=ϵ"
