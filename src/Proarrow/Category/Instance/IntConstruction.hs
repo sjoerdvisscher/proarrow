@@ -29,8 +29,8 @@ type IntConstruction :: CAT (INT k)
 data IntConstruction a b where
   Int :: (Ob ap, Ob am, Ob bp, Ob bm) => ap ** bm ~> am ** bp -> IntConstruction (I ap am) (I bp bm)
 
-toInt :: forall {k} (a :: k) b. (TracedMonoidal k) => (a ~> b) -> I a Unit ~> I b Unit
-toInt f = Int (swap @k @b @Unit . (f `par` obj @Unit)) \\ f
+toInt :: forall {k} (a :: k) b m. (TracedMonoidal k, Ob m) => (a ~> b) -> I a m ~> I b m
+toInt f = Int (swap @k @b @m . (f `par` obj @m)) \\ f
 
 isoToInt :: forall {k} (a :: k) b. (TracedMonoidal k) => (a ~> b) -> (b ~> a) -> I a a ~> I b b
 isoToInt f g = Int (swap @k @b @a . (f `par` g)) \\ f \\ g

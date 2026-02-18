@@ -125,7 +125,7 @@ strongPar0 = dimap rightUnitorInv rightUnitor (act (obj @a) par0)
 
 type Costrong :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Costrong m (p :: c +-> d) where
-  coact :: forall (a :: m) x y. (Ob a, Ob x, Ob y) => p (Act a x) (Act a y) -> p x y
+  coact :: forall (a :: m) (x :: d) (y :: c). (Ob a, Ob x, Ob y) => p (Act a x) (Act a y) -> p x y
 
 trace :: forall {k} (p :: k +-> k) u x y. (SelfAction k, Costrong k p, Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
 trace p = coact @k @p @u @x @y (dimap (swap @k @u @x) (swap @k @y @u) p) \\ p

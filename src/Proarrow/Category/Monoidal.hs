@@ -20,6 +20,9 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 
+infixl 8 ||
+infixl 7 ==
+
 -- This is equal to a monoidal functor for representable profunctors
 -- and to an oplax monoidal functor for corepresentable profunctors.
 type MonoidalProfunctor :: forall {j} {k}. j +-> k -> Constraint
@@ -68,6 +71,12 @@ instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   rightUnitorInv @'(a1, a2) = rightUnitorInv @j @a1 :**: rightUnitorInv @k @a2
   associator @'(a1, a2) @'(b1, b2) @'(c1, c2) = associator @j @a1 @b1 @c1 :**: associator @k @a2 @b2 @c2
   associatorInv @'(a1, a2) @'(b1, b2) @'(c1, c2) = associatorInv @j @a1 @b1 @c1 :**: associatorInv @k @a2 @b2 @c2
+
+(||) :: (Monoidal k) => (a :: k) ~> b -> c ~> d -> a ** c ~> b ** d
+(||) = par
+
+(==) :: (CategoryOf k) => (a :: k) ~> b -> b ~> c -> a ~> c
+f == g = g . f
 
 obj2 :: forall {k} a b. (Monoidal k, Ob (a :: k), Ob b) => Obj (a ** b)
 obj2 = obj @a `par` obj @b
