@@ -2,11 +2,12 @@
 
 module Proarrow.Category.Instance.Fam where
 
+import GHC.Base (Any)
 import Data.Kind (Type)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Instance.Cat (FstCat, Initiate, LftCat, RgtCat, SndCat, Terminate, (:&&&:) (..), (:|||:) (..))
-import Proarrow.Category.Instance.Coproduct (COPRODUCT)
+import Proarrow.Category.Instance.Cat (FstCat, SndCat, Terminate, (:&&&:) (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..), Snd, Fst)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
@@ -87,9 +88,44 @@ instance (CategoryOf k) => FunctorForRep (IsPresheafSub :: FAM k +-> Presheaf k)
   type IsPresheafSub @ (DEP x dx) = AsPresheaf dx
   fmap (Fam r) = Prof \(AsPresheaf dx) -> AsPresheaf (case r dx of dy :.: f -> rmap (index f) dy)
 
+data family Initiate :: VOID +-> k
+instance (CategoryOf k) => FunctorForRep (Initiate :: VOID +-> k) where
+  type Initiate @ a = Any
+  fmap = \case {}
+
 instance (CategoryOf k) => HasInitialObject (FAM k) where
   type InitialObject = DEP VOID (Rep Initiate)
   initiate = Fam @(Rep Initiate) \(Rep @_ @_ @b _) -> case obj @b of {}
+
+data family LftCat :: j +-> COPRODUCT j k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (LftCat :: j +-> COPRODUCT j k) where
+  type LftCat @ a = L a
+  fmap = InjL
+
+data family RgtCat :: k +-> COPRODUCT j k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (RgtCat :: k +-> COPRODUCT j k) where
+  type RgtCat @ a = R a
+  fmap = InjR
+
+type (:|||:) :: (i +-> k) -> (j +-> k) -> (COPRODUCT i j +-> k)
+data (p :|||: q) a b where
+  InjLP :: p a b -> (p :|||: q) a (L b)
+  InjRP :: q a b -> (p :|||: q) a (R b)
+instance (Profunctor p, Profunctor q) => Profunctor (p :|||: q) where
+  dimap l (InjL r) (InjLP p) = InjLP (dimap l r p)
+  dimap l (InjR r) (InjRP p) = InjRP (dimap l r p)
+  r \\ InjLP p = r \\ p
+  r \\ InjRP q = r \\ q
+instance (Representable p, Representable q) => Representable (p :|||: q) where
+  type (p :|||: q) % L a = p % a
+  type (p :|||: q) % R a = q % a
+  tabulate @b f = case obj @b of
+    InjL l -> InjLP (tabulate @p f) \\ l
+    InjR r -> InjRP (tabulate @q f) \\ r
+  index (InjLP p) = index p
+  index (InjRP q) = index q
+  repMap (InjL f) = repMap @p f
+  repMap (InjR f) = repMap @q f
 
 instance (CategoryOf k) => HasBinaryCoproducts (FAM k) where
   type a || b = DEP (COPRODUCT (X a) (X b)) (DX a :|||: DX b)

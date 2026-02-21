@@ -2,12 +2,8 @@
 
 module Proarrow.Category.Instance.Cat where
 
-import GHC.Base (Any)
-
-import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
@@ -19,10 +15,10 @@ import Proarrow.Category.Monoidal
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Strictified ()
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -40,6 +36,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
+import Proarrow.Profunctor.Corepresentable (Corep)
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
@@ -65,18 +62,14 @@ data family Terminate :: k +-> ()
 instance (CategoryOf k) => FunctorForRep (Terminate :: k +-> ()) where
   type Terminate @ a = '()
   fmap _ = Unit
+
 instance HasTerminalObject KIND where
   type TerminalObject = K ()
   terminate = Cat @(Rep Terminate)
 
-data family Initiate :: VOID +-> k
-instance (CategoryOf k) => FunctorForRep (Initiate :: VOID +-> k) where
-  type Initiate @ a = Any
-  fmap = \case {}
-
 instance HasInitialObject KIND where
-  type InitialObject = K VOID
-  initiate = Cat @(Rep Initiate)
+  type InitialObject = K ()
+  initiate = Cat @(Corep Terminate)
 
 data family FstCat :: (j, k) +-> j
 instance (CategoryOf j, CategoryOf k) => FunctorForRep (FstCat :: (j, k) +-> j) where
@@ -101,48 +94,20 @@ instance (Representable p, Representable q) => Representable (p :&&&: q) where
   repMap f = repMap @p f :**: repMap @q f
 
 instance HasBinaryProducts KIND where
-  type l && r = K (UN K l, UN K r)
+  type K l && K r = K (l, r)
   withObProd r = r
   fst = Cat @(Rep FstCat)
   snd = Cat @(Rep SndCat)
   Cat @p &&& Cat @q = Cat @(p :&&&: q)
 
-data family LftCat :: j +-> COPRODUCT j k
-instance (CategoryOf j, CategoryOf k) => FunctorForRep (LftCat :: j +-> COPRODUCT j k) where
-  type LftCat @ a = L a
-  fmap = InjL
-
-data family RgtCat :: k +-> COPRODUCT j k
-instance (CategoryOf j, CategoryOf k) => FunctorForRep (RgtCat :: k +-> COPRODUCT j k) where
-  type RgtCat @ a = R a
-  fmap = InjR
-
-type (:|||:) :: (i +-> k) -> (j +-> k) -> (COPRODUCT i j +-> k)
-data (p :|||: q) a b where
-  InjLP :: p a b -> (p :|||: q) a (L b)
-  InjRP :: q a b -> (p :|||: q) a (R b)
-instance (Profunctor p, Profunctor q) => Profunctor (p :|||: q) where
-  dimap l (InjL r) (InjLP p) = InjLP (dimap l r p)
-  dimap l (InjR r) (InjRP p) = InjRP (dimap l r p)
-  r \\ InjLP p = r \\ p
-  r \\ InjRP q = r \\ q
-instance (Representable p, Representable q) => Representable (p :|||: q) where
-  type (p :|||: q) % L a = p % a
-  type (p :|||: q) % R a = q % a
-  tabulate @b f = case obj @b of
-    InjL l -> InjLP (tabulate @p f) \\ l
-    InjR r -> InjRP (tabulate @q f) \\ r
-  index (InjLP p) = index p
-  index (InjRP q) = index q
-  repMap (InjL f) = repMap @p f
-  repMap (InjR f) = repMap @q f
-
 instance HasBinaryCoproducts KIND where
-  type K l || K r = K (COPRODUCT l r)
+  type K l || K r = K (l, r)
   withObCoprod r = r
-  lft = Cat @(Rep LftCat)
-  rgt = Cat @(Rep RgtCat)
-  Cat @p ||| Cat @q = Cat @(p :|||: q)
+  lft = Cat @(Corep FstCat)
+  rgt = Cat @(Corep SndCat)
+  Cat @p ||| Cat @q = Cat @(UnOp (Rep CombineDual :.: (Op p :&&&: Op q)))
+
+instance HasBiproducts KIND
 
 instance MonoidalProfunctor Cat where
   par0 = id

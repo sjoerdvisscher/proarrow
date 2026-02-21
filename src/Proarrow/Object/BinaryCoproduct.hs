@@ -25,7 +25,7 @@ import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), St
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj, tgt)
-import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
+import Proarrow.Object.BinaryProduct (PROD (..), Prod (..), HasBinaryProducts (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
@@ -228,3 +228,10 @@ instance (Ok cs p, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE c
   lft = Str Lft F.Id
   rgt = Str Rgt F.Id
   f ||| g = Str (Sum f g) F.Id \\ f \\ g
+
+class ((a && b) ~ (a || b)) => CheckBiproduct a b
+instance ((a && b) ~ (a || b)) => CheckBiproduct a b
+
+class (HasBinaryCoproducts k, HasBinaryProducts k, forall (a :: k) (b :: k). (Ob a, Ob b) => CheckBiproduct a b) => HasBiproducts k where
+  sum :: (a :: k) ~> b -> a ~> b -> a ~> b
+  sum f g = codiag . (f +++ g) . diag \\ f \\ g

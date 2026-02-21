@@ -11,7 +11,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Dual
   ( CompactClosed (..)
@@ -171,6 +171,7 @@ instance (P.Num a) => HasBinaryProducts (MatK a) where
   fst @(M m) @(M n) = withPlusNat @m @n (Mat (P.fmap (`append` (0 P.<$ matId @n @a)) (matId @m)))
   snd @(M m) @(M n) = withPlusNat @m @n (Mat (P.fmap (append (0 P.<$ matId @m @a)) (matId @n)))
   Mat a &&& Mat b = mat (append a b)
+instance (P.Num a) => HasBiproducts (MatK a)
 
 instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
   par0 = id
