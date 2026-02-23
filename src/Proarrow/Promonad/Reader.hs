@@ -24,6 +24,8 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Promonad (Procomonad (..))
 import Proarrow.Promonad.Writer (Writer (..))
+import Proarrow.Object.Exponential (Closed (..), uncurry)
+import Proarrow.Profunctor.Representable (Representable (..))
 
 data Reader r a b where
   Reader :: forall a b r. (Ob a) => Act r a ~> b -> Reader (OP r) a b
@@ -32,11 +34,19 @@ instance (Ob (r :: m), MonoidalAction m k) => Profunctor (Reader (OP r) :: k +->
   dimap l r (Reader f) = Reader (r . f . (actHom (obj @r) l)) \\ r \\ l
   r \\ Reader f = r \\ f
 
+-- | The coreader comonad given the Promonad instance.
 instance (Ob (r :: m), MonoidalAction m k) => Corepresentable (Reader (OP r) :: k +-> k) where
   type Reader (OP r) %% a = Act r a
   coindex (Reader f) = f
   cotabulate f = Reader f
   corepMap f = actHom (obj @r) f
+
+-- | The reader monad given the Promonad instance.
+instance (Ob (r :: k), SelfAction k, Closed k) => Representable (Reader (OP r) :: k +-> k) where
+  type Reader (OP r) % a = r ~~> a
+  index (Reader @a @b f) = curry @_ @a @r @b (f . swap @_ @a @r)
+  tabulate @b @a f = Reader (uncurry @r @b f . swap @_ @r @a) \\ f
+  repMap f = f ^^^ obj @r
 
 instance (MonoidalAction m k) => Functor (Reader :: OPPOSITE m -> k +-> k) where
   map (Op f) = f // Prof \(Reader @a g) -> Reader (g . actHom f (obj @a))

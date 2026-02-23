@@ -10,6 +10,8 @@ import Proarrow.Category.Monoidal
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
   , first
+  , leftUnitorInvWith
+  , leftUnitorWith
   , second
   , swap'
   , unitObj
@@ -19,7 +21,18 @@ import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, tgt, (//), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid, Monoid (..), comultAct, counitAct, mappendAct, memptyAct)
+import Proarrow.Object.Dual
+  ( CompactClosed (..)
+  , ExpSA
+  , StarAutonomous (..)
+  , combineDual
+  , doubleNeg
+  , doubleNegInv
+  , dualityCounit
+  , dualityUnit, expSA
+  )
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 import Proarrow.Promonad (Procomonad (..))
@@ -31,11 +44,31 @@ instance (Ob (w :: m), MonoidalAction m k) => Profunctor (Writer w :: k +-> k) w
   dimap = dimapRep
   r \\ Writer f = r \\ f
 
+-- | The writer monad given the Promonad instance.
 instance (Ob (w :: m), MonoidalAction m k) => Representable (Writer w :: k +-> k) where
   type Writer w % a = Act w a
   index (Writer f) = f
   tabulate f = Writer f
   repMap f = actHom (obj @w) f
+
+-- | The cowriter comonad given the Promonad instance.
+instance (Ob (w :: k), SelfAction k, CompactClosed k) => Corepresentable (Writer w :: k +-> k) where
+  type Writer w %% a = ExpSA w a
+  coindex (Writer @b @a f) =
+    leftUnitorWith (dualityCounit @w)
+      . associatorInv @k @(Dual w) @w @b
+      . (obj @(Dual w) `par` (f . doubleNeg @a))
+      . distribDual @k @w @(Dual a)
+      \\ f
+  cotabulate @a f =
+    Writer
+      ( (obj @w `par` (f . combineDual @w @(Dual a)))
+          . associator @k @w @(Dual w) @(Dual (Dual a))
+          . leftUnitorInvWith (dualityUnit @w)
+          . doubleNegInv @a
+      )
+      \\ f
+  corepMap f = expSA f (obj @w)
 
 instance (MonoidalAction m k) => Functor (Writer :: m -> k +-> k) where
   map f = f // Prof \(Writer @b g) -> Writer (actHom f (obj @b) . g)
