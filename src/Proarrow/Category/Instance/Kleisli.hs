@@ -118,11 +118,11 @@ instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive 
   distL0 @(KL a) = arr (distL0 @k @a)
   distR0 @(KL a) = arr (distR0 @k @a)
 
-instance (Strong Type p, Promonad p) => Strong Type (Id :: CAT (KLEISLI (p :: Type +-> Type))) where
-  act f (Id (Kleisli p)) = Id (Kleisli (act f p))
-instance (Strong Type p, Promonad p) => MonoidalAction Type (KLEISLI (p :: Type +-> Type)) where
-  type Act y (KL x) = KL (Act y x)
-  withObAct @y @(KL x) r = withObAct @Type @Type @y @x r
+instance (Promonad p, MonoidalProfunctor p) => Strong Type (Id :: CAT (KLEISLI (p :: Type +-> Type))) where
+  act f (Id (Kleisli p)) = Id (arr f `par` Kleisli p)
+instance (Promonad p, MonoidalProfunctor p) => MonoidalAction Type (KLEISLI (p :: Type +-> Type)) where
+  type Act y (KL x) = KL (y ** x)
+  withObAct @y @(KL x) r = withOb2 @Type @y @x r
   unitor = arr (unitor @Type)
   unitorInv = arr (unitorInv @Type)
   multiplicator @a @b @(KL c) = arr (multiplicator @Type @Type @a @b @c)

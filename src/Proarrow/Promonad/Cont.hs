@@ -21,6 +21,7 @@ instance CategoryOf k => Promonad (Cont (r :: k)) where
   Cont f . Cont g = Cont (g . f)
 instance Strong Type (Cont (r :: Type)) where
   act ab (Cont yrxy) = Cont \byr -> uncurry (yrxy . curry byr . ab)
+-- Not costrong
 
 -- | Only premonoidal not monoidal?
 instance MonoidalProfunctor (Cont (r :: Type)) where

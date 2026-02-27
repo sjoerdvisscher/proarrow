@@ -17,14 +17,21 @@ import Proarrow.Category.Instance.Free
   )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), associator, leftUnitor, type (**!))
-import Proarrow.Category.Opposite (OPPOSITE (..))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , associator
+  , leftUnitor
+  , type (**!)
+  )
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, diag)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 
 infixr 2 ~~>
 
@@ -105,6 +112,21 @@ ap
   -> p a x
   -> p a y
 ap pf px = dimap diag (apply @j @x @y) (pf `par` px) \\ px
+
+data family Not (r :: k) :: k +-> OPPOSITE k
+instance (Closed k, Ob r) => FunctorForRep (Not (r :: k)) where
+  type Not r @ a = OP (a ~~> r)
+  fmap f = Op (obj @r ^^^ f)
+
+-- | The Op-Op adjunction, giving rise to the continuation monad.
+instance (Closed k, SymMonoidal k, Ob r) => Representable (Corep (Not (r :: k))) where
+  type Corep (Not r) % OP a = a ~~> r
+  tabulate f = Corep (Op (swapClosed @r f)) \\ f
+  index (Corep (Op f)) = swapClosed @r f
+  repMap (Op f) = obj @r ^^^ f
+
+swapClosed :: forall {k} (c :: k) a b. (Closed k, SymMonoidal k, Ob b, Ob c) => a ~> b ~~> c -> b ~> a ~~> c
+swapClosed f = curry @k @b @a (uncurry @b @c f . swap @k @b @a) \\ f
 
 data family (-->) (a :: k) (b :: k) :: k
 instance (Ob (a :: FREE cs p), Ob b, Closed `Elem` cs, Monoidal `Elem` cs) => IsFreeOb (a --> b) where

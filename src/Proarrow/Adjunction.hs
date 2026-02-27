@@ -13,7 +13,7 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor, FunctorForRep, map)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), trivialCorep)
+import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), corepObj, trivialCorep)
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable
@@ -23,6 +23,7 @@ import Proarrow.Profunctor.Representable
   , Representable (..)
   , mapCorepStar
   , mapRepCostar
+  , repObj
   , trivialRep
   )
 import Proarrow.Profunctor.Star (Star, pattern Star)
@@ -44,6 +45,12 @@ unitRep = index (trivialCorep @p)
 
 counitRep :: forall p a. (Adjunction p, Ob a) => p %% (p % a) ~> a
 counitRep = coindex (trivialRep @p)
+
+bindRep :: forall p a b. (Adjunction p, Ob b) => a ~> p % (p %% b) -> p % (p %% a) ~> p % (p %% b)
+bindRep f = repMap @p (rightAdjunct @p @a @(p %% b) f) \\ corepObj @p @b
+
+extendRep :: forall p a b. (Adjunction p, Ob a) => (p %% (p % a) ~> b) -> p %% (p % a) ~> p %% (p % b)
+extendRep f = corepMap @p (leftAdjunct @p @(p % a) @b f) \\ repObj @p @a
 
 -- | The left adjoint of @((->) a)@ is @(,) a@.
 instance Corepresentable (Star ((->) a)) where

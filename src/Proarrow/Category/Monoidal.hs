@@ -19,11 +19,13 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
+import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), trivialRep)
 
 infixl 8 ||
 infixl 7 ==
 
--- This is equal to a monoidal functor for representable profunctors
+-- This is equal to a lax monoidal functor for representable profunctors
 -- and to an oplax monoidal functor for corepresentable profunctors.
 type MonoidalProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: j +-> k) where
@@ -37,6 +39,34 @@ instance MonoidalProfunctor U.Unit where
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :**: q) where
   par0 = par0 :**: par0
   (f1 :**: f2) `par` (g1 :**: g2) = (f1 `par` g1) :**: (f2 `par` g2)
+
+par0Rep :: (Representable p, MonoidalProfunctor p) => Unit ~> p % Unit
+par0Rep @p = index @p par0
+
+parRep :: (Representable p, MonoidalProfunctor p, Ob x, Ob y) => (p % x) ** (p % y) ~> p % (x ** y)
+parRep @p @x @y = index @p (trivialRep @p @x `par` trivialRep @p @y)
+
+unpar0Corep :: (Corepresentable p, MonoidalProfunctor p) => p %% Unit ~> Unit
+unpar0Corep @p = coindex @p par0
+
+unparCorep :: (Corepresentable p, MonoidalProfunctor p, Ob x, Ob y) => p %% (x ** y) ~> (p %% x) ** (p %% y)
+unparCorep @p @x @y = coindex @p (trivialCorep @p @x `par` trivialCorep @p @y)
+
+type StrongMonoidalRep p = (Representable p, MonoidalProfunctor p, MonoidalProfunctor (RepCostar p))
+
+unpar0Rep :: (StrongMonoidalRep p) => p % Unit ~> Unit
+unpar0Rep @p = unpar0Corep @(RepCostar p)
+
+unparRep :: (StrongMonoidalRep p, Ob x, Ob y) => p % (x ** y) ~> (p % x) ** (p % y)
+unparRep @p @x @y = unparCorep @(RepCostar p) @x @y
+
+type StrongMonoidalCorep p = (Corepresentable p, MonoidalProfunctor p, MonoidalProfunctor (CorepStar p))
+
+par0Corep :: (StrongMonoidalCorep p) => Unit ~> p %% Unit
+par0Corep @p = par0Rep @(CorepStar p)
+
+parCorep :: (StrongMonoidalCorep p, Ob x, Ob y) => (p %% x) ** (p %% y) ~> p %% (x ** y)
+parCorep @p @x @y = parRep @(CorepStar p) @x @y
 
 type Monoidal :: Kind -> Constraint
 class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Monoidal k where
