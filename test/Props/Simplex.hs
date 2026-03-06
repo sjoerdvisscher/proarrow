@@ -35,12 +35,12 @@ instance (Ob a, Ob b) => TestableType (Simplex a b) where
     (SZ, SZ) -> one ZZ
     (SZ, SS @b') -> case gen @(Simplex Z b') of
       GenEmpty f -> GenEmpty (\(Y p) -> f p)
-      GenNonEmpty f gf -> GenNonEmpty (Y f) (Y <$> gf)
+      GenNonEmpty gf -> GenNonEmpty (Y <$> gf)
     (SS, SZ) -> GenEmpty \case {}
     (SS @a', SS @b') -> case (gen @(Simplex a' b), gen @(Simplex (S a') b')) of
       (GenEmpty l, GenEmpty r) -> GenEmpty \case
         X f -> l f
         Y f -> r f
-      (GenNonEmpty f gf, GenEmpty _) -> GenNonEmpty (X f) (X <$> gf)
-      (GenEmpty _, GenNonEmpty g gg) -> GenNonEmpty (Y g) (Y <$> gg)
-      (GenNonEmpty f gf, GenNonEmpty _ gg) -> GenNonEmpty (X f) (choose (X <$> gf) (Y <$> gg))
+      (GenNonEmpty gf, GenEmpty _) -> GenNonEmpty (X <$> gf)
+      (GenEmpty _, GenNonEmpty gg) -> GenNonEmpty (Y <$> gg)
+      (GenNonEmpty gf, GenNonEmpty gg) -> GenNonEmpty (choose (X <$> gf) (Y <$> gg))

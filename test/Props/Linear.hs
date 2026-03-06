@@ -54,7 +54,7 @@ instance (TestableType a, TestableType b) => TestableType (With a b) where
   gen = case (gen @a, gen @b) of
     (GenEmpty absurd, _) -> GenEmpty \(With x xa _) -> absurd (xa x)
     (_, GenEmpty absurd) -> GenEmpty \(With x _ xb) -> absurd (xb x)
-    (GenNonEmpty x ga, GenNonEmpty y gb) -> GenNonEmpty (mkWith x y) (mkWith <$> ga <*> gb)
+    (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty (mkWith <$> ga <*> gb)
   eqP (With x fa fb) (With y ga gb) = liftA2 (&&) (eqP (fa x) (ga y)) (eqP (fb x) (gb y))
   showP (With x fa fb) = "mkWith " ++ showP (fa x) ++ " " ++ showP (fb x)
 instance TestableType Top where

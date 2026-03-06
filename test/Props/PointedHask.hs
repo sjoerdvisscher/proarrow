@@ -50,9 +50,9 @@ instance (TestableType a, TestableType b) => TestableType (These a b) where
       This x -> l x
       That y -> r y
       These x _ -> l x
-    (GenNonEmpty a ga, GenEmpty _) -> GenNonEmpty (This a) (This <$> ga)
-    (GenEmpty _, GenNonEmpty b gb) -> GenNonEmpty (That b) (That <$> gb)
-    (GenNonEmpty a ga, GenNonEmpty b gb) -> GenNonEmpty (These a b) (oneof [This <$> ga, That <$> gb, These <$> ga <*> gb])
+    (GenNonEmpty ga, GenEmpty _) -> GenNonEmpty (This <$> ga)
+    (GenEmpty _, GenNonEmpty gb) -> GenNonEmpty (That <$> gb)
+    (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty (oneof [This <$> ga, That <$> gb, These <$> ga <*> gb])
   eqP (This l) (This r) = eqP l r
   eqP (That l) (That r) = eqP l r
   eqP (These l1 l2) (These r1 r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)

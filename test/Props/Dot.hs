@@ -64,7 +64,7 @@ instance Testable DOT where
   showOb @ns = intercalate "," $ unVec $ names @(UN D ns)
 
 instance (Ob a, Ob b) => TestableType (Dot a b) where
-  gen = GenNonEmpty (node "f") $ do
+  gen = GenNonEmpty $ do
     let iIxs = ixs @(UN D a)
         oIxs = ixs @(UN D b)
         iNms = names @(UN D a)

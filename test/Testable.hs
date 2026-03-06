@@ -15,11 +15,11 @@ import Proarrow.Object (Ob')
 class EnumAll a where
   enumAll :: [a]
 
-data GenTotal a = GenEmpty ~(forall x. a -> x) | GenNonEmpty a (Gen a)
+data GenTotal a = GenEmpty ~(forall x. a -> x) | GenNonEmpty (Gen a)
 
 invmap :: (a -> b) -> (b -> a) -> GenTotal a -> GenTotal b
 invmap _ f' (GenEmpty g) = GenEmpty (g . f')
-invmap f _ (GenNonEmpty x g) = GenNonEmpty (f x) (fmap f g)
+invmap f _ (GenNonEmpty g) = GenNonEmpty (fmap f g)
 
 class TestableType a where
   gen :: GenTotal a
@@ -34,7 +34,7 @@ class TestableType a where
 
 genP :: (TestableType a) => Property a
 genP = case gen of
-  GenNonEmpty _ g -> genWith (Just . showP) g
+  GenNonEmpty g -> genWith (Just . showP) g
   GenEmpty _ -> discard
 
 type TestableProfunctor :: forall {j} {k}. j +-> k -> Constraint
@@ -81,7 +81,7 @@ genObDef = someElem (mkSomeList @k @obs)
 
 optGen :: [a] -> GenTotal a
 optGen [] = error "optGen: empty list"
-optGen (x : xs) = GenNonEmpty x (elem (x :| xs))
+optGen (x : xs) = GenNonEmpty (elem (x :| xs))
 
 one :: a -> GenTotal a
-one x = GenNonEmpty x (pure x)
+one x = GenNonEmpty (pure x)

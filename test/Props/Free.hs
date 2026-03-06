@@ -57,20 +57,20 @@ instance (TestObFree a, TestObFree b) => TestObFree (a + b) where
   genFree @c = case (genFree @a @c, genFree @b @c) of
     (GenEmpty l, _) -> GenEmpty (l . (. lft))
     (_, GenEmpty r) -> GenEmpty (r . (. rgt))
-    (GenNonEmpty l gl, GenNonEmpty r gr) -> GenNonEmpty (l ||| r) (liftA2 (|||) gl gr)
+    (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (liftA2 (|||) gl gr)
   genFreeTerm = case (genFreeTerm @a, genFreeTerm @b) of
     (GenEmpty _, GenEmpty _) -> GenEmpty undefined
-    (GenNonEmpty l gl, GenEmpty _) -> GenNonEmpty (lft . l) ((lft .) <$> gl)
-    (GenEmpty _, GenNonEmpty r gr) -> GenNonEmpty (rgt . r) ((rgt .) <$> gr)
-    (GenNonEmpty l gl, GenNonEmpty _ gr) -> GenNonEmpty (lft . l) (choose ((lft .) <$> gl) ((rgt .) <$> gr))
+    (GenNonEmpty gl, GenEmpty _) -> GenNonEmpty ((lft .) <$> gl)
+    (GenEmpty _, GenNonEmpty gr) -> GenNonEmpty ((rgt .) <$> gr)
+    (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (choose ((lft .) <$> gl) ((rgt .) <$> gr))
   showObFree = "(" ++ showObFree @a ++ " + " ++ showObFree @b ++ ")"
 instance (TestObFree a, TestObFree b) => TestObFree (a *! b) where
   genFree @c = case (genFree @a @c, genFree @b @c) of
     (GenEmpty _, GenEmpty _) -> GenEmpty undefined
-    (GenNonEmpty l gl, _) -> GenNonEmpty (l . fst) ((. fst) <$> gl)
-    (_, GenNonEmpty r gr) -> GenNonEmpty (r . snd) ((. snd) <$> gr)
+    (GenNonEmpty gl, _) -> GenNonEmpty ((. fst) <$> gl)
+    (_, GenNonEmpty gr) -> GenNonEmpty ((. snd) <$> gr)
   genFreeTerm = case (genFreeTerm @a, genFreeTerm @b) of
     (GenEmpty l, _) -> GenEmpty (\t -> l (fst . t))
     (_, GenEmpty r) -> GenEmpty (\t -> r (snd . t))
-    (GenNonEmpty l gl, GenNonEmpty r gr) -> GenNonEmpty (l &&& r) (liftA2 (&&&) gl gr)
+    (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (liftA2 (&&&) gl gr)
   showObFree = "(" ++ showObFree @a ++ " *! " ++ showObFree @b ++ ")"

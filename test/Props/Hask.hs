@@ -7,7 +7,7 @@ import Control.Monad (replicateM)
 import Data.Kind (Type)
 import Data.List (intercalate)
 import Data.Void (Void)
-import Test.Falsify.Generator (Function, applyFun, choose, elem, fun, function, functionMap)
+import Test.Falsify.Generator (Function, applyFun, choose, elem, fun, function, functionMap, minimalValue)
 import Test.Falsify.Property (genWith, Property)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
@@ -60,9 +60,9 @@ instance (Eq b, EnumAll a) => Eq (a -> b) where
 instance (TestOb a, TestOb b) => TestableType (a -> b) where
   gen = case gen @a of
     GenEmpty absurd -> one absurd
-    GenNonEmpty a _ -> case gen @b of
-      GenEmpty absurd -> GenEmpty \ab -> absurd (ab a)
-      GenNonEmpty b gb -> GenNonEmpty (const b) (fmap applyFun (fun gb))
+    GenNonEmpty g -> case gen @b of
+      GenEmpty absurd -> GenEmpty \ab -> absurd (ab (minimalValue g))
+      GenNonEmpty gb -> GenNonEmpty (fmap applyFun (fun gb))
   eqP = eqHask
   showP f = "(" ++ intercalate "," [showP x ++ "->" ++ showP (f x) | x <- enumAll] ++ ")"
 
@@ -70,7 +70,7 @@ eqHask :: (TestableType a, TestableType b) => (a -> b) -> (a -> b) -> Property B
 eqHask l r =
   case gen of
     GenEmpty _ -> pure True -- There can only be one function of a type with no values
-    GenNonEmpty _ ga -> do
+    GenNonEmpty ga -> do
       a <- genWith (Just . showP) ga
       eqP (l a) (r a)
 
@@ -85,16 +85,16 @@ instance (TestableType a, TestableType b) => TestableType (a, b) where
   gen = case (gen @a, gen @b) of
     (GenEmpty f, _) -> GenEmpty (f . fst)
     (_, GenEmpty g) -> GenEmpty (g . snd)
-    (GenNonEmpty a ga, GenNonEmpty b gb) -> GenNonEmpty (a, b) (liftA2 (,) ga gb)
+    (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty (liftA2 (,) ga gb)
   eqP (l1, l2) (r1, r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
   showP (a, b) = "(" ++ showP a ++ ", " ++ showP b ++ ")"
 
 instance (TestableType a, TestableType b) => TestableType (Either a b) where
   gen = case (gen @a, gen @b) of
     (GenEmpty f, GenEmpty g) -> GenEmpty (either f g)
-    (GenNonEmpty a ga, GenEmpty _) -> GenNonEmpty (Left a) (Left <$> ga)
-    (GenEmpty _, GenNonEmpty b gb) -> GenNonEmpty (Right b) (Right <$> gb)
-    (GenNonEmpty _ ga, GenNonEmpty b gb) -> GenNonEmpty (Right b) (choose (Left <$> ga) (Right <$> gb))
+    (GenNonEmpty ga, GenEmpty _) -> GenNonEmpty (Left <$> ga)
+    (GenEmpty _, GenNonEmpty gb) -> GenNonEmpty (Right <$> gb)
+    (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty (choose (Left <$> ga) (Right <$> gb))
   eqP (Left l) (Left r) = eqP l r
   eqP (Right l) (Right r) = eqP l r
   eqP _ _ = pure False
@@ -104,7 +104,7 @@ instance (TestableType a, TestableType b) => TestableType (Either a b) where
 instance (TestableType a) => TestableType (Maybe a) where
   gen = case gen @a of
     GenEmpty _ -> one Nothing
-    GenNonEmpty a ga -> GenNonEmpty (Just a) (choose (pure Nothing) (Just <$> ga))
+    GenNonEmpty ga -> GenNonEmpty (choose (pure Nothing) (Just <$> ga))
   eqP Nothing Nothing = pure True
   eqP (Just l) (Just r) = eqP l r
   eqP _ _ = pure False
@@ -112,7 +112,7 @@ instance (TestableType a) => TestableType (Maybe a) where
   showP (Just a) = "Just " ++ showP a
 
 instance TestableType [()] where
-  gen = GenNonEmpty [] (elem [[], [()], [(), ()], [(), (), ()]])
+  gen = GenNonEmpty (elem [[], [()], [(), ()], [(), (), ()]])
 
 -- Hard to write and also unused instances.
 instance (EnumAll a, Eq a, Function a, Function b) => Function (a -> b) where
@@ -124,5 +124,3 @@ instance (EnumAll a, Eq a, Function a, Function b) => Function (a -> b) where
       index table a = case lookup a table of
         Just b -> b
         Nothing -> error "Function @(a -> b): value of type a passed that is not in enumAll @a"
-instance Function Void where
-  function = undefined

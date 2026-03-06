@@ -38,7 +38,7 @@ instance Testable (MatK Int) where
 
 instance (TestOb (a :: MatK Int), TestOb b) => TestableType (Mat a b) where
   gen =
-    GenNonEmpty (Mat (pure (pure 0))) $
+    GenNonEmpty $
       Mat <$> traverse (traverse \() -> liftA2 (*) (elem [1, -1]) (elem [0 .. 9])) (repeat @(UN M b) (repeat @(UN M a) ()))
   eqP (Mat l) (Mat r) = pure $ l == r
   showP (Mat m) = show (toList <$> toList m)

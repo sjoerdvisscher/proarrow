@@ -31,7 +31,7 @@ instance Testable Nat where
   genOb = genObDef @'[0, 1, 2]
 
 instance (TestOb n, TestOb m) => TestableType (ZX n m) where
-  gen = GenNonEmpty (ZX mempty) $ do
+  gen = GenNonEmpty $ do
     let valGen = elem [-1, -sqrt 2, -0.5, 0, 0.5, sqrt 2, 1]
     let matrix = Map.fromList [((o, i), liftA2 (:+) valGen valGen) | o <- enumAll @m, i <- enumAll @n]
     ZX <$> sequenceA matrix
