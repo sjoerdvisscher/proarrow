@@ -12,7 +12,7 @@ import Proarrow.Core (CategoryOf (..), UN)
 import Props
 import Props.Hask ()
 import Test.Falsify.Generator (Function (..))
-import Testable (EnumAll (..), GenTotal (..), Testable (..), TestableType (..), genObDef, invmap, one)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, invmap, one, pattern GenNonEmpty)
 
 test :: TestTree
 test =
@@ -38,14 +38,6 @@ instance Testable LINEAR where
   showOb @(L a) = showOb @_ @a
   genOb = genObDef @'[L Bool, L (Bool, Bool), L (Maybe Bool)]
 
-instance (Eq b, EnumAll a) => Eq (a %1 -> b) where
-  l == r = (\a -> l a) == (\a -> r a)
-instance (Eq a, EnumAll a, EnumAll b) => EnumAll (a %1 -> b) where
-  enumAll = unsafeLinear <$> enumAll
-instance (EnumAll a, EnumAll b) => EnumAll (With a b) where
-  enumAll = [mkWith a b | a <- enumAll, b <- enumAll]
-instance EnumAll Top where
-  enumAll = [Top ()]
 instance (TestOb a, TestOb b) => TestableType (a %1 -> b) where
   gen = invmap unsafeLinear (\f a -> f a) gen
   eqP l r = eqP (\a -> l a) (\a -> r a)

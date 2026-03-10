@@ -31,7 +31,16 @@ import Proarrow.Tools.Diagrams.Dot
   )
 
 import Props
-import Testable (GenTotal (..), Some (..), Testable (..), TestableType (..), genObDef, one, someElem)
+import Testable
+  ( GenTotal (..)
+  , Some (..)
+  , Testable (..)
+  , TestableType (..)
+  , genObDef
+  , one
+  , someElem
+  , pattern GenNonEmpty
+  )
 
 test :: TestTree
 test =

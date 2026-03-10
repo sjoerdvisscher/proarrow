@@ -12,7 +12,7 @@ import Proarrow.Category.Instance.Mat (Mat (..), MatK (..), Nat (..), Vec (..), 
 import Proarrow.Core (UN)
 
 import Props
-import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef)
+import Testable (Testable (..), TestableType (..), genObDef, pattern GenNonEmpty)
 
 test :: TestTree
 test =

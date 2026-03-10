@@ -88,7 +88,7 @@ class IsFreeOb (a :: FREE cs (p :: CAT j)) where
   withLowerOb :: forall {k} (f :: j +-> k) r . (Representable f, All cs k) => ((Ob (Lower f (a :: FREE cs p))) => r) -> r
 instance (Ob a, Typeable a) => IsFreeOb (EMB a) where
   type Lower f (EMB a) = f % a
-  withLowerOb @f r = withRepOb @f @a r
+  withLowerOb @f = withRepOb @f @a
 
 class ((Ok cs p, Eq2 p) => Eq2 str, (Ok cs p) => Typeable str, Show2 p => Show2 str) => CanEqShow (str :: CAT (FREE cs p))
 instance ((Ok cs p, Eq2 p) => Eq2 str, (Ok cs p) => Typeable str, Show2 p => Show2 str) => CanEqShow (str :: CAT (FREE cs p))

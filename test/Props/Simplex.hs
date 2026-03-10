@@ -11,7 +11,7 @@ import Proarrow.Category.Instance.Simplex (IsNat (..), Nat (..), SNat (..), Simp
 import Proarrow.Core (Ob)
 
 import Props
-import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one, pattern GenNonEmpty)
 
 test :: TestTree
 test =

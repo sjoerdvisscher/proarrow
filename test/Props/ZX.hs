@@ -12,7 +12,7 @@ import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.ZX (ZX (..), enumAll, isZero, nat)
 import Props
-import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef)
+import Testable (Testable (..), TestableType (..), genObDef, pattern GenNonEmpty)
 
 test :: TestTree
 test =

@@ -10,27 +10,16 @@ import Test.Falsify.Generator (Function (..), functionMap)
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (id, (.))
 
-import Proarrow.Category.Instance.Free (Show2)
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
-import Proarrow.Profunctor.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Costar (Costar, unCostar, pattern Costar)
 import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
 import Proarrow.Promonad.Cont (Cont (..))
 
 import Props
 import Props.Hask ()
-import Testable
-  ( EnumAll (..)
-  , GenTotal (..)
-  , Testable (..)
-  , TestableProfunctor
-  , TestableType (..)
-  , genObDef
-  , invmap
-  , one
-  , optGen
-  )
+import Testable (Testable (..), TestableProfunctor, TestableType (..), genObDef, invmap)
 
 test :: TestTree
 test =
@@ -57,12 +46,10 @@ test =
         [ propCategory @(KLEISLI (Costar (Prelude Pair)))
         , propTerminalObject @(KLEISLI (Costar (Prelude Pair)))
         , propInitialObject @(KLEISLI (Costar (Prelude Pair)))
+        , propBinaryProducts @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         , propMonoidal @(KLEISLI (Costar (Prelude Pair))) (\r -> r)
         ]
     ]
-
-instance (TestOb a, TestOb b, Show2 p) => Show (Kleisli a (b :: KLEISLI p)) where
-  show (Kleisli f) = show f
 
 instance (TestableProfunctor p, Promonad p, TestOb a, TestOb b) => TestableType (Kleisli (a :: KLEISLI (p :: Type +-> Type)) b) where
   gen = invmap Kleisli unKleisli (gen @(p (UN KL a) (UN KL b)))
@@ -74,20 +61,16 @@ instance (TestableProfunctor p, Promonad p) => Testable (KLEISLI (p :: Type +-> 
   showOb @(KL a) = "KL " ++ showOb @_ @a
   genOb = genObDef @'[KL Bool, KL (), KL (Maybe Bool)]
 
-instance (EnumAll (f a)) => EnumAll (Prelude f a) where
-  enumAll = Prelude <$> enumAll
 instance (TestableType (f a)) => TestableType (Prelude f a) where
   gen = invmap Prelude unPrelude gen
   eqP (Prelude l) (Prelude r) = eqP l r
   showP (Prelude f) = showP f
 instance (Function (f a)) => Function (Prelude f a) where
-  function = fmap (functionMap Prelude unPrelude) . function
+  function = fmap (functionMap unPrelude Prelude) . function
 
 newtype Pair a = Pair {unPair :: (a, a)}
   deriving (Eq, Show, Functor, Generic)
   deriving anyclass (Function)
-instance (EnumAll a) => EnumAll (Pair a) where
-  enumAll = [Pair (x, y) | x <- enumAll, y <- enumAll]
 instance (TestableType a) => TestableType (Pair a) where
   gen = invmap Pair unPair gen
   eqP (Pair (l1, l2)) (Pair (r1, r2)) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
@@ -99,9 +82,7 @@ instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => Testable
   showP (Star f) = showP f
 
 instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestableType (Costar (Prelude f) a b) where
-  gen = case gen @(f a) of
-    GenEmpty absurd -> one (Costar (absurd . unPrelude))
-    _ -> optGen (fmap Costar enumAll) -- Somehow using `invmap Costar unCostar gen` causes infinite loops
+  gen = invmap Costar unCostar gen
   eqP (Costar l) (Costar r) = eqP l r
   showP (Costar f) = showP f
 

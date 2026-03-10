@@ -3,7 +3,6 @@
 
 module Props.PointedHask where
 
-import Data.List (intercalate)
 import Data.Void (Void)
 import Test.Falsify.Generator (Function, oneof)
 import Test.Tasty (TestTree, testGroup)
@@ -14,7 +13,7 @@ import Proarrow.Core (CategoryOf (..), UN)
 
 import Props
 import Props.Hask ()
-import Testable (EnumAll (..), GenTotal (..), Testable (..), TestableType (..), genObDef, invmap)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, invmap, pattern GenNonEmpty)
 
 test :: TestTree
 test =
@@ -35,15 +34,13 @@ test =
 instance (TestOb a, TestOb b) => TestableType (Pointed a b) where
   gen = invmap Pt unPt gen
   eqP (Pt l) (Pt r) = eqP l r
-  showP (Pt f) = intercalate "," [showP x ++ "->" ++ maybe "*" showP (f x) | x <- enumAll]
+  showP _ = "<pointed function>"
 
 instance Testable POINTED where
   type TestOb a = (Ob a, TestOb (UN P a))
   showOb @(P a) = showOb @_ @a
   genOb = genObDef @'[P Bool, P (Bool, Bool), P (Maybe Bool)]
 
-instance (EnumAll a, EnumAll b) => EnumAll (These a b) where
-  enumAll = (This <$> enumAll) ++ (That <$> enumAll) ++ (These <$> enumAll <*> enumAll)
 instance (TestableType a, TestableType b) => TestableType (These a b) where
   gen = case (gen @a, gen @b) of
     (GenEmpty l, GenEmpty r) -> GenEmpty \case

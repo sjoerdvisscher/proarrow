@@ -5,26 +5,38 @@ module Testable where
 import Data.Kind (Constraint)
 import Data.List.NonEmpty (NonEmpty (..))
 import GHC.Exts qualified as GHC
-import Test.Falsify.Generator (Gen, elem)
+import Test.Falsify.Generator (Fun, Gen, applyFun, elem)
 import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (Ob')
+import Unsafe.Coerce (unsafeCoerce)
 
-class EnumAll a where
-  enumAll :: [a]
-
-data GenTotal a = GenEmpty ~(forall x. a -> x) | GenNonEmpty (Gen a)
+data GenTotal a where
+  GenEmpty :: ~(forall x. a -> x) -> GenTotal a
+  GenNENonFun :: Gen a -> GenTotal a
+  GenFun :: (TestableType a, TestableType b) => ((a -> b) -> p) -> Gen (Fun a b) -> GenTotal p
 
 invmap :: (a -> b) -> (b -> a) -> GenTotal a -> GenTotal b
 invmap _ f' (GenEmpty g) = GenEmpty (g . f')
-invmap f _ (GenNonEmpty g) = GenNonEmpty (fmap f g)
+invmap f _ (GenNENonFun g) = GenNENonFun (fmap f g)
+invmap f _ (GenFun f' g) = GenFun (f . f') g
+
+flatten :: GenTotal a -> Gen a
+flatten (GenNENonFun g) = g
+flatten (GenFun f g) = (f . applyFun) <$> g
+flatten (GenEmpty _) = error "flatten: Match on GenEmpty first"
+
+pattern GenNonEmpty :: Gen a -> GenTotal a
+pattern GenNonEmpty g <- (flatten -> g)
+  where
+    GenNonEmpty g = GenNENonFun g
+
+{-# COMPLETE GenEmpty, GenNonEmpty #-}
 
 class TestableType a where
   gen :: GenTotal a
-  default gen :: (EnumAll a) => GenTotal a
-  gen = optGen enumAll
   eqP :: a -> a -> Property Bool
   default eqP :: (Eq a) => a -> a -> Property Bool
   eqP l r = pure (l == r)
@@ -32,9 +44,17 @@ class TestableType a where
   default showP :: (Show a) => a -> String
   showP = show
 
+newtype ShowP a = ShowP {unShowP :: a}
+instance (TestableType a) => Show (ShowP a) where
+  show (ShowP a) = showP a
+
+showFun :: forall a b. (TestableType a, TestableType b) => Fun a b -> String
+showFun = show . unsafeCoerce @(Fun a b) @(Fun (ShowP a) (ShowP b))
+
 genP :: (TestableType a) => Property a
 genP = case gen of
-  GenNonEmpty g -> genWith (Just . showP) g
+  GenNENonFun g -> genWith (Just . showP) g
+  GenFun f g -> (f . applyFun) <$> genWith (Just . showFun) g
   GenEmpty _ -> discard
 
 type TestableProfunctor :: forall {j} {k}. j +-> k -> Constraint

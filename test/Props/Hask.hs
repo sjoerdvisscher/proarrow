@@ -3,18 +3,16 @@
 
 module Props.Hask where
 
-import Control.Monad (replicateM)
 import Data.Kind (Type)
-import Data.List (intercalate)
 import Data.Void (Void)
-import Test.Falsify.Generator (Function, applyFun, choose, elem, fun, function, functionMap, minimalValue)
-import Test.Falsify.Property (genWith, Property)
+import Test.Falsify.Generator (Function, choose, elem, fun, function, minimalValue)
+import Test.Falsify.Property (Property, genWith)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Prelude hiding (elem)
 
 import Props
-import Testable (EnumAll (..), GenTotal (..), Testable (..), TestableType (..), genObDef, one)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one, optGen, pattern GenNonEmpty)
 
 test :: TestTree
 test =
@@ -30,41 +28,18 @@ test =
     ]
 
 instance Testable Type where
-  type TestOb a = (TestableType a, Typeable a, EnumAll a, Function a, Eq a)
+  type TestOb a = (TestableType a, Typeable a, Function a)
   showOb @a = show (typeRep @a)
-  genOb = genObDef @'[Bool, (Bool, Bool), Maybe Bool]
+  genOb = genObDef @'[Bool, (Bool, Bool), Maybe Bool, Void]
 
-instance EnumAll Void where
-  enumAll = []
-instance EnumAll () where
-  enumAll = [()]
-instance EnumAll Bool where
-  enumAll = [False, True]
-instance (EnumAll a, EnumAll b) => EnumAll (a, b) where
-  enumAll = [(a, b) | a <- enumAll, b <- enumAll]
-instance (EnumAll a, EnumAll b) => EnumAll (Either a b) where
-  enumAll = [Left a | a <- enumAll] ++ [Right b | b <- enumAll]
-instance (EnumAll a) => EnumAll (Maybe a) where
-  enumAll = Nothing : map Just enumAll
-instance EnumAll [()] where
-  enumAll = [[], [()], [(), ()], [(), (), ()]]
-instance (Eq a, EnumAll a, EnumAll b) => EnumAll (a -> b) where
-  enumAll = do
-    let as = enumAll
-    table <- zip as <$> replicateM (length as) enumAll
-    return \a -> case lookup a table of
-      Just b -> b
-      Nothing -> error "enumAll @(a -> b): value of type a passed that is not in enumAll @a"
-instance (Eq b, EnumAll a) => Eq (a -> b) where
-  l == r = all id [l a == r a | a <- enumAll @a]
 instance (TestOb a, TestOb b) => TestableType (a -> b) where
-  gen = case gen @a of
-    GenEmpty absurd -> one absurd
-    GenNonEmpty g -> case gen @b of
-      GenEmpty absurd -> GenEmpty \ab -> absurd (ab (minimalValue g))
-      GenNonEmpty gb -> GenNonEmpty (fmap applyFun (fun gb))
+  gen = case gen @b of
+    GenEmpty absurd -> case gen @a of
+      GenEmpty absurda -> one absurda
+      GenNonEmpty g -> GenEmpty \ab -> absurd (ab (minimalValue g))
+    GenNonEmpty gb -> GenFun id (fun gb)
   eqP = eqHask
-  showP f = "(" ++ intercalate "," [showP x ++ "->" ++ showP (f x) | x <- enumAll] ++ ")"
+  showP _ = "<function>"
 
 eqHask :: (TestableType a, TestableType b) => (a -> b) -> (a -> b) -> Property Bool
 eqHask l r =
@@ -74,8 +49,10 @@ eqHask l r =
       a <- genWith (Just . showP) ga
       eqP (l a) (r a)
 
-instance TestableType Bool
-instance TestableType ()
+instance TestableType Bool where
+  gen = optGen [False, True]
+instance TestableType () where
+  gen = one ()
 instance TestableType Void where
   gen = GenEmpty \case {}
   eqP = \case {}
@@ -115,12 +92,5 @@ instance TestableType [()] where
   gen = GenNonEmpty (elem [[], [()], [(), ()], [(), (), ()]])
 
 -- Hard to write and also unused instances.
-instance (EnumAll a, Eq a, Function a, Function b) => Function (a -> b) where
-  function = fmap (functionMap tabulate index) . function
-    where
-      tabulate :: (a -> b) -> [(a, b)]
-      tabulate f = [(a, f a) | a <- enumAll]
-      index :: [(a, b)] -> a -> b
-      index table a = case lookup a table of
-        Just b -> b
-        Nothing -> error "Function @(a -> b): value of type a passed that is not in enumAll @a"
+instance Function (a -> b) where
+  function = error "Should not be used"

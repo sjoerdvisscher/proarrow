@@ -16,7 +16,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..), TermF)
 import Proarrow.Profunctor.Initial (InitialProfunctor)
 
 import Props
-import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one, pattern GenNonEmpty)
 
 type FREEKIND =
   FREE '[HasInitialObject, HasTerminalObject, HasBinaryProducts, HasBinaryCoproducts] (InitialProfunctor :: CAT ())
