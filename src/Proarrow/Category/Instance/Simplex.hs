@@ -1,19 +1,25 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Category.Instance.Simplex where
+module Proarrow.Category.Instance.Simplex (module Proarrow.Category.Instance.Simplex, Nat (..)) where
 
+import Data.Fin (Fin (..))
 import Data.Kind (Type)
-
+import Data.Type.Nat (Nat (..), type Plus, SNatI)
+import Data.Vec.Lazy (Vec (..))
 import Prelude (Eq, Show (..), (++), type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Data.Typeable (Typeable)
 
-type data Nat = Z | S Nat
+type n + m = Plus n m
+
 data SNat :: Nat -> Type where
   SZ :: SNat Z
   SS :: (IsNat n) => SNat (S n)
@@ -24,7 +30,7 @@ instance Show (SNat n) where
 class (a + Z ~ a, a + S b ~ S (a + b), (a + b) + c ~ a + (b + c)) => Rules a b c
 instance (a + Z ~ a, a + S b ~ S (a + b), (a + b) + c ~ a + (b + c)) => Rules a b c
 
-class (forall b c. Rules a b c) => IsNat (a :: Nat) where singNat :: SNat a
+class (forall b c. Rules a b c, SNatI a, Typeable a) => IsNat (a :: Nat) where singNat :: SNat a
 instance IsNat Z where singNat = SZ
 instance (IsNat a) => IsNat (S a) where singNat = SS
 
@@ -71,22 +77,21 @@ instance HasTerminalObject Nat where
     SZ -> Y ZZ
     SS @n -> X (terminate @_ @n)
 
-data Fin :: Nat -> Type where
-  Fz :: Fin (S n)
-  Fs :: Fin n -> Fin (S n)
-
 data family Forget :: Nat +-> Type
 instance FunctorForRep Forget where
   type Forget @ n = Fin n
   fmap ZZ = id
-  fmap (Y f) = Fs . fmap @Forget f
+  fmap (Y f) = FS . fmap @Forget f
   fmap (X f) = \case
-    Fz -> Fz
-    Fs n -> fmap @Forget f n
+    FZ -> FZ
+    FS n -> fmap @Forget f n
 
-type family (a :: Nat) + (b :: Nat) :: Nat where
-  Z + b = b
-  S a + b = S (a + b)
+data family Pick :: Type -> OPPOSITE Nat +-> Type
+instance FunctorForRep (Pick a) where
+  type (Pick a) @ OP n = Vec n a
+  fmap (Op ZZ) VNil = VNil
+  fmap (Op (Y f)) (_ ::: xs) = fmap @(Pick a) (Op f) xs
+  fmap (Op (X f)) (x ::: xs) = x ::: (fmap @(Pick a) (Op f) (x ::: xs))
 
 instance MonoidalProfunctor Simplex where
   par0 = ZZ
@@ -107,6 +112,8 @@ instance Monoidal Nat where
   rightUnitorInv = id
   associator @a @b @c = withOb2 @_ @a @b (withOb2 @_ @(a ** b) @c (id @Simplex))
   associatorInv @a @b @c = withOb2 @_ @b @c (withOb2 @_ @a @(b ** c) (id @Simplex))
+
+-- Not symmetric monoidal
 
 instance Monoid Z where
   mempty = ZZ

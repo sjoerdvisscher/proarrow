@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE RequiredTypeArguments #-}
 
 module Testable where
 
@@ -9,9 +10,12 @@ import Test.Falsify.Generator (Fun, Gen, applyFun, elem)
 import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->), UN, Is)
 import Proarrow.Object (Ob')
 import Unsafe.Coerce (unsafeCoerce)
+import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Functor qualified as Rep
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 
 data GenTotal a where
   GenEmpty :: ~(forall x. a -> x) -> GenTotal a
@@ -71,6 +75,11 @@ class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor ((~>) :: CAT k),
   showOb :: forall (a :: k). (TestOb a) => String
   genOb :: Property (Some k)
 
+instance Testable k => Testable (OPPOSITE k) where
+  type TestOb a = (Is OP a, TestOb (UN OP a))
+  showOb @(OP a) = "OP (" ++ showOb @k @a ++ ")"
+  genOb = mapSome OP <$> genOb
+
 class (TestOb a) => TestOb' a
 instance (TestOb a) => TestOb' a
 
@@ -79,6 +88,9 @@ instance (forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
 
 data Some k where
   Some :: forall {k} a. (TestOb (a :: k)) => Some k
+
+mapSome :: forall {j} {k}. forall (f :: j -> k) -> (forall a. TestOb a => TestOb' (f a)) => Some j -> Some k
+mapSome f (Some @a) = Some @(f a)
 
 class MkSomeList (as :: [k]) where
   mkSomeList :: [Some k]
@@ -105,3 +117,13 @@ optGen (x : xs) = GenNonEmpty (elem (x :| xs))
 
 one :: a -> GenTotal a
 one x = GenNonEmpty (pure x)
+
+instance (TestableType (p b a)) => TestableType (Op p (OP a) (OP b)) where
+  gen = invmap Op unOp gen
+  eqP (Op l) (Op r) = eqP l r
+  showP (Op p) = "Op (" ++ showP p ++ ")"
+
+instance (TestableType (a ~> (f Rep.@ b)), Ob b) => TestableType (Rep f a b) where
+  gen = invmap Rep unRep (gen @(a ~> f Rep.@ b))
+  eqP (Rep l) (Rep r) = eqP l r
+  showP (Rep p) = showP p
