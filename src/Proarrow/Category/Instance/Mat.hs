@@ -5,7 +5,7 @@ module Proarrow.Category.Instance.Mat where
 import Data.Complex (Complex, conjugate)
 import Data.Kind (Type)
 import Data.Type.Nat (Nat (..), SNatI, type Mult, type Plus)
-import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, repeat, (++))
+import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, tabulate, (++))
 import Prelude (($), type (~))
 import Prelude qualified as P
 
@@ -13,6 +13,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
+import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Dual
@@ -85,7 +86,7 @@ instance (IsNat n) => IsNat (S n) where
   withDist @m @o r = withMultNat @n @o $ withMultNat @m @o $ withAssocPlus @o @(n * o) @(m * o) $ withDist @n @m @o r
 
 zero :: (P.Num a, IsNat n) => Vec n a
-zero = repeat 0
+zero = P.pure 0
 
 withNat :: Vec n a -> ((IsNat n) => r) -> r
 withNat VNil r = r
@@ -193,5 +194,22 @@ instance (P.Num a) => Strong (MatK a) (Id :: CAT (MatK a)) where
 
 instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
   coact @x = compactClosedCoact @x
+
+instance (P.Num a, IsNat n) => Monoid (M n :: MatK a) where
+  mempty = Mat $ P.pure $ P.pure 1
+  mappend = withMultNat @n @n $ Mat $
+    tabulate \i -> concat $
+      tabulate \j ->
+        tabulate \k -> if i P.== j P.&& j P.== k then 1 else 0
+instance (P.Num a, IsNat n) => Comonoid (M n :: MatK a) where
+  counit = Mat $ P.pure $ P.pure 1
+  comult = withMultNat @n @n $
+    Mat $
+      concat $
+        tabulate \i ->
+          tabulate \j ->
+            tabulate \k ->
+              if i P.== j P.&& j P.== k then 1 else 0
+instance (P.Num a) => CopyDiscard (MatK a)
 
 -- Monoids are associative, unital algebras.

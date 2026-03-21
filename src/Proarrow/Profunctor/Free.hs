@@ -7,7 +7,7 @@ module Proarrow.Profunctor.Free where
 import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Maybe (Maybe (..), fromMaybe)
-import Data.Semigroup (Semigroup (..))
+import Data.Semigroup (sconcat)
 import Prelude (($))
 import Prelude qualified as P
 
@@ -71,13 +71,13 @@ instance HasFree P.Monoid where
   lift' f = Star ((: []) . f)
   retract' (Star f) = P.mconcat . f
 
-instance HasFree Semigroup where
-  type Free Semigroup = Star NonEmpty
+instance HasFree P.Semigroup where
+  type Free P.Semigroup = Star NonEmpty
   lift' f = Star ((:| []) . f)
   retract' (Star f) = sconcat . f
 
-instance HasFree (P.Monoid `On` Semigroup) where
-  type Free (P.Monoid `On` Semigroup) = Sub (Star Maybe) :: CAT (SUBCAT Semigroup)
+instance HasFree (P.Monoid `On` P.Semigroup) where
+  type Free (P.Monoid `On` P.Semigroup) = Sub (Star Maybe) :: CAT (SUBCAT P.Semigroup)
   lift' (Sub f) = Sub (Star (Just . f))
   retract' (Sub (Star f)) = Sub (fromMaybe P.mempty . f)
 

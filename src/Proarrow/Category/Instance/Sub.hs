@@ -71,11 +71,11 @@ instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub
   tabulate (Sub f) = Sub (tabulate f)
   repMap (Sub f) = Sub (repMap @p f)
 
-instance (MonoidalAction m k, Monoidal (SUBCAT (ob :: OB m))) => Strong (SUBCAT (ob :: OB m)) (Id :: CAT k) where
+instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => Strong (SUBCAT (ob :: OB m)) (Id :: CAT Type) where
   Sub f `act` g = f `act` g
-instance (MonoidalAction m k, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) k where
-  type Act (p :: SUBCAT ob) (x :: k) = Act (UN SUB p) x
-  withObAct @(SUB a) @x r = withObAct @m @k @a @x r
+instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) Type where
+  type Act (p :: SUBCAT ob) (x :: Type) = Act (UN SUB p) x
+  withObAct @(SUB a) @x r = withObAct @m @Type @a @x r
   unitor = unitor @m
   unitorInv = unitorInv @m
   multiplicator @(SUB p) @(SUB q) @x = multiplicator @_ @_ @p @q @x

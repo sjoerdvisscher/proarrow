@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Monoid where
 
@@ -11,11 +12,18 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), actHom)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj)
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag)
+import Proarrow.Object.BinaryCoproduct
+  ( COPROD (..)
+  , Coprod (..)
+  , HasBinaryCoproducts (..)
+  , HasBiproducts (..)
+  , HasCoproducts
+  , codiag
+  )
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Identity (Id (..))
 
@@ -164,3 +172,9 @@ instance (Comonoid c) => Monoid (OP c) where
 instance (Monoid c) => Comonoid (OP c) where
   counit = Op mempty
   comult = Op mappend
+
+instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => P.Semigroup (Id a b) where
+  Id f <> Id g = Id (sum f g)
+instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => P.Monoid (Id a b) where
+  mempty = Id zero
+instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => CommutativeMonoid (Id a b)

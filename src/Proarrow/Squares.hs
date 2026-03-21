@@ -5,7 +5,8 @@ module Proarrow.Squares where
 import Data.Functor.Compose (Compose (..))
 import Prelude (Either (..), Traversable, either, ($))
 
-import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), obj1, (||))
+import Proarrow.Category.Bicategory (Adjunction, Bicategory (..), obj1, (||))
+import Proarrow.Category.Bicategory qualified as Adj
 import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Bicategory.Strictified
   ( Fold
@@ -194,7 +195,7 @@ toLeft
   :: forall {kk} {j} {k} (f :: kk j k) f'
    . (Equipment kk, TightPair f f')
   => Sq (f' ::: Nil) Nil (f ::: Nil) Nil
-toLeft = withOb0s @kk @f $ Sq (St (counit @f @f'))
+toLeft = withOb0s @kk @f $ Sq (St (Adj.counit @f @f'))
 
 -- | Bend a companion proarrow back to a vertical arrow.
 --
@@ -220,7 +221,7 @@ fromRight
   :: forall {kk} {j} {k} (f :: kk j k) f'
    . (Equipment kk, TightPair f f')
   => Sq Nil (f' ::: Nil) Nil (f ::: Nil)
-fromRight = withOb0s @kk @f $ Sq (St (unit @f @f'))
+fromRight = withOb0s @kk @f $ Sq (St (Adj.unit @f @f'))
 
 -- > K--I--K
 -- > |  v  |
@@ -318,6 +319,32 @@ hSplitAll
   => Sq (Fold ps ::: Nil) ps Nil Nil
 hSplitAll = let n = splitAll @ps in Sq n \\ n
 
+-- | The unit of an adjunction.
+--
+-- > J-------J
+-- > |   /-->g
+-- > |   @   |
+-- > |   \--<f
+-- > J-------J
+unit
+  :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
+   . (Adjunction f g, Equipment kk)
+  => Sq Nil (f ::: g ::: Nil) Nil Nil
+unit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.unit @f @g) ||| hSplitAll
+
+-- | The count of an adjunction.
+--
+-- > K-------K
+-- > f>--\   |
+-- > |   @   |
+-- > g<--/   |
+-- > K-------K
+counit
+  :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
+   . (Adjunction f g, Equipment kk)
+  => Sq (g ::: f ::: Nil) Nil Nil Nil
+counit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.counit @f @g) ||| hSplitAll
+
 -- | Optics in proarrow equipments.
 --
 -- > J-------J
@@ -327,6 +354,16 @@ hSplitAll = let n = splitAll @ps in Sq n \\ n
 -- > K-------K
 type Optic (a :: kk z j) (b :: kk k z) (s :: kk x j) (t :: kk k x) =
   (IsTight a, IsCotight b, IsTight s, IsCotight t) => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
+
+type IsOptic (a :: kk z j) (b :: kk k z) (s :: kk x j) (t :: kk k x) =
+  (IsTight a, IsCotight b, IsTight s, IsCotight t)
+
+-- | Sequential composition of optics, with 2 holes.
+seq
+  :: forall {kk} {i} {j} a b s t a' b' (u :: kk i j) v
+   . (Equipment kk, TightPair u t, IsOptic a b s t, IsOptic a' b' u v)
+  => Optic a b s t -> Optic a' b' u v -> Sq (v ::: s ::: Nil) (b' ::: a' ::: b ::: a ::: Nil) Nil Nil
+seq st uv = (hId @s === unit @u @t === hId @v) ||| (st === uv)
 
 -- > J-------J
 -- > s>-\ /->a

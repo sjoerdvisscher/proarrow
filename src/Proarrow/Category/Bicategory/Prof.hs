@@ -95,24 +95,6 @@ type FUNK = SUBCAT ProfRep PROFK
 type FUN p = SUB @ProfRep (PK p)
 type UNFUN p = UN PK (UN SUB p)
 
--- instance HasCompanions PROFK FUNK where
---   type Companion PROFK p = PK (UNFUN p)
---   mapCompanion (Sub (Prof n)) = Prof n
---   withObCompanion r = r
---   compToId = Prof id
---   compFromId = Prof id
---   compToCompose f g = Prof id \\ f \\ g
---   compFromCompose f g = Prof id \\ f \\ g
-
--- instance Equipment PROFK FUNK where
---   type Conjoint PROFK p = PK (RepCostar (UNFUN p))
---   mapConjoint (Sub (Prof @p n)) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (trivialRep @p @a)))
---   withObConjoint r = r
---   conjToId = Prof (Id . unRepCostar)
---   conjFromId = Prof \(Id f) -> RepCostar f \\ f
---   conjToCompose (Sub Prof{}) (Sub (Prof @g _)) = Prof \(RepCostar @b h) -> RepCostar id :.: RepCostar h \\ repObj @g @b
---   conjFromCompose (Sub (Prof @f _)) (Sub Prof{}) = Prof \(RepCostar f :.: RepCostar g) -> RepCostar (g . repMap @f f)
-
 type instance IsOb Tight p = Representable (UN PK p)
 type instance IsOb Cotight p = Corepresentable (UN PK p)
 type instance TightAdjoint p = PK (CorepStar (UN PK p))

@@ -5,8 +5,8 @@ module Proarrow.Category.Monoidal.Action where
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
-import Proarrow.Category.Instance.Product ((:**:) (..))
-import Proarrow.Category.Instance.Unit qualified as U
+-- import Proarrow.Category.Instance.Product ((:**:) (..))
+-- import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Identity (Id (..))
@@ -23,11 +23,11 @@ class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Strong m (p :: c
 actHom :: (MonoidalAction m k) => (a :: m) ~> b -> (x :: k) ~> y -> Act a x ~> Act b y
 actHom ab xy = unId (act ab (Id xy))
 
-instance (Profunctor p) => Strong () p where
-  act U.Unit p = p
+-- instance (Profunctor p) => Strong () p where
+--   act U.Unit p = p
 
-instance (Strong m p, Strong m' q) => Strong (m, m') (p :**: q) where
-  act (p :**: q) (x :**: y) = act p x :**: act q y
+-- instance (Strong m p, Strong m' q) => Strong (m, m') (p :**: q) where
+--   act (p :**: q) (x :**: y) = act p x :**: act q y
 
 class (Monoidal m, CategoryOf k, Strong m (Id :: CAT k)) => MonoidalAction m k where
   -- I would like to default Act to `**`, but that doesn't seem possible without GHC thinking `m` and `k` are the same.
@@ -38,24 +38,24 @@ class (Monoidal m, CategoryOf k, Strong m (Id :: CAT k)) => MonoidalAction m k w
   multiplicator :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act a (Act b x) ~> Act (a ** b) x
   multiplicatorInv :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act (a ** b) x ~> Act a (Act b x)
 
-instance (CategoryOf k) => MonoidalAction () k where
-  type Act '() x = x
-  withObAct r = r
-  unitor = id
-  unitorInv = id
-  multiplicator = id
-  multiplicatorInv = id
+-- instance (CategoryOf k) => MonoidalAction () k where
+--   type Act '() x = x
+--   withObAct r = r
+--   unitor = id
+--   unitorInv = id
+--   multiplicator = id
+--   multiplicatorInv = id
 
-instance (Strong m (Id :: CAT p), Strong n (Id :: CAT q)) => Strong (m, n) (Id :: CAT (p, q)) where
-  act (f :**: f') (Id (g :**: g')) = Id (actHom f g :**: actHom f' g')
+-- instance (Strong m (Id :: CAT p), Strong n (Id :: CAT q)) => Strong (m, n) (Id :: CAT (p, q)) where
+--   act (f :**: f') (Id (g :**: g')) = Id (actHom f g :**: actHom f' g')
 
-instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
-  type Act '(p, q) '(x, y) = '(Act p x, Act q y)
-  withObAct @'(p, q) @'(x, y) r = withObAct @n @j @p @x (withObAct @m @k @q @y r)
-  unitor = unitor @n :**: unitor @m
-  unitorInv = unitorInv @n :**: unitorInv @m
-  multiplicator @'(p, q) @'(r, s) @'(x, y) = multiplicator @n @j @p @r @x :**: multiplicator @m @k @q @s @y
-  multiplicatorInv @'(p, q) @'(r, s) @'(x, y) = multiplicatorInv @n @j @p @r @x :**: multiplicatorInv @m @k @q @s @y
+-- instance (MonoidalAction n j, MonoidalAction m k) => MonoidalAction (n, m) (j, k) where
+--   type Act '(p, q) '(x, y) = '(Act p x, Act q y)
+--   withObAct @'(p, q) @'(x, y) r = withObAct @n @j @p @x (withObAct @m @k @q @y r)
+--   unitor = unitor @n :**: unitor @m
+--   unitorInv = unitorInv @n :**: unitorInv @m
+--   multiplicator @'(p, q) @'(r, s) @'(x, y) = multiplicator @n @j @p @r @x :**: multiplicator @m @k @q @s @y
+--   multiplicatorInv @'(p, q) @'(r, s) @'(x, y) = multiplicatorInv @n @j @p @r @x :**: multiplicatorInv @m @k @q @s @y
 
 class (MonoidalAction m k, SymMonoidal m) => SymMonoidalAction m k
 instance (MonoidalAction m k, SymMonoidal m) => SymMonoidalAction m k
@@ -65,13 +65,13 @@ instance (Act a b ~ a ** b) => ActIsTensor a b
 class (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
 instance (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
 class
-  ( SymMonoidalAction k k
+  ( SymMonoidalAction k k, Strong k (Id :: k +-> k)
   , forall (a :: k) (b :: k). ActIsTensor a b
   , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
   ) =>
   SelfAction k
 instance
-  ( SymMonoidalAction k k
+  ( SymMonoidalAction k k, Strong k (Id :: k +-> k)
   , forall (a :: k) (b :: k). ActIsTensor a b
   , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
   )
@@ -105,11 +105,11 @@ first' p = dimap (swap @k @a @c) (swap @k @c @b) (second' @c p) \\ p
 second' :: forall {k} {p :: CAT k} c a b. (SelfAction k, Strong k p, Ob c) => p a b -> p (c ** a) (c ** b)
 second' p = act (obj @c) p
 
--- | If a strong profunctor is representable, we get the usual strength for the represented functor.
+-- | If a strong profunctor is representable, we get the usual strength for the representing functor.
 strength :: forall {m} p a b. (Representable p, Strong m p, Ob (a :: m), Ob b) => Act a (p % b) ~> p % Act a b
 strength = index (act (obj @a) (trivialRep @p @b))
 
--- | If a strong profunctor is corepresentable, we get the usual costrength for the represented functor.
+-- | If a strong profunctor is corepresentable, we get the usual costrength for the representing functor.
 costrength :: forall {m} p a b. (Corepresentable p, Strong m p, Ob (a :: m), Ob b) => p %% Act a b ~> Act a (p %% b)
 costrength = coindex (act (obj @a) (trivialCorep @p @b))
 

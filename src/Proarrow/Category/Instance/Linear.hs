@@ -5,14 +5,17 @@ module Proarrow.Category.Instance.Linear where
 import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Kind (Type)
 import Data.Void (Void)
-import Prelude (Bool (..), Either (..), Eq (..), Show (..), showParen, showString, undefined, (&&), (>))
+import Prelude (Bool (..), Either (..), Eq (..), Show (..), error, showParen, showString, (&&), (>))
+import System.IO.Unsafe (unsafeDupablePerformIO)
+import Unsafe.Coerce (unsafeCoerce)
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryCoproduct (COPROD, HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Dual (StarAutonomous (..))
@@ -23,8 +26,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))
-import System.IO.Unsafe (unsafeDupablePerformIO)
-import Unsafe.Coerce (unsafeCoerce)
+import Proarrow.Profunctor.Identity (Id(..))
 
 data LINEAR = L Type
 type instance UN L (L a) = a
@@ -126,6 +128,17 @@ instance HasInitialObject LINEAR where
   type InitialObject = L Void
   initiate = Linear \case {}
 
+instance Strong (COPROD LINEAR) (Id :: CAT LINEAR) where
+  act (Coprod (Id f)) (Id g) = Id (f +++ g)
+
+instance MonoidalAction (COPROD LINEAR) LINEAR where
+  type Act (p :: COPROD LINEAR) (x :: LINEAR) = UN COPR (p ** COPR x)
+  withObAct r = r
+  unitor = unId (unCoprod leftUnitor)
+  unitorInv = unId (unCoprod leftUnitorInv)
+  multiplicator @a @b @x = unId (unCoprod (associatorInv @(COPROD LINEAR) @a @b @(COPR x)))
+  multiplicatorInv @a @b @x = unId (unCoprod (associator @(COPROD LINEAR) @a @b @(COPR x)))
+
 instance Costrong (COPROD LINEAR) Linear where
   coact (Linear uxuy) = loop . Linear Right
     where
@@ -173,6 +186,16 @@ instance Copowered Type LINEAR where
   withObCopower r = r
   copower f = Linear \(Ur n, a) -> unLinear (f n) a
   uncopower (Linear f) n = Linear \x -> f (Ur n, x)
+
+instance MonoidalProfunctor (Coprod Linear) where
+  par0 = Coprod (Linear \x -> x)
+  Coprod f `par` Coprod g = Coprod (f +++ g)
+
+instance Distributive LINEAR where
+  distL = Linear \(a, ebc) -> case ebc of Left b -> Left (a, b); Right c -> Right (a, c)
+  distR = Linear \(eab, c) -> case eab of Left a -> Left (a, c); Right b -> Right (b, c)
+  distL0 = Linear \(_a, v) -> case v of {}
+  distR0 = Linear \(v, _a) -> case v of {}
 
 type Not a = a %1 -> ()
 
@@ -227,7 +250,7 @@ instance StarAutonomous LINEAR where
 -- TODO: only tested in GHCi, might get ruined by optimizations
 dn :: Not (Not a) %1 -> a
 dn nna =
-  let ref = unsafeDupablePerformIO (newIORef undefined)
+  let ref = unsafeDupablePerformIO (newIORef (error "Linear.dn: write failed"))
   in case nna (unsafeLinear (fill ref)) of () -> unsafeDupablePerformIO (readIORef ref)
   where
     fill ref x = unsafeDupablePerformIO (writeIORef ref x)

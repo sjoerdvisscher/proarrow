@@ -1,6 +1,6 @@
 module Proarrow.Profunctor.Constant where
 
-import Proarrow.Core (CategoryOf (..), Promonad (..), type (+->), Optic)
+import Proarrow.Core (CategoryOf (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Representable (rep, Rep)
 import Proarrow.Profunctor.Corepresentable (corep, Corep)
@@ -10,8 +10,12 @@ instance (CategoryOf j, CategoryOf k, Ob c) => FunctorForRep (Constant c :: j +-
   type Constant c @ a = c
   fmap _ = id
 
-view :: forall {k} {c} (s :: k) (t :: k) a b. (CategoryOf k, Ob a, Ob b, c (Rep (Constant a))) => Optic c s t a b -> s ~> a
+type Getting r s a = Rep (Constant r) a a -> Rep (Constant r) s s
+
+view :: forall {k} (s :: k) a. (CategoryOf k, Ob a) => Getting a s a -> s ~> a
 view l = rep @(Constant a) l id
 
-review :: forall {k} {c} (s :: k) (t :: k) a b. (CategoryOf k, Ob a, Ob b, c (Corep (Constant b))) => Optic c s t a b -> b ~> t
+type AReview r s a = Corep (Constant r) a a -> Corep (Constant r) s s
+
+review :: forall {k} (t :: k) b. (CategoryOf k, Ob b) => AReview b t b -> b ~> t
 review l = corep @(Constant b) l id

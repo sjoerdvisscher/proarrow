@@ -246,11 +246,11 @@ deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
 instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
   swap = Str Swap Id
 
-data UnitFtor :: () +-> k
-instance (Monoidal k) => FunctorForRep (UnitFtor :: () +-> k) where
-  type UnitFtor @ '() = Unit
+data UnitRep :: () +-> k
+instance (Monoidal k) => FunctorForRep (UnitRep :: () +-> k) where
+  type UnitRep @ '() = Unit
   fmap U.Unit = unitObj
-data MultFtor :: (k, k) +-> k
-instance (Monoidal k) => FunctorForRep (MultFtor :: (k, k) +-> k) where
-  type MultFtor @ '(a, b) = a ** b
+data MultRep :: (k, k) +-> k
+instance (Monoidal k) => FunctorForRep (MultRep :: (k, k) +-> k) where
+  type MultRep @ '(a, b) = a ** b
   fmap (f :**: g) = f `par` g

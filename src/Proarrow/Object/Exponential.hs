@@ -30,8 +30,8 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//)
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, diag)
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
+import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 infixr 2 ~~>
 
@@ -87,17 +87,10 @@ instance (Closed j, Closed k) => Closed (j, k) where
   apply @'(a1, a2) @'(b1, b2) = apply @j @a1 @b1 :**: apply @k @a2 @b2
   (f1 :**: f2) ^^^ (g1 :**: g2) = (f1 ^^^ g1) :**: (f2 ^^^ g2)
 
-data family Exponential :: OPPOSITE k -> k +-> k
-instance (Closed k, Ob (a :: k)) => FunctorForRep (Exponential (OP a)) where
-  type Exponential (OP a) @ b = a ~~> b
-  fmap f = f ^^^ obj @a
-
--- | The curry/uncurry adjunction.
-instance (Closed k, Ob (a :: k)) => Corepresentable (Rep (Exponential (OP a))) where
-  type Rep (Exponential (OP a)) %% b = b ** a
-  coindex (Rep f) = uncurry @a f
-  cotabulate @c f = Rep (curry @k @c @a f) \\ f
-  corepMap f = f `par` obj @a
+data family ExpRep :: (OPPOSITE k, k) +-> k
+instance (Closed k) => FunctorForRep (ExpRep :: (OPPOSITE k, k) +-> k) where
+  type ExpRep @ '(OP a, b) = a ~~> b
+  fmap (Op f :**: g) = g ^^^ f
 
 class (Cartesian k, Closed k) => CCC k
 instance (Cartesian k, Closed k) => CCC k

@@ -180,15 +180,15 @@ instance MonoidalAction Type (COPROD Type) where
   multiplicator = Coprod (Id associatorInv)
   multiplicatorInv = Coprod (Id associator)
 
-instance (HasCoproducts k) => Strong (COPROD k) (Id :: CAT k) where
+instance Strong (COPROD Type) (Id :: CAT Type) where
   Coprod (Id f) `act` Id g = Id (f +++ g)
-instance (HasCoproducts k) => MonoidalAction (COPROD k) k where
-  type Act (p :: COPROD k) (x :: k) = UN COPR (p ** COPR x)
-  withObAct @(COPR a) @x r = withObCoprod @k @a @x r
+instance MonoidalAction (COPROD Type) Type where
+  type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
+  withObAct r = r
   unitor = unId (unCoprod leftUnitor)
   unitorInv = unId (unCoprod leftUnitorInv)
-  multiplicator @a @b @x = unId (unCoprod (associatorInv @(COPROD k) @a @b @(COPR x)))
-  multiplicatorInv @a @b @x = unId (unCoprod (associator @(COPROD k) @a @b @(COPR x)))
+  multiplicator @a @b @x = unId (unCoprod (associatorInv @(COPROD Type) @a @b @(COPR x)))
+  multiplicatorInv @a @b @x = unId (unCoprod (associator @(COPROD Type) @a @b @(COPR x)))
 
 class (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b
 instance (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b

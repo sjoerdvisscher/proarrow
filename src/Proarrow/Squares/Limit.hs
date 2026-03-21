@@ -8,7 +8,6 @@ import Proarrow.Category.Bicategory
   ( Adjunction
   , Bicategory (..)
   )
-import Proarrow.Category.Bicategory qualified as Adj
 import Proarrow.Category.Bicategory.Strictified (Path (..), Strictified (..))
 import Proarrow.Category.Equipment (Equipment, IsCotight, IsTight, Tight, withObO2)
 import Proarrow.Category.Equipment.Limit qualified as L
@@ -16,12 +15,13 @@ import Proarrow.Core (CategoryOf (..))
 import Proarrow.Squares
   ( Sq
   , Sq' (..)
+  , counit
   , fromLeft
-  , hArr
   , hCombineAll
   , hId
   , hSplitAll
   , toRight
+  , unit
   , (===)
   , (|||)
   )
@@ -294,15 +294,3 @@ colimitUniv (Sq (St n)) = withOb0s @kk @j $ L.withObColimit @j @k @d $ Sq $ St $
 --               === vCombine
 --           )
 --           === vSplit
-
-unit
-  :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
-   . (Adjunction f g, Equipment kk)
-  => Sq Nil (f ::: g ::: Nil) Nil Nil
-unit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.unit @f @g) ||| hSplitAll
-
-counit
-  :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
-   . (Adjunction f g, Equipment kk)
-  => Sq (g ::: f ::: Nil) Nil Nil Nil
-counit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.counit @f @g) ||| hSplitAll

@@ -32,6 +32,7 @@ module Proarrow.Core
   , Iso'
   , AnIso
   , iso
+  , cloneIso
   , from
   , Exchange(..)
     -- * Object Identities
@@ -222,6 +223,9 @@ instance CategoryOf k => Profunctor (Exchange a b :: k +-> k) where
   r \\ Exchange sa bt = r \\ sa \\ bt
 
 type AnIso s t a b = Exchange a b a b -> Exchange a b s t
+
+cloneIso :: (CategoryOf k, Ob (a :: k), Ob b) => AnIso s t a b -> Iso s t a b
+cloneIso l = case l (Exchange id id) of Exchange sa bt -> iso sa bt
 
 from :: (CategoryOf k, Ob (a :: k), Ob b) => AnIso s t a b -> Iso b a t s
 from l = case l (Exchange id id) of Exchange sa bt -> iso bt sa

@@ -69,8 +69,8 @@ instance (IsOptic m c d) => CategoryOf (OPTIC m c d) where
 
 type MixedOptic m a b s t = Core.Optic (Strong m) s t a b
 
-toIso :: MixedOptic () a b s t -> Core.Iso s t a b
-toIso l p = l p
+-- toIso :: MixedOptic () a b s t -> Core.Iso s t a b
+-- toIso l p = l p
 
 ex2prof :: forall m a b s t. Optic m a b s t -> MixedOptic m a b s t
 ex2prof (Optic l w r) p = dimap l r (act w p)

@@ -3,14 +3,13 @@
 
 module Proarrow.Category.Equipment.Stateful where
 
-import Data.Kind (Type)
 import Prelude (type (~))
 
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Adjunction_ (..), Adj (..))
 import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), SymMonoidalAction)
+import Proarrow.Category.Monoidal.Action (Strong (..), SelfAction, actHom)
 import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core
   ( CAT
@@ -26,32 +25,34 @@ import Proarrow.Core
   , src
   , tgt
   , (:~>)
-  , type (+->)
+  , type (+->), obj
   )
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Promonad.Writer (Writer (..))
+import Proarrow.Profunctor.Product ((:*:)(..))
+import Proarrow.Profunctor.Coproduct ((:+:) (..))
 
-type STT' :: Kind -> Kind -> CAT ()
-newtype STT' m k i j = ST (k +-> k)
+type STT' :: Kind -> CAT ()
+newtype STT' k i j = ST (k +-> k)
 type instance UN ST (ST p) = p
-type STT m k = STT' m k '() '()
+type STT k = STT' k '() '()
 
-type StT :: CAT (STT' m k i j)
+type StT :: CAT (STT' k i j)
 data StT a b where
-  StT :: (Strong m p, Strong m q) => p :~> q -> StT (ST p :: STT' m k i j) (ST q)
-instance (MonoidalAction m k) => Profunctor (StT :: CAT (STT' m k i j)) where
+  StT :: (Strong k p, Strong k q) => p :~> q -> StT (ST p :: STT' k i j) (ST q)
+instance (SelfAction k) => Profunctor (StT :: CAT (STT' k i j)) where
   dimap = dimapDefault
   r \\ StT p = r \\ p
-instance (MonoidalAction m k) => Promonad (StT :: CAT (STT' m k i j)) where
+instance (SelfAction k) => Promonad (StT :: CAT (STT' k i j)) where
   id = StT id
   StT f . StT g = StT (f . g)
-instance (MonoidalAction m k) => CategoryOf (STT' m k i j) where
+instance (SelfAction k) => CategoryOf (STT' k i j) where
   type (~>) = StT
-  type Ob (a :: STT' m k i j) = (Is ST a, Strong m (UN ST a))
+  type Ob (a :: STT' k i j) = (Is ST a, Strong k (UN ST a))
 
-instance (MonoidalAction m k, m ~ Type) => Bicategory (STT' m k) where
+instance (SelfAction k) => Bicategory (STT' k) where
   type I = ST Id
   type a `O` b = ST (UN ST a :.: UN ST b)
   withOb2 r = r
@@ -66,8 +67,8 @@ instance (MonoidalAction m k, m ~ Type) => Bicategory (STT' m k) where
   associatorInv = StT \(p :.: (q :.: r)) -> (p :.: q) :.: r
 
 instance
-  (MonoidalAction m k, Adjunction (PK l) (PK r), Ob l, Ob r, Strong m r, Strong m l, m ~ Type)
-  => Adjunction_ (ST l :: STT' m k i j) (ST r)
+  (SelfAction k, Adjunction (PK l) (PK r), Ob l, Ob r, Strong k r, Strong k l)
+  => Adjunction_ (ST l :: STT' k i j) (ST r)
   where
     adj = Adj
       { adjUnit = StT (case unit @(PK l) @(PK r) of Prof f -> f)
@@ -75,92 +76,92 @@ instance
       }
 
 class
-  ( IsReader m (WithReader m p)
-  , Strong m (WithReader m p)
-  , Proadjunction p (WithReader m p)
-  , WithWriter m (WithReader m p) ~ p
+  ( IsReader (WithReader p)
+  , Strong k (WithReader p)
+  , Proadjunction p (WithReader p)
+  , WithWriter (WithReader p) ~ p
   ) =>
-  IsWriter m (p :: k +-> k)
+  IsWriter (p :: k +-> k)
   where
-  type WithReader m p :: k +-> k
-instance (SymMonoidalAction m k) => IsWriter m (Id :: k +-> k) where type WithReader m Id = Id
-instance (SymMonoidalAction m k, Ob (a :: m)) => IsWriter m (Writer a :: k +-> k) where
-  type WithReader m (Writer a) = Reader (OP a)
-instance (IsWriter m p, IsWriter m q, m ~ Type) => IsWriter m (p :.: q) where
-  type WithReader m (p :.: q) = WithReader m q :.: WithReader m p
+  type WithReader p :: k +-> k
+instance (SelfAction k) => IsWriter (Id :: k +-> k) where type WithReader Id = Id
+instance (SelfAction k, Ob (a :: k)) => IsWriter (Writer a :: k +-> k) where
+  type WithReader (Writer a) = Reader (OP a)
+instance (IsWriter p, IsWriter q) => IsWriter (p :.: q) where
+  type WithReader (p :.: q) = WithReader q :.: WithReader p
 
 class
-  ( IsWriter m (WithWriter m p)
-  , Strong m (WithWriter m p)
-  , Proadjunction (WithWriter m p) p
-  , WithReader m (WithWriter m p) ~ p
+  ( IsWriter (WithWriter p)
+  , Strong k (WithWriter p)
+  , Proadjunction (WithWriter p) p
+  , WithReader (WithWriter p) ~ p
   ) =>
-  IsReader m (p :: k +-> k)
+  IsReader (p :: k +-> k)
   where
-  type WithWriter m p :: k +-> k
-instance (SymMonoidalAction m k) => IsReader m (Id :: k +-> k) where type WithWriter m Id = Id
-instance (SymMonoidalAction m k, Ob (a :: m)) => IsReader m (Reader (OP a) :: k +-> k) where
-  type WithWriter m (Reader (OP a)) = Writer a
-instance (IsReader m p, IsReader m q, m ~ Type) => IsReader m (p :.: q) where
-  type WithWriter m (p :.: q) = WithWriter m q :.: WithWriter m p
+  type WithWriter p :: k +-> k
+instance (SelfAction k) => IsReader (Id :: k +-> k) where type WithWriter Id = Id
+instance (SelfAction k, Ob (a :: k)) => IsReader (Reader (OP a) :: k +-> k) where
+  type WithWriter (Reader (OP a)) = Writer a
+instance (IsReader p, IsReader q) => IsReader (p :.: q) where
+  type WithWriter (p :.: q) = WithWriter q :.: WithWriter p
 
-type instance IsOb Tight (p :: STT' m k i j) = IsWriter m (UN ST p)
-type instance IsOb Cotight (p :: STT' m k i j) = (IsReader m (UN ST p))
-type instance CotightAdjoint (p :: STT' m k i j) = ST (WithReader m (UN ST p))
-type instance TightAdjoint (p :: STT' m k i j) = ST (WithWriter m (UN ST p))
-instance (MonoidalAction m k, m ~ Type) => WithObO2 Tight (STT' m k) where withObO2 r = r
-instance (MonoidalAction m k, m ~ Type) => WithObO2 Cotight (STT' m k) where withObO2 r = r
+type instance IsOb Tight (p :: STT' k i j) = IsWriter (UN ST p)
+type instance IsOb Cotight (p :: STT' k i j) = (IsReader (UN ST p))
+type instance CotightAdjoint (p :: STT' k i j) = ST (WithReader (UN ST p))
+type instance TightAdjoint (p :: STT' k i j) = ST (WithWriter (UN ST p))
+instance (SelfAction k) => WithObO2 Tight (STT' k) where withObO2 r = r
+instance (SelfAction k) => WithObO2 Cotight (STT' k) where withObO2 r = r
 
 -- | Stateful transformers.
 -- https://arxiv.org/pdf/2305.16899 definition 6
 -- Generalized to any symmetric monoidal action.
-instance (SymMonoidalAction m k, m ~ Type) => Equipment (STT' m k) where
+instance (SelfAction k) => Equipment (STT' k) where
   withTightAdjoint r = r
   withCotightAdjoint r = r
 
--- type STSq (p :: k +-> k) (q :: k +-> k) (a :: m) (b :: m) = ST (Writer a) `O` (ST p :: STT m k) ~> (ST q :: STT m k) `O` ST (Writer a)
+type STSq (p :: k +-> k) (q :: k +-> k) (a :: k) (b :: k) = ST (Writer a) `O` (ST p :: STT k) ~> (ST q :: STT k) `O` ST (Writer a)
 
--- crossing
---   :: forall {k} {m} (p :: k +-> k) (a :: m)
---    . (Strong m p, Ob a, SymMonoidalAction m k) => STSq p p a a
--- crossing = StT \(Writer g :.: p) -> lmap g (act (obj @a) p) :.: Writer (obj @a `act` tgt p) \\ p
+crossing
+  :: forall {k} (p :: k +-> k) (a :: k)
+   . (Strong k p, Ob a, SelfAction k) => STSq p p a a
+crossing = StT \(Writer g :.: p) -> lmap g (act (obj @a) p) :.: Writer (obj @a `actHom` tgt p) \\ p
 
--- pi0
---   :: forall {m} {k} (p :: STT m k) (q :: STT m k). (Ob p, Ob q, SymMonoidalAction m k) => ST (UN ST p :*: UN ST q) ~> p
--- pi0 = StT \(p :*: _) -> p
+pi0
+  :: forall {k} (p :: STT k) (q :: STT k). (Ob p, Ob q, SelfAction k) => ST (UN ST p :*: UN ST q) ~> p
+pi0 = StT \(p :*: _) -> p
 
--- pi1
---   :: forall {m} {k} (p :: STT m k) (q :: STT m k). (Ob p, Ob q, SymMonoidalAction m k) => ST (UN ST p :*: UN ST q) ~> q
--- pi1 = StT \(_ :*: q) -> q
+pi1
+  :: forall {k} (p :: STT k) (q :: STT k). (Ob p, Ob q, SelfAction k) => ST (UN ST p :*: UN ST q) ~> q
+pi1 = StT \(_ :*: q) -> q
 
--- mult
---   :: forall {m} {k} (p :: k +-> k) q r (a :: m) b
---    . (Strong m p, Strong m q, Strong m r, M.SymMonoidal m, Ob a, Ob b)
---   => STSq p q a b -> STSq p r a b -> STSq p (q :*: r) a b
--- STSq n `mult` STSq m = STSq (\p -> n p :*: m p)
+mult
+  :: forall {k} (p :: STT k) q r (a :: k) b
+   . (Ob p, Ob q, Ob r, SelfAction k, Ob a, Ob b)
+  => p ~> q -> p ~> r -> p ~> ST (UN ST q :*: UN ST r)
+StT n `mult` StT m = StT \p -> n p :*: m p
 
--- ip0
---   :: forall {m} {k} p q. (Strong m (p :: k +-> k), Strong m q, M.SymMonoidal m) => STSq p (p :+: q) (M.Unit :: m) M.Unit
--- ip0 = STSq \p -> act (obj @(M.Unit :: m)) (InjL p)
+ip0
+  :: forall {k} (p :: STT k) q. (Ob p, Ob q, SelfAction k) => p ~> ST (UN ST p :+: UN ST q)
+ip0 = StT \p -> InjL p
 
--- ip1
---   :: forall {m} {k} p q. (Strong m (p :: k +-> k), Strong m q, M.SymMonoidal m) => STSq q (p :+: q) (M.Unit :: m) M.Unit
--- ip1 = STSq \p -> act (obj @(M.Unit :: m)) (InjR p)
+ip1
+  :: forall {k} (p :: STT k) q. (Ob p, Ob q, SelfAction k) => q ~> ST (UN ST p :+: UN ST q)
+ip1 = StT \p -> InjR p
 
 -- plus
---   :: forall {m} {k} (p :: k +-> k) q r (a :: m) b
---    . (Strong m p, Strong m q, Strong m r, M.SymMonoidal m, Ob a, Ob b)
+--   :: forall {k} (p :: k +-> k) q r (a :: k) b
+--    . (Strong k p, Strong k q, Strong k r, M.SymMonoidal m, Ob a, Ob b)
 --   => STSq p r a b -> STSq q r a b -> STSq (p :+: q) r a b
 -- STSq n `plus` STSq m = STSq (coproduct n m)
 
 -- sigma0
---   :: forall {m} {k} (a :: m) b
---    . (Ob a, Ob b, M.SymMonoidal m, MonoidalAction m k, HasCoproducts m) => STSq (Id :: k +-> k) Id a (a || b)
+--   :: forall {k} (a :: k) b
+--    . (Ob a, Ob b, M.SymMonoidal m, SelfAction k, HasCoproducts m) => STSq (Id :: k +-> k) Id a (a || b)
 -- sigma0 = withObCoprod @m @a @b $ STSq \(Id f) -> Id (act (lft @m @a @b) f)
 
 -- sigma1
---   :: forall {m} {k} (a :: m) b
---    . (Ob a, Ob b, M.SymMonoidal m, MonoidalAction m k, HasCoproducts m) => STSq (Id :: k +-> k) Id b (a || b)
+--   :: forall {k} (a :: k) b
+--    . (Ob a, Ob b, M.SymMonoidal m, SelfAction k, HasCoproducts m) => STSq (Id :: k +-> k) Id b (a || b)
 -- sigma1 = withObCoprod @m @a @b $ STSq \(Id f) -> Id (act (rgt @m @a @b) f)
 
 -- copair

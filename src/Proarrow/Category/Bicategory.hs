@@ -86,6 +86,7 @@ class (Locally CategoryOf kk, forall i. (Ob0 kk i) => ObUnit kk i) => Bicategory
 
   -- | Get proof that the source and target of a 1-cell are 0-cells.
   withOb0s :: forall {j} {k} a r. (Ob (a :: kk j k)) => ((Ob0 kk j, Ob0 kk k) => r) -> r
+
   -- no default implementation possible since withOb0s has an ambiguous type
 
   -- | Observe constraints from a 2-cell value.

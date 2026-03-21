@@ -7,9 +7,9 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
-  , MultFtor
+  , MultRep
   , SymMonoidal (..)
-  , UnitFtor
+  , UnitRep
   , swap
   )
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
@@ -134,8 +134,8 @@ instance SymMonoidal KIND where
 
 -- | A strictified monoidal category as a monoid in Cat.
 instance (Monoidal k) => Monoid (K [k]) where
-  mempty = Cat @(Rep UnitFtor)
-  mappend = Cat @(Rep MultFtor)
+  mempty = Cat @(Rep UnitRep)
+  mappend = Cat @(Rep MultRep)
 
 instance (Ob a) => Comonoid (a :: KIND) where
   counit = terminate
