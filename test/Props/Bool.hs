@@ -9,7 +9,7 @@ import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Core (obj)
 
 import Props
-import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one)
+import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one, TestingEqShow (..))
 
 test :: TestTree
 test =
@@ -35,6 +35,7 @@ instance (TestOb a, TestOb b) => TestableType (Booleans a b) where
     (Fls, Tru) -> one F2T
     (Tru, Tru) -> one Tru
     (Tru, Fls) -> GenEmpty \case {}
+instance (TestOb a, TestOb b) => TestingEqShow (Booleans a b) where
   eqP _ _ = pure True
   showP Fls = "F->F"
   showP F2T = "F->T"

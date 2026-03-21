@@ -13,7 +13,7 @@ import Proarrow.Category.Instance.Mat (Mat (..), MatK (..))
 import Proarrow.Core (UN)
 
 import Props
-import Testable (Testable (..), TestableType (..), genObDef, pattern GenNonEmpty)
+import Testable (Testable (..), TestableType (..), TestingEqShow (..), genObDef, pattern GenNonEmpty)
 
 test :: TestTree
 test =
@@ -27,6 +27,15 @@ test =
     , propMonoidal_ @(MatK Int)
     , propSymMonoidal_ @(MatK Int)
     , propClosed_ @(MatK Int)
+    , propStarAutonomous_ @(MatK Int)
+    , testMonoid_ @(M Z :: MatK Int)
+    , testMonoid_ @(M (S Z) :: MatK Int)
+    , testMonoid_ @(M (S (S Z)) :: MatK Int)
+    , testMonoid_ @(M (S (S (S Z))) :: MatK Int)
+    , testComonoid_ @(M Z :: MatK Int)
+    , testComonoid_ @(M (S Z) :: MatK Int)
+    , testComonoid_ @(M (S (S Z)) :: MatK Int)
+    , testComonoid_ @(M (S (S (S Z))) :: MatK Int)
     ]
 
 instance Testable (MatK Int) where
@@ -37,5 +46,6 @@ instance (TestOb (a :: MatK Int), TestOb b) => TestableType (Mat a b) where
   gen =
     GenNonEmpty $
       Mat <$> traverse (traverse \() -> liftA2 (*) (elem [1, -1]) (elem [0 .. 9])) (repeat @(UN M b) (repeat @(UN M a) ()))
+instance (TestOb (a :: MatK Int), TestOb b) => TestingEqShow (Mat a b) where
   eqP (Mat l) (Mat r) = pure $ l == r
   showP (Mat m) = show m

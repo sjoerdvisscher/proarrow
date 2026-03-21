@@ -13,7 +13,15 @@ import Proarrow.Core (CategoryOf (..), UN)
 
 import Props
 import Props.Hask ()
-import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, invmap, pattern GenNonEmpty)
+import Testable
+  ( GenTotal (..)
+  , Testable (..)
+  , TestableType (..)
+  , TestingEqShow (..)
+  , genObDef
+  , invmap
+  , pattern GenNonEmpty
+  )
 
 test :: TestTree
 test =
@@ -26,13 +34,14 @@ test =
     , propBinaryCoproducts @POINTED (\r -> r)
     , propMonoidal @POINTED (\r -> r)
     , propSymMonoidal @POINTED (\r -> r)
-    , propMonoid @(P Void) (\r -> r)
-    , propMonoid @(P ()) (\r -> r)
-    , propMonoid @(P [()]) (\r -> r)
+    , testMonoid @(P Void) (\r -> r)
+    , testMonoid @(P ()) (\r -> r)
+    , testMonoid @(P [()]) (\r -> r)
     ]
 
 instance (TestOb a, TestOb b) => TestableType (Pointed a b) where
   gen = invmap Pt unPt gen
+instance (TestOb a, TestOb b) => TestingEqShow (Pointed a b) where
   eqP (Pt l) (Pt r) = eqP l r
   showP _ = "<pointed function>"
 
@@ -50,6 +59,7 @@ instance (TestableType a, TestableType b) => TestableType (These a b) where
     (GenNonEmpty ga, GenEmpty _) -> GenNonEmpty (This <$> ga)
     (GenEmpty _, GenNonEmpty gb) -> GenNonEmpty (That <$> gb)
     (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty (oneof [This <$> ga, That <$> gb, These <$> ga <*> gb])
+instance (TestingEqShow a, TestingEqShow b) => TestingEqShow (These a b) where
   eqP (This l) (This r) = eqP l r
   eqP (That l) (That r) = eqP l r
   eqP (These l1 l2) (These r1 r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
