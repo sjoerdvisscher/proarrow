@@ -19,7 +19,7 @@ import Proarrow.Promonad.Cont (Cont (..))
 
 import Props
 import Props.Hask ()
-import Testable (Testable (..), TestableProfunctor, TestableType (..), genObDef, invmap)
+import Testable (Testable (..), TestableProfunctor, TestableType (..), TestingEqShow (..), genObDef, invmap)
 
 test :: TestTree
 test =
@@ -53,6 +53,7 @@ test =
 
 instance (TestableProfunctor p, Promonad p, TestOb a, TestOb b) => TestableType (Kleisli (a :: KLEISLI (p :: Type +-> Type)) b) where
   gen = invmap Kleisli unKleisli (gen @(p (UN KL a) (UN KL b)))
+instance (TestableProfunctor p, Promonad p, TestOb a, TestOb b) => TestingEqShow (Kleisli (a :: KLEISLI (p :: Type +-> Type)) b) where
   eqP (Kleisli l) (Kleisli r) = eqP l r
   showP (Kleisli f) = "Kleisli (" ++ showP f ++ ")"
 
@@ -63,6 +64,7 @@ instance (TestableProfunctor p, Promonad p) => Testable (KLEISLI (p :: Type +-> 
 
 instance (TestableType (f a)) => TestableType (Prelude f a) where
   gen = invmap Prelude unPrelude gen
+instance (TestingEqShow (f a)) => TestingEqShow (Prelude f a) where
   eqP (Prelude l) (Prelude r) = eqP l r
   showP (Prelude f) = showP f
 instance (Function (f a)) => Function (Prelude f a) where
@@ -73,16 +75,19 @@ newtype Pair a = Pair {unPair :: (a, a)}
   deriving anyclass (Function)
 instance (TestableType a) => TestableType (Pair a) where
   gen = invmap Pair unPair gen
+instance (TestingEqShow a) => TestingEqShow (Pair a) where
   eqP (Pair (l1, l2)) (Pair (r1, r2)) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
   showP (Pair (x, y)) = "Pair " ++ showP x ++ " " ++ showP y
 
 instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestableType (Star (Prelude f) a b) where
   gen = invmap Star unStar gen
+instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestingEqShow (Star (Prelude f) a b) where
   eqP (Star l) (Star r) = eqP l r
   showP (Star f) = showP f
 
 instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestableType (Costar (Prelude f) a b) where
   gen = invmap Costar unCostar gen
+instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestingEqShow (Costar (Prelude f) a b) where
   eqP (Costar l) (Costar r) = eqP l r
   showP (Costar f) = showP f
 
@@ -92,5 +97,6 @@ instance Promonad (Costar (Prelude Pair)) where
 
 instance (TestOb a, TestOb b) => TestableType (Cont Void a b) where
   gen = invmap Cont runCont gen
+instance (TestOb a, TestOb b) => TestingEqShow (Cont Void a b) where
   eqP (Cont l) (Cont r) = eqP l r
   showP (Cont f) = "Cont (" ++ showP f ++ ")"

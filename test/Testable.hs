@@ -6,16 +6,17 @@ module Testable where
 import Data.Kind (Constraint)
 import Data.List.NonEmpty (NonEmpty (..))
 import GHC.Exts qualified as GHC
-import Test.Falsify.Generator (Fun, Gen, applyFun, elem)
+import Test.Falsify.Generator (Fun, Gen, applyFun, elem, Function, minimalValue, fun)
 import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->), UN, Is)
-import Proarrow.Object (Ob')
-import Unsafe.Coerce (unsafeCoerce)
-import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Functor qualified as Rep
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Functor qualified as Rep
+import Proarrow.Object (Ob')
+import Proarrow.Profunctor.Representable (Rep (..))
+import Unsafe.Coerce (unsafeCoerce)
+import Proarrow.Category.Instance.Product ((:**:)(..), Fst, Snd)
 
 data GenTotal a where
   GenEmpty :: ~(forall x. a -> x) -> GenTotal a
@@ -39,8 +40,7 @@ pattern GenNonEmpty g <- (flatten -> g)
 
 {-# COMPLETE GenEmpty, GenNonEmpty #-}
 
-class TestableType a where
-  gen :: GenTotal a
+class TestingEqShow a where
   eqP :: a -> a -> Property Bool
   default eqP :: (Eq a) => a -> a -> Property Bool
   eqP l r = pure (l == r)
@@ -48,11 +48,14 @@ class TestableType a where
   default showP :: (Show a) => a -> String
   showP = show
 
+class TestingEqShow a => TestableType a where
+  gen :: GenTotal a
+
 newtype ShowP a = ShowP {unShowP :: a}
-instance (TestableType a) => Show (ShowP a) where
+instance (TestingEqShow a) => Show (ShowP a) where
   show (ShowP a) = showP a
 
-showFun :: forall a b. (TestableType a, TestableType b) => Fun a b -> String
+showFun :: forall a b. (TestingEqShow a, TestingEqShow b) => Fun a b -> String
 showFun = show . unsafeCoerce @(Fun a b) @(Fun (ShowP a) (ShowP b))
 
 genP :: (TestableType a) => Property a
@@ -60,6 +63,14 @@ genP = case gen of
   GenNENonFun g -> genWith (Just . showP) g
   GenFun f g -> (f . applyFun) <$> genWith (Just . showFun) g
   GenEmpty _ -> discard
+
+genNamed :: (TestableType a) => String -> Property a
+genNamed nm = case gen of
+  GenNENonFun g -> genWith (Just . named . showP) g
+  GenFun f g -> (f . applyFun) <$> genWith (Just . named . showFun) g
+  GenEmpty _ -> discard
+  where
+    named s = "for " ++ nm ++ ": " ++ s
 
 type TestableProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class
@@ -75,10 +86,18 @@ class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor ((~>) :: CAT k),
   showOb :: forall (a :: k). (TestOb a) => String
   genOb :: Property (Some k)
 
-instance Testable k => Testable (OPPOSITE k) where
+instance (Testable k) => Testable (OPPOSITE k) where
   type TestOb a = (Is OP a, TestOb (UN OP a))
   showOb @(OP a) = "OP (" ++ showOb @k @a ++ ")"
   genOb = mapSome OP <$> genOb
+
+instance (Testable j, Testable k) => Testable (j, k) where
+  type TestOb a = (a ~ '(Fst a, Snd a), TestOb (Fst a), TestOb (Snd a))
+  showOb @'(a, b) = "(" ++ showOb @j @a ++ ", " ++ showOb @k @b ++ ")"
+  genOb = do
+    Some @a <- genOb @j
+    Some @b <- genOb @k
+    pure $ Some @'(a, b)
 
 class (TestOb a) => TestOb' a
 instance (TestOb a) => TestOb' a
@@ -89,7 +108,7 @@ instance (forall (a :: k). (Ob a) => TestOb' a) => TestObIsOb k
 data Some k where
   Some :: forall {k} a. (TestOb (a :: k)) => Some k
 
-mapSome :: forall {j} {k}. forall (f :: j -> k) -> (forall a. TestOb a => TestOb' (f a)) => Some j -> Some k
+mapSome :: forall {j} {k}. forall (f :: j -> k) -> (forall a. (TestOb a) => TestOb' (f a)) => Some j -> Some k
 mapSome f (Some @a) = Some @(f a)
 
 class MkSomeList (as :: [k]) where
@@ -118,12 +137,45 @@ optGen (x : xs) = GenNonEmpty (elem (x :| xs))
 one :: a -> GenTotal a
 one x = GenNonEmpty (pure x)
 
+instance (TestableType a, TestingEqShow b) => TestingEqShow (a -> b) where
+  eqP = eqHask
+  showP _ = "<function>"
+
+instance (Function a, TestableType a, TestableType b) => TestableType (a -> b) where
+  gen = case gen @b of
+    GenEmpty absurd -> case gen @a of
+      GenEmpty absurda -> one absurda
+      GenNonEmpty g -> GenEmpty \ab -> absurd (ab (minimalValue g))
+    GenNonEmpty gb -> GenFun id (fun gb)
+
+eqHask :: (TestableType a, TestingEqShow b) => (a -> b) -> (a -> b) -> Property Bool
+eqHask l r =
+  case gen of
+    GenEmpty _ -> pure True -- There can only be one function of a type with no values
+    GenNonEmpty ga -> do
+      a <- genWith (Just . showP) ga
+      eqP (l a) (r a)
+
 instance (TestableType (p b a)) => TestableType (Op p (OP a) (OP b)) where
   gen = invmap Op unOp gen
+
+instance (TestingEqShow (p b a)) => TestingEqShow (Op p (OP a) (OP b)) where
   eqP (Op l) (Op r) = eqP l r
   showP (Op p) = "Op (" ++ showP p ++ ")"
 
 instance (TestableType (a ~> (f Rep.@ b)), Ob b) => TestableType (Rep f a b) where
   gen = invmap Rep unRep (gen @(a ~> f Rep.@ b))
+
+instance (TestingEqShow (a ~> (f Rep.@ b)), Ob b) => TestingEqShow (Rep f a b) where
   eqP (Rep l) (Rep r) = eqP l r
   showP (Rep p) = showP p
+
+instance (TestingEqShow (catk a1 b1), TestingEqShow (catj a2 b2)) => TestingEqShow ((catk :**: catj) '(a1, a2) '(b1, b2)) where
+  eqP (l1 :**: l2) (r1 :**: r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
+  showP (l1 :**: l2) = "(" ++ showP l1 ++ ") :**: (" ++ showP l2 ++ ")"
+
+instance (TestableType (catk a1 b1), TestableType (catj a2 b2)) => TestableType ((catk :**: catj) '(a1, a2) '(b1, b2)) where
+  gen = case (gen, gen) of
+    (GenEmpty f, _) -> GenEmpty \(l :**: _) -> f l
+    (_, GenEmpty f) -> GenEmpty \(_ :**: r) -> f r
+    (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty $ liftA2 (:**:) ga gb

@@ -36,6 +36,7 @@ import Testable
   , Some (..)
   , Testable (..)
   , TestableType (..)
+  , TestingEqShow
   , genObDef
   , one
   , someElem
@@ -61,6 +62,7 @@ instance Testable Symbol where
   genOb = genObDef @'["A", "B", "C", "D", "E"]
   showOb @s = symbolVal (Proxy @s)
 
+instance (Ob a, Ob b) => TestingEqShow (SymRefl a b)
 instance (Ob a, Ob b) => TestableType (SymRefl a b) where
   gen = case decideSymbol (Proxy @a) (Proxy @b) of
     Right Refl -> one SymRefl
@@ -72,6 +74,7 @@ instance Testable DOT where
     pure $ foldSome somes
   showOb @ns = intercalate "," $ unVec $ names @(UN D ns)
 
+instance (Ob a, Ob b) => TestingEqShow (Dot a b)
 instance (Ob a, Ob b) => TestableType (Dot a b) where
   gen = GenNonEmpty $ do
     let iIxs = ixs @(UN D a)

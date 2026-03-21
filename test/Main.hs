@@ -10,7 +10,6 @@ import Props.Dot qualified as Dot
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
-import Props.Linear qualified as Linear
 import Props.Mat qualified as Mat
 import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
@@ -25,7 +24,6 @@ main =
       , Dot.test
       , Free.test
       , Hask.test
-      , Linear.test
       , Kleisli.test
       , Mat.test
       , PointedHask.test

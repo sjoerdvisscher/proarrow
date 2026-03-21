@@ -23,6 +23,7 @@ import Testable
   , ShowP (..)
   , Testable (..)
   , TestableType (..)
+  , TestingEqShow (..)
   , genObDef
   , one
   , optGen
@@ -37,10 +38,10 @@ test =
     , propInitialObject @Nat
     , propTerminalObject @Nat
     , propMonoidal_ @Nat
-    , propMonoid_ @Z
-    , propMonoid_ @(S Z)
-    , propProfunctor @(Rep Forget)
-    , propProfunctor @(Rep (Pick Bool))
+    , testMonoid_ @Z
+    , testMonoid_ @(S Z)
+    , testProfunctor @(Rep Forget)
+    , testProfunctor @(Rep (Pick Bool))
     ]
 
 instance Testable Nat where
@@ -48,6 +49,7 @@ instance Testable Nat where
   genOb = genObDef @'[Z, S Z, S (S Z), S (S (S Z))]
   showOb @a = show (singNat @a)
 
+instance (Ob a, Ob b) => TestingEqShow (Simplex a b)
 instance (Ob a, Ob b) => TestableType (Simplex a b) where
   gen = case (singNat @a, singNat @b) of
     (SZ, SZ) -> one ZZ
@@ -63,6 +65,7 @@ instance (Ob a, Ob b) => TestableType (Simplex a b) where
       (GenEmpty _, GenNonEmpty gg) -> GenNonEmpty (Y <$> gg)
       (GenNonEmpty gf, GenNonEmpty gg) -> GenNonEmpty (choose (X <$> gf) (Y <$> gg))
 
+instance (IsNat n) => TestingEqShow (Fin n)
 instance (IsNat n) => TestableType (Fin n) where
   gen = case singNat @n of
     SZ -> GenEmpty absurd
@@ -77,6 +80,7 @@ instance (TestableType a, IsNat n) => TestableType (Vec n a) where
   gen = case gen @a of
     GenEmpty ax -> case universe @n of VNil -> one VNil; _ -> GenEmpty \(a ::: _) -> ax a
     GenNonEmpty ga -> GenNonEmpty (traverse (\_ -> ga) universe)
+instance (TestingEqShow a, IsNat n) => TestingEqShow (Vec n a) where
   eqP VNil VNil = pure True
   eqP as bs = getAll <$> getAp (fold (zipWith (\l r -> Ap (fmap All (eqP l r))) as bs))
   showP = show . fmap ShowP
