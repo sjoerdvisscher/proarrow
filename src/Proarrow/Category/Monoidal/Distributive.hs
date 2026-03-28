@@ -18,6 +18,7 @@ import Proarrow.Core
   , rmap
   , src
   , tgt
+  , (//)
   , (:~>)
   , type (+->)
   )
@@ -38,6 +39,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
+import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
 import Prelude (($))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
@@ -49,10 +51,12 @@ class (Monoidal k, HasCoproducts k, DistributiveProfunctor (Id :: CAT k)) => Dis
   distL0 :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
   distR0 :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
 
-distLInv :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
+distLInv
+  :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
 distLInv = second @a (lft @k @b @c) ||| second @a (rgt @k @b @c)
 
-distRInv :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** c || b ** c) ~> ((a || b) ** c)
+distRInv
+  :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** c || b ** c) ~> ((a || b) ** c)
 distRInv = first @c (lft @k @a @b) ||| first @c (rgt @k @a @b)
 
 instance Distributive Type where
@@ -86,6 +90,20 @@ distRProd =
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where
   traverse :: (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => t :.: p :~> p :.: t
+
+-- | With a representable traversable profunctor, you get a traversal a la one-liner.
+repTraverse
+  :: forall {k} (t :: k +-> k) p a b
+   . (Traversable t, Representable t, DistributiveProfunctor p, Strong k p, SelfAction k)
+  => p a b -> p (t % a) (t % b)
+repTraverse p = p // case traverse (trivialRep :.: p) of x :.: y -> rmap (index @t y) x
+
+-- | If both profunctors are representable, you get traversals as in base.
+baseTraverse
+  :: forall {k} (t :: k +-> k) f a b
+   . (Traversable t, Representable t, Representable f, DistributiveProfunctor f, Strong k f, SelfAction k, Ob b)
+  => a ~> f % b -> t % a ~> f % (t % b)
+baseTraverse = index . repTraverse @t @f @a @b . tabulate
 
 instance (CategoryOf k) => Traversable (Id :: k +-> k) where
   traverse (Id f :.: p) = lmap f p :.: Id id \\ p

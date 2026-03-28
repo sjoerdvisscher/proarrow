@@ -5,6 +5,8 @@ module Proarrow.Squares where
 import Data.Functor.Compose (Compose (..))
 import Prelude (Either (..), Traversable, either, ($))
 
+import Data.Functor.Const (Const (..))
+import Data.Kind (Type)
 import Proarrow.Category.Bicategory (Adjunction, Bicategory (..), obj1, (||))
 import Proarrow.Category.Bicategory qualified as Adj
 import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
@@ -345,6 +347,35 @@ counit
   => Sq (g ::: f ::: Nil) Nil Nil Nil
 counit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.counit @f @g) ||| hSplitAll
 
+-- class IsTight m => Dist m p where
+--   dist :: Sq (p ::: Nil) (p ::: Nil) (m ::: Nil) (m ::: Nil)
+
+-- type MixedOptic m s t a b = forall p. Dist m p => Sq (CotightAdjoint a ::: p ::: TightAdjoint b) (CotightAdjoint s ::: p ::: TightAdjoint t) Nil Nil
+
+-- class (IsTight m) => Dist m p where
+--   dist :: m :.: p :~> p :.: m
+
+-- type MixedOptic m s t a b = forall p. (Dist m p) => RepCostar a :.: p :.: b :~> RepCostar s :.: p :.: t
+
+-- data Optic m s t a b where
+--   Optic :: s :~> m :.: a -> m :.: b :~> t -> Optic m s t a b
+
+-- instance Dist m (Optic m s t) where
+
+-- mix
+--   :: (Representable m, Representable s, Representable t, Representable a, Representable b)
+--   => Optic m s t a b -> MixedOptic m s t a b
+-- mix @m (Optic sam bmt) (RepCostar @x a :.: p :.: b) = case dist (trivialRep @m :.: p) \\ a of
+--   p' :.: m2 ->
+--     case sam (trivialRep @_ @x) of m3 :.: a1 -> cotabulate (index (rmap (a . index a1) m3))
+--       :.: p'
+--       :.: bmt (m2 :.: b)
+
+-- unmix
+--   :: (Representable m, Representable s, Representable t, Representable a, Representable b)
+--   => MixedOptic m s t a b -> Optic m s t a b
+-- unmix n = Optic l r
+
 -- | Optics in proarrow equipments.
 --
 -- > J-------J
@@ -353,7 +384,7 @@ counit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.counit @f @g) ||| hSplitAll
 -- > t<--@--<b
 -- > K-------K
 type Optic (a :: kk z j) (b :: kk k z) (s :: kk x j) (t :: kk k x) =
-  (IsTight a, IsCotight b, IsTight s, IsCotight t) => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
+  IsOptic a b s t => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
 
 type IsOptic (a :: kk z j) (b :: kk k z) (s :: kk x j) (t :: kk k x) =
   (IsTight a, IsCotight b, IsTight s, IsCotight t)
@@ -370,12 +401,14 @@ seq st uv = (hId @s === unit @u @t === hId @v) ||| (st === uv)
 -- > |   @   |
 -- > |   v   |
 -- > X---m---Z
-
+-- s ~> a :.: m
+--
 -- > X---m---Z
 -- > |   v   |
 -- > |   @   |
 -- > t<-/ \-<b
 -- > K-------K
+-- b :.: m ~> t
 
 -- > J-------J     J-------J
 -- > a>--@   |     s>--@   |
@@ -397,8 +430,30 @@ seq st uv = (hId @s === unit @u @t === hId @v) ||| (st === uv)
 -- > |   @--<b     |   @--<b
 -- > K-------K     K-------K
 
+-- a<--@--<s
+-- p---@---p
+-- b>--@-->t
+
+--     @--<m
+-- p---@---p
+--     @-->m
+
+-- a<--@--<s
+-- m<--@
+-- p---@---p
+-- m>--@
+-- b>--@-->t
+
+-- p (a, x) (b, y) -> p (s, x) (t, y)
+-- RepCostar a :.: p :.: CorepStar b -> RepCostar s :.: p :.: CorepStar t
+-- p x y -> p (s, x) (s, y)
+-- p ~> RepCostar m :.: p :.: m
+-- RepCostar a :.: RepCostar m :.: p :.: m :.: CorepStar b -> RepCostar s :.: p :.: CorepStar t
+-- p (m, (a, x)) (m, (b, y)) -> p (s, x) (t, y)
+-- s :.: a ~> m, m :.: CorepStar b -> CorepStar t
+
 type ProfOptic a b s t = Optic (PK a) (PK b) (PK s) (PK t)
-mkProfOptic :: s :.: t :~> a :.: b -> ProfOptic a b s t
+mkProfOptic :: IsOptic (PK a) (PK b) (PK s) (PK t) => s :.: t :~> a :.: b -> ProfOptic a b s t
 mkProfOptic n = Sq (St (Prof n))
 
 type HaskOptic a b s t = ProfOptic (Star a) (Costar b) (Star s) (Costar t)
@@ -406,6 +461,10 @@ mkHaskOptic
   :: (Functor a, Functor b, Functor s, Functor t)
   => (forall x r. (Ob x) => (forall y. (Ob y) => (s x ~> a y) -> (b y ~> t x) -> r) -> r) -> HaskOptic a b s t
 mkHaskOptic k = mkProfOptic \(Star @y s :.: Costar t) -> k @y \get put -> Star (get . s) :.: Costar (t . put)
+
+type Iso s t a b = HaskOptic (Const a :: Type -> Type) (Const b) (Const s :: Type -> Type) (Const t)
+mkIso :: (s -> a) -> (b -> t) -> Iso s t a b
+mkIso f g = mkHaskOptic (\k -> k @() (Const . f . getConst) (Const . g . getConst))
 
 type Lens s t a b = HaskOptic ((,) a) ((,) b) ((,) s) ((,) t)
 mkLens :: (s -> a) -> (s -> b -> t) -> Lens s t a b

@@ -11,18 +11,17 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, src, (//), (:~>), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepObj, withCorepOb)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepObj, trivialCorep, withCorepOb)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
-import Proarrow.Profunctor.Wrapped (Wrapped (..))
 
 type Unweighted = TerminalProfunctor
 
@@ -114,7 +113,7 @@ instance (Corepresentable j2, HasColimits j1 k, HasColimits j2 k) => HasColimits
   colimit @d ((j1 :.: j2) :.: c) = colimit @j1 @k @d (j1 :.: colimit @j2 @k @(Colimit j1 d) (j2 :.: c))
   colimitUniv @d n = colimitUniv @j2 @k @(Colimit j1 d) (colimitUniv @j1 @k @d (\(j1 :.: (j2 :.: p')) -> n ((j1 :.: j2) :.: p')))
 
-instance (Representable j) => HasColimits (Wrapped j) k where
-  type Colimit (Wrapped j) d = RepCostar j :.: d
-  colimit (j :.: (RepCostar g :.: d)) = lmap (g . index j) d
-  colimitUniv n p = p // RepCostar (repMap @j (src p)) :.: n (trivialRep :.: p)
+instance (FunctorForRep f) => HasColimits (Rep f) k where
+  type Colimit (Rep f) d = Corep f :.: d
+  colimit (Rep f :.: (Corep g :.: d)) = lmap (g . f) d
+  colimitUniv n p = p // trivialCorep :.: n (trivialRep :.: p)

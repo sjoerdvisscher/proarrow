@@ -150,6 +150,10 @@ first f = f `par` obj @c
 second :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (c ** a) ~> (c ** b)
 second f = obj @c `par` f
 
+type State a = Unit ~> a
+type Costate a = a ~> Unit
+type Scalar k = (Unit :: k) ~> Unit
+
 class (Monoidal k) => SymMonoidal k where
   swap :: (Ob (a :: k), Ob b) => (a ** b) ~> (b ** a)
 

@@ -26,7 +26,6 @@ import Proarrow.Monoid (Comonoid (..), CopyDiscard (..), Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
-import Proarrow.Profunctor.Wrapped (Wrapped (..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -92,9 +91,15 @@ instance (Monoidal j, Monoidal k) => Monoidal (j +-> k) where
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j +-> k) where
   swap = Prof \(Day @c @d @e @f f p q g) -> Day (swap @_ @c @e . f) q p (g . swap @_ @f @d) \\ p \\ q
 
-instance (CopyDiscard k, Monoidal j, j `Supplies` Monoid) => CopyDiscard (j +-> k) where
-  copy = Prof \p -> p // Day copy p p mappend
-  discard = Prof \p -> p // DayUnit discard mempty
+instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
+  mempty = Prof \(DayUnit f g) -> dimap f g par0
+  mappend = Prof \(Day f p q g) -> dimap f g (p `par` q)
+
+instance (Monoidal j, CopyDiscard k, j `Supplies` Monoid, Profunctor p) => Comonoid (p :: j +-> k) where
+  counit = Prof \p -> p // DayUnit discard mempty
+  comult = Prof \p -> p // Day copy p p mappend
+
+instance (CopyDiscard k, Monoidal j, j `Supplies` Monoid) => CopyDiscard (j +-> k)
 
 instance (Monoidal j, Monoidal k) => Distributive (j +-> k) where
   distL = Prof \(Day l a bc r) -> case bc of
@@ -110,18 +115,6 @@ duoidal
   :: (Monoidal j, Profunctor (p :: j +-> k), Profunctor p', Profunctor q, Profunctor q')
   => (p :.: p') `Day` (q :.: q') ~> (p `Day` q) :.: (p' `Day` q')
 duoidal = Prof \(Day f (p :.: p') (q :.: q') g) -> let b = tgt p `par` tgt q in Day f p q b :.: Day b p' q' g
-
-instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
-  mempty = Prof \(DayUnit f g) -> dimap f g par0
-  mappend = Prof \(Day f p q g) -> dimap f g (p `par` q)
-
-instance (Monoidal j, Monoidal k, k `Supplies` Comonoid, j `Supplies` Monoid, Profunctor p) => Comonoid (p :: j +-> k) where
-  counit = Prof \p -> p // DayUnit counit mempty
-  comult = Prof \p -> p // Day comult p p mappend
-
--- instance Monoidal k => Comonoid (E (PK (DayUnit :: k +-> k))) where
---   counit = Endo (Bi.Prof \(DayUnit f g) -> g . f)
---   comult = Endo (Bi.Prof \(DayUnit f g) -> DayUnit f id :.: DayUnit id g)
 
 data DayExp p q a b where
   DayExp
@@ -158,7 +151,3 @@ multDayExp = Prof \(Day @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
                      (pq' (e `par` e') (f `par` f') p')
                      (r . (h `par` j) . swapInner' d d' f f')
         )
-
-instance (MonoidalProfunctor p) => Monoid (Wrapped p) where
-  mempty = Prof \(DayUnit f g) -> Wrapped (dimap f g par0)
-  mappend = Prof \(Day f (Wrapped p) (Wrapped q) g) -> Wrapped (dimap f g (p `par` q))

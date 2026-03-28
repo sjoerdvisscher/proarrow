@@ -13,8 +13,8 @@ import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
-import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
+import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..), DistributiveProfunctor)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->), rmap)
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
 import Proarrow.Object.Initial (initiate)
@@ -81,8 +81,8 @@ instance (Alternative f, Monoidal k, Distributive j) => MonoidalProfunctor (Copr
 instance (Functor (f :: Type -> Type)) => Strong Type (Star f) where
   act f (Star k) = Star (\(a, x) -> map (f a,) (k x))
 
-instance (Functor f, P.Applicative f) => Strong (SUBCAT P.Traversable) (Star (Prelude f)) where
-  act (Sub (Nat n)) (Star f) = Star (\t -> Prelude (P.traverse (unPrelude . f) (n t)))
+instance (P.Applicative f) => Strong (SUBCAT P.Traversable) (Star (Prelude f)) where
+  act (Sub (Nat n)) (Star f) = Star (P.traverse f  . n)
 
 instance Traversable (Star P.Maybe) where
   traverse (Star a2mb :.: p) = lmap a2mb go :.: Star id
@@ -101,6 +101,12 @@ instance Traversable (Star []) where
           (\l -> case l of [] -> P.Left (); (x : xs) -> P.Right (x, xs))
           (P.const [] ||| \(x, xs) -> x : xs)
           (par0 `copar` (p `par` go))
+
+starTraverse :: (Traversable (Star t :: Type +-> Type), DistributiveProfunctor p, Strong Type p) => p a b -> p (t a) (t b)
+starTraverse p = case traverse (Star id :.: p) of x :.: Star y -> rmap y x
+
+preludeTraverse :: (Applicative f, Traversable (Star t :: Type +-> Type)) => (a -> f b) -> t a -> f (t b)
+preludeTraverse = unStar . starTraverse . Star
 
 instance (Functor f, Thin j, Discrete k) => ThinProfunctor (Star f :: j +-> k) where
   type HasArrow (Star f) a b = a P.~ f b

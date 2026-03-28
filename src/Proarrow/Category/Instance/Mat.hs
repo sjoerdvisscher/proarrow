@@ -12,7 +12,7 @@ import Prelude qualified as P
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
@@ -29,6 +29,7 @@ import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Functor (FunctorForRep (..))
 
 type n + m = Plus n m
 type (*) n m = Mult n m
@@ -38,13 +39,18 @@ type instance UN M (M n) = n
 
 data Mat :: CAT (MatK a) where
   Mat
-    :: forall {a} {m'} {n'} m n
-     . (Ob m', Ob n', m' ~ (M m :: MatK a), n' ~ M n)
-    => Vec n (Vec m a)
-    -> Mat m' n'
+    :: forall {a} m n
+     . (IsNat m, IsNat n)
+    => { unMat :: Vec n (Vec m a) }
+    -> Mat (M m :: MatK a) (M n)
 
 app :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
 app m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
+
+data family App :: MatK a +-> Type
+instance P.Num a => FunctorForRep (App :: MatK a +-> Type) where
+  type App @a @ M n = Vec n a
+  fmap (Mat m) = app m
 
 class (SNatI n, P.Applicative (Vec n), n + Z ~ n, n * Z ~ Z, n * S Z ~ n) => IsNat (n :: Nat) where
   matId :: (P.Num a) => Vec n (Vec n a)
