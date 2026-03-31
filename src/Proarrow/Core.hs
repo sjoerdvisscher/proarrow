@@ -218,7 +218,7 @@ iso :: (s ~> a) -> (b ~> t) -> Iso s t a b
 iso sa bt = dimap sa bt
 
 data Exchange a b s t = Exchange (s ~> a) (b ~> t)
-instance CategoryOf k => Profunctor (Exchange a b :: k +-> k) where
+instance (CategoryOf j, CategoryOf k) => Profunctor (Exchange a b :: j +-> k) where
   dimap l r (Exchange sa bt) = Exchange (sa . l) (r . bt)
   r \\ Exchange sa bt = r \\ sa \\ bt
 

@@ -27,7 +27,6 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
-import Proarrow.Profunctor.Identity qualified as Id
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
 
@@ -205,8 +204,8 @@ instance Monoidal Type where
 instance SymMonoidal Type where
   swap = swapProd
 
-instance Strong Type (Id.Id :: Type +-> Type) where
-  act f (Id.Id g) = Id.Id (f `par` g)
+instance Strong Type (->) where
+  act = par
 instance MonoidalAction Type Type where
   type Act p x = p ** x
   withObAct r = r

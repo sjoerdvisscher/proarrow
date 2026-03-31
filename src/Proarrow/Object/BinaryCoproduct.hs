@@ -169,8 +169,8 @@ instance (HasCoproducts k) => SymMonoidal (COPROD k) where
 instance Costrong (COPROD Type) (Id :: CAT Type) where
   coact (Id uxuy) = Id (let loop ux = P.either (loop . P.Left) id (uxuy ux) in loop . P.Right)
 
-instance Strong Type (Id :: CAT (COPROD Type)) where
-  l `act` Id (Coprod (Id r)) = Id (Coprod (Id (l `par` r)))
+instance Strong Type (Coprod Id :: CAT (COPROD Type)) where
+  l `act` Coprod (Id r) = Coprod (Id (l `par` r))
 
 instance MonoidalAction Type (COPROD Type) where
   type Act p (COPR x) = COPR (p ** x)
@@ -180,8 +180,8 @@ instance MonoidalAction Type (COPROD Type) where
   multiplicator = Coprod (Id associatorInv)
   multiplicatorInv = Coprod (Id associator)
 
-instance Strong (COPROD Type) (Id :: CAT Type) where
-  Coprod (Id f) `act` Id g = Id (f +++ g)
+instance Strong (COPROD Type) (->) where
+  Coprod (Id f) `act` g = f +++ g
 instance MonoidalAction (COPROD Type) Type where
   type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
   withObAct r = r

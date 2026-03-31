@@ -12,9 +12,19 @@ import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.Nat ((!))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, swap)
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs, actHom)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
 import Proarrow.Category.Opposite (OPPOSITE (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Kind
+  , Profunctor (..)
+  , Promonad (..)
+  , cloneIso
+  , dimapDefault
+  , obj
+  , type (+->)
+  )
 import Proarrow.Core qualified as Core
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Object (src, tgt)
@@ -42,7 +52,7 @@ instance (CategoryOf c, CategoryOf d) => Profunctor (Optic m a b :: c +-> d) whe
 instance (IsOptic m c d) => Strong m (Optic m a b :: c +-> d) where
   act :: forall (a1 :: m) (b1 :: m) (s :: d) (t :: c). a1 ~> b1 -> Optic m a b s t -> Optic m a b (Act a1 s) (Act b1 t)
   act w (Optic @x @x' f w' g) =
-    Optic (composeActs @a1 @x @a (src w `actHom` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `actHom` tgt g))
+    Optic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
       \\ w
       \\ w'
 
@@ -69,8 +79,8 @@ instance (IsOptic m c d) => CategoryOf (OPTIC m c d) where
 
 type MixedOptic m a b s t = Core.Optic (Strong m) s t a b
 
--- toIso :: MixedOptic () a b s t -> Core.Iso s t a b
--- toIso l p = l p
+toIso :: (MonoidalAction () c, MonoidalAction () d) => Core.Optic (Strong ()) s t (a :: c) (b :: d) -> Core.Iso s t a b
+toIso l p = cloneIso l p \\ p
 
 ex2prof :: forall m a b s t. Optic m a b s t -> MixedOptic m a b s t
 ex2prof (Optic l w r) p = dimap l r (act w p)
@@ -196,7 +206,7 @@ instance (IsChart m c d) => Promonad (ChartCat :: CAT (CHART m c d)) where
   id = ChartCat (prof2ex id)
   ChartCat (Optic @x @x' @_ @t ll lw lr) . ChartCat (Optic @y @y' @a rl rw rr) =
     ChartCat $
-      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `actHom` obj @t))
+      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `act` obj @t))
         \\ lw
         \\ rw
 

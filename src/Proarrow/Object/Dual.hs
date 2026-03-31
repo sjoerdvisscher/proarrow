@@ -14,16 +14,17 @@ import Proarrow.Category.Monoidal
   , leftUnitorWith
   , rightUnitorInvWith
   , rightUnitorWith
-  , swap, unitObj
+  , swap
+  , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), actHom)
-import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj, (//), Iso, iso)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
+import Proarrow.Core (CategoryOf (..), Iso, Obj, Profunctor (..), Promonad (..), iso, obj, (//))
 import Proarrow.Object.Exponential (Closed (..))
 
-class Ob (Dual a) => ObDual a
-instance Ob (Dual a) => ObDual a
+class (Ob (Dual a)) => ObDual a
+instance (Ob (Dual a)) => ObDual a
 
-class (SymMonoidal k, Closed k, Ob (Unit :: k), forall (a :: k). Ob a => ObDual a) => StarAutonomous k where
+class (SymMonoidal k, Closed k, Ob (Unit :: k), forall (a :: k). (Ob a) => ObDual a) => StarAutonomous k where
   type Dual (a :: k) :: k
   dual :: (a :: k) ~> b -> Dual b ~> Dual a
   dualInv :: (Ob (a :: k), Ob b) => Dual a ~> Dual b -> b ~> a
@@ -41,7 +42,8 @@ doubleNegInv =
   linDistInv @k @Unit @a @(Dual a) (dual (swap @k @a @(Dual a)) . dualityUnitSA @a) . leftUnitorInv @k @a
     \\ dualObj @a
 
-doubleNegIso :: forall {k} (a :: k) (a' :: k). (StarAutonomous k, Ob a, Ob a') => Iso a a' (Dual (Dual a)) (Dual (Dual a'))
+doubleNegIso
+  :: forall {k} (a :: k) (a' :: k). (StarAutonomous k, Ob a, Ob a') => Iso a a' (Dual (Dual a)) (Dual (Dual a'))
 doubleNegIso = iso doubleNegInv doubleNeg
 
 type ExpSA a b = Dual (a ** Dual b)
@@ -127,11 +129,11 @@ compactClosedCoact
    . (CompactClosed m, MonoidalAction m k, Ob x, Ob y, Ob u) => Act u x ~> Act u y -> x ~> y
 compactClosedCoact f =
   unitor @m @k @y
-    . actHom (dualityCounit @u) (obj @y)
+    . act (dualityCounit @u) (obj @y)
     . multiplicator @m @k @(Dual u) @u @y
-    . actHom (obj @(Dual u)) f
+    . act (obj @(Dual u)) f
     . multiplicatorInv @m @k @(Dual u) @u @x
-    . actHom (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
+    . act (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
     . unitorInv @m @k @x
     \\ dualObj @u
 

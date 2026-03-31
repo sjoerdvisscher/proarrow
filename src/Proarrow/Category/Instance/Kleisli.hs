@@ -15,6 +15,8 @@ import Data.Kind (Type)
 
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.ThinCategory qualified as T
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveProfunctor)
@@ -30,17 +32,14 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
-import Proarrow.Object (pattern Obj, type Obj, tgt)
+import Proarrow.Monoid (CopyDiscard (..))
+import Proarrow.Object (tgt, pattern Obj, type Obj)
 import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, copar)
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (RepCostar(..), Representable(..), trivialRep)
-import Proarrow.Monoid (CopyDiscard (..))
-import Proarrow.Category.Enriched.ThinCategory qualified as T
-import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), trivialRep)
 
 newtype KLEISLI (p :: CAT k) = KL k
 type instance UN KL (KL k) = k
@@ -106,6 +105,7 @@ instance (Promonad p, MonoidalProfunctor p) => Monoidal (KLEISLI (p :: k +-> k))
   rightUnitorInv = arr rightUnitorInv
   associator @(KL a) @(KL b) @(KL c) = arr (associator @k @a @b @c)
   associatorInv @(KL a) @(KL b) @(KL c) = arr (associatorInv @k @a @b @c)
+
 instance (Promonad p, MonoidalProfunctor p, SymMonoidal k) => SymMonoidal (KLEISLI (p :: k +-> k)) where
   swap @(KL a) @(KL b) = arr (swap @k @a @b)
 instance (Promonad p, MonoidalProfunctor p, CopyDiscard k) => CopyDiscard (KLEISLI (p :: k +-> k)) where
@@ -118,8 +118,8 @@ instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive 
   distL0 @(KL a) = arr (distL0 @k @a)
   distR0 @(KL a) = arr (distR0 @k @a)
 
-instance (Promonad p, MonoidalProfunctor p) => Strong Type (Id :: CAT (KLEISLI (p :: Type +-> Type))) where
-  act f (Id (Kleisli p)) = Id (arr f `par` Kleisli p)
+instance (Promonad p, MonoidalProfunctor p) => Strong Type (Kleisli :: CAT (KLEISLI (p :: Type +-> Type))) where
+  act f (Kleisli p) = arr f `par` Kleisli p
 instance (Promonad p, MonoidalProfunctor p) => MonoidalAction Type (KLEISLI (p :: Type +-> Type)) where
   type Act y (KL x) = KL (y ** x)
   withObAct @y @(KL x) r = withOb2 @Type @y @x r
@@ -160,7 +160,8 @@ type LIFTEDF (f :: j +-> k) = KLEISLI (RepCostar f :.: f)
 unlift :: (Representable f) => Kleisli (KL a :: LIFTEDF f) (KL b) -> (f % a ~> f % b, Obj a, Obj b)
 unlift (Kleisli (RepCostar f :.: g)) = (index g . f, Obj, tgt g)
 
-pattern LiftF :: (Representable (f :: j +-> k)) => (Ob (a :: j), Ob b) => (f % a ~> f % b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
+pattern LiftF
+  :: (Representable (f :: j +-> k)) => (Ob (a :: j), Ob b) => (f % a ~> f % b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
 pattern LiftF f <- (unlift -> (f, Obj, Obj))
   where
     LiftF f = Kleisli (RepCostar f :.: trivialRep)

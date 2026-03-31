@@ -6,10 +6,10 @@ module Proarrow.Category.Equipment.Stateful where
 import Prelude (type (~))
 
 import Proarrow.Adjunction (Proadjunction)
-import Proarrow.Category.Bicategory (Adjunction (..), Bicategory (..), Adjunction_ (..), Adj (..))
+import Proarrow.Category.Bicategory (Adj (..), Adjunction (..), Adjunction_ (..), Bicategory (..))
 import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
-import Proarrow.Category.Monoidal.Action (Strong (..), SelfAction, actHom)
+import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core
   ( CAT
@@ -21,18 +21,19 @@ import Proarrow.Core
   , UN
   , dimapDefault
   , lmap
+  , obj
   , rmap
   , src
   , tgt
   , (:~>)
-  , type (+->), obj
+  , type (+->)
   )
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Promonad.Writer (Writer (..))
-import Proarrow.Profunctor.Product ((:*:)(..))
-import Proarrow.Profunctor.Coproduct ((:+:) (..))
 
 type STT' :: Kind -> CAT ()
 newtype STT' k i j = ST (k +-> k)
@@ -70,7 +71,8 @@ instance
   (SelfAction k, Adjunction (PK l) (PK r), Ob l, Ob r, Strong k r, Strong k l)
   => Adjunction_ (ST l :: STT' k i j) (ST r)
   where
-    adj = Adj
+  adj =
+    Adj
       { adjUnit = StT (case unit @(PK l) @(PK r) of Prof f -> f)
       , adjCounit = StT (case counit @(PK l) @(PK r) of Prof f -> f)
       }
@@ -119,12 +121,13 @@ instance (SelfAction k) => Equipment (STT' k) where
   withTightAdjoint r = r
   withCotightAdjoint r = r
 
-type STSq (p :: k +-> k) (q :: k +-> k) (a :: k) (b :: k) = ST (Writer a) `O` (ST p :: STT k) ~> (ST q :: STT k) `O` ST (Writer a)
+type STSq (p :: k +-> k) (q :: k +-> k) (a :: k) (b :: k) =
+  ST (Writer a) `O` (ST p :: STT k) ~> (ST q :: STT k) `O` ST (Writer a)
 
 crossing
   :: forall {k} (p :: k +-> k) (a :: k)
    . (Strong k p, Ob a, SelfAction k) => STSq p p a a
-crossing = StT \(Writer g :.: p) -> lmap g (act (obj @a) p) :.: Writer (obj @a `actHom` tgt p) \\ p
+crossing = StT \(Writer g :.: p) -> lmap g (act (obj @a) p) :.: Writer (obj @a `act` tgt p) \\ p
 
 pi0
   :: forall {k} (p :: STT k) (q :: STT k). (Ob p, Ob q, SelfAction k) => ST (UN ST p :*: UN ST q) ~> p

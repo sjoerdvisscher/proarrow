@@ -128,8 +128,8 @@ instance HasInitialObject LINEAR where
   type InitialObject = L Void
   initiate = Linear \case {}
 
-instance Strong (COPROD LINEAR) (Id :: CAT LINEAR) where
-  act (Coprod (Id f)) (Id g) = Id (f +++ g)
+instance Strong (COPROD LINEAR) Linear where
+  act (Coprod (Id f)) g = f +++ g
 
 instance MonoidalAction (COPROD LINEAR) LINEAR where
   type Act (p :: COPROD LINEAR) (x :: LINEAR) = UN COPR (p ** COPR x)

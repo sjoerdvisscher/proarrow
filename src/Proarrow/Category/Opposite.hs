@@ -2,7 +2,7 @@ module Proarrow.Category.Opposite where
 
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), actHom)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -99,7 +99,7 @@ instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +
 instance (Strong k p) => Strong (OPPOSITE k) (Op p) where
   act (Op w) (Op p) = Op (act w p)
 instance (Strong k (Id :: CAT m)) => Strong (OPPOSITE k) (Id :: CAT (OPPOSITE m)) where
-  act (Op w) (Id (Op p)) = Id (Op (actHom w p))
+  act (Op w) (Id (Op p)) = Id (Op (act w p))
 instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   type Act (OP a) (OP b) = OP (Act a b)
   withObAct @(OP a) @(OP b) r = withObAct @m @k @a @b r

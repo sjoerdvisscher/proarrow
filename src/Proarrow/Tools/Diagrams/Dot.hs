@@ -38,7 +38,6 @@ import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), St
 import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
-import Proarrow.Profunctor.Identity (Id (..))
 
 type Port = String -- Basically a shown int, but may contain an additional direction (:n, :e, :s, :w)
 
@@ -202,8 +201,8 @@ instance (Ob as) => Comonoid (D as) where
   counit = node' (Vec (cycle [":n"])) (Vec []) "shape=point; width=0.07"
   comult = withIsList2 @as @as $ node' (Vec (cycle [":n"])) (Vec (cycle [":sw", ":se"])) "shape=point; width=0.07"
 instance CopyDiscard DOT
-instance Strong DOT (Id :: CAT DOT) where
-  act f (Id g) = Id (f `par` g)
+instance Strong DOT Dot where
+  act = par
 instance Costrong DOT Dot where
   coact @(D as) @(D xs) @(D ys) (Dot f) = Dot \n ->
     case f n of

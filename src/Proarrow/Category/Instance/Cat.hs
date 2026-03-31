@@ -197,8 +197,8 @@ instance MonoidalAction KIND KIND where
   multiplicator = associatorInv
   multiplicatorInv = associator
 
-instance Strong KIND (Id :: CAT KIND) where
-  act = par . Id
+instance Strong KIND Cat where
+  act = par
 
 instance Costrong KIND Cat where
   coact @u = compactClosedCoact @u
