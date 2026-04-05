@@ -9,9 +9,14 @@ import Proarrow.Category.Colimit (HasColimits (..), mapColimit)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (COREP, COREPK, REP, REPK, SUBCAT (..), Sub (..))
 import Proarrow.Category.Limit (HasLimits (..), mapLimit)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor, FunctorForRep, map)
+import Proarrow.Object.BinaryCoproduct (Cocartesian, Coprod (..), HasBinaryCoproducts (..))
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), corepObj, trivialCorep)
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
@@ -195,3 +200,35 @@ leftAdjointPreservesColimitsInv
    . (Corepresentable p, Corepresentable d, HasColimits j k, HasColimits j k')
   => Colimit j d :.: p :~> Colimit j (d :.: p)
 leftAdjointPreservesColimitsInv = colimitUniv @j @k' @(d :.: p) (\(j :.: (colim :.: p)) -> colimit (j :.: colim) :.: p)
+
+-- | Preservation of limits and colimits makes the adjunction heteromorphism a distributive profunctor.
+newtype Adj p a b = Adj (p a b)
+  deriving newtype (Profunctor, Representable, Corepresentable)
+
+instance (Cartesian j, Cartesian k, Adjunction p) => MonoidalProfunctor (Adj p :: j +-> k) where
+  par0 = cotabulate terminate \\ corepObj @p @TerminalObject
+  Adj @_ @x l `par` Adj @_ @y r =
+    withOb2 @_ @x @y
+      ( cotabulate
+          ( coindex @p @(x ** y) (lmap (fst @_ @x @y) l)
+              &&& coindex @p @(x ** y) (lmap (snd @_ @x @y) r)
+          )
+      )
+      \\ l
+      \\ r
+
+instance (Cocartesian j, Cocartesian k, Adjunction p) => MonoidalProfunctor (Coprod (Adj p :: j +-> k)) where
+  par0 = tabulate initiate \\ repObj @p @InitialObject
+  Coprod (Adj @_ @_ @x l) `par` Coprod (Adj @_ @_ @y r) =
+    withObCoprod @_ @x @y
+      ( Coprod
+          ( Adj
+              ( tabulate
+                  ( index @p @_ @(x || y) (rmap (lft @_ @x @y) l)
+                      ||| index @p @_ @(x || y) (rmap (rgt @_ @x @y) r)
+                  )
+              )
+          )
+      )
+      \\ l
+      \\ r

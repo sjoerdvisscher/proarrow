@@ -32,6 +32,7 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 infixl 4 ||
 infixl 4 |||
@@ -130,6 +131,12 @@ instance (Profunctor p) => Profunctor (Coprod p) where
 instance (Promonad p) => Promonad (Coprod p) where
   id = Coprod id
   Coprod f . Coprod g = Coprod (f . g)
+instance (Representable p) => Representable (Coprod p) where
+  type Coprod p % (COPR a) = COPR (p % a)
+  index (Coprod p) = Coprod (Id (index p))
+  tabulate (Coprod (Id f)) = Coprod (tabulate f)
+  repMap (Coprod (Id f)) = Coprod (Id (repMap @p f))
+
 
 -- | The same category as the category of @k@, but with coproducts as the tensor.
 instance (CategoryOf k) => CategoryOf (COPROD k) where
@@ -150,6 +157,10 @@ copar0 = unCoprod par0
 
 copar :: (MonoidalProfunctor (Coprod p)) => p a b -> p c d -> p (a || c) (b || d)
 copar p q = unCoprod (Coprod p `par` Coprod q)
+
+instance (HasInitialObject k) => HasInitialObject (COPROD k) where
+  type InitialObject = COPR InitialObject
+  initiate = Coprod (Id initiate)
 
 -- | Coproducts as monoidal tensor.
 instance (HasCoproducts k) => Monoidal (COPROD k) where
