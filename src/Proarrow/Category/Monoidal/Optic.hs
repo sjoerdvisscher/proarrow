@@ -6,13 +6,13 @@ module Proarrow.Category.Monoidal.Optic where
 
 import Data.Bifunctor (bimap)
 import Data.Kind (Type)
-import Prelude (Either (..), Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($), type (~))
+import Prelude (Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($), type (~))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.Nat ((!))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, swap)
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, swap, Monoidal (..), obj2)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs, SelfAction)
 import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core
   ( CAT
@@ -28,10 +28,12 @@ import Proarrow.Core
 import Proarrow.Core qualified as Core
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Object (src, tgt)
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..))
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), Cocartesian, HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Star (Star, pattern Star)
+import qualified Proarrow.Category.Monoidal.Distributive as Dist
+import Proarrow.Profunctor.Representable (Representable (..))
 
 type Optic :: Kind -> c -> d -> c -> d -> Type
 data Optic m a b s t where
@@ -79,7 +81,7 @@ instance (IsOptic m c d) => CategoryOf (OPTIC m c d) where
 
 type MixedOptic m a b s t = Core.Optic (Strong m) s t a b
 
-toIso :: (MonoidalAction () c, MonoidalAction () d) => Core.Optic (Strong ()) s t (a :: c) (b :: d) -> Core.Iso s t a b
+toIso :: (IsOptic () c d) => Core.Optic (Strong ()) s t (a :: c) (b :: d) -> Core.Iso s t a b
 toIso l p = cloneIso l p \\ p
 
 ex2prof :: forall m a b s t. Optic m a b s t -> MixedOptic m a b s t
@@ -87,24 +89,41 @@ ex2prof (Optic l w r) p = dimap l r (act w p)
 
 prof2ex
   :: forall {c} {d} m (a :: c) (b :: d) (s :: c) (t :: d)
-   . (MonoidalAction m c, MonoidalAction m d, Ob a, Ob b)
+   . (IsOptic m c d, Ob a, Ob b)
   => MixedOptic m a b s t
   -> Optic m a b s t
 prof2ex p2p = p2p (Optic (unitorInv @m) par0 (unitor @m))
 
-type Lens (s :: k) t a b = MixedOptic k a b s t
+type Lens (s :: k) (t :: k) a b = Core.Optic (Strong k) s t a b
+mkMonoidalLens
+  :: forall {k} (m :: k) (a :: k) (b :: k) (s :: k) (t :: k)
+   . (SelfAction k, Ob m, Ob a, Ob b)
+  => (s ~> m ** a) -> (m ** b ~> t) -> Lens s t a b
+mkMonoidalLens sma mbt = ex2prof (Optic sma (obj @m) mbt)
+
+_1 :: forall {k} (a :: k) b c. (SelfAction k, Ob a, Ob b, Ob c) => Lens (a ** c) (b ** c) a b
+_1 = mkMonoidalLens @c (swap @k @a @c) (swap @k @c @b)
+
+_2 :: forall {k} (a :: k) b c. (SelfAction k, Ob a, Ob b, Ob c) => Lens (c ** a) (c ** b) a b
+_2 = mkMonoidalLens @c (obj2 @c @a) (obj2 @c @b)
+
 mkLens
   :: (Cartesian k, Act s a ~ (s && a), Act s b ~ (s && b), Ob (b :: k))
   => (s ~> a) -> ((s && b) ~> t) -> Lens s t a b
 mkLens sa sbt = ex2prof (Optic (id &&& sa) (src sa) sbt) \\ sa
 
 type Prism (s :: k) t a b = MixedOptic (COPROD k) a b s t
-mkPrism :: (s -> Either t a) -> (b -> t) -> Prism s t a b
-mkPrism sta bt = ex2prof @(COPROD Type) (Optic sta id (either id bt))
+mkPrism :: forall {k} s t a b. (Cocartesian k, Act (COPR t) a ~ (t || a), Act (COPR t) b ~ (t || b), Ob (a :: k))
+  => (s ~> (t || a)) -> (b ~> t) -> Prism s t a b
+mkPrism sta bt = ex2prof (Optic sta (Coprod (Id (tgt bt))) (id ||| bt)) \\ bt
 
 type Traversal s t a b = MixedOptic (SUBCAT Traversable) a b s t
 traversing :: (Traversable f) => Traversal (f a) (f b) a b
 traversing = ex2prof @(SUBCAT Traversable) (Optic Prelude id unPrelude)
+
+type Traversal' s t a b = Core.Optic Dist.StrongDistributiveProfunctor s t a b
+traversing' :: forall t a b. (Dist.Traversable t, Representable t) => Traversal' (t % a) (t % b) a b
+traversing' = Dist.repTraverse @t
 
 class (Monad m) => Algebra m a where algebra :: m a -> a
 instance (Monad m) => Algebra m (m a) where algebra = (>>= id)
@@ -115,16 +134,6 @@ instance (Monad m, Algebra m a, Algebra m b) => Algebra m (a, b) where
 type AlgebraicLens m s t a b = MixedOptic (SUBCAT (Algebra m)) a b s t
 mkAlgebraicLens :: forall m s t a b. (Monad m) => (s -> a) -> (m s -> b -> t) -> AlgebraicLens m s t a b
 mkAlgebraicLens v u = ex2prof @(SUBCAT (Algebra m)) (Optic (\s -> (return @m s, v s)) id (uncurry u))
-
-newtype Viewing a (b :: Type) s (t :: Type) = Viewing {unView :: s -> a}
-instance Profunctor (Viewing a b) where
-  dimap l _ (Viewing f) = Viewing (f . l)
-instance Strong Type (Viewing a b) where
-  act _ (Viewing f) = Viewing (f . snd)
-
-infixl 8 ^.
-(^.) :: s -> (Viewing a b a b -> Viewing a b s t) -> a
-(^.) s l = unView (l $ Viewing id) s
 
 data Previewing a (b :: Type) s (t :: Type) where
   Previewing :: {unPreview :: s -> Maybe a} -> Previewing a b s t

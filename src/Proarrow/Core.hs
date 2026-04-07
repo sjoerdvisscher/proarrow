@@ -27,6 +27,7 @@ module Proarrow.Core
     -- ** Promonad Utilities
   , arr
     -- * Isomorphisms
+  , Optic'
   , Optic
   , Iso
   , Iso'
@@ -210,7 +211,8 @@ type Is w a = a ~ w (UN w a)
 
 -- * Isomophisms (as optics)
 
-type Optic c s t a b = forall p. c p => p a b -> p s t
+type Optic' p s t a b = p a b -> p s t
+type Optic c s t a b = forall p. c p => Optic' p s t a b
 type Iso s t a b = Optic Profunctor s t a b
 type Iso' s a = Iso s s a a
 

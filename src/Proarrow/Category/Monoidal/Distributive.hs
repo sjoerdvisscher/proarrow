@@ -87,21 +87,24 @@ distRProd =
       withObCoprod @k @(a && c) @(b && c) $
         uncurry @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
 
+class (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => StrongDistributiveProfunctor (p :: k +-> k)
+instance (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => StrongDistributiveProfunctor (p :: k +-> k)
+
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where
-  traverse :: (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => t :.: p :~> p :.: t
+  traverse :: (StrongDistributiveProfunctor p) => t :.: p :~> p :.: t
 
 -- | With a representable traversable profunctor, you get a traversal a la one-liner.
 repTraverse
   :: forall {k} (t :: k +-> k) p a b
-   . (Traversable t, Representable t, DistributiveProfunctor p, Strong k p, SelfAction k)
+   . (Traversable t, Representable t, StrongDistributiveProfunctor p)
   => p a b -> p (t % a) (t % b)
 repTraverse p = p // case traverse (trivialRep :.: p) of x :.: y -> rmap (index @t y) x
 
 -- | If both profunctors are representable, you get traversals as in base.
 baseTraverse
   :: forall {k} (t :: k +-> k) f a b
-   . (Traversable t, Representable t, Representable f, DistributiveProfunctor f, Strong k f, SelfAction k, Ob b)
+   . (Traversable t, Representable t, Representable f, StrongDistributiveProfunctor f, Ob b)
   => a ~> f % b -> t % a ~> f % (t % b)
 baseTraverse = index . repTraverse @t @f @a @b . tabulate
 

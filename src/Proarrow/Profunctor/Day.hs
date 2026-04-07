@@ -26,6 +26,7 @@ import Proarrow.Monoid (Comonoid (..), CopyDiscard (..), Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -151,3 +152,13 @@ multDayExp = Prof \(Day @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
                      (pq' (e `par` e') (f `par` f') p')
                      (r . (h `par` j) . swapInner' d d' f f')
         )
+
+instance (Monoidal j, Monoidal k) => Strong (j +-> k) (Prof :: CAT (j +-> k)) where
+  act = par
+instance (Monoidal j, Monoidal k) => MonoidalAction (j +-> k) (j +-> k) where
+  type Act p q = p ** q
+  withObAct r = r
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator = associatorInv
+  multiplicatorInv = associator
