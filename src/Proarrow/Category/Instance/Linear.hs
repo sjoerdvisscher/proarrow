@@ -10,7 +10,7 @@ import System.IO.Unsafe (unsafeDupablePerformIO)
 import Unsafe.Coerce (unsafeCoerce)
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..), Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
@@ -130,14 +130,6 @@ instance HasInitialObject LINEAR where
 
 instance Strong (COPROD LINEAR) Linear where
   act (Coprod (Id f)) g = f +++ g
-
-instance MonoidalAction (COPROD LINEAR) LINEAR where
-  type Act (p :: COPROD LINEAR) (x :: LINEAR) = UN COPR (p ** COPR x)
-  withObAct r = r
-  unitor = unId (unCoprod leftUnitor)
-  unitorInv = unId (unCoprod leftUnitorInv)
-  multiplicator @a @b @x = unId (unCoprod (associatorInv @(COPROD LINEAR) @a @b @(COPR x)))
-  multiplicatorInv @a @b @x = unId (unCoprod (associator @(COPROD LINEAR) @a @b @(COPR x)))
 
 instance Costrong (COPROD LINEAR) Linear where
   coact (Linear uxuy) = loop . Linear Right

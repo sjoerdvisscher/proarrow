@@ -35,9 +35,10 @@ import Prelude
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
-import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 
 type Port = String -- Basically a shown int, but may contain an additional direction (:n, :e, :s, :w)
 

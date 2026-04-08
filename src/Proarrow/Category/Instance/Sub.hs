@@ -3,15 +3,9 @@ module Proarrow.Category.Instance.Sub where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Monoid (CopyDiscard (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable)
-import Proarrow.Profunctor.Representable (Representable (..), repObj)
-import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
+import Proarrow.Profunctor.Representable
 
 type SUBCAT :: forall {k}. OB k -> Type
 type data SUBCAT (ob :: OB k) = SUB k
@@ -38,8 +32,8 @@ type On :: (k -> Constraint) -> forall (ob :: OB k) -> SUBCAT ob -> Constraint
 class (c (UN SUB a)) => (c `On` ob) a
 instance (c (UN SUB a)) => (c `On` ob) a
 
-class (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
-instance (CategoryOf k, ob (a ** b)) => IsObMult (ob :: OB k) a b
+class (ob (a ** b)) => IsObMult (ob :: OB k) a b
+instance (ob (a ** b)) => IsObMult (ob :: OB k) a b
 
 instance (MonoidalProfunctor p, SubMonoidal ob) => MonoidalProfunctor (Sub p :: CAT (SUBCAT (ob :: OB k))) where
   par0 = Sub par0
@@ -62,9 +56,10 @@ instance (SubMonoidal ob) => Monoidal (SUBCAT (ob :: OB k)) where
 instance (SymMonoidal k, SubMonoidal ob) => SymMonoidal (SUBCAT (ob :: OB k)) where
   swap @(SUB a) @(SUB b) = Sub (swap @k @a @b)
 
-instance (SubMonoidal ob, CopyDiscard k) => CopyDiscard (SUBCAT (ob :: OB k)) where
-  copy = Sub copy
-  discard = Sub discard
+data family Forget :: forall (ob :: OB k) -> SUBCAT ob +-> k
+instance (CategoryOf k) => FunctorForRep (Forget (ob :: OB k)) where
+  type Forget ob @ (SUB a) = a
+  fmap (Sub f) = f
 
 instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub p :: CAT (SUBCAT (ob :: OB k))) where
   type Sub p % a = SUB (p % UN SUB a)
@@ -72,36 +67,3 @@ instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub
   tabulate (Sub f) = Sub (tabulate f)
   repMap (Sub f) = Sub (repMap @p f)
 
-instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => Strong (SUBCAT (ob :: OB m)) (->) where
-  Sub f `act` g = f `act` g
-instance (MonoidalAction m Type, Monoidal (SUBCAT (ob :: OB m))) => MonoidalAction (SUBCAT (ob :: OB m)) Type where
-  type Act (p :: SUBCAT ob) (x :: Type) = Act (UN SUB p) x
-  withObAct @(SUB a) @x r = withObAct @m @Type @a @x r
-  unitor = unitor @m
-  unitorInv = unitorInv @m
-  multiplicator @(SUB p) @(SUB q) @x = multiplicator @_ @_ @p @q @x
-  multiplicatorInv @(SUB p) @(SUB q) @x = multiplicatorInv @_ @_ @p @q @x
-
-data family Forget :: forall (ob :: OB k) -> SUBCAT ob +-> k
-instance (CategoryOf k) => FunctorForRep (Forget (ob :: OB k)) where
-  type Forget ob @ (SUB a) = a
-  fmap (Sub f) = f
-
-type REPK j k = SUBCAT (Representable :: j +-> k -> Constraint)
-type REP (f :: j +-> k) = SUB f :: REPK j k
-
-type OpCorepresentable :: OPPOSITE (j +-> k) -> Constraint
-class (Corepresentable (UN OP p)) => OpCorepresentable p
-instance (Corepresentable (UN OP p)) => OpCorepresentable p
-type COREPK j k = SUBCAT (OpCorepresentable :: OPPOSITE (k +-> j) -> Constraint)
-type COREP (f :: k +-> j) = SUB (OP f) :: COREPK j k
-
-class HasArrow (~>) (p % a) (q % a) => HasArrowRep p q a
-instance HasArrow (~>) (p % a) (q % a) => HasArrowRep p q a
-class (forall a. Ob a => HasArrowRep p q a) => HasAllArrows (p :: j +-> k) (q :: j +-> k)
-instance (forall a. Ob a => HasArrowRep p q a) => HasAllArrows (p :: j +-> k) (q :: j +-> k)
-instance (Thin k) => ThinProfunctor (Sub Prof :: CAT (REPK j k)) where
-  type HasArrow (Sub Prof :: CAT (REPK j k)) (REP p) (REP q) = HasAllArrows p q
-  arr @(REP p) @(REP q) = Sub (Prof \ @_ @b p -> tabulate (arr . index p) \\ repObj @p @b \\ repObj @q @b \\ p)
-  withArr = withArr -- TODO, impossible?
-  -- withArr @p @q (Sub (Prof n)) r = withArr @((~>) :: CAT k) (index (n trivialRep)) r

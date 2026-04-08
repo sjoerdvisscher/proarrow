@@ -1,17 +1,8 @@
 module Proarrow.Category.Opposite where
 
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
+import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
+import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..))
 
 newtype OPPOSITE k = OP k
 type instance UN OP (OP k) = k
@@ -36,58 +27,10 @@ instance (Promonad c) => Promonad (Op c) where
   id = Op id
   Op f . Op g = Op (g . f)
 
-instance (HasInitialObject k) => HasTerminalObject (OPPOSITE k) where
-  type TerminalObject = OP InitialObject
-  terminate = Op initiate
-
-instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
-  type InitialObject = OP TerminalObject
-  initiate = Op terminate
-
-instance (HasBinaryCoproducts k) => HasBinaryProducts (OPPOSITE k) where
-  type a && b = OP (UN OP a || UN OP b)
-  withObProd @(OP a) @(OP b) r = withObCoprod @k @a @b r
-  fst @(OP a) @(OP b) = Op (lft @_ @a @b)
-  snd @(OP a) @(OP b) = Op (rgt @_ @a @b)
-  Op a &&& Op b = Op (a ||| b)
-
-instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
-  type a || b = OP (UN OP a && UN OP b)
-  withObCoprod @(OP a) @(OP b) r = withObProd @k @a @b r
-  lft @(OP a) @(OP b) = Op (fst @_ @a @b)
-  rgt @(OP a) @(OP b) = Op (snd @_ @a @b)
-  Op a ||| Op b = Op (a &&& b)
-
-instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where
-  par0 = Op par0
-  Op l `par` Op r = Op (l `par` r)
-
--- | The opposite of a monoidal category is also monoidal, with the same tensor product.
-instance (Monoidal k) => Monoidal (OPPOSITE k) where
-  type Unit = OP Unit
-  type a ** b = OP (UN OP a ** UN OP b)
-  withOb2 @(OP a) @(OP b) r = withOb2 @k @a @b r
-  leftUnitor = Op leftUnitorInv
-  leftUnitorInv = Op leftUnitor
-  rightUnitor = Op rightUnitorInv
-  rightUnitorInv = Op rightUnitor
-  associator @(OP a) @(OP b) @(OP c) = Op (associatorInv @k @a @b @c)
-  associatorInv @(OP a) @(OP b) @(OP c) = Op (associator @k @a @b @c)
-
-instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
-  swap @(OP a) @(OP b) = Op (swap @k @b @a)
-
-instance (Representable p) => Corepresentable (Op p) where
-  type Op p %% OP a = OP (p % a)
-  coindex (Op f) = Op (index f)
-  cotabulate (Op f) = Op (tabulate f)
-  corepMap (Op f) = Op (repMap @p f)
-
-instance (Corepresentable p) => Representable (Op p) where
-  type Op p % OP a = OP (p %% a)
-  index (Op f) = Op (coindex f)
-  tabulate (Op f) = Op (cotabulate f)
-  repMap (Op f) = Op (corepMap @p f)
+instance (ThinProfunctor p) => ThinProfunctor (Op p) where
+  type HasArrow (Op p) (OP a) (OP b) = HasArrow p b a
+  arr = Op arr
+  withArr (Op f) r = withArr f r
 
 type UnOp :: OPPOSITE k +-> OPPOSITE j -> j +-> k
 data UnOp p a b where
@@ -96,19 +39,8 @@ instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +
   dimap l r = UnOp . dimap (Op r) (Op l) . unUnOp
   r \\ UnOp f = r \\ f
 
-instance (Strong k p) => Strong (OPPOSITE k) (Op p) where
-  act (Op w) (Op p) = Op (act w p)
-instance (Strong k (Id :: CAT m)) => Strong (OPPOSITE k) (Id :: CAT (OPPOSITE m)) where
-  act (Op w) (Id (Op p)) = Id (Op (act w p))
-instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
-  type Act (OP a) (OP b) = OP (Act a b)
-  withObAct @(OP a) @(OP b) r = withObAct @m @k @a @b r
-  unitor = Op (unitorInv @m)
-  unitorInv = Op (unitor @m)
-  multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @m @k @a @b @x)
-  multiplicatorInv @(OP a) @(OP b) @(OP x) = Op (multiplicator @m @k @a @b @x)
+instance (Thin j, Thin k, ThinProfunctor p) => ThinProfunctor (UnOp p :: j +-> k) where
+  type HasArrow (UnOp p) a b = HasArrow p (OP b) (OP a)
+  arr = unOp arr
+  withArr f r = withArr (Op f) r
 
-instance (ThinProfunctor p) => ThinProfunctor (Op p) where
-  type HasArrow (Op p) (OP a) (OP b) = HasArrow p b a
-  arr = Op arr
-  withArr (Op f) r = withArr f r

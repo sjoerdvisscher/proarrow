@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Object.Initial where
 
 import Data.Kind (Type)
@@ -8,6 +9,7 @@ import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Initial (InitialProfunctor)
@@ -53,3 +55,11 @@ deriving instance Show (Struct HasInitialObject a b)
 instance (Ok cs p, HasInitialObject `Elem` cs) => HasInitialObject (FREE cs p) where
   type InitialObject = InitF
   initiate = Str Initial Id
+
+instance (HasInitialObject k) => HasTerminalObject (OPPOSITE k) where
+  type TerminalObject = OP InitialObject
+  terminate = Op initiate
+
+instance (HasTerminalObject k) => HasInitialObject (OPPOSITE k) where
+  type InitialObject = OP TerminalObject
+  initiate = Op terminate

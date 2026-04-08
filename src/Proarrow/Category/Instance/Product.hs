@@ -7,7 +7,6 @@ import Prelude (type (~))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
-import Proarrow.Profunctor.Representable (Representable (..))
 
 type Fst :: (a, b) -> a
 type family Fst a where
@@ -41,9 +40,3 @@ instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :**: q) where
   type HasArrow (p :**: q) '(a1, a2) '(b1, b2) = (HasArrow p a1 b1, HasArrow q a2 b2)
   arr = arr :**: arr
   withArr (f :**: g) r = withArr f (withArr g r)
-
-instance (Representable p, Representable q) => Representable (p :**: q) where
-  type (p :**: q) % '(a, b) = '(p % a, q % b)
-  index (p :**: q) = index p :**: index q
-  tabulate (f :**: g) = tabulate f :**: tabulate g
-  repMap (f :**: g) = repMap @p f :**: repMap @q g

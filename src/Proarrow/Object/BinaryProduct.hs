@@ -100,13 +100,6 @@ instance (HasBinaryProducts k, Representable (p :: j +-> k), Representable q) =>
     withRepOb @p @b (withRepOb @q @b (tabulate (fst @_ @(p % b) @(q % b) . f) :*: tabulate (snd @_ @(p % b) @(q % b) . f)))
   repMap f = repMap @p f *** repMap @q f
 
-instance (CategoryOf j, CategoryOf k) => MonoidalAction (PROD (j +-> k)) (j +-> k) where
-  type Act (PR p) q = p :*: q
-  withObAct r = r
-  unitor = leftUnitorProd
-  unitorInv = leftUnitorProdInv
-  multiplicator = associatorProdInv
-  multiplicatorInv = associatorProd
 instance (CategoryOf j, CategoryOf k) => Strong (PROD (j +-> k)) (Prof :: CAT (j +-> k)) where
   act (Prod (Prof n)) (Prof m) = Prof \(p :*: q) -> n p :*: m q
 
@@ -195,15 +188,13 @@ instance (HasProducts k) => Monoidal (PROD k) where
 instance (HasProducts k) => SymMonoidal (PROD k) where
   swap @(PR a) @(PR b) = Prod (swapProd @a @b)
 
-instance (HasProducts k, Category cat) => Strong (PROD k) (Prod cat :: CAT (PROD k)) where
-  act (Prod f) (Prod g) = Prod (f *** g)
-instance (HasProducts k) => MonoidalAction (PROD k) (PROD k) where
-  type Act (PR x) (PR y) = PR (x && y)
-  withObAct @(PR a) @(PR b) r = withObProd @k @a @b r
+instance (HasProducts k, Strong (PROD k) ((~>) :: CAT k)) => MonoidalAction (PROD k) k where
+  type Act (PR x) y = x && y
+  withObAct @(PR a) @b r = withObProd @k @a @b r
   unitor = leftUnitorProd
   unitorInv = leftUnitorProdInv
-  multiplicator @a @b @c = associatorProdInv @a @b @c
-  multiplicatorInv @a @b @c = associatorProd @a @b @c
+  multiplicator @(PR a) @(PR b) @c = associatorProd @a @b @c
+  multiplicatorInv @(PR a) @(PR b) @c = associatorProdInv @a @b @c
 
 instance MonoidalProfunctor (->) where
   par0 = id
@@ -231,8 +222,8 @@ instance MonoidalAction Type Type where
   withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
-  multiplicator = associatorInv
-  multiplicatorInv = associator
+  multiplicator = associator
+  multiplicatorInv = associatorInv
 
 instance Costrong Type (->) where
   coact f x = let (u, y) = f (u, x) in y

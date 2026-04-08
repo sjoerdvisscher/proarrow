@@ -4,11 +4,13 @@
 
 module Proarrow.Category.Instance.Free where
 
+import Data.Char (toLower)
 import Data.Kind (Constraint)
 import Data.Typeable (Typeable, eqT, (:~:) (..))
 import Prelude (Bool (..), Eq (..), Maybe (..), Show (..), (&&))
 import Prelude qualified as P
 
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -21,14 +23,13 @@ import Proarrow.Core
   )
 import Proarrow.Profunctor.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
-import Data.Char (toLower)
 
 type family All (cs :: [Kind -> Constraint]) (k :: Kind) :: Constraint where
   All '[] k = ()
   All (c ': cs) k = (c k, All cs k)
 
-class (All cs k => c k) => FromAll cs c k
-instance (All cs k => c k) => FromAll cs c k
+class ((All cs k) => c k) => FromAll cs c k
+instance ((All cs k) => c k) => FromAll cs c k
 
 type Elem :: (Kind -> Constraint) -> [Kind -> Constraint] -> Constraint
 class (forall k. FromAll cs c k) => c `Elem` cs
@@ -85,15 +86,18 @@ showPostComp d p g = P.showParen (d P.> 9) (P.showsPrec 10 p . P.showString " . 
 type IsFreeOb :: forall {j} {cs :: [Kind -> Constraint]} {p :: CAT j}. FREE cs p -> Constraint
 class IsFreeOb (a :: FREE cs (p :: CAT j)) where
   type Lower (f :: j +-> k) (a :: FREE cs p) :: k
-  withLowerOb :: forall {k} (f :: j +-> k) r . (Representable f, All cs k) => ((Ob (Lower f (a :: FREE cs p))) => r) -> r
+  withLowerOb :: forall {k} (f :: j +-> k) r. (Representable f, All cs k) => ((Ob (Lower f (a :: FREE cs p))) => r) -> r
 instance (Ob a, Typeable a) => IsFreeOb (EMB a) where
   type Lower f (EMB a) = f % a
   withLowerOb @f = withRepOb @f @a
 
-class ((Ok cs p, Eq2 p) => Eq2 str, (Ok cs p) => Typeable str, Show2 p => Show2 str) => CanEqShow (str :: CAT (FREE cs p))
-instance ((Ok cs p, Eq2 p) => Eq2 str, (Ok cs p) => Typeable str, Show2 p => Show2 str) => CanEqShow (str :: CAT (FREE cs p))
+class ((Ok cs p, Eq2 p) => Eq2 str, (Ok cs p) => Typeable str, (Show2 p) => Show2 str) => CanEqShow (str :: CAT (FREE cs p))
+instance ((Ok cs p, Eq2 p) => Eq2 str, (Ok cs p) => Typeable str, (Show2 p) => Show2 str) => CanEqShow (str :: CAT (FREE cs p))
 
-class (Typeable c, CanEqShow (Struct c :: CAT (FREE cs p)), c `Elem` cs) => HasStructure cs (p :: CAT j) (c :: Kind -> Constraint) where
+class
+  (Typeable c, CanEqShow (Struct c :: CAT (FREE cs p)), c `Elem` cs) =>
+  HasStructure cs (p :: CAT j) (c :: Kind -> Constraint)
+  where
   data Struct c :: CAT (FREE cs p)
   foldStructure
     :: forall {k} (f :: j +-> k) (a :: FREE cs p) (b :: FREE cs p)
@@ -116,7 +120,8 @@ fold pn = go
     go (Str s g) = foldStructure @_ @_ @_ @_ @f go s . go g
 
 retract
-  :: forall {j} {k} cs (f :: j +-> k) a b. (All cs k, Representable f) => (a :: FREE cs InitialProfunctor) ~> b -> Lower f a ~> Lower f b
+  :: forall {j} {k} cs (f :: j +-> k) a b
+   . (All cs k, Representable f) => (a :: FREE cs InitialProfunctor) ~> b -> Lower f a ~> Lower f b
 retract = fold @cs @f (\case {})
 
 instance (Ok cs p) => CategoryOf (FREE cs p) where
@@ -135,3 +140,54 @@ instance (Ok cs p) => Profunctor (Free :: CAT (FREE cs p)) where
   r \\ Id = r
   r \\ Emb _ f = r \\ f
   r \\ Str _ f = r \\ f
+
+data family UnitF :: k
+instance (Monoidal `Elem` cs) => IsFreeOb (UnitF :: FREE cs p) where
+  type Lower f UnitF = Unit
+  withLowerOb r = r
+data family (**!) (a :: k) (b :: k) :: k
+instance (Ob (a :: FREE cs p), Ob b, Monoidal `Elem` cs) => IsFreeOb (a **! b) where
+  type Lower f (a **! b) = Lower f a ** Lower f b
+  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withOb2 @_ @(Lower f a) @(Lower f b) r))
+instance (Monoidal `Elem` cs) => HasStructure cs p Monoidal where
+  data Struct Monoidal i o where
+    Par0 :: Struct Monoidal UnitF UnitF
+    Par :: a ~> b -> c ~> d -> Struct Monoidal (a **! c) (b **! d)
+    LeftUnitor :: (Ob a) => Struct Monoidal (UnitF **! a) a
+    LeftUnitorInv :: (Ob a) => Struct Monoidal a (UnitF **! a)
+    RightUnitor :: (Ob a) => Struct Monoidal (a **! UnitF) a
+    RightUnitorInv :: (Ob a) => Struct Monoidal a (a **! UnitF)
+    Associator :: (Ob a, Ob b, Ob c) => Struct Monoidal ((a **! b) **! c) (a **! (b **! c))
+    AssociatorInv :: (Ob a, Ob b, Ob c) => Struct Monoidal (a **! (b **! c)) ((a **! b) **! c)
+  foldStructure _ Par0 = par0
+  foldStructure go (Par f g) = go f `par` go g
+  foldStructure @f _ (LeftUnitor @a) = withLowerOb @a @f leftUnitor
+  foldStructure @f _ (LeftUnitorInv @a) = withLowerOb @a @f leftUnitorInv
+  foldStructure @f _ (RightUnitor @a) = withLowerOb @a @f rightUnitor
+  foldStructure @f _ (RightUnitorInv @a) = withLowerOb @a @f rightUnitorInv
+  foldStructure @f _ (Associator @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+  foldStructure @f _ (AssociatorInv @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+deriving instance (WithEq a) => Eq (Struct Monoidal a b)
+deriving instance (WithShow a) => Show (Struct Monoidal a b)
+instance (Ok cs p, Monoidal `Elem` cs) => MonoidalProfunctor (Free :: CAT (FREE cs p)) where
+  par0 = Str Par0 Id
+  f `par` g = Str (Par f g) Id \\ f \\ g
+instance (Ok cs p, Monoidal `Elem` cs) => Monoidal (FREE cs p) where
+  type Unit = UnitF
+  type a ** b = a **! b
+  withOb2 r = r
+  leftUnitor = Str LeftUnitor Id
+  leftUnitorInv = Str LeftUnitorInv Id
+  rightUnitor = Str RightUnitor Id
+  rightUnitorInv = Str RightUnitorInv Id
+  associator = Str Associator Id
+  associatorInv = Str AssociatorInv Id
+
+instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
+  data Struct SymMonoidal i o where
+    Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
+  foldStructure @f _ (Swap @a @b) = withLowerOb @a @f (withLowerOb @b @f (swap @_ @(Lower f a) @(Lower f b)))
+deriving instance (WithEq a) => Eq (Struct SymMonoidal a b)
+deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
+instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
+  swap = Str Swap Id

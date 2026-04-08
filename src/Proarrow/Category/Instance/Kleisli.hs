@@ -19,6 +19,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.ThinCategory qualified as T
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveProfunctor)
 import Proarrow.Core
   ( CAT
@@ -32,7 +33,6 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
-import Proarrow.Monoid (CopyDiscard (..))
 import Proarrow.Object (tgt, pattern Obj, type Obj)
 import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, copar)
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)

@@ -7,8 +7,8 @@ import Data.Kind (Constraint)
 import Prelude (($), type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), associatorInv', associator')
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Monoid (CopyDiscard (..))
 
 infixl 8 ||
 infixl 7 ==

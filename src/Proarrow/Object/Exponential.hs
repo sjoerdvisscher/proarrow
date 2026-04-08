@@ -14,6 +14,7 @@ import Proarrow.Category.Instance.Free
   , Ok
   , WithEq
   , WithShow
+  , type (**!)
   )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
@@ -23,7 +24,6 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , associator
   , leftUnitor
-  , type (**!)
   )
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))

@@ -6,12 +6,10 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Category (Supplies)
-import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), par)
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
 import Proarrow.Object.BinaryCoproduct
   ( COPROD (..)
   , Coprod (..)
@@ -25,7 +23,10 @@ import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Constant (Constant)
+import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
@@ -56,7 +57,7 @@ memptyAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob
 memptyAct = act (mempty @a) (obj @n) . unitorInv @m
 
 mappendAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => Act a (Act a n) ~> Act a n
-mappendAct = act (mappend @a) (obj @n) . multiplicator @m @c @a @a @n
+mappendAct = act (mappend @a) (obj @n) . multiplicatorInv @m @c @a @a @n
 
 type ModuleObject :: forall {m} {c}. m -> c -> Constraint
 class (MonoidalAction m c, Monoid a, Ob n) => ModuleObject (a :: m) (n :: c) where
@@ -83,22 +84,7 @@ counitAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, 
 counitAct = unitor @m . act (counit @a) (obj @n)
 
 comultAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> Act a (Act a n)
-comultAct = multiplicatorInv @m @c @a @a @n . act (comult @a) (obj @n)
-
-class (Monoidal k) => CopyDiscard k where
-  copy :: (Ob (a :: k)) => a ~> a ** a
-  default copy :: (k `Supplies` Comonoid) => (Ob (a :: k)) => a ~> a ** a
-  copy = comult
-  discard :: (Ob (a :: k)) => a ~> Unit
-  default discard :: (k `Supplies` Comonoid) => (Ob (a :: k)) => a ~> Unit
-  discard = counit
-
-instance (HasProducts k) => CopyDiscard (PROD k)
-instance CopyDiscard Type
-instance CopyDiscard ()
-instance (CopyDiscard j, CopyDiscard k) => CopyDiscard (j, k) where
-  copy = copy :**: copy
-  discard = discard :**: discard
+comultAct = multiplicator @m @c @a @a @n . act (comult @a) (obj @n)
 
 type data MONOIDK (m :: k) = M
 data Mon a b where
@@ -178,3 +164,13 @@ instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => P.Semigroup (I
 instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => P.Monoid (Id a b) where
   mempty = Id zero
 instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => CommutativeMonoid (Id a b)
+
+instance (Monoidal k, Monoid r) => MonoidalProfunctor (Rep (Constant r) :: k +-> k) where
+  par0 = Rep mempty
+  Rep @_ @_ @x l `par` Rep @_ @_ @y r = withOb2 @k @x @y (Rep (mappend . (l `par` r)))
+instance (HasCoproducts k, Ob r) => MonoidalProfunctor (Coprod (Rep (Constant r)) :: COPROD k +-> COPROD k) where
+  par0 = Coprod (Rep initiate)
+  Coprod @_ @_ @x (Rep l) `par` Coprod @_ @_ @y (Rep r) = withObCoprod @k @x @y (Coprod (Rep (l ||| r)))
+instance (Monoidal k, Comonoid r) => MonoidalProfunctor (Corep (Constant r) :: k +-> k) where
+  par0 = Corep counit
+  Corep @_ @x l `par` Corep @_ @y r = withOb2 @k @x @y (Corep ((l `par` r) . comult))

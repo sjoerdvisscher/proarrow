@@ -22,6 +22,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj, tgt)
@@ -177,6 +178,14 @@ instance (HasCoproducts k) => Monoidal (COPROD k) where
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
   swap @(COPR a) @(COPR b) = Coprod (Id (swapCoprod @k @a @b))
 
+instance (HasCoproducts k, Strong (COPROD k) ((~>) :: CAT k)) => MonoidalAction (COPROD k) k where
+  type Act a b = UN COPR a || b
+  withObAct @(COPR a) @b r = withObCoprod @k @a @b r
+  unitor = unId (unCoprod leftUnitor)
+  unitorInv = unId (unCoprod leftUnitorInv)
+  multiplicator @a @b @x = unId (unCoprod (associator @(COPROD k) @a @b @(COPR x)))
+  multiplicatorInv @a @b @x = unId (unCoprod (associatorInv @(COPROD k) @a @b @(COPR x)))
+
 instance Costrong (COPROD Type) (Id :: CAT Type) where
   coact (Id uxuy) = Id (let loop ux = P.either (loop . P.Left) id (uxuy ux) in loop . P.Right)
 
@@ -188,18 +197,11 @@ instance MonoidalAction Type (COPROD Type) where
   withObAct r = r
   unitor = Coprod (Id leftUnitor)
   unitorInv = Coprod (Id leftUnitorInv)
-  multiplicator = Coprod (Id associatorInv)
-  multiplicatorInv = Coprod (Id associator)
+  multiplicator = Coprod (Id associator)
+  multiplicatorInv = Coprod (Id associatorInv)
 
 instance Strong (COPROD Type) (->) where
   Coprod (Id f) `act` g = f +++ g
-instance MonoidalAction (COPROD Type) Type where
-  type Act (p :: COPROD Type) (x :: Type) = UN COPR (p ** COPR x)
-  withObAct r = r
-  unitor = unId (unCoprod leftUnitor)
-  unitorInv = unId (unCoprod leftUnitorInv)
-  multiplicator @a @b @x = unId (unCoprod (associatorInv @(COPROD Type) @a @b @(COPR x)))
-  multiplicatorInv @a @b @x = unId (unCoprod (associator @(COPROD Type) @a @b @(COPR x)))
 
 class (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b
 instance (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b
@@ -246,3 +248,17 @@ instance ((a && b) ~ (a || b)) => CheckBiproduct a b
 class (HasBinaryCoproducts k, HasBinaryProducts k, forall (a :: k) (b :: k). (Ob a, Ob b) => CheckBiproduct a b) => HasBiproducts k where
   sum :: (a :: k) ~> b -> a ~> b -> a ~> b
   sum f g = codiag . (f +++ g) . diag \\ f \\ g
+
+instance (HasBinaryCoproducts k) => HasBinaryProducts (OPPOSITE k) where
+  type a && b = OP (UN OP a || UN OP b)
+  withObProd @(OP a) @(OP b) r = withObCoprod @k @a @b r
+  fst @(OP a) @(OP b) = Op (lft @_ @a @b)
+  snd @(OP a) @(OP b) = Op (rgt @_ @a @b)
+  Op a &&& Op b = Op (a ||| b)
+
+instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
+  type a || b = OP (UN OP a && UN OP b)
+  withObCoprod @(OP a) @(OP b) r = withObProd @k @a @b r
+  lft @(OP a) @(OP b) = Op (fst @_ @a @b)
+  rgt @(OP a) @(OP b) = Op (snd @_ @a @b)
+  Op a ||| Op b = Op (a &&& b)

@@ -13,11 +13,12 @@ import Proarrow.Category.Monoidal
   , swap
   )
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Strictified ()
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Monoid (Comonoid (..), CopyDiscard, Monoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
@@ -194,8 +195,8 @@ instance MonoidalAction KIND KIND where
   withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
-  multiplicator = associatorInv
-  multiplicatorInv = associator
+  multiplicator = associator
+  multiplicatorInv = associatorInv
 
 instance Strong KIND Cat where
   act = par

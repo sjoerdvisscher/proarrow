@@ -1,5 +1,5 @@
 {-|
-Description: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Start here!
+Description: < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < Start here!
 -}
 module Proarrow.Core
   ( -- * Type Infrastructure

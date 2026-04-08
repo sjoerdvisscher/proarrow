@@ -15,7 +15,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, (//))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, (//), OB)
 import Proarrow.Functor (Functor (..), type (.~>))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -27,6 +27,7 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -121,8 +122,19 @@ instance MonoidalAction (Type -> Type) Type where
   withObAct r = r
   unitor = runIdentity
   unitorInv = Identity
-  multiplicator = Compose
-  multiplicatorInv = getCompose
+  multiplicator = getCompose
+  multiplicatorInv = Compose
+
+instance (ob Identity, forall a b. (ob a, ob b) => ob (Compose a b)) => Strong (SUBCAT (ob :: OB (Type -> Type))) (->) where
+  act (Sub (Nat n)) f = n . map f
+instance (Monoidal (SUBCAT (ob :: OB (Type -> Type))), Strong (SUBCAT (ob :: OB (Type -> Type))) ((~>) :: CAT Type)) => MonoidalAction (SUBCAT (ob :: OB (Type -> Type))) Type where
+  type Act (p :: SUBCAT ob) (x :: Type) = UN SUB p x
+  withObAct r = r
+  unitor = runIdentity
+  unitorInv = Identity
+  multiplicator = getCompose
+  multiplicatorInv = Compose
+
 
 type Ran :: (j -> k) -> (j -> Type) -> k -> Type
 newtype Ran j h a = Ran {runRan :: forall b. (a ~> j b) -> h b}

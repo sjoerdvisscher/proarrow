@@ -1,8 +1,9 @@
 module Proarrow.Category.Monoidal.Rev where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
-import Proarrow.Monoid (Monoid (..), Comonoid (..), CopyDiscard (..))
+import Proarrow.Monoid (Monoid (..), Comonoid (..))
 
 type data REV k = R k
 type instance UN R (R a) = a

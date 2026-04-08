@@ -130,9 +130,9 @@ compactClosedCoact
 compactClosedCoact f =
   unitor @m @k @y
     . act (dualityCounit @u) (obj @y)
-    . multiplicator @m @k @(Dual u) @u @y
+    . multiplicatorInv @m @k @(Dual u) @u @y
     . act (obj @(Dual u)) f
-    . multiplicatorInv @m @k @(Dual u) @u @x
+    . multiplicator @m @k @(Dual u) @u @x
     . act (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
     . unitorInv @m @k @x
     \\ dualObj @u

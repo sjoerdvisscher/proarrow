@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Profunctor.Representable where
 
@@ -11,6 +12,8 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object (Obj, obj, tgt, src)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, trivialCorep)
 import Proarrow.Category.Instance.Prof (Prof(..))
+import Proarrow.Category.Opposite (Op (..), OPPOSITE (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
 
 infixl 8 %
 
@@ -27,6 +30,12 @@ instance Representable (->) where
   tabulate f = f
   repMap f = f
 
+instance (Representable p, Representable q) => Representable (p :**: q) where
+  type (p :**: q) % '(a, b) = '(p % a, q % b)
+  index (p :**: q) = index p :**: index q
+  tabulate (f :**: g) = tabulate f :**: tabulate g
+  repMap (f :**: g) = repMap @p f :**: repMap @q g
+
 repObj :: forall p a. (Representable p, Ob a) => Obj (p % a)
 repObj = repMap @p (obj @a)
 
@@ -38,6 +47,18 @@ dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r
 
 trivialRep :: forall p a. (Representable p, Ob a) => p (p % a) a
 trivialRep = tabulate (repObj @p @a)
+
+instance (Representable p) => Corepresentable (Op p) where
+  type Op p %% OP a = OP (p % a)
+  coindex (Op f) = Op (index f)
+  cotabulate (Op f) = Op (tabulate f)
+  corepMap (Op f) = Op (repMap @p f)
+
+instance (Corepresentable p) => Representable (Op p) where
+  type Op p % OP a = OP (p %% a)
+  index (Op f) = Op (coindex f)
+  tabulate (Op f) = Op (cotabulate f)
+  repMap (Op f) = Op (corepMap @p f)
 
 type CorepStar :: (k +-> j) -> (j +-> k)
 data CorepStar p a b where

@@ -7,6 +7,7 @@ import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner', unitObj)
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core
   ( CAT
@@ -22,7 +23,7 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Monoid (Comonoid (..), CopyDiscard (..), Monoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
@@ -160,5 +161,5 @@ instance (Monoidal j, Monoidal k) => MonoidalAction (j +-> k) (j +-> k) where
   withObAct r = r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
-  multiplicator = associatorInv
-  multiplicatorInv = associator
+  multiplicator = associator
+  multiplicatorInv = associatorInv

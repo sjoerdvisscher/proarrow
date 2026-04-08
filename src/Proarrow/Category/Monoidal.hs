@@ -3,21 +3,26 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
-import Prelude (Eq, Show, ($))
+import Prelude (($))
 
-import Proarrow.Category.Instance.Free
-  ( Elem
-  , FREE (..)
-  , Free (..)
-  , HasStructure (..)
-  , IsFreeOb (..)
-  , Ok
-  , WithEq
-  , WithShow
-  )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Obj, Profunctor (..), Promonad (..), obj, src, tgt, type (+->))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Iso
+  , Kind
+  , Obj
+  , Profunctor (..)
+  , Promonad (..)
+  , UN
+  , iso
+  , obj
+  , src
+  , tgt
+  , type (+->)
+  )
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), trivialRep)
@@ -80,6 +85,17 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Mono
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
   associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
 
+leftUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => Iso (Unit ** a) (Unit ** a') a a'
+leftUnitorIso = iso leftUnitor leftUnitorInv
+
+rightUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => Iso (a ** Unit) (a' ** Unit) a a'
+rightUnitorIso = iso rightUnitor rightUnitorInv
+
+associatorIso
+  :: (Monoidal k, Ob (a :: k), Ob b, Ob c, Ob (a' :: k), Ob b', Ob c')
+  => Iso ((a ** b) ** c) ((a' ** b') ** c') (a ** (b ** c)) (a' ** (b' ** c'))
+associatorIso @k @a @b @c @a' @b' @c' = iso (associator @k @a @b @c) (associatorInv @k @a' @b' @c')
+
 instance Monoidal () where
   type Unit = '()
   type '() ** '() = '()
@@ -101,6 +117,25 @@ instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   rightUnitorInv @'(a1, a2) = rightUnitorInv @j @a1 :**: rightUnitorInv @k @a2
   associator @'(a1, a2) @'(b1, b2) @'(c1, c2) = associator @j @a1 @b1 @c1 :**: associator @k @a2 @b2 @c2
   associatorInv @'(a1, a2) @'(b1, b2) @'(c1, c2) = associatorInv @j @a1 @b1 @c1 :**: associatorInv @k @a2 @b2 @c2
+
+instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where
+  par0 = Op par0
+  Op l `par` Op r = Op (l `par` r)
+
+-- | The opposite of a monoidal category is also monoidal, with the same tensor product.
+instance (Monoidal k) => Monoidal (OPPOSITE k) where
+  type Unit = OP Unit
+  type a ** b = OP (UN OP a ** UN OP b)
+  withOb2 @(OP a) @(OP b) r = withOb2 @k @a @b r
+  leftUnitor = Op leftUnitorInv
+  leftUnitorInv = Op leftUnitor
+  rightUnitor = Op rightUnitorInv
+  rightUnitorInv = Op rightUnitor
+  associator @(OP a) @(OP b) @(OP c) = Op (associatorInv @k @a @b @c)
+  associatorInv @(OP a) @(OP b) @(OP c) = Op (associator @k @a @b @c)
+
+instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
+  swap @(OP a) @(OP b) = Op (swap @k @b @a)
 
 (||) :: (Monoidal k) => (a :: k) ~> b -> c ~> d -> a ** c ~> b ** d
 (||) = par
@@ -198,57 +233,6 @@ swapSnd = (obj2 @a @d `par` swap @k @b @c) . swapInner @a @b @d @c . (obj2 @a @b
 swapOuter
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((d ** b) ** (c ** a))
 swapOuter = (obj2 @d @b `par` swap @k @a @c) . swapFst @a @b @d @c . (obj2 @a @b `par` swap @k @c @d)
-
-data family UnitF :: k
-instance (Monoidal `Elem` cs) => IsFreeOb (UnitF :: FREE cs p) where
-  type Lower f UnitF = Unit
-  withLowerOb r = r
-data family (**!) (a :: k) (b :: k) :: k
-instance (Ob (a :: FREE cs p), Ob b, Monoidal `Elem` cs) => IsFreeOb (a **! b) where
-  type Lower f (a **! b) = Lower f a ** Lower f b
-  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withOb2 @_ @(Lower f a) @(Lower f b) r))
-instance (Monoidal `Elem` cs) => HasStructure cs p Monoidal where
-  data Struct Monoidal i o where
-    Par0 :: Struct Monoidal UnitF UnitF
-    Par :: a ~> b -> c ~> d -> Struct Monoidal (a **! c) (b **! d)
-    LeftUnitor :: (Ob a) => Struct Monoidal (UnitF **! a) a
-    LeftUnitorInv :: (Ob a) => Struct Monoidal a (UnitF **! a)
-    RightUnitor :: (Ob a) => Struct Monoidal (a **! UnitF) a
-    RightUnitorInv :: (Ob a) => Struct Monoidal a (a **! UnitF)
-    Associator :: (Ob a, Ob b, Ob c) => Struct Monoidal ((a **! b) **! c) (a **! (b **! c))
-    AssociatorInv :: (Ob a, Ob b, Ob c) => Struct Monoidal (a **! (b **! c)) ((a **! b) **! c)
-  foldStructure _ Par0 = par0
-  foldStructure go (Par f g) = go f `par` go g
-  foldStructure @f _ (LeftUnitor @a) = withLowerOb @a @f leftUnitor
-  foldStructure @f _ (LeftUnitorInv @a) = withLowerOb @a @f leftUnitorInv
-  foldStructure @f _ (RightUnitor @a) = withLowerOb @a @f rightUnitor
-  foldStructure @f _ (RightUnitorInv @a) = withLowerOb @a @f rightUnitorInv
-  foldStructure @f _ (Associator @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
-  foldStructure @f _ (AssociatorInv @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
-deriving instance (WithEq a) => Eq (Struct Monoidal a b)
-deriving instance (WithShow a) => Show (Struct Monoidal a b)
-instance (Ok cs p, Monoidal `Elem` cs) => MonoidalProfunctor (Free :: CAT (FREE cs p)) where
-  par0 = Str Par0 Id
-  f `par` g = Str (Par f g) Id \\ f \\ g
-instance (Ok cs p, Monoidal `Elem` cs) => Monoidal (FREE cs p) where
-  type Unit = UnitF
-  type a ** b = a **! b
-  withOb2 r = r
-  leftUnitor = Str LeftUnitor Id
-  leftUnitorInv = Str LeftUnitorInv Id
-  rightUnitor = Str RightUnitor Id
-  rightUnitorInv = Str RightUnitorInv Id
-  associator = Str Associator Id
-  associatorInv = Str AssociatorInv Id
-
-instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
-  data Struct SymMonoidal i o where
-    Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
-  foldStructure @f _ (Swap @a @b) = withLowerOb @a @f (withLowerOb @b @f (swap @_ @(Lower f a) @(Lower f b)))
-deriving instance (WithEq a) => Eq (Struct SymMonoidal a b)
-deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
-instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
-  swap = Str Swap Id
 
 data UnitRep :: () +-> k
 instance (Monoidal k) => FunctorForRep (UnitRep :: () +-> k) where
