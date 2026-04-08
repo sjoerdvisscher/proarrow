@@ -26,7 +26,7 @@
 	  ></li
 	><li
 	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs"
-	  >User Comments</a
+	  >Github</a
 	  ></li
 	><li
 	><a href="index.html"
@@ -57,6 +57,364 @@
 	><p class="caption"
 	>Proarrow.Category.Monoidal.Distributive</p
 	></div
+      ><div id="synopsis"
+      ><details id="syn"
+	><summary
+	  >Synopsis</summary
+	  ><ul class="details-toggle" data-details-id="syn"
+	  ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+	      >MonoidalProfunctor</a
+	      > p, <a href="Proarrow-Category-Monoidal.html#t:MonoidalProfunctor" title="Proarrow.Category.Monoidal"
+	      >MonoidalProfunctor</a
+	      > (<a href="Proarrow-Object-BinaryCoproduct.html#t:Coprod" title="Proarrow.Object.BinaryCoproduct"
+	      >Coprod</a
+	      > p)) =&gt; <a href="#t:DistributiveProfunctor"
+	      >DistributiveProfunctor</a
+	      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+	      >Monoidal</a
+	      > k, <a href="Proarrow-Object-BinaryCoproduct.html#t:HasCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	      >HasCoproducts</a
+	      > k, <a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	      >DistributiveProfunctor</a
+	      > (<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+	      >Id</a
+	      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+	      >Type</a
+	      >)) =&gt; <a href="#t:Distributive"
+	      >Distributive</a
+	      > k <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:distL"
+		  >distL</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > c) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > (b <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+		  >||</a
+		  > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > b) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+		  >||</a
+		  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > c))</li
+		><li
+		><a href="#v:distR"
+		  >distR</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > c) =&gt; ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+		  >||</a
+		  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > c) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > c) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+		  >||</a
+		  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > c))</li
+		><li
+		><a href="#v:distL0"
+		  >distL0</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+		  >InitialObject</a
+		  > :: k)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+		  >InitialObject</a
+		  > :: k)</li
+		><li
+		><a href="#v:distR0"
+		  >distR0</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  >Ob</a
+		  > a =&gt; ((<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+		  >InitialObject</a
+		  > :: k) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  >~&gt;</a
+		  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+		  >InitialObject</a
+		  > :: k)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:distLInv"
+	      >distLInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+	      >Monoidal</a
+	      > k, <a href="Proarrow-Object-BinaryCoproduct.html#t:HasCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	      >HasCoproducts</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > b) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > (b <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > c))</li
+	    ><li class="src short"
+	    ><a href="#v:distRInv"
+	      >distRInv</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+	      >Monoidal</a
+	      > k, <a href="Proarrow-Object-BinaryCoproduct.html#t:HasCoproducts" title="Proarrow.Object.BinaryCoproduct"
+	      >HasCoproducts</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > c) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	      >**</a
+	      > c)</li
+	    ><li class="src short"
+	    ><a href="#v:distLProd"
+	      >distLProd</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	      >BiCCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > (b <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > ((a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > b) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > (a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > c))</li
+	    ><li class="src short"
+	    ><a href="#v:distRProd"
+	      >distRProd</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (a :: k) (b :: k) (c :: k). (<a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
+	      >BiCCC</a
+	      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > c) =&gt; ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > b) <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > c) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > ((a <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > c) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+	      >||</a
+	      > (b <a href="Proarrow-Object-BinaryProduct.html#t:-38--38-" title="Proarrow.Object.BinaryProduct"
+	      >&amp;&amp;</a
+	      > c))</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	      >DistributiveProfunctor</a
+	      > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
+	      >Strong</a
+	      > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+	      >SelfAction</a
+	      > k) =&gt; <a href="#t:StrongDistributiveProfunctor"
+	      >StrongDistributiveProfunctor</a
+	      > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k)</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > t =&gt; <a href="#t:Traversable"
+	      >Traversable</a
+	      > (t :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:traverse"
+		  >traverse</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+		  >StrongDistributiveProfunctor</a
+		  > p =&gt; (t <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
+		  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+		  >:~&gt;</a
+		  > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
+		  > t)</li
+		></ul
+	      ></li
+	    ><li class="src short"
+	    ><a href="#v:repTraverse"
+	      >repTraverse</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (t :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) p (a :: k) (b :: k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
+	      >Traversable</a
+	      > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > t, <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	      >StrongDistributiveProfunctor</a
+	      > p) =&gt; p a b -&gt; p (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > a) (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > b)</li
+	    ><li class="src short"
+	    ><a href="#v:baseTraverse"
+	      >baseTraverse</a
+	      > :: <span class="keyword"
+	      >forall</span
+	      > {k} (t :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (f :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) (a :: k) (b :: k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
+	      >Traversable</a
+	      > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	      >Representable</a
+	      > f, <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	      >StrongDistributiveProfunctor</a
+	      > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	      >Ob</a
+	      > b) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > b)) -&gt; (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	      >~&gt;</a
+	      > (f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	      >%</a
+	      > b))</li
+	    ><li class="src short"
+	    ><span class="keyword"
+	      >class</span
+	      > <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+	      >Profunctor</a
+	      > t =&gt; <a href="#t:Cotraversable"
+	      >Cotraversable</a
+	      > (t :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	      >+-&gt;</a
+	      > k) <span class="keyword"
+	      >where</span
+	      ><ul class="subs"
+	      ><li
+		><a href="#v:cotraverse"
+		  >cotraverse</a
+		  > :: <span class="keyword"
+		  >forall</span
+		  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		  >+-&gt;</a
+		  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+		  >DistributiveProfunctor</a
+		  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
+		  >Strong</a
+		  > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+		  >SelfAction</a
+		  > k) =&gt; (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
+		  > t) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+		  >:~&gt;</a
+		  > (t <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+		  >:.:</a
+		  > p)</li
+		></ul
+	      ></li
+	    ></ul
+	  ></details
+	></div
       ><div id="interface"
       ><h1
 	>Documentation</h1
@@ -76,8 +434,8 @@
 	    >+-&gt;</a
 	    > k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#DistributiveProfunctor" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L43" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L45" class="link"
+	    >Github</a
 	    > <a href="#t:DistributiveProfunctor" class="selflink"
 	    >#</a
 	    ></p
@@ -104,10 +462,10 @@
 		      > (p :: j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 		      >+-&gt;</a
 		      > k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-44" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-46" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L44" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L46" class="link"
+		    >Github</a
 		    > <a href="#t:DistributiveProfunctor" class="selflink"
 		    >#</a
 		    ></td
@@ -150,8 +508,8 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#Distributive" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L46" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
+	    >Github</a
 	    > <a href="#t:Distributive" class="selflink"
 	    >#</a
 	    ></p
@@ -183,8 +541,8 @@
 	      >**</a
 	      > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L46" class="link"
-	      >Comments</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
+	      >Github</a
 	      > <a href="#v:distL" class="selflink"
 	      >#</a
 	      ></p
@@ -213,8 +571,8 @@
 	      >**</a
 	      > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L46" class="link"
-	      >Comments</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
+	      >Github</a
 	      > <a href="#v:distR" class="selflink"
 	      >#</a
 	      ></p
@@ -235,8 +593,8 @@
 	      >InitialObject</a
 	      > :: k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L46" class="link"
-	      >Comments</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
+	      >Github</a
 	      > <a href="#v:distL0" class="selflink"
 	      >#</a
 	      ></p
@@ -257,8 +615,8 @@
 	      >InitialObject</a
 	      > :: k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L46" class="link"
-	      >Comments</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
+	      >Github</a
 	      > <a href="#v:distR0" class="selflink"
 	      >#</a
 	      ></p
@@ -283,7 +641,7 @@
 		    > <a href="src/Proarrow.Category.Instance.Bool.html#line-133" class="link"
 		    >Source</a
 		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L133" class="link"
-		    >Comments</a
+		    >Github</a
 		    > <a href="#t:Distributive" class="selflink"
 		    >#</a
 		    ></td
@@ -333,8 +691,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L47" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
 			  > <a href="#v:distL" class="selflink"
 			  >#</a
 			  ></p
@@ -369,8 +727,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
 			  > <a href="#v:distR" class="selflink"
 			  >#</a
 			  ></p
@@ -397,8 +755,8 @@
 			  >BOOL</a
 			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
 			  > <a href="#v:distL0" class="selflink"
 			  >#</a
 			  ></p
@@ -425,8 +783,8 @@
 			  >BOOL</a
 			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
 			  > <a href="#v:distR0" class="selflink"
 			  >#</a
 			  ></p
@@ -447,7 +805,7 @@
 		    > <a href="src/Proarrow.Category.Instance.Cost.html#line-213" class="link"
 		    >Source</a
 		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L213" class="link"
-		    >Comments</a
+		    >Github</a
 		    > <a href="#t:Distributive" class="selflink"
 		    >#</a
 		    ></td
@@ -497,8 +855,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L47" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
 			  > <a href="#v:distL" class="selflink"
 			  >#</a
 			  ></p
@@ -533,8 +891,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
 			  > <a href="#v:distR" class="selflink"
 			  >#</a
 			  ></p
@@ -561,8 +919,8 @@
 			  >COST</a
 			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
 			  > <a href="#v:distL0" class="selflink"
 			  >#</a
 			  ></p
@@ -589,8 +947,8 @@
 			  >COST</a
 			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
 			  > <a href="#v:distR0" class="selflink"
 			  >#</a
 			  ></p
@@ -605,11 +963,13 @@
 		      ></span
 		      > <a href="Proarrow-Category-Monoidal-Distributive.html#t:Distributive" title="Proarrow.Category.Monoidal.Distributive"
 		      >Distributive</a
-		      > ()</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-64" class="link"
+		      > <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+		      >LINEAR</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Instance.Linear.html#line-194" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L64" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L194" class="link"
+		    >Github</a
 		    > <a href="#t:Distributive" class="selflink"
 		    >#</a
 		    ></td
@@ -622,8 +982,8 @@
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
-		      >Defined in <a href="Proarrow-Category-Monoidal-Distributive.html"
-			>Proarrow.Category.Monoidal.Distributive</a
+		      >Defined in <a href="Proarrow-Category-Instance-Linear.html"
+			>Proarrow.Category.Instance.Linear</a
 			></p
 		      > <div class="subs methods"
 		      ><p class="caption"
@@ -633,7 +993,13 @@
 			  >distL</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: ()) (b :: ()) (c :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -653,8 +1019,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L47" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
 			  > <a href="#v:distL" class="selflink"
 			  >#</a
 			  ></p
@@ -663,7 +1029,13 @@
 			  >distR</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: ()) (b :: ()) (c :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (b :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) (c :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
@@ -683,8 +1055,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
 			  > <a href="#v:distR" class="selflink"
 			  >#</a
 			  ></p
@@ -693,20 +1065,26 @@
 			  >distL0</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: ()). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
 			  >InitialObject</a
-			  > :: ())) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
 			  >InitialObject</a
-			  > :: ()) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
+			  > :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
 			  > <a href="#v:distL0" class="selflink"
 			  >#</a
 			  ></p
@@ -715,20 +1093,26 @@
 			  >distR0</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: ()). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  > (a :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a =&gt; ((<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
 			  >InitialObject</a
-			  > :: ()) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  > :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
 			  >**</a
 			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
 			  >InitialObject</a
-			  > :: ()) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
+			  > :: <a href="Proarrow-Category-Instance-Linear.html#t:LINEAR" title="Proarrow.Category.Instance.Linear"
+			  >LINEAR</a
+			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
 			  > <a href="#v:distR0" class="selflink"
 			  >#</a
 			  ></p
@@ -743,13 +1127,11 @@
 		      ></span
 		      > <a href="Proarrow-Category-Monoidal-Distributive.html#t:Distributive" title="Proarrow.Category.Monoidal.Distributive"
 		      >Distributive</a
-		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      ></span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-58" class="link"
+		      > ()</span
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-68" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L58" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L68" class="link"
+		    >Github</a
 		    > <a href="#t:Distributive" class="selflink"
 		    >#</a
 		    ></td
@@ -771,6 +1153,146 @@
 			><p class="src"
 			><a href="#v:distL"
 			  >distL</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()) (c :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (b <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > c)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > b) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
+			  > <a href="#v:distL" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:distR"
+			  >distR</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()) (b :: ()) (c :: ()). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > b, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > c) =&gt; ((a <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > b) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > ((a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c) <a href="Proarrow-Object-BinaryCoproduct.html#t:-124--124-" title="Proarrow.Object.BinaryCoproduct"
+			  >||</a
+			  > (b <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
+			  > <a href="#v:distR" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:distL0"
+			  >distL0</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; (a <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: ())) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: ()) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
+			  > <a href="#v:distL0" class="selflink"
+			  >#</a
+			  ></p
+			><p class="src"
+			><a href="#v:distR0"
+			  >distR0</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (a :: ()). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+			  >Ob</a
+			  > a =&gt; ((<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: ()) <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			  >**</a
+			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  >~&gt;</a
+			  > (<a href="Proarrow-Object-Initial.html#t:InitialObject" title="Proarrow.Object.Initial"
+			  >InitialObject</a
+			  > :: ()) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
+			  > <a href="#v:distR0" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Distributive:Distributive:5"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal-Distributive.html#t:Distributive" title="Proarrow.Category.Monoidal.Distributive"
+		      >Distributive</a
+		      > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      ></span
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-62" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L62" class="link"
+		    >Github</a
+		    > <a href="#t:Distributive" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Distributive:Distributive:5"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Distributive.html"
+			>Proarrow.Category.Monoidal.Distributive</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:distL"
+			  >distL</a
 			  > :: (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
 			  > a, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
@@ -791,8 +1313,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L47" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
 			  > <a href="#v:distL" class="selflink"
 			  >#</a
 			  ></p
@@ -819,8 +1341,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
 			  > <a href="#v:distR" class="selflink"
 			  >#</a
 			  ></p
@@ -843,8 +1365,8 @@
 			  >Type</a
 			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
 			  > <a href="#v:distL0" class="selflink"
 			  >#</a
 			  ></p
@@ -867,8 +1389,8 @@
 			  >Type</a
 			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
 			  > <a href="#v:distR0" class="selflink"
 			  >#</a
 			  ></p
@@ -879,7 +1401,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Distributive:Distributive:5"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Distributive:Distributive:6"
 		      ></span
 		      > <a href="Proarrow-Object-Exponential.html#t:BiCCC" title="Proarrow.Object.Exponential"
 		      >BiCCC</a
@@ -888,10 +1410,10 @@
 		      > (<a href="Proarrow-Object-BinaryProduct.html#t:PROD" title="Proarrow.Object.BinaryProduct"
 		      >PROD</a
 		      > k)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-70" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-74" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L70" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L74" class="link"
+		    >Github</a
 		    > <a href="#t:Distributive" class="selflink"
 		    >#</a
 		    ></td
@@ -900,7 +1422,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:Distributive:Distributive:5"
+		  ><details id="i:ic:Distributive:Distributive:6"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -941,8 +1463,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L47" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
 			  > <a href="#v:distL" class="selflink"
 			  >#</a
 			  ></p
@@ -977,8 +1499,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
 			  > <a href="#v:distR" class="selflink"
 			  >#</a
 			  ></p
@@ -1005,8 +1527,8 @@
 			  >PROD</a
 			  > k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
 			  > <a href="#v:distL0" class="selflink"
 			  >#</a
 			  ></p
@@ -1033,8 +1555,8 @@
 			  >PROD</a
 			  > k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
 			  > <a href="#v:distR0" class="selflink"
 			  >#</a
 			  ></p
@@ -1045,7 +1567,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Distributive:Distributive:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Distributive:Distributive:7"
 		      ></span
 		      > (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Distributive" title="Proarrow.Category.Monoidal.Distributive"
 		      >Distributive</a
@@ -1061,7 +1583,7 @@
 		    > <a href="src/Proarrow.Category.Instance.Kleisli.html#line-115" class="link"
 		    >Source</a
 		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L115" class="link"
-		    >Comments</a
+		    >Github</a
 		    > <a href="#t:Distributive" class="selflink"
 		    >#</a
 		    ></td
@@ -1070,7 +1592,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:Distributive:Distributive:6"
+		  ><details id="i:ic:Distributive:Distributive:7"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1111,8 +1633,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L47" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
 			  > <a href="#v:distL" class="selflink"
 			  >#</a
 			  ></p
@@ -1147,8 +1669,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
 			  > <a href="#v:distR" class="selflink"
 			  >#</a
 			  ></p
@@ -1175,8 +1697,8 @@
 			  >KLEISLI</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
 			  > <a href="#v:distL0" class="selflink"
 			  >#</a
 			  ></p
@@ -1203,8 +1725,8 @@
 			  >KLEISLI</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
 			  > <a href="#v:distR0" class="selflink"
 			  >#</a
 			  ></p
@@ -1215,7 +1737,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Distributive:Distributive:7"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Distributive:Distributive:8"
 		      ></span
 		      > (<a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
 		      >Monoidal</a
@@ -1226,10 +1748,10 @@
 		      > (j <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 		      >+-&gt;</a
 		      > k)</span
-		    > <a href="src/Proarrow.Profunctor.Day.html#line-89" class="link"
+		    > <a href="src/Proarrow.Profunctor.Day.html#line-105" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L89" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L105" class="link"
+		    >Github</a
 		    > <a href="#t:Distributive" class="selflink"
 		    >#</a
 		    ></td
@@ -1238,7 +1760,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:Distributive:Distributive:7"
+		  ><details id="i:ic:Distributive:Distributive:8"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1279,8 +1801,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L47" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
+			  >Github</a
 			  > <a href="#v:distL" class="selflink"
 			  >#</a
 			  ></p
@@ -1315,8 +1837,8 @@
 			  >**</a
 			  > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L48" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
+			  >Github</a
 			  > <a href="#v:distR" class="selflink"
 			  >#</a
 			  ></p
@@ -1343,8 +1865,8 @@
 			  >+-&gt;</a
 			  > k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distL0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L49" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L51" class="link"
+			  >Github</a
 			  > <a href="#v:distL0" class="selflink"
 			  >#</a
 			  ></p
@@ -1371,8 +1893,8 @@
 			  >+-&gt;</a
 			  > k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distR0" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L50" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L52" class="link"
+			  >Github</a
 			  > <a href="#v:distR0" class="selflink"
 			  >#</a
 			  ></p
@@ -1414,8 +1936,8 @@
 	    >||</a
 	    > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distLInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L53" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L56" class="link"
+	    >Github</a
 	    > <a href="#v:distLInv" class="selflink"
 	    >#</a
 	    ></p
@@ -1450,8 +1972,8 @@
 	    >**</a
 	    > c) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distRInv" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L56" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L60" class="link"
+	    >Github</a
 	    > <a href="#v:distRInv" class="selflink"
 	    >#</a
 	    ></p
@@ -1484,8 +2006,8 @@
 	    >&amp;&amp;</a
 	    > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distLProd" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L77" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L81" class="link"
+	    >Github</a
 	    > <a href="#v:distLProd" class="selflink"
 	    >#</a
 	    ></p
@@ -1518,11 +2040,81 @@
 	    >&amp;&amp;</a
 	    > c)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#distRProd" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L80" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L84" class="link"
+	    >Github</a
 	    > <a href="#v:distRProd" class="selflink"
 	    >#</a
 	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><span class="keyword"
+	    >class</span
+	    > (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	    >DistributiveProfunctor</a
+	    > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
+	    >Strong</a
+	    > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+	    >SelfAction</a
+	    > k) =&gt; <a id="t:StrongDistributiveProfunctor" class="def"
+	    >StrongDistributiveProfunctor</a
+	    > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) <a href="src/Proarrow.Category.Monoidal.Distributive.html#StrongDistributiveProfunctor" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L90" class="link"
+	    >Github</a
+	    > <a href="#t:StrongDistributiveProfunctor" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="subs instances"
+	  ><h4 class="instances details-toggle-control details-toggle" data-details-id="i:StrongDistributiveProfunctor"
+	    >Instances</h4
+	    ><details id="i:StrongDistributiveProfunctor" open="open"
+	    ><summary class="hide-when-js-enabled"
+	      >Instances details</summary
+	      ><table
+	      ><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:StrongDistributiveProfunctor:StrongDistributiveProfunctor:1"
+		      ></span
+		      > (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+		      >DistributiveProfunctor</a
+		      > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
+		      >Strong</a
+		      > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+		      >SelfAction</a
+		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+		      >StrongDistributiveProfunctor</a
+		      > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+		      >+-&gt;</a
+		      > k)</span
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-91" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L91" class="link"
+		    >Github</a
+		    > <a href="#t:StrongDistributiveProfunctor" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:StrongDistributiveProfunctor:StrongDistributiveProfunctor:1"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Monoidal-Distributive.html"
+			>Proarrow.Category.Monoidal.Distributive</a
+			></p
+		      ></details
+		    ></td
+		  ></tr
+		></table
+	      ></details
+	    ></div
 	  ></div
 	><div class="top"
 	><p class="src"
@@ -1538,8 +2130,8 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#Traversable" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L87" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L94" class="link"
+	    >Github</a
 	    > <a href="#t:Traversable" class="selflink"
 	    >#</a
 	    ></p
@@ -1553,13 +2145,9 @@
 	      >forall</span
 	      > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 	      >+-&gt;</a
-	      > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-	      >DistributiveProfunctor</a
-	      > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-	      >Strong</a
-	      > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-	      >SelfAction</a
-	      > k) =&gt; (t <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	      > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	      >StrongDistributiveProfunctor</a
+	      > p =&gt; (t <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 	      >:.:</a
 	      > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 	      >:~&gt;</a
@@ -1567,8 +2155,8 @@
 	      >:.:</a
 	      > t) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L87" class="link"
-	      >Comments</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L94" class="link"
+	      >Github</a
 	      > <a href="#v:traverse" class="selflink"
 	      >#</a
 	      ></p
@@ -1594,10 +2182,10 @@
 		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-90" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-111" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L90" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -1623,13 +2211,9 @@
 			  >forall</span
 			  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; ((<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
+			  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p =&gt; ((<a href="Proarrow-Profunctor-Identity.html#t:Id" title="Proarrow.Profunctor.Identity"
 			  >Id</a
 			  > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
@@ -1645,8 +2229,8 @@
 			  >Type</a
 			  >)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -1662,10 +2246,10 @@
 		      > <a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
 		      >Traversable</a
 		      > (-&gt;)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-93" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-114" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L93" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L114" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -1695,17 +2279,9 @@
 			  >+-&gt;</a
 			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) =&gt; ((-&gt;) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p =&gt; ((-&gt;) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
 			  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
@@ -1713,8 +2289,8 @@
 			  >:.:</a
 			  > (-&gt;)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -1736,10 +2312,10 @@
 		      > p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Fix.html#line-35" class="link"
+		    > <a href="src/Proarrow.Profunctor.Fix.html#line-34" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L35" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L34" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -1765,13 +2341,9 @@
 			  >forall</span
 			  > (p0 :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p0, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p0, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; (<a href="Proarrow-Profunctor-Fix.html#t:Fix" title="Proarrow.Profunctor.Fix"
+			  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p0 =&gt; (<a href="Proarrow-Profunctor-Fix.html#t:Fix" title="Proarrow.Profunctor.Fix"
 			  >Fix</a
 			  > p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
@@ -1783,8 +2355,8 @@
 			  >Fix</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -1797,17 +2369,21 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Traversable:Traversable:4"
 		      ></span
-		      > <a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
+		      > (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
+		      >Monoid</a
+		      > w, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
 		      >Traversable</a
-		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
-		      >Star</a
-		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
-		      >Maybe</a
+		      > (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+		      >Writer</a
+		      > w :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Star.html#line-87" class="link"
+		    > <a href="src/Proarrow.Promonad.Writer.html#line-107" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L87" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L107" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -1820,8 +2396,8 @@
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
-		      >Defined in <a href="Proarrow-Profunctor-Star.html"
-			>Proarrow.Profunctor.Star</a
+		      >Defined in <a href="Proarrow-Promonad-Writer.html"
+			>Proarrow.Promonad.Writer</a
 			></p
 		      > <div class="subs methods"
 		      ><p class="caption"
@@ -1831,40 +2407,24 @@
 			  >traverse</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (p :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 			  >+-&gt;</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) =&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
-			  >Star</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
-			  >Maybe</a
-			  > <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p =&gt; (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+			  >Writer</a
+			  > w <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
 			  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
 			  > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
-			  > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
-			  >Star</a
-			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
-			  >Maybe</a
-			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
+			  > <a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+			  >Writer</a
+			  > w) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -1881,13 +2441,13 @@
 		      >Traversable</a
 		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 		      >Star</a
-		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/GHC-Exts.html#t:List" title="GHC.Exts"
-		      >[]</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+		      >Maybe</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Star.html#line-96" class="link"
+		    > <a href="src/Proarrow.Profunctor.Star.html#line-86" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L96" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L86" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -1917,17 +2477,81 @@
 			  >+-&gt;</a
 			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  >). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
+			  >). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p =&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+			  >Maybe</a
+			  > <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >Star</a
+			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/Data-Maybe.html#t:Maybe" title="Data.Maybe"
+			  >Maybe</a
+			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
+			  > <a href="#v:traverse" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Traversable:Traversable:6"
+		      ></span
+		      > <a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
+		      >Traversable</a
+		      > (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+		      >Star</a
+		      > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/GHC-Exts.html#t:List" title="GHC.Exts"
+		      >[]</a
+		      >)</span
+		    > <a href="src/Proarrow.Profunctor.Star.html#line-95" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+		    >Github</a
+		    > <a href="#t:Traversable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Traversable:Traversable:6"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Profunctor-Star.html"
+			>Proarrow.Profunctor.Star</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:traverse"
+			  >traverse</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (p :: <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			  >Type</a
+			  > <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
 			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) =&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
+			  >). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p =&gt; (<a href="Proarrow-Profunctor-Star.html#t:Star" title="Proarrow.Profunctor.Star"
 			  >Star</a
 			  > <a href="${pkgroot}/../../../share/doc/ghc-9.12.2/html/libraries/base-4.21.0.0-958c/GHC-Exts.html#t:List" title="GHC.Exts"
 			  >[]</a
@@ -1943,8 +2567,8 @@
 			  >[]</a
 			  >) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -1955,7 +2579,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Traversable:Traversable:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Traversable:Traversable:7"
 		      ></span
 		      > <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
 		      >SelfAction</a
@@ -1969,7 +2593,7 @@
 		    > <a href="src/Proarrow.Profunctor.HaskValue.html#line-28" class="link"
 		    >Source</a
 		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L28" class="link"
-		    >Comments</a
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -1978,7 +2602,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:Traversable:Traversable:6"
+		  ><details id="i:ic:Traversable:Traversable:7"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1995,13 +2619,9 @@
 			  >forall</span
 			  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; ((<a href="Proarrow-Profunctor-HaskValue.html#t:HaskValue" title="Proarrow.Profunctor.HaskValue"
+			  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p =&gt; ((<a href="Proarrow-Profunctor-HaskValue.html#t:HaskValue" title="Proarrow.Profunctor.HaskValue"
 			  >HaskValue</a
 			  > c :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 			  >Type</a
@@ -2017,84 +2637,8 @@
 			  >Type</a
 			  >)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
-			  > <a href="#v:traverse" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Traversable:Traversable:7"
-		      ></span
-		      > (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
-		      >Monoid</a
-		      > w, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-		      >SelfAction</a
-		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
-		      >Traversable</a
-		      > (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
-		      >Writer</a
-		      > w :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Promonad.Writer.html#line-107" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L107" class="link"
-		    >Comments</a
-		    > <a href="#t:Traversable" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:ic:Traversable:Traversable:7"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Promonad-Writer.html"
-			>Proarrow.Promonad.Writer</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:traverse"
-			  >traverse</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
-			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; ((<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
-			  >Writer</a
-			  > w :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
-			  >:.:</a
-			  > p) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-			  >:~&gt;</a
-			  > (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
-			  >:.:</a
-			  > (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
-			  >Writer</a
-			  > w :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2118,10 +2662,10 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-105" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-126" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L105" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L126" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2147,13 +2691,9 @@
 			  >forall</span
 			  > (p0 :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p0, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p0, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; ((p <a href="Proarrow-Profunctor-Coproduct.html#t::-43-:" title="Proarrow.Profunctor.Coproduct"
+			  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p0 =&gt; ((p <a href="Proarrow-Profunctor-Coproduct.html#t::-43-:" title="Proarrow.Profunctor.Coproduct"
 			  >:+:</a
 			  > q) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
@@ -2165,8 +2705,8 @@
 			  >:+:</a
 			  > q)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2192,10 +2732,10 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-101" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-122" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L101" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L122" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2221,13 +2761,9 @@
 			  >forall</span
 			  > (p0 :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p0, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p0, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; ((p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
+			  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p0 =&gt; ((p <a href="Proarrow-Profunctor-Product.html#t::-42-:" title="Proarrow.Profunctor.Product"
 			  >:*:</a
 			  > q) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
@@ -2239,8 +2775,8 @@
 			  >:*:</a
 			  > q)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2264,10 +2800,10 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-96" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-117" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L96" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L117" class="link"
+		    >Github</a
 		    > <a href="#t:Traversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2293,13 +2829,9 @@
 			  >forall</span
 			  > (p0 :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
 			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p0, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p0, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  > k). <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >StrongDistributiveProfunctor</a
+			  > p0 =&gt; ((p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
 			  > q) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
@@ -2311,8 +2843,8 @@
 			  >:.:</a
 			  > q)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#traverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L88" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L95" class="link"
+			  >Github</a
 			  > <a href="#v:traverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2322,6 +2854,80 @@
 		  ></tr
 		></table
 	      ></details
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:repTraverse" class="def"
+	    >repTraverse</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (t :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) p (a :: k) (b :: k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
+	    >Traversable</a
+	    > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > t, <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	    >StrongDistributiveProfunctor</a
+	    > p) =&gt; p a b -&gt; p (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > a) (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > b) <a href="src/Proarrow.Category.Monoidal.Distributive.html#repTraverse" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L102" class="link"
+	    >Github</a
+	    > <a href="#v:repTraverse" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >With a representable traversable profunctor, you get a traversal a la one-liner.</p
+	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:baseTraverse" class="def"
+	    >baseTraverse</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (t :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (f :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+	    >+-&gt;</a
+	    > k) (a :: k) (b :: k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:Traversable" title="Proarrow.Category.Monoidal.Distributive"
+	    >Traversable</a
+	    > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > t, <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+	    >Representable</a
+	    > f, <a href="Proarrow-Category-Monoidal-Distributive.html#t:StrongDistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+	    >StrongDistributiveProfunctor</a
+	    > f, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > b) =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > b)) -&gt; (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (f <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > (t <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+	    >%</a
+	    > b)) <a href="src/Proarrow.Category.Monoidal.Distributive.html#baseTraverse" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L109" class="link"
+	    >Github</a
+	    > <a href="#v:baseTraverse" class="selflink"
+	    >#</a
+	    ></p
+	  ><div class="doc"
+	  ><p
+	    >If both profunctors are representable, you get traversals as in base.</p
 	    ></div
 	  ></div
 	><div class="top"
@@ -2338,8 +2944,8 @@
 	    >where</span
 	    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#Cotraversable" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L110" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L131" class="link"
+	    >Github</a
 	    > <a href="#t:Cotraversable" class="selflink"
 	    >#</a
 	    ></p
@@ -2367,8 +2973,8 @@
 	      >:.:</a
 	      > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 	      >Source</a
-	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L110" class="link"
-	      >Comments</a
+	      > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L131" class="link"
+	      >Github</a
 	      > <a href="#v:cotraverse" class="selflink"
 	      >#</a
 	      ></p
@@ -2394,10 +3000,10 @@
 		      > :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-113" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-134" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L113" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L134" class="link"
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2445,8 +3051,8 @@
 			  >:.:</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2462,10 +3068,10 @@
 		      > <a href="Proarrow-Category-Monoidal-Distributive.html#t:Cotraversable" title="Proarrow.Category.Monoidal.Distributive"
 		      >Cotraversable</a
 		      > (-&gt;)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-116" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-137" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L116" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L137" class="link"
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2513,8 +3119,8 @@
 			  >:.:</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2536,10 +3142,10 @@
 		      > p :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Profunctor.Fix.html#line-38" class="link"
+		    > <a href="src/Proarrow.Profunctor.Fix.html#line-37" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L38" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L37" class="link"
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2583,8 +3189,8 @@
 			  >:.:</a
 			  > p0) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2596,6 +3202,84 @@
 		><td class="src clearfix"
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Cotraversable:Cotraversable:4"
+		      ></span
+		      > (<a href="Proarrow-Monoid.html#t:Comonoid" title="Proarrow.Monoid"
+		      >Comonoid</a
+		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+		      >SelfAction</a
+		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Distributive.html#t:Cotraversable" title="Proarrow.Category.Monoidal.Distributive"
+		      >Cotraversable</a
+		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+		      >Reader</a
+		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		      >OP</a
+		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-89" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L89" class="link"
+		    >Github</a
+		    > <a href="#t:Cotraversable" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:ic:Cotraversable:Cotraversable:4"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Promonad-Reader.html"
+			>Proarrow.Promonad.Reader</a
+			></p
+		      > <div class="subs methods"
+		      ><p class="caption"
+			>Methods</p
+			><p class="src"
+			><a href="#v:cotraverse"
+			  >cotraverse</a
+			  > :: <span class="keyword"
+			  >forall</span
+			  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
+			  >+-&gt;</a
+			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
+			  >DistributiveProfunctor</a
+			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
+			  >Strong</a
+			  > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+			  >SelfAction</a
+			  > k) =&gt; (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  >Reader</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > r)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
+			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  >Reader</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > r) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
+			  >Source</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
+			  > <a href="#v:cotraverse" class="selflink"
+			  >#</a
+			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Cotraversable:Cotraversable:5"
 		      ></span
 		      > (<a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
 		      >Functor</a
@@ -2613,7 +3297,7 @@
 		    > <a href="src/Proarrow.Profunctor.Costar.html#line-65" class="link"
 		    >Source</a
 		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L65" class="link"
-		    >Comments</a
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2622,7 +3306,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:Cotraversable:Cotraversable:4"
+		  ><details id="i:ic:Cotraversable:Cotraversable:5"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2657,8 +3341,8 @@
 			  >:.:</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2669,7 +3353,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Cotraversable:Cotraversable:5"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Cotraversable:Cotraversable:6"
 		      ></span
 		      > <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
 		      >SelfAction</a
@@ -2683,7 +3367,7 @@
 		    > <a href="src/Proarrow.Profunctor.HaskValue.html#line-31" class="link"
 		    >Source</a
 		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L31" class="link"
-		    >Comments</a
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2692,7 +3376,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:ic:Cotraversable:Cotraversable:5"
+		  ><details id="i:ic:Cotraversable:Cotraversable:6"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -2731,90 +3415,8 @@
 			  >:.:</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
-			  > <a href="#v:cotraverse" class="selflink"
-			  >#</a
-			  ></p
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:ic:Cotraversable:Cotraversable:6"
-		      ></span
-		      > (<a href="Proarrow-Monoid.html#t:Comonoid" title="Proarrow.Monoid"
-		      >Comonoid</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-		      >SelfAction</a
-		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Distributive.html#t:Cotraversable" title="Proarrow.Category.Monoidal.Distributive"
-		      >Cotraversable</a
-		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-		      >Reader</a
-		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-		      >OP</a
-		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-85" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L85" class="link"
-		    >Comments</a
-		    > <a href="#t:Cotraversable" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:ic:Cotraversable:Cotraversable:6"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Promonad-Reader.html"
-			>Proarrow.Promonad.Reader</a
-			></p
-		      > <div class="subs methods"
-		      ><p class="caption"
-			>Methods</p
-			><p class="src"
-			><a href="#v:cotraverse"
-			  >cotraverse</a
-			  > :: <span class="keyword"
-			  >forall</span
-			  > (p :: k <a href="Proarrow-Core.html#t:-43--45--62-" title="Proarrow.Core"
-			  >+-&gt;</a
-			  > k). (<a href="Proarrow-Category-Monoidal-Distributive.html#t:DistributiveProfunctor" title="Proarrow.Category.Monoidal.Distributive"
-			  >DistributiveProfunctor</a
-			  > p, <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
-			  >Strong</a
-			  > k p, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-			  >SelfAction</a
-			  > k) =&gt; (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
-			  >:.:</a
-			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-			  >Reader</a
-			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-			  >:~&gt;</a
-			  > ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-			  >Reader</a
-			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
-			  >:.:</a
-			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
-			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2838,10 +3440,10 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-128" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-149" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L128" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L149" class="link"
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2885,8 +3487,8 @@
 			  >:.:</a
 			  > p0) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2912,10 +3514,10 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-124" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-145" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L124" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L145" class="link"
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -2959,8 +3561,8 @@
 			  >:.:</a
 			  > p0) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -2984,10 +3586,10 @@
 		      > q :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-119" class="link"
+		    > <a href="src/Proarrow.Category.Monoidal.Distributive.html#line-140" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L119" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L140" class="link"
+		    >Github</a
 		    > <a href="#t:Cotraversable" class="selflink"
 		    >#</a
 		    ></td
@@ -3031,8 +3633,8 @@
 			  >:.:</a
 			  > p0) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p

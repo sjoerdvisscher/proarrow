@@ -9,3 +9,5 @@ cabal haddock \
     --comments-entity=https://github.com/sjoerdvisscher/proarrow/blob/main/src/%{MODULE/.//}.hs#L%L
     --pretty-html
     --odir=docs"
+
+grep -rilE '>(User )?Comments<' docs | xargs sed -i '' -E 's/>(User )?Comments</>Github</gI'

@@ -26,7 +26,7 @@
 	  ></li
 	><li
 	><a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs"
-	  >User Comments</a
+	  >Github</a
 	  ></li
 	><li
 	><a href="index.html"
@@ -68,12 +68,12 @@
 	    >Reader</a
 	    > (r :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 	    >OPPOSITE</a
-	    > m) (a :: k) (b :: k) <span class="keyword"
+	    > k) (a :: k) (b :: k) <span class="keyword"
 	    >where</span
 	    > <a href="src/Proarrow.Promonad.Reader.html#Reader" class="link"
 	    >Source</a
-	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L30" class="link"
-	    >Comments</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L35" class="link"
+	    >Github</a
 	    > <a href="#t:Reader" class="selflink"
 	    >#</a
 	    ></p
@@ -87,11 +87,11 @@
 		  >Reader</a
 		  > :: <span class="keyword"
 		  >forall</span
-		  > {k} {m} (a :: k) (b :: k) (r1 :: m). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		  > {k} (a :: k) (b :: k) (r1 :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		  >Ob</a
-		  > a =&gt; (<a href="Proarrow-Category-Monoidal-Action.html#t:Act" title="Proarrow.Category.Monoidal.Action"
-		  >Act</a
-		  > r1 a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+		  > a =&gt; ((r1 <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+		  >**</a
+		  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 		  >~&gt;</a
 		  > b) -&gt; <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 		  >Reader</a
@@ -117,23 +117,21 @@
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		      >Ob</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >MonoidalAction</a
-		      > m k, <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
-		      >SymMonoidal</a
-		      > m) =&gt; <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
+		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+		      >SelfAction</a
+		      > k) =&gt; <a href="Proarrow-Category-Monoidal-Action.html#t:Strong" title="Proarrow.Category.Monoidal.Action"
 		      >Strong</a
-		      > m (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+		      > k (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 		      >Reader</a
 		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 		      >OP</a
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-62" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-68" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L62" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L68" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -157,7 +155,7 @@
 			  >act</a
 			  > :: <span class="keyword"
 			  >forall</span
-			  > (a :: m) (b :: m) (x :: k) (y :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > (a :: k) (b :: k) (x :: k) (y :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > b) -&gt; <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
@@ -173,8 +171,8 @@
 			  >Act</a
 			  > b y) <a href="src/Proarrow.Category.Monoidal.Action.html#act" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L21" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Action.hs#L20" class="link"
+			  >Github</a
 			  > <a href="#v:act" class="selflink"
 			  >#</a
 			  ></p
@@ -185,101 +183,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:IsReader:2"
-		      ></span
-		      > (<a href="Proarrow-Category-Monoidal-Action.html#t:SymMonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >SymMonoidalAction</a
-		      > m k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
-		      >Ob</a
-		      > a) =&gt; <a href="Proarrow-Category-Equipment-Stateful.html#t:IsReader" title="Proarrow.Category.Equipment.Stateful"
-		      >IsReader</a
-		      > m (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-		      >Reader</a
-		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-		      >OP</a
-		      > a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Equipment.Stateful.html#line-102" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Stateful.hs#L102" class="link"
-		    >Comments</a
-		    > <a href="#t:IsReader" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:Reader:IsReader:2"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Equipment-Stateful.html"
-			>Proarrow.Category.Equipment.Stateful</a
-			></p
-		      > <div class="subs associated-types"
-		      ><p class="caption"
-			>Associated Types</p
-			><table
-			><tr
-			  ><td class="src clearfix"
-			    ><span class="inst-left"
-			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:WithWriterkmReader:WithWriter:1"
-				></span
-				> <span class="keyword"
-				>type</span
-				> <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
-				>WithWriter</a
-				> m (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-				>Reader</a
-				> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-				>OP</a
-				> a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-				>Type</a
-				>)</span
-			      ></td
-			    ><td class="doc empty"
-			    >&nbsp;</td
-			    ></tr
-			  ><tr
-			  ><td colspan="2"
-			    ><details id="i:if:D:R:WithWriterkmReader:WithWriter:1"
-			      ><summary class="hide-when-js-enabled"
-				>Instance details</summary
-				><p
-				>Defined in <a href="Proarrow-Category-Equipment-Stateful.html"
-				  >Proarrow.Category.Equipment.Stateful</a
-				  ></p
-				> <div class="src"
-				><span class="keyword"
-				  >type</span
-				  > <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
-				  >WithWriter</a
-				  > m (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-				  >Reader</a
-				  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-				  >OP</a
-				  > a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-				  >Type</a
-				  >) = <a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
-				  >Writer</a
-				  > a :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-				  >Type</a
-				  ></div
-				></details
-			      ></td
-			    ></tr
-			  ></table
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:MonoidalProfunctor:3"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:MonoidalProfunctor:2"
 		      ></span
 		      > (<a href="Proarrow-Monoid.html#t:Comonoid" title="Proarrow.Monoid"
 		      >Comonoid</a
@@ -296,10 +200,10 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-71" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-75" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L71" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L75" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -310,7 +214,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:Reader:MonoidalProfunctor:3"
+		  ><details id="i:id:Reader:MonoidalProfunctor:2"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -334,7 +238,7 @@
 			  > :: k) <a href="src/Proarrow.Category.Monoidal.html#par0" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L32" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:par0" class="selflink"
 			  >#</a
 			  ></p
@@ -362,7 +266,7 @@
 			  > y2) <a href="src/Proarrow.Category.Monoidal.html#par" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal.hs#L33" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:par" class="selflink"
 			  >#</a
 			  ></p
@@ -373,13 +277,13 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Profunctor:4"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Profunctor:3"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		      >Ob</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >MonoidalAction</a
-		      > m k) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
+		      > r, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k) =&gt; <a href="Proarrow-Core.html#t:Profunctor" title="Proarrow.Core"
 		      >Profunctor</a
 		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 		      >Reader</a
@@ -388,10 +292,10 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-33" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-38" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L33" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L38" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -400,7 +304,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:Reader:Profunctor:4"
+		  ><details id="i:id:Reader:Profunctor:3"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -429,8 +333,8 @@
 			  >OP</a
 			  > r) c d <a href="src/Proarrow.Core.html#dimap" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L110" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L112" class="link"
+			  >Github</a
 			  > <a href="#v:dimap" class="selflink"
 			  >#</a
 			  ></p
@@ -449,8 +353,8 @@
 			  >OP</a
 			  > r) a b -&gt; r0 <a href="src/Proarrow.Core.html#%5C%5C" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L112" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L114" class="link"
+			  >Github</a
 			  > <a href="#v:-92--92-" class="selflink"
 			  >#</a
 			  ></p
@@ -461,13 +365,13 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Corepresentable:5"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Corepresentable:4"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		      >Ob</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >MonoidalAction</a
-		      > m k) =&gt; <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
+		      > r, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k) =&gt; <a href="Proarrow-Profunctor-Corepresentable.html#t:Corepresentable" title="Proarrow.Profunctor.Corepresentable"
 		      >Corepresentable</a
 		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 		      >Reader</a
@@ -476,21 +380,26 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-38" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-44" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L38" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L44" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
 		  ><td class="doc"
 		  ><p
-		    >The coreader comonad given the Promonad instance.</p
+		    >The coreader comonad given the Promonad instance.
+ Together with the <code
+		      ><a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
+			>Representable</a
+			></code
+		      > instance this gives the curry/uncurry adjunction.</p
 		    ></td
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:Reader:Corepresentable:5"
+		  ><details id="i:id:Reader:Corepresentable:4"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -509,20 +418,18 @@
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) a b -&gt; ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > r) a b -&gt; (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  > r) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
 			  >%%</a
 			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
 			  > b <a href="src/Proarrow.Profunctor.Corepresentable.html#coindex" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L16" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:coindex" class="selflink"
 			  >#</a
 			  ></p
@@ -533,13 +440,11 @@
 			  >forall</span
 			  > (a :: k) (b :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
-			  > a =&gt; (((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > a =&gt; ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  > r) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
 			  >%%</a
 			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
@@ -550,7 +455,7 @@
 			  > r) a b <a href="src/Proarrow.Profunctor.Corepresentable.html#cotabulate" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L17" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:cotabulate" class="selflink"
 			  >#</a
 			  ></p
@@ -561,28 +466,24 @@
 			  >forall</span
 			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > b) -&gt; ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > b) -&gt; (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  > r) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
 			  >%%</a
 			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
+			  > r) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
 			  >%%</a
 			  > b) <a href="src/Proarrow.Profunctor.Corepresentable.html#corepMap" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Corepresentable.hs#L18" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:corepMap" class="selflink"
 			  >#</a
 			  ></p
@@ -593,12 +494,12 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Representable:6"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Representable:5"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		      >Ob</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
-		      >SelfAction</a
+		      > r, <a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+		      >SymMonoidal</a
 		      > k, <a href="Proarrow-Object-Exponential.html#t:Closed" title="Proarrow.Object.Exponential"
 		      >Closed</a
 		      > k) =&gt; <a href="Proarrow-Profunctor-Representable.html#t:Representable" title="Proarrow.Profunctor.Representable"
@@ -610,10 +511,10 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-45" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-51" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L45" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L51" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -624,7 +525,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:Reader:Representable:6"
+		  ><details id="i:id:Reader:Representable:5"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -645,18 +546,16 @@
 			  >OP</a
 			  > r) a b -&gt; a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  > r) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#index" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L20" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:index" class="selflink"
 			  >#</a
 			  ></p
@@ -669,13 +568,11 @@
 			  >Ob</a
 			  > b =&gt; (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  > r) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			  >%</a
 			  > b)) -&gt; <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
@@ -684,7 +581,7 @@
 			  > r) a b <a href="src/Proarrow.Profunctor.Representable.html#tabulate" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L21" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:tabulate" class="selflink"
 			  >#</a
 			  ></p
@@ -695,28 +592,24 @@
 			  >forall</span
 			  > (a :: k) (b :: k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > b) -&gt; ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > b) -&gt; (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  > r) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			  >%</a
 			  > a) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
+			  > r) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 			  >%</a
 			  > b) <a href="src/Proarrow.Profunctor.Representable.html#repMap" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Profunctor/Representable.hs#L22" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:repMap" class="selflink"
 			  >#</a
 			  ></p
@@ -727,13 +620,13 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Proadjunction:7"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Proadjunction:6"
 		      ></span
 		      > (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 		      >Ob</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >MonoidalAction</a
-		      > m k) =&gt; <a href="Proarrow-Adjunction.html#t:Proadjunction" title="Proarrow.Adjunction"
+		      > r, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k) =&gt; <a href="Proarrow-Adjunction.html#t:Proadjunction" title="Proarrow.Adjunction"
 		      >Proadjunction</a
 		      > (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
 		      >Writer</a
@@ -746,10 +639,10 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-88" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-92" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L88" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L92" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -758,7 +651,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:Reader:Proadjunction:7"
+		  ><details id="i:id:Reader:Proadjunction:6"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -775,41 +668,33 @@
 			  >forall</span
 			  > (a :: k). <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
 			  >Ob</a
-			  > a =&gt; ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > a =&gt; (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  > r) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
-			  > (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+			  > <a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
 			  >Writer</a
-			  > r :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) a a <a href="src/Proarrow.Adjunction.html#unit" class="link"
+			  > r) a a <a href="src/Proarrow.Adjunction.html#unit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L72" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L77" class="link"
+			  >Github</a
 			  > <a href="#v:unit" class="selflink"
 			  >#</a
 			  ></p
 			><p class="src"
 			><a href="#v:counit"
 			  >counit</a
-			  > :: ((<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+			  > :: (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
 			  >Writer</a
-			  > r :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  > r <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
-			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  > r)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
 			  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >(~&gt;)</a
@@ -817,11 +702,103 @@
 			  >CAT</a
 			  > k) <a href="src/Proarrow.Adjunction.html#counit" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L73" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Adjunction.hs#L78" class="link"
+			  >Github</a
 			  > <a href="#v:counit" class="selflink"
 			  >#</a
 			  ></p
+			></div
+		      ></details
+		    ></td
+		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:IsReader:7"
+		      ></span
+		      > (<a href="Proarrow-Category-Monoidal-Action.html#t:SelfAction" title="Proarrow.Category.Monoidal.Action"
+		      >SelfAction</a
+		      > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+		      >Ob</a
+		      > a) =&gt; <a href="Proarrow-Category-Equipment-Stateful.html#t:IsReader" title="Proarrow.Category.Equipment.Stateful"
+		      >IsReader</a
+		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+		      >Reader</a
+		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		      >OP</a
+		      > a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Equipment.Stateful.html#line-105" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Stateful.hs#L105" class="link"
+		    >Github</a
+		    > <a href="#t:IsReader" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Reader:IsReader:7"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Equipment-Stateful.html"
+			>Proarrow.Category.Equipment.Stateful</a
+			></p
+		      > <div class="subs associated-types"
+		      ><p class="caption"
+			>Associated Types</p
+			><table
+			><tr
+			  ><td class="src clearfix"
+			    ><span class="inst-left"
+			      ><span class="instance details-toggle-control details-toggle" data-details-id="i:if:D:R:WithWriterkReader:WithWriter:1"
+				></span
+				> <span class="keyword"
+				>type</span
+				> <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
+				>WithWriter</a
+				> (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+				>Reader</a
+				> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+				>OP</a
+				> a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				>Type</a
+				>)</span
+			      ></td
+			    ><td class="doc empty"
+			    >&nbsp;</td
+			    ></tr
+			  ><tr
+			  ><td colspan="2"
+			    ><details id="i:if:D:R:WithWriterkReader:WithWriter:1"
+			      ><summary class="hide-when-js-enabled"
+				>Instance details</summary
+				><p
+				>Defined in <a href="Proarrow-Category-Equipment-Stateful.html"
+				  >Proarrow.Category.Equipment.Stateful</a
+				  ></p
+				> <div class="src"
+				><span class="keyword"
+				  >type</span
+				  > <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
+				  >WithWriter</a
+				  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+				  >Reader</a
+				  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+				  >OP</a
+				  > a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+				  >Type</a
+				  >) = <a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+				  >Writer</a
+				  > a</div
+				></details
+			      ></td
+			    ></tr
+			  ></table
 			></div
 		      ></details
 		    ></td
@@ -844,10 +821,10 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-85" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-89" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L85" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L89" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -881,26 +858,22 @@
 			  >SelfAction</a
 			  > k) =&gt; (p <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
+			  > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  >Reader</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > r)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  >:~&gt;</a
 			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
-			  >:~&gt;</a
-			  > ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-			  >Reader</a
-			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  > r) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
 			  >:.:</a
 			  > p) <a href="src/Proarrow.Category.Monoidal.Distributive.html#cotraverse" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L111" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Monoidal/Distributive.hs#L132" class="link"
+			  >Github</a
 			  > <a href="#v:cotraverse" class="selflink"
 			  >#</a
 			  ></p
@@ -915,9 +888,9 @@
 		      ></span
 		      > (<a href="Proarrow-Monoid.html#t:Comonoid" title="Proarrow.Monoid"
 		      >Comonoid</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >MonoidalAction</a
-		      > m k) =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
+		      > r, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k) =&gt; <a href="Proarrow-Core.html#t:Promonad" title="Proarrow.Core"
 		      >Promonad</a
 		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 		      >Reader</a
@@ -926,10 +899,10 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-54" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-60" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L54" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L60" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -961,8 +934,8 @@
 			  >OP</a
 			  > r) a a <a href="src/Proarrow.Core.html#id" class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L156" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L158" class="link"
+			  >Github</a
 			  > <a href="#v:id" class="selflink"
 			  >#</a
 			  ></p
@@ -985,8 +958,8 @@
 			  >OP</a
 			  > r) a c <a href="src/Proarrow.Core.html#." class="link"
 			  >Source</a
-			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L158" class="link"
-			  >Comments</a
+			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Core.hs#L160" class="link"
+			  >Github</a
 			  > <a href="#v:." class="selflink"
 			  >#</a
 			  ></p
@@ -1001,9 +974,9 @@
 		      ></span
 		      > (<a href="Proarrow-Monoid.html#t:Monoid" title="Proarrow.Monoid"
 		      >Monoid</a
-		      > r, <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >MonoidalAction</a
-		      > m k) =&gt; <a href="Proarrow-Promonad.html#t:Procomonad" title="Proarrow.Promonad"
+		      > r, <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k) =&gt; <a href="Proarrow-Promonad.html#t:Procomonad" title="Proarrow.Promonad"
 		      >Procomonad</a
 		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 		      >Reader</a
@@ -1012,10 +985,10 @@
 		      > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-58" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-64" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L58" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L64" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -1037,13 +1010,11 @@
 			><p class="src"
 			><a href="#v:extract"
 			  >extract</a
-			  > :: (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > :: <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  > r) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
 			  > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >(~&gt;)</a
@@ -1052,39 +1023,33 @@
 			  > k) <a href="src/Proarrow.Promonad.html#extract" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad.hs#L13" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:extract" class="selflink"
 			  >#</a
 			  ></p
 			><p class="src"
 			><a href="#v:duplicate"
 			  >duplicate</a
-			  > :: (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > :: <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
+			  > r) <a href="Proarrow-Core.html#t::-126--62-" title="Proarrow.Core"
 			  >:~&gt;</a
-			  > ((<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-			  >Reader</a
-			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
-			  >:.:</a
 			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
 			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
 			  >OP</a
-			  > r) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >)) <a href="src/Proarrow.Promonad.html#duplicate" class="link"
+			  > r) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+			  >:.:</a
+			  > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  >Reader</a
+			  > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			  >OP</a
+			  > r)) <a href="src/Proarrow.Promonad.html#duplicate" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad.hs#L14" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:duplicate" class="selflink"
 			  >#</a
 			  ></p
@@ -1097,21 +1062,21 @@
 		  ><span class="inst-left"
 		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:Functor:11"
 		      ></span
-		      > <a href="Proarrow-Category-Monoidal-Action.html#t:MonoidalAction" title="Proarrow.Category.Monoidal.Action"
-		      >MonoidalAction</a
-		      > m k =&gt; <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
+		      > <a href="Proarrow-Category-Monoidal.html#t:Monoidal" title="Proarrow.Category.Monoidal"
+		      >Monoidal</a
+		      > k =&gt; <a href="Proarrow-Functor.html#t:Functor" title="Proarrow.Functor"
 		      >Functor</a
 		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 		      >Reader</a
 		      > :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 		      >OPPOSITE</a
-		      > m -&gt; k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      > k -&gt; k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
 		      >Type</a
 		      >)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-51" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-57" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L51" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L57" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -1137,24 +1102,20 @@
 			  >forall</span
 			  > (a :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
-			  > m) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
+			  > k) (b :: <a href="Proarrow-Category-Opposite.html#t:OPPOSITE" title="Proarrow.Category.Opposite"
 			  >OPPOSITE</a
-			  > m). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > k). (a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > b) -&gt; (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > b) -&gt; <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
-			  > a :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+			  > a <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
 			  >~&gt;</a
-			  > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			  > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
 			  >Reader</a
-			  > b :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			  >Type</a
-			  >) <a href="src/Proarrow.Functor.html#map" class="link"
+			  > b <a href="src/Proarrow.Functor.html#map" class="link"
 			  >Source</a
 			  > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Functor.hs#L19" class="link"
-			  >Comments</a
+			  >Github</a
 			  > <a href="#v:map" class="selflink"
 			  >#</a
 			  ></p
@@ -1165,61 +1126,7 @@
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:WithWriter:12"
-		      ></span
-		      > <span class="keyword"
-		      >type</span
-		      > <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
-		      >WithWriter</a
-		      > m (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-		      >Reader</a
-		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-		      >OP</a
-		      > a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-		      >Type</a
-		      >)</span
-		    > <a href="src/Proarrow.Category.Equipment.Stateful.html#line-103" class="link"
-		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Stateful.hs#L103" class="link"
-		    >Comments</a
-		    > <a href="#t:WithWriter" class="selflink"
-		    >#</a
-		    ></td
-		  ><td class="doc empty"
-		  >&nbsp;</td
-		  ></tr
-		><tr
-		><td colspan="2"
-		  ><details id="i:id:Reader:WithWriter:12"
-		    ><summary class="hide-when-js-enabled"
-		      >Instance details</summary
-		      ><p
-		      >Defined in <a href="Proarrow-Category-Equipment-Stateful.html"
-			>Proarrow.Category.Equipment.Stateful</a
-			></p
-		      > <div class="src"
-		      ><span class="keyword"
-			>type</span
-			> <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
-			>WithWriter</a
-			> m (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
-			>Reader</a
-			> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
-			>OP</a
-			> a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			>) = <a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
-			>Writer</a
-			> a :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
-			>Type</a
-			></div
-		      ></details
-		    ></td
-		  ></tr
-		><tr
-		><td class="src clearfix"
-		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:-37--37-:13"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:-37--37-:12"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1232,10 +1139,10 @@
 		      >) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
 		      >%%</a
 		      > (a :: k)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-39" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-45" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L39" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L45" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -1244,7 +1151,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:Reader:-37--37-:13"
+		  ><details id="i:id:Reader:-37--37-:12"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1262,16 +1169,16 @@
 			>Type</a
 			>) <a href="Proarrow-Profunctor-Corepresentable.html#t:-37--37-" title="Proarrow.Profunctor.Corepresentable"
 			>%%</a
-			> (a :: k) = <a href="Proarrow-Category-Monoidal-Action.html#t:Act" title="Proarrow.Category.Monoidal.Action"
-			>Act</a
-			> r a</div
+			> (a :: k) = r <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+			>**</a
+			> a</div
 		      ></details
 		    ></td
 		  ></tr
 		><tr
 		><td class="src clearfix"
 		  ><span class="inst-left"
-		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:-37-:14"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:-37-:13"
 		      ></span
 		      > <span class="keyword"
 		      >type</span
@@ -1284,10 +1191,10 @@
 		      >) <a href="Proarrow-Profunctor-Representable.html#t:-37-" title="Proarrow.Profunctor.Representable"
 		      >%</a
 		      > (a :: k)</span
-		    > <a href="src/Proarrow.Promonad.Reader.html#line-46" class="link"
+		    > <a href="src/Proarrow.Promonad.Reader.html#line-52" class="link"
 		    >Source</a
-		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L46" class="link"
-		    >Comments</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L52" class="link"
+		    >Github</a
 		    > <a href="#t:Reader" class="selflink"
 		    >#</a
 		    ></td
@@ -1296,7 +1203,7 @@
 		  ></tr
 		><tr
 		><td colspan="2"
-		  ><details id="i:id:Reader:-37-:14"
+		  ><details id="i:id:Reader:-37-:13"
 		    ><summary class="hide-when-js-enabled"
 		      >Instance details</summary
 		      ><p
@@ -1320,9 +1227,169 @@
 		      ></details
 		    ></td
 		  ></tr
+		><tr
+		><td class="src clearfix"
+		  ><span class="inst-left"
+		    ><span class="instance details-toggle-control details-toggle" data-details-id="i:id:Reader:WithWriter:14"
+		      ></span
+		      > <span class="keyword"
+		      >type</span
+		      > <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
+		      >WithWriter</a
+		      > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+		      >Reader</a
+		      > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+		      >OP</a
+		      > a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+		      >Type</a
+		      >)</span
+		    > <a href="src/Proarrow.Category.Equipment.Stateful.html#line-106" class="link"
+		    >Source</a
+		    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Category/Equipment/Stateful.hs#L106" class="link"
+		    >Github</a
+		    > <a href="#t:WithWriter" class="selflink"
+		    >#</a
+		    ></td
+		  ><td class="doc empty"
+		  >&nbsp;</td
+		  ></tr
+		><tr
+		><td colspan="2"
+		  ><details id="i:id:Reader:WithWriter:14"
+		    ><summary class="hide-when-js-enabled"
+		      >Instance details</summary
+		      ><p
+		      >Defined in <a href="Proarrow-Category-Equipment-Stateful.html"
+			>Proarrow.Category.Equipment.Stateful</a
+			></p
+		      > <div class="src"
+		      ><span class="keyword"
+			>type</span
+			> <a href="Proarrow-Category-Equipment-Stateful.html#t:WithWriter" title="Proarrow.Category.Equipment.Stateful"
+			>WithWriter</a
+			> (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+			>Reader</a
+			> ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+			>OP</a
+			> a) :: k -&gt; k -&gt; <a href="Proarrow-Category-Instance-Hask.html#t:Type" title="Proarrow.Category.Instance.Hask"
+			>Type</a
+			>) = <a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+			>Writer</a
+			> a</div
+		      ></details
+		    ></td
+		  ></tr
 		></table
 	      ></details
 	    ></div
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:dayCounit" class="def"
+	    >dayCounit</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (r :: k). (<a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > r, <a href="Proarrow-Object-BinaryProduct.html#t:Cartesian" title="Proarrow.Object.BinaryProduct"
+	    >Cartesian</a
+	    > k) =&gt; <a href="Proarrow-Profunctor-Day.html#t:Day" title="Proarrow.Profunctor.Day"
+	    >Day</a
+	    > (<a href="Proarrow-Promonad-Writer.html#t:Writer" title="Proarrow.Promonad.Writer"
+	    >Writer</a
+	    > r) (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+	    >Reader</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > r)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > (<a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >(~&gt;)</a
+	    > :: <a href="Proarrow-Core.html#t:CAT" title="Proarrow.Core"
+	    >CAT</a
+	    > k) <a href="src/Proarrow.Promonad.Reader.html#dayCounit" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L97" class="link"
+	    >Github</a
+	    > <a href="#v:dayCounit" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:readerComp" class="def"
+	    >readerComp</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (r :: k) (s :: k). (<a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+	    >SymMonoidal</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > r, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > s) =&gt; (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+	    >Reader</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > r) <a href="Proarrow-Profunctor-Composition.html#t::.:" title="Proarrow.Profunctor.Composition"
+	    >:.:</a
+	    > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+	    >Reader</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > s)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+	    >Reader</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > (r <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > s)) <a href="src/Proarrow.Promonad.Reader.html#readerComp" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L101" class="link"
+	    >Github</a
+	    > <a href="#v:readerComp" class="selflink"
+	    >#</a
+	    ></p
+	  ></div
+	><div class="top"
+	><p class="src"
+	  ><a id="v:readerDay" class="def"
+	    >readerDay</a
+	    > :: <span class="keyword"
+	    >forall</span
+	    > {k} (r :: k) (s :: k). (<a href="Proarrow-Category-Monoidal.html#t:SymMonoidal" title="Proarrow.Category.Monoidal"
+	    >SymMonoidal</a
+	    > k, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > r, <a href="Proarrow-Core.html#t:Ob" title="Proarrow.Core"
+	    >Ob</a
+	    > s) =&gt; <a href="Proarrow-Profunctor-Day.html#t:Day" title="Proarrow.Profunctor.Day"
+	    >Day</a
+	    > (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+	    >Reader</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > r)) (<a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+	    >Reader</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > s)) <a href="Proarrow-Core.html#t:-126--62-" title="Proarrow.Core"
+	    >~&gt;</a
+	    > <a href="Proarrow-Promonad-Reader.html#t:Reader" title="Proarrow.Promonad.Reader"
+	    >Reader</a
+	    > ('<a href="Proarrow-Category-Opposite.html#v:OP" title="Proarrow.Category.Opposite"
+	    >OP</a
+	    > (r <a href="Proarrow-Category-Monoidal.html#t:-42--42-" title="Proarrow.Category.Monoidal"
+	    >**</a
+	    > s)) <a href="src/Proarrow.Promonad.Reader.html#readerDay" class="link"
+	    >Source</a
+	    > <a href="https://github.com/sjoerdvisscher/proarrow/blob/main/src/Proarrow/Promonad/Reader.hs#L106" class="link"
+	    >Github</a
+	    > <a href="#v:readerDay" class="selflink"
+	    >#</a
+	    ></p
 	  ></div
 	></div
       ></div
