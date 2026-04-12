@@ -11,21 +11,21 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
-  , Iso
   , Kind
   , Obj
   , Profunctor (..)
   , Promonad (..)
   , UN
-  , iso
   , obj
   , src
   , tgt
   , type (+->)
   )
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), trivialRep)
+import Proarrow.Profunctor.Constant (review, view)
 
 infixl 8 ||
 infixl 7 ==
@@ -80,10 +80,13 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Mono
   withOb2 :: (Ob (a :: k), Ob b) => ((Ob (a ** b)) => r) -> r
   leftUnitor :: (Ob (a :: k)) => Unit ** a ~> a
   leftUnitorInv :: (Ob (a :: k)) => a ~> Unit ** a
+  leftUnitorInv = review leftUnitorIso
   rightUnitor :: (Ob (a :: k)) => a ** Unit ~> a
   rightUnitorInv :: (Ob (a :: k)) => a ~> a ** Unit
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
+  associator @a @b @c = view (associatorIso @k @a @b @c @a @b @c)
   associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
+  associatorInv @a @b @c = review (associatorIso @k @a @b @c @a @b @c)
 
 leftUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => Iso (Unit ** a) (Unit ** a') a a'
 leftUnitorIso = iso leftUnitor leftUnitorInv

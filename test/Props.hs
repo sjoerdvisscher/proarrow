@@ -9,18 +9,7 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Opposite (OPPOSITE (..))
-import Proarrow.Core
-  ( AnIso
-  , CategoryOf (..)
-  , Profunctor (..)
-  , Promonad (..)
-  , cloneIso
-  , lmap
-  , obj
-  , rmap
-  , (:~>)
-  , type (+->)
-  )
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Object.BinaryProduct qualified as BinaryProduct
@@ -31,6 +20,7 @@ import Proarrow.Object.Terminal qualified as Terminal
 import Proarrow.Profunctor.Constant (review, view)
 import Proarrow.Profunctor.Representable (Rep)
 import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor, TestingEqShow (..), genNamed)
+import Proarrow.Optic (Iso)
 
 testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
 testEq nm sl l sr r = do
@@ -299,7 +289,7 @@ propProfunctorWith
   :: forall {j} {k} (p :: j +-> k)
    . (Profunctor p, Testable j, Testable k)
   => (forall a b. (TestOb a, TestOb b) => Property (p a b))
-  -> (forall a b r. (TestOb a, TestOb b) => (TestingEqShow (p a b) => r) -> r)
+  -> (forall a b r. (TestOb a, TestOb b) => ((TestingEqShow (p a b)) => r) -> r)
   -> Property ()
 propProfunctorWith genPro withEqShow = do
   Some @a <- genOb @k
@@ -342,8 +332,8 @@ propIso f g = do
   testEq "right inverse" "f . g" (f . g) "id" id
   testEq "left inverse" "g . f" (g . f) "id" id
 
-propIso' :: forall {k} (a :: k) b. (Testable k, TestOb a, TestOb b) => AnIso a a b b -> Property ()
-propIso' iso = propIso (view (cloneIso iso)) (review (cloneIso iso))
+propIso' :: forall {k} (a :: k) b. (Testable k, TestOb a, TestOb b) => Iso a a b b -> Property ()
+propIso' iso = propIso (view iso) (review iso)
 
 propIsoP
   :: forall p q a b c d

@@ -7,7 +7,7 @@ import Prelude (type (~))
 
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Exchange, Kind, Profunctor (..), Promonad (..), obj, type (+->), OB, UN)
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->), OB, UN)
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
@@ -20,12 +20,6 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 type Strong :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Strong m (p :: c +-> d) where
   act :: forall (a :: m) b x y. a ~> b -> p x y -> p (Act a x) (Act b y)
-
-instance
-  (CategoryOf j, CategoryOf k, Strong () ((~>) :: j +-> j), Strong () ((~>) :: k +-> k))
-  => Strong () (Exchange a b :: j +-> k)
-  where
-  act U.Unit p = p
 
 class (Monoidal m, CategoryOf k, Strong m ((~>) :: CAT k)) => MonoidalAction m k where
   -- I would like to default Act to `**`, but that doesn't seem possible without GHC thinking `m` and `k` are the same.

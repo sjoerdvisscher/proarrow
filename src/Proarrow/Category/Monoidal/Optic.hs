@@ -5,7 +5,7 @@
 module Proarrow.Category.Monoidal.Optic where
 
 import Data.Bifunctor (bimap)
-import Data.Kind (Constraint, Type)
+import Data.Kind (Type)
 import Prelude (Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($), type (~))
 
 import Data.Monoid qualified as P
@@ -33,87 +33,62 @@ import Proarrow.Core
   , Profunctor (..)
   , Promonad (..)
   , UN
-  , cloneIso
   , dimapDefault
   , obj
+  , rmap
   , (//)
   , type (+->)
   )
-import Proarrow.Core qualified as Core
 import Proarrow.Functor (Prelude (..))
-import Proarrow.Monoid (Monoid)
 import Proarrow.Object (src, tgt)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD, Prod (..))
-import Proarrow.Profunctor.Constant (Constant, Getting)
+import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..))
+import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withRepOb)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 
-type Optic :: Kind -> c -> d -> c -> d -> Type
-data Optic m a b s t where
-  Optic
+type ExOptic :: Kind -> c -> d -> c -> d -> Type
+data ExOptic m a b s t where
+  ExOptic
     :: forall {c} {d} {m} (x :: m) (x' :: m) a b s t
      . (Ob (a :: c), Ob (b :: d))
     => s ~> (x `Act` a)
     -> x ~> x'
     -> (x' `Act` b) ~> t
-    -> Optic m a b s t
+    -> ExOptic m a b s t
 
 type IsOptic m c d = (MonoidalAction m c, MonoidalAction m d)
 
-instance (CategoryOf c, CategoryOf d) => Profunctor (Optic m a b :: c +-> d) where
-  dimap l r (Optic f w g) = Optic (f . l) w (r . g)
-  r \\ Optic f _ g = r \\ f \\ g
+instance (CategoryOf c, CategoryOf d) => Profunctor (ExOptic m a b :: c +-> d) where
+  dimap l r (ExOptic f w g) = ExOptic (f . l) w (r . g)
+  r \\ ExOptic f _ g = r \\ f \\ g
 
-instance (IsOptic m c d) => Strong m (Optic m a b :: c +-> d) where
-  act :: forall (a1 :: m) (b1 :: m) (s :: d) (t :: c). a1 ~> b1 -> Optic m a b s t -> Optic m a b (Act a1 s) (Act b1 t)
-  act w (Optic @x @x' f w' g) =
-    Optic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
+instance (IsOptic m c d) => Strong m (ExOptic m a b :: c +-> d) where
+  act
+    :: forall (a1 :: m) (b1 :: m) (s :: d) (t :: c). a1 ~> b1 -> ExOptic m a b s t -> ExOptic m a b (Act a1 s) (Act b1 t)
+  act w (ExOptic @x @x' f w' g) =
+    ExOptic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
       \\ w
       \\ w'
 
-type data OPTIC m (c :: Kind) (d :: Kind) = OPT c d
-type family OptL (p :: OPTIC w c d) where
-  OptL (OPT c d) = c
-type family OptR (p :: OPTIC w c d) where
-  OptR (OPT c d) = d
-type OpticCat :: CAT (OPTIC w c d)
-data OpticCat ab st where
-  OpticCat :: Optic m a b s t -> OpticCat (OPT a b :: OPTIC m c d) (OPT s t)
-
-instance (IsOptic m c d) => Profunctor (OpticCat :: CAT (OPTIC m c d)) where
-  dimap = dimapDefault
-  r \\ OpticCat (Optic f _ g) = r \\ f \\ g
-instance (IsOptic m c d) => Promonad (OpticCat :: CAT (OPTIC m c d)) where
-  id = OpticCat (prof2ex id)
-  OpticCat l@Optic{} . OpticCat r@Optic{} = OpticCat $ prof2ex (ex2prof l . ex2prof r)
-
--- | The category of optics.
-instance (IsOptic m c d) => CategoryOf (OPTIC m c d) where
-  type (~>) = OpticCat
-  type Ob a = (a ~ OPT (OptL a) (OptR a), Ob (OptL a), Ob (OptR a))
-
-type MixedOptic m s t a b = Core.Optic (Strong m) s t a b
-
-toIso :: (IsOptic () c d) => MixedOptic () s t (a :: c) (b :: d) -> Core.Iso s t a b
-toIso l p = cloneIso l p \\ p
-
-ex2prof :: forall m a b s t. Optic m a b s t -> MixedOptic m s t a b
-ex2prof (Optic l w r) p = dimap l r (act w p)
+ex2prof
+  :: forall {c} {d} m (a :: c) (b :: d) s t. (CategoryOf c, CategoryOf d) => ExOptic m a b s t -> Optic (Strong m) s t a b
+ex2prof (ExOptic l w r) = Optic (dimap l r . act w) \\ l \\ r
 
 prof2ex
   :: forall {c} {d} m (a :: c) (b :: d) (s :: c) (t :: d)
    . (IsOptic m c d, Ob a, Ob b)
-  => MixedOptic m s t a b
-  -> Optic m a b s t
-prof2ex p2p = p2p (Optic (unitorInv @m) par0 (unitor @m))
+  => Optic (Strong m) s t a b
+  -> ExOptic m a b s t
+prof2ex p2p = over p2p (ExOptic (unitorInv @m) par0 (unitor @m))
 
-type MonoidalOptic (s :: k) (t :: k) a b = MixedOptic (SUBCAT (Any :: OB k)) s t a b
+type MonoidalOptic (s :: k) (t :: k) a b = Optic (Strong (SUBCAT (Any :: OB k))) s t a b
 mkMonoidal
   :: forall {k} (m :: k) (a :: k) (b :: k) s t
    . (Monoidal k, Ob m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalOptic s t a b
-mkMonoidal sma mbt = ex2prof (Optic sma (Sub @(Any :: OB k) (obj @m)) mbt)
+mkMonoidal sma mbt = ex2prof (ExOptic sma (Sub @(Any :: OB k) (obj @m)) mbt)
 
 _1 :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => MonoidalOptic (a ** c) (b ** c) a b
 _1 = mkMonoidal @c (swap @k @a @c) (swap @k @c @b)
@@ -131,23 +106,21 @@ instance (Cartesian k, SelfAction k, Ob c) => Strong k (Rep (Constant c) :: k +-
 instance Strong (COPROD Type) (Rep (Constant (P.First c)) :: Type +-> Type) where
   act _ (Rep f) = Rep (either (const (P.First Nothing)) f)
 
-type Lens (s :: k) (t :: k) a b = MixedOptic (PROD k) s t a b
+type Lens (s :: k) (t :: k) a b = Optic (Strong (PROD k)) s t a b
 mkLens :: forall {k} (s :: k) (t :: k) a b. (HasProducts k, Ob b) => (s ~> a) -> ((s && b) ~> t) -> Lens s t a b
-mkLens sa sbt = ex2prof (Optic (id &&& sa) (Prod (src sa)) sbt) \\ sa
+mkLens sa sbt = ex2prof (ExOptic (id &&& sa) (Prod (src sa)) sbt) \\ sa
 
-type Prism (s :: k) t a b = MixedOptic (COPROD k) s t a b
+type Prism (s :: k) t a b = Optic (Strong (COPROD k)) s t a b
 mkPrism :: forall {k} (s :: k) (t :: k) a b. (HasCoproducts k, Ob a) => (s ~> (t || a)) -> (b ~> t) -> Prism s t a b
-mkPrism sta bt = ex2prof (Optic sta (Coprod (Id (tgt bt))) (id ||| bt)) \\ bt
+mkPrism sta bt = ex2prof (ExOptic sta (Coprod (Id (tgt bt))) (id ||| bt)) \\ bt
 
-type HaskTraversal s t a b = MixedOptic (SUBCAT Traversable) s t a b
+type HaskTraversal s t a b = Optic (Strong (SUBCAT Traversable)) s t a b
 traversing :: (Traversable f) => HaskTraversal (f a) (f b) a b
-traversing = ex2prof @(SUBCAT Traversable) (Optic Prelude id unPrelude)
+traversing = ex2prof @(SUBCAT Traversable) (ExOptic Prelude id unPrelude)
 
-type Traversal s t a b = Core.Optic Dist.StrongDistributiveProfunctor s t a b
-traversing' :: forall t a b. (Dist.Traversable t, Representable t) => Traversal (t % a) (t % b) a b
-traversing' = Dist.repTraverse @t
-
-type Fold s a = forall m. (Monoid m) => Getting m s a
+type Traversal s t a b = Optic Dist.StrongDistributiveProfunctor s t a b
+traversing' :: forall t a b. (Dist.Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
+traversing' = withRepOb @t @a $ withRepOb @t @b $ Optic (Dist.repTraverse @t)
 
 class (Monad m) => Algebra m a where algebra :: m a -> a
 instance (Monad m) => Algebra m (m a) where algebra = (>>= id)
@@ -155,9 +128,9 @@ instance (Monad m) => Algebra m () where algebra _ = ()
 instance (Monad m, Algebra m a, Algebra m b) => Algebra m (a, b) where
   algebra mab = (algebra (fmap fst mab), algebra (fmap snd mab))
 
-type AlgebraicLens m s t a b = MixedOptic (SUBCAT (Algebra m)) s t a b
+type AlgebraicLens m s t a b = Optic (Strong (SUBCAT (Algebra m))) s t a b
 mkAlgebraicLens :: forall m s t a b. (Monad m) => (s -> a) -> (m s -> b -> t) -> AlgebraicLens m s t a b
-mkAlgebraicLens v u = ex2prof @(SUBCAT (Algebra m)) (Optic (\s -> (return @m s, v s)) id (uncurry u))
+mkAlgebraicLens v u = ex2prof @(SUBCAT (Algebra m)) (ExOptic (\s -> (return @m s, v s)) id (uncurry u))
 
 data Previewing a (b :: Type) s (t :: Type) where
   Previewing :: {unPreview :: s -> Maybe a} -> Previewing a b s t
@@ -220,34 +193,15 @@ infixl 8 .?
 (.?) :: (Monad m) => (Classifying m a b a b -> Classifying m a b s t) -> b -> m s -> t
 (.?) l b ms = unClassify (l $ Classifying (const id)) ms b
 
-data Re p s t a b where
-  Re :: (Ob a, Ob b) => {unRe :: p b a -> p t s} -> Re p s t a b
-
-class
-  (forall p a b. (coc p) => c (Re p a b)) =>
-  InvertableOptic (c :: j +-> k -> Constraint) (coc :: k +-> j -> Constraint)
-    | c -> coc
 instance InvertableOptic (Strong m) (Costrong m)
 instance InvertableOptic (Costrong m) (Strong m)
-instance InvertableOptic Profunctor Profunctor
-
-class (l p, r p) => (l :&&: r) p
-instance (l p, r p) => (l :&&: r) p
-instance (InvertableOptic l l', InvertableOptic r r') => InvertableOptic (l :&&: r) (l' :&&: r')
-
-re :: (Ob a, Ob b, InvertableOptic c coc) => Core.Optic c s t a b -> Core.Optic coc b a t s
-re l = unRe (l (Re id))
-
-instance (Profunctor p) => Profunctor (Re p s t) where
-  dimap l r (Re f) = Re (f . dimap r l) \\ l \\ r
-  r \\ Re{} = r
 instance (Strong m p) => Costrong m (Re p s t) where
   coact @a (Re f) = Re \pyx -> f (act (obj @a) pyx)
 instance (Costrong m p) => Strong m (Re p s t) where
   act @a @b @x @y g (Re f) = g //
     withObAct @m @_ @a @x $
       withObAct @m @_ @b @y $
-        Re \payax -> f (coact @_ @_ @b (Core.rmap (act g (obj @x)) payax))
+        Re \payax -> f (coact @_ @_ @b (rmap (act g (obj @x)) payax))
 
 -- Charts, a kind of dual to optics.
 type IsChart m c d = (IsOptic m c d, SymMonoidal m)
@@ -259,16 +213,16 @@ type family ChaR (p :: CHART w c d) where
   ChaR (CHA c d) = d
 type ChartCat :: CAT (CHART w c d)
 data ChartCat ab st where
-  ChartCat :: Optic m a t s b -> ChartCat (CHA a (OP b) :: CHART m c d) (CHA s (OP t))
+  ChartCat :: ExOptic m a t s b -> ChartCat (CHA a (OP b) :: CHART m c d) (CHA s (OP t))
 
 instance (IsChart m c d) => Profunctor (ChartCat :: CAT (CHART m c d)) where
   dimap = dimapDefault
-  r \\ ChartCat (Optic f _ g) = r \\ f \\ g
+  r \\ ChartCat (ExOptic f _ g) = r \\ f \\ g
 instance (IsChart m c d) => Promonad (ChartCat :: CAT (CHART m c d)) where
   id = ChartCat (prof2ex id)
-  ChartCat (Optic @x @x' @_ @t ll lw lr) . ChartCat (Optic @y @y' @a rl rw rr) =
+  ChartCat (ExOptic @x @x' @_ @t ll lw lr) . ChartCat (ExOptic @y @y' @a rl rw rr) =
     ChartCat $
-      Optic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `act` obj @t))
+      ExOptic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `act` obj @t))
         \\ lw
         \\ rw
 

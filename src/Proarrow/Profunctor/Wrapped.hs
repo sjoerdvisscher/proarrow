@@ -2,8 +2,9 @@ module Proarrow.Profunctor.Wrapped where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Core (Iso, Profunctor (..), Promonad (..), iso)
+import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 

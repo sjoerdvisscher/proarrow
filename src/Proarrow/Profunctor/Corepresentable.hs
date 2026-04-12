@@ -4,8 +4,9 @@ module Proarrow.Profunctor.Corepresentable where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->), Iso, iso)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (obj, Obj)
+import Proarrow.Optic (Iso, iso)
 import Proarrow.Functor (FunctorForRep (..))
 
 infixl 8 %%

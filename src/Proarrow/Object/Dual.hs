@@ -18,8 +18,9 @@ import Proarrow.Category.Monoidal
   , unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
-import Proarrow.Core (CategoryOf (..), Iso, Obj, Profunctor (..), Promonad (..), iso, obj, (//))
+import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj, (//))
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Optic (Iso, iso)
 
 class (Ob (Dual a)) => ObDual a
 instance (Ob (Dual a)) => ObDual a
