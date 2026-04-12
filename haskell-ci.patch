@@ -1,0 +1,42 @@
+diff --git a/.github/workflows/haskell-ci.yml b/.github/workflows/haskell-ci.yml
+index 9bb174a..c5101e2 100644
+--- a/.github/workflows/haskell-ci.yml
++++ b/.github/workflows/haskell-ci.yml
+@@ -193,7 +193,18 @@ jobs:
+           ${CABAL} -vnormal check
+       - name: haddock
+         run: |
+-          $CABAL v2-haddock --disable-documentation --haddock-all $ARG_COMPILER --with-haddock $HADDOCK $ARG_TESTS $ARG_BENCH all
++          cd ${PKGDIR_proarrow} || false
++          chmod +x mkdocs.sh
++          ./mkdocs.sh
++      - name: Copy docs
++        run: |
++          mkdir docs
++          cp -r ${PKGDIR_proarrow}/docs .
++      - name: Upload GH pages artifact
++        uses: actions/upload-pages-artifact@v4.0.0
++        if: ${{ github.ref_name == 'main' && matrix.compiler == 'ghc-9.12.2' }}
++        with:
++          path: docs
+       - name: unconstrained build
+         run: |
+           rm -f cabal.project.local
+@@ -219,3 +219,17 @@ jobs:
+         with:
+           key: ${{ runner.os }}-${{ matrix.compiler }}-${{ github.sha }}
+           path: ~/.cabal/store
++
++  deploy:
++    needs: linux
++    permissions:
++      pages: write      # to deploy to Pages
++      id-token: write   # to verify the deployment originates from an appropriate source
++    environment:
++      name: github-pages
++      url: ${{ steps.deployment.outputs.page_url }}
++    runs-on: ubuntu-latest
++    steps:
++      - name: Deploy to GitHub Pages
++        id: deployment
++        uses: actions/deploy-pages@v5

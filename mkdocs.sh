@@ -1,7 +1,10 @@
+: "${CABAL:=cabal}"
+: "${ARG_COMPILER:=}"
+
 rm -rf docs
 mkdir docs
 
-cabal haddock \
+${CABAL} haddock ${ARG_COMPILER} \
   --haddock-hyperlink-source \
   --haddock-options="
     --comments-base=https://github.com/sjoerdvisscher/proarrow/
@@ -10,4 +13,4 @@ cabal haddock \
     --pretty-html
     --odir=docs"
 
-grep -rilE '>(User )?Comments<' docs | xargs sed -i '' -E 's/>(User )?Comments</>Github</gI'
+grep -rilE '>(User )?Comments<' docs | xargs sed -i -E 's/>(User )?Comments</>Github</gI'
