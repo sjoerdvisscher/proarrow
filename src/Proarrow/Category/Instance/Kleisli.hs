@@ -16,7 +16,7 @@ import Data.Kind (Type)
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Enriched.ThinCategory qualified as T
+import Proarrow.Category.Enriched.Thin qualified as T
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))

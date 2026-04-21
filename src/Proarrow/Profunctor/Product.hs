@@ -2,7 +2,7 @@ module Proarrow.Profunctor.Product where
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Core (Profunctor (..), (:~>), type (+->))

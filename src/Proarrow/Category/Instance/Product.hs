@@ -6,7 +6,7 @@ import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 
 type Fst :: (a, b) -> a
 type family Fst a where

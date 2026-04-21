@@ -20,7 +20,7 @@ import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 
 data BOOL = FLS | TRU
 

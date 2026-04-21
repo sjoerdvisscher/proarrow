@@ -4,7 +4,7 @@ import Prelude (Show, Eq)
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Thin)
 import Proarrow.Category.Instance.Zero (Bottom (..))
 
 type InitialProfunctor :: j +-> k

@@ -14,7 +14,7 @@ import Proarrow.Core (Any, CAT, CategoryOf (..), Kind, Profunctor (..), type (+-
 import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 import Proarrow.Object.Exponential (uncurry)
 import Proarrow.Object.Exponential qualified as E
-import Proarrow.Category.Enriched.ThinCategory (CodiscreteProfunctor (..), ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), ThinProfunctor (..))
 import Proarrow.Profunctor qualified as P
 import Proarrow.Category.Opposite (Op(..), OPPOSITE (..))
 

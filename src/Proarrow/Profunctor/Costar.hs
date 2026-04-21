@@ -6,7 +6,7 @@ import Control.Monad qualified as P
 import Data.Functor.Compose (Compose (..))
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (Discrete, Thin, ThinProfunctor (..), withEq)
 import Proarrow.Category.Instance.Nat (Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)

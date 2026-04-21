@@ -5,7 +5,7 @@ import Data.Kind (Constraint)
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Thin)
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Profunctor.Representable (Representable (..), repObj)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))

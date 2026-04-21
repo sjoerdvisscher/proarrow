@@ -5,7 +5,7 @@ module Proarrow.Category.Instance.Unit where
 import Prelude (type (~))
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 
 type Unit :: CAT ()

@@ -9,7 +9,7 @@ import GHC.TypeNats (KnownNat, Nat, cmpNat, natVal, withKnownNat, withSomeSNat, 
 import Unsafe.Coerce (unsafeCoerce)
 import Prelude (Num ((+)), error, ($))
 
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (//))

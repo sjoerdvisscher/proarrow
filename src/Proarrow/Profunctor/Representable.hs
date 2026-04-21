@@ -6,15 +6,15 @@ module Proarrow.Profunctor.Representable where
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
-import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Object (Obj, obj, tgt, src)
+import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, trivialCorep)
-import Proarrow.Category.Instance.Prof (Prof(..))
-import Proarrow.Category.Opposite (Op (..), OPPOSITE (..))
-import Proarrow.Category.Instance.Product ((:**:) (..))
 
 infixl 8 %
 
@@ -119,7 +119,7 @@ instance (FunctorForRep f) => Representable (Rep f) where
   tabulate = Rep
   repMap = fmap @f
 
-rep :: forall f a b a' b'. Ob b => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
+rep :: forall f a b a' b'. (Ob b) => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
 rep = iso Rep unRep
 
 type Monad m = (Promonad m, Representable m)

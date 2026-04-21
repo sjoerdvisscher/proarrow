@@ -5,7 +5,7 @@ module Proarrow.Profunctor.Star where
 import Data.Functor.Compose (Compose (..))
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched.ThinCategory (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (Discrete, Thin, ThinProfunctor (..), withEq)
 import Proarrow.Category.Instance.Nat (Nat (..), Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))

@@ -17,7 +17,7 @@ import Proarrow.Core
   )
 import Proarrow.Object.Initial (HasInitialObject (..), initiate')
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
-import Proarrow.Category.Enriched.ThinCategory (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
+import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
 import Proarrow.Functor (FunctorForRep (..))
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind

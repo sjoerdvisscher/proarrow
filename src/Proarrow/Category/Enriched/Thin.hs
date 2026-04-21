@@ -1,5 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-module Proarrow.Category.Enriched.ThinCategory where
+module Proarrow.Category.Enriched.Thin where
 
 import Data.Kind (Constraint)
 import Prelude (type (~))

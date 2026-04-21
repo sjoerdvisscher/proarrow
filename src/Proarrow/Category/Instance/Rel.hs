@@ -4,7 +4,7 @@ module Proarrow.Category.Instance.Rel where
 
 import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), src, (:~>), type (+->), Promonad (..))
-import Proarrow.Category.Enriched.ThinCategory (Discrete, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))

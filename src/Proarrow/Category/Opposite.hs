@@ -1,6 +1,6 @@
 module Proarrow.Category.Opposite where
 
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Thin)
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 

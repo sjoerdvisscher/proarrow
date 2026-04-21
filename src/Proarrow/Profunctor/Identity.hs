@@ -1,7 +1,7 @@
 module Proarrow.Profunctor.Identity where
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
-import Proarrow.Category.Enriched.ThinCategory (Thin, ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction, Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))

@@ -1,7 +1,7 @@
 module Proarrow.Category.Instance.Zero where
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Category.Enriched.ThinCategory (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 
 type data VOID
