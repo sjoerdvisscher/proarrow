@@ -13,7 +13,9 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), Hypergraph, spiderDefault)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
@@ -22,14 +24,13 @@ import Proarrow.Object.Dual
   , ExpSA
   , StarAutonomous (..)
   , applySA
-  , compactClosedCoact
+  , coactCC
   , currySA
   , expSA
   )
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Functor (FunctorForRep (..))
 
 type n + m = Plus n m
 type (*) n m = Mult n m
@@ -41,14 +42,14 @@ data Mat :: CAT (MatK a) where
   Mat
     :: forall {a} m n
      . (IsNat m, IsNat n)
-    => { unMat :: Vec n (Vec m a) }
+    => {unMat :: Vec n (Vec m a)}
     -> Mat (M m :: MatK a) (M n)
 
 app :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
 app m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
 
 data family App :: MatK a +-> Type
-instance P.Num a => FunctorForRep (App :: MatK a +-> Type) where
+instance (P.Num a) => FunctorForRep (App :: MatK a +-> Type) where
   type App @a @ M n = Vec n a
   fmap (Mat m) = app m
 
@@ -192,21 +193,22 @@ instance (P.Num a) => MonoidalAction (MatK a) (MatK a) where
   withObAct @b @c r = withOb2 @_ @b @c r
   unitor = leftUnitor
   unitorInv = leftUnitorInv
-  multiplicator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
-  multiplicatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
+  multiplicator @b @c @d = associator @_ @b @c @d
+  multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
 
-instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a))where
+instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a)) where
   act = par
 
 instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
-  coact @x = compactClosedCoact @x
+  coact @x = coactCC @x
 
 instance (P.Num a, IsNat n) => Monoid (M n :: MatK a) where
   mempty = Mat $ P.pure $ P.pure 1
-  mappend = withMultNat @n @n $ Mat $
-    tabulate \i -> concat $
-      tabulate \j ->
-        tabulate \k -> if i P.== j P.&& j P.== k then 1 else 0
+  mappend = withMultNat @n @n $
+    Mat $
+      tabulate \i -> concat $
+        tabulate \j ->
+          tabulate \k -> if i P.== j P.&& j P.== k then 1 else 0
 instance (P.Num a, IsNat n) => Comonoid (M n :: MatK a) where
   counit = Mat $ P.pure $ P.pure 1
   comult = withMultNat @n @n $
@@ -216,6 +218,9 @@ instance (P.Num a, IsNat n) => Comonoid (M n :: MatK a) where
           tabulate \j ->
             tabulate \k ->
               if i P.== j P.&& j P.== k then 1 else 0
+instance (P.Num a, IsNat n) => Frobenius (M n :: MatK a) where
+  spider @x @y = spiderDefault @x @y @(M n)
+instance (P.Num a) => Hypergraph (MatK a)
 instance (P.Num a) => CopyDiscard (MatK a)
 
 -- Monoids are associative, unital algebras.

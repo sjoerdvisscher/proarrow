@@ -63,11 +63,11 @@ right f = obj @c +++ f
 codiag :: forall {k} (a :: k). (HasBinaryCoproducts k, Ob a) => (a || a) ~> a
 codiag = id ||| id
 
-swapCoprod' :: (HasBinaryCoproducts k) => (a :: k) ~> a' -> b ~> b' -> (a || b) ~> (b' || a')
+swapCoprod' :: forall {k} (a :: k) a' b b'. (HasBinaryCoproducts k) => a ~> a' -> b ~> b' -> (a || b) ~> (b' || a')
 swapCoprod' a b = rgt' (tgt b) a ||| lft' b (tgt a)
 
-swapCoprod :: (HasBinaryCoproducts k, Ob a, Ob b) => (a :: k) || b ~> b || a
-swapCoprod @_ @a @b = swapCoprod' (obj @a) (obj @b)
+swapCoprod :: forall {k} (a :: k) b. (HasBinaryCoproducts k, Ob a, Ob b) => a || b ~> b || a
+swapCoprod = swapCoprod' (obj @a) (obj @b)
 
 type HasCoproducts k = (HasInitialObject k, HasBinaryCoproducts k)
 
@@ -168,15 +168,33 @@ instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)
   withOb2 @(COPR a) @(COPR b) r = withObCoprod @k @a @b r
-  leftUnitor = Coprod (Id (initiate ||| id))
-  leftUnitorInv = Coprod (Id (rgt @_ @InitialObject))
-  rightUnitor = Coprod (Id (id ||| initiate))
-  rightUnitorInv = Coprod (Id (lft @_ @_ @InitialObject))
-  associator @(COPR a) @(COPR b) @(COPR c) = Coprod (Id ((obj @a +++ lft @k @b @c) ||| (withObCoprod @k @b @c (rgt @k @a @(b || c)) . rgt @k @b @c)))
-  associatorInv @(COPR a) @(COPR b) @(COPR c) = Coprod (Id ((withObCoprod @k @a @b (lft @k @(a || b) @c) . lft @k @a @b) ||| (rgt @k @a @b +++ obj @c)))
+  leftUnitor = Coprod (Id leftUnitorCoprod)
+  leftUnitorInv = Coprod (Id leftUnitorCoprodInv)
+  rightUnitor = Coprod (Id rightUnitorCoprod)
+  rightUnitorInv = Coprod (Id rightUnitorCoprodInv)
+  associator @(COPR a) @(COPR b) @(COPR c) = Coprod (Id (associatorCoprod @a @b @c))
+  associatorInv @(COPR a) @(COPR b) @(COPR c) = Coprod (Id (associatorCoprodInv @a @b @c))
+
+leftUnitorCoprod :: forall {k} (a :: k). (HasCoproducts k, Ob a) => (InitialObject || a) ~> a
+leftUnitorCoprod = initiate ||| id
+
+leftUnitorCoprodInv :: forall {k} (a :: k). (HasCoproducts k, Ob a) => a ~> (InitialObject || a)
+leftUnitorCoprodInv = rgt @k @InitialObject @a
+
+rightUnitorCoprod :: forall {k} (a :: k). (HasCoproducts k, Ob a) => (a || InitialObject) ~> a
+rightUnitorCoprod = id ||| initiate
+
+rightUnitorCoprodInv :: forall {k} (a :: k). (HasCoproducts k, Ob a) => a ~> (a || InitialObject)
+rightUnitorCoprodInv = lft @k @a @InitialObject
+
+associatorCoprod :: forall {k} (a :: k) b c. (HasCoproducts k, Ob a, Ob b, Ob c) => (a || b) || c ~> a || (b || c)
+associatorCoprod = (obj @a +++ lft @k @b @c) ||| (withObCoprod @k @b @c (rgt @k @a @(b || c)) . rgt @k @b @c)
+
+associatorCoprodInv :: forall {k} (a :: k) b c. (HasCoproducts k, Ob a, Ob b, Ob c) => a || (b || c) ~> (a || b) || c
+associatorCoprodInv = (withObCoprod @k @a @b (lft @k @(a || b) @c) . lft @k @a @b) ||| (rgt @k @a @b +++ obj @c)
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
-  swap @(COPR a) @(COPR b) = Coprod (Id (swapCoprod @k @a @b))
+  swap @(COPR a) @(COPR b) = Coprod (Id (swapCoprod @a @b))
 
 instance (HasCoproducts k, Strong (COPROD k) ((~>) :: CAT k)) => MonoidalAction (COPROD k) k where
   type Act a b = UN COPR a || b
@@ -211,7 +229,7 @@ class (Strong (COPROD k) p, CoprodAction k) => StrongCoprod (p :: CAT k)
 instance (Strong (COPROD k) p, CoprodAction k) => StrongCoprod (p :: CAT k)
 
 left' :: forall {k} (p :: CAT k) c a b. (StrongCoprod p, Ob c) => p a b -> p (a || c) (b || c)
-left' p = dimap (swapCoprod @_ @a @c) (swapCoprod @_ @c @b) (right' @_ @c p) \\ p
+left' p = dimap (swapCoprod @a @c) (swapCoprod @c @b) (right' @_ @c p) \\ p
 
 right' :: forall {k} (p :: CAT k) c a b. (StrongCoprod p, Ob c) => p a b -> p (c || a) (c || b)
 right' p = act (obj @(COPR c)) p

@@ -7,21 +7,28 @@ module Proarrow.Category.Instance.ZX where
 import Data.Bits (Bits (..), shiftL, (.|.))
 import Data.Char (chr)
 import Data.Complex (Complex (..), conjugate, magnitude, mkPolar)
+import Data.Functor ((<&>))
 import Data.List (intercalate, sort)
 import Data.Map.Strict qualified as Map
 import Data.Proxy (Proxy (..))
-import GHC.TypeNats (KnownNat, Nat, natVal, withSomeSNat, pattern SNat, type SNat, type (+))
+import Data.Type.Nat qualified as M
+import Data.Vec.Lazy (Vec (..), reifyList)
+import GHC.TypeNats (KnownNat, Nat, natVal, withSomeSNat, pattern SNat, type SNat, type (+), type (-))
 import Numeric (showFFloat)
 import Unsafe.Coerce (unsafeCoerce)
-import Prelude hiding (id, (.))
+import Prelude hiding (Monoid, id, (.))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), spiderDefault)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, currySA, expSA, coactCC)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), Costrong (..))
 
 newtype Bitstring (n :: Nat) = BS Int
   deriving (Eq, Ord)
@@ -67,13 +74,13 @@ enumAll :: (KnownNat n) => [Bitstring n]
 enumAll = [minBound .. maxBound]
 
 nat :: (KnownNat n) => Int
-nat @n = fromIntegral $ natVal (Proxy :: Proxy n)
+nat @n = fromIntegral $ natVal (Proxy @n)
 
 withPlusIsNat :: forall a b r. (KnownNat a, KnownNat b) => ((KnownNat (a + b)) => r) -> r
 withPlusIsNat r = case ab of SNat -> r
   where
     ab :: SNat (a + b)
-    ab = withSomeSNat (natVal (Proxy :: Proxy a) + natVal (Proxy :: Proxy b)) unsafeCoerce
+    ab = withSomeSNat (natVal (Proxy @a) + natVal (Proxy @b)) unsafeCoerce
 
 type ZX :: CAT Nat
 data ZX i o where
@@ -95,6 +102,16 @@ instance Show (ZX a b) where
           ++ "="
           ++ (if abs (1 - r) < epsilon then "1" else showFFloat (Just 3) r "")
           ++ (if abs c < epsilon then "" else " :+ " ++ showFFloat (Just 3) c "")
+
+type family MatrixSize (n :: Nat) :: M.Nat where
+  MatrixSize 0 = M.Nat1
+  MatrixSize n = M.Mult M.Nat2 (MatrixSize (n - 1))
+
+toMatrix :: forall o i. ZX i o -> Vec (MatrixSize o) (Vec (MatrixSize i) (Complex Double))
+toMatrix (ZX m) =
+  reifyList (enumAll @o) \vo ->
+    reifyList (enumAll @i) \vi ->
+      unsafeCoerce $ vo <&> \o -> vi <&> \i -> Map.findWithDefault 0 (o, i) m
 
 instance Profunctor ZX where
   dimap = dimapDefault
@@ -177,6 +194,20 @@ instance CompactClosed Nat where
   distribDual @a @b = withOb2 @_ @a @b id
   dualUnit = ZX Map.empty
 
+instance MonoidalAction Nat Nat where
+  type Act p x = p ** x
+  withObAct @b @c r = withOb2 @_ @b @c r
+  unitor = leftUnitor
+  unitorInv = leftUnitorInv
+  multiplicator @b @c @d = associator @_ @b @c @d
+  multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
+
+instance Strong Nat ZX where
+  act = par
+
+instance Costrong Nat ZX where
+  coact @x = coactCC @x
+
 instance HasTerminalObject Nat where
   type TerminalObject = 0
   terminate = ZX Map.empty
@@ -185,8 +216,23 @@ instance HasInitialObject Nat where
   type InitialObject = 0
   initiate = ZX Map.empty
 
+-- No binary(co)products, since that would need 2^n + 2^m = 2^(x :: nat)
+
+instance (KnownNat n) => Monoid (n :: Nat) where
+  mempty = ZX $ Map.fromList [((o, minBound), 1) | o <- enumAll @n]
+  mappend = withPlusIsNat @n @n $ ZX $ Map.fromList [((o, combine o o), 1) | o <- enumAll @n]
+
+instance (KnownNat n) => Comonoid (n :: Nat) where
+  counit = ZX $ Map.fromList [((minBound, i), 1) | i <- enumAll @n]
+  comult = withPlusIsNat @n @n $ ZX $ Map.fromList [((combine i i, i), 1) | i <- enumAll @n]
+
+instance (KnownNat a) => Frobenius (a :: Nat) where
+  spider @n @m = spiderDefault @n @m @a
+
+instance CopyDiscard Nat
+
 zSpider :: (KnownNat i, KnownNat o) => Double -> ZX i o
-zSpider alpha = ZX $ Map.fromList $ [(minBound, 1), (maxBound, mkPolar 1 alpha)]
+zSpider alpha = ZX $ Map.fromListWith (+) [(minBound, 1), (maxBound, mkPolar 1 alpha)]
 
 xSpider :: (KnownNat i, KnownNat o) => Double -> ZX i o
 xSpider alpha = hadamard . zSpider alpha . hadamard

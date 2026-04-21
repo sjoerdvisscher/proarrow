@@ -114,10 +114,10 @@ combineDual =
     \\ dualObj @b
 
 dimension :: forall {k} (a :: k). (CompactClosed k, Ob a) => (Unit :: k) ~> Unit
-dimension = compactClosedTrace @Unit (unitObj `par` unitObj)
+dimension = traceCC @Unit (unitObj `par` unitObj)
 
-compactClosedTrace :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** u ~> y ** u -> x ~> y
-compactClosedTrace f =
+traceCC :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** u ~> y ** u -> x ~> y
+traceCC f =
   rightUnitorWith (dualityCounit @u . swap @k @u @(Dual u))
     . associator @k @y @u @(Dual u)
     . (f `par` obj @(Dual u))
@@ -125,10 +125,10 @@ compactClosedTrace f =
     . rightUnitorInvWith (dualityUnit @u)
     \\ dualObj @u
 
-compactClosedCoact
+coactCC
   :: forall {m} {k} (u :: m) (x :: k) (y :: k)
    . (CompactClosed m, MonoidalAction m k, Ob x, Ob y, Ob u) => Act u x ~> Act u y -> x ~> y
-compactClosedCoact f =
+coactCC f =
   unitor @m @k @y
     . act (dualityCounit @u) (obj @y)
     . multiplicatorInv @m @k @(Dual u) @u @y

@@ -24,6 +24,14 @@ test =
     , propMonoidal_ @Nat
     , propSymMonoidal_ @Nat
     , propClosed_ @Nat
+    , testMonoid_ @0
+    , testMonoid_ @1
+    , testMonoid_ @2
+    , testMonoid_ @3
+    , testComonoid_ @0
+    , testComonoid_ @1
+    , testComonoid_ @2
+    , testComonoid_ @3
     ]
 
 instance Testable Nat where

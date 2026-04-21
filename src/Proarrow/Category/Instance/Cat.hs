@@ -30,7 +30,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), compactClosedCoact)
+import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), coactCC)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -202,4 +202,4 @@ instance Strong KIND Cat where
   act = par
 
 instance Costrong KIND Cat where
-  coact @u = compactClosedCoact @u
+  coact @u = coactCC @u
