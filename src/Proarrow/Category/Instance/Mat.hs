@@ -4,15 +4,18 @@ module Proarrow.Category.Instance.Mat where
 
 import Data.Complex (Complex, conjugate)
 import Data.Kind (Type)
-import Data.Type.Nat (Nat (..), SNatI, type Mult, type Plus)
+import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat, type Mult, type Plus)
 import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, tabulate, (++))
 import Prelude (($), type (~))
 import Prelude qualified as P
 
+import Data.Fin (Fin)
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLInv, distRInv)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), Hypergraph, spiderDefault)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
@@ -47,6 +50,23 @@ data Mat :: CAT (MatK a) where
 
 app :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
 app m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
+
+arr :: forall n m a. (P.Num a) => FinSet (FS m) (FS n) -> Mat (M n :: MatK a) (M m :: MatK a)
+arr (FinSet v) = withIsNat @n $ withIsNat @m $ Mat (P.fmap one v)
+
+arr' :: forall n m a. (P.Num a) => FinSet (FS m) (FS n) -> Mat (M m :: MatK a) (M n :: MatK a)
+arr' (FinSet v) = withIsNat @n $ withIsNat @m $ Mat (P.traverse one v)
+
+one :: (P.Num a, IsNat n) => Fin n -> Vec n a
+one m = tabulate \n -> if n P.== m then 1 else 0
+
+zero :: (P.Num a, IsNat n) => Vec n a
+zero = P.pure 0
+
+withIsNat :: forall n r. (SNatI n) => ((IsNat n) => r) -> r
+withIsNat r = case snat @n of
+  SZ -> r
+  SS @n' -> withIsNat @n' r
 
 data family App :: MatK a +-> Type
 instance (P.Num a) => FunctorForRep (App :: MatK a +-> Type) where
@@ -92,16 +112,6 @@ instance (IsNat n) => IsNat (S n) where
   withAssocMult @m @o r = withMultNat @n @m $ withAssocMult @n @m @o (withDist @m @(n * m) @o r)
   withDist @m @o r = withMultNat @n @o $ withMultNat @m @o $ withAssocPlus @o @(n * o) @(m * o) $ withDist @n @m @o r
 
-zero :: (P.Num a, IsNat n) => Vec n a
-zero = P.pure 0
-
-withNat :: Vec n a -> ((IsNat n) => r) -> r
-withNat VNil r = r
-withNat (_ ::: xs) r = withNat xs r
-
-mat :: (IsNat m) => Vec n (Vec m a) -> Mat (M m :: MatK a) (M n)
-mat m = withNat m (Mat m)
-
 instance {-# OVERLAPPABLE #-} (P.Num a) => DaggerProfunctor (Mat :: CAT (MatK a)) where
   dagger (Mat m) = Mat (P.sequenceA m)
 
@@ -130,15 +140,15 @@ instance (P.Num a) => HasTerminalObject (MatK a) where
 instance (P.Num a) => HasBinaryCoproducts (MatK a) where
   type M x || M y = M (x + y)
   withObCoprod @(M x) @(M y) r = withPlusNat @x @y r
-  lft @(M m) @(M n) = mat (matId @m ++ (zero P.<$ matId @n @a))
-  rgt @(M m) @(M n) = mat ((zero P.<$ matId @m @a) ++ matId @n)
+  lft @(M m) @(M n) = withPlusNat @m @n (Mat (matId @m ++ (zero P.<$ matId @n @a)))
+  rgt @(M m) @(M n) = withPlusNat @m @n (Mat ((zero P.<$ matId @m @a) ++ matId @n))
   Mat @m a ||| Mat @n b = withPlusNat @m @n (Mat (P.liftA2 (++) a b))
 instance (P.Num a) => HasBinaryProducts (MatK a) where
   type M x && M y = M (x + y)
   withObProd @(M x) @(M y) r = withPlusNat @x @y r
   fst @(M m) @(M n) = withPlusNat @m @n (Mat (P.fmap (++ (0 P.<$ matId @n @a)) (matId @m)))
   snd @(M m) @(M n) = withPlusNat @m @n (Mat (P.fmap ((0 P.<$ matId @m @a) ++) (matId @n)))
-  Mat a &&& Mat b = mat (a ++ b)
+  Mat @_ @m a &&& Mat @_ @n b = withPlusNat @m @n (Mat (a ++ b))
 instance (P.Num a) => HasBiproducts (MatK a)
 
 instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
@@ -162,13 +172,13 @@ instance (P.Num a) => Monoidal (MatK a) where
   associatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
 
 instance (P.Num a) => SymMonoidal (MatK a) where
-  swap @(M x) @(M y) =
-    withMultNat @x @y $
-      withMultNat @y @x $
-        Mat $
-          concatMap @_ @y @_ @x
-            (\x -> P.fmap (\b -> concatMap @_ @x @_ @y (\a -> P.fmap (a P.*) x) b) (matId @y @a))
-            (matId @x @a)
+  swap @(M x) @(M y) = arr (swap @_ @(FS x) @(FS y))
+
+instance (P.Num a) => Distributive (MatK a) where
+  distL @(M a') @(M b) @(M c) = arr (distRInv @(FS b) @(FS c) @(FS a'))
+  distR @(M a') @(M b) @(M c) = arr (distLInv @(FS c) @(FS a') @(FS b))
+  distL0 = id
+  distR0 = id
 
 instance (P.Num a) => Closed (MatK a) where
   type x ~~> y = ExpSA x y
@@ -203,21 +213,11 @@ instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
   coact @x = coactCC @x
 
 instance (P.Num a, IsNat n) => Monoid (M n :: MatK a) where
-  mempty = Mat $ P.pure $ P.pure 1
-  mappend = withMultNat @n @n $
-    Mat $
-      tabulate \i -> concat $
-        tabulate \j ->
-          tabulate \k -> if i P.== j P.&& j P.== k then 1 else 0
+  mempty = arr counit
+  mappend = arr comult
 instance (P.Num a, IsNat n) => Comonoid (M n :: MatK a) where
-  counit = Mat $ P.pure $ P.pure 1
-  comult = withMultNat @n @n $
-    Mat $
-      concat $
-        tabulate \i ->
-          tabulate \j ->
-            tabulate \k ->
-              if i P.== j P.&& j P.== k then 1 else 0
+  counit = arr' counit
+  comult = arr' comult
 instance (P.Num a, IsNat n) => Frobenius (M n :: MatK a) where
   spider @x @y = spiderDefault @x @y @(M n)
 instance (P.Num a) => Hypergraph (MatK a)

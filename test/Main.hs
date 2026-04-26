@@ -7,6 +7,7 @@ import Prelude
 
 import Props.Bool qualified as Bool
 import Props.Dot qualified as Dot
+import Props.FinSet qualified as FinSet
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
@@ -22,6 +23,7 @@ main =
       "Proarrow"
       [ Bool.test
       , Dot.test
+      , FinSet.test
       , Free.test
       , Hask.test
       , Kleisli.test
