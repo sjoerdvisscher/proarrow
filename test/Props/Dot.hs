@@ -8,14 +8,14 @@ import Data.List (findIndices, intercalate)
 import Data.List.NonEmpty (fromList)
 import Data.Proxy (Proxy (..))
 import Data.Traversable (for)
-import Data.Type.Equality ((:~:) (..))
+import Data.Type.Equality ((:~:) (..), TestEquality (testEquality))
 import Data.Void (absurd)
-import GHC.TypeLits (Symbol, decideSymbol, symbolVal)
+import GHC.TypeLits (Symbol, decideSymbol, symbolVal, pattern SSymbol)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (elem, fst, id, snd, (.))
 
-import Proarrow.Category.Monoidal.Strictified (IsList (..))
+import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), UN)
 import Proarrow.Tools.Diagrams.Dot
   ( DOT (..)
@@ -37,9 +37,8 @@ import Testable
   , Testable (..)
   , TestableType (..)
   , TestingEqShow
-  , genObDef
+  , genSomeDef
   , one
-  , someElem
   , pattern GenNonEmpty
   )
 
@@ -59,7 +58,7 @@ foldSome (Some @n : Some @m : rest) = case foldSome (Some @m : rest) of
   Some @(D ns) -> withIsList2 @'[n] @ns (Some @(D (n ': ns)))
 
 instance Testable Symbol where
-  genOb = genObDef @'["A", "B", "C", "D", "E"]
+  genSome = genSomeDef @'["A", "B", "C", "D", "E"]
   showOb @s = symbolVal (Proxy @s)
 
 instance (Ob a, Ob b) => TestingEqShow (SymRefl a b)
@@ -68,11 +67,17 @@ instance (Ob a, Ob b) => TestableType (SymRefl a b) where
     Right Refl -> one SymRefl
     Left f -> GenEmpty \SymRefl -> absurd (f Refl)
 instance Testable DOT where
-  genOb = do
-    num <- someElem [0 .. 5]
-    somes <- replicateM num (genOb @Symbol)
+  genSome = do
+    num <- elem [0 .. 5]
+    somes <- replicateM num (genSome @Symbol)
     pure $ foldSome somes
   showOb @ns = intercalate "," $ unVec $ names @(UN D ns)
+  eqOb @(D s) @(D t) =
+    case (sList @s, sList @t) of
+      (SNil, SNil) -> Just Refl
+      (SSing @a, SSing @b) -> (\Refl -> Refl) <$> testEquality (SSymbol @a) (SSymbol @b)
+      (SCons @a @as, SCons @b @bs) -> (\Refl Refl -> Refl) <$> testEquality (SSymbol @a) (SSymbol @b) <*> eqOb @DOT @(D as) @(D bs)
+      _ -> Nothing
 
 instance (Ob a, Ob b) => TestingEqShow (Dot a b)
 instance (Ob a, Ob b) => TestableType (Dot a b) where

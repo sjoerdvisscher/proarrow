@@ -18,7 +18,7 @@ import Testable
   , Testable (..)
   , TestableType (..)
   , TestingEqShow (..)
-  , genObDef
+  , genSomeDef
   , invmap
   , pattern GenNonEmpty
   )
@@ -48,7 +48,7 @@ instance (TestOb a, TestOb b) => TestingEqShow (Pointed a b) where
 instance Testable POINTED where
   type TestOb a = (Ob a, TestOb (UN P a))
   showOb @(P a) = showOb @_ @a
-  genOb = genObDef @'[P Bool, P (Bool, Bool), P (Maybe Bool)]
+  genSome = genSomeDef @'[P Bool, P (Bool, Bool), P (Maybe Bool)]
 
 instance (TestableType a, TestableType b) => TestableType (These a b) where
   gen = case (gen @a, gen @b) of

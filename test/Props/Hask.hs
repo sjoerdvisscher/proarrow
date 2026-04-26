@@ -16,7 +16,7 @@ import Testable
   , Testable (..)
   , TestableType (..)
   , TestingEqShow (..)
-  , genObDef
+  , genSomeDef
   , one
   , optGen
   , pattern GenNonEmpty
@@ -38,7 +38,7 @@ test =
 instance Testable Type where
   type TestOb a = (TestableType a, Typeable a, Function a)
   showOb @a = show (typeRep @a)
-  genOb = genObDef @'[Bool, (Bool, Bool), Maybe Bool, Void]
+  genSome = genSomeDef @'[Bool, (Bool, Bool), Maybe Bool, Void]
 
 instance TestableType Bool where
   gen = optGen [False, True]

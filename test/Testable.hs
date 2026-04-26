@@ -5,18 +5,19 @@ module Testable where
 
 import Data.Kind (Constraint)
 import Data.List.NonEmpty (NonEmpty (..))
+import Data.Typeable (Typeable, eqT, (:~:) (..))
 import GHC.Exts qualified as GHC
-import Test.Falsify.Generator (Fun, Gen, applyFun, elem, Function, minimalValue, fun)
+import Test.Falsify.Generator (Fun, Function, Gen, applyFun, elem, fun, minimalValue)
 import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
+import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Representable (Rep (..))
 import Unsafe.Coerce (unsafeCoerce)
-import Proarrow.Category.Instance.Product ((:**:)(..), Fst, Snd)
 
 data GenTotal a where
   GenEmpty :: ~(forall x. a -> x) -> GenTotal a
@@ -48,7 +49,7 @@ class TestingEqShow a where
   default showP :: (Show a) => a -> String
   showP = show
 
-class TestingEqShow a => TestableType a where
+class (TestingEqShow a) => TestableType a where
   gen :: GenTotal a
 
 newtype ShowP a = ShowP {unShowP :: a}
@@ -84,19 +85,29 @@ class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor ((~>) :: CAT k),
   type TestOb (a :: k) :: GHC.Constraint
   type TestOb a = Ob a
   showOb :: forall (a :: k). (TestOb a) => String
-  genOb :: Property (Some k)
+  eqOb :: (TestOb (a :: k), TestOb b) => Maybe (a :~: b)
+  default eqOb :: forall a b. (TestOb (a :: k), TestOb b, Typeable a, Typeable b) => Maybe (a :~: b)
+  eqOb = eqT @a @b
+  genSome :: Gen (Some k)
+
+genOb :: Testable k => Property (Some k)
+genOb = genWith (Just . show) genSome
 
 instance (Testable k) => Testable (OPPOSITE k) where
   type TestOb a = (Is OP a, TestOb (UN OP a))
   showOb @(OP a) = "OP (" ++ showOb @k @a ++ ")"
-  genOb = mapSome OP <$> genOb
+  eqOb @(OP a) @(OP b) = fmap (\Refl -> Refl) $ eqOb @k @a @b
+  genSome = mapSome OP <$> genSome
 
 instance (Testable j, Testable k) => Testable (j, k) where
   type TestOb a = (a ~ '(Fst a, Snd a), TestOb (Fst a), TestOb (Snd a))
   showOb @'(a, b) = "(" ++ showOb @j @a ++ ", " ++ showOb @k @b ++ ")"
-  genOb = do
-    Some @a <- genOb @j
-    Some @b <- genOb @k
+  eqOb @'(a1, a2) @'(b1, b2) = case (eqOb @j @a1 @b1, eqOb @k @a2 @b2) of
+    (Just Refl, Just Refl) -> Just Refl
+    _ -> Nothing
+  genSome = do
+    Some @a <- genSome @j
+    Some @b <- genSome @k
     pure $ Some @'(a, b)
 
 class (TestOb a) => TestOb' a
@@ -127,8 +138,10 @@ someElemWith :: (a -> String) -> [a] -> Property a
 someElemWith _ [] = discard
 someElemWith f (x : xs) = genWith (Just . f) (elem (x :| xs))
 
-genObDef :: forall {k} (obs :: [k]). (Testable k, MkSomeList obs) => Property (Some k)
-genObDef = someElem (mkSomeList @k @obs)
+genSomeDef :: forall {k} (obs :: [k]). (Testable k, MkSomeList obs) => Gen (Some k)
+genSomeDef = case mkSomeList @k @obs of
+  [] -> error "genSomeDef: empty list"
+  (x : xs) -> elem (x :| xs)
 
 optGen :: [a] -> GenTotal a
 optGen [] = error "optGen: empty list"

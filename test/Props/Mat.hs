@@ -4,7 +4,8 @@
 module Props.Mat where
 
 import Data.Kind (Type)
-import Data.Type.Nat (Nat (..), snat, snatToNat, SNat (..))
+import Data.Type.Equality (TestEquality(..), type (:~:) (..))
+import Data.Type.Nat (Nat (..), snat, snatToNat, SNat (..), Nat0, Nat1, Nat2, Nat3)
 import Data.Vec.Lazy (repeat, Vec (..))
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
@@ -17,7 +18,7 @@ import Proarrow.Profunctor.Representable (Rep)
 
 import Props
 import Props.Hask ()
-import Testable (Testable (..), TestableType (..), TestingEqShow (..), genObDef, pattern GenNonEmpty, invmap, GenTotal (..), one)
+import Testable (Testable (..), TestableType (..), TestingEqShow (..), genSomeDef, pattern GenNonEmpty, invmap, GenTotal (..), one)
 
 test :: TestTree
 test =
@@ -32,20 +33,21 @@ test =
     , propSymMonoidal_ @(MatK Int)
     , propClosed_ @(MatK Int)
     , propStarAutonomous_ @(MatK Int)
-    , testMonoid_ @(M Z :: MatK Int)
-    , testMonoid_ @(M (S Z) :: MatK Int)
-    , testMonoid_ @(M (S (S Z)) :: MatK Int)
-    , testMonoid_ @(M (S (S (S Z))) :: MatK Int)
-    , testComonoid_ @(M Z :: MatK Int)
-    , testComonoid_ @(M (S Z) :: MatK Int)
-    , testComonoid_ @(M (S (S Z)) :: MatK Int)
-    , testComonoid_ @(M (S (S (S Z))) :: MatK Int)
+    , testMonoid_ @(M Nat0 :: MatK Int)
+    , testMonoid_ @(M Nat1 :: MatK Int)
+    , testMonoid_ @(M Nat2 :: MatK Int)
+    , testMonoid_ @(M Nat3 :: MatK Int)
+    , testComonoid_ @(M Nat0 :: MatK Int)
+    , testComonoid_ @(M Nat1 :: MatK Int)
+    , testComonoid_ @(M Nat2 :: MatK Int)
+    , testComonoid_ @(M Nat3 :: MatK Int)
     , testProperty "App functor" $ propProfunctor @(Rep App :: MatK Int +-> Type)
     ]
 
 instance Testable (MatK Int) where
   showOb @(M a) = show $ snatToNat $ snat @a
-  genOb = genObDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z)))]
+  eqOb @(M a) @(M b) = (\Refl -> Refl) <$> testEquality (snat @a) (snat @b)
+  genSome = genSomeDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z)))]
 
 instance (TestOb (a :: MatK Int), TestOb b) => TestableType (Mat a b) where
   gen = invmap Mat unMat gen

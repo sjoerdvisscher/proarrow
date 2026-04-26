@@ -3,7 +3,7 @@
 module Props.Kleisli where
 
 import Data.Kind (Type)
-import Data.Typeable (Typeable)
+import Data.Typeable (Typeable, type (:~:) (..))
 import Data.Void (Void)
 import GHC.Generics (Generic)
 import Test.Falsify.Generator (Function (..), functionMap)
@@ -19,7 +19,7 @@ import Proarrow.Promonad.Cont (Cont (..))
 
 import Props
 import Props.Hask ()
-import Testable (Testable (..), TestableProfunctor, TestableType (..), TestingEqShow (..), genObDef, invmap)
+import Testable (Testable (..), TestableProfunctor, TestableType (..), TestingEqShow (..), genSomeDef, invmap)
 
 test :: TestTree
 test =
@@ -60,7 +60,8 @@ instance (TestableProfunctor p, Promonad p, TestOb a, TestOb b) => TestingEqShow
 instance (TestableProfunctor p, Promonad p) => Testable (KLEISLI (p :: Type +-> Type)) where
   type TestOb a = (Ob a, TestOb (UN KL a))
   showOb @(KL a) = "KL " ++ showOb @_ @a
-  genOb = genObDef @'[KL Bool, KL (), KL (Maybe Bool)]
+  eqOb @(KL a) @(KL b) = (\Refl -> Refl) <$> eqOb @Type @a @b
+  genSome = genSomeDef @'[KL Bool, KL (), KL (Maybe Bool)]
 
 instance (TestableType (f a)) => TestableType (Prelude f a) where
   gen = invmap Prelude unPrelude gen

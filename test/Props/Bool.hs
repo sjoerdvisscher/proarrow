@@ -2,6 +2,7 @@
 
 module Props.Bool where
 
+import Data.Type.Equality ((:~:)(Refl))
 import Test.Tasty (TestTree, testGroup)
 import Prelude
 
@@ -9,7 +10,7 @@ import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Core (obj)
 
 import Props
-import Testable (GenTotal (..), Testable (..), TestableType (..), genObDef, one, TestingEqShow (..))
+import Testable (GenTotal (..), Testable (..), TestableType (..), genSomeDef, one, TestingEqShow (..))
 
 test :: TestTree
 test =
@@ -27,7 +28,11 @@ instance Testable BOOL where
   showOb @a = case obj @a of
     Fls -> "FLS"
     Tru -> "TRU"
-  genOb = genObDef @'[FLS, TRU]
+  eqOb @a @b = case (obj @a, obj @b) of
+    (Fls, Fls) -> Just Refl
+    (Tru, Tru) -> Just Refl
+    _ -> Nothing
+  genSome = genSomeDef @'[FLS, TRU]
 
 instance (TestOb a, TestOb b) => TestableType (Booleans a b) where
   gen = case (obj @a, obj @b) of

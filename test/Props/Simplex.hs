@@ -24,7 +24,7 @@ import Testable
   , Testable (..)
   , TestableType (..)
   , TestingEqShow (..)
-  , genObDef
+  , genSomeDef
   , one
   , optGen
   , pattern GenNonEmpty
@@ -46,7 +46,7 @@ test =
 
 instance Testable Nat where
   type TestOb a = Ob a
-  genOb = genObDef @'[Z, S Z, S (S Z), S (S (S Z))]
+  genSome = genSomeDef @'[Z, S Z, S (S Z), S (S (S Z))]
   showOb @a = show (singNat @a)
 
 instance (Ob a, Ob b) => TestingEqShow (Simplex a b)

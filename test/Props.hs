@@ -17,10 +17,10 @@ import Proarrow.Object.Dual qualified as Dual
 import Proarrow.Object.Exponential qualified as Exponential
 import Proarrow.Object.Initial qualified as Initial
 import Proarrow.Object.Terminal qualified as Terminal
+import Proarrow.Optic (Iso)
 import Proarrow.Profunctor.Constant (review, view)
 import Proarrow.Profunctor.Representable (Rep)
-import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor, TestingEqShow (..), genNamed)
-import Proarrow.Optic (Iso)
+import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor, TestingEqShow (..), genNamed, genOb)
 
 testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
 testEq nm sl l sr r = do

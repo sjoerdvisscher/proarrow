@@ -12,7 +12,7 @@ import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.ZX (ZX (..), enumAll, isZero, nat)
 import Props
-import Testable (Testable (..), TestableType (..), TestingEqShow (..), genObDef, pattern GenNonEmpty)
+import Testable (Testable (..), TestableType (..), TestingEqShow (..), genSomeDef, pattern GenNonEmpty)
 
 test :: TestTree
 test =
@@ -36,7 +36,7 @@ test =
 
 instance Testable Nat where
   showOb @n = show $ nat @n
-  genOb = genObDef @'[0, 1, 2]
+  genSome = genSomeDef @'[0, 1, 2]
 
 instance (TestOb n, TestOb m) => TestableType (ZX n m) where
   gen = GenNonEmpty $ do
