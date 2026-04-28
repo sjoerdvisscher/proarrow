@@ -1,8 +1,9 @@
 module Proarrow.Category.Instance.FinSet where
 
 import Data.Fin (Fin (..), fin0, split, weakenLeft, weakenRight)
+import Data.Maybe (fromMaybe)
 import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Plus, SNat (..), SNatI, snat)
-import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, repeat, universe, zipWith, (!), (++))
+import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, repeat, tabulate, universe, zipWith, (!), (++))
 import Prelude (($))
 import Prelude qualified as P
 
@@ -11,6 +12,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
@@ -26,14 +28,14 @@ import Proarrow.Object.BinaryProduct
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Optic (Iso', iso)
 
 type data FINSET = FS Nat
 type instance UN FS (FS n) = n
 
 type FinSet :: CAT FINSET
 data FinSet a b where
-  FinSet :: (SNatI n, SNatI m) => { unFinSet :: Vec n (Fin m) } -> FinSet (FS n) (FS m)
+  FinSet :: (SNatI n, SNatI m) => {unFinSet :: Vec n (Fin m)} -> FinSet (FS n) (FS m)
 
 deriving instance P.Show (FinSet a b)
 deriving instance P.Eq (FinSet a b)
@@ -152,7 +154,7 @@ unExp f = case snat @n of
 -- >>> import Data.Type.Nat
 -- >>> comult @(FS Nat4)
 -- FinSet (0 ::: 5 ::: 10 ::: 15 ::: VNil)
-instance SNatI a => Comonoid (FS a) where
+instance (SNatI a) => Comonoid (FS a) where
   counit = terminate
   comult = diag
 instance CopyDiscard FINSET
@@ -160,3 +162,15 @@ instance CopyDiscard FINSET
 instance Monoid (FS Nat1) where
   mempty = terminate
   mappend = terminate
+
+findIso :: (SNatI n) => [(Fin n, Fin n)] -> P.Maybe (Iso' (FS n) (FS n))
+findIso ps = iso P.<$> findArr ps P.<*> findArr (P.fmap swap ps)
+
+findArr :: forall n. (SNatI n) => [(Fin n, Fin n)] -> P.Maybe (FS n ~> FS n)
+findArr = go (repeat P.Nothing)
+  where
+    go :: Vec n (P.Maybe (Fin n)) -> [(Fin n, Fin n)] -> P.Maybe (FS n ~> FS n)
+    go v [] = P.Just $ FinSet $ zipWith fromMaybe universe v
+    go v ((f1, f2) : ps) = case v ! f1 of
+      P.Just f | f P./= f2 -> P.Nothing
+      _ -> go (tabulate (\i -> if i P.== f1 then P.Just f2 else v ! i)) ps

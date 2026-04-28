@@ -4,8 +4,9 @@
 module Props.FinSet where
 
 import Data.Fin (Fin, absurd, universe)
-import Data.Type.Equality (TestEquality(..), type (:~:) (..))
-import Data.Type.Nat (Nat0, Nat1, Nat2, Nat3, Nat4, SNat (..), SNatI, snat)
+import Data.Proxy (Proxy (..))
+import Data.Type.Equality (TestEquality (..), type (:~:) (..))
+import Data.Type.Nat (Nat0, Nat1, Nat2, Nat3, Nat4, SNat (..), SNatI, reflect, snat)
 import Data.Vec.Lazy (Vec (..), repeat)
 import Test.Tasty (TestTree, testGroup)
 import Prelude qualified as P
@@ -45,7 +46,7 @@ test =
 
 instance Testable FINSET where
   type TestOb a = Ob a
-  showOb @(FS a) = P.show (snat @a)
+  showOb @(FS a) = P.show (reflect (Proxy @a))
   eqOb @(FS a) @(FS b) = (\Refl -> Refl) P.<$> testEquality (snat @a) (snat @b)
   genSome = genSomeDef @'[FS Nat1, FS Nat2, FS Nat3, FS Nat4]
 

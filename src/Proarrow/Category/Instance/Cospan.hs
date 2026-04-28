@@ -1,11 +1,19 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Instance.Cospan where
 
-import Prelude (($))
+import Data.Fin (Fin (..))
+import Data.IntMap.Strict qualified as IM
+import Data.Type.Nat (snat, snatToNatural)
+import Data.Vec.Lazy (Vec (..), reifyList, tabulate, zipWith)
+import Prelude (Either (..), Num (..), fromIntegral, ($), (++), (==))
+import Prelude qualified as P
 
+import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), Hypergraph, curryHG, spiderDefault)
+import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius (..), Hypergraph, applyHG, curryHG, spiderDefault)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, tgt)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct
@@ -80,11 +88,10 @@ instance (HasPushouts k) => Hypergraph (COSPAN k)
 instance (HasPushouts k) => CopyDiscard (COSPAN k)
 
 instance (HasPushouts k) => Closed (COSPAN k) where
-  type a ~~> b = a ** b
+  type a ~~> b = ExpHG a b
   withObExp @(CS a) @(CS b) r = withObCoprod @k @a @b r
   curry @a @b = curryHG @a @b
-  apply @(CS a) @(CS b) = withObCoprod @k @a @b $ coarr (lft @k @_ @a . rgt @k @a @b)
-  f ^^^ g = dual g `par` f
+  apply @b @c = applyHG @b @c
 
 instance (HasPushouts k) => StarAutonomous (COSPAN k) where
   type Dual a = a
@@ -95,3 +102,36 @@ instance (HasPushouts k) => StarAutonomous (COSPAN k) where
 instance (HasPushouts k) => CompactClosed (COSPAN k) where
   distribDual @(CS a) @(CS b) = withObCoprod @k @a @b id
   dualUnit = id
+
+instance (HasPushouts k) => DaggerProfunctor (Cospan :: CAT (COSPAN k)) where
+  dagger = dual
+
+-- Exercise 6.22 of Seven Sketches
+-- >>> import Data.Fin
+-- >>> import Data.Type.Nat
+-- >>> let l :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin0 ::: fin1 ::: fin2 ::: VNil
+-- >>> let r :: FinSet (FS Nat4) (FS Nat5) = FinSet $ fin0 ::: fin2 ::: fin4 ::: fin4 ::: VNil
+-- >>> (case pushout l r of Cospan (FinSet l) (FinSet r) -> (P.show l, P.show r)) :: (P.String, P.String)
+-- ("1 ::: 3 ::: 3 ::: VNil","1 ::: 0 ::: 1 ::: 2 ::: 3 ::: VNil")
+instance HasPushouts FINSET where
+  pushout (FinSet @_ @a f) (FinSet @_ @b g) =
+    let
+      sizeA = fromIntegral (snatToNatural (snat @a))
+      sizeB = fromIntegral (snatToNatural (snat @b))
+      toI (Left a) = fromIntegral a
+      toI (Right b) = sizeA + fromIntegral b
+      find m i = P.maybe i (find m) $ IM.lookup i m
+      union m (i, j) = let ri = find m i; rj = find m j in if ri == rj then m else IM.insert ri rj m
+      unionFind = P.foldl union IM.empty (zipWith (\u v -> (toI (Left u), toI (Right v))) f g)
+      groups = IM.elems $ P.foldl @[] (\m x -> IM.insertWith (++) (find unionFind x) [x] m) IM.empty [0 .. sizeA + sizeB - 1]
+    in
+      reifyList groups \vec ->
+        let mapA = tabulate @a (\a -> findIndex (P.elem (toI $ Left a)) vec)
+            mapB = tabulate @b (\b -> findIndex (P.elem (toI $ Right b)) vec)
+        in Cospan (FinSet mapA) (FinSet mapB)
+
+findIndex :: (a -> P.Bool) -> Vec n a -> Fin n
+findIndex _ VNil = P.error "unexpected missing element"
+findIndex f (a ::: as)
+  | f a = FZ
+  | P.otherwise = FS $ findIndex f as
