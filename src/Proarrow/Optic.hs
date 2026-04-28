@@ -3,7 +3,7 @@ module Proarrow.Optic where
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
-import Proarrow.Core (Profunctor (..), Promonad (..), CategoryOf (..), Kind, CAT, type (+->), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, type (+->))
 
 type data OPTIC (j :: Kind) (k :: Kind) (c :: j +-> k -> Constraint) = OPT k j
 type family OptL (p :: OPTIC j k c) where
@@ -12,7 +12,8 @@ type family OptR (p :: OPTIC j k c) where
   OptR (OPT j k) = k
 type Optic_ :: CAT (OPTIC j k c)
 data Optic_ ab st where
-  Optic :: (Ob a, Ob b, Ob s, Ob t) => { over :: forall p. (c p) => p a b -> p s t } -> Optic_ (OPT a b :: OPTIC j k c) (OPT s t)
+  Optic
+    :: (Ob a, Ob b, Ob s, Ob t) => {over :: forall p. (c p) => p a b -> p s t} -> Optic_ (OPT a b :: OPTIC j k c) (OPT s t)
 
 instance (CategoryOf j, CategoryOf k) => Profunctor (Optic_ :: CAT (OPTIC j k c)) where
   dimap = dimapDefault
@@ -32,6 +33,9 @@ instance (c1 p, c2 p) => (c1 :&&: c2) p
 -- | Compose optics if different kinds
 (%) :: Optic c1 s t a b -> Optic c2 a b c d -> Optic (c1 :&&: c2) s t c d
 Optic n % Optic m = Optic (n . m)
+
+type (:=>) :: ((j +-> k) -> Constraint) -> ((j +-> k) -> Constraint) -> Constraint
+type c :=> d = forall p. (c p) => d p
 
 type Iso s t a b = Optic Profunctor s t a b
 type Iso' s a = Iso s s a a

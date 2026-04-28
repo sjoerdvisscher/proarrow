@@ -6,7 +6,8 @@ module Proarrow.Category.Monoidal.Optic where
 
 import Data.Bifunctor (bimap)
 import Data.Kind (Type)
-import Prelude (Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($), type (~))
+import GHC.Generics qualified as G
+import Prelude (Either (..), Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($))
 
 import Data.Monoid qualified as P
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
@@ -21,9 +22,9 @@ import Proarrow.Category.Monoidal.Action
   , composeActs
   , decomposeActs
   , fromSelfAct
+  , strongPar0
   )
 import Proarrow.Category.Monoidal.Distributive qualified as Dist
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core
   ( Any
   , CAT
@@ -33,7 +34,6 @@ import Proarrow.Core
   , Profunctor (..)
   , Promonad (..)
   , UN
-  , dimapDefault
   , obj
   , rmap
   , (//)
@@ -41,7 +41,14 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Object (src, tgt)
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
+import Proarrow.Object.BinaryCoproduct
+  ( COPROD (..)
+  , Coprod (..)
+  , HasBinaryCoproducts (..)
+  , HasCoproducts
+  , copar
+  , copar0
+  )
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..))
 import Proarrow.Profunctor.Constant (Constant)
@@ -203,30 +210,38 @@ instance (Costrong m p) => Strong m (Re p s t) where
       withObAct @m @_ @b @y $
         Re \payax -> f (coact @_ @_ @b (rmap (act g (obj @x)) payax))
 
--- Charts, a kind of dual to optics.
-type IsChart m c d = (IsOptic m c d, SymMonoidal m)
+v1Optic :: Traversal (G.V1 a) (G.V1 a') a a'
+v1Optic = Optic \_ -> dimap (\case {}) (\case {}) copar0
 
-type data CHART m (c :: Kind) (d :: Kind) = CHA c (OPPOSITE d)
-type family ChaL (p :: CHART w c d) where
-  ChaL (CHA c d) = c
-type family ChaR (p :: CHART w c d) where
-  ChaR (CHA c d) = d
-type ChartCat :: CAT (CHART w c d)
-data ChartCat ab st where
-  ChartCat :: ExOptic m a t s b -> ChartCat (CHA a (OP b) :: CHART m c d) (CHA s (OP t))
+u1Optic :: Traversal (G.U1 a) (G.U1 a') a a'
+u1Optic = Optic \_ -> dimap (\_ -> ()) (\() -> G.U1) par0
 
-instance (IsChart m c d) => Profunctor (ChartCat :: CAT (CHART m c d)) where
-  dimap = dimapDefault
-  r \\ ChartCat (ExOptic f _ g) = r \\ f \\ g
-instance (IsChart m c d) => Promonad (ChartCat :: CAT (CHART m c d)) where
-  id = ChartCat (prof2ex id)
-  ChartCat (ExOptic @x @x' @_ @t ll lw lr) . ChartCat (ExOptic @y @y' @a rl rw rr) =
-    ChartCat $
-      ExOptic (composeActs @x @y @a ll rl) (lw `par` rw) (decomposeActs @y' @x' @t lr rr . (swap @_ @x' @y' `act` obj @t))
-        \\ lw
-        \\ rw
+par1Optic :: Traversal (G.Par1 a) (G.Par1 a') a a'
+par1Optic = Optic (dimap G.unPar1 G.Par1)
 
--- | The category of charts.
-instance (IsChart m c d) => CategoryOf (CHART m c d) where
-  type (~>) = ChartCat
-  type Ob a = (a ~ CHA (ChaL a) (ChaR a), Ob (ChaL a), Ob (ChaR a))
+rec1Optic :: Traversal (f a) (f a') a a' -> Traversal (G.Rec1 f a) (G.Rec1 f a') a a'
+rec1Optic (Optic l) = Optic \p -> dimap G.unRec1 G.Rec1 (l p)
+
+m1Optic :: Traversal (f a) (f a') a a' -> Traversal (G.M1 i k f a) (G.M1 i k f a') a a'
+m1Optic (Optic l) = Optic \p -> dimap G.unM1 G.M1 (l p)
+
+k1Optic :: forall i k a a'. Traversal (G.K1 i k a) (G.K1 i k a') a a'
+k1Optic = Optic \_ -> dimap G.unK1 G.K1 strongPar0
+
+plusOptic
+  :: Traversal (p a) (p a') a a'
+  -> Traversal (q a) (q a') a a'
+  -> Traversal ((p G.:+: q) a) ((p G.:+: q) a') a a'
+plusOptic (Optic l) (Optic r) = Optic \p -> dimap (\case G.L1 f -> Left f; G.R1 f -> Right f) (either G.L1 G.R1) (l p `copar` r p)
+
+multOptic
+  :: Traversal (p a) (p a') a a'
+  -> Traversal (q a) (q a') a a'
+  -> Traversal ((p G.:*: q) a) ((p G.:*: q) a') a a'
+multOptic (Optic l) (Optic r) = Optic \p -> dimap (\(f G.:*: g) -> (f, g)) (\(f, g) -> f G.:*: g) (l p `par` r p)
+
+compOptic
+  :: Traversal (p (q a)) (p (q a')) (q a) (q a')
+  -> Traversal (q a) (q a') a a'
+  -> Traversal ((p G.:.: q) a) ((p G.:.: q) a') a a'
+compOptic (Optic l) (Optic r) = Optic \p -> dimap G.unComp1 G.Comp1 (l (r p))
