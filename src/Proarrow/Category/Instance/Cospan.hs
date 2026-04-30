@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Category.Instance.Cospan where
 
@@ -11,10 +12,13 @@ import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
+import Proarrow.Category.Instance.Span (HasPullbacks (..), SPAN (..), Span (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius (..), Hypergraph, applyHG, curryHG, spiderDefault)
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, tgt)
+import Proarrow.Category.Opposite (OPPOSITE, Op (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, tgt, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct
   ( HasBinaryCoproducts (..)
@@ -135,3 +139,19 @@ findIndex _ VNil = P.error "unexpected missing element"
 findIndex f (a ::: as)
   | f a = FZ
   | P.otherwise = FS $ findIndex f as
+
+instance (HasPullbacks k) => HasPushouts (OPPOSITE k) where
+  pushout (Op l) (Op r) = case pullback l r of Span f g -> Cospan (Op f) (Op g)
+
+instance (HasPushouts k) => HasPullbacks (OPPOSITE k) where
+  pullback (Op l) (Op r) = case pushout l r of Cospan f g -> Span (Op f) (Op g)
+
+data family Pushout :: SPAN k +-> COSPAN k
+instance (HasPushouts k, HasPullbacks k) => FunctorForRep (Pushout :: SPAN k +-> COSPAN k) where
+  type Pushout @ (SP a) = CS a
+  fmap (Span l r) = pushout l r
+
+data family Pullback :: COSPAN k +-> SPAN k
+instance (HasPushouts k, HasPullbacks k) => FunctorForRep (Pullback :: COSPAN k +-> SPAN k) where
+  type Pullback @ (CS a) = SP a
+  fmap (Cospan l r) = pullback l r
