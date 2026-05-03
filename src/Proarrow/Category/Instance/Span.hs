@@ -1,14 +1,6 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
 module Proarrow.Category.Instance.Span where
 
-import Data.Fin (universe)
-import Data.Vec.Lazy (reifyList, (!))
-import Prelude (($), (==))
-import Prelude qualified as P
-
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius (..), Hypergraph, applyHG, curryHG, spiderDefault)
@@ -16,7 +8,6 @@ import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), 
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
-  , HasProducts
   , associatorProd
   , associatorProdInv
   , leftUnitorProd
@@ -27,13 +18,8 @@ import Proarrow.Object.BinaryProduct
   )
 import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..))
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Pullback (Cone (..), Cosink (..), HasPullbacks (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-
--- | Composition of spans needs a pullback, an inherently dependently typed concept.
--- So we can't express it properly in Haskell, but the projection arrows can still do the right thing.
-class (HasProducts k) => HasPullbacks k where
-  pullback :: forall (o :: k) a b. a ~> o -> b ~> o -> Span (SP a) (SP b)
-  pullback f g = Span (fst @k @a @b) (snd @k @a @b) \\ f \\ g
 
 newtype SPAN k = SP k
 type instance UN SP (SP k) = k
@@ -53,7 +39,7 @@ instance (HasPullbacks k) => Profunctor (Span :: CAT (SPAN k)) where
   r \\ Span f g = r \\ f \\ g
 instance (HasPullbacks k) => Promonad (Span :: CAT (SPAN k)) where
   id = Span id id
-  Span f g . Span h i = case pullback i f of Span l r -> Span (h . l) (g . r)
+  Span f g . Span h i = case pullback i f of Cone (Leg l (Leg r Apex)) -> Span (h . l) (g . r)
 instance (HasPullbacks k) => CategoryOf (SPAN k) where
   type (~>) = Span
   type Ob a = (Is SP a, Ob (UN SP a))
@@ -103,16 +89,3 @@ instance (HasPullbacks k) => CompactClosed (SPAN k) where
 
 instance (HasPullbacks k) => DaggerProfunctor (Span :: CAT (SPAN k)) where
   dagger = dual
-
--- Exercise 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
--- >>> import Data.Fin
--- >>> import Data.Type.Nat
--- >>> import Data.Vec.Lazy
--- >>> let f :: FinSet (FS Nat6) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin0 ::: fin0 ::: fin2 ::: fin1 ::: VNil
--- >>> let g :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: fin0 ::: VNil
--- >>> (case pullback f g of Span (FinSet l) (FinSet r) -> (P.show l, P.show r)) :: (P.String, P.String)
--- ("0 ::: 0 ::: 1 ::: 2 ::: 2 ::: 3 ::: 3 ::: 4 ::: 5 ::: VNil","1 ::: 3 ::: 2 ::: 1 ::: 3 ::: 1 ::: 3 ::: 0 ::: 2 ::: VNil")
-instance HasPullbacks FINSET where
-  pullback (FinSet f) (FinSet g) =
-    let groups = [(x, y) | x <- universe, y <- universe, f ! x == g ! y]
-    in reifyList groups \vec -> Span (FinSet $ P.fmap fst vec) (FinSet $ P.fmap snd vec)
