@@ -8,6 +8,7 @@ import Prelude
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
 import Props.Dot qualified as Dot
+import Props.FinRel qualified as FinRel
 import Props.FinSet qualified as FinSet
 import Props.Free qualified as Free
 import Props.Hask qualified as Hask
@@ -26,6 +27,7 @@ main =
       [ Bool.test
       , Cospan.test
       , Dot.test
+      , FinRel.test
       , FinSet.test
       , Free.test
       , Hask.test

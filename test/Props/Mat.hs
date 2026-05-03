@@ -5,14 +5,14 @@ module Props.Mat where
 
 import Data.Kind (Type)
 import Data.Type.Equality (TestEquality(..), type (:~:) (..))
-import Data.Type.Nat (Nat (..), snat, snatToNat, SNat (..), Nat0, Nat1, Nat2, Nat3)
+import Data.Type.Nat (Nat (..), snat, snatToNat, SNat (..), Nat0, Nat1, Nat2, Nat3, SNatI)
 import Data.Vec.Lazy (repeat, Vec (..))
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (elem, repeat)
 
-import Proarrow.Category.Instance.Mat (Mat (..), MatK (..), App, IsNat)
+import Proarrow.Category.Instance.Mat (Mat (..), MatK (..), App)
 import Proarrow.Core (type (+->))
 import Proarrow.Profunctor.Representable (Rep)
 
@@ -56,7 +56,7 @@ instance (TestOb (a :: MatK Int), TestOb b) => TestingEqShow (Mat a b) where
   showP (Mat m) = show m
 
 instance (Eq a, Show a) => TestingEqShow (Vec n a)
-instance (Eq a, Show a, TestableType a, IsNat n) => TestableType (Vec n a) where
+instance (Eq a, Show a, TestableType a, SNatI n) => TestableType (Vec n a) where
   gen = case gen of
     GenEmpty absurd -> case snat @n of
       SZ -> one VNil

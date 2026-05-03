@@ -34,6 +34,7 @@ import Proarrow.Object.Dual
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 
 type n + m = Plus n m
 type (*) n m = Mult n m
@@ -67,11 +68,6 @@ withIsNat :: forall n r. (SNatI n) => ((IsNat n) => r) -> r
 withIsNat r = case snat @n of
   SZ -> r
   SS @n' -> withIsNat @n' r
-
-data family App :: MatK a +-> Type
-instance (P.Num a) => FunctorForRep (App :: MatK a +-> Type) where
-  type App @a @ M n = Vec n a
-  fmap (Mat m) = app m
 
 class (SNatI n, P.Applicative (Vec n), n + Z ~ n, n * Z ~ Z, n * S Z ~ n) => IsNat (n :: Nat) where
   matId :: (P.Num a) => Vec n (Vec n a)
@@ -212,9 +208,11 @@ instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a)) where
 instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
   coact @x = coactCC @x
 
+-- | Monoids are associative, unital algebras.
 instance (P.Num a, IsNat n) => Monoid (M n :: MatK a) where
   mempty = arr counit
   mappend = arr comult
+
 instance (P.Num a, IsNat n) => Comonoid (M n :: MatK a) where
   counit = arr' counit
   comult = arr' comult
@@ -223,4 +221,10 @@ instance (P.Num a, IsNat n) => Frobenius (M n :: MatK a) where
 instance (P.Num a) => Hypergraph (MatK a)
 instance (P.Num a) => CopyDiscard (MatK a)
 
--- Monoids are associative, unital algebras.
+data family App :: MatK a +-> Type
+instance (P.Num a) => FunctorForRep (App :: MatK a +-> Type) where
+  type App @a @ M n = Vec n a
+  fmap (Mat m) = app m
+instance (P.Num a) => MonoidalProfunctor (Rep App :: MatK a +-> Type) where
+  par0 = Rep \() -> 1 ::: VNil
+  Rep @_ @_ @b f `par` Rep @_ @_ @c g = withOb2 @_ @b @c $ Rep (\(x, y) -> concatMap (\a -> (a P.*) P.<$> f x) (g y))
