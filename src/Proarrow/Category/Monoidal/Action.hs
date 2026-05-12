@@ -5,14 +5,14 @@ module Proarrow.Category.Monoidal.Action where
 import Data.Kind (Constraint, Type)
 import Prelude (type (~))
 
+import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..), SubMonoidal)
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, type (+->), OB, UN)
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, OB, Profunctor (..), Promonad (..), UN, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
-import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..), SubMonoidal)
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 
 -- | Profuntorial strength for a monoidal action.
 -- Gives functorial strength for representable profunctors,
@@ -21,7 +21,7 @@ type Strong :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Strong m (p :: c +-> d) where
   act :: forall (a :: m) b x y. a ~> b -> p x y -> p (Act a x) (Act b y)
 
-class (Monoidal m, CategoryOf k, Strong m ((~>) :: CAT k)) => MonoidalAction m k where
+class (Monoidal m, CategoryOf k, Strong m (Hom k)) => MonoidalAction m k where
   -- I would like to default Act to `**`, but that doesn't seem possible without GHC thinking `m` and `k` are the same.
   type Act (a :: m) (x :: k) :: k
   withObAct :: (Ob (a :: m), Ob (x :: k)) => ((Ob (Act a x)) => r) -> r
@@ -30,7 +30,7 @@ class (Monoidal m, CategoryOf k, Strong m ((~>) :: CAT k)) => MonoidalAction m k
   multiplicator :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act (a ** b) x ~> Act a (Act b x)
   multiplicatorInv :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act a (Act b x) ~> Act (a ** b) x
 
-instance (CategoryOf k, Strong () ((~>) :: CAT k)) => MonoidalAction () k where
+instance (CategoryOf k, Strong () (Hom k)) => MonoidalAction () k where
   type Act '() x = x
   withObAct r = r
   unitor = id
@@ -53,7 +53,10 @@ instance (SubMonoidal ob) => Strong (SUBCAT (ob :: OB Type)) (->) where
 instance (SubMonoidal ob) => Strong (SUBCAT (ob :: OB ())) U.Unit where
   act (Sub f) g = f `par` g
 
-instance (Monoidal k, Monoidal (SUBCAT (ob :: OB k)), Strong (SUBCAT (ob :: OB k)) ((~>) :: CAT k)) => MonoidalAction (SUBCAT (ob :: OB k)) k where
+instance
+  (Monoidal k, Monoidal (SUBCAT (ob :: OB k)), Strong (SUBCAT (ob :: OB k)) (Hom k))
+  => MonoidalAction (SUBCAT (ob :: OB k)) k
+  where
   type Act (p :: SUBCAT ob) (x :: k) = UN SUB p ** x
   withObAct @(SUB a) @x r = withOb2 @k @a @x r
   unitor = leftUnitor @k
@@ -153,5 +156,5 @@ class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Costrong m (p ::
 trace :: forall {k} (p :: k +-> k) u x y. (SelfAction k, Costrong k p, Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
 trace p = coact @k @p @u @x @y (dimap (swap @k @u @x) (swap @k @y @u) p) \\ p
 
-class (SelfAction k, Costrong k ((~>) :: CAT k)) => TracedMonoidal k
-instance (SelfAction k, Costrong k ((~>) :: CAT k)) => TracedMonoidal k
+class (SelfAction k, Costrong k (Hom k)) => TracedMonoidal k
+instance (SelfAction k, Costrong k (Hom k)) => TracedMonoidal k

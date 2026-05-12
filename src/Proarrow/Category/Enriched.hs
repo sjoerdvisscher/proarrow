@@ -5,18 +5,18 @@ module Proarrow.Category.Enriched where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), ThinProfunctor (..))
 import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Core (Any, CAT, CategoryOf (..), Kind, Profunctor (..), type (+->))
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor (..), type (+->))
 import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 import Proarrow.Object.Exponential (uncurry)
 import Proarrow.Object.Exponential qualified as E
-import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), ThinProfunctor (..))
 import Proarrow.Profunctor qualified as P
-import Proarrow.Category.Opposite (Op(..), OPPOSITE (..))
 
 -- | Working with enriched categories and profunctors in Haskell is hard.
 -- Instead we encode them using the underlying regular category/profunctor,
@@ -30,13 +30,13 @@ class (Monoidal v, Profunctor p, Enriched v j, Enriched v k) => EnrichedProfunct
   rmap :: (Ob a, Ob b, Ob c) => HomObj v b c ** ProObj v p a b ~> ProObj v p a c
   lmap :: (Ob a, Ob b, Ob c) => HomObj v c a ** ProObj v p a b ~> ProObj v p c b
 
-class (EnrichedProfunctor v ((~>) :: CAT k)) => Enriched v k
-instance (EnrichedProfunctor v ((~>) :: CAT k)) => Enriched v k
+class (EnrichedProfunctor v (Hom k)) => Enriched v k
+instance (EnrichedProfunctor v (Hom k)) => Enriched v k
 
-type HomObj v (a :: k) (b :: k) = ProObj v ((~>) :: CAT k) a b
+type HomObj v (a :: k) (b :: k) = ProObj v (Hom k) a b
 
 comp :: forall {k} v (a :: k) b c. (Enriched v k, Ob a, Ob b, Ob c) => HomObj v b c ** HomObj v a b ~> HomObj v a c
-comp = rmap @v @((~>) :: CAT k) @a @b @c
+comp = rmap @v @(Hom k) @a @b @c
 
 -- | Closed monoidal categories are enriched in themselves.
 type HomSelf a b = a E.~~> b

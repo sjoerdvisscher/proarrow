@@ -1,10 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Enriched.Thin where
 
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), type (+->))
 
 type ThinProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (Profunctor p, Thin j, Thin k) => ThinProfunctor (p :: j +-> k) where
@@ -13,8 +14,8 @@ class (Profunctor p, Thin j, Thin k) => ThinProfunctor (p :: j +-> k) where
   arr :: (Ob a, Ob b, HasArrow p a b) => p a b
   withArr :: p a b -> ((HasArrow p a b) => r) -> r
 
-class (ThinProfunctor ((~>) :: CAT k)) => Thin k
-instance (ThinProfunctor ((~>) :: CAT k)) => Thin k
+class (ThinProfunctor (Hom k)) => Thin k
+instance (ThinProfunctor (Hom k)) => Thin k
 
 class (ThinProfunctor p, Ob a, Ob b, HasArrow p a b) => HasArrow' p a b where arr' :: p a b
 instance (ThinProfunctor p, Ob a, Ob b, HasArrow p a b) => HasArrow' p a b where arr' = arr
@@ -31,11 +32,11 @@ instance
   where
   anyArr = arr'
 
-class (CodiscreteProfunctor ((~>) :: CAT k)) => Codiscrete k
-instance (CodiscreteProfunctor ((~>) :: CAT k)) => Codiscrete k
+class (CodiscreteProfunctor (Hom k)) => Codiscrete k
+instance (CodiscreteProfunctor (Hom k)) => Codiscrete k
 
 class ((HasArrow p c d) ~ (c ~ d)) => ArrowIsId p c d where
-  arrowIsIdProof :: HasArrow p c d => (c ~ d => r) -> r
+  arrowIsIdProof :: (HasArrow p c d) => ((c ~ d) => r) -> r
 instance ((HasArrow p c d) ~ (c ~ d)) => ArrowIsId p c d where
   arrowIsIdProof r = r
 
@@ -45,5 +46,5 @@ class (ThinProfunctor p, forall c d. ArrowIsId p c d, Discrete k) => DiscretePro
 instance (ThinProfunctor p, forall c d. ArrowIsId p c d, Discrete k) => DiscreteProfunctor (p :: k +-> k) where
   withEq @a @b p r = withArr p (arrowIsIdProof @p @a @b r)
 
-class (DiscreteProfunctor ((~>) :: CAT k)) => Discrete k
-instance (DiscreteProfunctor ((~>) :: CAT k)) => Discrete k
+class (DiscreteProfunctor (Hom k)) => Discrete k
+instance (DiscreteProfunctor (Hom k)) => Discrete k
