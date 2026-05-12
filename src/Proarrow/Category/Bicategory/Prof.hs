@@ -1,6 +1,7 @@
 module Proarrow.Category.Bicategory.Prof where
 
 import Data.Kind (Constraint)
+import Prelude (type (~))
 
 import Proarrow.Adjunction qualified as A
 import Proarrow.Category.Bicategory
@@ -27,8 +28,8 @@ import Proarrow.Category.Limit qualified as L
 import Proarrow.Category.Opposite qualified as Op
 import Proarrow.Core
   ( CAT
-  , Category
   , CategoryOf (..)
+  , Hom
   , Is
   , Profunctor (..)
   , Promonad (..)
@@ -115,7 +116,7 @@ instance (Procomonad p) => Comonad (PK p :: PROFK k k) where
   epsilon = Prof (Id . extract)
   delta = Prof duplicate
 
-instance (Category (cj :: CAT j), Category (ck :: CAT k), Profunctor p) => Bimodule (PK ck) (PK cj) (PK p :: PROFK j k) where
+instance (cj ~ Hom j, ck ~ Hom k, Profunctor p) => Bimodule (PK ck) (PK cj) (PK p :: PROFK j k) where
   leftAction = Prof \(f :.: p) -> lmap f p
   rightAction = Prof \(p :.: f) -> rmap f p
 

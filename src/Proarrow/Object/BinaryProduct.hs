@@ -22,7 +22,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
-import Proarrow.Core (CAT, Category, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, src, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, src, type (+->), Hom)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -169,7 +169,7 @@ instance (HasInitialObject k) => HasInitialObject (PROD k) where
   type InitialObject = PR InitialObject
   initiate = Prod initiate
 
-instance (HasProducts k, Category cat) => MonoidalProfunctor (Prod cat :: CAT (PROD k)) where
+instance (HasProducts k, cat ~ Hom k) => MonoidalProfunctor (Prod cat) where
   par0 = id
   f `par` g = f *** g
 

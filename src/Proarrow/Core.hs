@@ -11,8 +11,6 @@ module Proarrow.Core
     -- ** CategoryOf Class
   , CategoryOf(..)
   , Hom
-    -- ** Category Class
-  , Category
     -- * Profunctors
     -- ** Profunctor Class
   , Profunctor(..)
@@ -81,13 +79,6 @@ class (Promonad ((~>) :: CAT k)) => CategoryOf k where
 
 -- | A type synonym for @(~>) :: CAT k@, the type of morphisms in the category of kind @k@.
 type Hom k = ((~>) :: CAT k)
-
--- ** Category Class
-
--- | A convenience class that bundles together the requirements for a well-formed category.
--- The automatic instance means you get 'Category' for free once you have 'CategoryOf' and 'Promonad'.
-class (Promonad cat, CategoryOf k, cat ~ Hom k) => Category (cat :: CAT k)
-instance (Promonad cat, CategoryOf k, cat ~ Hom k) => Category (cat :: CAT k)
 
 -- * Profunctors
 
