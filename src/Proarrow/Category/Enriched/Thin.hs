@@ -8,7 +8,7 @@ import Prelude (type (~))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), type (+->))
 
 type ThinProfunctor :: forall {j} {k}. j +-> k -> Constraint
-class (Profunctor p, Thin j, Thin k) => ThinProfunctor (p :: j +-> k) where
+class (Profunctor p) => ThinProfunctor (p :: j +-> k) where
   type HasArrow (p :: j +-> k) (a :: k) (b :: j) :: Constraint
   type HasArrow p a b = ()
   arr :: (Ob a, Ob b, HasArrow p a b) => p a b

@@ -5,7 +5,7 @@ module Proarrow.Category.Enriched where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), ThinProfunctor (..), Thin)
 import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
@@ -78,7 +78,7 @@ instance (DaggerProfunctor p) => EnrichedProfunctor (Type, Type) p where
   rmap = uncurry P.rmap :**: uncurry P.lmap
   lmap = uncurry P.lmap :**: uncurry P.rmap
 
-instance (ThinProfunctor p) => EnrichedProfunctor CONSTRAINT p where
+instance (ThinProfunctor p, Thin j, Thin k) => EnrichedProfunctor CONSTRAINT (p :: j +-> k) where
   type ProObj CONSTRAINT p a b = CNSTRNT (HasArrow p a b)
   withProObj r = r
   underlying p = Entails (\r -> withArr p r)
