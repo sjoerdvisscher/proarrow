@@ -4,14 +4,13 @@
 module Proarrow.Profunctor.Representable where
 
 import Data.Kind (Constraint)
-import Prelude (type (~))
 
-import Proarrow.Category.Enriched.Thin (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Thin)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->))
-import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->), Hom)
+import Proarrow.Functor (FunctorForRep (..), withMappedOb)
 import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, trivialCorep)
@@ -87,10 +86,10 @@ instance (Representable p) => Corepresentable (RepCostar p) where
   coindex (RepCostar f) = f
   cotabulate = RepCostar
   corepMap = repMap @p
-instance (Representable p, Discrete j, Thin k) => ThinProfunctor (RepCostar p :: j +-> k) where
-  type HasArrow (RepCostar p) a b = (p % a) ~ b
-  arr = RepCostar id
-  withArr (RepCostar f) r = withEq f r
+instance (Representable p, Thin j) => ThinProfunctor (RepCostar p :: j +-> k) where
+  type HasArrow (RepCostar p :: j +-> k) a b = HasArrow (Hom j) (p % a) b
+  arr @a = withRepOb @p @a (RepCostar arr)
+  withArr (RepCostar f) r = withArr f r
 
 mapRepCostar :: (Representable p, Representable q) => p ~> q -> RepCostar q ~> RepCostar p
 mapRepCostar (Prof n) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (trivialRep @_ @a)))
@@ -118,6 +117,10 @@ instance (FunctorForRep f) => Representable (Rep f) where
   index (Rep f) = f
   tabulate = Rep
   repMap = fmap @f
+instance (FunctorForRep f, Thin k) => ThinProfunctor (Rep f :: j +-> k) where
+  type HasArrow (Rep f :: j +-> k) a b = HasArrow (Hom k) a (f @ b)
+  arr @_ @b = withMappedOb @f @b (Rep arr)
+  withArr (Rep f) r = withArr f r
 
 rep :: forall f a b a' b'. (Ob b) => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
 rep = iso Rep unRep

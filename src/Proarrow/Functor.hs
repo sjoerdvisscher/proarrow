@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Functor where
 
 import Data.Functor.Compose (Compose (..))
@@ -8,8 +9,8 @@ import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
-import Proarrow.Core (CategoryOf (..), Promonad (..), Profunctor, rmap, type (+->))
-import Proarrow.Object (Ob')
+import Proarrow.Core (CategoryOf (..), Profunctor, Promonad (..), rmap, (\\), type (+->))
+import Proarrow.Object (Ob', obj)
 
 infixr 0 .~>
 type f .~> g = forall a. (Ob a) => f a ~> g a
@@ -48,6 +49,7 @@ instance (Profunctor p) => P.Functor (FromProfunctor p a) where
 
 -- | Presheaves are functors but it makes more sense in proarrow to represent them as profunctors from the unit category.
 type Presheaf k = () +-> k
+
 -- | Copresheaves are functors but it makes more sense in proarrow to represent them as profunctors into the unit category.
 type Copresheaf k = k +-> ()
 
@@ -57,3 +59,6 @@ type FunctorForRep :: forall {j} {k}. (j +-> k) -> Constraint
 class (CategoryOf j, CategoryOf k) => FunctorForRep (f :: j +-> k) where
   type f @ (a :: j) :: k
   fmap :: (a ~> b) -> f @ a ~> f @ b
+
+withMappedOb :: forall {j} {k} (f :: j +-> k) (a :: j) r. (FunctorForRep f, Ob a) => ((Ob (f @ a)) => r) -> r
+withMappedOb r = r \\ fmap @f (obj @a)
