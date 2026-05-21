@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
 module Proarrow.Object.Terminal where
 
 import Data.Kind (Type)
@@ -10,6 +11,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 class (CategoryOf k, Ob (TerminalObject :: k)) => HasTerminalObject k where
   type TerminalObject :: k
@@ -36,6 +38,12 @@ instance (HasTerminalObject j, HasTerminalObject k) => HasTerminalObject (j, k) 
 instance (CategoryOf j, CategoryOf k) => HasTerminalObject (j +-> k) where
   type TerminalObject = TerminalProfunctor
   terminate = Prof \a -> TerminalProfunctor \\ a
+
+instance (HasTerminalObject k, CategoryOf j) => Representable (TerminalProfunctor :: j +-> k) where
+  type TerminalProfunctor % x = TerminalObject
+  index TerminalProfunctor = terminate
+  tabulate f = TerminalProfunctor \\ f
+  repMap _ = id
 
 class ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k
 instance ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semicartesian k

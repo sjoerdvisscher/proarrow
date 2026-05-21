@@ -188,7 +188,7 @@ instance (HasProducts k) => Monoidal (PROD k) where
 instance (HasProducts k) => SymMonoidal (PROD k) where
   swap @(PR a) @(PR b) = Prod (swapProd @a @b)
 
-instance (HasProducts k, Strong (PROD k) ((~>) :: CAT k)) => MonoidalAction (PROD k) k where
+instance (HasProducts k, Strong (PROD k) (Hom k)) => MonoidalAction (PROD k) k where
   type Act (PR x) y = x && y
   withObAct @(PR a) @b r = withObProd @k @a @b r
   unitor = leftUnitorProd

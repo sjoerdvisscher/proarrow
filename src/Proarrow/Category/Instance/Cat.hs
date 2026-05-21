@@ -38,6 +38,8 @@ import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
 import Proarrow.Profunctor.Corepresentable (Corep)
+import Proarrow.Profunctor.Constant (Constant)
+import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
@@ -59,18 +61,13 @@ instance Profunctor Cat where
   dimap = dimapDefault
   r \\ Cat = r
 
-data family Terminate :: k +-> ()
-instance (CategoryOf k) => FunctorForRep (Terminate :: k +-> ()) where
-  type Terminate @ a = '()
-  fmap _ = Unit
-
 instance HasTerminalObject KIND where
   type TerminalObject = K ()
-  terminate = Cat @(Rep Terminate)
+  terminate = Cat @(Rep (Constant '()))
 
 instance HasInitialObject KIND where
   type InitialObject = K ()
-  initiate = Cat @(Corep Terminate)
+  initiate = Cat @(Corep (Constant '()))
 
 data family FstCat :: (j, k) +-> j
 instance (CategoryOf j, CategoryOf k) => FunctorForRep (FstCat :: (j, k) +-> j) where
@@ -95,7 +92,7 @@ instance (Representable p, Representable q) => Representable (p :&&&: q) where
   repMap f = repMap @p f :**: repMap @q f
 
 instance HasBinaryProducts KIND where
-  type K l && K r = K (l, r)
+  type l && r = K (UN K l, UN K r)
   withObProd r = r
   fst = Cat @(Rep FstCat)
   snd = Cat @(Rep SndCat)
@@ -132,6 +129,12 @@ instance (CategoryOf j, CategoryOf k) => FunctorForRep (Swap :: (j, k) +-> (k, j
   fmap (f1 :**: f2) = f2 :**: f1
 instance SymMonoidal KIND where
   swap @(K j) @(K k) = Cat @(Rep Swap :: (j, k) +-> (k, j))
+
+instance Distributive KIND where
+  distL @a @b @c = distLProd @a @b @c
+  distR @a @b @c = distRProd @a @b @c
+  distL0 = snd
+  distR0 = fst
 
 -- | A strictified monoidal category as a monoid in Cat.
 instance (Monoidal k) => Monoid (K [k]) where

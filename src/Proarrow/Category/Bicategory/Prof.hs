@@ -52,6 +52,7 @@ import Proarrow.Profunctor.Ran qualified as R
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..))
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Profunctor.Constant (Constant)
 
 type data PROFK j k = PK (j +-> k)
 type instance UN PK (PK p) = p
@@ -242,7 +243,7 @@ instance
 
 type instance Bi.TerminalObject FUNK = ()
 instance Bi.HasTerminalObject FUNK where
-  type Terminate FUNK j = FUN (Rep C.Terminate)
+  type Terminate FUNK j = FUN (Rep (Constant '()))
   terminate = Sub (Prof id)
   termUniv @_ @_ @g = Sub (Prof \f -> tabulate U.Unit \\ f \\ repMap @(UNFUN g) (tgt f))
 

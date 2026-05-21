@@ -45,3 +45,5 @@ instance Closed (KLEISLI (Cont (r :: Type))) where
   curry = currySA
   apply = applySA
   (^^^) = expSA
+
+-- Not CompactClosed, needs ((a -> r, b -> r) -> r) -> ((a, b) -> r) -> r

@@ -2,6 +2,7 @@ module Proarrow.Category.Instance.Sub where
 
 import Data.Kind (Constraint, Type)
 
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
@@ -67,3 +68,7 @@ instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub
   tabulate (Sub f) = Sub (tabulate f)
   repMap (Sub f) = Sub (repMap @p f)
 
+type FUN j k = SUBCAT (Representable :: OB (j +-> k))
+
+(!) :: forall {j} {k} f g a b. f ~> (g :: FUN j k) -> a ~> b -> UN SUB f % a ~> UN SUB g % b
+Sub (Prof n) ! ab = index @(UN SUB g) @_ @b (n (tabulate (repMap @(UN SUB f) ab))) \\ ab

@@ -13,6 +13,8 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Initial (InitialProfunctor)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
   type InitialObject :: k
@@ -36,6 +38,12 @@ instance (HasInitialObject j, HasInitialObject k) => HasInitialObject (j, k) whe
 instance (CategoryOf j, CategoryOf k) => HasInitialObject (j +-> k) where
   type InitialObject = InitialProfunctor
   initiate = Prof \case {}
+
+instance (HasInitialObject j, CategoryOf k) => Corepresentable (TerminalProfunctor :: j +-> k) where
+  type TerminalProfunctor %% x = InitialObject
+  coindex TerminalProfunctor = initiate
+  cotabulate f = TerminalProfunctor \\ f
+  corepMap _ = id
 
 class (HasInitialObject k, HasTerminalObject k, (InitialObject :: k) ~ TerminalObject) => HasZeroObject k where
   zero :: (Ob (a :: k), Ob b) => a ~> b

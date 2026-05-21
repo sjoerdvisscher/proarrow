@@ -6,7 +6,7 @@ import GHC.Base (Any)
 import Data.Kind (Type)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Instance.Cat (FstCat, SndCat, Terminate, (:&&&:) (..))
+import Proarrow.Category.Instance.Cat (FstCat, SndCat, (:&&&:) (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..), Snd, Fst)
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -39,6 +39,7 @@ import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep, withRepOb)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type data FAM (k :: Kind) = forall (x :: Kind). DEP_ (x +-> k)
 type instance UN DEP_ (DEP_ dx) = dx
@@ -136,24 +137,9 @@ instance (CategoryOf k) => HasBinaryCoproducts (FAM k) where
     InjLP p -> case l p of dx :.: f -> dx :.: InjLP f
     InjRP q -> case r q of dy :.: g -> dy :.: InjRP g
 
-type Term :: () +-> k
-data Term a b where Term :: Ob a => Term a '()
-instance (CategoryOf k) => Profunctor (Term :: () +-> k) where
-  dimap l Unit Term = Term \\ l
-  r \\ Term = r
-instance (HasTerminalObject k) => Representable (Term :: () +-> k) where
-  type Term % '() = TerminalObject
-  tabulate f = Term \\ f
-  index Term = terminate
-  repMap Unit = id
-instance (CategoryOf k) => Corepresentable (Term :: () +-> k) where
-  type Term %% a = '()
-  cotabulate Unit = Term
-  coindex Term = Unit
-  corepMap _ = Unit
 instance (HasTerminalObject k) => HasTerminalObject (FAM k) where
-  type TerminalObject = DEP () Term
-  terminate = Fam @(Rep Terminate) \dx -> Term :.: Rep Unit \\ dx
+  type TerminalObject = DEP () TerminalProfunctor
+  terminate = Fam @(Rep (Constant '())) \dx -> TerminalProfunctor :.: Rep Unit \\ dx
 
 type (:&&:) :: x +-> k -> y +-> k -> (x, y) +-> k
 data (p :&&: q) a b where

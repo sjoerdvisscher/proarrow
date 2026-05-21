@@ -1,9 +1,13 @@
 module Proarrow.Category.Instance.Bool where
 
+import Prelude (type (~))
+
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Instance.Sub (FUN, SUBCAT (..), (!))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct
@@ -20,7 +24,9 @@ import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Representable (Representable (..))
+import Prelude qualified as P
 
 data BOOL = FLS | TRU
 
@@ -29,6 +35,9 @@ data Booleans a b where
   Fls :: Booleans FLS FLS
   F2T :: Booleans FLS TRU
   Tru :: Booleans TRU TRU
+
+deriving instance P.Eq (Booleans a b)
+deriving instance P.Show (Booleans a b)
 
 class (IsBool (Dual b)) => IsBool (b :: BOOL) where boolId :: b ~> b
 instance IsBool FLS where boolId = Fls
@@ -63,6 +72,18 @@ instance ThinProfunctor Booleans where
   withArr Fls r = r
   withArr F2T r = r
   withArr Tru r = r
+
+instance Representable Booleans where
+  type Booleans % x = x
+  index = id
+  tabulate = id
+  repMap = id
+
+instance Corepresentable Booleans where
+  type Booleans %% x = x
+  coindex = id
+  cotabulate = id
+  corepMap = id
 
 instance HasTerminalObject BOOL where
   type TerminalObject = TRU
@@ -184,3 +205,35 @@ instance (Ob a) => Comonoid (a :: BOOL) where
     Tru -> Tru
 
 instance CopyDiscard BOOL
+
+type NonTrivialProfunctor :: (BOOL, BOOL) -> BOOL +-> BOOL
+data NonTrivialProfunctor ft a b where
+  FF :: NonTrivialProfunctor '(TRU, tt) FLS FLS
+  FT :: NonTrivialProfunctor ft FLS TRU
+  TT :: NonTrivialProfunctor '(ff, TRU) TRU TRU
+
+deriving instance P.Eq (NonTrivialProfunctor ft a b)
+deriving instance P.Show (NonTrivialProfunctor ft a b)
+
+-- | There are 4 non-trivial profunctors BOOL +-> BOOL, all with FLS->TRU, and optionally FLS->FLS and TRU->TRU.
+instance Profunctor (NonTrivialProfunctor ft) where
+  dimap Fls Fls FF = FF
+  dimap Fls F2T FF = FT
+  dimap Fls Tru FT = FT
+  dimap F2T Tru TT = FT
+  dimap Tru Tru TT = TT
+  dimap F2T Fls x = case x of {}
+  dimap Tru Fls x = case x of {}
+  dimap Tru F2T x = case x of {}
+  dimap F2T F2T x = case x of {}
+  r \\ FF = r
+  r \\ FT = r
+  r \\ TT = r
+
+-- | The arrow category of @k@ as functor category from @2@ to @k@.
+type ARROW k = FUN BOOL k
+
+commSquare
+  :: forall {k} f g a b c d
+   . (a ~ f % FLS, b ~ f % TRU, c ~ g % FLS, d ~ g % TRU) => SUB f ~> (SUB g :: ARROW k) -> (a ~> b, b ~> d, a ~> c, c ~> d)
+commSquare n = (repMap @f F2T, n ! Tru, n ! Fls, repMap @g F2T) \\ n

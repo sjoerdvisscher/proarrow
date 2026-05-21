@@ -3,8 +3,8 @@ module Proarrow.Category.Instance.Discrete where
 import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Category.Enriched.Thin qualified as Thin
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
 
 newtype DISCRETE k = D k
 type instance UN D (D a) = a
@@ -16,6 +16,7 @@ data Discrete a b where
 -- | The discrete category with only identity arrows, every type of kind @k@ is an object.
 instance CategoryOf (DISCRETE k) where
   type (~>) = Discrete
+
 instance Profunctor Discrete where
   dimap = dimapDefault
 instance Promonad Discrete where
@@ -27,7 +28,7 @@ instance Thin.ThinProfunctor Discrete where
   arr = Refl
   withArr Refl r = r
 
-withEq :: Discrete a b -> (a ~ b => r) -> r
+withEq :: Discrete a b -> ((a ~ b) => r) -> r
 withEq = Thin.withEq
 
 instance DaggerProfunctor Discrete where
@@ -43,6 +44,7 @@ data Codiscrete a b where
 -- | The codiscrete category has exactly one arrow between every object, every type of kind @k@ is an object.
 instance CategoryOf (CODISCRETE k) where
   type (~>) = Codiscrete
+
 instance Profunctor Codiscrete where
   dimap = dimapDefault
 instance Promonad Codiscrete where
