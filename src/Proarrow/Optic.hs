@@ -1,3 +1,5 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Optic where
 
 import Data.Kind (Constraint)
@@ -25,17 +27,24 @@ instance (CategoryOf j, CategoryOf k) => CategoryOf (OPTIC j k c) where
   type (~>) = Optic_
   type Ob opt = (opt ~ OPT (OptL opt) (OptR opt), Ob (OptL opt), Ob (OptR opt))
 
+newtype WrappedOptic c a b s t = WrappedOptic {unWrappedOptic :: Optic c s t a b}
+instance (Ob a, Ob b, CategoryOf j, CategoryOf k, c :=> Profunctor) => Profunctor (WrappedOptic c a b :: j +-> k) where
+  dimap l r (WrappedOptic (Optic n)) = WrappedOptic (Optic (\ @p -> implies @c @Profunctor @p dimap l r . n) \\ l \\ r)
+  r \\ WrappedOptic o = r \\ o
+
 type Optic (c :: j +-> k -> Constraint) s t a b = Optic_ (OPT a b) (OPT s t :: OPTIC j k c)
 type Optic' c s a = Optic c s s a a
 
 class (c1 p, c2 p) => (c1 :&&: c2) p
 instance (c1 p, c2 p) => (c1 :&&: c2) p
+
 -- | Compose optics if different kinds
 (%) :: Optic c1 s t a b -> Optic c2 a b c d -> Optic (c1 :&&: c2) s t c d
 Optic n % Optic m = Optic (n . m)
 
-type (:=>) :: ((j +-> k) -> Constraint) -> ((j +-> k) -> Constraint) -> Constraint
-type c :=> d = forall p. (c p) => d p
+type (:=>) :: forall {j} {k}. ((j +-> k) -> Constraint) -> ((j +-> k) -> Constraint) -> Constraint
+class c :=> d where
+  implies :: (c p) => ((d p) => r) -> r
 
 type Iso s t a b = Optic Profunctor s t a b
 type Iso' s a = Iso s s a a

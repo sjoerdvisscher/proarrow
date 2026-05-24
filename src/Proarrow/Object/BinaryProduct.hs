@@ -22,7 +22,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, src, type (+->), Hom)
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, src, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -101,7 +101,7 @@ instance (HasBinaryProducts k, Representable (p :: j +-> k), Representable q) =>
   repMap f = repMap @p f *** repMap @q f
 
 instance (CategoryOf j, CategoryOf k) => Strong (PROD (j +-> k)) (Prof :: CAT (j +-> k)) where
-  act (Prod (Prof n)) (Prof m) = Prof \(p :*: q) -> n p :*: m q
+  act (Prod n) m = n *** m
 
 leftUnitorProd :: forall {k} (a :: k). (HasProducts k, Ob a) => TerminalObject && a ~> a
 leftUnitorProd = snd @k @TerminalObject
@@ -217,6 +217,8 @@ instance SymMonoidal Type where
 
 instance Strong Type (->) where
   act = par
+instance Strong (PROD Type) (->) where
+  act (Prod f) g = f *** g
 instance MonoidalAction Type Type where
   type Act p x = p ** x
   withObAct r = r
@@ -229,8 +231,8 @@ instance Costrong Type (->) where
   coact f x = let (u, y) = f (u, x) in y
 
 -- | Products as monoidal structure.
-
 class (Act a b ~ a && b) => ActIsProd a b
+
 instance (Act a b ~ a && b) => ActIsProd a b
 class (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c
 instance (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c

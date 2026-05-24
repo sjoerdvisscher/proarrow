@@ -3,6 +3,7 @@
 module Proarrow.Profunctor.Star where
 
 import Data.Functor.Compose (Compose (..))
+import Data.Kind (Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Discrete, Thin, ThinProfunctor (..), withEq)
@@ -10,12 +11,13 @@ import Proarrow.Category.Instance.Nat (Nat (..), Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), strength)
+import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, StrongDistributiveProfunctor, Traversable (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
+import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
@@ -77,8 +79,8 @@ instance (Alternative f, Monoidal k, Distributive j) => MonoidalProfunctor (Copr
   par0 = Co (Star empty)
   Co (Star @a f) `par` Co (Star @b g) = let ab = obj @a +++ obj @b in Co (Star (alt @f @a @b ab . (f `par` g))) \\ ab
 
-instance (Functor (f :: k -> k), SelfAction k) => Strong k (Star f) where
-  act @_ @b @_ @y f (Star k) = f // withObAct @k @k @b @y (Star (strength @(Star f) @b @y . (f `par` k)))
+instance (P.Functor f) => Strong (PROD Type) (Star (Prelude f)) where
+  act (Prod f) (Star k) = Star (\(a, x) -> P.fmap ((,) (f a)) (k x))
 
 instance (P.Applicative f) => Strong (SUBCAT P.Traversable) (Star (Prelude f)) where
   act (Sub (Nat n)) (Star f) = Star (P.traverse f . n)
@@ -107,7 +109,7 @@ starTraverse
 starTraverse p = p // case traverse (trivialRep :.: p) of x :.: Star y -> rmap y x
 
 preludeTraverse
-  :: (Applicative (f :: k -> k), Functor t, Traversable (Star t), SelfAction k, HasCoproducts k, Ob b)
+  :: (Applicative (f :: k -> k), Functor t, Traversable (Star t), SelfAction k, Strong k (Star f), HasCoproducts k, Ob b)
   => (a ~> f b) -> t a ~> f (t b)
 preludeTraverse = unStar . starTraverse . Star
 

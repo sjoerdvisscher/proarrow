@@ -6,10 +6,12 @@ module Proarrow.Category.Monoidal.Optic where
 
 import Data.Bifunctor (bimap)
 import Data.Kind (Type)
+import Data.Monoid qualified as P
 import GHC.Generics qualified as G
 import Prelude (Either (..), Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($))
+import Prelude qualified as P
 
-import Data.Monoid qualified as P
+import Data.Functor.Const (Const (..))
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.Nat ((!))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
@@ -54,7 +56,7 @@ import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withRepOb)
-import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
 
 type ExOptic :: Kind -> c -> d -> c -> d -> Type
 data ExOptic m a b s t where
@@ -116,6 +118,13 @@ instance Strong (COPROD Type) (Rep (Constant (P.First c)) :: Type +-> Type) wher
 type Lens (s :: k) (t :: k) a b = Optic (Strong (PROD k)) s t a b
 mkLens :: forall {k} (s :: k) (t :: k) a b. (HasProducts k, Ob b) => (s ~> a) -> ((s && b) ~> t) -> Lens s t a b
 mkLens sa sbt = ex2prof (ExOptic (id &&& sa) (Prod (src sa)) sbt) \\ sa
+
+type VLLens s t a b = forall f. (P.Functor f) => (a -> f b) -> s -> f t
+toVLLens :: Lens s t a b -> VLLens s t a b
+toVLLens (Optic l) = (unPrelude .) . unStar . l . Star . (Prelude .)
+
+fromVLLens :: VLLens s t a b -> Lens s t a b
+fromVLLens f = mkLens (getConst . f Const) (P.uncurry (f (const id)))
 
 type Prism (s :: k) t a b = Optic (Strong (COPROD k)) s t a b
 mkPrism :: forall {k} (s :: k) (t :: k) a b. (HasCoproducts k, Ob a) => (s ~> (t || a)) -> (b ~> t) -> Prism s t a b
