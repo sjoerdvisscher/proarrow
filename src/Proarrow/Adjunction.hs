@@ -3,7 +3,7 @@
 
 module Proarrow.Adjunction where
 
-import Data.Kind (Constraint)
+import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Colimit (HasColimits (..), mapColimit)
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -18,8 +18,10 @@ import Proarrow.Object.BinaryCoproduct (Cocartesian, Coprod (..), HasBinaryCopro
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Optic (Iso, iso, re)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), corepObj, trivialCorep)
+import Proarrow.Profunctor.Constant (review, view)
+import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), corepObj, cotabulated, trivialCorep)
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable
@@ -30,6 +32,7 @@ import Proarrow.Profunctor.Representable
   , mapCorepStar
   , mapRepCostar
   , repObj
+  , tabulated
   , trivialRep
   )
 import Proarrow.Profunctor.Star (Star, pattern Star)
@@ -45,6 +48,11 @@ leftAdjunct = index . cotabulate @p
 
 rightAdjunct :: forall p a b. (Adjunction p, Ob b) => a ~> p % b -> (p %% a ~> b)
 rightAdjunct = coindex . tabulate @p
+
+-- | The isomorphism between @leftAdjunct@ and @rightAdjunct@.
+adjuncted
+  :: forall p a b a' b'. (Adjunction p, Ob a, Ob b') => Iso (b ~> p % a) (b' ~> p % a') (p %% b ~> a) (p %% b' ~> a')
+adjuncted = tabulated @p . re cotabulated
 
 unitRep :: forall p a. (Adjunction p, Ob a) => a ~> p % (p %% a)
 unitRep = index (trivialCorep @p)
@@ -233,3 +241,13 @@ instance (Cocartesian j, Cocartesian k, Adjunction p) => MonoidalProfunctor (Cop
       )
       \\ l
       \\ r
+
+-- | Every adjunction between Hask endofunctors is equivalent to the curry-uncurry adjunction.
+haskAdjIsCurryAdj
+  :: forall p a b a' b'. (Adjunction (p :: Type +-> Type)) => Iso (p %% () -> a -> b) (p %% () -> a' -> b') (p a b) (p a' b')
+haskAdjIsCurryAdj =
+  iso (\kab -> tabulate \a -> index @p (cotabulate (\k -> kab k a)) ()) (\p k a -> coindex p (corepMap @p (\() -> a) k))
+
+instance (Adjunction p) => Promonad (Adj p :: Type +-> Type) where
+  id = Adj (view (haskAdjIsCurryAdj @p) (\_ -> id))
+  Adj l . Adj r = Adj (view (haskAdjIsCurryAdj @p) (\k -> review haskAdjIsCurryAdj l k . review haskAdjIsCurryAdj r k))

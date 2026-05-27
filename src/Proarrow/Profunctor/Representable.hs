@@ -5,12 +5,13 @@ module Proarrow.Profunctor.Representable where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Instance.Unit ()
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->), Hom)
-import Proarrow.Functor (FunctorForRep (..), withMappedOb)
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), (:~>), type (+->))
+import Proarrow.Functor (FunctorForRep (..), Presheaf, withMappedOb)
 import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, trivialCorep)
@@ -47,6 +48,14 @@ dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r
 
 trivialRep :: forall p a. (Representable p, Ob a) => p (p % a) a
 trivialRep = tabulate (repObj @p @a)
+
+tabulated :: forall p a a' b b'. (Representable p, Ob b) => Iso (a ~> p % b) (a' ~> p % b') (p a b) (p a' b')
+tabulated = iso tabulate index
+
+type RepresentablePresheaf (f :: Presheaf k) = Representable f
+type Key (f :: Presheaf k) = f % '()
+tabulatedPresheaf :: (RepresentablePresheaf f, Ob a) => Iso (a ~> Key f) (a' ~> Key f) (f a '()) (f a' '())
+tabulatedPresheaf = tabulated
 
 instance (Representable p) => Corepresentable (Op p) where
   type Op p %% OP a = OP (p % a)
@@ -122,8 +131,8 @@ instance (FunctorForRep f, Thin k) => ThinProfunctor (Rep f :: j +-> k) where
   arr @_ @b = withMappedOb @f @b (Rep arr)
   withArr (Rep f) r = withArr f r
 
-rep :: forall f a b a' b'. (Ob b) => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
-rep = iso Rep unRep
+rep :: forall f a b a' b'. (FunctorForRep f, Ob b) => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
+rep = tabulated
 
 type Monad m = (Promonad m, Representable m)
 
