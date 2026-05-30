@@ -2,7 +2,9 @@
 
 module Proarrow.Object.Pullback where
 
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->), lmap, UN)
+import Prelude (($))
+
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->), lmap, UN, (//))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Prod (..))
 import Proarrow.Object.Initial (HasZeroObject (..))
@@ -35,6 +37,10 @@ data Cosink (as :: [k]) where
 -- But at runtime we can still calculate the arrows and the type, which we hide behind an existential.
 class (HasProducts k) => HasPullbacks k where
   pullback :: forall (o :: k) a b. a ~> o -> b ~> o -> Cosink [a, b]
+
+-- | In a thin category, arrows don't carry information, so pullbacks are just products.
+thinPullback :: forall {k} (o :: k) a b. HasProducts k => a ~> o -> b ~> o -> Cosink [a, b]
+thinPullback l r = l // r // withObProd @k @a @b $ Cone $ Leg (fst @k @a @b) $ Leg (snd @k @a @b) Apex
 
 equalizer :: forall {k} (a :: k) b. (HasPullbacks k) => a ~> b -> a ~> b -> Cosink '[a]
 equalizer f@Objs g = case pullback (obj @a &&& f) (obj @a &&& g) of

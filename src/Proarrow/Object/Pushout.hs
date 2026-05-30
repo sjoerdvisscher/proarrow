@@ -2,8 +2,10 @@
 
 module Proarrow.Object.Pushout where
 
+import Prelude (($))
+
 import Proarrow.Category.Opposite (OPPOSITE, Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->), rmap, UN)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->), rmap, UN, (//))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasCoproducts, COPROD (..), Coprod (..))
 import Proarrow.Object.Initial (HasZeroObject (..))
@@ -38,6 +40,10 @@ data Sink (as :: [k]) where
 -- But at runtime we can still calculate the arrows and the type, which we hide behind an existential.
 class (HasCoproducts k) => HasPushouts k where
   pushout :: forall (o :: k) a b. o ~> a -> o ~> b -> Sink [a, b]
+
+-- | In a thin category, arrows don't carry information, so pushouts are just coproducts.
+thinPushout :: forall {k} (o :: k) a b. HasCoproducts k => o ~> a -> o ~> b -> Sink [a, b]
+thinPushout l r = l // r // withObCoprod @k @a @b $ Cocone $ Coleg (lft @k @a @b) $ Coleg (rgt @k @a @b) Coapex
 
 coequalizer :: forall {k} (a :: k) b. (HasPushouts k) => a ~> b -> a ~> b -> Sink '[b]
 coequalizer f@Objs g = case pushout (obj @b ||| f) (obj @b ||| g) of

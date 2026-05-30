@@ -23,6 +23,8 @@ import Proarrow.Object.BinaryProduct
 import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Pullback (HasPullbacks (..), thinPullback)
+import Proarrow.Object.Pushout (HasPushouts (..), thinPushout)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
@@ -108,6 +110,12 @@ instance HasBinaryProducts BOOL where
   Fls &&& _ = Fls
   F2T &&& b = b
   Tru &&& Tru = Tru
+
+instance HasPullbacks BOOL where
+  pullback = thinPullback
+
+instance HasPushouts BOOL where
+  pushout = thinPushout
 
 instance HasInitialObject BOOL where
   type InitialObject = FLS
