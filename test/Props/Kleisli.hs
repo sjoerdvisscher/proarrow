@@ -11,7 +11,7 @@ import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
-import Proarrow.Core (CategoryOf (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Profunctor.Costar (Costar, unCostar, pattern Costar)
 import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
@@ -19,7 +19,17 @@ import Proarrow.Promonad.Cont (Cont (..))
 
 import Props
 import Props.Hask ()
-import Testable (Testable (..), TestableProfunctor, TestableType (..), TestingEqShow (..), genSomeDef, invmap)
+import Testable
+  ( SomeProfunctorElt (..)
+  , TestOb'
+  , Testable (..)
+  , TestableProfunctor (..)
+  , TestableType (..)
+  , TestableTypeP
+  , TestingEqShow (..)
+  , genSomeDef
+  , invmap
+  )
 
 test :: TestTree
 test =
@@ -51,13 +61,20 @@ test =
         ]
     ]
 
-instance (TestableProfunctor p, Promonad p, TestOb a, TestOb b) => TestableType (Kleisli (a :: KLEISLI (p :: Type +-> Type)) b) where
+instance (TestableTypeP p, Promonad p, TestOb a, TestOb b) => TestableType (Kleisli (a :: KLEISLI (p :: Type +-> Type)) b) where
   gen = invmap Kleisli unKleisli (gen @(p (UN KL a) (UN KL b)))
-instance (TestableProfunctor p, Promonad p, TestOb a, TestOb b) => TestingEqShow (Kleisli (a :: KLEISLI (p :: Type +-> Type)) b) where
+instance (TestingEqShow (p a b), Promonad p) => TestingEqShow (Kleisli (KL a :: KLEISLI (p :: Type +-> Type)) (KL b)) where
   eqP (Kleisli l) (Kleisli r) = eqP l r
   showP (Kleisli f) = "Kleisli (" ++ showP f ++ ")"
+instance
+  (TestableProfunctor p, TestableTypeP p, Promonad p)
+  => TestableProfunctor (Kleisli :: CAT (KLEISLI (p :: Type +-> Type)))
+  where
+  genProfunctorElt nm = do
+    SomeP p <- genProfunctorElt @p nm
+    pure $ SomeP (Kleisli p)
 
-instance (TestableProfunctor p, Promonad p) => Testable (KLEISLI (p :: Type +-> Type)) where
+instance (TestableProfunctor p, TestableTypeP p, Promonad p) => Testable (KLEISLI (p :: Type +-> Type)) where
   type TestOb a = (Ob a, TestOb (UN KL a))
   showOb @(KL a) = "KL " ++ showOb @_ @a
   eqOb @(KL a) @(KL b) = (\Refl -> Refl) <$> eqOb @Type @a @b
@@ -85,12 +102,14 @@ instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => Testable
 instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestingEqShow (Star (Prelude f) a b) where
   eqP (Star l) (Star r) = eqP l r
   showP (Star f) = showP f
+instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Star (Prelude f))
 
 instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestableType (Costar (Prelude f) a b) where
   gen = invmap Costar unCostar gen
 instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestingEqShow (Costar (Prelude f) a b) where
   eqP (Costar l) (Costar r) = eqP l r
   showP (Costar f) = showP f
+instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Costar (Prelude f))
 
 instance Promonad (Costar (Prelude Pair)) where
   id = Costar \(Prelude (Pair (x, _))) -> x
@@ -101,3 +120,4 @@ instance (TestOb a, TestOb b) => TestableType (Cont Void a b) where
 instance (TestOb a, TestOb b) => TestingEqShow (Cont Void a b) where
   eqP (Cont l) (Cont r) = eqP l r
   showP (Cont f) = "Cont (" ++ showP f ++ ")"
+instance TestableProfunctor (Cont Void)

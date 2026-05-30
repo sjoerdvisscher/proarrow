@@ -12,7 +12,14 @@ import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.ZX (ZX (..), enumAll, isZero, nat)
 import Props
-import Testable (Testable (..), TestableType (..), TestingEqShow (..), genSomeDef, pattern GenNonEmpty)
+import Testable
+  ( Testable (..)
+  , TestableProfunctor
+  , TestableType (..)
+  , TestingEqShow (..)
+  , genSomeDef
+  , pattern GenNonEmpty
+  )
 
 test :: TestTree
 test =
@@ -45,3 +52,4 @@ instance (TestOb n, TestOb m) => TestableType (ZX n m) where
     ZX <$> sequenceA matrix
 instance (TestOb n, TestOb m) => TestingEqShow (ZX n m) where
   eqP (ZX l) (ZX r) = pure $ all isZero (l Map.\\ r) && all isZero (r Map.\\ l) && all isZero (Map.intersectionWith (-) l r)
+instance TestableProfunctor ZX

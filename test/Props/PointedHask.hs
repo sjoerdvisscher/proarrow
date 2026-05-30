@@ -16,6 +16,7 @@ import Props.Hask ()
 import Testable
   ( GenTotal (..)
   , Testable (..)
+  , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
@@ -44,6 +45,7 @@ instance (TestOb a, TestOb b) => TestableType (Pointed a b) where
 instance (TestOb a, TestOb b) => TestingEqShow (Pointed a b) where
   eqP (Pt l) (Pt r) = eqP l r
   showP _ = "<pointed function>"
+instance TestableProfunctor Pointed
 
 instance Testable POINTED where
   type TestOb a = (Ob a, TestOb (UN P a))

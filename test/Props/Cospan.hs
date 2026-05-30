@@ -12,7 +12,7 @@ import Prelude (Bool (..), Maybe (..), pure, zip, ($), (&&), (++), (<$>), (<*>),
 
 import Proarrow.Category.Instance.Cospan (COSPAN (..), Cospan (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), findIso, unFinSet)
-import Proarrow.Core (CategoryOf (..), UN, (//), (\\))
+import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 
 import Props
 import Props.FinSet ()
@@ -20,6 +20,7 @@ import Testable
   ( GenTotal (..)
   , Some (..)
   , Testable (..)
+  , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , mapSome
@@ -80,3 +81,5 @@ instance (TestOb a, TestOb b) => TestableType (Cospan a (b :: COSPAN FINSET)) wh
           (GenEmpty _, _) -> loop
           (_, GenEmpty _) -> loop
           (GenNonEmpty l, GenNonEmpty r) -> Cospan <$> l <*> r
+
+instance TestableProfunctor (Cospan :: CAT (COSPAN FINSET))

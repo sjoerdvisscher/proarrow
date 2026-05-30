@@ -20,7 +20,17 @@ import Proarrow.Object.Terminal qualified as Terminal
 import Proarrow.Optic (Iso)
 import Proarrow.Profunctor.Constant (review, view)
 import Proarrow.Profunctor.Representable (Rep)
-import Testable (Some (..), TestObIsOb, Testable (..), TestableProfunctor, TestingEqShow (..), genNamed, genOb)
+import Testable
+  ( Some (..)
+  , SomeProfunctorElt (..)
+  , TestObIsOb
+  , Testable (..)
+  , TestableProfunctor (..)
+  , TestableTypeP
+  , TestingEqShow (..)
+  , genNamed
+  , genOb
+  )
 
 testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
 testEq nm sl l sr r = do
@@ -217,7 +227,13 @@ propClosed
   -> TestTree
 propClosed withTestOb2 withTestObExp = testProperty "Closed" $ do
   propProfunctorWith @(Rep (Exponential.ExpRep @k))
-    (\ @_ @'(OP b1, b2) -> withTestObExp @b1 @b2 genNamed "p")
+    ( do
+        Some @a <- genOb
+        Some @b1 <- genOb
+        Some @b2 <- genOb
+        p <- withTestObExp @b1 @b2 (genNamed @(Rep (Exponential.ExpRep @k) a '(OP b1, b2)) "p")
+        pure $ SomeP @a @'(OP b1, b2) p
+    )
     (\ @_ @'(OP b1, b2) r -> withTestObExp @b1 @b2 r)
   Some @a <- genOb @k
   Some @b <- genOb
@@ -283,18 +299,16 @@ testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestT
 testProfunctor = testProperty "Profunctor" (propProfunctor @p)
 
 propProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => Property ()
-propProfunctor = propProfunctorWith @p (\ @a @b -> genNamed @(p a b) "p") (\r -> r)
+propProfunctor = propProfunctorWith @p (genProfunctorElt "p") (\r -> r)
 
 propProfunctorWith
   :: forall {j} {k} (p :: j +-> k)
    . (Profunctor p, Testable j, Testable k)
-  => (forall a b. (TestOb a, TestOb b) => Property (p a b))
+  => (Property (SomeProfunctorElt p))
   -> (forall a b r. (TestOb a, TestOb b) => ((TestingEqShow (p a b)) => r) -> r)
   -> Property ()
 propProfunctorWith genPro withEqShow = do
-  Some @a <- genOb @k
-  Some @b <- genOb @j
-  p <- genPro @a @b
+  SomeP @a @b p <- genPro
   withEqShow @a @b $
     testEq "identity" "dimap id id p" (dimap id id p) "p" p
   Some @c <- genOb @k
@@ -318,9 +332,7 @@ propProfunctorWith genPro withEqShow = do
 propNaturalTransformation
   :: forall {j} {k} (p :: j +-> k) q. (TestableProfunctor p, TestableProfunctor q) => p :~> q -> Property ()
 propNaturalTransformation n = do
-  Some @a <- genOb @k
-  Some @b <- genOb @j
-  p <- genNamed @(p a b) "p"
+  SomeP @a @b p <- genProfunctorElt @p "p"
   Some @c <- genOb @k
   Some @d <- genOb @j
   f <- genNamed @(c ~> a) "f"
@@ -337,7 +349,7 @@ propIso' iso = propIso (view iso) (review iso)
 
 propIsoP
   :: forall p q a b c d
-   . (TestableProfunctor p, TestableProfunctor q, TestOb a, TestOb b, TestOb c, TestOb d)
+   . (TestableTypeP p, TestableTypeP q, TestOb a, TestOb b, TestOb c, TestOb d)
   => (p a b -> q c d) -> (q c d -> p a b) -> Property ()
 propIsoP f g = do
   p <- genNamed @(p a b) "p"
@@ -347,7 +359,7 @@ propIsoP f g = do
 
 propNaturalIsoP
   :: forall {j} {k} (p :: j +-> k) q
-   . (TestableProfunctor p, TestableProfunctor q)
+   . (TestableProfunctor p, TestableTypeP p, TestableProfunctor q, TestableTypeP q)
   => (p :~> q) -> (q :~> p) -> Property ()
 propNaturalIsoP f g = do
   Some @a <- genOb @k

@@ -7,24 +7,25 @@ import Data.Foldable (toList)
 import Data.Type.Nat (Nat0, Nat1, Nat2, Nat3)
 import Data.Typeable ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
-import Prelude (Bool (..), Maybe (..), pure, zip, ($), (&&), (++), (<$>), (<*>), (||), (==))
+import Prelude (Bool (..), Maybe (..), pure, zip, ($), (&&), (++), (<$>), (<*>), (==), (||))
 
-import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), unFinSet)
-import Proarrow.Core (CategoryOf (..), UN, (//), (\\))
+import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
+import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 
+import Data.List (sort)
 import Props
 import Props.FinSet ()
 import Testable
   ( GenTotal (..)
   , Some (..)
   , Testable (..)
+  , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , mapSome
   , pattern GenNonEmpty
   )
-import Data.List (sort)
 
 test :: TestTree
 test =
@@ -76,3 +77,4 @@ instance (TestOb a, TestOb b) => TestableType (Span a (b :: SPAN FINSET)) where
           (GenEmpty _, _) -> loop
           (_, GenEmpty _) -> loop
           (GenNonEmpty l, GenNonEmpty r) -> Span <$> l <*> r
+instance TestableProfunctor (Span :: CAT (SPAN FINSET))

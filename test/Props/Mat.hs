@@ -4,21 +4,31 @@
 module Props.Mat where
 
 import Data.Kind (Type)
-import Data.Type.Equality (TestEquality(..), type (:~:) (..))
-import Data.Type.Nat (Nat (..), snat, snatToNat, SNat (..), Nat0, Nat1, Nat2, Nat3, SNatI)
-import Data.Vec.Lazy (repeat, Vec (..))
+import Data.Type.Equality (TestEquality (..), type (:~:) (..))
+import Data.Type.Nat (Nat (..), Nat0, Nat1, Nat2, Nat3, SNat (..), SNatI, snat, snatToNat)
+import Data.Vec.Lazy (Vec (..), repeat)
 import Test.Falsify.Generator (elem)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude hiding (elem, repeat)
 
-import Proarrow.Category.Instance.Mat (Mat (..), MatK (..), App)
-import Proarrow.Core (type (+->))
+import Proarrow.Category.Instance.Mat (App, Mat (..), MatK (..))
+import Proarrow.Core (CAT, type (+->))
 import Proarrow.Profunctor.Representable (Rep)
 
 import Props
 import Props.Hask ()
-import Testable (Testable (..), TestableType (..), TestingEqShow (..), genSomeDef, pattern GenNonEmpty, invmap, GenTotal (..), one)
+import Testable
+  ( GenTotal (..)
+  , Testable (..)
+  , TestableProfunctor
+  , TestableType (..)
+  , TestingEqShow (..)
+  , genSomeDef
+  , invmap
+  , one
+  , pattern GenNonEmpty
+  )
 
 test :: TestTree
 test =
@@ -54,6 +64,7 @@ instance (TestOb (a :: MatK Int), TestOb b) => TestableType (Mat a b) where
 instance (TestOb (a :: MatK Int), TestOb b) => TestingEqShow (Mat a b) where
   eqP (Mat l) (Mat r) = pure $ l == r
   showP (Mat m) = show m
+instance TestableProfunctor (Mat :: CAT (MatK Int))
 
 instance (Eq a, Show a) => TestingEqShow (Vec n a)
 instance (Eq a, Show a, TestableType a, SNatI n) => TestableType (Vec n a) where
@@ -66,3 +77,5 @@ instance (Eq a, Show a, TestableType a, SNatI n) => TestableType (Vec n a) where
 instance TestingEqShow Int
 instance TestableType Int where
   gen = GenNonEmpty $ liftA2 (*) (elem [1, -1]) (elem [0 .. 9])
+
+instance TestableProfunctor (Rep App :: MatK Int +-> Type)

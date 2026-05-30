@@ -24,7 +24,7 @@ import Testable
   , invmap
   , one
   , optGen
-  , pattern GenNonEmpty
+  , pattern GenNonEmpty, TestableProfunctor
   )
 
 test :: TestTree
@@ -53,6 +53,7 @@ instance Testable FINSET where
 instance (Ob a, Ob b) => TestingEqShow (FinSet a b)
 instance (Ob a, Ob b) => TestableType (FinSet a b) where
   gen = invmap FinSet unFinSet gen
+instance TestableProfunctor FinSet
 
 instance (P.Eq a, P.Show a) => TestingEqShow (Vec n a)
 instance (P.Eq a, P.Show a, TestableType a, SNatI n) => TestableType (Vec n a) where

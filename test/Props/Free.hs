@@ -16,7 +16,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..), TermF)
 import Proarrow.Profunctor.Initial (InitialProfunctor)
 
 import Props
-import Testable (GenTotal (..), Testable (..), TestableType (..), TestingEqShow, genSomeDef, one, pattern GenNonEmpty)
+import Testable (GenTotal (..), Testable (..), TestableType (..), TestingEqShow, genSomeDef, one, pattern GenNonEmpty, TestableProfunctor)
 
 type FREEKIND =
   FREE '[HasInitialObject, HasTerminalObject, HasBinaryProducts, HasBinaryCoproducts] (InitialProfunctor :: CAT ())
@@ -41,6 +41,7 @@ instance Testable FREEKIND where
 instance (TestObFree a, TestObFree b) => TestingEqShow (Free a (b :: FREEKIND))
 instance (TestObFree a, TestObFree b) => TestableType (Free a (b :: FREEKIND)) where
   gen = genFree
+instance TestableProfunctor (Free :: CAT FREEKIND)
 
 class (Ob a) => TestObFree (a :: FREEKIND) where
   genFree :: (TestObFree b) => GenTotal (Free a b)

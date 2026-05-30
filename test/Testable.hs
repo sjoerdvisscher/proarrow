@@ -3,7 +3,7 @@
 
 module Testable where
 
-import Data.Kind (Constraint)
+import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Typeable (Typeable, eqT, (:~:) (..))
 import GHC.Exts qualified as GHC
@@ -13,7 +13,7 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Representable (Rep (..))
@@ -67,21 +67,42 @@ genP = case gen of
 
 genNamed :: (TestableType a) => String -> Property a
 genNamed nm = case gen of
-  GenNENonFun g -> genWith (Just . named . showP) g
-  GenFun f g -> (f . applyFun) <$> genWith (Just . named . showFun) g
+  GenNENonFun g -> genWithNamed nm (Just . showP) g
+  GenFun f g -> (f . applyFun) <$> genWithNamed nm (Just . showFun) g
   GenEmpty _ -> discard
+
+genWithNamed :: String -> (a -> Maybe String) -> Gen a -> Property a
+genWithNamed nm f = genWith (fmap named . f)
   where
     named s = "for " ++ nm ++ ": " ++ s
 
+type SomeProfunctorElt :: (j +-> k) -> Type
+data SomeProfunctorElt p where
+  SomeP :: (TestOb a, TestOb b) => p a b -> SomeProfunctorElt p
+
+instance (forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (p a b)) => Show (SomeProfunctorElt p) where
+  show (SomeP p) = showP p
+
+type TestableTypeP :: (j +-> k) -> Constraint
+class (forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b)) => TestableTypeP (p :: j +-> k)
+instance (forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b)) => TestableTypeP (p :: j +-> k)
+
 type TestableProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class
-  (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b)) =>
+  (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (p a b)) =>
   TestableProfunctor (p :: j +-> k)
-instance
-  (Testable j, Testable k, Profunctor p, forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b))
-  => TestableProfunctor (p :: j +-> k)
+  where
+  -- | The default implementation generates types @a@ and @b@ and then generates a value of type @p a b@.
+  -- But that can cause too many discarded tests.
+  genProfunctorElt :: String -> Property (SomeProfunctorElt p)
+  default genProfunctorElt :: (TestableTypeP p) => String -> Property (SomeProfunctorElt p)
+  genProfunctorElt nm = do
+    Some @a <- genOb
+    Some @b <- genOb
+    p <- genNamed @(p a b) nm
+    pure $ SomeP p
 
-class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor ((~>) :: CAT k), CategoryOf k) => Testable k where
+class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor (Hom k), TestableTypeP (Hom k), CategoryOf k) => Testable k where
   type TestOb (a :: k) :: GHC.Constraint
   type TestOb a = Ob a
   showOb :: forall (a :: k). (TestOb a) => String
@@ -90,15 +111,24 @@ class (forall (a :: k). (TestOb a) => Ob' a, TestableProfunctor ((~>) :: CAT k),
   eqOb = eqT @a @b
   genSome :: Gen (Some k)
 
-genOb :: Testable k => Property (Some k)
+genOb :: (Testable k) => Property (Some k)
 genOb = genWith (Just . show) genSome
 
+instance (TestableProfunctor p) => TestableProfunctor (Op p) where
+  genProfunctorElt nm = do
+    SomeP p <- genProfunctorElt @p nm
+    pure $ SomeP (Op p)
 instance (Testable k) => Testable (OPPOSITE k) where
   type TestOb a = (Is OP a, TestOb (UN OP a))
   showOb @(OP a) = "OP (" ++ showOb @k @a ++ ")"
   eqOb @(OP a) @(OP b) = fmap (\Refl -> Refl) $ eqOb @k @a @b
   genSome = mapSome OP <$> genSome
 
+instance (TestableProfunctor p, TestableProfunctor q) => TestableProfunctor (p :**: q) where
+  genProfunctorElt nm = do
+    SomeP p <- genProfunctorElt @p (nm ++ "_0")
+    SomeP q <- genProfunctorElt @q (nm ++ "_1")
+    pure $ SomeP (p :**: q)
 instance (Testable j, Testable k) => Testable (j, k) where
   type TestOb a = (a ~ '(Fst a, Snd a), TestOb (Fst a), TestOb (Snd a))
   showOb @'(a, b) = "(" ++ showOb @j @a ++ ", " ++ showOb @k @b ++ ")"
@@ -133,6 +163,9 @@ instance (Testable k) => Show (Some k) where
 
 someElem :: (Show a) => [a] -> Property a
 someElem = someElemWith show
+
+someElemNamed :: (Show a) => String -> [a] -> Property a
+someElemNamed nm = someElemWith (\a -> "for " ++ nm ++ ": " ++ show a)
 
 someElemWith :: (a -> String) -> [a] -> Property a
 someElemWith _ [] = discard

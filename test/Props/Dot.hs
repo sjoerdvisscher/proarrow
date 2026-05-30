@@ -8,7 +8,7 @@ import Data.List (findIndices, intercalate)
 import Data.List.NonEmpty (fromList)
 import Data.Proxy (Proxy (..))
 import Data.Traversable (for)
-import Data.Type.Equality ((:~:) (..), TestEquality (testEquality))
+import Data.Type.Equality (TestEquality (testEquality), (:~:) (..))
 import Data.Void (absurd)
 import GHC.TypeLits (Symbol, decideSymbol, symbolVal, pattern SSymbol)
 import Test.Falsify.Generator (elem)
@@ -35,6 +35,7 @@ import Testable
   ( GenTotal (..)
   , Some (..)
   , Testable (..)
+  , TestableProfunctor
   , TestableType (..)
   , TestingEqShow
   , genSomeDef
@@ -66,6 +67,7 @@ instance (Ob a, Ob b) => TestableType (SymRefl a b) where
   gen = case decideSymbol (Proxy @a) (Proxy @b) of
     Right Refl -> one SymRefl
     Left f -> GenEmpty \SymRefl -> absurd (f Refl)
+instance TestableProfunctor SymRefl
 instance Testable DOT where
   genSome = do
     num <- elem [0 .. 5]
@@ -114,3 +116,4 @@ instance (Ob a, Ob b) => TestableType (Dot a b) where
     if any (== Right "error") outputs
       then pure (node "g")
       else pure $ Dot \n -> (n + nodeCount, DotData{inputs, outputs, edges, nodeOpts})
+instance TestableProfunctor Dot

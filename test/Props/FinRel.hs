@@ -14,7 +14,7 @@ import Proarrow.Category.Instance.FinRel (Bitstring, FINREL (..), FinRel (..))
 import Props
 import Props.Hask ()
 import Props.Mat ()
-import Testable (Testable (..), TestableType (..), TestingEqShow (..), genSomeDef, invmap, pattern GenNonEmpty)
+import Testable (Testable (..), TestableType (..), TestingEqShow (..), genSomeDef, invmap, pattern GenNonEmpty, TestableProfunctor)
 
 test :: TestTree
 test =
@@ -49,6 +49,7 @@ instance (TestOb a, TestOb b) => TestableType (FinRel a b) where
 instance (TestOb a, TestOb b) => TestingEqShow (FinRel a b) where
   eqP (FinRel l) (FinRel r) = pure $ l == r
   showP (FinRel m) = show m
+instance TestableProfunctor FinRel
 
 instance (SNatI n) => TestingEqShow (Bitstring n)
 instance (SNatI n) => TestableType (Bitstring n) where

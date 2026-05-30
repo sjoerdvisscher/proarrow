@@ -22,6 +22,7 @@ import Testable
   ( GenTotal (..)
   , ShowP (..)
   , Testable (..)
+  , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
@@ -64,6 +65,7 @@ instance (Ob a, Ob b) => TestableType (Simplex a b) where
       (GenNonEmpty gf, GenEmpty _) -> GenNonEmpty (X <$> gf)
       (GenEmpty _, GenNonEmpty gg) -> GenNonEmpty (Y <$> gg)
       (GenNonEmpty gf, GenNonEmpty gg) -> GenNonEmpty (choose (X <$> gf) (Y <$> gg))
+instance TestableProfunctor Simplex
 
 instance (IsNat n) => TestingEqShow (Fin n)
 instance (IsNat n) => TestableType (Fin n) where
@@ -89,3 +91,6 @@ instance (IsNat n, Function a) => Function (Vec n a) where
   function = case singNat @n of
     SZ -> fmap (functionMap (\VNil -> ()) (\() -> VNil)) . function @()
     SS @m -> fmap (functionMap (\(x ::: xs) -> (x, xs)) (\(x, xs) -> (x ::: xs))) . function @(a, Vec m a)
+
+instance TestableProfunctor (Rep Forget)
+instance TestableProfunctor (Rep (Pick Bool))

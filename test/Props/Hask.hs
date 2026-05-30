@@ -14,6 +14,7 @@ import Props
 import Testable
   ( GenTotal (..)
   , Testable (..)
+  , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
@@ -39,6 +40,8 @@ instance Testable Type where
   type TestOb a = (TestableType a, Typeable a, Function a)
   showOb @a = show (typeRep @a)
   genSome = genSomeDef @'[Bool, (Bool, Bool), Maybe Bool, Void]
+
+instance TestableProfunctor (->)
 
 instance TestableType Bool where
   gen = optGen [False, True]
