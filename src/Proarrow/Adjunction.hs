@@ -139,7 +139,7 @@ instance (Profunctor j) => Profunctor (LimitAdj j) where
   dimap (Sub (Op (Prof l))) (Sub (Prof r)) (LimitAdj n) = LimitAdj (\j -> case n j of c :.: d -> l c :.: r d)
   r \\ LimitAdj f = r \\ f
 
--- | Colimit j -| Limit j
+-- | @Colimit j@ ⊣ @Limit j@
 instance (HasLimits j k) => Representable (LimitAdj (j :: a +-> b) :: REPK a k +-> COREPK b k) where
   type LimitAdj j % r = COREP (RepCostar (Limit j (UN SUB r)))
   index @c (LimitAdj n) =
