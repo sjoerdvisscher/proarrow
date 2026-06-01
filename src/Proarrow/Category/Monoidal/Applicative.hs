@@ -1,10 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Category.Monoidal.Applicative where
 
 import Control.Applicative qualified as P
 import Data.Function (($))
-import Data.Kind (Constraint)
+import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
@@ -13,10 +14,10 @@ import Proarrow.Category.Monoidal.Distributive (Distributive, DistributiveProfun
 import Proarrow.Core (CategoryOf (..), Profunctor (..), type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), COPROD(..), copar, copar0, unCoprod)
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Object.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), copar, copar0, unCoprod)
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Profunctor.Identity (Id (..))
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
 class (Monoidal j, Monoidal k, Functor f) => Applicative (f :: j -> k) where
@@ -29,6 +30,9 @@ ap = withObExp @j @a @b $ curry @k @_ @(f a) @(f b) (liftA2 @f @(a ~~> b) @a (ap
 instance (MonoidalProfunctor (p :: j +-> k), Comonoid x) => Applicative (FromProfunctor p x) where
   pure a () = FromProfunctor $ dimap counit a par0
   liftA2 abc (FromProfunctor pxa, FromProfunctor pxb) = FromProfunctor $ dimap comult abc (pxa `par` pxb)
+instance (MonoidalProfunctor (p :: Type +-> Type)) => P.Applicative (FromProfunctor p x) where
+  pure a = FromProfunctor (dimap (\_ -> ()) (\() -> a) par0)
+  FromProfunctor f <*> FromProfunctor a = FromProfunctor (dimap (\x -> (x, x)) (P.uncurry ($)) (f `par` a))
 
 instance (P.Applicative f) => Applicative (Prelude f) where
   pure a () = Prelude (P.pure (a ()))

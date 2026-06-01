@@ -129,7 +129,7 @@ instance (Traversable p, Traversable q) => Traversable (p :+: q) where
 
 type Cotraversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Cotraversable (t :: k +-> k) where
-  cotraverse :: (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => p :.: t :~> t :.: p
+  cotraverse :: (StrongDistributiveProfunctor (p :: k +-> k)) => p :.: t :~> t :.: p
 
 instance (CategoryOf k) => Cotraversable (Id :: k +-> k) where
   cotraverse (p :.: Id f) = Id id :.: rmap f p \\ p

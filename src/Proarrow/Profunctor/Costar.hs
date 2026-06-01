@@ -6,13 +6,13 @@ import Control.Monad qualified as P
 import Data.Functor.Compose (Compose (..))
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched.Thin (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->), Hom)
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -65,7 +65,7 @@ instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor
 instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
   cotraverse (p :.: Costar f) = p // Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p'
 
-instance (Functor f, Discrete j, Thin k) => ThinProfunctor (Costar f :: j +-> k) where
-  type HasArrow (Costar f) a b = f a P.~ b
-  arr = Costar id
-  withArr (Costar f) = withEq f
+instance (Functor f, Thin j) => ThinProfunctor (Costar f :: j +-> k) where
+  type HasArrow (Costar f :: j +-> k) a b = HasArrow (Hom j) (f a) b
+  arr = Costar arr
+  withArr (Costar f) = withArr f

@@ -8,7 +8,7 @@ import Data.Bifunctor (bimap)
 import Data.Kind (Type)
 import Data.Monoid qualified as P
 import GHC.Generics qualified as G
-import Prelude (Either (..), Maybe (..), Monad (..), Traversable, const, either, fmap, uncurry, ($))
+import Prelude (Either (..), Maybe (..), Monad (..), const, either, fmap, uncurry, ($))
 import Prelude qualified as P
 
 import Data.Functor.Const (Const (..))
@@ -29,19 +29,18 @@ import Proarrow.Category.Monoidal.Action
 import Proarrow.Category.Monoidal.Distributive qualified as Dist
 import Proarrow.Core
   ( Any
-  , CAT
   , CategoryOf (..)
   , Kind
   , OB
   , Profunctor (..)
   , Promonad (..)
-  , UN
+  , lmap
   , obj
   , rmap
   , (//)
   , type (+->)
   )
-import Proarrow.Functor (Prelude (..))
+import Proarrow.Functor (FromProfunctor (..), Prelude (..))
 import Proarrow.Object (src, tgt)
 import Proarrow.Object.BinaryCoproduct
   ( COPROD (..)
@@ -52,7 +51,7 @@ import Proarrow.Object.BinaryCoproduct
   , copar0
   )
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD, Prod (..))
-import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..))
+import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..), (:&&:))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withRepOb)
@@ -105,11 +104,6 @@ _1 = mkMonoidal @c (swap @k @a @c) (swap @k @c @b)
 _2 :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => MonoidalOptic (c ** a) (c ** b) a b
 _2 = mkMonoidal @c (obj2 @c @a) (obj2 @c @b)
 
-instance
-  (Cartesian k, Ob c, Strong (SUBCAT (Any :: OB k)) ((~>) :: CAT k))
-  => Strong (SUBCAT (Any :: OB k)) (Rep (Constant c) :: k +-> k)
-  where
-  act @m @m' @x @y g (Rep f) = withOb2 @k @(UN SUB m') @y (Rep (f . snd @k @(UN SUB m) @x)) \\ g \\ f
 instance (Cartesian k, SelfAction k, Ob c) => Strong k (Rep (Constant c) :: k +-> k) where
   act @m @m' @x @y g (Rep f) = withObAct @k @k @m' @y (Rep (f . snd @k @m @x . fromSelfAct @m @x)) \\ g \\ f
 instance Strong (COPROD Type) (Rep (Constant (P.First c)) :: Type +-> Type) where
@@ -130,13 +124,19 @@ type Prism (s :: k) t a b = Optic (Strong (COPROD k)) s t a b
 mkPrism :: forall {k} (s :: k) (t :: k) a b. (HasCoproducts k, Ob a) => (s ~> (t || a)) -> (b ~> t) -> Prism s t a b
 mkPrism sta bt = ex2prof (ExOptic sta (Coprod (Id (tgt bt))) (id ||| bt)) \\ bt
 
-type HaskTraversal s t a b = Optic (Strong (SUBCAT Traversable)) s t a b
-traversing :: (Traversable f) => HaskTraversal (f a) (f b) a b
-traversing = ex2prof @(SUBCAT Traversable) (ExOptic Prelude id unPrelude)
-
 type Traversal s t a b = Optic Dist.StrongDistributiveProfunctor s t a b
-traversing' :: forall t a b. (Dist.Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
-traversing' = withRepOb @t @a $ withRepOb @t @b $ Optic (Dist.repTraverse @t)
+traversing :: forall t a b. (Dist.Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
+traversing = withRepOb @t @a $ withRepOb @t @b $ Optic (Dist.repTraverse @t)
+
+type HaskTraversal s t a b = Optic (Dist.StrongDistributiveProfunctor :&&: Representable) s t a b
+haskTraversing :: (P.Traversable t) => HaskTraversal (t a) (t b) a b
+haskTraversing @t =
+  Optic
+    ( tabulate
+        . ((($ ()) . index . unFromProfunctor) .)
+        . P.traverse @t
+        . (\p a -> FromProfunctor (lmap (\_ -> a) p))
+    )
 
 class (Monad m) => Algebra m a where algebra :: m a -> a
 instance (Monad m) => Algebra m (m a) where algebra = (>>= id)

@@ -6,7 +6,7 @@ import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Enriched.Thin (Discrete, Thin, ThinProfunctor (..), withEq)
+import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat (..), Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..))
@@ -14,7 +14,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, StrongDistributiveProfunctor, Traversable (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (//), (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (//), (:~>), type (+->), Hom)
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
@@ -113,7 +113,7 @@ preludeTraverse
   => (a ~> f b) -> t a ~> f (t b)
 preludeTraverse = unStar . starTraverse . Star
 
-instance (Functor f, Thin j, Discrete k) => ThinProfunctor (Star f :: j +-> k) where
-  type HasArrow (Star f) a b = a P.~ f b
-  arr = Star id
-  withArr (Star f) = withEq f
+instance (Functor f, Thin k) => ThinProfunctor (Star f :: j +-> k) where
+  type HasArrow (Star f :: j +-> k) a b = HasArrow (Hom k) a (f b)
+  arr = Star arr
+  withArr (Star f) = withArr f
