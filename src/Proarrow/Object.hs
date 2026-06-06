@@ -7,6 +7,8 @@ module Proarrow.Object
   , tgt
   , Ob'
   , VacuusOb
+  , objDicts
+  , ObjDict (..)
   ) where
 
 import Data.Kind (Type)
@@ -21,17 +23,17 @@ type ObjDict :: forall {k}. k -> Type
 data ObjDict a where
   ObjDict :: (Ob a) => ObjDict a
 
-objDict :: (Profunctor p) => p a a' -> (ObjDict a, ObjDict a')
-objDict a = (ObjDict \\ a, ObjDict \\ a)
+objDicts :: (Profunctor p) => p a a' -> (ObjDict a, ObjDict a')
+objDicts a = (ObjDict \\ a, ObjDict \\ a)
 
 pattern Obj :: (CategoryOf k) => (Ob (a :: k)) => Obj a
-pattern Obj <- (objDict -> (ObjDict, ObjDict))
+pattern Obj <- (objDicts -> (ObjDict, ObjDict))
   where
     Obj = obj
 
 {-# COMPLETE Obj #-}
 
 pattern Objs :: (Profunctor p) => (Ob a, Ob b) => p a b
-pattern Objs <- (objDict -> (ObjDict, ObjDict))
+pattern Objs <- (objDicts -> (ObjDict, ObjDict))
 
 {-# COMPLETE Objs #-}

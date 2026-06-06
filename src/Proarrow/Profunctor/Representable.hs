@@ -40,8 +40,8 @@ instance (Representable p, Representable q) => Representable (p :**: q) where
 repObj :: forall p a. (Representable p, Ob a) => Obj (p % a)
 repObj = repMap @p (obj @a)
 
-withRepOb :: forall p a r. (Representable p, Ob a) => ((Ob (p % a)) => r) -> r
-withRepOb r = r \\ repObj @p @a
+withObRep :: forall p a r. (Representable p, Ob a) => ((Ob (p % a)) => r) -> r
+withObRep r = r \\ repObj @p @a
 
 dimapRep :: forall p a b c d. (Representable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r
@@ -97,7 +97,7 @@ instance (Representable p) => Corepresentable (RepCostar p) where
   corepMap = repMap @p
 instance (Representable p, Thin j) => ThinProfunctor (RepCostar p :: j +-> k) where
   type HasArrow (RepCostar p :: j +-> k) a b = HasArrow (Hom j) (p % a) b
-  arr @a = withRepOb @p @a (RepCostar arr)
+  arr @a = withObRep @p @a (RepCostar arr)
   withArr (RepCostar f) r = withArr f r
 
 mapRepCostar :: (Representable p, Representable q) => p ~> q -> RepCostar q ~> RepCostar p

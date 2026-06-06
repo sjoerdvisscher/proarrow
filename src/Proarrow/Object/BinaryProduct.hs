@@ -28,7 +28,7 @@ import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
+import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 infixl 5 &&
 infixl 5 &&&
@@ -97,7 +97,7 @@ instance (HasBinaryProducts k, Representable (p :: j +-> k), Representable q) =>
   type (p :*: q) % a = (p % a) && (q % a)
   index (p :*: q) = index p &&& index q
   tabulate @b f =
-    withRepOb @p @b (withRepOb @q @b (tabulate (fst @_ @(p % b) @(q % b) . f) :*: tabulate (snd @_ @(p % b) @(q % b) . f)))
+    withObRep @p @b (withObRep @q @b (tabulate (fst @_ @(p % b) @(q % b) . f) :*: tabulate (snd @_ @(p % b) @(q % b) . f)))
   repMap f = repMap @p f *** repMap @q f
 
 instance (CategoryOf j, CategoryOf k) => Strong (PROD (j +-> k)) (Prof :: CAT (j +-> k)) where

@@ -3,6 +3,7 @@ module Proarrow.Promonad.Reader where
 import Prelude (($))
 
 import Proarrow.Adjunction qualified as Adj
+import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
@@ -16,21 +17,21 @@ import Proarrow.Category.Monoidal
   , swapInner
   , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), strongPar0)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, src, (//), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, src, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryProduct (Cartesian)
 import Proarrow.Object.Exponential (Closed (..), uncurry)
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Composition (compComp, (:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Day (Day (..))
-import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
-import Proarrow.Promonad.Writer (Writer (..))
+import Proarrow.Promonad.Writer (Writer (..), WriterT (..))
 
 data Reader r a b where
   Reader :: forall a b r. (Ob a) => r ** a ~> b -> Reader (OP r) a b
@@ -86,8 +87,15 @@ instance (Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor 
                   . associatorInv @k @r @x1 @y1
               )
 
+-- | A version of cotraverse specialized to `Reader`, with fewer requirements on @p@.
+cotraverseReader
+  :: forall {k} p (r :: k). (Strong k p, SelfAction k, Ob r) => p :.: Reader (OP r) :~> Reader (OP r) :.: p
+cotraverseReader (p :.: Reader f) = let rp = obj @r `act` p in Reader (src rp) :.: rmap f rp \\ rp \\ p
+
 instance (Comonoid (r :: k), SelfAction k) => Cotraversable (Reader (OP r) :: k +-> k) where
-  cotraverse (p :.: Reader f) = let rp = unId (strongPar0 @r) `act` p in Reader (src rp) :.: rmap f rp \\ rp \\ p
+  cotraverse = cotraverseReader
+
+-- Reader is not Traversable
 
 instance (Ob (r :: k), Monoidal k) => Adj.Proadjunction (Writer r :: k +-> k) (Reader (OP r)) where
   unit @a = withOb2 @k @r @a $ Reader id :.: Writer id
@@ -105,3 +113,37 @@ readerDay
   :: forall {k} (r :: k) (s :: k). (SymMonoidal k, Ob r, Ob s) => Reader (OP r) `Day` Reader (OP s) ~> Reader (OP (r ** s))
 readerDay = withOb2 @k @r @s $
   Prof \(Day @c @_ @e @_ f (Reader p) (Reader q) g) -> Reader (g . (p `par` q) . swapInner @r @s @c @e . second @(r ** s) f) \\ f
+
+type ReaderT :: OPPOSITE k -> k +-> k -> k +-> k
+newtype ReaderT r p a b where
+  ReaderT :: (Reader r :.: p) a b -> ReaderT r p a b
+
+runReaderT :: (Profunctor p) => ReaderT (OP r) p a b -> p (r ** a) b
+runReaderT (ReaderT (Reader f :.: p)) = lmap f p
+
+deriving newtype instance (Profunctor p, Monoidal k, Ob (r :: k)) => Profunctor (ReaderT (OP r) p)
+deriving newtype instance (Representable p, Ob (r :: k), SymMonoidal k, Closed k) => Representable (ReaderT (OP r) p)
+deriving newtype instance (Corepresentable p, Ob (r :: k), Monoidal k) => Corepresentable (ReaderT (OP r) p)
+deriving newtype instance (Strong k p, Ob (r :: k), SelfAction k) => Strong k (ReaderT (OP r) p)
+deriving newtype instance
+  (MonoidalProfunctor p, Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (ReaderT (OP r) p)
+deriving newtype instance (Cotraversable p, Comonoid (r :: k), SelfAction k) => Cotraversable (ReaderT (OP r) p)
+
+instance (Monoidal k, Ob r) => Functor (ReaderT r :: k +-> k -> k +-> k) where
+  map n@Prof{} = Prof \(ReaderT p) -> ReaderT (unProf (map n) p)
+
+instance (Monoidal k) => Functor (ReaderT :: OPPOSITE k -> k +-> k -> k +-> k) where
+  map f = f // Nat $ Prof \(ReaderT p) -> ReaderT (unProf (unNat (map (map f))) p)
+
+instance (Comonoid (r :: k), SelfAction k, Strong k p, Promonad p) => Promonad (ReaderT (OP r) p) where
+  id = ReaderT (id :.: id)
+  ReaderT l . ReaderT r = ReaderT (compComp cotraverseReader l r)
+
+-- | ReaderT is a monad on profunctors, i.e. we have @p ~> ReaderT p@ and @ReaderT (ReaderT p) ~> ReaderT p@.
+instance (Comonoid r, Monoidal k) => Promonad (Star (ReaderT (OP r) :: k +-> k -> k +-> k)) where
+  id = Star $ Prof \p -> ReaderT (id :.: p) \\ p
+  Star l . Star r = Star $ Prof (\(ReaderT (f :.: ReaderT (g :.: p))) -> ReaderT ((g . f) :.: p)) . map l . r
+
+instance (Adj.Proadjunction p q, Ob (r :: k), Monoidal k) => Adj.Proadjunction (WriterT r p) (ReaderT (OP r) q) where
+  unit @a = case Adj.unit @_ @_ @a of l :.: r -> ReaderT l :.: WriterT r
+  counit (WriterT l :.: ReaderT r) = Adj.counit (l :.: r)

@@ -28,8 +28,8 @@ instance Corepresentable (->) where
 corepObj :: forall p a. (Corepresentable p, Ob a) => Obj (p %% a)
 corepObj = corepMap @p (obj @a)
 
-withCorepOb :: forall p a r. (Corepresentable p, Ob a) => ((Ob (p %% a)) => r) -> r
-withCorepOb r = r \\ corepMap @p (obj @a)
+withObCorep :: forall p a r. (Corepresentable p, Ob a) => ((Ob (p %% a)) => r) -> r
+withObCorep r = r \\ corepMap @p (obj @a)
 
 dimapCorep :: forall p a b c d. (Corepresentable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapCorep l r = cotabulate @p . dimap (corepMap @p l) r . coindex \\ l

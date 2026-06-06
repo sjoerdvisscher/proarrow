@@ -37,7 +37,7 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep, withRepOb)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep, withObRep)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
@@ -149,7 +149,7 @@ instance (Profunctor l, Profunctor r, CategoryOf k) => Profunctor (l :&&: r :: (
   r \\ (p :&&: q) = r \\ p \\ q
 instance (Representable l, Representable r, HasBinaryProducts k) => Representable (l :&&: r :: (x, y) +-> k) where
   type (l :&&: r) % ab = (l % Fst ab) && (r % Snd ab)
-  tabulate @'(a, b) f = withRepOb @l @a $ withRepOb @r @b $ tabulate (fst @_ @(l % a) @(r % b) . f) :&&: tabulate (snd @_ @(l % a) @(r % b) . f)
+  tabulate @'(a, b) f = withObRep @l @a $ withObRep @r @b $ tabulate (fst @_ @(l % a) @(r % b) . f) :&&: tabulate (snd @_ @(l % a) @(r % b) . f)
   index (p :&&: q) = index p &&& index q
   repMap (f :**: g) = repMap @l f *** repMap @r g
 instance (Corepresentable l, Corepresentable r, CategoryOf k) => Corepresentable (l :&&: r :: (x, y) +-> k) where

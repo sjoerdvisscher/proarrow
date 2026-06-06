@@ -20,7 +20,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), trivialCorep)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repObj, trivialRep, withRepOb)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repObj, trivialRep, withObRep)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (Representable (Limit j d)) => IsRepresentableLimit j d
@@ -68,8 +68,8 @@ choose
    . (HasBinaryProducts k, Representable d, Ob b)
   => ((d % L '()) && (d % R '())) ~> (d % b)
 choose =
-  withRepOb @d @(L '()) $
-    withRepOb @d @(R '()) $
+  withObRep @d @(L '()) $
+    withObRep @d @(R '()) $
       caseLr @b
         (fst @_ @(d % L '()) @(d % R '()))
         (snd @_ @(d % L '()) @(d % R '()))

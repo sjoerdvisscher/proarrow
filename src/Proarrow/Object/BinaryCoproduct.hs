@@ -29,7 +29,7 @@ import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..), HasBinaryProducts (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
@@ -105,8 +105,8 @@ instance (HasBinaryCoproducts j, Corepresentable (p :: j +-> k), Corepresentable
   type (p :*: q) %% a = (p %% a) || (q %% a)
   coindex (p :*: q) = coindex p ||| coindex q
   cotabulate @a f =
-    withCorepOb @p @a
-      (withCorepOb @q @a (cotabulate (f . lft @_ @(p %% a) @(q %% a)) :*: cotabulate (f . rgt @_ @(p %% a) @(q %% a))))
+    withObCorep @p @a
+      (withObCorep @q @a (cotabulate (f . lft @_ @(p %% a) @(q %% a)) :*: cotabulate (f . rgt @_ @(p %% a) @(q %% a))))
   corepMap f = corepMap @p f +++ corepMap @q f
 
 instance (HasBinaryCoproducts k) => HasBinaryCoproducts (PROD k) where

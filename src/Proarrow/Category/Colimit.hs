@@ -17,7 +17,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepObj, trivialCorep, withCorepOb)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepObj, trivialCorep, withObCorep)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable
@@ -68,8 +68,8 @@ cochoose
    . (HasBinaryCoproducts k, Corepresentable d, Ob b)
   => (d %% b) ~> ((d %% L '()) || (d %% R '()))
 cochoose =
-  withCorepOb @d @(L '()) $
-    withCorepOb @d @(R '()) $
+  withObCorep @d @(L '()) $
+    withObCorep @d @(R '()) $
       caseLr @b
         (lft @_ @(d %% L '()) @(d %% R '()))
         (rgt @_ @(d %% L '()) @(d %% R '()))

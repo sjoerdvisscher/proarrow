@@ -25,8 +25,8 @@ import Proarrow.Core
   , (//)
   , type (+->)
   )
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep, withCorepOb)
-import Proarrow.Profunctor.Representable (Representable (..), trivialRep, withRepOb)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep, withObCorep)
+import Proarrow.Profunctor.Representable (Representable (..), trivialRep, withObRep)
 
 type DUPLOID :: forall {n} {p}. p +-> n -> Kind
 type data DUPLOID (adj :: p +-> n) = N n | P p
@@ -43,10 +43,10 @@ class IsPN x where
 instance (Ob x, Representable adj) => IsPN (P x :: DUPLOID adj) where
   pn = SP
   withPosOb r = r
-  withNegOb r = withRepOb @adj @x r
+  withNegOb r = withObRep @adj @x r
 instance (Ob x, Corepresentable adj) => IsPN (N x :: DUPLOID adj) where
   pn = SN
-  withPosOb r = withCorepOb @adj @x r
+  withPosOb r = withObCorep @adj @x r
   withNegOb r = r
 
 type family Pos (x :: DUPLOID (adj :: p +-> n)) :: p where

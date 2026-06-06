@@ -3,11 +3,11 @@ module Proarrow.Profunctor.Composition where
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, tgt, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, tgt, (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object.BinaryCoproduct (Coprod (..), copar, copar0)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withCorepOb)
-import Proarrow.Profunctor.Representable (Representable (..), withRepOb)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
+import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
@@ -24,14 +24,14 @@ instance (Representable p, Representable q) => Representable (p :.: q) where
   type (p :.: q) % a = p % (q % a)
   index (p :.: q) = repMap @p (index q) . index p
   tabulate :: forall a b. (Ob b) => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
-  tabulate f = withRepOb @q @b (tabulate f :.: tabulate id)
+  tabulate f = withObRep @q @b (tabulate f :.: tabulate id)
   repMap f = repMap @p (repMap @q f)
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where
   type (p :.: q) %% a = q %% (p %% a)
   coindex (p :.: q) = coindex q . corepMap @q (coindex p)
   cotabulate :: forall a b. (Ob a) => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
-  cotabulate f = withCorepOb @p @a (cotabulate id :.: cotabulate f)
+  cotabulate f = withObCorep @p @a (cotabulate id :.: cotabulate f)
   corepMap f = corepMap @q (corepMap @p f)
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
@@ -57,3 +57,7 @@ o
   -> Prof r s
   -> Prof (p :.: r) (q :.: s)
 Prof pq `o` Prof rs = Prof \(p :.: r) -> pq p :.: rs r
+
+-- | @p :.: q@ is a `Promonad` if @p@ and @q@ are and if there's a distributive law between @p@ and @q@.
+compComp :: (Promonad p, Promonad q) => q :.: p :~> p :.: q -> (p :.: q) b c -> (p :.: q) a b -> (p :.: q) a c
+compComp dist (p1 :.: q1) (p2 :.: q2) = case dist (q2 :.: p1) of p3 :.: q3 -> (p3 . p2) :.: (q1 . q3)

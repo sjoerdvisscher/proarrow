@@ -54,7 +54,7 @@ import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProd
 import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..), (:&&:))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withRepOb)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withObRep)
 import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
 
 type ExOptic :: Kind -> c -> d -> c -> d -> Type
@@ -126,7 +126,7 @@ mkPrism sta bt = ex2prof (ExOptic sta (Coprod (Id (tgt bt))) (id ||| bt)) \\ bt
 
 type Traversal s t a b = Optic Dist.StrongDistributiveProfunctor s t a b
 traversing :: forall t a b. (Dist.Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
-traversing = withRepOb @t @a $ withRepOb @t @b $ Optic (Dist.repTraverse @t)
+traversing = withObRep @t @a $ withObRep @t @b $ Optic (Dist.repTraverse @t)
 
 type HaskTraversal s t a b = Optic (Dist.StrongDistributiveProfunctor :&&: Representable) s t a b
 haskTraversing :: (P.Traversable t) => HaskTraversal (t a) (t b) a b

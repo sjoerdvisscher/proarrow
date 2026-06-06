@@ -4,6 +4,7 @@ module Proarrow.Promonad.Writer where
 
 import Prelude (($))
 
+import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
@@ -14,11 +15,12 @@ import Proarrow.Category.Monoidal
   , leftUnitorWith
   , second
   , swap'
-  , unitObj, swapInner
+  , swapInner
+  , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), strongPar0)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, tgt, (//), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.Dual
@@ -32,12 +34,12 @@ import Proarrow.Object.Dual
   , dualityUnit
   , expSA
   )
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Composition (compComp, (:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Day (Day (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
+import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
-import Proarrow.Profunctor.Day (Day(..))
 
 data Writer w a b where
   Writer :: (Ob b) => a ~> w ** b -> Writer w a b
@@ -104,8 +106,14 @@ instance (Monoid (w :: k), SymMonoidal k) => MonoidalProfunctor (Writer w :: k +
                   . second @x1 g
               )
 
+-- | A version of traverse specialized to `Writer`, with fewer requirements on @p@.
+traverseWriter :: forall {k} p (w :: k). (Strong k p, SelfAction k, Ob w) => Writer w :.: p :~> p :.: Writer w
+traverseWriter (Writer f :.: p) = let wp = obj @w `act` p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p
+
 instance (Monoid (w :: k), Monoidal k) => Traversable (Writer w :: k +-> k) where
-  traverse (Writer f :.: p) = let wp = unId (strongPar0 @w) `act` p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p
+  traverse = traverseWriter
+
+-- Writer is not Cotraversable
 
 writerComp :: forall {k} (r :: k) (s :: k). (SymMonoidal k, Ob r, Ob s) => Writer r :.: Writer s ~> Writer (r ** s)
 writerComp = withOb2 @k @r @s $
@@ -114,3 +122,34 @@ writerComp = withOb2 @k @r @s $
 writerDay :: forall {k} (r :: k) (s :: k). (SymMonoidal k, Ob r, Ob s) => Writer r `Day` Writer s ~> Writer (r ** s)
 writerDay = withOb2 @k @r @s $
   Prof \(Day @_ @d @_ @f f (Writer p) (Writer q) g) -> Writer (second @(r ** s) g . swapInner @r @d @s @f . (p `par` q) . f) \\ g
+
+type WriterT :: k -> k +-> k -> k +-> k
+newtype WriterT w p a b where
+  WriterT :: (p :.: Writer w) a b -> WriterT w p a b
+
+runWriterT :: (Profunctor p) => WriterT w p a b -> p a (w ** b)
+runWriterT (WriterT (p :.: Writer f)) = rmap f p
+
+deriving newtype instance (Profunctor p, Monoidal k, Ob (w :: k)) => Profunctor (WriterT w p)
+deriving newtype instance (Representable p, Ob (w :: k), Monoidal k) => Representable (WriterT w p)
+deriving newtype instance
+  (Corepresentable p, Ob (w :: k), SelfAction k, CompactClosed k) => Corepresentable (WriterT w p)
+deriving newtype instance (Strong k p, Ob (w :: k), SelfAction k) => Strong k (WriterT w p)
+deriving newtype instance
+  (MonoidalProfunctor p, Monoid (w :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (WriterT w p)
+deriving newtype instance (Traversable p, Monoid (w :: k), SelfAction k) => Traversable (WriterT w p)
+
+instance (Monoidal k, Ob w) => Functor (WriterT w :: k +-> k -> k +-> k) where
+  map n@Prof{} = Prof \(WriterT p) -> WriterT (unProf (unNat (map n)) p)
+
+instance (Monoidal k) => Functor (WriterT :: k -> k +-> k -> k +-> k) where
+  map f = f // Nat $ Prof \(WriterT p) -> WriterT (unProf (map (map f)) p)
+
+instance (Monoid (w :: k), SelfAction k, Strong k p, Promonad p) => Promonad (WriterT w p) where
+  id = WriterT (id :.: id)
+  WriterT l . WriterT r = WriterT (compComp traverseWriter l r)
+
+-- | WriterT is a monad on profunctors, i.e. we have @p ~> WriterT p@ and @WriterT (WriterT p) ~> WriterT p@.
+instance (Monoid w, Monoidal k) => Promonad (Star (WriterT w :: k +-> k -> k +-> k)) where
+  id = Star $ Prof \p -> WriterT (p :.: id) \\ p
+  Star l . Star r = Star $ Prof (\(WriterT (WriterT (p :.: f) :.: g)) -> WriterT (p :.: (g . f))) . map l . r
