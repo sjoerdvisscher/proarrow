@@ -3,6 +3,7 @@ module Proarrow.Universal where
 import Data.Kind (Constraint)
 
 import Proarrow.Adjunction (Adjunction)
+import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), lmap, rmap, type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
 import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
@@ -21,9 +22,19 @@ class (Corepresentable l, Ob b) => TermUniversal (l :: j +-> k) (b :: j) where
   termUnivArr :: l (R l b) b
   termUnivProp :: l a b -> a ~> R l b
 
+instance (TermUniversal l b) => InitUniversal (Op l) (OP b) where
+  type L (Op l) (OP b) = OP (R l b)
+  initUnivArr = Op termUnivArr
+  initUnivProp (Op l) = Op (termUnivProp l)
+
+instance (InitUniversal r a) => TermUniversal (Op r) (OP a) where
+  type R (Op r) (OP a) = OP (L r a)
+  termUnivArr = Op initUnivArr
+  termUnivProp (Op l) = Op (initUnivProp l)
+
 newtype AsRightAdjoint r a b = AsRightAdjoint {unAsRightAdjoint :: r a b}
   deriving newtype (Profunctor, Representable)
-instance (forall (a :: k). Ob a => InitUniversal r a, Representable r) => Corepresentable (AsRightAdjoint (r :: j +-> k)) where
+instance (forall (a :: k). (Ob a) => InitUniversal r a, Representable r) => Corepresentable (AsRightAdjoint (r :: j +-> k)) where
   type AsRightAdjoint r %% a = L r a
   coindex (AsRightAdjoint r) = initUnivProp r \\ r
   cotabulate f = AsRightAdjoint (rmap f initUnivArr) \\ f
@@ -31,7 +42,7 @@ instance (forall (a :: k). Ob a => InitUniversal r a, Representable r) => Corepr
 
 newtype AsLeftAdjoint l a b = AsLeftAdjoint {unAsLeftAdjoint :: l a b}
   deriving newtype (Profunctor, Corepresentable)
-instance (forall b. Ob b => TermUniversal l b, Corepresentable l) => Representable (AsLeftAdjoint l) where
+instance (forall b. (Ob b) => TermUniversal l b, Corepresentable l) => Representable (AsLeftAdjoint l) where
   type AsLeftAdjoint l % b = R l b
   index (AsLeftAdjoint l) = termUnivProp l \\ l
   tabulate f = AsLeftAdjoint (lmap f termUnivArr) \\ f
