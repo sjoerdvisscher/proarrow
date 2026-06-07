@@ -121,6 +121,15 @@ newtype ReaderT r p a b where
 runReaderT :: (Profunctor p) => ReaderT (OP r) p a b -> p (r ** a) b
 runReaderT (ReaderT (Reader f :.: p)) = lmap f p
 
+ask :: (Promonad p, Monoidal k, Ob (r :: k)) => ReaderT (OP r) p Unit r
+ask = ReaderT (Reader rightUnitor :.: id)
+
+answer :: forall {k} p r a b. (Promonad p, Monoidal k, Comonoid (r :: k)) => ReaderT (OP r) p a b -> ReaderT (OP r) p (r ** a) b
+answer (ReaderT (Reader f :.: p)) = withOb2 @k @r @a $ ReaderT (Reader (f . leftUnitorWith @(r ** a) (counit @r)) :.: p)
+
+local :: forall {k} a b p r. (Monoidal k, Ob (r :: k)) => r ~> r -> ReaderT (OP r) p a b -> ReaderT (OP r) p a b
+local f (ReaderT (Reader r :.: p)) = ReaderT (Reader (r . first @a f) :.: p)
+
 deriving newtype instance (Profunctor p, Monoidal k, Ob (r :: k)) => Profunctor (ReaderT (OP r) p)
 deriving newtype instance (Representable p, Ob (r :: k), SymMonoidal k, Closed k) => Representable (ReaderT (OP r) p)
 deriving newtype instance (Corepresentable p, Ob (r :: k), Monoidal k) => Corepresentable (ReaderT (OP r) p)

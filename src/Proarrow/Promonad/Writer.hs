@@ -130,6 +130,15 @@ newtype WriterT w p a b where
 runWriterT :: (Profunctor p) => WriterT w p a b -> p a (w ** b)
 runWriterT (WriterT (p :.: Writer f)) = rmap f p
 
+tell :: (Promonad p, Monoidal k, Ob (w :: k)) => WriterT w p w Unit
+tell = WriterT (id :.: Writer rightUnitorInv)
+
+listen :: forall {k} p w a b. (Promonad p, Monoidal k, Comonoid (w :: k)) => WriterT w p a b -> WriterT w p a (w ** b)
+listen (WriterT (p :.: Writer f)) = withOb2 @k @w @b $ WriterT (p :.: Writer (associator @k @w @w @b . first @b (comult @w) . f))
+
+censor :: forall {k} p w a b. (Monoidal k, Ob (w :: k)) => w ~> w -> WriterT w p a b -> WriterT w p a b
+censor f (WriterT (p :.: Writer w)) = WriterT (p :.: Writer (first @b f . w))
+
 deriving newtype instance (Profunctor p, Monoidal k, Ob (w :: k)) => Profunctor (WriterT w p)
 deriving newtype instance (Representable p, Ob (w :: k), Monoidal k) => Representable (WriterT w p)
 deriving newtype instance
