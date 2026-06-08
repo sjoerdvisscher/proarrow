@@ -7,10 +7,10 @@ import Control.Arrow
   , ArrowApply (..)
   , ArrowChoice (..)
   , ArrowLoop (..)
-  , ArrowZero (..)
   , Kleisli (..)
   , (>>>)
   )
+import Control.Category qualified as P
 import Control.Monad (MonadPlus)
 import Control.Monad.Fix (MonadFix)
 import Data.Kind (Type)
@@ -18,11 +18,16 @@ import Prelude (Either (..), Functor (..), Monad (..))
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), Strong (..))
-import Proarrow.Core (CAT, Profunctor (..), Promonad (..))
-import Proarrow.Object.BinaryCoproduct (COPROD, Coprod (..))
+import Proarrow.Category.Monoidal.Distributive (DistributiveProfunctor)
+import Proarrow.Core (CAT, Profunctor (..), Promonad (..), rmap, type (+->))
+import Proarrow.Functor (FromProfunctor (..))
+import Proarrow.Object.BinaryCoproduct (COPROD, Coprod (..), copar)
 import Proarrow.Object.BinaryProduct ()
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+
+swap :: (b, a) -> (a, b)
+swap ~(x, y) = (y, x)
 
 type Arr :: CAT Type -> CAT Type
 newtype Arr arr a b = Arr {unArr :: arr a b}
@@ -39,8 +44,6 @@ instance (Arrow arr) => Strong Type (Arr arr) where
 
 instance (ArrowLoop arr) => Costrong Type (Arr arr) where
   coact (Arr f) = Arr (loop (arr swap >>> f >>> arr swap))
-    where
-      swap ~(x, y) = (y, x)
 
 instance (Arrow arr) => MonoidalProfunctor (Arr arr) where
   par0 = Arr (arr id)
@@ -71,15 +74,13 @@ instance (MonadPlus m) => Strong (COPROD Type) (Kleisli m) where
 
 instance (MonadFix m) => Costrong Type (Kleisli m) where
   coact f = loop (arr swap >>> f >>> arr swap)
-    where
-      swap ~(x, y) = (y, x)
 
 instance (Monad m) => MonoidalProfunctor (Kleisli m) where
   par0 = arr id
   l `par` r = l *** r
 
 instance (MonadPlus m) => MonoidalProfunctor (Coprod (Kleisli m)) where
-  par0 = Coprod zeroArrow
+  par0 = Coprod (Kleisli return)
   Coprod (Kleisli l) `par` Coprod (Kleisli r) = Coprod (Kleisli ((l >>> fmap Left) ||| (r >>> fmap Right)))
 
 instance (Functor m) => Representable (Kleisli m) where
@@ -87,3 +88,20 @@ instance (Functor m) => Representable (Kleisli m) where
   index = runKleisli
   tabulate = Kleisli
   repMap = fmap
+
+instance (Promonad p) => P.Category (FromProfunctor p :: Type +-> Type) where
+  id = id
+  (.) = (.)
+
+instance (MonoidalProfunctor p, Promonad p) => Arrow (FromProfunctor p :: Type +-> Type) where
+  arr f = rmap f id
+  FromProfunctor f *** FromProfunctor g = FromProfunctor (f `par` g)
+
+instance (DistributiveProfunctor p, Promonad p) => ArrowChoice (FromProfunctor p :: Type +-> Type) where
+  FromProfunctor f +++ FromProfunctor g = FromProfunctor (copar f g)
+
+instance (Representable p, MonoidalProfunctor p, Promonad p) => ArrowApply (FromProfunctor p :: Type +-> Type) where
+  app = FromProfunctor (tabulate \(FromProfunctor p, b) -> index p b)
+
+instance (Costrong Type p, MonoidalProfunctor p, Promonad p) => ArrowLoop (FromProfunctor p :: Type +-> Type) where
+  loop (FromProfunctor p) = FromProfunctor (coact @Type (dimap swap swap p))

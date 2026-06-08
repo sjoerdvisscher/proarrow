@@ -42,6 +42,7 @@ instance (Functor f, Functor g) => Functor (Compose f g) where
   map f = Compose . map (map f) . getCompose
 
 newtype FromProfunctor p a b = FromProfunctor {unFromProfunctor :: p a b}
+  deriving newtype (Profunctor, Promonad)
 instance (Profunctor p) => Functor (FromProfunctor p a) where
   map f = FromProfunctor . rmap f . unFromProfunctor
 instance (Profunctor p) => P.Functor (FromProfunctor p a) where
