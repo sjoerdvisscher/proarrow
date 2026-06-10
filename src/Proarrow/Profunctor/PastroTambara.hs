@@ -10,14 +10,14 @@ import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
 import Proarrow.Category.Monoidal.Optic (ExOptic (..))
 import Proarrow.Category.Opposite (OPPOSITE (..))
-import Proarrow.Core (CategoryOf (..), Kind, Profunctor (..), Promonad (..), obj, (//), (:~>), type (+->), src, tgt, OB)
+import Proarrow.Core (CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), obj, src, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Profunctor.Cofree (HasCofree (..), cofreeComp)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Free (HasFree (..), freeComp)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Profunctor.Yoneda (Yo (..))
-import Proarrow.Profunctor.Free (HasFree (..))
-import Proarrow.Profunctor.Cofree (HasCofree (..))
 
 type Pastro :: Kind -> j +-> k -> j +-> k
 data Pastro m p a b where
@@ -42,15 +42,15 @@ instance (MonoidalAction m j, MonoidalAction m k, Profunctor p) => Strong m (Pas
       \\ p
 
 instance (MonoidalAction m j, MonoidalAction m k) => HasFree (Strong m :: OB (j +-> k)) where
-  type Free (Strong m) = Star (Pastro m)
-  lift' n = Star (Prof pastro . n) \\ n
-  retract' (Star n) = Prof unpastro  . n
+  type Free (Strong m) p = Pastro m p
+  lift = Prof pastro
+  foldMap n = Prof unpastro . map n
 
 instance Functor (Pastro m) where
   map (Prof n) = Prof \(Pastro @z f p g) -> Pastro @z f (n p) g
 instance (MonoidalAction m j, MonoidalAction m k) => Promonad (Star (Pastro m) :: (j +-> k) +-> (j +-> k)) where
   id = Star (Prof pastro)
-  Star n . Star m = Star (Prof unpastro . map n . m)
+  Star n . Star m = Star (freeComp @(Strong m) n m)
 
 fromExOptic
   :: forall {j} {k} m (a :: k) (b :: j)
@@ -80,15 +80,15 @@ instance (MonoidalAction m j, MonoidalAction m k, Profunctor p) => Strong m (Tam
             (dimap (multiplicatorInv @m @k @z @b @x . act (obj @z) (act m (obj @x))) (multiplicator @m @j @z @b @y) (p @(z ** b)))
 
 instance (MonoidalAction m j, MonoidalAction m k) => HasCofree (Strong m :: OB (j +-> k)) where
-  type Cofree (Strong m) = Star (Tambara m)
-  lower' (Star n) = Prof untambara . n
-  section' n = Star (map n . Prof tambara) \\ n
+  type Cofree (Strong m) p = Tambara m p
+  lower = Prof untambara
+  unfoldMap n = map n . Prof tambara
 
 instance (MonoidalAction m j, MonoidalAction m k) => Functor (Tambara m :: (j +-> k) -> (j +-> k)) where
   map (Prof n) = Prof \(Tambara p) -> Tambara \ @z -> n (p @z)
 instance (MonoidalAction m j, MonoidalAction m k) => Promonad (Costar (Tambara m) :: (j +-> k) +-> (j +-> k)) where
   id = Costar (Prof untambara)
-  Costar n . Costar m = Costar (n . map m . Prof tambara)
+  Costar n . Costar m = Costar (cofreeComp @(Strong m) n m)
 
 -- | @Pastro m@ ⊣ @Tambara m@
 instance (MonoidalAction m j, MonoidalAction m k) => Corepresentable (Star (Tambara m) :: (j +-> k) +-> (j +-> k)) where

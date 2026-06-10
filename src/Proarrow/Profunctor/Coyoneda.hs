@@ -29,9 +29,9 @@ instance Promonad (Costar Coyoneda) where
   Costar (Prof l) . Costar (Prof r) = Costar (Prof (\p -> (l . (coyoneda \\ p) . r) p))
 
 instance HasFree Profunctor where
-  type Free Profunctor = Star Coyoneda
-  lift' (Prof n) = Star (Prof \p -> coyoneda (n p) \\ p)
-  retract' (Star (Prof f)) = Prof (unCoyoneda . f)
+  type Free Profunctor p = Coyoneda p
+  lift = Prof \p -> coyoneda p \\ p
+  foldMap (Prof f) = Prof (f . unCoyoneda)
 
 coyoneda :: (CategoryOf j, CategoryOf k, Ob a, Ob b) => p a b -> Coyoneda (p :: j +-> k) a b
 coyoneda = Coyoneda id id

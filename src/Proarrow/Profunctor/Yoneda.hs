@@ -33,9 +33,9 @@ instance Promonad (Costar Yoneda) where
   Costar (Prof l) . Costar (Prof r) = Costar (Prof (l . mkYoneda . r))
 
 instance HasCofree Profunctor where
-  type Cofree Profunctor = Star Yoneda
-  lower' (Star (Prof n)) = Prof (yoneda . n)
-  section' (Prof n) = Star (Prof (mkYoneda . n))
+  type Cofree Profunctor p = Yoneda p
+  lower = Prof yoneda
+  unfoldMap (Prof n) = Prof (mkYoneda . n)
 
 yoneda :: (CategoryOf j, CategoryOf k) => Yoneda (p :: j +-> k) :~> p
 yoneda (Yoneda k) = k $ Yo id id

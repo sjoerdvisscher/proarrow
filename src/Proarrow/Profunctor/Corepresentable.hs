@@ -5,7 +5,7 @@ module Proarrow.Profunctor.Corepresentable where
 import Data.Kind (Constraint)
 
 import Proarrow.Category.Instance.Unit ()
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, type (+->))
 import Proarrow.Functor (Copresheaf, FunctorForRep (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Optic (Iso, iso)
@@ -17,13 +17,19 @@ class (Profunctor p) => Corepresentable (p :: j +-> k) where
   type p %% (a :: k) :: j
   coindex :: p a b -> p %% a ~> b
   cotabulate :: (Ob a) => (p %% a ~> b) -> p a b
+  cotabulate f = rmap f trivialCorep
   corepMap :: (a ~> b) -> p %% a ~> p %% b
+  corepMap @_ @b f = coindex @p (lmap f (trivialCorep @p @b)) \\ f
+  trivialCorep :: (Ob a) => p a (p %% a)
+  trivialCorep @a = cotabulate (corepObj @p @a)
+  {-# MINIMAL coindex, ((cotabulate, corepMap) | trivialCorep) #-}
 
 instance Corepresentable (->) where
   type (->) %% a = a
   coindex f = f
   cotabulate f = f
   corepMap f = f
+  trivialCorep = id
 
 corepObj :: forall p a. (Corepresentable p, Ob a) => Obj (p %% a)
 corepObj = corepMap @p (obj @a)
@@ -33,9 +39,6 @@ withObCorep r = r \\ corepMap @p (obj @a)
 
 dimapCorep :: forall p a b c d. (Corepresentable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapCorep l r = cotabulate @p . dimap (corepMap @p l) r . coindex \\ l
-
-trivialCorep :: forall p a. (Corepresentable p, Ob a) => p a (p %% a)
-trivialCorep = cotabulate (corepObj @p @a)
 
 cotabulated :: forall p a a' b b'. (Corepresentable p, Ob a) => Iso (p %% a ~> b) (p %% a' ~> b') (p a b) (p a' b')
 cotabulated = iso cotabulate coindex

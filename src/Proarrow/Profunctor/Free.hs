@@ -4,18 +4,19 @@
 
 module Proarrow.Profunctor.Free where
 
+import Data.Foldable1 (Foldable1 (foldMap1))
 import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
-import Data.Maybe (Maybe (..), fromMaybe)
-import Data.Semigroup (sconcat)
+import Data.Maybe (Maybe (..))
 import Prelude (($))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), toInt)
 import Proarrow.Category.Instance.Nat (Nat (..), first)
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Instance.Sub (On, SUBCAT (..), Sub (..), Forget)
+import Proarrow.Category.Instance.Sub (Forget, On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
+import Proarrow.Category.Monoidal.Action (TracedMonoidal)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==), (||))
 import Proarrow.Core
@@ -30,56 +31,55 @@ import Proarrow.Core
   , lmap
   , obj
   , rmap
-  , src
+  , tgt
   , (//)
-  , type (+->)
+  , (:~>)
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Dual (CompactClosed, Dual, dualObj, dualityCounit, dualityUnit)
+import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
-import Proarrow.Profunctor.Representable (Representable (..), trivialRep, Rep (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Category.Monoidal.Action (TracedMonoidal)
 
-type HasFree :: forall {k}. (k -> Constraint) -> Constraint
-class (CategoryOf k, Representable (Free ob), forall b. (Ob b) => ob (Free ob % b)) => HasFree (ob :: k -> Constraint) where
-  type Free ob :: k +-> k
-  lift' :: a ~> b -> Free ob a b
-  retract' :: (ob b) => Free ob a b -> a ~> b
+type HasFree :: forall {k}. OB k -> Constraint
+class (CategoryOf k, forall a. (Ob a) => ob (Free ob a)) => HasFree (ob :: OB k) where
+  type Free ob (a :: k) :: k
+  lift :: (Ob a) => a ~> Free ob a
+  foldMap :: (ob b) => (a ~> b) -> Free ob a ~> b
 
-lift :: forall ob a. (HasFree ob, Ob a) => a ~> Free ob % a
-lift = index @(Free ob) (lift' @ob id)
+retract :: forall ob a. (HasFree ob, ob a, Ob a) => Free ob a ~> a
+retract = foldMap @ob id
 
-retract :: forall ob a. (HasFree ob, ob a, Ob a) => Free ob % a ~> a
-retract = retract' @ob trivialRep
+freeMap :: (HasFree ob) => (a ~> b) -> Free ob a ~> Free ob b
+freeMap @ob f = foldMap @ob (lift @ob . f) \\ f
 
-fold :: forall ob a b. (HasFree ob, ob b) => (a ~> b) -> Free ob % a ~> b
-fold f = retract' @ob (rmap f trivialRep) \\ f
+freeComp :: (HasFree ob, Ob c) => b ~> Free ob c -> a ~> Free ob b -> a ~> Free ob c
+freeComp @ob l r = foldMap @ob l . r
 
 -- | By creating the left adjoint to the forgetful functor,
 -- we obtain the free-forgetful adjunction.
 instance (HasFree ob) => Corepresentable (Rep (Forget (ob :: OB k))) where
-  type Rep (Forget ob) %% a = SUB (Free ob % a)
-  coindex (Rep f) = Sub (retract @ob . repMap @(Free ob) f) \\ f
-  cotabulate (Sub f) = Rep (f . lift @ob) \\ f
-  corepMap f = Sub (repMap @(Free ob) f) \\ f
+  type Rep (Forget ob) %% a = SUB (Free ob a)
+  coindex (Rep f) = Sub (foldMap @ob f) \\ f
+  trivialCorep @a = let f = lift @ob @a in Rep f \\ f
 
 instance HasFree P.Monoid where
-  type Free P.Monoid = Star []
-  lift' f = Star ((: []) . f)
-  retract' (Star f) = P.mconcat . f
+  type Free P.Monoid a = [a]
+  lift = P.pure
+  foldMap = P.foldMap
 
 instance HasFree P.Semigroup where
-  type Free P.Semigroup = Star NonEmpty
-  lift' f = Star ((:| []) . f)
-  retract' (Star f) = sconcat . f
+  type Free P.Semigroup a = NonEmpty a
+  lift = P.pure
+  foldMap = foldMap1
 
 instance HasFree (P.Monoid `On` P.Semigroup) where
-  type Free (P.Monoid `On` P.Semigroup) = Sub (Star Maybe) :: CAT (SUBCAT P.Semigroup)
-  lift' (Sub f) = Sub (Star (Just . f))
-  retract' (Sub (Star f)) = Sub (fromMaybe P.mempty . f)
+  type Free (P.Monoid `On` P.Semigroup) (SUB a) = SUB (Maybe a)
+  lift = Sub Just
+  foldMap (Sub f) = Sub (P.foldMap f)
 
 type Ap :: (k -> Type) -> k -> Type
 data Ap f a where
@@ -98,6 +98,10 @@ instance Functor Ap where
     Eff fa -> Eff (n fa)
     LiftA2 k x y -> LiftA2 k (first (Nat n) x) (first (Nat n) y)
 
+instance (Monoidal k) => Promonad (Star Ap :: CAT (k -> Type)) where
+  id = Star (lift @Applicative)
+  Star l . Star r = Star (freeComp @Applicative l r)
+
 instance (Monoidal k, Functor f) => Applicative (Ap (f :: k -> Type)) where
   pure a () = Pure a
   liftA2 f (fa, fb) = LiftA2 f fa fb
@@ -111,36 +115,41 @@ retractAp (Pure a) = pure a ()
 retractAp (Eff fa) = fa
 retractAp (LiftA2 k x y) = liftA2 k (retractAp x, retractAp y)
 
-instance (Monoidal k) => HasFree (Applicative :: (k -> Type) -> Constraint) where
-  type Free Applicative = Star Ap
-  lift' (Nat f) = Star (Nat (Eff . f))
-  retract' (Star (Nat f)) = Nat (retractAp . f)
+instance (Monoidal k) => HasFree (Applicative :: OB (k -> Type)) where
+  type Free Applicative f = Ap f
+  lift = Nat Eff
+  foldMap f@Nat{} = Nat retractAp . map f
 
 data FreePromonad p a b where
   Unit :: (a ~> b) -> FreePromonad p a b
-  Comp :: p b c -> FreePromonad p a b -> FreePromonad p a c
+  Comp :: p a b -> FreePromonad p b c -> FreePromonad p a c
+
+freePromonadAlg :: p :.: FreePromonad p :~> FreePromonad p
+freePromonadAlg (p :.: pp) = Comp p pp
+
+retractFreePromonad :: (Promonad p) => FreePromonad p :~> p
+retractFreePromonad (Unit f) = arr f
+retractFreePromonad (Comp p pp) = retractFreePromonad pp . p
 
 instance (Profunctor p) => Profunctor (FreePromonad p) where
   dimap l r (Unit f) = Unit (r . f . l)
-  dimap l r (Comp p q) = Comp (rmap r p) (lmap l q)
+  dimap l r (Comp p q) = Comp (lmap l p) (rmap r q)
   r \\ (Unit f) = r \\ f
   r \\ Comp p q = r \\ p \\ q
 
 instance (Profunctor p) => Promonad (FreePromonad p) where
   id = Unit id
-  Unit f . q = rmap f q
-  Comp r p . q = Comp r (p . q)
+  p . Unit f = lmap f p
+  p . Comp r q = Comp r (p . q)
 instance Functor FreePromonad where
-  map n =
-    n // Prof \case
-      Unit g -> Unit g
-      Comp p q -> Comp (unProf n p) (unProf (map n) q)
+  map = freeMap @Promonad
+instance Promonad (Star FreePromonad) where
+  id = Star (lift @Promonad)
+  Star l . Star r = Star (freeComp @Promonad l r)
 instance HasFree Promonad where
-  type Free Promonad = Star FreePromonad
-  lift' (Prof f) = Star (Prof \a -> f a `Comp` Unit (src a))
-  retract' (Star (Prof n)) = Prof \p -> case n p of
-    Unit f -> arr f
-    Comp q r -> q . unProf (retract @Promonad) r
+  type Free Promonad p = FreePromonad p
+  lift = Prof \p -> p `Comp` Unit (tgt p)
+  foldMap n@Prof{} = Prof retractFreePromonad . map n
 
 class
   (forall k. (b k) => c (f k)) =>

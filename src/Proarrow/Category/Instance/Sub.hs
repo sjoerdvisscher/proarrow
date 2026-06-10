@@ -6,7 +6,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Profunctor.Representable
+import Proarrow.Profunctor.Representable (Representable (..))
 
 type SUBCAT :: forall {k}. OB k -> Type
 type data SUBCAT (ob :: OB k) = SUB k
@@ -59,7 +59,7 @@ instance (SymMonoidal k, SubMonoidal ob) => SymMonoidal (SUBCAT (ob :: OB k)) wh
 
 data family Forget :: forall (ob :: OB k) -> SUBCAT ob +-> k
 instance (CategoryOf k) => FunctorForRep (Forget (ob :: OB k)) where
-  type Forget ob @ (SUB a) = a
+  type Forget ob @ a = UN SUB a
   fmap (Sub f) = f
 
 instance (Representable p, forall a. (ob a) => ob (p % a)) => Representable (Sub p :: CAT (SUBCAT (ob :: OB k))) where

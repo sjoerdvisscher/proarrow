@@ -5,7 +5,7 @@ module Proarrow.Adjunction where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Category.Colimit (HasColimits (..), mapColimit)
+import Proarrow.Category.Colimit (HasColimits (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Rep (COREP, COREPK, REP, REPK)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
@@ -29,7 +29,6 @@ import Proarrow.Profunctor.Representable
   , Rep
   , RepCostar (..)
   , Representable (..)
-  , mapCorepStar
   , mapRepCostar
   , repObj
   , tabulated
@@ -156,12 +155,12 @@ instance (HasLimits j k) => Representable (LimitAdj (j :: a +-> b) :: REPK a k +
                 )
           )
       )
-  tabulate @(SUB r) (Sub (Op (Prof n))) = LimitAdj (\j -> n (RepCostar (index @r (limit (trivialRep :.: j)))) :.: trivialRep \\ j)
+  trivialRep @(SUB r) = LimitAdj (\j -> RepCostar (index @r (limit (trivialRep :.: j))) :.: trivialRep \\ j)
   repMap (Sub n) = Sub (Op (mapRepCostar (mapLimit @j n)))
 
 instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a k +-> COREPK b k) where
   type LimitAdj j %% c = REP (CorepStar (Colimit j (UN OP (UN SUB c))))
-  cotabulate @(SUB (OP r)) (Sub (Prof n)) = LimitAdj (\j -> trivialCorep :.: n (CorepStar (coindex @r (colimit (j :.: trivialCorep)))) \\ j)
+  trivialCorep @(SUB (OP r)) = LimitAdj (\j -> trivialCorep :.: CorepStar (coindex @r (colimit (j :.: trivialCorep))) \\ j)
   coindex @_ @r (LimitAdj n) =
     Sub
       ( Prof \(CorepStar @o l) ->
@@ -174,7 +173,6 @@ instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a
                 . l
             )
       )
-  corepMap (Sub (Op n)) = Sub (mapCorepStar (mapColimit @j n))
 
 rightAdjointPreservesLimits
   :: forall {k} {k'} {i} {a} (j :: i +-> a) (p :: k +-> k') (d :: i +-> k)
