@@ -17,7 +17,7 @@ module Proarrow.Core
     -- ** Natural Transformations
   , type (:~>)
     -- ** Profunctor Utilities
-  , (//), lmap, rmap
+  , (//)
     -- ** Default Implementation
   , dimapDefault
     -- * Promonads
@@ -95,10 +95,19 @@ type Profunctor :: forall {j} {k}. j +-> k -> Constraint
 class (CategoryOf j, CategoryOf k) => Profunctor (p :: j +-> k) where
   -- | Map contravariantly over the first argument and covariantly over the second.
   dimap :: c ~> a -> b ~> d -> p a b -> p c d
+  dimap l r = lmap l . rmap r
+  -- | Left mapping (contravariant mapping over first argument).
+  lmap :: c ~> a -> p a b -> p c b
+  lmap l p = dimap l id p \\ p
+  -- | Right mapping (covariant mapping over second argument).
+  rmap :: b ~> d -> p a b -> p a d
+  rmap r p = dimap id r p \\ p
   -- | Constraint elimination, extracts object constraints from a profunctor heteromorphism.
   (\\) :: ((Ob a, Ob b) => r) -> p a b -> r
   default (\\) :: (Ob a, Ob b) => ((Ob a, Ob b) => r) -> p a b -> r
   r \\ _ = r
+
+  {-# MINIMAL dimap | (lmap, rmap) #-}
 
 -- ** Natural Transformations
 
@@ -110,14 +119,6 @@ type p :~> q = forall a b. p a b -> q a b
 -- | Flipped version of '(\\)'.
 (//) :: (Profunctor p) => p a b -> ((Ob a, Ob b) => r) -> r
 p // r = r \\ p
-
--- | Left mapping (contravariant mapping over first argument).
-lmap :: (Profunctor p) => c ~> a -> p a b -> p c b
-lmap l p = dimap l id p \\ p
-
--- | Right mapping (covariant mapping over second argument).
-rmap :: (Profunctor p) => b ~> d -> p a b -> p a d
-rmap r p = dimap id r p \\ p
 
 -- ** Default Implementation
 
