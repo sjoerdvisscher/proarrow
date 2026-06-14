@@ -9,9 +9,9 @@ import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), first, leftUnitorInvWith)
 import Proarrow.Category.Monoidal.Distributive (Distributive, DistributiveProfunctor)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), copar, copar0, unCoprod)
@@ -27,12 +27,18 @@ class (Monoidal j, Monoidal k, Functor f) => Applicative (f :: j -> k) where
 ap :: forall {j} {k} f a b. (Applicative (f :: j -> k), Closed j, Closed k, Ob a, Ob b) => f (a ~~> b) ~> f a ~~> f b
 ap = withObExp @j @a @b $ curry @k @_ @(f a) @(f b) (liftA2 @f @(a ~~> b) @a (apply @j @a))
 
+fmapDefault :: forall f a b. (Applicative f) => a ~> b -> f a ~> f b
+fmapDefault f = liftA2 @_ @Unit @a (f . leftUnitor @_ @a) . leftUnitorInvWith (pure @f id) \\ f
+
+liftA3 :: forall f a b c d. (Applicative f, Ob a, Ob b, Ob c) => (a ** b ** c ~> d) -> f a ** f b ** f c ~> f d
+liftA3 f = withOb2 @_ @a @b (liftA2 @_ @(a ** b) @c f . first @(f c) (liftA2 @f @a @b id))
+
 instance (MonoidalProfunctor (p :: j +-> k), Comonoid x) => Applicative (FromProfunctor p x) where
   pure a () = FromProfunctor $ dimap counit a par0
   liftA2 abc (FromProfunctor pxa, FromProfunctor pxb) = FromProfunctor $ dimap comult abc (pxa `par` pxb)
 instance (MonoidalProfunctor (p :: Type +-> Type)) => P.Applicative (FromProfunctor p x) where
-  pure a = FromProfunctor (dimap (\_ -> ()) (\() -> a) par0)
-  FromProfunctor f <*> FromProfunctor a = FromProfunctor (dimap (\x -> (x, x)) (P.uncurry ($)) (f `par` a))
+  pure a = pure (\() -> a) ()
+  liftA2 f = curry (liftA2 (P.uncurry f))
 
 instance (P.Applicative f) => Applicative (Prelude f) where
   pure a () = Prelude (P.pure (a ()))

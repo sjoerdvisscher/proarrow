@@ -35,6 +35,8 @@ import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Adjunction (Involution)
 
 type n + m = Plus n m
 type (*) n m = Mult n m
@@ -220,6 +222,21 @@ instance (P.Num a, IsNat n) => Frobenius (M n :: MatK a) where
   spider @x @y = spiderDefault @x @y @(M n)
 instance (P.Num a) => Hypergraph (MatK a)
 instance (P.Num a) => CopyDiscard (MatK a)
+
+data family Conjugate :: MatK (Complex a) +-> MatK (Complex a)
+instance (P.RealFloat a) => FunctorForRep (Conjugate :: MatK (Complex a) +-> MatK (Complex a)) where
+  type Conjugate @ n = n
+  fmap (Mat m) = Mat (P.fmap (P.fmap conjugate) m)
+-- | Conjugation is a self-adjoint functor
+instance (P.RealFloat a) => Corepresentable (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a)) where
+  type Rep Conjugate %% n = n
+  coindex (Rep f) = f
+  cotabulate f = Rep f \\ f
+  corepMap = fmap @Conjugate
+instance (P.RealFloat a) => Involution (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a))
+instance (P.RealFloat a) => MonoidalProfunctor (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a)) where
+  par0 = Rep par0
+  Rep l `par` Rep r = let lr = l `par` r in Rep lr \\ lr
 
 data family App :: MatK a +-> Type
 instance (P.Num a) => FunctorForRep (App :: MatK a +-> Type) where

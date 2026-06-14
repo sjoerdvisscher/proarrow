@@ -30,8 +30,8 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//)
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
 import Proarrow.Object.BinaryProduct (Cartesian, diag)
-import Proarrow.Profunctor.Corepresentable (Corep (..))
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 
 infixr 2 ~~>
 
@@ -106,17 +106,17 @@ ap
   -> p a y
 ap pf px = dimap diag (apply @j @x @y) (pf `par` px) \\ px
 
-data family Not (r :: k) :: k +-> OPPOSITE k
+data family Not (r :: k) :: OPPOSITE k +-> k
 instance (Closed k, Ob r) => FunctorForRep (Not (r :: k)) where
-  type Not r @ a = OP (a ~~> r)
-  fmap f = Op (obj @r ^^^ f)
+  type Not r @ OP a = a ~~> r
+  fmap (Op f) = obj @r ^^^ f
 
 -- | The Op-Op adjunction, giving rise to the continuation monad.
-instance (Closed k, SymMonoidal k, Ob r) => Representable (Corep (Not (r :: k))) where
-  type Corep (Not r) % OP a = a ~~> r
-  tabulate f = Corep (Op (swapClosed @r f)) \\ f
-  index (Corep (Op f)) = swapClosed @r f
-  repMap (Op f) = obj @r ^^^ f
+instance (Closed k, SymMonoidal k, Ob r) => Corepresentable (Rep (Not (r :: k))) where
+  type Rep (Not r) %% a = OP (a ~~> r)
+  cotabulate (Op f) = Rep (swapClosed @r f) \\ f
+  coindex (Rep f) = Op (swapClosed @r f)
+  corepMap f = Op (obj @r ^^^ f)
 
 swapClosed :: forall {k} (c :: k) a b. (Closed k, SymMonoidal k, Ob b, Ob c) => a ~> b ~~> c -> b ~> a ~~> c
 swapClosed f = curry @k @b @a (uncurry @b @c f . swap @k @b @a) \\ f

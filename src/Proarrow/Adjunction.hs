@@ -4,6 +4,7 @@
 module Proarrow.Adjunction where
 
 import Data.Kind (Constraint, Type)
+import Prelude (type (~))
 
 import Proarrow.Category.Colimit (HasColimits (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -78,6 +79,20 @@ instance Representable (Costar ((,) a)) where
   tabulate f = Costar \(a, b) -> f b a
   index (Costar g) a b = g (b, a)
   repMap = map
+
+class (p % a ~ p %% a, p % (p %% a) ~ p % (p % a), p %% (p % a) ~ p % (p % a)) => SelfAdjointPoint p a
+instance (p % a ~ p %% a, p % (p %% a) ~ p % (p % a), p %% (p % a) ~ p % (p % a)) => SelfAdjointPoint p a
+
+-- | Self-adjoint functors
+class (forall a. Ob a => SelfAdjointPoint p a, Adjunction p) => SelfAdjoint p
+instance (forall a. Ob a => SelfAdjointPoint p a, Adjunction p) => SelfAdjoint p
+
+-- | Involution functors are self-adjoint functors where the unit and counit form an isomorphism.
+class SelfAdjoint p => Involution p where
+  involuted :: forall a a'. (Ob a, Ob a') => Iso a a' (p % (p % a)) (p % (p % a'))
+  involuted = iso (unitRep @p) (counitRep @p)
+
+instance (CategoryOf k) => Involution (Id :: CAT k)
 
 -- | Adjunctions between two profunctors.
 type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint

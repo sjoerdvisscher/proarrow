@@ -1,6 +1,7 @@
 module Proarrow.Category.Opposite where
 
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 
@@ -17,6 +18,9 @@ instance (Profunctor p) => Functor (Op p a) where
 instance (Profunctor p) => Profunctor (Op p) where
   dimap (Op l) (Op r) = Op . dimap r l . unOp
   r \\ Op f = r \\ f
+
+instance Functor Op where
+  map (Prof n) = Prof \(Op p) -> Op (n p)
 
 -- | The opposite category of the category of `k`.
 instance (CategoryOf k) => CategoryOf (OPPOSITE k) where
@@ -43,4 +47,3 @@ instance (Thin j, Thin k, ThinProfunctor p) => ThinProfunctor (UnOp p :: j +-> k
   type HasArrow (UnOp p) a b = HasArrow p (OP b) (OP a)
   arr = unOp arr
   withArr f r = withArr (Op f) r
-

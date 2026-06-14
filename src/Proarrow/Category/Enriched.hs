@@ -5,14 +5,14 @@ module Proarrow.Category.Enriched where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor (..), type (+->))
+import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor, type (+->))
 import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 import Proarrow.Object.Exponential (uncurry)
 import Proarrow.Object.Exponential qualified as E
