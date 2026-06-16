@@ -22,7 +22,15 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Optic (Iso, iso, re)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Constant (review, view)
-import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..), corepObj, cotabulated, trivialCorep)
+import Proarrow.Profunctor.Corepresentable
+  ( Corep
+  , Corepresentable (..)
+  , corepObj
+  , cotabulated
+  , extend
+  , extract
+  , trivialCorep
+  )
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable
@@ -30,13 +38,15 @@ import Proarrow.Profunctor.Representable
   , Rep
   , RepCostar (..)
   , Representable (..)
+  , bind
   , mapRepCostar
   , repObj
+  , return
   , tabulated
   , trivialRep
   )
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Promonad qualified as P
 
 -- | Adjunctions as heteromorphisms.
 class (Representable p, Corepresentable p) => Adjunction p
@@ -54,17 +64,23 @@ adjuncted
   :: forall p a b a' b'. (Adjunction p, Ob a, Ob b') => Iso (b ~> p % a) (b' ~> p % a') (p %% b ~> a) (p %% b' ~> a')
 adjuncted = tabulated @p . re cotabulated
 
-unitRep :: forall p a. (Adjunction p, Ob a) => a ~> p % (p %% a)
-unitRep = index (trivialCorep @p)
+-- | The monad induced by an adjunction as a representable promonad.
+type AdjMonad p = p :.: CorepStar p
 
-counitRep :: forall p a. (Adjunction p, Ob a) => p %% (p % a) ~> a
-counitRep = coindex (trivialRep @p)
+unitRep :: forall p a. (Adjunction p, Ob a) => a ~> AdjMonad p % a
+unitRep = return @(AdjMonad p) @a
 
-bindRep :: forall p a b. (Adjunction p, Ob b) => a ~> p % (p %% b) -> p % (p %% a) ~> p % (p %% b)
-bindRep f = repMap @p (rightAdjunct @p @a @(p %% b) f) \\ corepObj @p @b
+bindRep :: forall p a b. (Adjunction p, Ob b) => a ~> AdjMonad p % b -> AdjMonad p % a ~> AdjMonad p % b
+bindRep = bind @(AdjMonad p) @a @b
 
-extendRep :: forall p a b. (Adjunction p, Ob a) => (p %% (p % a) ~> b) -> p %% (p % a) ~> p %% (p % b)
-extendRep f = corepMap @p (leftAdjunct @p @(p % a) @b f) \\ repObj @p @a
+-- | The comonad induced by an adjunction as a corepresentable promonad.
+type AdjComonad p = RepCostar p :.: p
+
+counitRep :: forall p a. (Adjunction p, Ob a) => AdjComonad p %% a ~> a
+counitRep = extract @(AdjComonad p) @a
+
+extendRep :: forall p a b. (Adjunction p, Ob a) => (AdjComonad p %% a ~> b) -> AdjComonad p %% a ~> AdjComonad p %% b
+extendRep = extend @(AdjComonad p) @a @b
 
 -- | The left adjoint of @((->) a)@ is @(,) a@.
 instance Corepresentable (Star ((->) a)) where
@@ -84,11 +100,12 @@ class (p % a ~ p %% a, p % (p %% a) ~ p % (p % a), p %% (p % a) ~ p % (p % a)) =
 instance (p % a ~ p %% a, p % (p %% a) ~ p % (p % a), p %% (p % a) ~ p % (p % a)) => SelfAdjointPoint p a
 
 -- | Self-adjoint functors
-class (forall a. Ob a => SelfAdjointPoint p a, Adjunction p) => SelfAdjoint p
-instance (forall a. Ob a => SelfAdjointPoint p a, Adjunction p) => SelfAdjoint p
+class (forall a. (Ob a) => SelfAdjointPoint p a, Adjunction p) => SelfAdjoint p
+
+instance (forall a. (Ob a) => SelfAdjointPoint p a, Adjunction p) => SelfAdjoint p
 
 -- | Involution functors are self-adjoint functors where the unit and counit form an isomorphism.
-class SelfAdjoint p => Involution p where
+class (SelfAdjoint p) => Involution p where
   involuted :: forall a a'. (Ob a, Ob a') => Iso a a' (p % (p % a)) (p % (p % a'))
   involuted = iso (unitRep @p) (counitRep @p)
 
@@ -136,7 +153,7 @@ instance (Proadjunction p q) => Promonad (q :.: p) where
   id = unit
   (q :.: p) . (q' :.: p') = rmap (counit (p' :.: q)) q' :.: p
 
-instance (Proadjunction p q) => Procomonad (p :.: q) where
+instance (Proadjunction p q) => P.Procomonad (p :.: q) where
   extract = counit
   duplicate (p :.: q) = p // case unit of q' :.: p' -> (p :.: q') :.: (p' :.: q)
 
