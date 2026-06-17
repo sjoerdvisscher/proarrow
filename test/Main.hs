@@ -18,10 +18,12 @@ import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
 import Props.ZX qualified as ZX
+import Examples.UntypedLambdaCalculus qualified as ULC
 
 main :: IO ()
 main =
   defaultMain $
+  testGroup "tests" $ [
     testGroup
       "Proarrow"
       [ Bool.test
@@ -37,4 +39,6 @@ main =
       , Simplex.test
       , Span.test
       , ZX.test
-      ]
+      ],
+    testGroup "Examples" [ ULC.test ]
+  ]

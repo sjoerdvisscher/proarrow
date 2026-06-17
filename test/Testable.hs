@@ -12,6 +12,7 @@ import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
+import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor qualified as Rep
@@ -124,6 +125,11 @@ instance (Testable k) => Testable (OPPOSITE k) where
   eqOb @(OP a) @(OP b) = fmap (\Refl -> Refl) $ eqOb @k @a @b
   genSome = mapSome OP <$> genSome
 
+instance TestableProfunctor Unit
+instance Testable () where
+  showOb = "()"
+  genSome = pure (Some @'())
+
 instance (TestableProfunctor p, TestableProfunctor q) => TestableProfunctor (p :**: q) where
   genProfunctorElt nm = do
     SomeP p <- genProfunctorElt @p (nm ++ "_0")
@@ -204,14 +210,12 @@ eqHask l r =
 
 instance (TestableType (p b a)) => TestableType (Op p (OP a) (OP b)) where
   gen = invmap Op unOp gen
-
 instance (TestingEqShow (p b a)) => TestingEqShow (Op p (OP a) (OP b)) where
   eqP (Op l) (Op r) = eqP l r
   showP (Op p) = "Op (" ++ showP p ++ ")"
 
 instance (TestableType (a ~> (f Rep.@ b)), Ob b) => TestableType (Rep f a b) where
   gen = invmap Rep unRep (gen @(a ~> f Rep.@ b))
-
 instance (TestingEqShow (a ~> (f Rep.@ b)), Ob b) => TestingEqShow (Rep f a b) where
   eqP (Rep l) (Rep r) = eqP l r
   showP (Rep p) = showP p
@@ -219,9 +223,14 @@ instance (TestingEqShow (a ~> (f Rep.@ b)), Ob b) => TestingEqShow (Rep f a b) w
 instance (TestingEqShow (catk a1 b1), TestingEqShow (catj a2 b2)) => TestingEqShow ((catk :**: catj) '(a1, a2) '(b1, b2)) where
   eqP (l1 :**: l2) (r1 :**: r2) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
   showP (l1 :**: l2) = "(" ++ showP l1 ++ ") :**: (" ++ showP l2 ++ ")"
-
 instance (TestableType (catk a1 b1), TestableType (catj a2 b2)) => TestableType ((catk :**: catj) '(a1, a2) '(b1, b2)) where
   gen = case (gen, gen) of
     (GenEmpty f, _) -> GenEmpty \(l :**: _) -> f l
     (_, GenEmpty f) -> GenEmpty \(_ :**: r) -> f r
     (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty $ liftA2 (:**:) ga gb
+
+instance (Ob a, Ob b) => TestableType (Unit a b) where
+  gen = one Unit
+instance TestingEqShow (Unit a b) where
+  showP _ = "Unit"
+  eqP _ _ = pure True

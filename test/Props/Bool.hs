@@ -49,13 +49,13 @@ instance Testable BOOL where
     _ -> Nothing
   genSome = genSomeDef @'[FLS, TRU]
 
-instance (TestOb a, TestOb b) => TestableType (Booleans a b) where
+instance (Ob a, Ob b) => TestableType (Booleans a b) where
   gen = case (obj @a, obj @b) of
     (Fls, Fls) -> one Fls
     (Fls, Tru) -> one F2T
     (Tru, Tru) -> one Tru
     (Tru, Fls) -> GenEmpty \case {}
-instance (TestOb a, TestOb b) => TestingEqShow (Booleans a b) where
+instance (Ob a, Ob b) => TestingEqShow (Booleans a b) where
   eqP _ _ = pure True
   showP Fls = "F->F"
   showP F2T = "F->T"
