@@ -23,6 +23,7 @@ import Proarrow.Object.BinaryProduct
 import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.NaturalNumbers (HasParamNNO (..))
 import Proarrow.Object.Pullback (HasPullbacks (..), thinPullback)
 import Proarrow.Object.Pushout (HasPushouts (..), thinPushout)
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -199,6 +200,12 @@ instance StarAutonomous BOOL where
     (Tru, _) -> f
 
 -- BOOL is not CompactClosed
+
+instance HasParamNNO BOOL where
+  type NNO = TRU
+  zero = Tru
+  succ = Tru
+  nnoUniv z _ = z
 
 instance Monoid TRU where
   mempty = Tru

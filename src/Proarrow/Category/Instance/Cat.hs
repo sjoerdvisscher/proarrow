@@ -2,6 +2,8 @@
 
 module Proarrow.Category.Instance.Cat where
 
+import Data.Type.Nat (Nat (..))
+
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal
@@ -40,6 +42,8 @@ import Proarrow.Profunctor.Representable (Rep, Representable (..))
 import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
+import Proarrow.Object.NaturalNumbers (HasParamNNO (..))
+import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
@@ -192,6 +196,25 @@ instance FunctorForRep (DualUnit :: OPPOSITE () +-> ()) where
 instance CompactClosed KIND where
   distribDual = Cat @(Rep DistribDual)
   dualUnit = Cat @(Rep DualUnit)
+
+data family Succ :: DISCRETE Nat +-> DISCRETE Nat
+instance FunctorForRep Succ where
+  type Succ @ D n = D (S n)
+  fmap Refl = Refl
+type NNOUniv :: a +-> x -> x +-> x -> (a, DISCRETE Nat) +-> x
+data NNOUniv z s a b where
+  NNOZ :: Ob x => z x a -> NNOUniv z s x '(a, D Z)
+  NNOS :: (s :.: NNOUniv z s) x '(a, D n) -> NNOUniv z s x '(a, D (S n))
+instance (Profunctor z, Profunctor s) => Profunctor (NNOUniv z s) where
+  dimap l (ra :**: Refl) (NNOZ z) = NNOZ (dimap l ra z) \\ l
+  dimap l (ra :**: Refl) (NNOS s) = NNOS (dimap l (ra :**: Refl) s)
+  r \\ NNOZ z = r \\ z
+  r \\ NNOS s = r \\ s
+instance HasParamNNO KIND where
+  type NNO = K (DISCRETE Nat)
+  zero = Cat @(Rep (Constant (D Z)))
+  succ = Cat @(Rep Succ)
+  nnoUniv (Cat @z) (Cat @s) = Cat @(NNOUniv z s)
 
 instance MonoidalAction KIND KIND where
   type Act a x = a ** x
