@@ -43,7 +43,9 @@ dimapCorep l r = cotabulate @p . dimap (corepMap @p l) r . coindex \\ l
 cotabulated :: forall p a a' b b'. (Corepresentable p, Ob a) => Iso (p %% a ~> b) (p %% a' ~> b') (p a b) (p a' b')
 cotabulated = iso cotabulate coindex
 
+-- | A representable copresheaf is a representable functor in the Haskell sense.
 type RepresentableCopresheaf (f :: Copresheaf k) = Corepresentable f
+
 type Key (f :: Copresheaf k) = f %% '()
 tabulatedCopresheaf :: (RepresentableCopresheaf f, Ob a) => Iso (Key f ~> a) (Key f ~> a') (f '() a) (f '() a')
 tabulatedCopresheaf = cotabulated

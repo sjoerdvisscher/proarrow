@@ -14,8 +14,8 @@ class (Profunctor p) => ThinProfunctor (p :: j +-> k) where
   arr :: (Ob a, Ob b, HasArrow p a b) => p a b
   withArr :: p a b -> ((HasArrow p a b) => r) -> r
 
-class (ThinProfunctor (Hom k)) => Thin k
-instance (ThinProfunctor (Hom k)) => Thin k
+class (ThinProfunctor (Hom k), CategoryOf k) => Thin k
+instance (ThinProfunctor (Hom k), CategoryOf k) => Thin k
 
 class (ThinProfunctor p, Ob a, Ob b, HasArrow p a b) => HasArrow' p a b where arr' :: p a b
 instance (ThinProfunctor p, Ob a, Ob b, HasArrow p a b) => HasArrow' p a b where arr' = arr

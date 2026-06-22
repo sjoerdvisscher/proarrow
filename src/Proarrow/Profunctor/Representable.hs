@@ -10,7 +10,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit ()
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), (:~>), type (+->), rmap, lmap)
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, rmap, (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..), Presheaf, withMappedOb)
 import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Optic (Iso, iso)
@@ -56,7 +56,9 @@ dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r
 tabulated :: forall p a a' b b'. (Representable p, Ob b) => Iso (a ~> p % b) (a' ~> p % b') (p a b) (p a' b')
 tabulated = iso tabulate index
 
+-- | A representable presheaf is a contravariant representable functor in the Haskell sense.
 type RepresentablePresheaf (f :: Presheaf k) = Representable f
+
 type Key (f :: Presheaf k) = f % '()
 tabulatedPresheaf :: (RepresentablePresheaf f, Ob a) => Iso (a ~> Key f) (a' ~> Key f) (f a '()) (f a' '())
 tabulatedPresheaf = tabulated

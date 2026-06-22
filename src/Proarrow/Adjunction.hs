@@ -111,6 +111,35 @@ class (SelfAdjoint p) => Involution p where
 
 instance (CategoryOf k) => Involution (Id :: CAT k)
 
+class (p %% a ~ RepCostar p % a, p % (p %% a) ~ p % (RepCostar p % a)) => AmbidextrousEqRep p a
+instance (p %% a ~ RepCostar p % a, p % (p %% a) ~ p % (RepCostar p % a)) => AmbidextrousEqRep p a
+
+class (p % a ~ CorepStar p %% a, p %% (p % a) ~ p %% (CorepStar p %% a)) => AmbidextrousEqCorep p a
+instance (p % a ~ CorepStar p %% a, p %% (p % a) ~ p %% (CorepStar p %% a)) => AmbidextrousEqCorep p a
+
+class
+  ( Adjunction p
+  , Representable (RepCostar p)
+  , Corepresentable (CorepStar p)
+  , forall a. (Ob a) => AmbidextrousEqRep p a
+  , forall a. (Ob a) => AmbidextrousEqCorep p a
+  ) =>
+  Ambidextrous p
+instance
+  ( Adjunction p
+  , Representable (RepCostar p)
+  , Corepresentable (CorepStar p)
+  , forall a. (Ob a) => AmbidextrousEqRep p a
+  , forall a. (Ob a) => AmbidextrousEqCorep p a
+  )
+  => Ambidextrous p
+
+class (Ambidextrous p) => AdjointEquivalence (p :: j +-> k) where
+  unitIso :: (Ob a, Ob a') => Iso a a' (AdjMonad p % a) (AdjMonad p % a')
+  unitIso @a @a' = iso (unitRep @p @a) (counitRep @(RepCostar p) @a')
+  counitIso :: (Ob a, Ob a') => Iso (AdjComonad p %% a) (AdjComonad p %% a') a a'
+  counitIso @a @a' = iso (counitRep @p @a) (unitRep @(CorepStar p) @a')
+
 -- | Adjunctions between two profunctors.
 type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
 class (Profunctor p, Profunctor q) => Proadjunction (p :: j +-> k) (q :: k +-> j) where

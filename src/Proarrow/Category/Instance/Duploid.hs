@@ -119,8 +119,8 @@ instance (Adjunction (adj :: n +-> p), StrongMonoidalCorep adj) => MonoidalProfu
           withPosOb @y2 $
             withOb2 @_ @(Pos x2) @(Pos y2) $
               withObCorep @adj @(Pos x2 ** Pos y2) $
-                case (lmap (index fp) (trivialRep @(AdjMonad adj) @(Pos x2)))
-                  `par` (lmap (index gp) (trivialRep @(AdjMonad adj) @(Pos y2))) of
+                case lmap (index fp) (trivialRep @(AdjMonad adj) @(Pos x2))
+                  `par` lmap (index gp) (trivialRep @(AdjMonad adj) @(Pos y2)) of
                   fg :.: CorepStar h -> Duploid (rmap h fg) \\ fg
 
 instance (Adjunction (adj :: n +-> p), StrongMonoidalCorep adj) => Monoidal (DUPLOID adj) where
