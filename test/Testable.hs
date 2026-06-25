@@ -7,10 +7,13 @@ import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Typeable (Typeable, eqT, (:~:) (..))
 import GHC.Exts qualified as GHC
-import Test.Falsify.Generator (Fun, Function, Gen, applyFun, elem, fun, minimalValue)
+import Test.Falsify.Generator (Fun, Function, Gen, applyFun, elem, fun, minimalValue, oneof)
 import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
+import Control.Applicative (Alternative (..))
+import Control.Monad (ap)
+import Debug.Trace (traceM, traceShowM)
 import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
@@ -18,6 +21,7 @@ import Proarrow.Core (CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), 
 import Proarrow.Functor qualified as Rep
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Representable (Rep (..))
+import Test.Falsify.Interactive (falsify)
 import Unsafe.Coerce (unsafeCoerce)
 
 data GenTotal a where
@@ -32,7 +36,7 @@ invmap f _ (GenFun f' g) = GenFun (f . f') g
 
 flatten :: GenTotal a -> Gen a
 flatten (GenNENonFun g) = g
-flatten (GenFun f g) = (f . applyFun) <$> g
+flatten (GenFun f g) = f . applyFun <$> g
 flatten (GenEmpty _) = error "flatten: Match on GenEmpty first"
 
 pattern GenNonEmpty :: Gen a -> GenTotal a
@@ -41,6 +45,30 @@ pattern GenNonEmpty g <- (flatten -> g)
     GenNonEmpty g = GenNENonFun g
 
 {-# COMPLETE GenEmpty, GenNonEmpty #-}
+
+instance Functor GenTotal where
+  fmap f = invmap f (error "fmap GenTotal")
+
+instance Applicative GenTotal where
+  pure a = GenNENonFun (pure a)
+  (<*>) = ap
+
+instance Alternative GenTotal where
+  empty = GenEmpty (error "empty")
+  GenEmpty f <|> GenEmpty _ = GenEmpty f
+  GenEmpty _ <|> g = g
+  f <|> GenEmpty _ = f
+  GenNonEmpty g <|> GenNonEmpty h = GenNonEmpty (oneof (g :| [h]))
+
+instance Monad GenTotal where
+  GenEmpty _ >>= _ = GenEmpty (error ">>= GenEmpty")
+  GenNonEmpty g >>= f = case f (minimalValue g) of
+    GenEmpty x -> GenEmpty x
+    _ -> GenNonEmpty do
+      p <- fmap f g
+      case p of
+        GenEmpty _ -> error ">>= GenEmpty"
+        GenNonEmpty g' -> g'
 
 class TestingEqShow a where
   eqP :: a -> a -> Property Bool
@@ -63,13 +91,13 @@ showFun = show . unsafeCoerce @(Fun a b) @(Fun (ShowP a) (ShowP b))
 genP :: (TestableType a) => Property a
 genP = case gen of
   GenNENonFun g -> genWith (Just . showP) g
-  GenFun f g -> (f . applyFun) <$> genWith (Just . showFun) g
+  GenFun f g -> f . applyFun <$> genWith (Just . showFun) g
   GenEmpty _ -> discard
 
 genNamed :: (TestableType a) => String -> Property a
 genNamed nm = case gen of
   GenNENonFun g -> genWithNamed nm (Just . showP) g
-  GenFun f g -> (f . applyFun) <$> genWithNamed nm (Just . showFun) g
+  GenFun f g -> f . applyFun <$> genWithNamed nm (Just . showFun) g
   GenEmpty _ -> discard
 
 genWithNamed :: String -> (a -> Maybe String) -> Gen a -> Property a
@@ -81,8 +109,14 @@ type SomeProfunctorElt :: (j +-> k) -> Type
 data SomeProfunctorElt p where
   SomeP :: (TestOb a, TestOb b) => p a b -> SomeProfunctorElt p
 
-instance (forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (p a b)) => Show (SomeProfunctorElt p) where
-  show (SomeP p) = showP p
+someP :: forall {k} {j} (p :: k +-> j) a b. (Profunctor p, TestObIsOb j, TestObIsOb k) => p a b -> SomeProfunctorElt p
+someP p = SomeP p \\ p
+
+instance
+  (forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestingEqShow (p a b), Testable k, Testable j)
+  => Show (SomeProfunctorElt p)
+  where
+  show (SomeP @a @b p) = showP p ++ " @" ++ showOb @k @a ++ " @" ++ showOb @j @b
 
 type TestableTypeP :: (j +-> k) -> Constraint
 class (forall a b. (TestOb (a :: k), TestOb (b :: j)) => TestableType (p a b)) => TestableTypeP (p :: j +-> k)
@@ -234,3 +268,18 @@ instance (Ob a, Ob b) => TestableType (Unit a b) where
 instance TestingEqShow (Unit a b) where
   showP _ = "Unit"
   eqP _ _ = pure True
+
+sampleT :: forall t. (TestableType t) => IO (Maybe String)
+sampleT = falsify $ do
+  p <- genP @t
+  traceM (showP p)
+
+sampleP :: forall {j} {k} (p :: j +-> k). (Testable j, Testable k, TestableProfunctor p) => IO (Maybe String)
+sampleP = falsify $ do
+  p <- genProfunctorElt @p "p"
+  traceShowM p
+
+sampleK :: forall k. (Testable k) => IO (Maybe String)
+sampleK = falsify @_ @() $ do
+  Some @a <- genOb @k
+  traceM $ showOb @k @a

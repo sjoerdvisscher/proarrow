@@ -2,7 +2,7 @@
 
 module Props where
 
-import Control.Monad (when)
+import Control.Monad (unless)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
@@ -35,7 +35,7 @@ import Testable
 testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
 testEq nm sl l sr r = do
   isEq <- eqP l r
-  when (not isEq) $
+  unless isEq $
     testFailed $
       "Failed "
         ++ nm
@@ -225,47 +225,49 @@ propClosed
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a Exponential.~~> b)) => r) -> r)
   -> TestTree
-propClosed withTestOb2 withTestObExp = testGroup "Closed" [
-  testProperty "Exponential is functorial" $ do
-    propProfunctorWith @(Rep (Exponential.ExpRep @k))
-      ( do
-          Some @a <- genOb
-          Some @b1 <- genOb
-          Some @b2 <- genOb
-          p <- withTestObExp @b1 @b2 (genNamed @(Rep (Exponential.ExpRep @k) a '(OP b1, b2)) "p")
-          pure $ SomeP @a @'(OP b1, b2) p
-      )
-      (\ @_ @'(OP b1, b2) r -> withTestObExp @b1 @b2 r)
-  , testProperty "Curry/uncurry is a natural isomorphism" $ do
-    Some @a <- genOb @k
-    Some @b <- genOb
-    Some @c <- genOb
-    withTestOb2 @a @b $ withTestObExp @b @c $ do
-      propIsoP
-        (Exponential.curry @k @a @b @c)
-        (Exponential.uncurry @b @c)
-      Some @a' <- genOb @k
-      Some @b' <- genOb
-      Some @c' <- genOb
-      f <- genNamed @(a' ~> a) "f"
-      g <- genNamed @(b' ~> b) "g"
-      h <- genNamed @(c ~> c') "h"
-      withTestOb2 @a' @b' $ withTestObExp @b' @c' $ do
-        let n = dimap (f `M.par` g) h
-        let n' = dimap f (h Exponential.^^^ g)
-        testEq
-          "natural curry"
-          "curry . n"
-          (Exponential.curry @k @a' @b' @c' . n)
-          "n' . curry"
-          (n' . Exponential.curry @k @a @b @c)
-        testEq
-          "natural uncurry"
-          "uncurry . n'"
-          (Exponential.uncurry @b' @c' . n')
-          "n . uncurry"
-          (n . Exponential.uncurry @b @c)
-  ]
+propClosed withTestOb2 withTestObExp =
+  testGroup
+    "Closed"
+    [ testProperty "Exponential is functorial" $ do
+        propProfunctorWith @(Rep (Exponential.ExpRep @k))
+          ( do
+              Some @a <- genOb
+              Some @b1 <- genOb
+              Some @b2 <- genOb
+              p <- withTestObExp @b1 @b2 (genNamed @(Rep (Exponential.ExpRep @k) a '(OP b1, b2)) "p")
+              pure $ SomeP @a @'(OP b1, b2) p
+          )
+          (\ @_ @'(OP b1, b2) r -> withTestObExp @b1 @b2 r)
+    , testProperty "Curry/uncurry is a natural isomorphism" $ do
+        Some @a <- genOb @k
+        Some @b <- genOb
+        Some @c <- genOb
+        withTestOb2 @a @b $ withTestObExp @b @c $ do
+          propIsoP
+            (Exponential.curry @k @a @b @c)
+            (Exponential.uncurry @b @c)
+          Some @a' <- genOb @k
+          Some @b' <- genOb
+          Some @c' <- genOb
+          f <- genNamed @(a' ~> a) "f"
+          g <- genNamed @(b' ~> b) "g"
+          h <- genNamed @(c ~> c') "h"
+          withTestOb2 @a' @b' $ withTestObExp @b' @c' $ do
+            let n = dimap (f `M.par` g) h
+            let n' = dimap f (h Exponential.^^^ g)
+            testEq
+              "natural curry"
+              "curry . n"
+              (Exponential.curry @k @a' @b' @c' . n)
+              "n' . curry"
+              (n' . Exponential.curry @k @a @b @c)
+            testEq
+              "natural uncurry"
+              "uncurry . n'"
+              (Exponential.uncurry @b' @c' . n')
+              "n . uncurry"
+              (n . Exponential.uncurry @b @c)
+    ]
 
 propClosed_
   :: forall k
