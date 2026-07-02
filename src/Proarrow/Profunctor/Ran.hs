@@ -11,8 +11,8 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), Corep (..), trivialCorep)
-import Proarrow.Profunctor.Representable (Representable (..), Rep (..), trivialRep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), trivialCorep)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
 
@@ -91,5 +91,5 @@ ranHomInv :: (Profunctor p) => (~>) |> p ~> p
 ranHomInv = Prof \(Ran k) -> k id
 
 instance (Procomonad j) => Promonad (Star (Ran (OP j))) where
-  id = Star (unNat (map (Op (Prof extract))) . ranHom)
-  Star l . Star r = Star (unNat (map (Op (Prof duplicate))) . ranCompose . map l . r)
+  id = Star (unNat (map (Op (Prof proextract))) . ranHom)
+  Star l . Star r = Star (unNat (map (Op (Prof produplicate))) . ranCompose . map l . r)

@@ -9,11 +9,10 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), Corep (..), trivialCorep)
-import Proarrow.Profunctor.Representable (Representable (..), Rep (..), trivialRep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), trivialCorep)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Promonad (Procomonad)
-import Proarrow.Promonad (Procomonad(..))
+import Proarrow.Promonad (Procomonad (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -63,6 +62,7 @@ instance (HasColimits j k, Corepresentable d) => Corepresentable (Rift (OP j) (d
   corepMap = corepMap @(Colimit j d)
 
 type PWLan j p a = (p <| j) %% a
+
 -- PWLan j p a ~> b = forall x. j x ~> a -> p x ~> b
 -- PWLan j p a ~> b = forall x. ((j x ~> a) .* p x) ~> b
 -- PWLan j p a = exists x. ((j x ~> a) .* p x)
@@ -70,6 +70,7 @@ class (Corepresentable j, Corepresentable p, Corepresentable (p <| j)) => Pointw
 instance (Corepresentable j, Corepresentable p, Corepresentable (p <| j)) => PointwiseLeftKanExtension j p
 
 type PWRift j p a = (p <| j) % a
+
 -- a ~> PWRift j p b = forall x. x ~> j a -> x ~> p b
 -- a ~> PWRift j p b = j a ~> p b
 class (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
@@ -88,5 +89,5 @@ riftHomInv :: (Profunctor p) => p <| (~>) ~> p
 riftHomInv = Prof \(Rift k) -> k id
 
 instance (Procomonad j) => Promonad (Star (Rift (OP j))) where
-  id = Star (unNat (map (Op (Prof extract))) . riftHom)
-  Star l . Star r = Star (unNat (map (Op (Prof duplicate))) . riftCompose . map l . r)
+  id = Star (unNat (map (Op (Prof proextract))) . riftHom)
+  Star l . Star r = Star (unNat (map (Op (Prof produplicate))) . riftCompose . map l . r)

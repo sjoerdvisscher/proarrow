@@ -46,13 +46,13 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Ran qualified as R
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..))
 import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
-import Proarrow.Profunctor.Constant (Constant)
 
 type data PROFK j k = PK (j +-> k)
 type instance UN PK (PK p) = p
@@ -114,8 +114,8 @@ instance (Promonad p) => Monad (PK p :: PROFK k k) where
   mu = Prof \(p :.: q) -> q . p
 
 instance (Procomonad p) => Comonad (PK p :: PROFK k k) where
-  epsilon = Prof (Id . extract)
-  delta = Prof duplicate
+  epsilon = Prof (Id . proextract)
+  delta = Prof produplicate
 
 instance (cj ~ Hom j, ck ~ Hom k, Profunctor p) => Bimodule (PK ck) (PK cj) (PK p :: PROFK j k) where
   leftAction = Prof \(f :.: p) -> lmap f p

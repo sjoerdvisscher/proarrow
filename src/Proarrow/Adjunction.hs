@@ -4,7 +4,7 @@
 module Proarrow.Adjunction where
 
 import Data.Kind (Constraint, Type)
-import Prelude (type (~))
+import Prelude (const, type (~))
 
 import Proarrow.Category.Colimit (HasColimits (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -27,8 +27,6 @@ import Proarrow.Profunctor.Corepresentable
   , Corepresentable (..)
   , corepObj
   , cotabulated
-  , extend
-  , extract
   , trivialCorep
   )
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
@@ -38,15 +36,13 @@ import Proarrow.Profunctor.Representable
   , Rep
   , RepCostar (..)
   , Representable (..)
-  , bind
   , mapRepCostar
   , repObj
-  , return
   , tabulated
   , trivialRep
   )
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Promonad qualified as P
+import Proarrow.Promonad (Procomonad (..), bind, extend, extract, return)
 
 -- | Adjunctions as heteromorphisms.
 class (Representable p, Corepresentable p) => Adjunction p
@@ -71,7 +67,7 @@ unitRep :: forall p a. (Adjunction p, Ob a) => a ~> AdjMonad p % a
 unitRep = return @(AdjMonad p) @a
 
 bindRep :: forall p a b. (Adjunction p, Ob b) => a ~> AdjMonad p % b -> AdjMonad p % a ~> AdjMonad p % b
-bindRep = bind @(AdjMonad p) @a @b
+bindRep = bind @(AdjMonad p) @b
 
 -- | The comonad induced by an adjunction as a corepresentable promonad.
 type AdjComonad p = RepCostar p :.: p
@@ -182,9 +178,9 @@ instance (Proadjunction p q) => Promonad (q :.: p) where
   id = unit
   (q :.: p) . (q' :.: p') = rmap (counit (p' :.: q)) q' :.: p
 
-instance (Proadjunction p q) => P.Procomonad (p :.: q) where
-  extract = counit
-  duplicate (p :.: q) = p // case unit of q' :.: p' -> (p :.: q') :.: (p' :.: q)
+instance (Proadjunction p q) => Procomonad (p :.: q) where
+  proextract = counit
+  produplicate (p :.: q) = p // case unit of q' :.: p' -> (p :.: q') :.: (p' :.: q)
 
 -- (~>) :~> Colimit j c :.: r
 --    <=>
@@ -305,8 +301,8 @@ instance (Cocartesian j, Cocartesian k, Adjunction p) => MonoidalProfunctor (Cop
 haskAdjIsCurryAdj
   :: forall p a b a' b'. (Adjunction (p :: Type +-> Type)) => Iso (p %% () -> a -> b) (p %% () -> a' -> b') (p a b) (p a' b')
 haskAdjIsCurryAdj =
-  iso (\kab -> tabulate \a -> index @p (cotabulate (\k -> kab k a)) ()) (\p k a -> coindex p (corepMap @p (\() -> a) k))
+  iso (\kab -> tabulate \a -> index @p (cotabulate (`kab` a)) ()) (\p k a -> coindex p (corepMap @p (\() -> a) k))
 
 instance (Adjunction p) => Promonad (Adj p :: Type +-> Type) where
-  id = Adj (view (haskAdjIsCurryAdj @p) (\_ -> id))
+  id = Adj (view (haskAdjIsCurryAdj @p) (const id))
   Adj l . Adj r = Adj (view (haskAdjIsCurryAdj @p) (\k -> review haskAdjIsCurryAdj l k . review haskAdjIsCurryAdj r k))

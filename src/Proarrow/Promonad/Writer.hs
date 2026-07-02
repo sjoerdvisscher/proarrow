@@ -1,5 +1,3 @@
-{-# LANGUAGE TupleSections #-}
-
 module Proarrow.Promonad.Writer where
 
 import Prelude (($))
@@ -52,8 +50,8 @@ instance (Ob (w :: k), Monoidal k) => Profunctor (Writer w :: k +-> k) where
 instance (Ob (w :: k), Monoidal k) => Representable (Writer w :: k +-> k) where
   type Writer w % a = w ** a
   index (Writer f) = f
-  tabulate f = Writer f
-  repMap f = obj @w `par` f
+  tabulate = Writer
+  repMap = second @w
 
 -- | The cowriter comonad given the Promonad instance.
 instance (Ob (w :: k), SelfAction k, CompactClosed k) => Corepresentable (Writer w :: k +-> k) where
@@ -82,8 +80,8 @@ instance (Monoid (w :: k), Monoidal k) => Promonad (Writer w :: k +-> k) where
   Writer @c g . Writer f = Writer (first @c (mappend @w) . associatorInv @k @w @w @c . second @w g . f)
 
 instance (Comonoid (w :: k), Monoidal k) => Procomonad (Writer w :: k +-> k) where
-  extract (Writer f) = leftUnitorWith (counit @w) . f
-  duplicate (Writer @b f) = Writer (associator @k @w @w @b . first @b (comult @w) . f) :.: Writer id \\ f
+  proextract (Writer f) = leftUnitorWith (counit @w) . f
+  produplicate (Writer @b f) = Writer (associator @k @w @w @b . first @b (comult @w) . f) :.: Writer id \\ f
 
 instance (Ob (w :: k), SelfAction k) => Strong k (Writer w :: k +-> k) where
   act @_ @b @_ @y f (Writer g) =

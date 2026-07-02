@@ -141,11 +141,3 @@ instance (FunctorForRep f, Thin k) => ThinProfunctor (Rep f :: j +-> k) where
 
 rep :: forall f a b a' b'. (FunctorForRep f, Ob b) => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
 rep = tabulated
-
-type Monad m = (Promonad m, Representable m)
-
-return :: forall m a. (Monad m, Ob a) => a ~> m % a
-return = index @m id
-
-bind :: forall m a b. (Monad m, Ob b) => (a ~> m % b) -> (m % a ~> m % b)
-bind f = index (tabulate @m @b f . (trivialRep \\ f))

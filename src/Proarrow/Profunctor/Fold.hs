@@ -29,8 +29,8 @@ instance (CategoryOf k) => Profunctor (Fold :: k +-> k) where
   r \\ Fold f g _ _ = r \\ f \\ g
 
 instance (CategoryOf k) => Procomonad (Fold :: k +-> k) where
-  extract (Fold f g _ _) = f . g
-  duplicate (Fold f g m z) = Fold id g m z :.: Fold f id m z
+  proextract (Fold f g _ _) = f . g
+  produplicate (Fold f g m z) = Fold id g m z :.: Fold f id m z
 
 instance (SymMonoidal k) => MonoidalProfunctor (Fold :: k +-> k) where
   par0 = Fold id id leftUnitor id

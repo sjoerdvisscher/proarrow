@@ -12,7 +12,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->), Hom)
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -51,8 +51,8 @@ instance (Profunctor p) => Promonad (Costar ((:*:) p)) where
   Costar (Prof l) . Costar (Prof r) = Costar (Prof \(p :*: a) -> l (p :*: r (p :*: a)))
 
 instance (P.Monad m) => Procomonad (Costar (Prelude m)) where
-  extract (Costar f) = f . Prelude . P.pure
-  duplicate (Costar f) = Costar unPrelude :.: Costar (f . Prelude . P.join . unPrelude)
+  proextract (Costar f) = f . Prelude . P.pure
+  produplicate (Costar f) = Costar unPrelude :.: Costar (f . Prelude . P.join . unPrelude)
 
 composeCostar :: (Functor g) => Costar f :.: Costar g :~> Costar (Compose g f)
 composeCostar (Costar f :.: Costar g) = Costar (g . map f . getCompose)

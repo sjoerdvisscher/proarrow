@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE FunctionalDependencies #-}
 
 module Proarrow.Category.Equipment
   ( Equipment (..)
@@ -14,7 +13,7 @@ module Proarrow.Category.Equipment
   , TightPair
   ) where
 
-import Proarrow.Category.Bicategory (Adjunction, Bicategory (..), Adjunction_)
+import Proarrow.Category.Bicategory (Adjunction, Adjunction_, Bicategory (..))
 import Proarrow.Category.Bicategory.Sub (IsOb, IsOb0, SUBCAT, WithObO2 (..))
 import Proarrow.Core (Any, CategoryOf (..))
 
@@ -42,7 +41,8 @@ class
   Equipment kk
   where
   withCotightAdjoint
-    :: forall {j} {k} (f :: kk j k) r. (IsTight f) => ((Adjunction_ f (CotightAdjoint f), IsCotight (CotightAdjoint f)) => r) -> r
+    :: forall {j} {k} (f :: kk j k) r
+     . (IsTight f) => ((Adjunction_ f (CotightAdjoint f), IsCotight (CotightAdjoint f)) => r) -> r
   withTightAdjoint
     :: forall {j} {k} (f :: kk j k) r. (IsCotight f) => ((Adjunction_ (TightAdjoint f) f, IsTight (TightAdjoint f)) => r) -> r
 

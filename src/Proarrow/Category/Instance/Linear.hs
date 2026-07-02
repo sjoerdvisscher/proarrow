@@ -5,9 +5,9 @@ module Proarrow.Category.Instance.Linear where
 import Data.IORef (newIORef, readIORef, writeIORef)
 import Data.Kind (Type)
 import Data.Void (Void)
-import Prelude (Bool (..), Either (..), Eq (..), Show (..), error, showParen, showString, (&&), (>))
 import System.IO.Unsafe (unsafeDupablePerformIO)
 import Unsafe.Coerce (unsafeCoerce)
+import Prelude (Bool (..), Either (..), Eq (..), Show (..), error, showParen, showString, (&&), (>))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), Strong (..))
@@ -25,8 +25,8 @@ import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Profunctor.Identity (Id(..))
 
 data LINEAR = L Type
 type instance UN L (L a) = a

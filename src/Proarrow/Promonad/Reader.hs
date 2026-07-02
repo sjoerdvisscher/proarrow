@@ -45,8 +45,8 @@ instance (Ob (r :: k), Monoidal k) => Profunctor (Reader (OP r) :: k +-> k) wher
 instance (Ob (r :: k), Monoidal k) => Corepresentable (Reader (OP r) :: k +-> k) where
   type Reader (OP r) %% a = r ** a
   coindex (Reader f) = f
-  cotabulate f = Reader f
-  corepMap f = second @r f
+  cotabulate = Reader
+  corepMap = second @r
 
 -- | The reader monad given the Promonad instance.
 instance (Ob (r :: k), SymMonoidal k, Closed k) => Representable (Reader (OP r) :: k +-> k) where
@@ -63,8 +63,8 @@ instance (Comonoid (r :: k), Monoidal k) => Promonad (Reader (OP r) :: k +-> k) 
   Reader g . Reader @a f = Reader (g . second @r f . associator @k @r @r @a . first @a (comult @r))
 
 instance (Monoid (r :: k), Monoidal k) => Procomonad (Reader (OP r) :: k +-> k) where
-  extract (Reader f) = f . leftUnitorInvWith (mempty @r)
-  duplicate (Reader @a f) = Reader id :.: Reader (f . first @a (mappend @r) . associatorInv @k @r @r @a) \\ f
+  proextract (Reader f) = f . leftUnitorInvWith (mempty @r)
+  produplicate (Reader @a f) = Reader id :.: Reader (f . first @a (mappend @r) . associatorInv @k @r @r @a) \\ f
 
 instance (Ob (r :: k), SelfAction k) => Strong k (Reader (OP r) :: k +-> k) where
   act @a @_ @x @_ f (Reader g) =
@@ -124,7 +124,8 @@ runReaderT (ReaderT (Reader f :.: p)) = lmap f p
 ask :: (Promonad p, Monoidal k, Ob (r :: k)) => ReaderT (OP r) p Unit r
 ask = ReaderT (Reader rightUnitor :.: id)
 
-answer :: forall {k} p r a b. (Promonad p, Monoidal k, Comonoid (r :: k)) => ReaderT (OP r) p a b -> ReaderT (OP r) p (r ** a) b
+answer
+  :: forall {k} p r a b. (Promonad p, Monoidal k, Comonoid (r :: k)) => ReaderT (OP r) p a b -> ReaderT (OP r) p (r ** a) b
 answer (ReaderT (Reader f :.: p)) = withOb2 @k @r @a $ ReaderT (Reader (f . leftUnitorWith @(r ** a) (counit @r)) :.: p)
 
 local :: forall {k} a b p r. (Monoidal k, Ob (r :: k)) => r ~> r -> ReaderT (OP r) p a b -> ReaderT (OP r) p a b

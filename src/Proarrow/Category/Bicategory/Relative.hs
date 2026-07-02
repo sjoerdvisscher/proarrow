@@ -1,10 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Bicategory.Relative where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Core (CategoryOf(..), CAT)
-import Proarrow.Category.Bicategory (Bicategory(..))
+import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Core (CAT, CategoryOf (..))
 
 -- | A @j@-relative monad @t@. Note that @j@ is the opposite of the usual convention.
 -- See 'Proarrow.Squares.Relative' how to use this with a conjoint and a companion to get the regular definition.
