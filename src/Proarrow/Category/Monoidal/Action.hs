@@ -86,8 +86,8 @@ instance (MonoidalAction m k, SymMonoidal m) => SymMonoidalAction m k
 
 class (Act a b ~ a ** b) => ActIsTensor a b
 instance (Act a b ~ a ** b) => ActIsTensor a b
-class (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
-instance (Act a (Act b c) ~ a ** (b ** c), a ** (Act b c) ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
+class (Act a (Act b c) ~ a ** (b ** c), a ** Act b c ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
+instance (Act a (Act b c) ~ a ** (b ** c), a ** Act b c ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
 class
   ( SymMonoidalAction k k
   , Strong k ((~>) :: k +-> k)

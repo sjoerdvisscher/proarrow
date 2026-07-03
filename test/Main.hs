@@ -5,6 +5,8 @@ module Main where
 import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
+-- import Examples.SimplyTypedLambdaCalculus qualified as STLC
+import Examples.UntypedLambdaCalculus qualified as ULC
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
 import Props.Dot qualified as Dot
@@ -18,27 +20,31 @@ import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
 import Props.ZX qualified as ZX
-import Examples.UntypedLambdaCalculus qualified as ULC
 
 main :: IO ()
 main =
   defaultMain $
-  testGroup "tests" $ [
     testGroup
-      "Proarrow"
-      [ Bool.test
-      , Cospan.test
-      , Dot.test
-      , FinRel.test
-      , FinSet.test
-      , Free.test
-      , Hask.test
-      , Kleisli.test
-      , Mat.test
-      , PointedHask.test
-      , Simplex.test
-      , Span.test
-      , ZX.test
-      ],
-    testGroup "Examples" [ ULC.test ]
-  ]
+      "tests"
+      [ testGroup
+          "Proarrow"
+          [ Bool.test
+          , Cospan.test
+          , Dot.test
+          , FinRel.test
+          , FinSet.test
+          , Free.test
+          , Hask.test
+          , Kleisli.test
+          , Mat.test
+          , PointedHask.test
+          , Simplex.test
+          , Span.test
+          , ZX.test
+          ]
+      , testGroup
+          "Examples"
+          [ ULC.test
+          -- , STLC.test
+          ]
+      ]

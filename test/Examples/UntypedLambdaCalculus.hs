@@ -7,7 +7,7 @@ import Data.List.NonEmpty (NonEmpty (..))
 import Data.Type.Equality ((:~:) (..))
 import Prelude hiding (fst, id, snd, (.))
 
-import Test.Falsify.Generator (Gen, oneof)
+import Test.Falsify.Generator (Gen, frequency, oneof)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 
@@ -25,7 +25,7 @@ import Testable
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow
-  , genSomeDef
+  , mapSome
   , pattern GenNonEmpty
   )
 
@@ -129,6 +129,7 @@ lift s = Cons (s . Wk) Vz \\ s
 ($$) (Lam t) u = lmap (cons id u) t \\ u
 ($$) t u = App t u
 
+-- simplifies @Cons (Wk . σ) (lmap σ Vz)@ to @σ@
 cons :: Sub a b -> Tm a -> Sub a (S b)
 cons (Comp Wk s) t = case (countWk s, countVs t) of
   (Just l, Just r) | l == r -> s
@@ -169,7 +170,7 @@ test =
     ]
 
 instance Testable CON where
-  genSome = genSomeDef @'[Z, S Z, S (S Z), S (S (S Z))]
+  genSome = frequency [(2, pure (Some @Z)), (1, mapSome S <$> genSome)]
   showOb @a = case sing @a of
     SZ -> "Z"
     SS @b -> "(S " ++ showOb @CON @b ++ ")"
