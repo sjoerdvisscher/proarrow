@@ -20,7 +20,7 @@ import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), Hypergraph, spider
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts, Coprod (..))
+import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, coactCC, currySA, expSA)
 import Proarrow.Object.Exponential (Closed (..))
@@ -48,7 +48,7 @@ shiftN n = n `B.shiftL` fromIntegral (snatToNatural (snat @n))
 
 -- | Split n + m bits into two parts: the lower n bits and the higher m bits.
 split :: (SNatI n) => Bitstring (Plus n m) -> (Bitstring n, Bitstring m)
-split @n (BS x) = case (x `divMod` (shiftN @n 1)) of (m, n) -> (BS n, BS m)
+split @n (BS x) = let (m, n) = x `divMod` shiftN @n 1 in (BS n, BS m)
 
 splits :: forall n m. (SNatI n, SNatI m) => Bitstring (Mult n m) -> Vec n (Bitstring m)
 splits bs = case snat @n of
@@ -58,7 +58,7 @@ splits bs = case snat @n of
 
 -- | Combine two bitstrings of lengths n and m into one bitstring with the n lower bits or m higher bits.
 combine :: (SNatI n) => Bitstring n -> Bitstring m -> Bitstring (Plus n m)
-combine @n (BS x) (BS y) = BS ((shiftN @n y) B..|. x)
+combine @n (BS x) (BS y) = BS (shiftN @n y B..|. x)
 
 combines :: (SNatI m) => Vec n (Bitstring m) -> Bitstring (Mult n m)
 combines VNil = 0

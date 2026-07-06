@@ -1,15 +1,17 @@
 module Proarrow.Category.Instance.PointedHask where
 
+import Control.Monad ((>=>))
 import Data.Kind (Type)
 import Data.Maybe qualified as P
+import Data.Void (Void, absurd)
 import GHC.Generics (Generic)
 import Prelude (Eq, Maybe (..), Show, const, ($), (>>=), type (~))
 
-import Data.Void (Void, absurd)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Applicative (liftA2)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
@@ -17,7 +19,6 @@ import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Functor (Functor(..))
 
 type data POINTED = P Type
 type instance UN P (P a) = a
@@ -34,7 +35,7 @@ instance Profunctor Pointed where
   r \\ Pt{} = r
 instance Promonad Pointed where
   id = Pt Just
-  Pt f . Pt g = Pt (\a -> g a >>= f)
+  Pt f . Pt g = Pt (g >=> f)
 
 -- | The category of types with an added point and point-preserving morphisms.
 instance CategoryOf POINTED where
@@ -103,7 +104,7 @@ instance Powered Type POINTED where
   type P a ^ n = P (n -> Maybe a)
   withObPower r = r
   power f = Pt (\a -> Just \n -> unPt (f n) a)
-  unpower (Pt f) n = Pt \a -> f a >>= ($ n)
+  unpower (Pt f) n = Pt (f >=> ($ n))
 
 instance Copowered Type POINTED where
   type n *. P a = P (n, a)
@@ -141,18 +142,18 @@ underlyingPt :: (HasZeroObject k) => (a :: k) ~> b -> Unit ~> P (a ~> b)
 underlyingPt f = Pt \() -> Just f
 
 enrichedPt :: (Ob (a :: k), Ob b, HasZeroObject k) => Unit ~> P (a ~> b) -> a ~> b
-enrichedPt (Pt f) = case f () of Just g -> g; Nothing -> zero
+enrichedPt (Pt f) = P.fromMaybe zero (f ())
 
 compPt :: (Ob (a :: k), Ob b, Ob c, HasZeroObject k) => P (b ~> c) ** P (a ~> b) ~> P (a ~> c)
 compPt = Pt \(bc, ab) -> Just (bc . ab)
 
 type FromPointed :: (Type -> Type) -> (POINTED -> Type)
 data FromPointed f a where
-  FromPointed :: { unFromPointed :: f a } -> FromPointed f (P a)
+  FromPointed :: {unFromPointed :: f a} -> FromPointed f (P a)
 
 type Filterable f = Functor (FromPointed f)
 
-mapMaybe :: Filterable f => (a -> Maybe b) -> f a -> f b
+mapMaybe :: (Filterable f) => (a -> Maybe b) -> f a -> f b
 mapMaybe f = unFromPointed . map (Pt f) . FromPointed
 
 instance Functor (FromPointed []) where

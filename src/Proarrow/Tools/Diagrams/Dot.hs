@@ -23,6 +23,7 @@ import Prelude
   , const
   , either
   , foldMap
+  , otherwise
   , show
   , snd
   , splitAt
@@ -85,7 +86,7 @@ shift (Fin i) = Fin (len @as + i)
 eitherF :: forall as bs r. (IsList as) => (Fin as -> r) -> (Fin bs -> r) -> Fin (as ++ bs) -> r
 eitherF f g (Fin i)
   | i < len @as = f (Fin i)
-  | True = g (Fin (i - len @as))
+  | otherwise = g (Fin (i - len @as))
 
 names :: (IsList (as :: [Symbol])) => Vec as String
 names @as = case sList @as of
@@ -135,15 +136,14 @@ instance Profunctor Dot where
   dimap = dimapDefault
   r \\ Dot{} = r
 instance Promonad Dot where
-  id @(D as) = Dot \n ->
-    ( n
-    , DotData
-        { inputs = fmap Left (ixs @as)
-        , outputs = fmap Left (ixs @as)
-        , edges = []
-        , nodeOpts = []
-        }
-    )
+  id @(D as) =
+    Dot
+      (,DotData
+          { inputs = fmap Left (ixs @as)
+          , outputs = fmap Left (ixs @as)
+          , edges = []
+          , nodeOpts = []
+          })
   Dot @bs l . Dot r = Dot \i ->
     let (k, DotData li lo le ln) = l j; (j, DotData ri ro re rn) = r i
     in ( k
@@ -159,7 +159,7 @@ instance CategoryOf DOT where
   type Ob a = (Is D a, IsList (UN D a))
 
 instance MonoidalProfunctor Dot where
-  par0 = Dot \i -> (i, DotData (Vec []) (Vec []) [] [])
+  par0 = Dot (,DotData (Vec []) (Vec []) [] [])
   Dot @lis @los l `par` Dot @ris @ros r = withIsList2 @lis @ris $ withIsList2 @los @ros $ Dot \i ->
     let (k, DotData li lo le ln) = l j; (j, DotData ri ro re rn) = r i
     in ( k
@@ -195,12 +195,12 @@ instance SymMonoidal DOT where
                  }
              )
 instance (Ob as) => Monoid (D as) where
-  mempty = node' (Vec []) (Vec (cycle [":s"])) "shape=point; width=0.07; fillcolor=white"
+  mempty = node' (Vec []) (Vec (repeat ":s")) "shape=point; width=0.07; fillcolor=white"
   mappend =
-    withIsList2 @as @as $ node' (Vec (cycle [":nw", ":ne"])) (Vec (cycle [":s"])) "shape=point; width=0.07; fillcolor=white"
+    withIsList2 @as @as $ node' (Vec (cycle [":nw", ":ne"])) (Vec (repeat ":s")) "shape=point; width=0.07; fillcolor=white"
 instance (Ob as) => Comonoid (D as) where
-  counit = node' (Vec (cycle [":n"])) (Vec []) "shape=point; width=0.07"
-  comult = withIsList2 @as @as $ node' (Vec (cycle [":n"])) (Vec (cycle [":sw", ":se"])) "shape=point; width=0.07"
+  counit = node' (Vec (repeat ":n")) (Vec []) "shape=point; width=0.07"
+  comult = withIsList2 @as @as $ node' (Vec (repeat ":n")) (Vec (cycle [":sw", ":se"])) "shape=point; width=0.07"
 instance CopyDiscard DOT
 instance Strong DOT Dot where
   act = par

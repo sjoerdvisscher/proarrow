@@ -263,7 +263,8 @@ instance BOOL `InternalIn` FINSET where
     Cone $
       Leg (FinSet $ fin0 ::: fin1 ::: fin2 ::: fin2 ::: VNil) $
         Leg (FinSet $ fin0 ::: fin0 ::: fin1 ::: fin2 ::: VNil) $
-          Leg (FinSet $ fin0 ::: fin1 ::: fin1 ::: fin2 ::: VNil) $
+          Leg
+            (FinSet $ fin0 ::: fin1 ::: fin1 ::: fin2 ::: VNil)
             Apex
 
 type Finite k = k `InternalIn` FINSET

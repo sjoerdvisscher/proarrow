@@ -20,15 +20,15 @@ import Prelude hiding (Monoid, id, (.))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), spiderDefault)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, currySA, expSA, coactCC)
+import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, coactCC, currySA, expSA)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), Costrong (..))
 
 newtype Bitstring (n :: Nat) = BS Int
   deriving (Eq, Ord)
@@ -43,7 +43,7 @@ instance Enum (Bitstring n) where
 
 -- | Split n + m bits into two parts: the lower n bits and the higher m bits.
 split :: (KnownNat n) => Bitstring (n + m) -> (Bitstring n, Bitstring m)
-split @n (BS x) = case (x `divMod` (1 `shiftL` nat @n)) of (m, n) -> (BS n, BS m)
+split @n (BS x) = let (m, n) = x `divMod` (1 `shiftL` nat @n) in (BS n, BS m)
 
 -- | Combine two bitstrings of lengths n and m into one bitstring with the n lower bits or m higher bits.
 combine :: (KnownNat n) => Bitstring n -> Bitstring m -> Bitstring (n + m)

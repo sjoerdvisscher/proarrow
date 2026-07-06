@@ -8,7 +8,7 @@ import Data.Bifunctor (bimap)
 import Data.Kind (Type)
 import Data.Monoid qualified as P
 import GHC.Generics qualified as G
-import Prelude (Either (..), Maybe (..), Monad (..), const, either, fmap, uncurry, ($))
+import Prelude (Either (..), Maybe (..), Monad (..), const, either, flip, fmap, uncurry, ($))
 import Prelude qualified as P
 
 import Data.Functor.Const (Const (..))
@@ -133,9 +133,9 @@ haskTraversing :: (P.Traversable t) => HaskTraversal (t a) (t b) a b
 haskTraversing @t =
   Optic
     ( tabulate
-        . ((($ ()) . index . unFromProfunctor) .)
+        . (flip (index . unFromProfunctor) () .)
         . P.traverse @t
-        . (\p a -> FromProfunctor (lmap (\_ -> a) p))
+        . (\p a -> FromProfunctor (lmap (const a) p))
     )
 
 class (Monad m) => Algebra m a where algebra :: m a -> a
@@ -223,7 +223,7 @@ v1Optic :: Traversal (G.V1 a) (G.V1 a') a a'
 v1Optic = Optic \_ -> dimap (\case {}) (\case {}) copar0
 
 u1Optic :: Traversal (G.U1 a) (G.U1 a') a a'
-u1Optic = Optic \_ -> dimap (\_ -> ()) (\() -> G.U1) par0
+u1Optic = Optic \_ -> dimap (const ()) (\() -> G.U1) par0
 
 par1Optic :: Traversal (G.Par1 a) (G.Par1 a') a a'
 par1Optic = Optic (dimap G.unPar1 G.Par1)
@@ -247,7 +247,7 @@ multOptic
   :: Traversal (p a) (p a') a a'
   -> Traversal (q a) (q a') a a'
   -> Traversal ((p G.:*: q) a) ((p G.:*: q) a') a a'
-multOptic (Optic l) (Optic r) = Optic \p -> dimap (\(f G.:*: g) -> (f, g)) (\(f, g) -> f G.:*: g) (l p `par` r p)
+multOptic (Optic l) (Optic r) = Optic \p -> dimap (\(f G.:*: g) -> (f, g)) (uncurry (G.:*:)) (l p `par` r p)
 
 compOptic
   :: Traversal (p (q a)) (p (q a')) (q a) (q a')

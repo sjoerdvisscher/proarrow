@@ -10,6 +10,7 @@ import Prelude (($), type (~))
 import Prelude qualified as P
 
 import Data.Fin (Fin)
+import Proarrow.Adjunction (Involution)
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -34,9 +35,8 @@ import Proarrow.Object.Dual
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Representable (Rep (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Adjunction (Involution)
+import Proarrow.Profunctor.Representable (Rep (..))
 
 type n + m = Plus n m
 type (*) n m = Mult n m
@@ -94,7 +94,7 @@ instance IsNat Z where
   withAssocMult r = r
   withDist r = r
 instance (IsNat n) => IsNat (S n) where
-  matId = (1 ::: zero) ::: (P.fmap (0 :::) matId)
+  matId = (1 ::: zero) ::: P.fmap (0 :::) matId
   withPlusNat @m r = withPlusNat @n @m r
   withMultNat @m r = withMultNat @n @m (withPlusNat @m @(n * m) r)
   withPlusSucc @m r = withPlusSucc @n @m r
@@ -227,12 +227,14 @@ data family Conjugate :: MatK (Complex a) +-> MatK (Complex a)
 instance (P.RealFloat a) => FunctorForRep (Conjugate :: MatK (Complex a) +-> MatK (Complex a)) where
   type Conjugate @ n = n
   fmap (Mat m) = Mat (P.fmap (P.fmap conjugate) m)
+
 -- | Conjugation is a self-adjoint functor
 instance (P.RealFloat a) => Corepresentable (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a)) where
   type Rep Conjugate %% n = n
   coindex (Rep f) = f
   cotabulate f = Rep f \\ f
   corepMap = fmap @Conjugate
+
 instance (P.RealFloat a) => Involution (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a))
 instance (P.RealFloat a) => MonoidalProfunctor (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a)) where
   par0 = Rep par0

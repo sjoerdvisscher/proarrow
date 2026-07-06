@@ -14,7 +14,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, StrongDistributiveProfunctor, Traversable (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (//), (:~>), type (+->), Hom)
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
@@ -65,7 +65,7 @@ instance (Applicative f, Monoidal j, Monoidal k) => MonoidalProfunctor (Star (f 
 
 instance (Functor f, HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (Star (f :: j -> k))) where
   par0 = Coprod (Star initiate)
-  Coprod (Star @a f) `par` Coprod (Star @b g) = withObCoprod @_ @a @b (Coprod (Star ((map (lft @_ @a @b) . f ||| map (rgt @_ @a @b) . g))))
+  Coprod (Star @a f) `par` Coprod (Star @b g) = withObCoprod @_ @a @b (Coprod (Star (map (lft @_ @a @b) . f ||| map (rgt @_ @a @b) . g)))
 
 -- Hmm, another wrapper required...
 type CoprodDom :: j +-> k -> COPROD j +-> k
@@ -80,7 +80,7 @@ instance (Alternative f, Monoidal k, Distributive j) => MonoidalProfunctor (Copr
   Co (Star @a f) `par` Co (Star @b g) = let ab = obj @a +++ obj @b in Co (Star (alt @f @a @b ab . (f `par` g))) \\ ab
 
 instance (P.Functor f) => Strong (PROD Type) (Star (Prelude f)) where
-  act (Prod f) (Star k) = Star (\(a, x) -> P.fmap ((,) (f a)) (k x))
+  act (Prod f) (Star k) = Star (\(a, x) -> P.fmap (f a,) (k x))
 
 instance (P.Applicative f) => Strong (SUBCAT P.Traversable) (Star (Prelude f)) where
   act (Sub (Nat n)) (Star f) = Star (P.traverse f . n)
@@ -99,8 +99,8 @@ instance Traversable (Star []) where
     where
       go =
         dimap
-          (\l -> case l of [] -> P.Left (); (x : xs) -> P.Right (x, xs))
-          (P.const [] ||| \(x, xs) -> x : xs)
+          (\case [] -> P.Left (); (x : xs) -> P.Right (x, xs))
+          (P.const [] ||| P.uncurry (:))
           (par0 `copar` (p `par` go))
 
 starTraverse

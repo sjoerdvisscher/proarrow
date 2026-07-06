@@ -1,5 +1,11 @@
 {-# LANGUAGE LinearTypes #-}
 
+{- HLINT ignore "Avoid lambda using `infix`" -}
+
+{- HLINT ignore "Use curry" -}
+{- HLINT ignore "Use bimap" -}
+{- HLINT ignore "Use tuple-section" -}
+
 module Proarrow.Category.Instance.Linear where
 
 import Data.IORef (newIORef, readIORef, writeIORef)
@@ -28,7 +34,7 @@ import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
-data LINEAR = L Type
+newtype LINEAR = L Type
 type instance UN L (L a) = a
 
 type Linear :: CAT LINEAR

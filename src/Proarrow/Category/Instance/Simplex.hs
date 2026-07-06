@@ -5,10 +5,11 @@ module Proarrow.Category.Instance.Simplex (module Proarrow.Category.Instance.Sim
 
 import Data.Fin (Fin (..))
 import Data.Kind (Type)
-import Data.Type.Nat (Nat (..), type Plus, SNatI)
+import Data.Type.Nat (Nat (..), SNatI, type Plus)
 import Data.Vec.Lazy (Vec (..))
 import Prelude (Eq, Show (..), (++), type (~))
 
+import Data.Typeable (Typeable)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
@@ -16,7 +17,6 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Data.Typeable (Typeable)
 
 type n + m = Plus n m
 
@@ -91,7 +91,7 @@ instance FunctorForRep (Pick a) where
   type (Pick a) @ OP n = Vec n a
   fmap (Op ZZ) VNil = VNil
   fmap (Op (Y f)) (_ ::: xs) = fmap @(Pick a) (Op f) xs
-  fmap (Op (X f)) (x ::: xs) = x ::: (fmap @(Pick a) (Op f) (x ::: xs))
+  fmap (Op (X f)) (x ::: xs) = x ::: fmap @(Pick a) (Op f) (x ::: xs)
 
 instance MonoidalProfunctor Simplex where
   par0 = ZZ
