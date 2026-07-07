@@ -67,7 +67,7 @@ instance (Monoidal k) => Protensor (Tensor :: PROTENSOR k) where
             in fas //
                  fass //
                    let fasg = Str.Str @(UN L as) @'[Str.Fold (UN L as)] fas `par` Str.Str @(UN L (Str.Fold ass')) @(UN L bs) (Str.unStr g)
-                   in foldList (as `par` fass) // fasg // (Tensor (Str.Str (Str.unStr fasg))) :.: Cons (Tensor (Str.Str id)) l
+                   in foldList (as `par` fass) // fasg // Tensor (Str.Str (Str.unStr fasg)) :.: Cons (Tensor (Str.Str id)) l
 
 instance (MonoidalProfunctor p) => PromonoidalProfunctor Tensor p where
   parN (Tensor (Str.Str f) :.: l) = let fl = foldList l in lmap f fl :.: Tensor (Str.Str (tgt fl)) \\ fl \\ l

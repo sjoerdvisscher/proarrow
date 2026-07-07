@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Profunctor.Rift where
 
 import Prelude (type (~))
@@ -10,9 +12,9 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rma
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), trivialCorep)
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
+import Proarrow.Profunctor.Representable (Rep (..), RepCostar, Representable (..), trivialRep, withObRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Promonad (Procomonad (..), RelativeComonad (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -27,6 +29,9 @@ runRift j (Rift k) = k j \\ j
 
 runRiftProf :: (Profunctor j, Profunctor p) => j :.: (p <| j) ~> p
 runRiftProf = Prof \(j :.: r) -> runRift j r
+
+riftUniv :: (Profunctor j, Profunctor g) => (j :.: g) ~> p -> g ~> p <| j
+riftUniv (Prof n) = Prof \g -> g // Rift \j -> n (j :.: g)
 
 flipRift :: (FunctorForRep j, Profunctor p) => p <| Rep j ~> Corep j :.: p
 flipRift = Prof \(Rift k) -> trivialCorep :.: k trivialRep
@@ -76,6 +81,10 @@ type PWRift j p a = (p <| j) % a
 class (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
 instance (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
 
+instance (Representable g, Representable f, Profunctor j, f ~ j <| g) => RelativeComonad j (RepCostar f :.: RepCostar g) where
+  relExtract @a = let f = trivialRep @f @a in runRift (trivialRep @g) f \\ f
+  relExtend @a @b j = withObRep @f @a (repMap @g @(f % a) @(f % b) (index @f @_ @b (Rift (\g -> lmap (index g) j)))) \\ j
+
 riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => (p <| j) <| i ~> p <| (j :.: i)
 riftCompose = Prof \k -> k // Rift \(j :.: i) -> runRift j (runRift i k)
 
@@ -83,7 +92,7 @@ riftComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => p <| (j :.: i) ~
 riftComposeInv = Prof \k -> k // Rift \i -> i // Rift \j -> runRift (j :.: i) k
 
 riftHom :: (Profunctor p) => p ~> p <| (~>)
-riftHom = Prof \p -> p // Rift \j -> lmap j p
+riftHom = Prof \p -> p // Rift (`lmap` p)
 
 riftHomInv :: (Profunctor p) => p <| (~>) ~> p
 riftHomInv = Prof \(Rift k) -> k id

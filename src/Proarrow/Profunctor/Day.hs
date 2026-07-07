@@ -7,6 +7,7 @@ import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner', unitObj)
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), first', second')
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core
@@ -27,7 +28,6 @@ import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -163,3 +163,10 @@ instance (Monoidal j, Monoidal k) => MonoidalAction (j +-> k) (j +-> k) where
   unitorInv = leftUnitorInv
   multiplicator = associator
   multiplicatorInv = associatorInv
+
+-- Day p q :: j +-> k can be Strong in multiple ways:
+-- 1. Either p or q is strong, and we have: Act a (b ** c) ~ (Act a b) ** c.
+-- 2. Or p and q are both strong, and we have: Act a (b ** c) ~ (Act a b) ** (Act a c)
+
+day2comp :: (Strong k (p :: k +-> k), Strong k q, SelfAction k) => Day p q ~> p :.: q
+day2comp = Prof \(Day @_ @d @e f p q g) -> lmap f (first' @e p) :.: rmap g (second' @d q) \\ p \\ q

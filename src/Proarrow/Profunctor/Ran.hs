@@ -1,4 +1,5 @@
-{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Profunctor.Ran where
 
@@ -11,10 +12,10 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), trivialCorep)
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), trivialCorep, withObCorep)
+import Proarrow.Profunctor.Representable (CorepStar, Rep (..), Representable (..), trivialRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Promonad (Procomonad (..))
+import Proarrow.Promonad (Procomonad (..), RelativeMonad (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.
 
@@ -29,6 +30,9 @@ runRan j (Ran k) = k j \\ j
 
 runRanProf :: (Profunctor j, Profunctor p) => (j |> p) :.: j ~> p
 runRanProf = Prof \(r :.: j) -> runRan j r
+
+ranUniv :: (Profunctor j, Profunctor g) => (g :.: j) ~> p -> g ~> j |> p
+ranUniv (Prof n) = Prof \g -> g // Ran \j -> n (g :.: j)
 
 flipRan :: (FunctorForRep j, Profunctor p) => Corep j |> p ~> p :.: Rep j
 flipRan = Prof \(Ran k) -> k trivialCorep :.: trivialRep
@@ -71,6 +75,10 @@ type PWLift j p a = (j |> p) %% a
 class (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 instance (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 
+instance (Corepresentable g, Corepresentable f, Profunctor j, f ~ g |> j) => RelativeMonad j (CorepStar g :.: CorepStar f) where
+  relReturn @a = let f = trivialCorep @f @a in runRan (trivialCorep @g) f \\ f
+  relBind @b @a j = withObCorep @f @b (corepMap @g @(f %% a) @(f %% b) (coindex @f @a (Ran (\g -> rmap (coindex g) j)))) \\ j
+
 -- | The right Kan extension is the right adjoint of the precomposition functor.
 instance (Profunctor j) => Corepresentable (Star (Ran (OP j))) where
   type Star (Ran (OP j)) %% p = p :.: j
@@ -85,7 +93,7 @@ ranComposeInv :: (Profunctor i, Profunctor j, Profunctor p) => (i :.: j) |> p ~>
 ranComposeInv = Prof \k -> k // Ran \i -> i // Ran \j -> runRan (i :.: j) k
 
 ranHom :: (Profunctor p) => p ~> (~>) |> p
-ranHom = Prof \p -> p // Ran \j -> rmap j p
+ranHom = Prof \p -> p // Ran (`rmap` p)
 
 ranHomInv :: (Profunctor p) => (~>) |> p ~> p
 ranHomInv = Prof \(Ran k) -> k id

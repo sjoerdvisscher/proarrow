@@ -8,8 +8,8 @@ import Data.Kind (Type)
 import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..), SubMonoidal)
-import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Core (CategoryOf (..), OB)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), leftUnitorWith, rightUnitorWith)
+import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object.BinaryProduct (HasProducts, PROD (..))
 
@@ -31,3 +31,12 @@ instance (CopyDiscard j, CopyDiscard k) => CopyDiscard (j, k) where
 instance (SubMonoidal ob, CopyDiscard k) => CopyDiscard (SUBCAT (ob :: OB k)) where
   copy = Sub copy
   discard = Sub discard
+
+fst :: forall {k} (a :: k) b. (CopyDiscard k, Ob a, Ob b) => (a ** b) ~> a
+fst = rightUnitorWith (discard @k @b)
+
+snd :: forall {k} a (b :: k). (CopyDiscard k, Ob a, Ob b) => (a ** b) ~> b
+snd = leftUnitorWith (discard @k @a)
+
+(&&&) :: forall {k} (a :: k) x y. (CopyDiscard k) => a ~> x -> a ~> y -> a ~> x ** y
+f &&& g = (f `par` g) . copy \\ f

@@ -171,7 +171,7 @@ instance Closed CON where
   curry @d @g f =
     f // case sing @g of
       SE -> f
-      SC @g' -> curry @CON @d @g' (withObProd @CON @d @g' (currySub f))
+      SC @g' -> withObProd @CON @d @g' (curry @CON @d @g' (currySub f))
   apply @d @g = case sing @d of
     SE -> id
     SC @d' @a -> withObExpSub @g @a $ uncurrySub (apply @CON @d' @(Exp g a))

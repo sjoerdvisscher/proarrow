@@ -4,7 +4,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, tgt, (:~>), type (+->))
-import Proarrow.Functor (Functor (..))
+import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (Coprod (..), copar, copar0)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
@@ -33,6 +33,10 @@ instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) whe
   cotabulate :: forall a b. (Ob a) => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
   cotabulate f = withObCorep @p @a (cotabulate id :.: cotabulate f)
   corepMap f = corepMap @q (corepMap @p f)
+
+instance (FunctorForRep p, FunctorForRep q) => FunctorForRep (p :.: q) where
+  type (p :.: q) @ b = p @ (q @ b)
+  fmap = fmap @p . fmap @q
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
   par0 = par0 :.: par0

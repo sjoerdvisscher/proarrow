@@ -1,4 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
 module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)
