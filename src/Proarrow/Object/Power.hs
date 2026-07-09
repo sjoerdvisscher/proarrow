@@ -1,20 +1,23 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE FunctionalDependencies #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Object.Power where
 
 import Data.Kind (Type)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Enriched (Enriched, EnrichedProfunctor (..), HomObj, comp)
+import Proarrow.Category.Enriched (Enriched, EnrichedProfunctor (..), GenArrow (..), HomObj, comp)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (leftUnitorInvWith)
-import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), (//), type (+->))
+import Proarrow.Category.Opposite (OPPOSITE (..))
+import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (TerminalObject, terminate)
+import Proarrow.Profunctor.Representable (Representable (..))
 
 -- | Categories powered over @v@.
 class (Enriched v k, Closed v) => Powered v k where
@@ -77,3 +80,8 @@ instance (CategoryOf j, CategoryOf k) => Powered Type (j +-> k) where
   withObPower r = r
   power f = Prof \p -> p // Power \n -> unProf (f n) p
   unpower (Prof f) n = Prof \p -> unPower (f p) n
+
+instance (Powered v k, Ob (n :: v)) => Representable (GenArrow (OP (n :: v)) :: k +-> k) where
+  type GenArrow (OP n) % a = a ^ n
+  index (GenArrow @a @b f) = power @v @k @a @b f
+  trivialRep @a = withObPower @v @k @a @n (GenArrow (unpower @v @k @a (obj @(a ^ n))))

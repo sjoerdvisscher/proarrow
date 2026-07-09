@@ -10,9 +10,9 @@ import Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), leftUnitorInvWith, rightUnitorInvWith)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor, type (+->))
+import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor ((\\)), Promonad (..), type (+->))
 import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 import Proarrow.Object.Exponential (uncurry)
 import Proarrow.Object.Exponential qualified as E
@@ -101,3 +101,19 @@ instance (EnrichedProfunctor v p) => EnrichedProfunctor (Clone v) (Op p) where
   enriched (Sub f) = Op (enriched f)
   rmap @(OP a) @(OP b) @(OP c) = Sub (lmap @v @p @b @a @c)
   lmap @(OP a) @(OP b) @(OP c) = Sub (rmap @v @p @b @a @c)
+
+-- | A generalized arrow of an enriched category. If @k@ is both powered and copowered, this is an adjunction.
+type GenArrow :: OPPOSITE v -> k +-> k
+data GenArrow n a b where
+  GenArrow :: (Ob a, Ob b) => n ~> HomObj v a b -> GenArrow (OP n) a b
+
+instance (Ob (n :: v), Enriched v k, CategoryOf k) => Profunctor (GenArrow (OP n) :: k +-> k) where
+  dimap @c @a @b @d l r (GenArrow f) =
+    GenArrow
+      ( let g = comp @v @c @a @b . rightUnitorInvWith (underlying @v l) . f
+        in comp @v @c @b @d . leftUnitorInvWith (underlying @v r) . g \\ g
+      )
+      \\ f
+      \\ l
+      \\ r
+  r \\ GenArrow f = r \\ f

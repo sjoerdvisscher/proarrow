@@ -6,15 +6,16 @@ module Proarrow.Object.Copower where
 import Data.Kind (Type)
 import Prelude (type (~))
 
-import Proarrow.Category.Enriched (Enriched, HomObj, comp, underlying)
+import Proarrow.Category.Enriched (Enriched, GenArrow (..), HomObj, comp, underlying)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (rightUnitorInvWith)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), (//), type (+->))
+import Proarrow.Core (CategoryOf (..), Ob, Profunctor (dimap, (\\)), Promonad (..), obj, (//), type (+->))
 import Proarrow.Object.Exponential (Closed)
 import Proarrow.Object.Power (Powered (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 -- | Categories copowered over @v@.
 class (Enriched v k, Closed v) => Copowered v k where
@@ -77,3 +78,8 @@ instance (Powered v k, Enriched v (OPPOSITE k), forall (a :: k) b. HomObjOp v a 
   withObCopower @(OP a) @n r = withObPower @v @k @a @n r
   copower @(OP a) @(OP b) f = Op (power @v @k @b @a f)
   uncopower @(OP a) (Op f) = unpower @v @k @a f
+
+instance (Copowered v k, Ob (n :: v)) => Corepresentable (GenArrow (OP (n :: v)) :: k +-> k) where
+  type GenArrow (OP n) %% a = n *. a
+  coindex (GenArrow @a @b f) = copower @v @k @a @b f
+  trivialCorep @a = withObCopower @v @k @a @n (GenArrow (uncopower @v @k @a (obj @(n *. a))))
