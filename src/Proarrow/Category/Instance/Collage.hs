@@ -2,6 +2,8 @@ module Proarrow.Category.Instance.Collage where
 
 import Data.Kind (Constraint)
 
+import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
+import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -15,10 +17,9 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate')
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
-import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
-import Proarrow.Functor (FunctorForRep (..))
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind
 type data COLLAGE (p :: k +-> j) = L j | R k
@@ -91,3 +92,12 @@ data family InjR :: forall (p :: k +-> j) -> k +-> COLLAGE p
 instance (Profunctor p) => FunctorForRep (InjR p) where
   type InjR p @ a = R a
   fmap = InR
+
+data family ProjTo2 :: forall (p :: k +-> j) -> COLLAGE p +-> BOOL
+instance (Profunctor p) => FunctorForRep (ProjTo2 p) where
+  type ProjTo2 p @ L a = FLS
+  type ProjTo2 p @ R a = TRU
+  fmap = \case
+    InL _ -> Fls
+    InR _ -> Tru
+    L2R _ -> F2T

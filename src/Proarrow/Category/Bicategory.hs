@@ -75,7 +75,7 @@ class (Locally CategoryOf kk, forall i. (Ob0 kk i) => ObUnit kk i) => Bicategory
   type O (p :: kk j k) (q :: kk i j) :: kk i k
 
   -- | Horizontal composition of 2-cells.
-  o :: (a :: kk j k) ~> b -> c ~> d -> (a `O` c) ~> (b `O` d)
+  o :: forall {j} {k} a b c d. (a :: kk j k) ~> b -> c ~> d -> (a `O` c) ~> (b `O` d)
 
   -- | Get proof that the composition of 2 1-cells is also a 1-cell.
   withOb2
