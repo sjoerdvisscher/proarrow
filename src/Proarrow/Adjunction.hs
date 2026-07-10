@@ -7,6 +7,7 @@ import Data.Kind (Constraint, Type)
 import Prelude (const, type (~))
 
 import Proarrow.Category.Colimit (HasColimits (..))
+import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Rep (COREP, COREPK, REP, REPK)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
@@ -135,6 +136,8 @@ class (Ambidextrous p) => AdjointEquivalence (p :: j +-> k) where
   unitIso @a @a' = iso (unitRep @p @a) (counitRep @(RepCostar p) @a')
   counitIso :: (Ob a, Ob a') => Iso (AdjComonad p %% a) (AdjComonad p %% a') a a'
   counitIso @a @a' = iso (counitRep @p @a) (unitRep @(CorepStar p) @a')
+
+type GaloisConnection (p :: j +-> k) = (ThinProfunctor p, Thin j, Thin k, Adjunction p)
 
 -- | Adjunctions between two profunctors.
 type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint

@@ -1,13 +1,14 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Profunctor.Exponential where
 
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), UN, type (+->))
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Discrete, withEq)
+import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
+import Proarrow.Category.Instance.Constraint (reifyExp, (:=>) (..), type (:-) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, (//), type (+->))
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
-import Proarrow.Profunctor.Product ((:*:) (..))
 import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Category.Instance.Constraint ((:=>) (..), reifyExp, type (:-) (..))
+import Proarrow.Profunctor.Product ((:*:) (..))
 
 data (p :~>: q) a b where
   Exp :: (Ob a, Ob b) => (forall c d. c ~> a -> b ~> d -> p c d -> q c d) -> (p :~>: q) a b
@@ -26,4 +27,4 @@ instance (CategoryOf j, CategoryOf k) => Closed (PROD (j +-> k)) where
 instance (ThinProfunctor p, ThinProfunctor q, Discrete j, Discrete k) => ThinProfunctor (p :~>: q :: j +-> k) where
   type HasArrow (p :~>: q) a b = (HasArrow p a b :=> HasArrow q a b)
   arr @a @b = Exp \ca bd p -> withEq ca (withEq bd (withArr p (unEntails (entails @(HasArrow p a b) @(HasArrow q a b)) arr)))
-  withArr @a @b (Exp f) = reifyExp (Entails @(HasArrow p a b) @(HasArrow q a b) (withArr (f id id arr)))
+  withArr @a @b (Exp f) r = reifyExp (Entails @(HasArrow p a b) @(HasArrow q a b) (\r' -> withArr (f id id arr) r')) r

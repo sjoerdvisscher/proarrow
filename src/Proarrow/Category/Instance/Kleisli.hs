@@ -134,7 +134,7 @@ instance (DaggerProfunctor p, Promonad p) => DaggerProfunctor (Kleisli :: CAT (K
 instance (T.ThinProfunctor p, Promonad p) => T.ThinProfunctor (Kleisli :: CAT (KLEISLI p)) where
   type HasArrow (Kleisli :: CAT (KLEISLI p)) (KL a) (KL b) = T.HasArrow p a b
   arr = Kleisli T.arr
-  withArr (Kleisli p) = T.withArr p
+  withArr (Kleisli p) r = T.withArr p r
 
 type KleisliFree :: forall (p :: k +-> k) -> k +-> KLEISLI p
 data KleisliFree p a b where

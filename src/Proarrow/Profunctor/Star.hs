@@ -116,4 +116,4 @@ preludeTraverse = unStar . starTraverse . Star
 instance (Functor f, Thin k) => ThinProfunctor (Star f :: j +-> k) where
   type HasArrow (Star f :: j +-> k) a b = HasArrow (Hom k) a (f b)
   arr = Star arr
-  withArr (Star f) = withArr f
+  withArr (Star f) r = withArr f r

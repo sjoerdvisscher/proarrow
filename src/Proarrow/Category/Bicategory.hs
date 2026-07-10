@@ -69,9 +69,15 @@ instance (Ob (I :: kk i i)) => ObUnit kk i
 -- * 2-cells are values of type @p ~> q@, where @p@ and @q@ are 1-cells.
 type Bicategory :: forall {s}. CAT s -> Constraint
 class (Locally CategoryOf kk, forall i. (Ob0 kk i) => ObUnit kk i) => Bicategory (kk :: CAT s) where
+  -- | Constraints on 0-cells.
   type Ob0 kk (j :: k) :: Constraint
+
   type Ob0 kk j = ()
+
+  -- | 1-cell identity
   type I :: kk i i
+
+  -- | 1-cell composition
   type O (p :: kk j k) (q :: kk i j) :: kk i k
 
   -- | Horizontal composition of 2-cells.

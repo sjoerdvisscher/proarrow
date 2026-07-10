@@ -38,7 +38,7 @@ instance (ThinProfunctor p) => CategoryOf (GRAPH p) where
 -- | A morphism gives two equal ways to compute the "diagonal", which is an element of the profunctor.
 diagonalElement
   :: forall {j} {k} (p :: k +-> j) (aj :: j) (ak :: k) (bj :: j) (bk :: k) r
-   . (ThinProfunctor p) => GR aj ak ~> (GR bj bk :: GRAPH p) -> ((HasArrow p aj bk) => r) -> r
+   . (ThinProfunctor p) => GR aj ak ~> (GR bj bk :: GRAPH p) -> ((HasArrow p aj bk, Ob aj, Ob bk) => r) -> r
 diagonalElement (Graph f g) = withArr @p @aj @bk (lmap f (arr @p @bj @bk) \\ f \\ g)
 
 -- | The arrow category is the graph of the hom-functor. Here we require the category to be thin.

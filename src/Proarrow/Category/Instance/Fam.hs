@@ -2,13 +2,13 @@
 
 module Proarrow.Category.Instance.Fam where
 
-import GHC.Base (Any)
 import Data.Kind (Type)
+import GHC.Base (Any)
 import Prelude (($), type (~))
 
 import Proarrow.Category.Instance.Cat (FstCat, SndCat, (:&&&:) (..))
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
-import Proarrow.Category.Instance.Product ((:**:) (..), Snd, Fst)
+import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
@@ -36,9 +36,9 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Constant (Constant)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep, withObRep)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type data FAM (k :: Kind) = forall (x :: Kind). DEP_ (x +-> k)
@@ -149,7 +149,8 @@ instance (Profunctor l, Profunctor r, CategoryOf k) => Profunctor (l :&&: r :: (
   r \\ (p :&&: q) = r \\ p \\ q
 instance (Representable l, Representable r, HasBinaryProducts k) => Representable (l :&&: r :: (x, y) +-> k) where
   type (l :&&: r) % ab = (l % Fst ab) && (r % Snd ab)
-  tabulate @'(a, b) f = withObRep @l @a $ withObRep @r @b $ tabulate (fst @_ @(l % a) @(r % b) . f) :&&: tabulate (snd @_ @(l % a) @(r % b) . f)
+  tabulate @'(a, b) f =
+    withObRep @l @a $ withObRep @r @b $ tabulate (fst @_ @(l % a) @(r % b) . f) :&&: tabulate (snd @_ @(l % a) @(r % b) . f)
   index (p :&&: q) = index p &&& index q
   repMap (f :**: g) = repMap @l f *** repMap @r g
 instance (Corepresentable l, Corepresentable r, CategoryOf k) => Corepresentable (l :&&: r :: (x, y) +-> k) where

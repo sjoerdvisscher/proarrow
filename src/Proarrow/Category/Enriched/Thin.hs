@@ -12,7 +12,7 @@ class (Profunctor p) => ThinProfunctor (p :: j +-> k) where
   type HasArrow (p :: j +-> k) (a :: k) (b :: j) :: Constraint
   type HasArrow p a b = ()
   arr :: (Ob a, Ob b, HasArrow p a b) => p a b
-  withArr :: p a b -> ((HasArrow p a b) => r) -> r
+  withArr :: p a b -> ((HasArrow p a b, Ob a, Ob b) => r) -> r
 
 class (HasArrow (Hom k) a a) => HasIdArrow k a
 instance (HasArrow (Hom k) a a) => HasIdArrow k a
@@ -49,5 +49,4 @@ class (ThinProfunctor p, forall c d. ArrowIsId p c d, Discrete k) => DiscretePro
 instance (ThinProfunctor p, forall c d. ArrowIsId p c d, Discrete k) => DiscreteProfunctor (p :: k +-> k) where
   withEq @a @b p r = withArr p (arrowIsIdProof @p @a @b r)
 
-class (DiscreteProfunctor (Hom k)) => Discrete k
-instance (DiscreteProfunctor (Hom k)) => Discrete k
+type Discrete k = DiscreteProfunctor (Hom k)

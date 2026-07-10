@@ -81,10 +81,10 @@ instance (DaggerProfunctor p) => EnrichedProfunctor (Type, Type) p where
 instance (ThinProfunctor p, Thin j, Thin k) => EnrichedProfunctor CONSTRAINT (p :: j +-> k) where
   type ProObj CONSTRAINT p a b = CNSTRNT (HasArrow p a b)
   withProObj r = r
-  underlying p = Entails (\r -> withArr p r)
+  underlying p = Entails \r -> withArr p r
   enriched (Entails f) = f arr
-  rmap @a @b @c = Entails (withArr @p (P.rmap (arr @(~>) @b @c) (arr @p @a @b)))
-  lmap @a @b @c = Entails (withArr @p (P.lmap (arr @(~>) @c @a) (arr @p @a @b)))
+  rmap @a @b @c = Entails \r -> withArr @p (P.rmap (arr @(~>) @b @c) (arr @p @a @b)) r
+  lmap @a @b @c = Entails \r -> withArr @p (P.lmap (arr @(~>) @c @a) (arr @p @a @b)) r
 
 instance (CodiscreteProfunctor p) => EnrichedProfunctor () p where
   type ProObj () p a b = '()

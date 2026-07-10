@@ -7,16 +7,18 @@ import Proarrow.Category.Bicategory.Kan
   , RightKanExtension (..)
   , RightKanLift (..)
   )
+import Proarrow.Category.Bicategory.LaxFunctor (LaxFunctor (..), Map0, Map1, type (:->))
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
-import Proarrow.Category.Monoidal (SymMonoidal)
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, parRep)
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, obj, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid qualified as M
 import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
 import Proarrow.Object.Dual qualified as M
 import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type MonK :: Kind -> CAT ()
 newtype MonK k i j = MK k
@@ -116,3 +118,13 @@ instance (Coclosed k, SymMonoidal k, Ob (q <~~ p), Ob p, Ob q) => LeftKanLift (M
   type Lift (MK p) (MK q) = MK (q <~~ p)
   lift = Mon2 (M.swap @k @(q <~~ p) @p . coeval @k @q @p)
   liftUniv @(MK g) (Mon2 f) = Mon2 (coevalUniv @k @p @g (M.swap @k @p @g . f))
+
+data family MonFunctor (p :: j +-> k) :: MonK j :-> MonK k
+type instance Map0 (MonFunctor p) '() = '()
+type instance Map1 (MonFunctor p) (MK a) = MK (p % a)
+instance (MonoidalProfunctor p, Representable p) => LaxFunctor (MonFunctor (p :: j +-> k)) where
+  map2 (Mon2 f) = Mon2 (repMap @p f)
+  laxId = Mon2 (index @p par0)
+  laxComp @(MK a) @(MK b) = Mon2 (parRep @p @a @b)
+  withMap0Ob0 r = r
+  withMap1Ob @(MK a) r = withObRep @p @a r

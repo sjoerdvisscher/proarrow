@@ -59,7 +59,7 @@ type instance UN PK (PK p) = p
 
 type Prof :: CAT (PROFK j k)
 data Prof p q where
-  Prof :: (Ob p, Ob q) => p :~> q -> Prof (PK p) (PK q)
+  Prof :: (Ob p, Ob q) => {unProf :: p :~> q} -> Prof (PK p) (PK q)
 
 instance Profunctor Prof where
   dimap = dimapDefault

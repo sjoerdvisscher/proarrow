@@ -1,14 +1,15 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 -- Collected from https://www.clowderproject.com/tag/01D0.html
 module Proarrow.Category.Instance.Rel where
 
 import Proarrow.Adjunction (Proadjunction (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), src, (:~>), type (+->), Promonad (..))
-import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor)
+import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), src, (:~>), type (+->))
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
 
 class (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
 instance (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
@@ -30,7 +31,8 @@ instance (Relation p, Representable p) => Corepresentable (Converse p) where
   corepMap f = withEq f (repMap @p (src f))
 
 asImplication
-  :: forall a b p q r. (Relation p, Relation q) => p :~> q -> (Ob a, Ob b, HasArrow p a b) => ((HasArrow q a b) => r) -> r
+  :: forall a b p q r
+   . (Relation p, Relation q) => p :~> q -> (Ob a, Ob b, HasArrow p a b) => ((HasArrow q a b, Ob a, Ob b) => r) -> r
 asImplication n = withArr (n (arr @p @a @b))
 
 class (Relation p) => Functional p where

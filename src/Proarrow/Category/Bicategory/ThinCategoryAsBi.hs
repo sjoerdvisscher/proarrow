@@ -3,8 +3,10 @@ module Proarrow.Category.Bicategory.ThinCategoryAsBi where
 import Prelude (type (~))
 
 import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Category.Bicategory.LaxFunctor (LaxFunctor (..), Map0, Map1, (:->))
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
+import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type THINK :: forall k -> CAT k
 data THINK k i j = THIN
@@ -37,3 +39,16 @@ instance (Thin k) => Bicategory (THINK k) where
   rightUnitorInv = id
   associator @p @q @r = obj @p `o` obj @q `o` obj @r
   associatorInv @p @q @r = obj @p `o` obj @q `o` obj @r
+
+-- | A functor between thin categories, i.e. a monotone function.
+data family ThinFunctor (p :: j +-> k) :: THINK j :-> THINK k
+
+type instance Map0 (ThinFunctor p) a = p % a
+type instance Map1 (ThinFunctor p) THIN = THIN
+instance (Representable p, Thin j, Thin k) => LaxFunctor (ThinFunctor (p :: j +-> k)) where
+  map2 @a Id = withMap1Ob @(ThinFunctor p) @a Id
+  laxId @i = withObRep @p @i Id
+  laxComp @(THIN :: THINK j b c) @(THIN :: THINK j a b) =
+    withArr (repMap @p (arr @_ @b @c) . repMap @p (arr @_ @a @b)) Id
+  withMap0Ob0 @i r = withObRep @p @i r
+  withMap1Ob @(THIN :: THINK j a b) r = withArr (repMap @p (arr @_ @a @b)) r

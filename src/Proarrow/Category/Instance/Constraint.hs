@@ -1,10 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+
 module Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..), (:=>) (..), reifyExp, eqIsSuperOrd, maybeLiftsSemigroup) where
 
 import Data.Kind (Constraint)
 import GHC.Exts (withDict)
 import Prelude qualified as P
 
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
@@ -13,7 +15,6 @@ import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Object.BinaryProduct qualified as P
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 
 newtype CONSTRAINT = CNSTRNT Constraint
 type instance UN CNSTRNT (CNSTRNT a) = a
@@ -38,7 +39,7 @@ instance Profunctor (:-) where
 instance ThinProfunctor (:-) where
   type HasArrow (:-) a b = UN CNSTRNT a :=> UN CNSTRNT b
   arr @(CNSTRNT a) @(CNSTRNT b) = Entails \r -> unEntails (entails @a @b) r
-  withArr p@Entails{} = reifyExp p
+  withArr p@Entails{} r = reifyExp p r
 
 instance HasTerminalObject CONSTRAINT where
   type TerminalObject = CNSTRNT ()
@@ -81,7 +82,7 @@ instance CopyDiscard CONSTRAINT
 
 class b :=> c where
   entails :: CNSTRNT b :- CNSTRNT c
-instance (b => c) => (b :=> c) where
+instance ((b) => c) => (b :=> c) where
   entails = Entails \r -> r
 
 reifyExp :: forall b c r. CNSTRNT b :- CNSTRNT c -> ((b :=> c) => r) -> r

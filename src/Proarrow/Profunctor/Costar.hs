@@ -68,4 +68,4 @@ instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
 instance (Functor f, Thin j) => ThinProfunctor (Costar f :: j +-> k) where
   type HasArrow (Costar f :: j +-> k) a b = HasArrow (Hom j) (f a) b
   arr = Costar arr
-  withArr (Costar f) = withArr f
+  withArr (Costar f) r = withArr f r
