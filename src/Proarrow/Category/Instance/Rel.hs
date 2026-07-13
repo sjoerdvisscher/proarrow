@@ -6,7 +6,7 @@ module Proarrow.Category.Instance.Rel where
 import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor)
 import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), src, (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), src, tgt, (:~>), type (+->))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
@@ -28,7 +28,7 @@ instance (Relation p, Representable p) => Corepresentable (Converse p) where
   type (Converse p) %% a = p % a
   coindex (Converse p) = withEq (index p) (src p)
   cotabulate f = withEq f (Converse (tabulate f))
-  corepMap f = withEq f (repMap @p (src f))
+  corepMap f = let fb = repMap @p (tgt f) in withEq f fb \\ fb
 
 asImplication
   :: forall a b p q r

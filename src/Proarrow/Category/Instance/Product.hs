@@ -5,8 +5,8 @@ module Proarrow.Category.Instance.Product where
 import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), Discrete (..), ThinProfunctor (..))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
 
 type Fst :: (a, b) -> a
 type family Fst a where
@@ -17,7 +17,7 @@ type family Snd a where
 
 type (:**:) :: j1 +-> k1 -> j2 +-> k2 -> (j1, j2) +-> (k1, k2)
 data (c :**: d) a b where
-  (:**:) :: { fstK :: c a1 b1, sndK :: d a2 b2 } -> (c :**: d) '(a1, a2) '(b1, b2)
+  (:**:) :: {fstK :: c a1 b1, sndK :: d a2 b2} -> (c :**: d) '(a1, a2) '(b1, b2)
 
 -- | The product of two categories.
 instance (CategoryOf k1, CategoryOf k2) => CategoryOf (k1, k2) where
@@ -40,3 +40,13 @@ instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :**: q) where
   type HasArrow (p :**: q) '(a1, a2) '(b1, b2) = (HasArrow p a1 b1, HasArrow q a2 b2)
   arr = arr :**: arr
   withArr (f :**: g) r = withArr f (withArr g r)
+
+checkDiscrete :: (Discrete j, Discrete k) => Hom (j, k) a b -> ((a ~ b) => r) -> r
+checkDiscrete f r = withEq f r
+
+-- Does not work
+-- checkDiscreteProfunctor :: (DiscreteProfunctor p, DiscreteProfunctor q) => (p :**: q) a b -> r
+-- checkDiscreteProfunctor f = exfalso f
+
+checkCodiscreteProfunctor :: (CodiscreteProfunctor p, CodiscreteProfunctor q, Ob a, Ob b) => (p :**: q) a b
+checkCodiscreteProfunctor = anyArr

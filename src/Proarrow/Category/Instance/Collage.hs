@@ -2,8 +2,16 @@ module Proarrow.Category.Instance.Collage where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor, Thin, ThinProfunctor (..), anyArr)
+import Proarrow.Category.Enriched.Thin
+  ( CodiscreteProfunctor
+  , DiscreteProfunctor (..)
+  , Thin
+  , ThinProfunctor (..)
+  , anyArr
+  )
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
+import Proarrow.Category.Instance.Coproduct qualified as C
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -20,6 +28,10 @@ import Proarrow.Core
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate')
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
+import Proarrow.Optic (Iso', iso)
+import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind
 type data COLLAGE (p :: k +-> j) = L j | R k
@@ -92,6 +104,23 @@ data family InjR :: forall (p :: k +-> j) -> k +-> COLLAGE p
 instance (Profunctor p) => FunctorForRep (InjR p) where
   type InjR p @ a = R a
   fmap = InR
+
+collageUniv :: forall {j} {k} (p :: k +-> j). (ThinProfunctor p) => Iso' p (Corep (InjL p) :.: Rep (InjR p))
+collageUniv =
+  iso
+    (Prof \p -> Corep (L2R p) :.: Rep id \\ p)
+    ( Prof \case
+        (Corep (L2R p) :.: Rep (InR r)) -> rmap r p
+        (Corep (InL l) :.: Rep (L2R p)) -> lmap l p
+    )
+
+data family CollageAsCoprod :: COLLAGE (p :: k +-> j) +-> C.COPRODUCT j k
+instance (DiscreteProfunctor p) => FunctorForRep (CollageAsCoprod :: COLLAGE (p :: k +-> j) +-> C.COPRODUCT j k) where
+  type CollageAsCoprod @ L a = C.L a
+  type CollageAsCoprod @ R a = C.R a
+  fmap (InL f) = C.InjL f
+  fmap (InR f) = C.InjR f
+  fmap (L2R p) = exfalso p
 
 data family ProjTo2 :: forall (p :: k +-> j) -> COLLAGE p +-> BOOL
 instance (Profunctor p) => FunctorForRep (ProjTo2 p) where

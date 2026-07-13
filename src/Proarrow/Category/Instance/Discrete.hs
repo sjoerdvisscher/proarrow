@@ -1,6 +1,6 @@
 module Proarrow.Category.Instance.Discrete where
 
-import Prelude (type (~))
+import Data.Type.Equality (type (~~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin qualified as Thin
@@ -24,12 +24,12 @@ instance Promonad Discrete where
   Refl . Refl = Refl
 
 instance Thin.ThinProfunctor Discrete where
-  type HasArrow Discrete a b = (a ~ b)
+  type HasArrow Discrete a b = (a ~~ b)
   arr = Refl
   withArr Refl r = r
 
-withEq :: Discrete a b -> ((a ~ b) => r) -> r
-withEq = Thin.withEq
+withEq :: Discrete a b -> ((a ~~ b) => r) -> r
+withEq p r = Thin.withEq p r
 
 instance DaggerProfunctor Discrete where
   dagger Refl = Refl

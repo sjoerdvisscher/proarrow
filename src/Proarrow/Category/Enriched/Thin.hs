@@ -5,6 +5,7 @@ module Proarrow.Category.Enriched.Thin where
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
+import Proarrow.Category.Instance.Zero (Bottom (..), Zero)
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), type (+->))
 
 type ThinProfunctor :: forall {j} {k}. j +-> k -> Constraint
@@ -13,6 +14,10 @@ class (Profunctor p) => ThinProfunctor (p :: j +-> k) where
   type HasArrow p a b = ()
   arr :: (Ob a, Ob b, HasArrow p a b) => p a b
   withArr :: p a b -> ((HasArrow p a b, Ob a, Ob b) => r) -> r
+
+instance ThinProfunctor Zero where
+  arr = no
+  withArr = \case {}
 
 class (HasArrow (Hom k) a a) => HasIdArrow k a
 instance (HasArrow (Hom k) a a) => HasIdArrow k a
@@ -35,18 +40,30 @@ instance
   where
   anyArr = arr'
 
-class (CodiscreteProfunctor (Hom k)) => Codiscrete k
-instance (CodiscreteProfunctor (Hom k)) => Codiscrete k
+type Codiscrete k = CodiscreteProfunctor (Hom k)
 
-class ((HasArrow p c d) ~ (c ~ d)) => ArrowIsId p c d where
-  arrowIsIdProof :: (HasArrow p c d) => ((c ~ d) => r) -> r
-instance ((HasArrow p c d) ~ (c ~ d)) => ArrowIsId p c d where
+class ((c) => d, (d) => c) => c <=> d
+instance ((c) => d, (d) => c) => c <=> d
+
+class ((HasArrow p a b) => Bottom) => HasNoArrow p a b where
+  arrowIsBottomProof :: (HasArrow p a b) => r
+instance ((HasArrow p a b) => Bottom) => HasNoArrow p a b where
+  arrowIsBottomProof = no
+
+type DiscreteProfunctor :: forall {j} {k}. j +-> k -> Constraint
+class (ThinProfunctor p, forall a b. (Ob a, Ob b) => HasNoArrow p a b) => DiscreteProfunctor (p :: j +-> k) where
+  exfalso :: p a b -> r
+instance (ThinProfunctor p, forall a b. (Ob a, Ob b) => HasNoArrow p a b) => DiscreteProfunctor (p :: j +-> k) where
+  exfalso @a @b p = withArr p (arrowIsBottomProof @p @a @b)
+
+class ((HasArrow (Hom k) c d) <=> (c ~ d)) => ArrowIsId k c d where
+  arrowIsIdProof :: (HasArrow (Hom k) c d) => ((c ~ d) => r) -> r
+instance ((HasArrow (Hom k) c d) <=> (c ~ d)) => ArrowIsId k c d where
   arrowIsIdProof r = r
 
-type DiscreteProfunctor :: forall {k}. k +-> k -> Constraint
-class (ThinProfunctor p, forall c d. ArrowIsId p c d, Discrete k) => DiscreteProfunctor (p :: k +-> k) where
-  withEq :: p a b -> ((a ~ b) => r) -> r
-instance (ThinProfunctor p, forall c d. ArrowIsId p c d, Discrete k) => DiscreteProfunctor (p :: k +-> k) where
-  withEq @a @b p r = withArr p (arrowIsIdProof @p @a @b r)
+-- | Note: @Discrete k@ is not the same as @DiscreteProfunctor (Hom k)@!
+class (Thin k, forall c d. (Ob c, Ob d) => ArrowIsId k c d) => Discrete k where
+  withEq :: (a :: k) ~> b -> ((a ~ b) => r) -> r
 
-type Discrete k = DiscreteProfunctor (Hom k)
+instance (Thin k, forall c d. (Ob c, Ob d) => ArrowIsId k c d) => Discrete k where
+  withEq @a @b f r = withArr f (arrowIsIdProof @k @a @b r)

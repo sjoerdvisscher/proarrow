@@ -1,8 +1,7 @@
 module Proarrow.Category.Instance.Zero where
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 type data VOID
 
@@ -25,10 +24,6 @@ instance Promonad Zero where
 instance Profunctor Zero where
   dimap = dimapDefault
   _ \\ x = case x of {}
-
-instance ThinProfunctor Zero where
-  arr = no
-  withArr = \case {}
 
 instance DaggerProfunctor Zero where
   dagger = \case {}
