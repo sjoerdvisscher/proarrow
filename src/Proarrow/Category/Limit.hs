@@ -17,10 +17,10 @@ import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), trivialCorep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), corepUniv)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repObj, trivialRep, withObRep)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repObj, repUniv, withObRep)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (Representable (Limit j d)) => IsRepresentableLimit j d
@@ -115,4 +115,4 @@ instance (Representable j1, HasLimits j1 k, HasLimits j2 k) => HasLimits (j1 :.:
 instance (FunctorForRep f) => HasLimits (Corep f) k where
   type Limit (Corep f) d = d :.: Rep f
   limit ((d :.: Rep f) :.: Corep g) = rmap (g . f) d
-  limitUniv n p = p // n (p :.: trivialCorep) :.: trivialRep
+  limitUniv n p = p // n (p :.: corepUniv) :.: repUniv

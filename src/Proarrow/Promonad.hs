@@ -39,7 +39,7 @@ return :: forall m a. (Monad m, Ob a) => a ~> m % a
 return = index @m id
 
 bind :: forall m b a. (Monad m, Ob b) => a ~> m % b -> m % a ~> m % b
-bind f = index (tabulate @m @b f . (trivialRep \\ f))
+bind f = index (tabulate @m @b f . (repUniv \\ f))
 
 type Comonad w = (Promonad w, Corepresentable w)
 
@@ -47,7 +47,7 @@ extract :: forall w a. (Comonad w, Ob a) => w %% a ~> a
 extract = coindex @w id
 
 extend :: forall w a b. (Comonad w, Ob a) => w %% a ~> b -> w %% a ~> w %% b
-extend f = coindex ((trivialCorep \\ f) . cotabulate @w @a f)
+extend f = coindex ((corepUniv \\ f) . cotabulate @w @a f)
 
 type RelativeMonad :: i +-> k -> k +-> i -> Constraint
 class (Representable m, Profunctor j) => RelativeMonad j m where

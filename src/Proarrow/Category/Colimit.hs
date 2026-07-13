@@ -17,7 +17,7 @@ import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepObj, trivialCorep, withObCorep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepObj, corepUniv, withObCorep)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable
@@ -116,4 +116,4 @@ instance (Corepresentable j2, HasColimits j1 k, HasColimits j2 k) => HasColimits
 instance (FunctorForRep f) => HasColimits (Rep f) k where
   type Colimit (Rep f) d = Corep f :.: d
   colimit (Rep f :.: (Corep g :.: d)) = lmap (g . f) d
-  colimitUniv n p = p // trivialCorep :.: n (trivialRep :.: p)
+  colimitUniv n p = p // corepUniv :.: n (repUniv :.: p)

@@ -39,7 +39,7 @@ import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), trivialRep)
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
 
 newtype KLEISLI (p :: CAT k) = KL k
 type instance UN KL (KL k) = k
@@ -164,6 +164,6 @@ pattern LiftF
   :: (Representable (f :: j +-> k)) => (Ob (a :: j), Ob b) => (f % a ~> f % b) -> Kleisli (KL a :: LIFTEDF f) (KL b)
 pattern LiftF f <- (unlift -> (f, Obj, Obj))
   where
-    LiftF f = Kleisli (RepCostar f :.: trivialRep)
+    LiftF f = Kleisli (RepCostar f :.: repUniv)
 
 {-# COMPLETE LiftF #-}

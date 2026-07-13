@@ -39,7 +39,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
+import Proarrow.Profunctor.Representable (Representable (..), repUniv)
 import Prelude (($))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
@@ -99,7 +99,7 @@ repTraverse
   :: forall {k} (t :: k +-> k) p a b
    . (Traversable t, Representable t, StrongDistributiveProfunctor p)
   => p a b -> p (t % a) (t % b)
-repTraverse p = p // case traverse (trivialRep :.: p) of x :.: y -> rmap (index @t y) x
+repTraverse p = p // case traverse (repUniv :.: p) of x :.: y -> rmap (index @t y) x
 
 -- | If both profunctors are representable, you get traversals as in base.
 baseTraverse

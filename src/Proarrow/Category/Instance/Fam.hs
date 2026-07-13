@@ -38,7 +38,7 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep, withObRep)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv, withObRep)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type data FAM (k :: Kind) = forall (x :: Kind). DEP_ (x +-> k)
@@ -131,8 +131,8 @@ instance (Representable p, Representable q) => Representable (p :|||: q) where
 instance (CategoryOf k) => HasBinaryCoproducts (FAM k) where
   type a || b = DEP (COPRODUCT (X a) (X b)) (DX a :|||: DX b)
   withObCoprod r = r
-  lft = Fam @(Rep LftCat) \p -> InjLP p :.: trivialRep \\ p
-  rgt = Fam @(Rep RgtCat) \q -> InjRP q :.: trivialRep \\ q
+  lft = Fam @(Rep LftCat) \p -> InjLP p :.: repUniv \\ p
+  rgt = Fam @(Rep RgtCat) \q -> InjRP q :.: repUniv \\ q
   Fam @f l ||| Fam @g r = Fam @(f :|||: g) \case
     InjLP p -> case l p of dx :.: f -> dx :.: InjLP f
     InjRP q -> case r q of dy :.: g -> dy :.: InjRP g

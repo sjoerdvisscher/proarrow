@@ -82,4 +82,4 @@ instance (Powered v k, Enriched v (OPPOSITE k), forall (a :: k) b. HomObjOp v a 
 instance (Copowered v k, Ob (n :: v)) => Corepresentable (GenArrow (OP (n :: v)) :: k +-> k) where
   type GenArrow (OP n) %% a = n *. a
   coindex (GenArrow @a @b f) = copower @v @k @a @b f
-  trivialCorep @a = withObCopower @v @k @a @n (GenArrow (uncopower @v @k @a (obj @(n *. a))))
+  corepUniv @a = withObCopower @v @k @a @n (GenArrow (uncopower @v @k @a (obj @(n *. a))))

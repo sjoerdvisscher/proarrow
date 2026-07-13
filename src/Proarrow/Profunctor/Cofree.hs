@@ -9,8 +9,8 @@ import Prelude (Int, fst, snd)
 import Proarrow.Category.Instance.Sub (Forget, SUBCAT (..), Sub (..))
 import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
-import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Representable (Representable (..), repUniv)
 
 type HasCofree :: forall {k}. OB k -> Constraint
 class (CategoryOf k, forall a. (Ob a) => ob (Cofree ob a)) => HasCofree (ob :: k -> Constraint) where
@@ -32,7 +32,7 @@ cofreeComp @ob l r = l . unfoldMap @ob r
 instance (HasCofree ob) => Representable (Corep (Forget (ob :: OB k))) where
   type Corep (Forget ob) % a = SUB (Cofree ob a)
   index (Corep f) = Sub (unfoldMap @ob f) \\ f
-  trivialRep @a = let f = lower @ob @a in Corep f \\ f
+  repUniv @a = let f = lower @ob @a in Corep f \\ f
 
 class Test a where
   test :: a -> Int

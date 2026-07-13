@@ -14,35 +14,36 @@ import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap
 import Proarrow.Functor (FunctorForRep (..), Presheaf, withMappedOb)
 import Proarrow.Object (Obj, obj, src, tgt)
 import Proarrow.Optic (Iso, iso)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep, trivialCorep)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv, dimapCorep)
 
 infixl 8 %
 
+-- | A profunctor is representable if @p ? a@ as a presheaf is representable in a functorial way over @a@.
 type Representable :: forall {j} {k}. j +-> k -> Constraint
 class (Profunctor p) => Representable (p :: j +-> k) where
   type p % (a :: j) :: k
   index :: p a b -> a ~> p % b
   tabulate :: (Ob b) => (a ~> p % b) -> p a b
-  tabulate f = lmap f trivialRep
+  tabulate f = lmap f repUniv
   repMap :: (a ~> b) -> p % a ~> p % b
-  repMap @a f = index @p (rmap f (trivialRep @p @a)) \\ f
-  trivialRep :: (Ob a) => p (p % a) a
-  trivialRep @a = tabulate (repObj @p @a)
-  {-# MINIMAL index, ((tabulate, repMap) | trivialRep) #-}
+  repMap @a f = index @p (rmap f (repUniv @p @a)) \\ f
+  repUniv :: (Ob a) => p (p % a) a
+  repUniv @a = tabulate (repObj @p @a)
+  {-# MINIMAL index, ((tabulate, repMap) | repUniv) #-}
 
 instance Representable (->) where
   type (->) % a = a
   index f = f
   tabulate f = f
   repMap f = f
-  trivialRep = id
+  repUniv = id
 
 instance (Representable p, Representable q) => Representable (p :**: q) where
   type (p :**: q) % '(a, b) = '(p % a, q % b)
   index (p :**: q) = index p :**: index q
   tabulate (f :**: g) = tabulate f :**: tabulate g
   repMap (f :**: g) = repMap @p f :**: repMap @q g
-  trivialRep = trivialRep :**: trivialRep
+  repUniv = repUniv :**: repUniv
 
 repObj :: forall p a. (Representable p, Ob a) => Obj (p % a)
 repObj = repMap @p (obj @a)
@@ -68,14 +69,14 @@ instance (Representable p) => Corepresentable (Op p) where
   coindex (Op f) = Op (index f)
   cotabulate (Op f) = Op (tabulate f)
   corepMap (Op f) = Op (repMap @p f)
-  trivialCorep = Op trivialRep
+  corepUniv = Op repUniv
 
 instance (Corepresentable p) => Representable (Op p) where
   type Op p % OP a = OP (p %% a)
   index (Op f) = Op (coindex f)
   tabulate (Op f) = Op (cotabulate f)
   repMap (Op f) = Op (corepMap @p f)
-  trivialRep = Op trivialCorep
+  repUniv = Op corepUniv
 
 type CorepStar :: (k +-> j) -> (j +-> k)
 data CorepStar p a b where
@@ -90,7 +91,7 @@ instance (Corepresentable p) => Representable (CorepStar p) where
   repMap = corepMap @p
 
 mapCorepStar :: (Corepresentable p, Corepresentable q) => p ~> q -> CorepStar q ~> CorepStar p
-mapCorepStar (Prof n) = Prof \(CorepStar @a f) -> CorepStar (coindex (n (trivialCorep @_ @a)) . f)
+mapCorepStar (Prof n) = Prof \(CorepStar @a f) -> CorepStar (coindex (n (corepUniv @_ @a)) . f)
 
 type RepCostar :: (k +-> j) -> (j +-> k)
 data RepCostar p a b where
@@ -109,7 +110,7 @@ instance (Representable p, Thin j) => ThinProfunctor (RepCostar p :: j +-> k) wh
   withArr (RepCostar f) r = withArr f r
 
 mapRepCostar :: (Representable p, Representable q) => p ~> q -> RepCostar q ~> RepCostar p
-mapRepCostar (Prof n) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (trivialRep @_ @a)))
+mapRepCostar (Prof n) = Prof \(RepCostar @a f) -> RepCostar (f . index (n (repUniv @_ @a)))
 
 flipRep :: forall p. (Representable p) => (~>) :~> p -> RepCostar p :~> (~>)
 flipRep n p = coindex p . index (n (src p))

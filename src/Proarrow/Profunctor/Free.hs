@@ -64,7 +64,7 @@ freeComp @ob l r = foldMap @ob l . r
 instance (HasFree ob) => Corepresentable (Rep (Forget (ob :: OB k))) where
   type Rep (Forget ob) %% a = SUB (Free ob a)
   coindex (Rep f) = Sub (foldMap @ob f) \\ f
-  trivialCorep @a = let f = lift @ob @a in Rep f \\ f
+  corepUniv @a = let f = lift @ob @a in Rep f \\ f
 
 instance HasFree P.Monoid where
   type Free P.Monoid a = [a]

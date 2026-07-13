@@ -365,9 +365,9 @@ counit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.counit @f @g) ||| hSplitAll
 -- mix
 --   :: (Representable m, Representable s, Representable t, Representable a, Representable b)
 --   => Optic m s t a b -> MixedOptic m s t a b
--- mix @m (Optic sam bmt) (RepCostar @x a :.: p :.: b) = case dist (trivialRep @m :.: p) \\ a of
+-- mix @m (Optic sam bmt) (RepCostar @x a :.: p :.: b) = case dist (repUniv @m :.: p) \\ a of
 --   p' :.: m2 ->
---     case sam (trivialRep @_ @x) of m3 :.: a1 -> cotabulate (index (rmap (a . index a1) m3))
+--     case sam (repUniv @_ @x) of m3 :.: a1 -> cotabulate (index (rmap (a . index a1) m3))
 --       :.: p'
 --       :.: bmt (m2 :.: b)
 
@@ -384,7 +384,7 @@ counit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.counit @f @g) ||| hSplitAll
 -- > t<--@--<b
 -- > K-------K
 type Optic (a :: kk z j) (b :: kk k z) (s :: kk x j) (t :: kk k x) =
-  IsOptic a b s t => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
+  (IsOptic a b s t) => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
 
 type IsOptic (a :: kk z j) (b :: kk k z) (s :: kk x j) (t :: kk k x) =
   (IsTight a, IsCotight b, IsTight s, IsCotight t)
@@ -453,7 +453,7 @@ seq st uv = (hId @s === unit @u @t === hId @v) ||| (st === uv)
 -- s :.: a ~> m, m :.: CorepStar b -> CorepStar t
 
 type ProfOptic a b s t = Optic (PK a) (PK b) (PK s) (PK t)
-mkProfOptic :: IsOptic (PK a) (PK b) (PK s) (PK t) => s :.: t :~> a :.: b -> ProfOptic a b s t
+mkProfOptic :: (IsOptic (PK a) (PK b) (PK s) (PK t)) => s :.: t :~> a :.: b -> ProfOptic a b s t
 mkProfOptic n = Sq (St (Prof n))
 
 type HaskOptic a b s t = ProfOptic (Star a) (Costar b) (Star s) (Costar t)

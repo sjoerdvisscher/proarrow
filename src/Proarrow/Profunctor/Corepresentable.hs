@@ -12,24 +12,25 @@ import Proarrow.Optic (Iso, iso)
 
 infixl 8 %%
 
+-- | A profunctor is corepresentable if @p a ?@ as a copresheaf is representable in a functorial way over @a@.
 type Corepresentable :: forall {j} {k}. (j +-> k) -> Constraint
 class (Profunctor p) => Corepresentable (p :: j +-> k) where
   type p %% (a :: k) :: j
   coindex :: p a b -> p %% a ~> b
   cotabulate :: (Ob a) => (p %% a ~> b) -> p a b
-  cotabulate f = rmap f trivialCorep
+  cotabulate f = rmap f corepUniv
   corepMap :: (a ~> b) -> p %% a ~> p %% b
-  corepMap @_ @b f = coindex @p (lmap f (trivialCorep @p @b)) \\ f
-  trivialCorep :: (Ob a) => p a (p %% a)
-  trivialCorep @a = cotabulate (corepObj @p @a)
-  {-# MINIMAL coindex, ((cotabulate, corepMap) | trivialCorep) #-}
+  corepMap @_ @b f = coindex @p (lmap f (corepUniv @p @b)) \\ f
+  corepUniv :: (Ob a) => p a (p %% a)
+  corepUniv @a = cotabulate (corepObj @p @a)
+  {-# MINIMAL coindex, ((cotabulate, corepMap) | corepUniv) #-}
 
 instance Corepresentable (->) where
   type (->) %% a = a
   coindex f = f
   cotabulate f = f
   corepMap f = f
-  trivialCorep = id
+  corepUniv = id
 
 corepObj :: forall p a. (Corepresentable p, Ob a) => Obj (p %% a)
 corepObj = corepMap @p (obj @a)

@@ -11,8 +11,8 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, OB, Profunctor (..), Promonad (..), UN, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), trivialRep)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv)
 
 -- | Profuntorial strength for a monoidal action.
 -- Gives functorial strength for representable profunctors,
@@ -133,11 +133,11 @@ second' p = act (obj @c) p
 
 -- | If a strong profunctor is representable, we get the usual strength for the representing functor.
 strength :: forall {m} p a b. (Representable p, Strong m p, Ob (a :: m), Ob b) => Act a (p % b) ~> p % Act a b
-strength = index (act (obj @a) (trivialRep @p @b))
+strength = index (act (obj @a) (repUniv @p @b))
 
 -- | If a strong profunctor is corepresentable, we get the usual costrength for the representing functor.
 costrength :: forall {m} p a b. (Corepresentable p, Strong m p, Ob (a :: m), Ob b) => p %% Act a b ~> Act a (p %% b)
-costrength = coindex (act (obj @a) (trivialCorep @p @b))
+costrength = coindex (act (obj @a) (corepUniv @p @b))
 
 -- | This is not monoidal `par` but premonoidal, i.e. no sliding.
 -- So with `prepar f g` the effects of f happen before the effects of g.

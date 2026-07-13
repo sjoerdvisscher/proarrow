@@ -12,8 +12,8 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), trivialCorep, withObCorep)
-import Proarrow.Profunctor.Representable (CorepStar, Rep (..), Representable (..), trivialRep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
+import Proarrow.Profunctor.Representable (CorepStar, Rep (..), Representable (..), repUniv)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..), RelativeMonad (..))
 
@@ -35,7 +35,7 @@ ranUniv :: (Profunctor j, Profunctor g) => (g :.: j) ~> p -> g ~> j |> p
 ranUniv (Prof n) = Prof \g -> g // Ran \j -> n (g :.: j)
 
 flipRan :: (FunctorForRep j, Profunctor p) => Corep j |> p ~> p :.: Rep j
-flipRan = Prof \(Ran k) -> k trivialCorep :.: trivialRep
+flipRan = Prof \(Ran k) -> k corepUniv :.: repUniv
 
 flipRanInv :: (FunctorForRep j, Profunctor p) => p :.: Rep j ~> Corep j |> p
 flipRanInv = Prof \(p :.: f) -> p // f // Ran \g -> rmap (coindex g . index f) p
@@ -76,7 +76,7 @@ class (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => Pointw
 instance (Corepresentable j, Corepresentable p, Corepresentable (j |> p)) => PointwiseLeftKanLift j p
 
 instance (Corepresentable g, Corepresentable f, Profunctor j, f ~ g |> j) => RelativeMonad j (CorepStar g :.: CorepStar f) where
-  relReturn @a = let f = trivialCorep @f @a in runRan (trivialCorep @g) f \\ f
+  relReturn @a = let f = corepUniv @f @a in runRan (corepUniv @g) f \\ f
   relBind @b @a j = withObCorep @f @b (corepMap @g @(f %% a) @(f %% b) (coindex @f @a (Ran (\g -> rmap (coindex g) j)))) \\ j
 
 -- | The right Kan extension is the right adjoint of the precomposition functor.

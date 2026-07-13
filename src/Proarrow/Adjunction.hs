@@ -27,8 +27,8 @@ import Proarrow.Profunctor.Corepresentable
   ( Corep
   , Corepresentable (..)
   , corepObj
+  , corepUniv
   , cotabulated
-  , trivialCorep
   )
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Identity (Id (..))
@@ -39,8 +39,8 @@ import Proarrow.Profunctor.Representable
   , Representable (..)
   , mapRepCostar
   , repObj
+  , repUniv
   , tabulated
-  , trivialRep
   )
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..), bind, extend, extract, return)
@@ -146,19 +146,19 @@ class (Profunctor p, Profunctor q) => Proadjunction (p :: j +-> k) (q :: k +-> j
   counit :: p :.: q :~> (~>)
 
 instance (Representable p) => Proadjunction p (RepCostar p) where
-  unit = trivialCorep :.: trivialRep
+  unit = corepUniv :.: repUniv
   counit (f :.: g) = coindex g . index f
 
 instance (Corepresentable p) => Proadjunction (CorepStar p) p where
-  unit = trivialCorep :.: trivialRep
+  unit = corepUniv :.: repUniv
   counit (f :.: g) = coindex g . index f
 
 instance (FunctorForRep f) => Proadjunction (Rep f) (Corep f) where
-  unit = trivialCorep :.: trivialRep
+  unit = corepUniv :.: repUniv
   counit (f :.: g) = coindex g . index f
 
 instance (Functor f) => Proadjunction (Star f) (Costar f) where
-  unit = trivialCorep :.: trivialRep
+  unit = corepUniv :.: repUniv
   counit (f :.: g) = coindex g . index f
 
 instance (Proadjunction l1 r1, Proadjunction l2 r2) => Proadjunction (l1 :.: l2) (r2 :.: r1) where
@@ -210,17 +210,17 @@ instance (HasLimits j k) => Representable (LimitAdj (j :: a +-> b) :: REPK a k +
                     . index
                       ( limitUniv @j @k
                           (\(g :.: j) -> case n j of c :.: r -> lmap (coindex c . index g) r)
-                          (trivialRep @(CorepStar (UN OP (UN SUB c))) @o)
+                          (repUniv @(CorepStar (UN OP (UN SUB c))) @o)
                       )
                 )
           )
       )
-  trivialRep @(SUB r) = LimitAdj (\j -> RepCostar (index @r (limit (trivialRep :.: j))) :.: trivialRep \\ j)
+  repUniv @(SUB r) = LimitAdj (\j -> RepCostar (index @r (limit (repUniv :.: j))) :.: repUniv \\ j)
   repMap (Sub n) = Sub (Op (mapRepCostar (mapLimit @j n)))
 
 instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a k +-> COREPK b k) where
   type LimitAdj j %% c = REP (CorepStar (Colimit j (UN OP (UN SUB c))))
-  trivialCorep @(SUB (OP r)) = LimitAdj (\j -> trivialCorep :.: CorepStar (coindex @r (colimit (j :.: trivialCorep))) \\ j)
+  corepUniv @(SUB (OP r)) = LimitAdj (\j -> corepUniv :.: CorepStar (coindex @r (colimit (j :.: corepUniv))) \\ j)
   coindex @_ @r (LimitAdj n) =
     Sub
       ( Prof \(CorepStar @o l) ->
@@ -228,7 +228,7 @@ instance (HasColimits j k) => Corepresentable (LimitAdj (j :: a +-> b) :: REPK a
             ( coindex
                 ( colimitUniv @j @k
                     (\(j :.: p) -> case n j of c :.: r -> rmap (coindex p . index r) c)
-                    (trivialCorep @(RepCostar (UN SUB r)) @o)
+                    (corepUniv @(RepCostar (UN SUB r)) @o)
                 )
                 . l
             )
@@ -239,10 +239,10 @@ rightAdjointPreservesLimits
    . (Adjunction p, Representable d, HasLimits j k, HasLimits j k')
   => Limit j (p :.: d) :~> p :.: Limit j d
 rightAdjointPreservesLimits lim =
-  trivialCorep @p
+  corepUniv @p
     :.: limitUniv @j @k @d
       (\((f' :.: lim') :.: j) -> case limit @j @k' @(p :.: d) (lim' :.: j) of g' :.: d -> lmap (coindex g' . index f') d)
-      (trivialRep @(CorepStar p) :.: lim)
+      (repUniv @(CorepStar p) :.: lim)
     \\ lim
 
 rightAdjointPreservesLimitsInv
@@ -258,8 +258,8 @@ leftAdjointPreservesColimits
 leftAdjointPreservesColimits colim =
   colimitUniv @j @k @d
     (\(j :.: (colim' :.: g')) -> case colimit @j @k' @(d :.: p) (j :.: colim') of d :.: f' -> rmap (coindex g' . index f') d)
-    (colim :.: trivialCorep @(RepCostar p))
-    :.: trivialRep @p
+    (colim :.: corepUniv @(RepCostar p))
+    :.: repUniv @p
     \\ colim
 
 leftAdjointPreservesColimitsInv

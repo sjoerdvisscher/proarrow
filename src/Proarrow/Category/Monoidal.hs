@@ -24,8 +24,8 @@ import Proarrow.Core
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Constant (review, view)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep)
-import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), trivialRep)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
+import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), repUniv)
 
 infixl 8 ||
 infixl 7 ==
@@ -49,13 +49,13 @@ par0Rep :: (Representable p, MonoidalProfunctor p) => Unit ~> p % Unit
 par0Rep @p = index @p par0
 
 parRep :: (Representable p, MonoidalProfunctor p, Ob x, Ob y) => (p % x) ** (p % y) ~> p % (x ** y)
-parRep @p @x @y = index @p (trivialRep @p @x `par` trivialRep @p @y)
+parRep @p @x @y = index @p (repUniv @p @x `par` repUniv @p @y)
 
 unpar0Corep :: (Corepresentable p, MonoidalProfunctor p) => p %% Unit ~> Unit
 unpar0Corep @p = coindex @p par0
 
 unparCorep :: (Corepresentable p, MonoidalProfunctor p, Ob x, Ob y) => p %% (x ** y) ~> (p %% x) ** (p %% y)
-unparCorep @p @x @y = coindex @p (trivialCorep @p @x `par` trivialCorep @p @y)
+unparCorep @p @x @y = coindex @p (corepUniv @p @x `par` corepUniv @p @y)
 
 type StrongMonoidalRep p = (Representable p, MonoidalProfunctor p, MonoidalProfunctor (RepCostar p))
 

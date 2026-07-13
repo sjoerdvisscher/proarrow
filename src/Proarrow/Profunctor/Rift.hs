@@ -11,8 +11,8 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), trivialCorep)
-import Proarrow.Profunctor.Representable (Rep (..), RepCostar, Representable (..), trivialRep, withObRep)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv)
+import Proarrow.Profunctor.Representable (Rep (..), RepCostar, Representable (..), repUniv, withObRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..), RelativeComonad (..))
 
@@ -34,7 +34,7 @@ riftUniv :: (Profunctor j, Profunctor g) => (j :.: g) ~> p -> g ~> p <| j
 riftUniv (Prof n) = Prof \g -> g // Rift \j -> n (j :.: g)
 
 flipRift :: (FunctorForRep j, Profunctor p) => p <| Rep j ~> Corep j :.: p
-flipRift = Prof \(Rift k) -> trivialCorep :.: k trivialRep
+flipRift = Prof \(Rift k) -> corepUniv :.: k repUniv
 
 flipRiftInv :: (FunctorForRep j, Profunctor p) => Corep j :.: p ~> p <| Rep j
 flipRiftInv = Prof \(g :.: p) -> g // p // Rift \f -> lmap (coindex g . index f) p
@@ -82,7 +82,7 @@ class (Representable p, Representable j, Representable (p <| j)) => PointwiseRig
 instance (Representable p, Representable j, Representable (p <| j)) => PointwiseRightKanLift j p
 
 instance (Representable g, Representable f, Profunctor j, f ~ j <| g) => RelativeComonad j (RepCostar f :.: RepCostar g) where
-  relExtract @a = let f = trivialRep @f @a in runRift (trivialRep @g) f \\ f
+  relExtract @a = let f = repUniv @f @a in runRift (repUniv @g) f \\ f
   relExtend @a @b j = withObRep @f @a (repMap @g @(f % a) @(f % b) (index @f @_ @b (Rift (\g -> lmap (index g) j)))) \\ j
 
 riftCompose :: (Profunctor i, Profunctor j, Profunctor p) => (p <| j) <| i ~> p <| (j :.: i)

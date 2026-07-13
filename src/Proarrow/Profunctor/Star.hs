@@ -22,7 +22,7 @@ import Proarrow.Object.Initial (initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Representable (..), dimapRep, trivialRep)
+import Proarrow.Profunctor.Representable (Representable (..), dimapRep, repUniv)
 
 type Star' :: j .-> k -> j +-> k
 data Star' f a b where
@@ -106,7 +106,7 @@ instance Traversable (Star []) where
 starTraverse
   :: forall {k} t p a b
    . (Functor t, Traversable (Star t :: k +-> k), StrongDistributiveProfunctor (p :: k +-> k)) => p a b -> p (t a) (t b)
-starTraverse p = p // case traverse (trivialRep :.: p) of x :.: Star y -> rmap y x
+starTraverse p = p // case traverse (repUniv :.: p) of x :.: Star y -> rmap y x
 
 preludeTraverse
   :: (Applicative (f :: k -> k), Functor t, Traversable (Star t), SelfAction k, Strong k (Star f), HasCoproducts k, Ob b)

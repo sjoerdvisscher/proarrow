@@ -9,7 +9,7 @@ import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), src, (:~>), type (+->))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Representable (Representable (..), trivialRep)
+import Proarrow.Profunctor.Representable (Representable (..), repUniv)
 
 class (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
 instance (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
@@ -45,7 +45,7 @@ class (Relation p) => Total p where
   isTotal :: (~>) :~> Converse p :.: p
 
 reprIsTotal :: (Relation p, Representable p) => (~>) :~> Converse p :.: p
-reprIsTotal f = withEq f (Converse trivialRep :.: trivialRep) \\ f
+reprIsTotal f = withEq f (Converse repUniv :.: repUniv) \\ f
 
 class (Relation p) => Injective p where
   isInjective :: Converse p :.: p :~> (~>)

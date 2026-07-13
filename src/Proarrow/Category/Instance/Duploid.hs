@@ -23,8 +23,8 @@ import Proarrow.Core
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), trivialCorep, withObCorep)
-import Proarrow.Profunctor.Representable (CorepStar (..), Representable (..), trivialRep, withObRep)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv, withObCorep)
+import Proarrow.Profunctor.Representable (CorepStar (..), Representable (..), repUniv, withObRep)
 
 type DUPLOID :: forall {n} {p}. n +-> p -> Kind
 type data DUPLOID (adj :: n +-> p) = N n | P p
@@ -66,8 +66,8 @@ instance (Adjunction adj) => Profunctor (Duploid :: CAT (DUPLOID adj)) where
 -- | ATTENTION: a duploid is not associative, so not really a promonad/category!
 instance (Adjunction adj) => Promonad (Duploid :: CAT (DUPLOID adj)) where
   id @x = Duploid $ case pn @x of
-    SP -> trivialCorep
-    SN -> trivialRep
+    SP -> corepUniv
+    SN -> repUniv
   g@(Duploid @y _) . f = case pn @y of
     SP -> g • f
     SN -> g ◦ f
@@ -91,7 +91,7 @@ fromLinear f = Duploid (case pn @x of SN -> tabulate (repMap @adj f); SP -> cota
 type Dn x = P (Pos x)
 
 down :: forall {adj} (x :: DUPLOID adj). (Adjunction adj, Ob x) => x ~> Dn x
-down = withPosOb @x $ Duploid trivialCorep
+down = withPosOb @x $ Duploid corepUniv
 
 undown :: forall {adj} (x :: DUPLOID adj). (Adjunction adj, Ob x) => Dn x ~> x
 undown = withPosOb @x $ fromThunkable (obj @(Pos x))
@@ -102,7 +102,7 @@ mapDown f = down . f . undown \\ f
 type Up x = N (Neg x)
 
 unup :: forall {adj} (x :: DUPLOID adj). (Adjunction adj, Ob x) => Up x ~> x
-unup = withNegOb @x $ Duploid trivialRep
+unup = withNegOb @x $ Duploid repUniv
 
 up :: forall {adj} (x :: DUPLOID adj). (Adjunction adj, Ob x) => x ~> Up x
 up = withNegOb @x $ fromLinear (obj @(Neg x))
@@ -119,8 +119,8 @@ instance (Adjunction (adj :: n +-> p), StrongMonoidalCorep adj) => MonoidalProfu
           withPosOb @y2 $
             withOb2 @_ @(Pos x2) @(Pos y2) $
               withObCorep @adj @(Pos x2 ** Pos y2) $
-                case lmap (index fp) (trivialRep @(AdjMonad adj) @(Pos x2))
-                  `par` lmap (index gp) (trivialRep @(AdjMonad adj) @(Pos y2)) of
+                case lmap (index fp) (repUniv @(AdjMonad adj) @(Pos x2))
+                  `par` lmap (index gp) (repUniv @(AdjMonad adj) @(Pos y2)) of
                   fg :.: CorepStar h -> Duploid (rmap h fg) \\ fg
 
 instance (Adjunction (adj :: n +-> p), StrongMonoidalCorep adj) => Monoidal (DUPLOID adj) where

@@ -84,4 +84,4 @@ instance (CategoryOf j, CategoryOf k) => Powered Type (j +-> k) where
 instance (Powered v k, Ob (n :: v)) => Representable (GenArrow (OP (n :: v)) :: k +-> k) where
   type GenArrow (OP n) % a = a ^ n
   index (GenArrow @a @b f) = power @v @k @a @b f
-  trivialRep @a = withObPower @v @k @a @n (GenArrow (unpower @v @k @a (obj @(a ^ n))))
+  repUniv @a = withObPower @v @k @a @n (GenArrow (unpower @v @k @a (obj @(a ^ n))))

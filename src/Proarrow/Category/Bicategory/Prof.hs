@@ -227,7 +227,7 @@ instance
 --     Col.InL f -> repMap @g f
 --     Col.InR f -> repMap @f f
 --     Col.L2R p ->
---       p // case reflect ([] @s) of Sq (Prof n) -> case n (trivialRep :.: p) of Id g :.: f -> index f . g
+--       p // case reflect ([] @s) of Sq (Prof n) -> case n (repUniv :.: p) of Id g :.: f -> index f . g
 
 -- cotabulatorFactorize
 --   :: forall p f g r
