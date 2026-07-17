@@ -18,6 +18,7 @@ import Proarrow.Category.Instance.Free
   , WithShow
   )
 import Proarrow.Category.Instance.Free qualified as F
+import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -26,14 +27,14 @@ import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj, tgt)
-import Proarrow.Object.BinaryProduct (PROD (..), Prod (..), HasBinaryProducts (..), diag)
+import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
-import Proarrow.Profunctor.Representable (Representable (..))
 
 infixl 4 ||
 infixl 4 |||
@@ -137,7 +138,6 @@ instance (Representable p) => Representable (Coprod p) where
   index (Coprod p) = Coprod (Id (index p))
   tabulate (Coprod (Id f)) = Coprod (tabulate f)
   repMap (Coprod (Id f)) = Coprod (Id (repMap @p f))
-
 
 -- | The same category as the category of @k@, but with coproducts as the tensor.
 instance (CategoryOf k) => CategoryOf (COPROD k) where
@@ -245,7 +245,7 @@ instance (HasBinaryCoproducts `Elem` cs) => HasStructure cs p HasBinaryCoproduct
     Sum :: a ~> o -> b ~> o -> Struct HasBinaryCoproducts (a + b) o
   foldStructure @f _ (Lft @a @b) = withLowerOb @a @f (withLowerOb @b @f (lft @_ @(Lower f a) @(Lower f b)))
   foldStructure @f _ (Rgt @a @b) = withLowerOb @a @f (withLowerOb @b @f (rgt @_ @(Lower f a) @(Lower f b)))
-  foldStructure go (Sum g h) = (go g ||| go h)
+  foldStructure go (Sum g h) = go g ||| go h
 deriving instance (WithEq a) => Eq (Struct HasBinaryCoproducts a b)
 instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
   showsPrec _ Lft = P.showString "lft"
@@ -263,7 +263,10 @@ instance (Ok cs p, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE c
 class ((a && b) ~ (a || b)) => CheckBiproduct a b
 instance ((a && b) ~ (a || b)) => CheckBiproduct a b
 
-class (HasBinaryCoproducts k, HasBinaryProducts k, forall (a :: k) (b :: k). (Ob a, Ob b) => CheckBiproduct a b) => HasBiproducts k where
+class
+  (HasBinaryCoproducts k, HasBinaryProducts k, forall (a :: k) (b :: k). (Ob a, Ob b) => CheckBiproduct a b) =>
+  HasBiproducts k
+  where
   sum :: (a :: k) ~> b -> a ~> b -> a ~> b
   sum f g = codiag . (f +++ g) . diag \\ f \\ g
 
@@ -280,3 +283,9 @@ instance (HasBinaryProducts k) => HasBinaryCoproducts (OPPOSITE k) where
   lft @(OP a) @(OP b) = Op (fst @_ @a @b)
   rgt @(OP a) @(OP b) = Op (snd @_ @a @b)
   Op a ||| Op b = Op (a &&& b)
+
+-- | The left adjoint to the diagonal functor.
+instance (HasBinaryCoproducts k) => Corepresentable (Rep Diag :: k +-> (k, k)) where
+  type Rep Diag %% '(a, b) = a || b
+  coindex (Rep (f :**: g)) = f ||| g
+  corepUniv @'(a, b) = withObCoprod @k @a @b (Rep (lft @k @a @b :**: rgt @k @a @b))

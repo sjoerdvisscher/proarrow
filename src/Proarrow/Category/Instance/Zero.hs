@@ -1,7 +1,10 @@
+{-# OPTIONS_GHC -Wno-missing-methods #-}
+
 module Proarrow.Category.Instance.Zero where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 
 type data VOID
 
@@ -27,3 +30,7 @@ instance Profunctor Zero where
 
 instance DaggerProfunctor Zero where
   dagger = \case {}
+
+data family Absurd :: VOID +-> k
+instance (CategoryOf k) => FunctorForRep (Absurd :: VOID +-> k) where
+  fmap = \case {}

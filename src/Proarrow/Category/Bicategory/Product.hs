@@ -2,40 +2,43 @@ module Proarrow.Category.Bicategory.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Instance.Product ()
-import Proarrow.Category.Bicategory (Bicategory (..), Adjunction_ (..), Monad (..), Comonad (..), Adj (..))
-import Proarrow.Category.Equipment (Equipment (..), TightAdjoint, CotightAdjoint, Tight, Cotight, IsOb, WithObO2 (..))
+import Proarrow.Category.Bicategory (Adj (..), Adjunction_ (..), Bicategory (..), Comonad (..), Monad (..))
+import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
+import Proarrow.Category.Instance.Product (Fst, Snd)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Functor (type (@))
 
 type PRODK :: CAT j -> CAT k -> CAT (j, k)
 data PRODK jj kk j k where
-  PROD :: jj (Fst ik) (Fst jl) -> kk (Snd ik) (Snd jl) -> PRODK jj kk ik jl
+  PROD :: jj (Fst @ ik) (Fst @ jl) -> kk (Snd @ ik) (Snd @ jl) -> PRODK jj kk ik jl
 
-type family PRODFST (p :: PRODK jj kk j k) :: jj (Fst j) (Fst k) where
+type family PRODFST (p :: PRODK jj kk j k) :: jj (Fst @ j) (Fst @ k) where
   PRODFST (PROD p q) = p
-type family PRODSND (p :: PRODK jj kk j k) :: kk (Snd j) (Snd k) where
+type family PRODSND (p :: PRODK jj kk j k) :: kk (Snd @ j) (Snd @ k) where
   PRODSND (PROD p q) = q
-type family Fst (p :: (j, k)) :: j where
-  Fst '(a, b) = a
-type family Snd (p :: (j, k)) :: k where
-  Snd '(a, b) = b
 
 type Prod :: CAT (PRODK jj kk j k)
 data Prod a b where
-  Prod :: { fst :: a ~> b, snd :: c ~> d } -> Prod (PROD a c) (PROD b d)
+  Prod :: {fst :: a ~> b, snd :: c ~> d} -> Prod (PROD a c) (PROD b d)
 
-instance (CategoryOf (jj (Fst ik) (Fst jl)), CategoryOf (kk (Snd ik) (Snd jl))) => Profunctor (Prod :: CAT (PRODK jj kk ik jl)) where
+instance
+  (CategoryOf (jj (Fst @ ik) (Fst @ jl)), CategoryOf (kk (Snd @ ik) (Snd @ jl)))
+  => Profunctor (Prod :: CAT (PRODK jj kk ik jl))
+  where
   dimap = dimapDefault
   r \\ Prod f g = r \\ f \\ g
-instance (CategoryOf (jj (Fst ik) (Fst jl)), CategoryOf (kk (Snd ik) (Snd jl))) => Promonad (Prod :: CAT (PRODK jj kk ik jl)) where
+instance
+  (CategoryOf (jj (Fst @ ik) (Fst @ jl)), CategoryOf (kk (Snd @ ik) (Snd @ jl)))
+  => Promonad (Prod :: CAT (PRODK jj kk ik jl))
+  where
   id = Prod id id
   Prod f1 g1 . Prod f2 g2 = Prod (f1 . f2) (g1 . g2)
-instance (CategoryOf (jj (Fst ik) (Fst jl)), CategoryOf (kk (Snd ik) (Snd jl))) => CategoryOf (PRODK jj kk ik jl) where
+instance (CategoryOf (jj (Fst @ ik) (Fst @ jl)), CategoryOf (kk (Snd @ ik) (Snd @ jl))) => CategoryOf (PRODK jj kk ik jl) where
   type (~>) = Prod
   type Ob (p :: PRODK jj kk ik jl) = (Ob (PRODFST p), Ob (PRODSND p), p ~ PROD (PRODFST p) (PRODSND p))
 
 instance (Bicategory jj, Bicategory kk) => Bicategory (PRODK jj kk) where
-  type Ob0 (PRODK jj kk) jk = (Ob0 jj (Fst jk), Ob0 kk (Snd jk))
+  type Ob0 (PRODK jj kk) jk = (Ob0 jj (Fst @ jk), Ob0 kk (Snd @ jk))
   type I = PROD I I
   type PROD a b `O` PROD c d = PROD (a `O` c) (b `O` d)
   withOb2 @(PROD a b) @(PROD c d) r = withOb2 @jj @a @c (withOb2 @kk @b @d r)
@@ -51,7 +54,7 @@ instance (Bicategory jj, Bicategory kk) => Bicategory (PRODK jj kk) where
 
 instance (Adjunction_ (PRODFST l) (PRODFST r), Adjunction_ (PRODSND l) (PRODSND r), Ob l, Ob r) => Adjunction_ l r where
   adj = case (adj @(PRODFST l) @(PRODFST r), adj @(PRODSND l) @(PRODSND r)) of
-    (Adj un1 coun1, Adj un2 coun2) -> Adj { adjUnit = Prod un1 un2, adjCounit = Prod coun1 coun2 }
+    (Adj un1 coun1, Adj un2 coun2) -> Adj{adjUnit = Prod un1 un2, adjCounit = Prod coun1 coun2}
 
 instance (Monad (PRODFST m), Monad (PRODSND m), Ob m) => Monad m where
   eta = Prod eta eta

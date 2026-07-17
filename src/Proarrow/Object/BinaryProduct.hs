@@ -17,7 +17,7 @@ import Proarrow.Category.Instance.Free
   , WithEq
   , WithShow
   )
-import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
+import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -27,6 +27,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
+import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
@@ -80,10 +81,10 @@ instance HasBinaryProducts () where
   U.Unit &&& U.Unit = U.Unit
 
 instance (HasBinaryProducts j, HasBinaryProducts k) => HasBinaryProducts (j, k) where
-  type a && b = '(Fst a && Fst b, Snd a && Snd b)
+  type '(a1, a2) && '(b1, b2) = '(a1 && b1, a2 && b2)
   withObProd @'(a1, a2) @'(b1, b2) r = withObProd @j @a1 @b1 (withObProd @k @a2 @b2 r)
   fst @'(a1, a2) @'(b1, b2) = fst @_ @a1 @b1 :**: fst @_ @a2 @b2
-  snd @a @b = snd @_ @(Fst a) @(Fst b) :**: snd @_ @(Snd a) @(Snd b)
+  snd @'(a1, a2) @'(b1, b2) = snd @_ @a1 @b1 :**: snd @_ @a2 @b2
   (f1 :**: f2) &&& (g1 :**: g2) = (f1 &&& g1) :**: (f2 &&& g2)
 
 instance (CategoryOf j, CategoryOf k) => HasBinaryProducts (j +-> k) where
@@ -278,3 +279,9 @@ instance (Ok cs p, HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs p)
   fst = Str Fst Id
   snd = Str Snd Id
   f &&& g = Str (Prd f g) Id \\ f \\ g
+
+-- | The right adjoint to the diagonal functor.
+instance (HasBinaryProducts k) => Representable (Corep Diag :: (k, k) +-> k) where
+  type Corep Diag % '(a, b) = a && b
+  index (Corep (f :**: g)) = f &&& g
+  repUniv @'(a, b) = withObProd @k @a @b (Corep (fst @k @a @b :**: snd @k @a @b))

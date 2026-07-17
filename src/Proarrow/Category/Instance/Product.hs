@@ -7,13 +7,7 @@ import Prelude (type (~))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (CodiscreteProfunctor (..), Discrete (..), ThinProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
-
-type Fst :: (a, b) -> a
-type family Fst a where
-  Fst '(a, b) = a
-type Snd :: (a, b) -> b
-type family Snd a where
-  Snd '(a, b) = b
+import Proarrow.Functor (FunctorForRep (..))
 
 type (:**:) :: j1 +-> k1 -> j2 +-> k2 -> (j1, j2) +-> (k1, k2)
 data (c :**: d) a b where
@@ -22,7 +16,7 @@ data (c :**: d) a b where
 -- | The product of two categories.
 instance (CategoryOf k1, CategoryOf k2) => CategoryOf (k1, k2) where
   type (~>) = (~>) :**: (~>)
-  type Ob a = (a ~ '(Fst a, Snd a), Ob (Fst a), Ob (Snd a))
+  type Ob a = (a ~ '(Fst @ a, Snd @ a), Ob (Fst @ a), Ob (Snd @ a))
 
 -- | The product promonad of promonads `p` and `q`.
 instance (Promonad p, Promonad q) => Promonad (p :**: q) where
@@ -40,6 +34,21 @@ instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :**: q) where
   type HasArrow (p :**: q) '(a1, a2) '(b1, b2) = (HasArrow p a1 b1, HasArrow q a2 b2)
   arr = arr :**: arr
   withArr (f :**: g) r = withArr f (withArr g r)
+
+data family Fst :: (j, k) +-> j
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (Fst :: (j, k) +-> j) where
+  type Fst @ '(a, b) = a
+  fmap (f :**: _) = f
+
+data family Snd :: (j, k) +-> k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (Snd :: (j, k) +-> k) where
+  type Snd @ '(a, b) = b
+  fmap (_ :**: f) = f
+
+data family Diag :: k +-> (k, k)
+instance (CategoryOf k) => FunctorForRep (Diag :: k +-> (k, k)) where
+  type Diag @ a = '(a, a)
+  fmap f = f :**: f
 
 checkDiscrete :: (Discrete j, Discrete k) => Hom (j, k) a b -> ((a ~ b) => r) -> r
 checkDiscrete f r = withEq f r

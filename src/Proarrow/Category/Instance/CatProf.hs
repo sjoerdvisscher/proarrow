@@ -1,10 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Instance.Cat where
+module Proarrow.Category.Instance.CatProf where
 
 import Data.Type.Nat (Nat (..))
 
-import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
+import Proarrow.Category.Instance.Product (Diag, Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
@@ -16,9 +17,20 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Category.Monoidal.Strictified ()
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Is
+  , Kind
+  , Profunctor (..)
+  , Promonad (..)
+  , UN
+  , dimapDefault
+  , type (+->)
+  )
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
@@ -35,15 +47,13 @@ import Proarrow.Object.BinaryProduct
 import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), coactCC)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.NaturalNumbers (HasParamNNO (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep, Representable (..))
-import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Constant (Constant)
-import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
-import Proarrow.Object.NaturalNumbers (HasParamNNO (..))
-import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
+import Proarrow.Profunctor.Corepresentable (Corep)
+import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Representable (Rep)
 
 newtype KIND = K Kind
 type instance UN K (K k) = k
@@ -73,41 +83,19 @@ instance HasInitialObject KIND where
   type InitialObject = K ()
   initiate = Cat @(Corep (Constant '()))
 
-data family FstCat :: (j, k) +-> j
-instance (CategoryOf j, CategoryOf k) => FunctorForRep (FstCat :: (j, k) +-> j) where
-  type FstCat @ '(a, b) = a
-  fmap (f :**: _) = f
-
-data family SndCat :: (j, k) +-> k
-instance (CategoryOf j, CategoryOf k) => FunctorForRep (SndCat :: (j, k) +-> k) where
-  type SndCat @ '(a, b) = b
-  fmap (_ :**: f) = f
-
-type (:&&&:) :: (k +-> i) -> (k +-> j) -> (k +-> (i, j))
-data (p :&&&: q) a b where
-  (:&&&:) :: p a c -> q b c -> (p :&&&: q) '(a, b) c
-instance (Profunctor p, Profunctor q) => Profunctor (p :&&&: q) where
-  dimap (l1 :**: l2) r (p :&&&: q) = dimap l1 r p :&&&: dimap l2 r q
-  r \\ (p :&&&: q) = r \\ p \\ q
-instance (Representable p, Representable q) => Representable (p :&&&: q) where
-  type (p :&&&: q) % a = '(p % a, q % a)
-  tabulate (p :**: q) = tabulate p :&&&: tabulate q
-  index (p :&&&: q) = index p :**: index q
-  repMap f = repMap @p f :**: repMap @q f
-
 instance HasBinaryProducts KIND where
   type l && r = K (UN K l, UN K r)
   withObProd r = r
-  fst = Cat @(Rep FstCat)
-  snd = Cat @(Rep SndCat)
-  Cat @p &&& Cat @q = Cat @(p :&&&: q)
+  fst = Cat @(Rep Fst)
+  snd = Cat @(Rep Snd)
+  Cat @p &&& Cat @q = Cat @((p :**: q) :.: Rep Diag)
 
 instance HasBinaryCoproducts KIND where
   type K l || K r = K (l, r)
   withObCoprod r = r
-  lft = Cat @(Corep FstCat)
-  rgt = Cat @(Corep SndCat)
-  Cat @p ||| Cat @q = Cat @(UnOp (Rep CombineDual :.: (Op p :&&&: Op q)))
+  lft = Cat @(Corep Fst)
+  rgt = Cat @(Corep Snd)
+  Cat @p ||| Cat @q = Cat @(Corep Diag :.: (p :**: q))
 
 instance HasBiproducts KIND
 
@@ -203,7 +191,7 @@ instance FunctorForRep Succ where
   fmap Refl = Refl
 type NNOUniv :: a +-> x -> x +-> x -> (a, DISCRETE Nat) +-> x
 data NNOUniv z s a b where
-  NNOZ :: Ob x => z x a -> NNOUniv z s x '(a, D Z)
+  NNOZ :: (Ob x) => z x a -> NNOUniv z s x '(a, D Z)
   NNOS :: (s :.: NNOUniv z s) x '(a, D n) -> NNOUniv z s x '(a, D (S n))
 instance (Profunctor z, Profunctor s) => Profunctor (NNOUniv z s) where
   dimap l (ra :**: Refl) (NNOZ z) = NNOZ (dimap l ra z) \\ l

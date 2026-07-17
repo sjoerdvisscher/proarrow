@@ -15,13 +15,13 @@ import Proarrow.Category.Bicategory
 import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
 import Proarrow.Category.Bicategory.Limit qualified as Bi
-import Proarrow.Category.Bicategory.Sub (IsOb, IsOb0, SUBCAT (..), Sub (..), WithObO2 (..))
+import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..), WithObO2 (..))
 import Proarrow.Category.Colimit qualified as L
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), Tight, TightAdjoint)
 import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
-import Proarrow.Category.Instance.Cat qualified as C
 import Proarrow.Category.Instance.Nat (Nat (..))
-import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
+import Proarrow.Category.Instance.Product qualified as C
 import Proarrow.Category.Instance.Prof qualified as Prof
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Limit qualified as L
@@ -89,12 +89,8 @@ instance Bicategory PROFK where
   associator = Prof \((p :.: q) :.: r) -> p :.: (q :.: r)
   associatorInv = Prof \(p :.: (q :.: r)) -> (p :.: q) :.: r
 
-data ProfRep
-type instance IsOb ProfRep p = Representable (UN PK p)
-type instance IsOb0 ProfRep k = ()
-
-type FUNK = SUBCAT ProfRep PROFK
-type FUN p = SUB @ProfRep (PK p)
+type FUNK = SUBCAT Tight PROFK
+type FUN p = SUB @Tight (PK p)
 type UNFUN p = UN PK (UN SUB p)
 
 type instance IsOb Tight p = Representable (UN PK p)
@@ -249,11 +245,11 @@ instance Bi.HasTerminalObject FUNK where
 
 type instance Bi.Product FUNK a b = (a, b)
 instance Bi.HasBinaryProducts FUNK where
-  type Fst FUNK a b = FUN (Rep C.FstCat)
-  type Snd FUNK a b = FUN (Rep C.SndCat)
+  type Fst FUNK a b = FUN (Rep C.Fst)
+  type Snd FUNK a b = FUN (Rep C.Snd)
   fstObj = Sub (Prof id)
   sndObj = Sub (Prof id)
-  type f &&& g = FUN (UNFUN f C.:&&&: UNFUN g)
+  type f &&& g = FUN ((UNFUN f :**: UNFUN g) :.: Rep Diag)
   prodObj = Sub (Prof id)
   prodUniv @_ @_ @_ @_ @k (Sub (Prof n)) (Sub (Prof m)) =
     Sub

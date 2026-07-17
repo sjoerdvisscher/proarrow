@@ -18,6 +18,7 @@ import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Functor (type (@))
 import Proarrow.Functor qualified as Rep
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Representable (Rep (..))
@@ -170,7 +171,7 @@ instance (TestableProfunctor p, TestableProfunctor q) => TestableProfunctor (p :
     SomeP q <- genProfunctorElt @q (nm ++ "_1")
     pure $ SomeP (p :**: q)
 instance (Testable j, Testable k) => Testable (j, k) where
-  type TestOb a = (a ~ '(Fst a, Snd a), TestOb (Fst a), TestOb (Snd a))
+  type TestOb a = (a ~ '(Fst @ a, Snd @ a), TestOb (Fst @ a), TestOb (Snd @ a))
   showOb @'(a, b) = "(" ++ showOb @j @a ++ ", " ++ showOb @k @b ++ ")"
   eqOb @'(a1, a2) @'(b1, b2) = case (eqOb @j @a1 @b1, eqOb @k @a2 @b2) of
     (Just Refl, Just Refl) -> Just Refl

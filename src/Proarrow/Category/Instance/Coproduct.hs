@@ -5,6 +5,9 @@ import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Representable (Representable (..))
 
 type data COPRODUCT j k = L j | R k
 
@@ -40,7 +43,39 @@ instance (CategoryOf j, CategoryOf k) => CategoryOf (COPRODUCT j k) where
   type (~>) @(COPRODUCT j k) = (~>) @j :++: (~>) @k
   type Ob (a :: COPRODUCT j k) = IsLR a
 
+instance (Representable p, Representable q) => Representable (p :++: q) where
+  type (p :++: q) % L a = L (p % a)
+  type (p :++: q) % R a = R (q % a)
+  index (InjL p) = InjL (index p)
+  index (InjR q) = InjR (index q)
+  repUniv @a = caseLr @a (InjL (repUniv @p)) (InjR (repUniv @q))
+
+instance (Corepresentable p, Corepresentable q) => Corepresentable (p :++: q) where
+  type (p :++: q) %% L a = L (p %% a)
+  type (p :++: q) %% R a = R (q %% a)
+  coindex (InjL f) = InjL (coindex f)
+  coindex (InjR f) = InjR (coindex f)
+  corepUniv @a = caseLr @a (InjL (corepUniv @p)) (InjR (corepUniv @q))
+
 instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :++: q) where
   dagger = \case
     InjL f -> InjL (dagger f)
     InjR f -> InjR (dagger f)
+
+data family Lft :: j +-> COPRODUCT j k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (Lft :: j +-> COPRODUCT j k) where
+  type Lft @ a = L a
+  fmap = InjL
+
+data family Rgt :: k +-> COPRODUCT j k
+instance (CategoryOf j, CategoryOf k) => FunctorForRep (Rgt :: k +-> COPRODUCT j k) where
+  type Rgt @ a = R a
+  fmap = InjR
+
+data family Codiag :: COPRODUCT k k +-> k
+instance (CategoryOf k) => FunctorForRep (Codiag :: COPRODUCT k k +-> k) where
+  type Codiag @ L a = a
+  type Codiag @ R a = a
+  fmap = \case
+    InjL f -> f
+    InjR g -> g

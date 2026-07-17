@@ -4,11 +4,10 @@ module Proarrow.Category.Instance.Fam where
 
 import Data.Kind (Type)
 import GHC.Base (Any)
-import Prelude (($), type (~))
+import Prelude (type (~))
 
-import Proarrow.Category.Instance.Cat (FstCat, SndCat, (:&&&:) (..))
-import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
-import Proarrow.Category.Instance.Product (Fst, Snd, (:**:) (..))
+import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), Codiag, Lft, Rgt, (:++:) (..))
+import Proarrow.Category.Instance.Product (Diag, Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
@@ -36,9 +35,9 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Constant (Constant)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv, withObRep)
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type data FAM (k :: Kind) = forall (x :: Kind). DEP_ (x +-> k)
@@ -98,71 +97,25 @@ instance (CategoryOf k) => HasInitialObject (FAM k) where
   type InitialObject = DEP VOID (Rep Initiate)
   initiate = Fam @(Rep Initiate) \(Rep @_ @_ @b _) -> case obj @b of {}
 
-data family LftCat :: j +-> COPRODUCT j k
-instance (CategoryOf j, CategoryOf k) => FunctorForRep (LftCat :: j +-> COPRODUCT j k) where
-  type LftCat @ a = L a
-  fmap = InjL
-
-data family RgtCat :: k +-> COPRODUCT j k
-instance (CategoryOf j, CategoryOf k) => FunctorForRep (RgtCat :: k +-> COPRODUCT j k) where
-  type RgtCat @ a = R a
-  fmap = InjR
-
-type (:|||:) :: (i +-> k) -> (j +-> k) -> (COPRODUCT i j +-> k)
-data (p :|||: q) a b where
-  InjLP :: p a b -> (p :|||: q) a (L b)
-  InjRP :: q a b -> (p :|||: q) a (R b)
-instance (Profunctor p, Profunctor q) => Profunctor (p :|||: q) where
-  dimap l (InjL r) (InjLP p) = InjLP (dimap l r p)
-  dimap l (InjR r) (InjRP p) = InjRP (dimap l r p)
-  r \\ InjLP p = r \\ p
-  r \\ InjRP q = r \\ q
-instance (Representable p, Representable q) => Representable (p :|||: q) where
-  type (p :|||: q) % L a = p % a
-  type (p :|||: q) % R a = q % a
-  tabulate @b f = case obj @b of
-    InjL l -> InjLP (tabulate @p f) \\ l
-    InjR r -> InjRP (tabulate @q f) \\ r
-  index (InjLP p) = index p
-  index (InjRP q) = index q
-  repMap (InjL f) = repMap @p f
-  repMap (InjR f) = repMap @q f
-
 instance (CategoryOf k) => HasBinaryCoproducts (FAM k) where
-  type a || b = DEP (COPRODUCT (X a) (X b)) (DX a :|||: DX b)
+  type a || b = DEP (COPRODUCT (X a) (X b)) (Rep Codiag :.: (DX a :++: DX b))
   withObCoprod r = r
-  lft = Fam @(Rep LftCat) \p -> InjLP p :.: repUniv \\ p
-  rgt = Fam @(Rep RgtCat) \q -> InjRP q :.: repUniv \\ q
-  Fam @f l ||| Fam @g r = Fam @(f :|||: g) \case
-    InjLP p -> case l p of dx :.: f -> dx :.: InjLP f
-    InjRP q -> case r q of dy :.: g -> dy :.: InjRP g
+  lft = Fam @(Rep Lft) \p -> (repUniv :.: InjL p) :.: repUniv \\ p
+  rgt = Fam @(Rep Rgt) \q -> (repUniv :.: InjR q) :.: repUniv \\ q
+  Fam @f l ||| Fam @g r = Fam @(Rep Codiag :.: (f :++: g)) \case
+    Rep d :.: InjL p -> case l p of dx :.: f -> lmap d dx :.: (repUniv :.: InjL f) \\ f
+    Rep d :.: InjR q -> case r q of dy :.: g -> lmap d dy :.: (repUniv :.: InjR g) \\ g
 
 instance (HasTerminalObject k) => HasTerminalObject (FAM k) where
   type TerminalObject = DEP () TerminalProfunctor
   terminate = Fam @(Rep (Constant '())) \dx -> TerminalProfunctor :.: Rep Unit \\ dx
 
-type (:&&:) :: x +-> k -> y +-> k -> (x, y) +-> k
-data (p :&&: q) a b where
-  (:&&:) :: p a b -> q a c -> (p :&&: q) a '(b, c)
-instance (Profunctor l, Profunctor r, CategoryOf k) => Profunctor (l :&&: r :: (x, y) +-> k) where
-  dimap l (r0 :**: r1) (p :&&: q) = dimap l r0 p :&&: dimap l r1 q
-  r \\ (p :&&: q) = r \\ p \\ q
-instance (Representable l, Representable r, HasBinaryProducts k) => Representable (l :&&: r :: (x, y) +-> k) where
-  type (l :&&: r) % ab = (l % Fst ab) && (r % Snd ab)
-  tabulate @'(a, b) f =
-    withObRep @l @a $ withObRep @r @b $ tabulate (fst @_ @(l % a) @(r % b) . f) :&&: tabulate (snd @_ @(l % a) @(r % b) . f)
-  index (p :&&: q) = index p &&& index q
-  repMap (f :**: g) = repMap @l f *** repMap @r g
-instance (Corepresentable l, Corepresentable r, CategoryOf k) => Corepresentable (l :&&: r :: (x, y) +-> k) where
-  type (l :&&: r) %% a = '(l %% a, r %% a)
-  cotabulate (f :**: g) = cotabulate f :&&: cotabulate g
-  coindex (p :&&: q) = coindex p :**: coindex q
-  corepMap f = corepMap @l f :**: corepMap @r f
 instance (HasBinaryProducts k) => HasBinaryProducts (FAM k) where
-  type a && b = DEP (X a, X b) (DX a :&&: DX b)
+  type a && b = DEP (X a, X b) (Corep Diag :.: (DX a :**: DX b))
   withObProd r = r
-  fst = Fam @(Rep FstCat) \(l :&&: r) -> l :.: Rep id \\ l \\ r
-  snd = Fam @(Rep SndCat) \(l :&&: r) -> r :.: Rep id \\ l \\ r
-  Fam @f l &&& Fam @g r = Fam @(f :&&&: g) \dx -> case (l dx, r dx) of (dy1 :.: f, dy2 :.: g) -> (dy1 :&&: dy2) :.: (f :&&&: g)
+  fst = Fam @(Rep Fst) \(Corep (d :**: _) :.: (l :**: r)) -> lmap d l :.: repUniv \\ l \\ r
+  snd = Fam @(Rep Snd) \(Corep (_ :**: d) :.: (l :**: r)) -> lmap d r :.: repUniv \\ l \\ r
+  Fam @f l &&& Fam @g r = Fam @((f :**: g) :.: Rep Diag) \dx -> case (l dx, r dx) of
+    (dy1 :.: f, dy2 :.: g) -> (corepUniv :.: (dy1 :**: dy2)) :.: ((f :**: g) :.: repUniv) \\ f \\ dy2
 
 type Poly = FAM (OPPOSITE Type)
