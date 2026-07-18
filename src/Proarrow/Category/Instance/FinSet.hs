@@ -96,8 +96,8 @@ instance HasBinaryProducts FINSET where
 instance Distributive FINSET where
   distL @a @b @c = distLProd @a @b @c
   distR @a @b @c = distRProd @a @b @c
-  distL0 @(FS a) = withObProd @_ @(FS a) @(FS Z) $ FinSet (concat @a @Z (repeat VNil))
-  distR0 = FinSet VNil
+  absorbL @(FS a) = withObProd @_ @(FS a) @(FS Z) $ FinSet (concat @a @Z (repeat VNil))
+  absorbR = FinSet VNil
 
 -- >>> import Data.Type.Nat
 -- >>> import Data.Fin

@@ -192,8 +192,8 @@ instance MonoidalProfunctor (Coprod Linear) where
 instance Distributive LINEAR where
   distL = Linear \(a, ebc) -> case ebc of Left b -> Left (a, b); Right c -> Right (a, c)
   distR = Linear \(eab, c) -> case eab of Left a -> Left (a, c); Right b -> Right (b, c)
-  distL0 = Linear \(_a, v) -> case v of {}
-  distR0 = Linear \(v, _a) -> case v of {}
+  absorbL = Linear \(_a, v) -> case v of {}
+  absorbR = Linear \(v, _a) -> case v of {}
 
 type Not a = a %1 -> ()
 

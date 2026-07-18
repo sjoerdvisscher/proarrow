@@ -175,8 +175,8 @@ instance (P.Num a) => SymMonoidal (MatK a) where
 instance (P.Num a) => Distributive (MatK a) where
   distL @(M a') @(M b) @(M c) = arr (distRInv @(FS b) @(FS c) @(FS a'))
   distR @(M a') @(M b) @(M c) = arr (distLInv @(FS c) @(FS a') @(FS b))
-  distL0 = id
-  distR0 = id
+  absorbL = id
+  absorbR = id
 
 instance (P.Num a) => Closed (MatK a) where
   type x ~~> y = ExpSA x y

@@ -6,7 +6,14 @@ module Proarrow.Profunctor.Day where
 import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, swapInner', unitObj)
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , swap
+  , swapInner'
+  , unitObj
+  )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), first', second')
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
@@ -42,6 +49,9 @@ type Day :: (j +-> k) -> (j +-> k) -> j +-> k
 data Day p q a b where
   Day :: forall c d e f p q a b. a ~> c ** e -> p c d -> q e f -> d ** f ~> b -> Day p q a b
 
+day :: (Monoidal j, Monoidal k, Profunctor (p :: j +-> k), Profunctor q) => p c d -> q e f -> Day p q (c ** e) (d ** f)
+day p q = Day (src p `par` src q) p q (tgt p `par` tgt q)
+
 instance (Profunctor p, Profunctor q) => Profunctor (Day p q) where
   dimap l r (Day f p q g) = Day (lmap l f) p q (rmap r g)
   r \\ Day f _ _ g = r \\ f \\ g
@@ -75,7 +85,7 @@ instance (Monoidal j, Monoidal k) => Monoidal (j +-> k) where
     Day
       (associator @_ @c2 @e2 @e1 . (f2 `par` src q1) . f1)
       p2
-      (Day (src q2 `par` src q1) q2 q1 (tgt q2 `par` tgt q1))
+      (day q2 q1)
       (g1 . (g2 `par` tgt q1) . associatorInv @_ @d2 @f2 @f1)
       \\ p2
       \\ q2
@@ -83,7 +93,7 @@ instance (Monoidal j, Monoidal k) => Monoidal (j +-> k) where
   associatorInv = Prof \(Day @c1 @d1 f1 p1 (Day @c2 @d2 @e2 @f2 f2 p2 q2 g2) g1) ->
     Day
       (associatorInv @_ @c1 @c2 @e2 . (src p1 `par` f2) . f1)
-      (Day (src p1 `par` src p2) p1 p2 (tgt p1 `par` tgt p2))
+      (day p1 p2)
       q2
       (g1 . (tgt p1 `par` g2) . associator @_ @d1 @d2 @f2)
       \\ p1
@@ -110,8 +120,8 @@ instance (Monoidal j, Monoidal k) => Distributive (j +-> k) where
   distR = Prof \(Day l ab c r) -> case ab of
     InjL a -> InjL (Day l a c r)
     InjR b -> InjR (Day l b c r)
-  distL0 = Prof \case {}
-  distR0 = Prof \case {}
+  absorbL = Prof \case {}
+  absorbR = Prof \case {}
 
 duoidal
   :: (Monoidal j, Profunctor (p :: j +-> k), Profunctor p', Profunctor q, Profunctor q')

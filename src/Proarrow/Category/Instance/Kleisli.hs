@@ -115,8 +115,8 @@ instance (Promonad p, MonoidalProfunctor p, CopyDiscard k) => CopyDiscard (KLEIS
 instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive (KLEISLI (p :: k +-> k)) where
   distL @(KL a) @(KL b) @(KL c) = arr (distL @k @a @b @c)
   distR @(KL a) @(KL b) @(KL c) = arr (distR @k @a @b @c)
-  distL0 @(KL a) = arr (distL0 @k @a)
-  distR0 @(KL a) = arr (distR0 @k @a)
+  absorbL @(KL a) = arr (absorbL @k @a)
+  absorbR @(KL a) = arr (absorbR @k @a)
 
 instance (Promonad p, MonoidalProfunctor p) => Strong Type (Kleisli :: CAT (KLEISLI (p :: Type +-> Type))) where
   act f (Kleisli p) = arr f `par` Kleisli p

@@ -29,6 +29,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
+import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Identity (Id (..))
@@ -163,6 +164,24 @@ instance (HasInitialObject k) => HasInitialObject (COPROD k) where
   type InitialObject = COPR InitialObject
   initiate = Coprod (Id initiate)
 
+instance (HasBinaryCoproducts k) => HasBinaryCoproducts (COPROD k) where
+  type COPR a || COPR b = COPR (a || b)
+  withObCoprod @(COPR a) @(COPR b) r = withObCoprod @k @a @b r
+  lft @(COPR a) @(COPR b) = Coprod (Id (lft @k @a @b))
+  rgt @(COPR a) @(COPR b) = Coprod (Id (rgt @k @a @b))
+  Coprod (Id f) ||| Coprod (Id g) = Coprod (Id (f ||| g))
+
+instance (HasTerminalObject k) => HasTerminalObject (COPROD k) where
+  type TerminalObject = COPR TerminalObject
+  terminate = Coprod (Id terminate)
+
+instance (HasBinaryProducts k) => HasBinaryProducts (COPROD k) where
+  type COPR a && COPR b = COPR (a && b)
+  withObProd @(COPR a) @(COPR b) r = withObProd @k @a @b r
+  fst @(COPR a) @(COPR b) = Coprod (Id (fst @k @a @b))
+  snd @(COPR a) @(COPR b) = Coprod (Id (snd @k @a @b))
+  Coprod (Id f) &&& Coprod (Id g) = Coprod (Id (f &&& g))
+
 -- | Coproducts as monoidal tensor.
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
@@ -220,6 +239,14 @@ instance MonoidalAction Type (COPROD Type) where
 
 instance Strong (COPROD Type) (->) where
   Coprod (Id f) `act` g = f +++ g
+
+type Uncoprod :: (COPROD j +-> COPROD k) -> j +-> k
+data Uncoprod p a b where
+  Uncoprod :: p (COPR a) (COPR b) -> Uncoprod p a b
+
+instance (Profunctor p, CategoryOf j, CategoryOf k) => Profunctor (Uncoprod p :: j +-> k) where
+  dimap l r (Uncoprod p) = Uncoprod (dimap (Coprod (Id l)) (Coprod (Id r)) p \\ p)
+  r \\ Uncoprod f = r \\ f
 
 class (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b
 instance (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b

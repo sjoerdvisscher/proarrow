@@ -168,8 +168,8 @@ instance Distributive BOOL where
   distR @a @b @c = case obj @c of
     Fls -> Fls
     Tru -> obj @a +++ obj @b
-  distL0 = Fls
-  distR0 = Fls
+  absorbL = Fls
+  absorbR = Fls
 
 instance Closed BOOL where
   type a ~~> b = ExpSA a b

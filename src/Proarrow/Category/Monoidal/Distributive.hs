@@ -48,8 +48,8 @@ instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributivePr
 class (Monoidal k, HasCoproducts k, DistributiveProfunctor (Id :: CAT k)) => Distributive k where
   distL :: (Ob (a :: k), Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
   distR :: (Ob (a :: k), Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
-  distL0 :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
-  distR0 :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
+  absorbL :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
+  absorbR :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
 
 distLInv
   :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
@@ -62,20 +62,20 @@ distRInv = first @c (lft @k @a @b) ||| first @c (rgt @k @a @b)
 instance Distributive Type where
   distL (a, e) = bimap (a,) (a,) e
   distR (e, c) = bimap (,c) (,c) e
-  distL0 = P.snd
-  distR0 = P.fst
+  absorbL = P.snd
+  absorbR = P.fst
 
 instance Distributive () where
   distL = U.Unit
   distR = U.Unit
-  distL0 = U.Unit
-  distR0 = U.Unit
+  absorbL = U.Unit
+  absorbR = U.Unit
 
 instance (BiCCC k) => Distributive (PROD k) where
   distL @(PR a) @(PR b) @(PR c) = Prod (distLProd @a @b @c)
   distR @(PR a) @(PR b) @(PR c) = Prod (distRProd @a @b @c)
-  distL0 @(PR a) = Prod (snd @k @a)
-  distR0 @(PR a) = Prod (fst @k @_ @a)
+  absorbL @(PR a) = Prod (snd @k @a)
+  absorbR @(PR a) = Prod (fst @k @_ @a)
 
 distLProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => (a && (b || c)) ~> (a && b || a && c)
 distLProd = (swapProd @b @a +++ swapProd @c @a) . distRProd @b @c @a . withObCoprod @k @b @c (swapProd @a @(b || c))

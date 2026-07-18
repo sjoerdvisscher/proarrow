@@ -241,5 +241,5 @@ instance Distributive COST where
 #if !(MIN_VERSION_GLASGOW_HASKELL(9,12,1,0))
           _ -> error "redundant case"
 #endif
-  distL0 = Inf
-  distR0 = Inf
+  absorbL = Inf
+  absorbR = Inf

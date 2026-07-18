@@ -125,8 +125,8 @@ instance SymMonoidal KIND where
 instance Distributive KIND where
   distL @a @b @c = distLProd @a @b @c
   distR @a @b @c = distRProd @a @b @c
-  distL0 = snd
-  distR0 = fst
+  absorbL = snd
+  absorbR = fst
 
 -- | A strictified monoidal category as a monoid in Cat.
 instance (Monoidal k) => Monoid (K [k]) where

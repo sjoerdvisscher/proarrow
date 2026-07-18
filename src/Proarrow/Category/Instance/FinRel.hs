@@ -170,8 +170,8 @@ instance SymMonoidal FINREL where
 instance Distributive FINREL where
   distL @(FR a) @(FR b) @(FR c) = arr (distL @_ @(FS a) @(FS b) @(FS c))
   distR @(FR a) @(FR b) @(FR c) = arr (distR @_ @(FS a) @(FS b) @(FS c))
-  distL0 @(FR a) = arr (distL0 @_ @(FS a))
-  distR0 @(FR a) = arr (distR0 @_ @(FS a))
+  absorbL @(FR a) = arr (absorbL @_ @(FS a))
+  absorbR @(FR a) = arr (absorbR @_ @(FS a))
 
 instance Closed FINREL where
   type x ~~> y = ExpSA x y

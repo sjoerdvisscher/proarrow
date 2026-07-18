@@ -39,7 +39,8 @@ instance {-# OVERLAPPABLE #-} (Cast i j, (a ': i) ~ i', IsFK a, IsFKs i) => Cast
 instance Cast i i where
   cast f = f
 
-pattern Uncurry :: (IsFK (a :: FK k), IsFK (b :: FK k), IsFKs (i :: [FK k]), Closed k) => Free i (a --> b) -> Free (a : i) b
+pattern Uncurry
+  :: (IsFK (a :: FK k), IsFK (b :: FK k), IsFKs (i :: [FK k]), Closed k) => Free i (a --> b) -> Free (a : i) b
 pattern Uncurry f = Apply (Tail f) Head
 
 lam
@@ -172,11 +173,10 @@ fromFree (Lft @a @b f) = lft' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
 fromFree (Rgt @a @b f) = rgt' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
 fromFree (Sum @a @b @_ @i m f g) =
   let ff = fromFree f; fg = fromFree g; fi = fromFreeObjs @i
-  in ( (ff . snoc @i @a ||| fg . snoc @i @b) . distLProd @(FromFree (Mul i)) @(FromFree a) @(FromFree b) . (fi &&& fromFree m)
-     )
-      \\ fi
-      \\ fromFreeObj @a
-      \\ fromFreeObj @b
+  in ((ff . snoc @i @a ||| fg . snoc @i @b) . distLProd @(FromFree (Mul i)) @(FromFree a) @(FromFree b) . (fi &&& fromFree m))
+       \\ fi
+       \\ fromFreeObj @a
+       \\ fromFreeObj @b
 fromFree (Fst @a @b f) = fst' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
 fromFree (Snd @a @b f) = snd' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
 fromFree (Prd f g) = fromFree f &&& fromFree g
@@ -225,3 +225,5 @@ toCCC f = fromFree (Uncurry f)
 -- test8 =
 --   toCCC @(F a *! (F b + F c)) @((F a *! F b) + (F a *! F c))
 --     (lam \(a :& bc) -> either (lam \b -> Lft (Tail a :& b)) (lam \c -> Rgt (Tail a :& c)) bc)
+-- test9 :: forall {k} (a :: k) b c. (BiCCC k, Ob a, Ob b, Ob c) => (a || b) && ((a ~~> c) && (b ~~> c)) ~> c
+-- test9 = toCCC @((F a + F b) *! ((F a --> F c) *! (F b --> F c))) @(F c) (lam \(ab :& (ac :& bc)) -> either ac bc ab)
