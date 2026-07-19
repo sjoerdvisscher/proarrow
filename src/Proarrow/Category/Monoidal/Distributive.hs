@@ -10,8 +10,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), first, second)
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Core
-  ( CAT
-  , CategoryOf (..)
+  ( CategoryOf (..)
   , Profunctor (..)
   , Promonad (..)
   , lmap
@@ -45,19 +44,27 @@ import Prelude (($))
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 instance (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
 
-class (Monoidal k, HasCoproducts k, DistributiveProfunctor (Id :: CAT k)) => Distributive k where
+class (Monoidal k, HasCoproducts k) => Distributive k where
   distL :: (Ob (a :: k), Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
   distR :: (Ob (a :: k), Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
   absorbL :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
   absorbR :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
 
 distLInv
-  :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
+  :: forall {k} a b c. (Distributive k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
 distLInv = second @a (lft @k @b @c) ||| second @a (rgt @k @b @c)
 
 distRInv
-  :: forall {k} a b c. (Monoidal k, HasCoproducts k, Ob (a :: k), Ob b, Ob c) => (a ** c || b ** c) ~> ((a || b) ** c)
+  :: forall {k} a b c. (Distributive k, Ob (a :: k), Ob b, Ob c) => (a ** c || b ** c) ~> ((a || b) ** c)
 distRInv = first @c (lft @k @a @b) ||| first @c (rgt @k @a @b)
+
+-- | Distributive promonads seem similar to selective applicative functors.
+-- https://blog.veritates.love/selective_applicatives_theoretical_basis.html
+branch
+  :: forall {k} a b c i (p :: k +-> k)
+   . (DistributiveProfunctor p, Promonad p, Distributive k, Ob a, Ob b, Ob c)
+  => p i (a || b) -> p a c -> p b c -> p i c
+branch pab pac pbc = rmap codiag ((pac `copar` pbc) . pab)
 
 instance Distributive Type where
   distL (a, e) = bimap (a,) (a,) e
