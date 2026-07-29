@@ -70,12 +70,12 @@ instance (Ob (r :: k), SelfAction k) => Strong k (Reader (OP r) :: k +-> k) wher
   act @a @_ @x @_ f (Reader g) =
     f //
       withObAct @k @k @a @x $
-        Reader ((f `par` g) . associator @k @a @r @x . first @x (swap @_ @r @a) . associatorInv @k @r @a @x)
+        Reader ((f ** g) . associator @k @a @r @x . first @x (swap @_ @r @a) . associatorInv @k @r @a @x)
 
 -- | Note: This is only premonoidal, not monoidal, unless the comonoid is cocommutative.
 instance (Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (Reader (OP r) :: k +-> k) where
-  par0 = id \\ unitObj @k
-  Reader @x1 @x2 f `par` Reader @y1 @y2 g =
+  one = id \\ unitObj @k
+  Reader @x1 @x2 f ** Reader @y1 @y2 g =
     f //
       g //
         withOb2 @_ @x1 @y1 $
@@ -83,7 +83,7 @@ instance (Comonoid (r :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor 
             Reader
               ( second @x2 g
                   . associator @k @x2 @r @y1
-                  . ((swap' (obj @r) f . associator @k @r @r @x1 . first @x1 (comult @r)) `par` obj @y1)
+                  . ((swap' (obj @r) f . associator @k @r @r @x1 . first @x1 (comult @r)) ** obj @y1)
                   . associatorInv @k @r @x1 @y1
               )
 
@@ -112,7 +112,7 @@ readerComp = withOb2 @k @r @s $
 readerDay
   :: forall {k} (r :: k) (s :: k). (SymMonoidal k, Ob r, Ob s) => Reader (OP r) `Day` Reader (OP s) ~> Reader (OP (r ** s))
 readerDay = withOb2 @k @r @s $
-  Prof \(Day @c @_ @e @_ f (Reader p) (Reader q) g) -> Reader (g . (p `par` q) . swapInner @r @s @c @e . second @(r ** s) f) \\ f
+  Prof \(Day @c @_ @e @_ f (Reader p) (Reader q) g) -> Reader (g . (p ** q) . swapInner @r @s @c @e . second @(r ** s) f) \\ f
 
 type ReaderT :: OPPOSITE k -> k +-> k -> k +-> k
 newtype ReaderT r p a b where

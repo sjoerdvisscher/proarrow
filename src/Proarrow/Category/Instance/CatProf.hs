@@ -100,8 +100,8 @@ instance HasBinaryCoproducts KIND where
 instance HasBiproducts KIND
 
 instance MonoidalProfunctor Cat where
-  par0 = id
-  Cat @p `par` Cat @q = Cat @(p :**: q)
+  one = id
+  Cat @p ** Cat @q = Cat @(p :**: q)
 
 -- | Products as monoidal structure.
 instance Monoidal KIND where
@@ -213,7 +213,7 @@ instance MonoidalAction KIND KIND where
   multiplicatorInv = associatorInv
 
 instance Strong KIND Cat where
-  act = par
+  act = (**)
 
 instance Costrong KIND Cat where
   coact @u = coactCC @u

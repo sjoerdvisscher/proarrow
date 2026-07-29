@@ -120,8 +120,8 @@ unmult f = case snat @n of
     P.Right f' -> let (n, m) = unmult @n' @m f' in (FS n, m)
 
 instance MonoidalProfunctor FinSet where
-  par0 = id
-  par = (***)
+  one = id
+  (**) = (***)
 
 instance Monoidal FINSET where
   type a ** b = a && b

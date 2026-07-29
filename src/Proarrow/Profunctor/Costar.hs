@@ -59,8 +59,8 @@ composeCostar (Costar f :.: Costar g) = Costar (g . map f . getCompose)
 
 -- | Every functor between cartesian categories is a colax monoidal functor.
 instance (Cartesian j, Cartesian k, Functor (f :: j -> k)) => MonoidalProfunctor (Costar f) where
-  par0 = Costar terminate
-  Costar @a f `par` Costar @b g = withOb2 @j @a @b (Costar (f . map (fst @j @a @b) &&& g . map (snd @j @a @b)))
+  one = Costar terminate
+  Costar @a f ** Costar @b g = withOb2 @j @a @b (Costar (f . map (fst @j @a @b) &&& g . map (snd @j @a @b)))
 
 instance (Functor t, Traversable (Star t)) => Cotraversable (Costar t) where
   cotraverse (p :.: Costar f) = p // Costar id :.: case traverse (Star id :.: p) of p' :.: Star g -> rmap (f . g) p'

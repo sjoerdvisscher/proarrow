@@ -4,7 +4,7 @@ import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction, Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), Hom)
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -32,8 +32,8 @@ instance (CategoryOf k) => Corepresentable (Id :: CAT k) where
   corepMap = id
 
 instance (Monoidal k) => MonoidalProfunctor (Id :: CAT k) where
-  par0 = Id par0
-  Id f `par` Id g = Id (f `par` g)
+  one = Id one
+  Id f ** Id g = Id (f ** g)
 
 instance (Dagger k) => DaggerProfunctor (Id :: CAT k) where
   dagger (Id p) = Id (dagger p)

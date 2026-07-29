@@ -4,7 +4,7 @@
 module Props.Dot where
 
 import Control.Monad (replicateM)
-import Data.List (findIndices, intercalate)
+import Data.List qualified as List
 import Data.List.NonEmpty (fromList)
 import Data.Proxy (Proxy (..))
 import Data.Traversable (for)
@@ -39,7 +39,7 @@ import Testable
   , TestableType (..)
   , TestingEqShow
   , genSomeDef
-  , one
+  , oneElem
   , pattern GenNonEmpty
   )
 
@@ -65,7 +65,7 @@ instance Testable Symbol where
 instance (Ob a, Ob b) => TestingEqShow (SymRefl a b)
 instance (Ob a, Ob b) => TestableType (SymRefl a b) where
   gen = case decideSymbol (Proxy @a) (Proxy @b) of
-    Right Refl -> one SymRefl
+    Right Refl -> oneElem SymRefl
     Left f -> GenEmpty \SymRefl -> absurd (f Refl)
 instance TestableProfunctor SymRefl
 instance Testable DOT where
@@ -73,7 +73,7 @@ instance Testable DOT where
     num <- elem [0 .. 5]
     somes <- replicateM num (genSome @Symbol)
     pure $ foldSome somes
-  showOb @ns = intercalate "," $ unVec $ names @(UN D ns)
+  showOb @ns = List.intercalate "," $ unVec $ names @(UN D ns)
   eqOb @(D s) @(D t) =
     case (sList @s, sList @t) of
       (SNil, SNil) -> Just Refl
@@ -100,20 +100,20 @@ instance (Ob a, Ob b) => TestableType (Dot a b) where
       pure (show i, label, show o)
     inputs <- for iIxs $ \i -> do
       let nm = iNms ! i
-      let pos = findIndices (== nm) (unVec oNms)
+      let pos = List.elemIndices nm (unVec oNms)
       let lst = (Right . show <$> [0 .. nodeCount - 1]) ++ (Left . Fin <$> pos)
-      if length lst == 0
+      if null lst
         then error $ "input: " ++ nm ++ " outputs: " ++ show oNms ++ " nodeCount: " ++ show nodeCount
         else elem . fromList $ lst
     outputs <- for oIxs $ \o -> do
-      case findIndices (== Left o) (unVec inputs) of
+      case List.elemIndices (Left o) (unVec inputs) of
         [i] -> pure $ Left (Fin i)
         [] ->
           if nodeCount == 0
             then pure $ Right "error" -- No input picked this output, bail out
             else Right . show <$> elem [0 .. nodeCount - 1]
         _ -> pure $ Right "error" -- Multiple inputs picked this output, bail out
-    if any (== Right "error") outputs
+    if Right "error" `List.elem` outputs
       then pure (node "g")
       else pure $ Dot \n -> (n + nodeCount, DotData{inputs, outputs, edges, nodeOpts})
 instance TestableProfunctor Dot

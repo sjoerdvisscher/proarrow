@@ -18,13 +18,14 @@ import Props
 import Testable
   ( GenTotal (..)
   , Testable (..)
+  , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
   , invmap
-  , one
+  , oneElem
   , optGen
-  , pattern GenNonEmpty, TestableProfunctor
+  , pattern GenNonEmpty
   )
 
 test :: TestTree
@@ -59,7 +60,7 @@ instance (P.Eq a, P.Show a) => TestingEqShow (Vec n a)
 instance (P.Eq a, P.Show a, TestableType a, SNatI n) => TestableType (Vec n a) where
   gen = case gen of
     GenEmpty absrd -> case snat @n of
-      SZ -> one VNil
+      SZ -> oneElem VNil
       SS -> GenEmpty \(a ::: _) -> absrd a
     GenNonEmpty g -> GenNonEmpty (P.sequence (repeat @n g))
 

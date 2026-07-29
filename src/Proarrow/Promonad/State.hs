@@ -4,22 +4,22 @@ import Prelude (($))
 
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap', leftUnitorWith)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), leftUnitorWith, swap')
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), arr, obj, type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Object (ObjDict (..), objDicts)
+import Proarrow.Object.BinaryProduct ((&&&))
 import Proarrow.Object.Dual (CompactClosed)
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
+import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Promonad.Writer (Writer (..))
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Object.BinaryProduct ((&&&))
-import Proarrow.Monoid (Comonoid (..))
 
 type State s = StateT s Id
 pattern State :: forall {k} a b s. (Monoidal k, Ob (s :: k)) => (Ob a, Ob b) => (s ** a) ~> (s ** b) -> State s a b
@@ -30,21 +30,21 @@ pattern State f <- (runStateT &&& objDicts -> (Id f, (ObjDict, ObjDict)))
 
 -- | Note: This is only premonoidal, not monoidal.
 instance (SymMonoidal k, Ob s) => MonoidalProfunctor (State (s :: k)) where
-  par0 = State (obj @s `par` par0) \\ (par0 :: (Unit :: k) ~> Unit)
-  par (State @a1 @b1 f) (State @a2 @b2 g) =
+  one = State (obj @s ** one) \\ (one :: (Unit :: k) ~> Unit)
+  State @a1 @b1 f ** State @a2 @b2 g =
     let s = obj @s; a1 = obj @a1; b1 = obj @b1; a2 = obj @a2; b2 = obj @b2
     in State
-         ( (s `par` swap' b2 b1)
+         ( (s ** swap' b2 b1)
              . associator @_ @s @b2 @b1
-             . (g `par` b1)
+             . (g ** b1)
              . associatorInv @_ @s @a2 @b1
-             . (s `par` swap' b1 a2)
+             . (s ** swap' b1 a2)
              . associator @_ @s @b1 @a2
-             . (f `par` a2)
+             . (f ** a2)
              . associatorInv @_ @s @a1 @a2
          )
-         \\ (a1 `par` a2)
-         \\ (b1 `par` b2)
+         \\ (a1 ** a2)
+         \\ (b1 ** b2)
 
 type StateT :: k -> k +-> k -> k +-> k
 newtype StateT s p a b where

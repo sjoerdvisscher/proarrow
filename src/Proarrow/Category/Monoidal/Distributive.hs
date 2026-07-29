@@ -10,7 +10,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second)
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
-import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, copar)
+import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, (++))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), PROD (..), Prod (..), diag, swapProd)
 import Proarrow.Object.Exponential (BiCCC, Closed (..), uncurry)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -44,7 +44,7 @@ branch
   :: forall {k} a b c i (p :: k +-> k)
    . (DistributiveProfunctor p, Promonad p, Distributive k, Ob a, Ob b, Ob c)
   => p i (a || b) -> p a c -> p b c -> p i c
-branch pab pac pbc = rmap codiag ((pac `copar` pbc) . pab)
+branch pab pac pbc = rmap codiag ((pac ++ pbc) . pab)
 
 instance Distributive Type where
   distL (a, e) = bimap (a,) (a,) e
@@ -122,7 +122,7 @@ instance (Traversable p, Traversable q) => Traversable (p :.: q) where
 
 instance (Cartesian k, Traversable p, Traversable q) => Traversable ((p :: k +-> k) :*: q) where
   traverse ((p :*: q) :.: r) = case (traverse (p :.: r), traverse (q :.: r)) of
-    ((:.:) @a r' p', (:.:) @b r'' q') -> lmap diag (r' `par` r'') :.: (lmap (fst @k @a @b) p' :*: lmap (snd @k @a @b) q') \\ p \\ p' \\ q'
+    ((:.:) @a r' p', (:.:) @b r'' q') -> lmap diag (r' ** r'') :.: (lmap (fst @k @a @b) p' :*: lmap (snd @k @a @b) q') \\ p \\ p' \\ q'
 
 instance (Traversable p, Traversable q) => Traversable (p :+: q) where
   traverse (InjL p :.: r) = case traverse (p :.: r) of r' :.: p' -> r' :.: InjL p'
@@ -145,7 +145,7 @@ instance (Cotraversable p, Cotraversable q) => Cotraversable (p :.: q) where
 
 instance (HasBinaryCoproducts k, Cotraversable p, Cotraversable q) => Cotraversable ((p :: k +-> k) :*: q) where
   cotraverse (r :.: (p :*: q)) = case (cotraverse (r :.: p), cotraverse (r :.: q)) of
-    ((:.:) @a p' r', (:.:) @b q' r'') -> (rmap (lft @k @a @b) p' :*: rmap (rgt @k @a @b) q') :.: rmap codiag (r' `copar` r'') \\ p \\ p' \\ q'
+    ((:.:) @a p' r', (:.:) @b q' r'') -> (rmap (lft @k @a @b) p' :*: rmap (rgt @k @a @b) q') :.: rmap codiag (r' ++ r'') \\ p \\ p' \\ q'
 
 instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
   cotraverse (r :.: InjL p) = case cotraverse (r :.: p) of p' :.: r' -> InjL p' :.: r'

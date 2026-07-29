@@ -100,8 +100,8 @@ instance (CategoryOf k1) => Closed (PROD (k1 -> Type)) where
   Prod (Nat m) ^^^ Prod (Nat n) = Prod (Nat \(Exp k) -> Exp \cd h -> m (k cd (n h)) \\ cd)
 
 instance MonoidalProfunctor (Nat :: CAT (Type -> Type)) where
-  par0 = id
-  Nat n `par` Nat m = Nat (\(Compose fg) -> Compose (n (map m fg)))
+  one = id
+  Nat n ** Nat m = Nat (\(Compose fg) -> Compose (n (map m fg)))
 
 -- | Composition as monoidal tensor.
 instance Monoidal (Type -> Type) where

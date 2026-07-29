@@ -1,5 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+{- HLINT ignore "Redundant id" -}
+
 module Props where
 
 import Control.Monad (unless)
@@ -171,16 +173,16 @@ propMonoidal withTestOb2 = testProperty "Monoidal" $ do
                                 propIso (M.leftUnitor @k @a) (M.leftUnitorInv @k @a)
                                 propIso (M.rightUnitor @k @a) (M.rightUnitorInv @k @a)
 
--- [ associator . ((f `par` g) `par` h) :=: (f `par` (g `par` h)) . associator
---       , associatorInv . (f `par` (g `par` h)) :=: ((f `par` g) `par` h) . associatorInv
---       , leftUnitor . (par0 `par` f) :=: f . leftUnitor
---       , leftUnitorInv . f :=: (par0 `par` f) . leftUnitorInv
---       , rightUnitor . (f `par` par0) :=: f . rightUnitor
---       , rightUnitorInv . f :=: (f `par` par0) . rightUnitorInv
---       , (id `par` leftUnitor) . associator @_ @(EMB "A") @_ @(EMB "B") :=: rightUnitor `par` id
---       , (id `par` associator @_ @(EMB "B") @(EMB "C") @(EMB "D"))
+-- [ associator . ((f ** g) ** h) :=: (f ** (g ** h)) . associator
+--       , associatorInv . (f ** (g ** h)) :=: ((f ** g) ** h) . associatorInv
+--       , leftUnitor . (one ** f) :=: f . leftUnitor
+--       , leftUnitorInv . f :=: (one ** f) . leftUnitorInv
+--       , rightUnitor . (f ** one) :=: f . rightUnitor
+--       , rightUnitorInv . f :=: (f ** one) . rightUnitorInv
+--       , (id ** leftUnitor) . associator @_ @(EMB "A") @_ @(EMB "B") :=: rightUnitor ** id
+--       , (id ** associator @_ @(EMB "B") @(EMB "C") @(EMB "D"))
 --           . associator
---           . (associator @_ @(EMB "A") @(EMB "B") @(EMB "C") `par` id)
+--           . (associator @_ @(EMB "A") @(EMB "B") @(EMB "C") ** id)
 --           :=: associator . associator
 --       ]
 
@@ -210,8 +212,8 @@ propSymMonoidal withTestOb2 = testProperty "Symmetric monoidal" $ do
                 "hexagon identity"
                 "associator . swap . associator"
                 (M.associator @k @b @c @a . M.swap @k @a @(b M.** c) . M.associator @k @a @b @c)
-                "(swap `par` id) . associator . (id `par` swap)"
-                ((obj @b `M.par` M.swap @k @a @c) . M.associator @k @b @a @c . (M.swap @k @a @b `M.par` obj @c))
+                "(swap ** id) . associator . (id ** swap)"
+                ((obj @b M.** M.swap @k @a @c) . M.associator @k @b @a @c . (M.swap @k @a @b M.** obj @c))
 
 propSymMonoidal_
   :: forall k
@@ -253,7 +255,7 @@ propClosed withTestOb2 withTestObExp =
           g <- genNamed @(b' ~> b) "g"
           h <- genNamed @(c ~> c') "h"
           withTestOb2 @a' @b' $ withTestObExp @b' @c' $ do
-            let n = dimap (f `M.par` g) h
+            let n = dimap (f M.** g) h
             let n' = dimap f (h Exponential.^^^ g)
             testEq
               "natural curry"
@@ -309,7 +311,7 @@ propProfunctor = propProfunctorWith @p (genProfunctorElt "p") (\r -> r)
 propProfunctorWith
   :: forall {j} {k} (p :: j +-> k)
    . (Profunctor p, Testable j, Testable k)
-  => (Property (SomeProfunctorElt p))
+  => Property (SomeProfunctorElt p)
   -> (forall a b r. (TestOb a, TestOb b) => ((TestingEqShow (p a b)) => r) -> r)
   -> Property ()
 propProfunctorWith genPro withEqShow = do
@@ -384,22 +386,22 @@ propMonoid withTestOb2 =
       testEq
         "left identity"
         "μ . (η ⊗ 1)"
-        (Monoid.mappend . (Monoid.mempty @m `M.par` obj @m))
+        (Monoid.mappend . (Monoid.mempty @m M.** obj @m))
         "λ"
         (M.leftUnitor @k @m)
       testEq
         "right identity"
         "μ . (1 ⊗ η)"
-        (Monoid.mappend . (obj @m `M.par` Monoid.mempty @m))
+        (Monoid.mappend . (obj @m M.** Monoid.mempty @m))
         "ρ"
         (M.rightUnitor @k @m)
       withTestOb2 @m @m $ withTestOb2 @(m M.** m) @m $ do
         testEq
           "associativity"
           "μ . (μ ⊗ 1)"
-          (Monoid.mappend @m . (Monoid.mappend @m `M.par` obj @m))
+          (Monoid.mappend @m . (Monoid.mappend @m M.** obj @m))
           "μ . (1 ⊗ μ) . α"
-          (Monoid.mappend . (obj @m `M.par` Monoid.mappend @m) . M.associator @k @m @m @m)
+          (Monoid.mappend . (obj @m M.** Monoid.mappend @m) . M.associator @k @m @m @m)
 
 testMonoid
   :: forall {k} m

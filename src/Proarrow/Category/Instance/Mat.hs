@@ -55,13 +55,13 @@ app :: (P.Num a, P.Applicative (Vec m)) => Vec n (Vec m a) -> Vec m a -> Vec n a
 app m v = P.fmap (P.sum . P.liftA2 (P.*) v) m
 
 arr :: forall n m a. (P.Num a) => FinSet (FS m) (FS n) -> Mat (M n :: MatK a) (M m :: MatK a)
-arr (FinSet v) = withIsNat @n $ withIsNat @m $ Mat (P.fmap one v)
+arr (FinSet v) = withIsNat @n $ withIsNat @m $ Mat (P.fmap oneV v)
 
 arr' :: forall n m a. (P.Num a) => FinSet (FS m) (FS n) -> Mat (M m :: MatK a) (M n :: MatK a)
-arr' (FinSet v) = withIsNat @n $ withIsNat @m $ Mat (P.traverse one v)
+arr' (FinSet v) = withIsNat @n $ withIsNat @m $ Mat (P.traverse oneV v)
 
-one :: (P.Num a, IsNat n) => Fin n -> Vec n a
-one m = tabulate \n -> if n P.== m then 1 else 0
+oneV :: (P.Num a, IsNat n) => Fin n -> Vec n a
+oneV m = tabulate \n -> if n P.== m then 1 else 0
 
 zero :: (P.Num a, IsNat n) => Vec n a
 zero = P.pure 0
@@ -150,8 +150,8 @@ instance (P.Num a) => HasBinaryProducts (MatK a) where
 instance (P.Num a) => HasBiproducts (MatK a)
 
 instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
-  par0 = id
-  Mat @fx @fy f `par` Mat @gx @gy g =
+  one = id
+  Mat @fx @fy f ** Mat @gx @gy g =
     withMultNat @gx @fx $
       withMultNat @gy @fy $
         Mat $
@@ -166,8 +166,8 @@ instance (P.Num a) => Monoidal (MatK a) where
   leftUnitorInv = id
   rightUnitor = id
   rightUnitorInv = id
-  associator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
-  associatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) `par` (obj @(M c) `par` obj @(M d)))
+  associator @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) ** (obj @(M c) ** obj @(M d)))
+  associatorInv @(M b) @(M c) @(M d) = withAssocMult @d @c @b (obj @(M b) ** (obj @(M c) ** obj @(M d)))
 
 instance (P.Num a) => SymMonoidal (MatK a) where
   swap @(M x) @(M y) = arr (swap @_ @(FS x) @(FS y))
@@ -193,7 +193,7 @@ instance (P.Num a) => StarAutonomous (MatK a) where
   linDistInv @(M x) @(M y) @(M z) (Mat m) = withMultNat @y @x $ Mat (P.fmap concat (chunks @z @y m))
 
 instance (P.Num a) => CompactClosed (MatK a) where
-  distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ dagger (obj @m) `par` dagger (obj @n)
+  distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ dagger (obj @m) ** dagger (obj @n)
   dualUnit = id
 
 instance (P.Num a) => MonoidalAction (MatK a) (MatK a) where
@@ -205,7 +205,7 @@ instance (P.Num a) => MonoidalAction (MatK a) (MatK a) where
   multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
 
 instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a)) where
-  act = par
+  act = (**)
 
 instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
   coact @x = coactCC @x
@@ -237,13 +237,13 @@ instance (P.RealFloat a) => Corepresentable (Rep Conjugate :: MatK (Complex a) +
 
 instance (P.RealFloat a) => Involution (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a))
 instance (P.RealFloat a) => MonoidalProfunctor (Rep Conjugate :: MatK (Complex a) +-> MatK (Complex a)) where
-  par0 = Rep par0
-  Rep l `par` Rep r = let lr = l `par` r in Rep lr \\ lr
+  one = Rep one
+  Rep l ** Rep r = let lr = l ** r in Rep lr \\ lr
 
 data family App :: MatK a +-> Type
 instance (P.Num a) => FunctorForRep (App :: MatK a +-> Type) where
   type App @a @ M n = Vec n a
   fmap (Mat m) = app m
 instance (P.Num a) => MonoidalProfunctor (Rep App :: MatK a +-> Type) where
-  par0 = Rep \() -> 1 ::: VNil
-  Rep @_ @_ @b f `par` Rep @_ @_ @c g = withOb2 @_ @b @c $ Rep (\(x, y) -> concatMap (\a -> (a P.*) P.<$> f x) (g y))
+  one = Rep \() -> 1 ::: VNil
+  Rep @_ @_ @b f ** Rep @_ @_ @c g = withOb2 @_ @b @c $ Rep (\(x, y) -> concatMap (\a -> (a P.*) P.<$> f x) (g y))

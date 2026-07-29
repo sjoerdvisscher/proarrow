@@ -34,7 +34,7 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Object (tgt, pattern Obj, type Obj)
-import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, copar)
+import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, (++))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
@@ -80,7 +80,7 @@ instance (Cartesian k, Promonad p, MonoidalProfunctor p) => HasBinaryProducts (K
   withObProd @(KL a) @(KL b) r = withObProd @k @a @b r
   fst @(KL a) @(KL b) = arr (fst @_ @a @b)
   snd @(KL a) @(KL b) = arr (snd @_ @a @b)
-  Kleisli f &&& Kleisli g = Kleisli (lmap diag (f `par` g)) \\ f
+  Kleisli f &&& Kleisli g = Kleisli (lmap diag (f ** g)) \\ f
 
 -- TODO: Only valid for certain promonads, which ones?
 instance (HasBinaryCoproducts k, Promonad p, MonoidalProfunctor (Coprod p)) => HasBinaryCoproducts (KLEISLI (p :: k +-> k)) where
@@ -88,11 +88,11 @@ instance (HasBinaryCoproducts k, Promonad p, MonoidalProfunctor (Coprod p)) => H
   withObCoprod @(KL a) @(KL b) r = withObCoprod @k @a @b r
   lft @(KL a) @(KL b) = arr (lft @_ @a @b)
   rgt @(KL a) @(KL b) = arr (rgt @_ @a @b)
-  Kleisli f ||| Kleisli g = Kleisli (rmap codiag (f `copar` g)) \\ f
+  Kleisli f ||| Kleisli g = Kleisli (rmap codiag (f ++ g)) \\ f
 
 instance (Promonad p, MonoidalProfunctor p) => MonoidalProfunctor (Kleisli :: CAT (KLEISLI (p :: k +-> k))) where
-  par0 = Kleisli par0
-  Kleisli f `par` Kleisli g = Kleisli (f `par` g)
+  one = Kleisli one
+  Kleisli f ** Kleisli g = Kleisli (f ** g)
 
 -- | If the promonad is a monoidal profunctor, then its Kleisli category is a monoidal category.
 instance (Promonad p, MonoidalProfunctor p) => Monoidal (KLEISLI (p :: k +-> k)) where
@@ -119,7 +119,7 @@ instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive 
   absorbR @(KL a) = arr (absorbR @k @a)
 
 instance (Promonad p, MonoidalProfunctor p) => Strong Type (Kleisli :: CAT (KLEISLI (p :: Type +-> Type))) where
-  act f (Kleisli p) = arr f `par` Kleisli p
+  act f (Kleisli p) = arr f ** Kleisli p
 instance (Promonad p, MonoidalProfunctor p) => MonoidalAction Type (KLEISLI (p :: Type +-> Type)) where
   type Act y (KL x) = KL (y ** x)
   withObAct @y @(KL x) r = withOb2 @Type @y @x r

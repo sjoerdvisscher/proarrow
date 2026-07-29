@@ -5,7 +5,7 @@ import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, tgt, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
-import Proarrow.Object.BinaryCoproduct (Coprod (..), copar, copar0)
+import Proarrow.Object.BinaryCoproduct (Coprod (..), nil, (++))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
@@ -39,15 +39,15 @@ instance (FunctorForRep p, FunctorForRep q) => FunctorForRep (p :.: q) where
   fmap = fmap @p . fmap @q
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
-  par0 = par0 :.: par0
-  (p :.: q) `par` (r :.: s) = (p `par` r) :.: (q `par` s)
+  one = one :.: one
+  (p :.: q) ** (r :.: s) = (p ** r) :.: (q ** s)
 
 instance
   (Profunctor f, Profunctor g, MonoidalProfunctor (Coprod f), MonoidalProfunctor (Coprod g))
   => MonoidalProfunctor (Coprod (f :.: g))
   where
-  par0 = Coprod (copar0 :.: copar0)
-  Coprod (f :.: g) `par` Coprod (h :.: i) = Coprod ((f `copar` h) :.: (g `copar` i))
+  one = Coprod (nil :.: nil)
+  Coprod (f :.: g) ** Coprod (h :.: i) = Coprod ((f ++ h) :.: (g ++ i))
 
 instance (Strong m p, Strong m q) => Strong m (p :.: q) where
   act f (p :.: q) = act f p :.: act (tgt f) q

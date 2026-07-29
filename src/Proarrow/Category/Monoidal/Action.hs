@@ -49,9 +49,9 @@ instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
   multiplicatorInv @(OP a) @(OP b) @(OP x) = Op (multiplicator @m @k @a @b @x)
 
 instance (SubMonoidal ob) => Strong (SUBCAT (ob :: OB Type)) (->) where
-  act (Sub f) g = f `par` g
+  act (Sub f) g = f ** g
 instance (SubMonoidal ob) => Strong (SUBCAT (ob :: OB ())) U.Unit where
-  act (Sub f) g = f `par` g
+  act (Sub f) g = f ** g
 
 instance
   (Monoidal k, Monoidal (SUBCAT (ob :: OB k)), Strong (SUBCAT (ob :: OB k)) (Hom k))
@@ -139,15 +139,15 @@ strength = index (act (obj @a) (repUniv @p @b))
 costrength :: forall {m} p a b. (Corepresentable p, Strong m p, Ob (a :: m), Ob b) => p %% Act a b ~> Act a (p %% b)
 costrength = coindex (act (obj @a) (corepUniv @p @b))
 
--- | This is not monoidal `par` but premonoidal, i.e. no sliding.
+-- | This is not monoidal ** but premonoidal, i.e. no sliding.
 -- So with `prepar f g` the effects of f happen before the effects of g.
--- p needs to be a commutative promonad for this to be monoidal `par`.
+-- p needs to be a commutative promonad for this to be monoidal **.
 prepar
   :: forall {k} {p :: CAT k} a b c d. (SelfAction k, Strong k p, Promonad p) => p a b -> p c d -> p (a ** c) (b ** d)
 prepar f g = second' @b g . first' @c f \\ f \\ g
 
 strongPar0 :: forall {k} {p :: CAT k} a. (SelfAction k, Strong k p, MonoidalProfunctor p, Ob a) => p a a
-strongPar0 = dimap rightUnitorInv rightUnitor (act (obj @a) par0)
+strongPar0 = dimap rightUnitorInv rightUnitor (act (obj @a) one)
 
 type Costrong :: forall {j} {k}. Kind -> j +-> k -> Constraint
 class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Costrong m (p :: c +-> d) where

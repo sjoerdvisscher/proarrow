@@ -1,8 +1,8 @@
 module Proarrow.Profunctor.Product where
 
-import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Core (Profunctor (..), (:~>), type (+->))
@@ -20,8 +20,8 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :*: q) where
   r \\ (p :*: _) = r \\ p
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :*: q) where
-  par0 = par0 :*: par0
-  par (p1 :*: p2) (q1 :*: q2) = par p1 q1 :*: par p2 q2
+  one = one :*: one
+  (p1 :*: p2) ** (q1 :*: q2) = (p1 ** q1) :*: (p2 ** q2)
 
 instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :*: q) where
   dagger (p :*: q) = dagger p :*: dagger q

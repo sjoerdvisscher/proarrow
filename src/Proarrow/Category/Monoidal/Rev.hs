@@ -3,7 +3,7 @@ module Proarrow.Category.Monoidal.Rev where
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
-import Proarrow.Monoid (Monoid (..), Comonoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 
 type data REV k = R k
 type instance UN R (R a) = a
@@ -26,8 +26,8 @@ instance (CategoryOf k) => CategoryOf (REV k) where
   type Ob a = (Is R a, Ob (UN R a))
 
 instance (MonoidalProfunctor p) => MonoidalProfunctor (Rev p) where
-  par0 = Rev par0
-  Rev f `par` Rev g = Rev (g `par` f)
+  one = Rev one
+  Rev f ** Rev g = Rev (g ** f)
 
 -- | The flipped tensor.
 instance (Monoidal k) => Monoidal (REV k) where

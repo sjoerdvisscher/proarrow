@@ -111,8 +111,8 @@ mapUp :: forall {adj} (x :: DUPLOID adj) y. (Adjunction adj) => x ~> y -> Up x ~
 mapUp f = up . f . unup \\ f
 
 instance (Adjunction (adj :: n +-> p), StrongMonoidalCorep adj) => MonoidalProfunctor (Duploid :: CAT (DUPLOID adj)) where
-  par0 = id
-  par @_ @x2 @_ @y2 f g =
+  one = id
+  (**) @_ @x2 @_ @y2 f g =
     f // g // case (down . f, down . g) of
       (Duploid fp, Duploid gp) ->
         withPosOb @x2 $
@@ -120,7 +120,7 @@ instance (Adjunction (adj :: n +-> p), StrongMonoidalCorep adj) => MonoidalProfu
             withOb2 @_ @(Pos x2) @(Pos y2) $
               withObCorep @adj @(Pos x2 ** Pos y2) $
                 case lmap (index fp) (repUniv @(AdjMonad adj) @(Pos x2))
-                  `par` lmap (index gp) (repUniv @(AdjMonad adj) @(Pos y2)) of
+                  ** lmap (index gp) (repUniv @(AdjMonad adj) @(Pos y2)) of
                   fg :.: CorepStar h -> Duploid (rmap h fg) \\ fg
 
 instance (Adjunction (adj :: n +-> p), StrongMonoidalCorep adj) => Monoidal (DUPLOID adj) where

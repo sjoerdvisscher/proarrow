@@ -47,8 +47,8 @@ import Proarrow.Object.BinaryCoproduct
   , Coprod (..)
   , HasBinaryCoproducts (..)
   , HasCoproducts
-  , copar
-  , copar0
+  , nil
+  , (++)
   )
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..), (:&&:))
@@ -77,7 +77,7 @@ instance (IsOptic m c d) => Strong m (ExOptic m a b :: c +-> d) where
   act
     :: forall (a1 :: m) (b1 :: m) (s :: d) (t :: c). a1 ~> b1 -> ExOptic m a b s t -> ExOptic m a b (Act a1 s) (Act b1 t)
   act w (ExOptic @x @x' f w' g) =
-    ExOptic (composeActs @a1 @x @a (src w `act` src f) f) (w `par` w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
+    ExOptic (composeActs @a1 @x @a (src w `act` src f) f) (w ** w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
       \\ w
       \\ w'
 
@@ -90,7 +90,7 @@ prof2ex
    . (IsOptic m c d, Ob a, Ob b)
   => Optic (Strong m) s t a b
   -> ExOptic m a b s t
-prof2ex p2p = over p2p (ExOptic (unitorInv @m) par0 (unitor @m))
+prof2ex p2p = over p2p (ExOptic (unitorInv @m) one (unitor @m))
 
 type MonoidalOptic (s :: k) (t :: k) a b = Optic (Strong (SUBCAT (Any :: OB k))) s t a b
 mkMonoidal
@@ -220,10 +220,10 @@ instance (Costrong m p) => Strong m (Re p s t) where
         Re \payax -> f (coact @_ @_ @b (rmap (act g (obj @x)) payax))
 
 v1Optic :: Traversal (G.V1 a) (G.V1 a') a a'
-v1Optic = Optic \_ -> dimap (\case {}) (\case {}) copar0
+v1Optic = Optic \_ -> dimap (\case {}) (\case {}) nil
 
 u1Optic :: Traversal (G.U1 a) (G.U1 a') a a'
-u1Optic = Optic \_ -> dimap (const ()) (\() -> G.U1) par0
+u1Optic = Optic \_ -> dimap (const ()) (\() -> G.U1) one
 
 par1Optic :: Traversal (G.Par1 a) (G.Par1 a') a a'
 par1Optic = Optic (dimap G.unPar1 G.Par1)
@@ -241,13 +241,13 @@ plusOptic
   :: Traversal (p a) (p a') a a'
   -> Traversal (q a) (q a') a a'
   -> Traversal ((p G.:+: q) a) ((p G.:+: q) a') a a'
-plusOptic (Optic l) (Optic r) = Optic \p -> dimap (\case G.L1 f -> Left f; G.R1 f -> Right f) (either G.L1 G.R1) (l p `copar` r p)
+plusOptic (Optic l) (Optic r) = Optic \p -> dimap (\case G.L1 f -> Left f; G.R1 f -> Right f) (either G.L1 G.R1) (l p ++ r p)
 
 multOptic
   :: Traversal (p a) (p a') a a'
   -> Traversal (q a) (q a') a a'
   -> Traversal ((p G.:*: q) a) ((p G.:*: q) a') a a'
-multOptic (Optic l) (Optic r) = Optic \p -> dimap (\(f G.:*: g) -> (f, g)) (uncurry (G.:*:)) (l p `par` r p)
+multOptic (Optic l) (Optic r) = Optic \p -> dimap (\(f G.:*: g) -> (f, g)) (uncurry (G.:*:)) (l p ** r p)
 
 compOptic
   :: Traversal (p (q a)) (p (q a')) (q a) (q a')

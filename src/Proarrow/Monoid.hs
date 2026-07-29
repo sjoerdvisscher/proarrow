@@ -6,7 +6,7 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), par)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), (**))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
 import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
@@ -34,7 +34,7 @@ class (Monoidal k, Ob m) => Monoid (m :: k) where
   mappend :: m ** m ~> m
 
 combine :: (Monoid m) => Unit ~> m -> Unit ~> m -> Unit ~> m
-combine f g = mappend . (f `par` g) . leftUnitorInv
+combine f g = mappend . (f ** g) . leftUnitorInv
 
 class (Monoid m) => CommutativeMonoid (m :: k)
 
@@ -121,8 +121,8 @@ instance (Monoid m) => HasBinaryCoproducts (MONOIDK m) where
   Mon f ||| Mon g = Mon (combine f g)
 
 instance (CommutativeMonoid m) => MonoidalProfunctor (Mon :: CAT (MONOIDK m)) where
-  par0 = Mon mempty
-  Mon f `par` Mon g = Mon (combine f g)
+  one = Mon mempty
+  Mon f ** Mon g = Mon (combine f g)
 instance (CommutativeMonoid m) => Monoidal (MONOIDK m) where
   type Unit = M
   type M ** M = M
@@ -166,11 +166,11 @@ instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => P.Monoid (Id a
 instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => CommutativeMonoid (Id a b)
 
 instance (Monoidal k, Monoid r) => MonoidalProfunctor (Rep (Constant r) :: k +-> k) where
-  par0 = Rep mempty
-  Rep @_ @_ @x l `par` Rep @_ @_ @y r = withOb2 @k @x @y (Rep (mappend . (l `par` r)))
+  one = Rep mempty
+  Rep @_ @_ @x l ** Rep @_ @_ @y r = withOb2 @k @x @y (Rep (mappend . (l ** r)))
 instance (HasCoproducts k, Ob r) => MonoidalProfunctor (Coprod (Rep (Constant r)) :: COPROD k +-> COPROD k) where
-  par0 = Coprod (Rep initiate)
-  Coprod @_ @_ @x (Rep l) `par` Coprod @_ @_ @y (Rep r) = withObCoprod @k @x @y (Coprod (Rep (l ||| r)))
+  one = Coprod (Rep initiate)
+  Coprod @_ @_ @x (Rep l) ** Coprod @_ @_ @y (Rep r) = withObCoprod @k @x @y (Coprod (Rep (l ||| r)))
 instance (Monoidal k, Comonoid r) => MonoidalProfunctor (Corep (Constant r) :: k +-> k) where
-  par0 = Corep counit
-  Corep @_ @x l `par` Corep @_ @y r = withOb2 @k @x @y (Corep ((l `par` r) . comult))
+  one = Corep counit
+  Corep @_ @x l ** Corep @_ @y r = withOb2 @k @x @y (Corep ((l ** r) . comult))

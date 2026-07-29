@@ -45,17 +45,17 @@ class (Monoidal k) => Closed k where
     f //
       g //
         withObExp @k @a @b P.$
-          let ab = obj @(a ~~> b) in curry @k @(a ~~> b) @x (f . apply @k @a @b . (ab `par` g))
+          let ab = obj @(a ~~> b) in curry @k @(a ~~> b) @x (f . apply @k @a @b . (ab ** g))
 
 uncurry :: forall {k} b c (a :: k). (Closed k) => (Ob b, Ob c) => a ~> b ~~> c -> a ** b ~> c
-uncurry f = apply @k @b @c . (f `par` obj @b)
+uncurry f = apply @k @b @c . (f ** obj @b)
 
 comp :: forall {k} (a :: k) b c. (Closed k, Ob a, Ob b, Ob c) => (b ~~> c) ** (a ~~> b) ~> a ~~> c
 comp =
   withObExp @k @b @c P.$
     withObExp @k @a @b P.$
       withOb2 @k @(b ~~> c) @(a ~~> b) P.$
-        curry @_ @_ @a (apply @k @b @c . (obj @(b ~~> c) `par` apply @k @a @b) . associator @k @(b ~~> c) @(a ~~> b) @a)
+        curry @_ @_ @a (apply @k @b @c . (obj @(b ~~> c) ** apply @k @a @b) . associator @k @(b ~~> c) @(a ~~> b) @a)
 
 mkExponential :: forall {k} a b. (Closed k) => (a :: k) ~> b -> Unit ~> (a ~~> b)
 mkExponential ab = curry @_ @_ @a (ab . leftUnitor) \\ ab
@@ -104,7 +104,7 @@ ap
   => p a (x ~~> y)
   -> p a x
   -> p a y
-ap pf px = dimap diag (apply @j @x @y) (pf `par` px) \\ px
+ap pf px = dimap diag (apply @j @x @y) (pf ** px) \\ px
 
 data family Not (r :: k) :: OPPOSITE k +-> k
 instance (Closed k, Ob r) => FunctorForRep (Not (r :: k)) where

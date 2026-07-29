@@ -59,12 +59,12 @@ instance (Ob (w :: k), SelfAction k, CompactClosed k) => Corepresentable (Writer
   coindex (Writer @b @a f) =
     leftUnitorWith (dualityCounit @w)
       . associatorInv @k @(Dual w) @w @b
-      . (obj @(Dual w) `par` (f . doubleNeg @a))
+      . (obj @(Dual w) ** (f . doubleNeg @a))
       . distribDual @k @w @(Dual a)
       \\ f
   cotabulate @a f =
     Writer
-      ( (obj @w `par` (f . combineDual @w @(Dual a)))
+      ( (obj @w ** (f . combineDual @w @(Dual a)))
           . associator @k @w @(Dual w) @(Dual (Dual a))
           . leftUnitorInvWith (dualityUnit @w)
           . doubleNegInv @a
@@ -73,7 +73,7 @@ instance (Ob (w :: k), SelfAction k, CompactClosed k) => Corepresentable (Writer
   corepMap f = expSA f (obj @w)
 
 instance (Monoidal k) => Functor (Writer :: k -> k +-> k) where
-  map f = f // Prof \(Writer @b g) -> Writer ((f `par` obj @b) . g)
+  map f = f // Prof \(Writer @b g) -> Writer ((f ** obj @b) . g)
 
 instance (Monoid (w :: k), Monoidal k) => Promonad (Writer w :: k +-> k) where
   id = Writer (leftUnitorInvWith (mempty @w))
@@ -87,12 +87,12 @@ instance (Ob (w :: k), SelfAction k) => Strong k (Writer w :: k +-> k) where
   act @_ @b @_ @y f (Writer g) =
     f //
       withObAct @k @k @b @y $
-        Writer (associator @k @w @b @y . first @y (swap @_ @b @w) . associatorInv @k @b @w @y . (f `par` g))
+        Writer (associator @k @w @b @y . first @y (swap @_ @b @w) . associatorInv @k @b @w @y . (f ** g))
 
 -- | Note: This is only premonoidal, not monoidal, unless the monoid is commutative.
 instance (Monoid (w :: k), SymMonoidal k) => MonoidalProfunctor (Writer w :: k +-> k) where
-  par0 = id \\ unitObj @k
-  Writer @x2 @x1 f `par` Writer @y2 @y1 g =
+  one = id \\ unitObj @k
+  Writer @x2 @x1 f ** Writer @y2 @y1 g =
     f //
       g //
         withOb2 @_ @x1 @y1 $
@@ -119,7 +119,7 @@ writerComp = withOb2 @k @r @s $
 
 writerDay :: forall {k} (r :: k) (s :: k). (SymMonoidal k, Ob r, Ob s) => Writer r `Day` Writer s ~> Writer (r ** s)
 writerDay = withOb2 @k @r @s $
-  Prof \(Day @_ @d @_ @f f (Writer p) (Writer q) g) -> Writer (second @(r ** s) g . swapInner @r @d @s @f . (p `par` q) . f) \\ g
+  Prof \(Day @_ @d @_ @f f (Writer p) (Writer q) g) -> Writer (second @(r ** s) g . swapInner @r @d @s @f . (p ** q) . f) \\ g
 
 type WriterT :: k -> k +-> k -> k +-> k
 newtype WriterT w p a b where

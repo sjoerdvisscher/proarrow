@@ -221,8 +221,8 @@ optGen :: [a] -> GenTotal a
 optGen [] = error "optGen: empty list"
 optGen (x : xs) = GenNonEmpty (elem (x :| xs))
 
-one :: a -> GenTotal a
-one x = GenNonEmpty (pure x)
+oneElem :: a -> GenTotal a
+oneElem x = GenNonEmpty (pure x)
 
 instance (TestableType a, TestingEqShow b) => TestingEqShow (a -> b) where
   eqP = eqHask
@@ -231,7 +231,7 @@ instance (TestableType a, TestingEqShow b) => TestingEqShow (a -> b) where
 instance (Function a, TestableType a, TestableType b) => TestableType (a -> b) where
   gen = case gen @b of
     GenEmpty absurd -> case gen @a of
-      GenEmpty absurda -> one absurda
+      GenEmpty absurda -> oneElem absurda
       GenNonEmpty g -> GenEmpty \ab -> absurd (ab (minimalValue g))
     GenNonEmpty gb -> GenFun id (fun gb)
 
@@ -265,7 +265,7 @@ instance (TestableType (catk a1 b1), TestableType (catj a2 b2)) => TestableType 
     (GenNonEmpty ga, GenNonEmpty gb) -> GenNonEmpty $ liftA2 (:**:) ga gb
 
 instance (Ob a, Ob b) => TestableType (Unit a b) where
-  gen = one Unit
+  gen = oneElem Unit
 instance TestingEqShow (Unit a b) where
   showP _ = "Unit"
   eqP _ _ = pure True

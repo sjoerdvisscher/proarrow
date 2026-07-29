@@ -94,10 +94,10 @@ instance FunctorForRep (Pick a) where
   fmap (Op (X f)) (x ::: xs) = x ::: fmap @(Pick a) (Op f) (x ::: xs)
 
 instance MonoidalProfunctor Simplex where
-  par0 = ZZ
-  ZZ `par` g = g
-  Y f `par` g = Y (f `par` g)
-  X f `par` g = X (f `par` g)
+  one = ZZ
+  ZZ ** g = g
+  Y f ** g = Y (f ** g)
+  X f ** g = X (f ** g)
 
 -- | Addition as monoidal tensor.
 instance Monoidal Nat where
@@ -127,10 +127,10 @@ data family Replicate :: k -> Nat +-> k
 instance (Monoid m) => FunctorForRep (Replicate m) where
   type Replicate m @ Z = Unit
   type Replicate m @ S b = m ** (Replicate m @ b)
-  fmap ZZ = par0
-  fmap (Y f) = let g = fmap @(Replicate m) f in (mempty @m `par` g) . leftUnitorInv \\ g
-  fmap (X (Y f)) = obj @m `par` fmap @(Replicate m) f
+  fmap ZZ = one
+  fmap (Y f) = let g = fmap @(Replicate m) f in (mempty @m ** g) . leftUnitorInv \\ g
+  fmap (X (Y f)) = obj @m ** fmap @(Replicate m) f
   fmap (X (X @x f)) =
     let g = fmap @(Replicate m) (X f)
         b = fmap @(Replicate m) (src f)
-    in g . (mappend @m `par` b) . associatorInv @_ @m @m @(Replicate m @ x) \\ b
+    in g . (mappend @m ** b) . associatorInv @_ @m @m @(Replicate m @ x) \\ b

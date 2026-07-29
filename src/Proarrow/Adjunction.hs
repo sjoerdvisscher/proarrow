@@ -273,8 +273,8 @@ newtype Adj p a b = Adj (p a b)
   deriving newtype (Profunctor, Representable, Corepresentable)
 
 instance (Cartesian j, Cartesian k, Corepresentable p) => MonoidalProfunctor (Adj p :: j +-> k) where
-  par0 = cotabulate terminate \\ corepObj @p @TerminalObject
-  Adj @_ @x l `par` Adj @_ @y r =
+  one = cotabulate terminate \\ corepObj @p @TerminalObject
+  Adj @_ @x l ** Adj @_ @y r =
     withOb2 @_ @x @y
       ( cotabulate
           ( coindex @p @(x ** y) (lmap (fst @_ @x @y) l)
@@ -285,8 +285,8 @@ instance (Cartesian j, Cartesian k, Corepresentable p) => MonoidalProfunctor (Ad
       \\ r
 
 instance (HasCoproducts j, HasCoproducts k, Representable p) => MonoidalProfunctor (Coprod (Adj p :: j +-> k)) where
-  par0 = tabulate initiate \\ repObj @p @InitialObject
-  Coprod (Adj @_ @_ @x l) `par` Coprod (Adj @_ @_ @y r) =
+  one = tabulate initiate \\ repObj @p @InitialObject
+  Coprod (Adj @_ @_ @x l) ** Coprod (Adj @_ @_ @y r) =
     withObCoprod @_ @x @y
       ( Coprod
           ( Adj

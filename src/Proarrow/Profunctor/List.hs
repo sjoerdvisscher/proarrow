@@ -6,10 +6,12 @@ module Proarrow.Profunctor.List where
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+
 -- import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Strictified qualified as Str
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Functor (..))
+
 -- import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -25,9 +27,9 @@ mkCons :: (Profunctor p) => p a b -> List p (L as) (L bs) -> List p (L (a ': as)
 mkCons f fs = Cons f fs \\ fs
 
 foldList :: (MonoidalProfunctor p) => List p as bs -> p (Str.Fold (UN L as)) (Str.Fold (UN L bs))
-foldList Nil = par0
+foldList Nil = one
 foldList (Cons p Nil) = p
-foldList (Cons p ps@Cons{}) = p `par` foldList ps
+foldList (Cons p ps@Cons{}) = p ** foldList ps
 
 instance Functor List where
   map (Prof n) = Prof \case
@@ -59,11 +61,11 @@ instance (Profunctor p) => Profunctor (List p) where
 
 -- | The free monoidal profunctor on a profunctor.
 instance (Profunctor p) => MonoidalProfunctor (List p) where
-  par0 = Nil
-  Nil `par` Nil = Nil
-  Nil `par` gs@Cons{} = gs
-  Cons f fs `par` Nil = mkCons f (fs `par` Nil)
-  Cons f fs `par` Cons g gs = mkCons f (fs `par` Cons g gs)
+  one = Nil
+  Nil ** Nil = Nil
+  Nil ** gs@Cons{} = gs
+  Cons f fs ** Nil = mkCons f (fs ** Nil)
+  Cons f fs ** Cons g gs = mkCons f (fs ** Cons g gs)
 
 -- | The free monoidal category on a category.
 instance (CategoryOf k) => Monoidal (LIST k) where

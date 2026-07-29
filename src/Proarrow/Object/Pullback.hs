@@ -4,12 +4,12 @@ module Proarrow.Object.Pullback where
 
 import Prelude (($))
 
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->), lmap, UN, (//))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, obj, (//), type (+->))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Prod (..))
 import Proarrow.Object.Initial (HasZeroObject (..))
 import Proarrow.Profunctor.List (LIST (..), List (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 
 -- | A cone is a bunch of arrows with a shared source.
 data Cone (a :: PROD k) (bs :: LIST k) where
@@ -24,9 +24,9 @@ instance (CategoryOf k) => Profunctor (Cone :: LIST k +-> PROD k) where
   r \\ Leg l c@(Leg _ c1) = r \\ l \\ c \\ c1
 
 instance (HasProducts k) => MonoidalProfunctor (Cone :: LIST k +-> PROD k) where
-  par0 = Apex
-  Apex @a `par` rs = lmap (Prod (snd @_ @a)) rs \\ rs
-  Leg l ls `par` (rs :: Cone r rs) = Leg (l . fst @_ @_ @(UN PR r)) (ls `par` rs) \\ l \\ rs
+  one = Apex
+  Apex @a ** rs = lmap (Prod (snd @_ @a)) rs \\ rs
+  Leg l ls ** (rs :: Cone r rs) = Leg (l . fst @_ @_ @(UN PR r)) (ls ** rs) \\ l \\ rs
 
 -- | A cosink (a.k.a a source) is a cone, but with the apex type hidden by an existential.
 data Cosink (as :: [k]) where
@@ -39,7 +39,7 @@ class (HasProducts k) => HasPullbacks k where
   pullback :: forall (o :: k) a b. a ~> o -> b ~> o -> Cosink [a, b]
 
 -- | In a thin category, arrows don't carry information, so pullbacks are just products.
-thinPullback :: forall {k} (o :: k) a b. HasProducts k => a ~> o -> b ~> o -> Cosink [a, b]
+thinPullback :: forall {k} (o :: k) a b. (HasProducts k) => a ~> o -> b ~> o -> Cosink [a, b]
 thinPullback l r = l // r // withObProd @k @a @b $ Cone $ Leg (fst @k @a @b) $ Leg (snd @k @a @b) Apex
 
 equalizer :: forall {k} (a :: k) b. (HasPullbacks k) => a ~> b -> a ~> b -> Cosink '[a]

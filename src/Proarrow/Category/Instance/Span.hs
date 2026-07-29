@@ -46,8 +46,8 @@ instance (HasPullbacks k) => CategoryOf (SPAN k) where
   type Ob a = (Is SP a, Ob (UN SP a))
 
 instance (HasPullbacks k) => MonoidalProfunctor (Span :: CAT (SPAN k)) where
-  par0 = id
-  Span l1 l2 `par` Span r1 r2 = Span (l1 *** r1) (l2 *** r2)
+  one = id
+  Span l1 l2 ** Span r1 r2 = Span (l1 *** r1) (l2 *** r2)
 instance (HasPullbacks k) => Monoidal (SPAN k) where
   type SP a ** SP b = SP (a && b)
   type Unit = SP TerminalObject

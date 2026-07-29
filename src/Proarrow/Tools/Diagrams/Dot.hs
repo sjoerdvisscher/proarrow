@@ -159,8 +159,8 @@ instance CategoryOf DOT where
   type Ob a = (Is D a, IsList (UN D a))
 
 instance MonoidalProfunctor Dot where
-  par0 = Dot (,DotData (Vec []) (Vec []) [] [])
-  Dot @lis @los l `par` Dot @ris @ros r = withIsList2 @lis @ris $ withIsList2 @los @ros $ Dot \i ->
+  one = Dot (,DotData (Vec []) (Vec []) [] [])
+  Dot @lis @los l ** Dot @ris @ros r = withIsList2 @lis @ris $ withIsList2 @los @ros $ Dot \i ->
     let (k, DotData li lo le ln) = l j; (j, DotData ri ro re rn) = r i
     in ( k
        , DotData
@@ -178,8 +178,8 @@ instance Monoidal DOT where
   leftUnitorInv = id
   rightUnitor = id
   rightUnitorInv = id
-  associator @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
-  associatorInv @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
+  associator @as @bs @cs = obj @as ** obj @bs ** obj @cs
+  associatorInv @as @bs @cs = obj @as ** obj @bs ** obj @cs
 instance SymMonoidal DOT where
   swap @(D as) @(D bs) =
     withIsList2 @as @bs $
@@ -203,7 +203,7 @@ instance (Ob as) => Comonoid (D as) where
   comult = withIsList2 @as @as $ node' (Vec (repeat ":n")) (Vec (cycle [":sw", ":se"])) "shape=point; width=0.07"
 instance CopyDiscard DOT
 instance Strong DOT Dot where
-  act = par
+  act = (**)
 instance Costrong DOT Dot where
   coact @(D as) @(D xs) @(D ys) (Dot f) = Dot \n ->
     case f n of
@@ -230,8 +230,8 @@ instance MonoidalAction DOT DOT where
   withObAct @a @x r = withOb2 @_ @a @x r
   unitor = id
   unitorInv = id
-  multiplicator @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
-  multiplicatorInv @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
+  multiplicator @as @bs @cs = obj @as ** obj @bs ** obj @cs
+  multiplicatorInv @as @bs @cs = obj @as ** obj @bs ** obj @cs
 
 swap2 :: (Ob a, Ob b) => Dot (D [a, b]) (D [b, a])
 swap2 @a @b = swap @_ @(D '[a]) @(D '[b])

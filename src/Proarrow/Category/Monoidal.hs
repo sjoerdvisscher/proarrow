@@ -34,28 +34,28 @@ infixl 7 ==
 -- and to an oplax monoidal functor for corepresentable profunctors.
 type MonoidalProfunctor :: forall {j} {k}. j +-> k -> Constraint
 class (Monoidal j, Monoidal k, Profunctor p) => MonoidalProfunctor (p :: j +-> k) where
-  par0 :: p Unit Unit
-  par :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
+  one :: p Unit Unit
+  (**) :: p x1 x2 -> p y1 y2 -> p (x1 ** y1) (x2 ** y2)
 
 instance MonoidalProfunctor U.Unit where
-  par0 = U.Unit
-  U.Unit `par` U.Unit = U.Unit
+  one = U.Unit
+  U.Unit ** U.Unit = U.Unit
 
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :**: q) where
-  par0 = par0 :**: par0
-  (f1 :**: f2) `par` (g1 :**: g2) = (f1 `par` g1) :**: (f2 `par` g2)
+  one = one :**: one
+  (f1 :**: f2) ** (g1 :**: g2) = (f1 ** g1) :**: (f2 ** g2)
 
 par0Rep :: (Representable p, MonoidalProfunctor p) => Unit ~> p % Unit
-par0Rep @p = index @p par0
+par0Rep @p = index @p one
 
 parRep :: (Representable p, MonoidalProfunctor p, Ob x, Ob y) => (p % x) ** (p % y) ~> p % (x ** y)
-parRep @p @x @y = index @p (repUniv @p @x `par` repUniv @p @y)
+parRep @p @x @y = index @p (repUniv @p @x ** repUniv @p @y)
 
 unpar0Corep :: (Corepresentable p, MonoidalProfunctor p) => p %% Unit ~> Unit
-unpar0Corep @p = coindex @p par0
+unpar0Corep @p = coindex @p one
 
 unparCorep :: (Corepresentable p, MonoidalProfunctor p, Ob x, Ob y) => p %% (x ** y) ~> (p %% x) ** (p %% y)
-unparCorep @p @x @y = coindex @p (corepUniv @p @x `par` corepUniv @p @y)
+unparCorep @p @x @y = coindex @p (corepUniv @p @x ** corepUniv @p @y)
 
 type StrongMonoidalRep p = (Representable p, MonoidalProfunctor p, MonoidalProfunctor (RepCostar p))
 
@@ -122,8 +122,8 @@ instance (Monoidal j, Monoidal k) => Monoidal (j, k) where
   associatorInv @'(a1, a2) @'(b1, b2) @'(c1, c2) = associatorInv @j @a1 @b1 @c1 :**: associatorInv @k @a2 @b2 @c2
 
 instance (MonoidalProfunctor p) => MonoidalProfunctor (Op p) where
-  par0 = Op par0
-  Op l `par` Op r = Op (l `par` r)
+  one = Op one
+  Op l ** Op r = Op (l ** r)
 
 -- | The opposite of a monoidal category is also monoidal, with the same tensor product.
 instance (Monoidal k) => Monoidal (OPPOSITE k) where
@@ -141,13 +141,13 @@ instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
   swap @(OP a) @(OP b) = Op (swap @k @b @a)
 
 (||) :: (Monoidal k) => (a :: k) ~> b -> c ~> d -> a ** c ~> b ** d
-(||) = par
+(||) = (**)
 
 (==) :: (CategoryOf k) => (a :: k) ~> b -> b ~> c -> a ~> c
 f == g = g . f
 
 obj2 :: forall {k} a b. (Monoidal k, Ob (a :: k), Ob b) => Obj (a ** b)
-obj2 = obj @a `par` obj @b
+obj2 = obj @a ** obj @b
 
 leftUnitor' :: (Monoidal k) => (a :: k) ~> b -> Unit ** a ~> b
 leftUnitor' f = f . leftUnitor \\ f
@@ -168,25 +168,25 @@ associatorInv' :: forall {k} a b c. (Monoidal k) => Obj (a :: k) -> Obj b -> Obj
 associatorInv' a b c = associatorInv @k @a @b @c \\ a \\ b \\ c
 
 leftUnitorWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => b ~> Unit -> b ** a ~> a
-leftUnitorWith f = leftUnitor . (f `par` obj @a)
+leftUnitorWith f = leftUnitor . (f ** obj @a)
 
 leftUnitorInvWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => Unit ~> b -> a ~> b ** a
-leftUnitorInvWith f = (f `par` obj @a) . leftUnitorInv
+leftUnitorInvWith f = (f ** obj @a) . leftUnitorInv
 
 rightUnitorWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => b ~> Unit -> a ** b ~> a
-rightUnitorWith f = rightUnitor . (obj @a `par` f)
+rightUnitorWith f = rightUnitor . (obj @a ** f)
 
 rightUnitorInvWith :: forall {k} a b. (Monoidal k, Ob (a :: k)) => Unit ~> b -> a ~> a ** b
-rightUnitorInvWith f = (obj @a `par` f) . rightUnitorInv
+rightUnitorInvWith f = (obj @a ** f) . rightUnitorInv
 
 unitObj :: (Monoidal k) => Obj (Unit :: k)
-unitObj = par0
+unitObj = one
 
 first :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (a ** c) ~> (b ** c)
-first f = f `par` obj @c
+first f = f ** obj @c
 
 second :: forall {k} c a b. (Monoidal k, Ob (c :: k)) => (a ~> b) -> (c ** a) ~> (c ** b)
-second f = obj @c `par` f
+second f = obj @c ** f
 
 type State a = Unit ~> a
 type Costate a = a ~> Unit
@@ -202,7 +202,7 @@ instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j, k) where
   swap @'(a1, a2) @'(b1, b2) = swap @j @a1 @b1 :**: swap @k @a2 @b2
 
 swap' :: forall {k} (a :: k) a' b b'. (SymMonoidal k) => a ~> a' -> b ~> b' -> (a ** b) ~> (b' ** a')
-swap' f g = swap @k @a' @b' . (f `par` g) \\ f \\ g
+swap' f g = swap @k @a' @b' . (f ** g) \\ f \\ g
 
 swapInner'
   :: (SymMonoidal k)
@@ -212,9 +212,9 @@ swapInner'
   -> d ~> d'
   -> ((a ** b) ** (c ** d)) ~> ((a' ** c') ** (b' ** d'))
 swapInner' a b c d =
-  associatorInv' (tgt a) (tgt c) (tgt b `par` tgt d)
-    . (a `par` (associator' (tgt c) (tgt b) (tgt d) . (swap' b c `par` d) . associatorInv' (src b) (src c) (src d)))
-    . associator' (src a) (src b) (src c `par` src d)
+  associatorInv' (tgt a) (tgt c) (tgt b ** tgt d)
+    . (a ** (associator' (tgt c) (tgt b) (tgt d) . (swap' b c ** d) . associatorInv' (src b) (src c) (src d)))
+    . associator' (src a) (src b) (src c ** src d)
 
 swapInner
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((a ** c) ** (b ** d))
@@ -222,20 +222,20 @@ swapInner =
   withOb2 @k @b @d $
     withOb2 @k @c @d $
       associatorInv @k @a @c @(b ** d)
-        . (obj @a `par` (associator @k @c @b @d . (swap @k @b @c `par` obj @d) . associatorInv @k @b @c @d))
+        . (obj @a ** (associator @k @c @b @d . (swap @k @b @c ** obj @d) . associatorInv @k @b @c @d))
         . associator @k @a @b @(c ** d)
 
 swapFst
   :: forall {k} (a :: k) b c d. (SymMonoidal k, Ob a, Ob b, Ob c, Ob d) => (a ** b) ** (c ** d) ~> (c ** b) ** (a ** d)
-swapFst = (swap @k @b @c `par` obj2 @a @d) . swapInner @b @a @c @d . (swap @k @a @b `par` obj2 @c @d)
+swapFst = (swap @k @b @c ** obj2 @a @d) . swapInner @b @a @c @d . (swap @k @a @b ** obj2 @c @d)
 
 swapSnd
   :: forall {k} a (b :: k) c d. (SymMonoidal k, Ob a, Ob b, Ob c, Ob d) => (a ** b) ** (c ** d) ~> (a ** d) ** (c ** b)
-swapSnd = (obj2 @a @d `par` swap @k @b @c) . swapInner @a @b @d @c . (obj2 @a @b `par` swap @k @c @d)
+swapSnd = (obj2 @a @d ** swap @k @b @c) . swapInner @a @b @d @c . (obj2 @a @b ** swap @k @c @d)
 
 swapOuter
   :: forall {k} a b c d. (SymMonoidal k, Ob (a :: k), Ob b, Ob c, Ob d) => ((a ** b) ** (c ** d)) ~> ((d ** b) ** (c ** a))
-swapOuter = (obj2 @d @b `par` swap @k @a @c) . swapFst @a @b @d @c . (obj2 @a @b `par` swap @k @c @d)
+swapOuter = (obj2 @d @b ** swap @k @a @c) . swapFst @a @b @d @c . (obj2 @a @b ** swap @k @c @d)
 
 data UnitRep :: () +-> k
 instance (Monoidal k) => FunctorForRep (UnitRep :: () +-> k) where
@@ -244,4 +244,4 @@ instance (Monoidal k) => FunctorForRep (UnitRep :: () +-> k) where
 data MultRep :: (k, k) +-> k
 instance (Monoidal k) => FunctorForRep (MultRep :: (k, k) +-> k) where
   type MultRep @ '(a, b) = a ** b
-  fmap (f :**: g) = f `par` g
+  fmap (f :**: g) = f ** g

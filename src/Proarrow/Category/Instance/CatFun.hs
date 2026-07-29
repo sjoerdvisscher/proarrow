@@ -57,8 +57,8 @@ instance HasBinaryCoproducts (BI FUNK) where
   Bi @(FUN p) ||| Bi @(FUN q) = Bi @(FUN (Rep Codiag :.: (p :++: q)))
 
 instance M.MonoidalProfunctor (Bi :: CAT (BI FUNK)) where
-  par0 = id
-  Bi @(FUN f) `par` Bi @(FUN g) = Bi @(FUN (f :**: g))
+  one = id
+  Bi @(FUN f) ** Bi @(FUN g) = Bi @(FUN (f :**: g))
 
 instance M.Monoidal (BI FUNK) where
   type Unit = B ()

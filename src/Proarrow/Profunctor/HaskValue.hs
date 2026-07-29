@@ -22,8 +22,8 @@ instance (Monoid c, CategoryOf k) => Promonad (HaskValue c :: k +-> k) where
   HaskValue c1 . HaskValue c2 = HaskValue (mappend c1 c2)
 
 instance (Monoid c, Monoidal j, Monoidal k) => MonoidalProfunctor (HaskValue c :: j +-> k) where
-  par0 = HaskValue mempty
-  HaskValue @a1 @b1 c1 `par` HaskValue @a2 @b2 c2 = withOb2 @k @a1 @a2 $ withOb2 @j @b1 @b2 $ HaskValue (mappend c1 c2)
+  one = HaskValue mempty
+  HaskValue @a1 @b1 c1 ** HaskValue @a2 @b2 c2 = withOb2 @k @a1 @a2 $ withOb2 @j @b1 @b2 $ HaskValue (mappend c1 c2)
 
 instance (SelfAction k) => Traversable (HaskValue c :: k +-> k) where
   traverse (HaskValue c :.: r) = strongPar0 :.: HaskValue c \\ r

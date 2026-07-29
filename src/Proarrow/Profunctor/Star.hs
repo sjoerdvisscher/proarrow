@@ -16,7 +16,7 @@ import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..
 import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..), baseTraverse)
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
-import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, copar)
+import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, (++))
 import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
 import Proarrow.Object.Initial (initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
@@ -60,12 +60,12 @@ composeStar :: (Functor f) => Star f :.: Star g :~> Star (Compose f g)
 composeStar (Star f :.: Star g) = Star (Compose . map g . f)
 
 instance (Applicative f, Monoidal j, Monoidal k) => MonoidalProfunctor (Star (f :: j -> k)) where
-  par0 = Star (pure id)
-  Star @a f `par` Star @b g = withOb2 @_ @a @b (Star (liftA2 @f @a @b id . (f `par` g)))
+  one = Star (pure id)
+  Star @a f ** Star @b g = withOb2 @_ @a @b (Star (liftA2 @f @a @b id . (f ** g)))
 
 instance (Functor f, HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (Star (f :: j -> k))) where
-  par0 = Coprod (Star initiate)
-  Coprod (Star @a f) `par` Coprod (Star @b g) = withObCoprod @_ @a @b (Coprod (Star (map (lft @_ @a @b) . f ||| map (rgt @_ @a @b) . g)))
+  one = Coprod (Star initiate)
+  Coprod (Star @a f) ** Coprod (Star @b g) = withObCoprod @_ @a @b (Coprod (Star (map (lft @_ @a @b) . f ||| map (rgt @_ @a @b) . g)))
 
 -- Hmm, another wrapper required...
 type CoprodDom :: j +-> k -> COPROD j +-> k
@@ -76,8 +76,8 @@ instance (Profunctor p) => Profunctor (CoprodDom p) where
   r \\ Co p = r \\ p
 
 instance (Alternative f, Monoidal k, Distributive j) => MonoidalProfunctor (CoprodDom (Star (f :: j -> k))) where
-  par0 = Co (Star empty)
-  Co (Star @a f) `par` Co (Star @b g) = let ab = obj @a +++ obj @b in Co (Star (alt @f @a @b ab . (f `par` g))) \\ ab
+  one = Co (Star empty)
+  Co (Star @a f) ** Co (Star @b g) = let ab = obj @a +++ obj @b in Co (Star (alt @f @a @b ab . (f ** g))) \\ ab
 
 instance (P.Functor f) => Strong (PROD Type) (Star (Prelude f)) where
   act (Prod f) (Star k) = Star (\(a, x) -> P.fmap (f a,) (k x))
@@ -92,7 +92,7 @@ instance Traversable (Star P.Maybe) where
         dimap
           (P.maybe (P.Left ()) P.Right)
           (P.const P.Nothing ||| P.Just)
-          (par0 `copar` p)
+          (one ++ p)
 
 instance Traversable (Star []) where
   traverse (Star a2bs :.: p) = lmap a2bs go :.: Star id
@@ -101,7 +101,7 @@ instance Traversable (Star []) where
         dimap
           (\case [] -> P.Left (); (x : xs) -> P.Right (x, xs))
           (P.const [] ||| P.uncurry (:))
-          (par0 `copar` (p `par` go))
+          (one ++ (p ** go))
 
 starTraverse
   :: forall {k} t f a b

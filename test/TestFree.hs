@@ -7,7 +7,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
 import Proarrow.Category.Instance.Free (FREE (..), Free (..), UnitF, fold, type (**!))
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), par)
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), (**))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts, (&&&), type (*!))
@@ -81,7 +81,7 @@ lam
 lam = unsafeLinear \f -> curry (f id . swapIn)
 
 ($) :: forall {k} (a :: k) a' (b :: k) i. (Closed k, Ob b) => a ~> (i ~~> b) %1 -> a' ~> i %1 -> a ** a' ~> b
-($) = unsafeLinear \f -> unsafeLinear \x -> apply @k @i @b . (f `par` x) \\ x
+($) = unsafeLinear \f -> unsafeLinear \x -> apply @k @i @b . (f ** x) \\ x
 
 testLam :: forall (a :: FC) b. (Ob a, Ob b) => UnitF ~> ((a ~~> b) ~~> (a ~~> b))
 testLam = lam \f -> lam \x -> f $ x

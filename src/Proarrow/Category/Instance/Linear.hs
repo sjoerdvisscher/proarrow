@@ -57,8 +57,8 @@ instance CategoryOf LINEAR where
   type Ob (a :: LINEAR) = Is L a
 
 instance MonoidalProfunctor Linear where
-  par0 = id
-  Linear f `par` Linear g = Linear \(x, y) -> (f x, g y)
+  one = id
+  Linear f ** Linear g = Linear \(x, y) -> (f x, g y)
 
 -- | Tuples as monoidal tensor. Note that tuples are not the binary product in LINEAR.
 instance Monoidal LINEAR where
@@ -97,13 +97,13 @@ instance Corepresentable (Rep Forget :: LINEAR +-> Type) where
 
 -- | Forget is a lax monoidal functor
 instance MonoidalProfunctor (Rep Forget) where
-  par0 = Rep \() -> ()
-  Rep f `par` Rep g = Rep \(x, y) -> (f x, g y)
+  one = Rep \() -> ()
+  Rep f ** Rep g = Rep \(x, y) -> (f x, g y)
 
 -- | Forget is also a colax monoidal functor
 instance MonoidalProfunctor (Corep Forget) where
-  par0 = Corep id
-  Corep f `par` Corep g = Corep \(x, y) -> (f x, g y)
+  one = Corep id
+  Corep f ** Corep g = Corep \(x, y) -> (f x, g y)
 
 data Ur a where
   Ur :: a -> Ur a
@@ -186,8 +186,8 @@ instance Copowered Type LINEAR where
   uncopower (Linear f) n = Linear \x -> f (Ur n, x)
 
 instance MonoidalProfunctor (Coprod Linear) where
-  par0 = Coprod (Linear \x -> x)
-  Coprod f `par` Coprod g = Coprod (f +++ g)
+  one = Coprod (Linear \x -> x)
+  Coprod f ** Coprod g = Coprod (f +++ g)
 
 instance Distributive LINEAR where
   distL = Linear \(a, ebc) -> case ebc of Left b -> Left (a, b); Right c -> Right (a, c)

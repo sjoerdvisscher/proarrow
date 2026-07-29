@@ -6,7 +6,13 @@ module Proarrow.Category.Monoidal.Strictified where
 import Data.Kind (Constraint)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), associatorInv', associator')
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , associator'
+  , associatorInv'
+  )
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 
@@ -14,7 +20,7 @@ infixl 8 ||
 infixl 7 ==
 
 (||) :: (Monoidal k) => (as :: [k]) ~> bs -> cs ~> ds -> (as ++ cs) ~> (bs ++ ds)
-(||) = par
+(||) = (**)
 
 (==) :: (CategoryOf k) => ((a :: k) ~> b) -> (b ~> c) -> a ~> c
 f == g = g . f
@@ -34,7 +40,7 @@ instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
 type IsList :: forall {k}. [k] -> Constraint
 class (CategoryOf k, as ~ as ++ '[], forall bs cs. Assoc as bs cs) => IsList (as :: [k]) where
   sList :: SList as
-  withIsList2 :: IsList bs => (IsList (as ++ bs) => r) -> r
+  withIsList2 :: (IsList bs) => ((IsList (as ++ bs)) => r) -> r
   swap1 :: (Ob b, SymMonoidal k) => as ++ '[b] ~> b ': as
   swap1Inv :: (Ob b, SymMonoidal k) => b ': as ~> as ++ '[b]
   swap' :: (IsList (bs :: [k]), SymMonoidal k) => as ++ bs ~> bs ++ as
@@ -53,9 +59,10 @@ instance (Ob (a :: k), CategoryOf k) => IsList '[a] where
 instance (Ob (a1 :: k), IsList (a2 ': as), IsList as) => IsList (a1 ': a2 ': as) where
   sList = SCons
   withIsList2 @bs r = withIsList2 @(a2 ': as) @bs $ withIsList2 @as @bs r
-  swap1 @b = case swap1 @(a2 ': as) @b of f -> (Str @[a1, b] @[b, a1] (swap @_ @a1 @b) `par` obj @(a2 ': as)) . (obj @'[a1] `par` f)
-  swap1Inv @b = case swap1Inv @(a2 ': as) @b of f -> (obj @'[a1] `par` f) . (Str @[b, a1] @[a1, b] (swap @_ @b @a1) `par` obj @(a2 ': as))
-  swap' @bs = case swap' @(a2 ': as) @bs of f -> associator @_ @bs @'[a1] @(a2 ': as) . (swap1Inv @bs @a1 `par` obj @(a2 ': as)) . (obj @'[a1] `par` f)
+  swap1 @b = case swap1 @(a2 ': as) @b of f -> (Str @[a1, b] @[b, a1] (swap @_ @a1 @b) ** obj @(a2 ': as)) . (obj @'[a1] ** f)
+  swap1Inv @b = case swap1Inv @(a2 ': as) @b of f -> (obj @'[a1] ** f) . (Str @[b, a1] @[a1, b] (swap @_ @b @a1) ** obj @(a2 ': as))
+  swap' @bs = case swap' @(a2 ': as) @bs of
+    f -> associator @_ @bs @'[a1] @(a2 ': as) . (swap1Inv @bs @a1 ** obj @(a2 ': as)) . (obj @'[a1] ** f)
 
 type family Fold (as :: [k]) :: k where
   Fold ('[] :: [k]) = Unit :: k
@@ -63,9 +70,9 @@ type family Fold (as :: [k]) :: k where
   Fold (a ': as) = a ** Fold as
 
 fold :: forall {k} as. (Monoidal k) => SList (as :: [k]) -> Fold as ~> Fold as
-fold SNil = par0
+fold SNil = one
 fold (SSing @a) = obj @a
-fold (SCons @a @as') = obj @a `par` fold (sList @as')
+fold (SCons @a @as') = obj @a ** fold (sList @as')
 
 concatFold
   :: forall {k} (as :: [k]) (bs :: [k])
@@ -77,9 +84,9 @@ concatFold =
       h SNil = leftUnitor \\ fbs
       h (SSing @c) = case sList @bs of
         SNil -> rightUnitor
-        SSing -> obj @c `par` fbs
-        SCons -> obj @c `par` fbs
-      h (SCons @c @cs') = let c = obj @c; cs = sList @cs' in (c `par` h cs) . associator' c (fold cs) fbs
+        SSing -> obj @c ** fbs
+        SCons -> obj @c ** fbs
+      h (SCons @c @cs') = let c = obj @c; cs = sList @cs' in (c ** h cs) . associator' c (fold cs) fbs
   in h (sList @as)
 
 splitFold
@@ -92,14 +99,14 @@ splitFold =
       h SNil = leftUnitorInv \\ fbs
       h (SSing @c) = case sList @bs of
         SNil -> rightUnitorInv
-        SSing -> obj @c `par` fbs
-        SCons -> obj @c `par` fbs
-      h (SCons @c @cs') = let c = obj @c; cs = sList @cs' in associatorInv' c (fold cs) fbs . (c `par` h cs)
+        SSing -> obj @c ** fbs
+        SCons -> obj @c ** fbs
+      h (SCons @c @cs') = let c = obj @c; cs = sList @cs' in associatorInv' c (fold cs) fbs . (c ** h cs)
   in h (sList @as)
 
 type Strictified :: CAT [k]
 data Strictified as bs where
-  Str :: (Ob as, Ob bs) => { unStr :: Fold as ~> Fold bs } -> Strictified as bs
+  Str :: (Ob as, Ob bs) => {unStr :: Fold as ~> Fold bs} -> Strictified as bs
 
 singleton :: (CategoryOf k) => (a :: k) ~> b -> '[a] ~> '[b]
 singleton a = Str a \\ a
@@ -109,8 +116,7 @@ instance (Monoidal k) => Profunctor (Strictified :: CAT [k]) where
   r \\ Str f = r \\ f
 
 instance (Monoidal k) => Promonad (Strictified :: CAT [k]) where
-  id :: forall (as :: [k]). (Ob as) => Strictified as as
-  id = Str (fold (sList @as))
+  id @as = Str (fold (sList @as))
   Str f . Str g = Str (f . g)
 
 -- | The strictified monoidal category, making the unitors and associators identities.
@@ -119,12 +125,11 @@ instance (Monoidal k) => CategoryOf [k] where
   type Ob as = IsList as
 
 instance (Monoidal k) => MonoidalProfunctor (Strictified :: CAT [k]) where
-  par0 = id
-  par :: (as :: [k]) ~> bs -> cs ~> ds -> as ++ cs ~> bs ++ ds
-  par (Str @as @bs f) (Str @cs @ds g) =
+  one = id
+  Str @as @bs f ** Str @cs @ds g =
     withOb2 @[k] @as @cs $
       withOb2 @[k] @bs @ds $
-        Str (concatFold @bs @ds . (f `par` g) . splitFold @as @cs)
+        Str (concatFold @bs @ds . (f ** g) . splitFold @as @cs)
 
 -- | List concattenation as monoidal tensor.
 instance (Monoidal k) => Monoidal [k] where
@@ -135,8 +140,8 @@ instance (Monoidal k) => Monoidal [k] where
   leftUnitorInv = id
   rightUnitor = id
   rightUnitorInv = id
-  associator @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
-  associatorInv @as @bs @cs = obj @as `par` obj @bs `par` obj @cs
+  associator @as @bs @cs = obj @as ** obj @bs ** obj @cs
+  associatorInv @as @bs @cs = obj @as ** obj @bs ** obj @cs
 
 instance (SymMonoidal k) => SymMonoidal [k] where
   swap @as @bs = swap' @as @bs
@@ -145,8 +150,8 @@ instance (SymMonoidal k, CopyDiscard k) => CopyDiscard [k] where
   copy @as0 = case sList @as0 of
     SNil -> id
     SSing @a -> Str @'[a] @'[a, a] copy
-    SCons @a @as -> (obj @'[a] `par` (associator @_ @as @'[a] @as . (swap @[k] @'[a] @as `par` obj @as))) . (Str @'[a] @'[a, a] copy `par` copy)
+    SCons @a @as -> (obj @'[a] ** (associator @_ @as @'[a] @as . (swap @[k] @'[a] @as ** obj @as))) . (Str @'[a] @'[a, a] copy ** copy)
   discard @as = case sList @as of
     SNil -> id
     SSing @a -> Str @'[a] @'[] discard
-    SCons @a -> Str @'[a] @'[] discard `par` discard
+    SCons @a -> Str @'[a] @'[] discard ** discard

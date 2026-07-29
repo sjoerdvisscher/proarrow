@@ -5,12 +5,12 @@ import Data.Functor.Const (Const (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Distributive (Traversable (..), Cotraversable (..))
+import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Core (Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Category.Monoidal.Action (Strong (..))
 
 type Fix :: k +-> k -> k +-> k
 data Fix p a b where
@@ -28,8 +28,8 @@ instance Functor Fix where
   map n@Prof{} = Prof (In . unProf (unNat (map n) . map (map n)) . out)
 
 instance (MonoidalProfunctor p) => MonoidalProfunctor (Fix p) where
-  par0 = In par0
-  In p `par` In q = In (p `par` q)
+  one = In one
+  In p ** In q = In (p ** q)
 
 instance (Traversable p) => Traversable (Fix p) where
   traverse (In pfp :.: r) = case traverse (pfp :.: r) of r' :.: pfp' -> r' :.: In pfp'

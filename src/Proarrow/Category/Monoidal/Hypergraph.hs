@@ -11,9 +11,9 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , leftUnitorInvWith
   , leftUnitorWith
-  , par
   , rightUnitorInvWith
   , rightUnitorWith
+  , (**)
   , (==)
   , (||)
   )
@@ -33,12 +33,12 @@ withObNFold r = case snat @n of
 fanIn :: forall n a. (SNatI n, Monoid a) => NFold n a ~> a
 fanIn = case snat @n of
   SZ -> mempty
-  SS @n' -> mappend @a . (obj @a `par` fanIn @n' @a)
+  SS @n' -> mappend @a . (obj @a ** fanIn @n' @a)
 
 fanOut :: forall n a. (SNatI n, Comonoid a) => a ~> NFold n a
 fanOut = case snat @n of
   SZ -> counit
-  SS @n' -> (obj @a `par` fanOut @n' @a) . comult @a
+  SS @n' -> (obj @a ** fanOut @n' @a) . comult @a
 
 -- | We have a special frobenius algebra for an object if it is a monoid and a comonoid in a nice compatible way.
 -- Then there's a unique way to go from n-fold @a@ to m-fold @a@.
@@ -102,4 +102,4 @@ curryHG :: forall {k} (a :: k) b c. (Hypergraph k, Ob a, Ob b) => a ** b ~> c ->
 curryHG = linDistHG @a @b @c
 
 applyHG :: forall {k} (b :: k) c. (Hypergraph k, Ob b, Ob c) => ExpHG b c ** b ~> c
-applyHG = linDistInvHG @_ @b (obj @b `par` obj @c)
+applyHG = linDistInvHG @_ @b (obj @b ** obj @c)

@@ -33,10 +33,10 @@ instance (CategoryOf k) => Procomonad (Fold :: k +-> k) where
   produplicate (Fold f g m z) = Fold id g m z :.: Fold f id m z
 
 instance (SymMonoidal k) => MonoidalProfunctor (Fold :: k +-> k) where
-  par0 = Fold id id leftUnitor id
-  Fold @m f g m z `par` Fold @n f' g' m' z' =
+  one = Fold id id leftUnitor id
+  Fold @m f g m z ** Fold @n f' g' m' z' =
     withOb2 @k @m @n P.$
-      Fold (f `par` f') (g `par` g') ((m `par` m') . swapInner @m @n @m @n) ((z `par` z') . leftUnitorInv)
+      Fold (f ** f') (g ** g') ((m ** m') . swapInner @m @n @m @n) ((z ** z') . leftUnitorInv)
 
 instance (CoprodAction k, BiCCC k) => Strong (COPROD k) (Fold :: k +-> k) where
   act (Coprod @_ @a (Id f)) (Fold @m k h m z) = f // withObCoprod @k @a @m P.$ Fold (f +++ k) (right @a h) (step m) (rgt @_ @a @m . z)

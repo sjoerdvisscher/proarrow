@@ -146,19 +146,19 @@ instance (CategoryOf k) => CategoryOf (COPROD k) where
   type Ob a = (Is COPR a, Ob (UN COPR a))
 
 instance (HasCoproducts k) => MonoidalProfunctor (Coprod (Id :: k +-> k)) where
-  par0 = Coprod id
-  Coprod (Id f) `par` Coprod (Id g) = Coprod (Id (f +++ g))
+  one = Coprod id
+  Coprod (Id f) ** Coprod (Id g) = Coprod (Id (f +++ g))
 
 instance (HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (TerminalProfunctor :: j +-> k)) where
-  par0 = Coprod TerminalProfunctor
-  Coprod (TerminalProfunctor @a1 @b1) `par` Coprod (TerminalProfunctor @a2 @b2) =
+  one = Coprod TerminalProfunctor
+  Coprod (TerminalProfunctor @a1 @b1) ** Coprod (TerminalProfunctor @a2 @b2) =
     withObCoprod @k @a1 @a2 $ withObCoprod @j @b1 @b2 $ Coprod TerminalProfunctor
 
-copar0 :: (MonoidalProfunctor (Coprod p)) => p InitialObject InitialObject
-copar0 = unCoprod par0
+nil :: (MonoidalProfunctor (Coprod p)) => p InitialObject InitialObject
+nil = unCoprod one
 
-copar :: (MonoidalProfunctor (Coprod p)) => p a b -> p c d -> p (a || c) (b || d)
-copar p q = unCoprod (Coprod p `par` Coprod q)
+(++) :: (MonoidalProfunctor (Coprod p)) => p a b -> p c d -> p (a || c) (b || d)
+p ++ q = unCoprod (Coprod p ** Coprod q)
 
 instance (HasInitialObject k) => HasInitialObject (COPROD k) where
   type InitialObject = COPR InitialObject
@@ -227,7 +227,7 @@ instance Costrong (COPROD Type) (Id :: CAT Type) where
   coact (Id uxuy) = Id (let loop ux = P.either (loop . P.Left) id (uxuy ux) in loop . P.Right)
 
 instance Strong Type (Coprod Id :: CAT (COPROD Type)) where
-  l `act` Coprod (Id r) = Coprod (Id (l `par` r))
+  l `act` Coprod (Id r) = Coprod (Id (l ** r))
 
 instance MonoidalAction Type (COPROD Type) where
   type Act p (COPR x) = COPR (p ** x)

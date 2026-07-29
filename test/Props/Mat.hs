@@ -26,7 +26,7 @@ import Testable
   , TestingEqShow (..)
   , genSomeDef
   , invmap
-  , one
+  , oneElem
   , pattern GenNonEmpty
   )
 
@@ -70,7 +70,7 @@ instance (Eq a, Show a) => TestingEqShow (Vec n a)
 instance (Eq a, Show a, TestableType a, SNatI n) => TestableType (Vec n a) where
   gen = case gen of
     GenEmpty absurd -> case snat @n of
-      SZ -> one VNil
+      SZ -> oneElem VNil
       SS -> GenEmpty \(a ::: _) -> absurd a
     GenNonEmpty g -> GenNonEmpty $ sequence (repeat @n g)
 

@@ -165,9 +165,9 @@ instance HasFreeK CategoryOf Monoidal LIST where
   type Lift CategoryOf Monoidal LIST a = L '[a]
   type Retract CategoryOf Monoidal LIST (a :: LIST k) = Fold (UN L a)
   liftK f = Cons f Nil
-  retractK Nil = par0
+  retractK Nil = one
   retractK (Cons f Nil) = f
-  retractK (Cons f fs@Cons{}) = f `par` retractK @CategoryOf @Monoidal fs
+  retractK (Cons f fs@Cons{}) = f ** retractK @CategoryOf @Monoidal fs
 
 instance HasFreeK TracedMonoidal CompactClosed INT where
   type Lift TracedMonoidal CompactClosed INT (a :: k) = I a Unit

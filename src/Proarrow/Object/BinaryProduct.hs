@@ -168,8 +168,8 @@ instance (HasInitialObject k) => HasInitialObject (PROD k) where
   initiate = Prod initiate
 
 instance (HasProducts k, cat ~ Hom k) => MonoidalProfunctor (Prod cat) where
-  par0 = id
-  f `par` g = f *** g
+  one = id
+  f ** g = f *** g
 
 -- | Products as monoidal structure.
 instance (HasProducts k) => Monoidal (PROD k) where
@@ -202,8 +202,8 @@ instance (Functor f) => Functor (FromProd f) where
   map (Prod g) (FromProd f) = FromProd (map g f)
 
 instance MonoidalProfunctor (->) where
-  par0 = id
-  f `par` g = f *** g
+  one = id
+  f ** g = f *** g
 
 -- | Products as monoidal structure.
 instance Monoidal Type where
@@ -221,7 +221,7 @@ instance SymMonoidal Type where
   swap = swapProd
 
 instance Strong Type (->) where
-  act = par
+  act = (**)
 instance Strong (PROD Type) (->) where
   act (Prod f) g = f *** g
 instance MonoidalAction Type Type where

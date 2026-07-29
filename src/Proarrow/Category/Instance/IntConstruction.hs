@@ -7,11 +7,11 @@ import Proarrow.Category.Monoidal
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
   , obj2
-  , par
   , swap
   , swapFst
   , swapInner
   , swapOuter
+  , (**)
   )
 import Proarrow.Category.Monoidal.Action (TracedMonoidal, trace)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
@@ -30,10 +30,10 @@ data IntConstruction a b where
   Int :: (Ob ap, Ob am, Ob bp, Ob bm) => ap ** bm ~> am ** bp -> IntConstruction (I ap am) (I bp bm)
 
 toInt :: forall {k} (a :: k) b m. (TracedMonoidal k, Ob m) => (a ~> b) -> I a m ~> I b m
-toInt f = Int (swap @k @b @m . (f `par` obj @m)) \\ f
+toInt f = Int (swap @k @b @m . (f ** obj @m)) \\ f
 
 isoToInt :: forall {k} (a :: k) b. (TracedMonoidal k) => (a ~> b) -> (b ~> a) -> I a a ~> I b b
-isoToInt f g = Int (swap @k @b @a . (f `par` g)) \\ f \\ g
+isoToInt f g = Int (swap @k @b @a . (f ** g)) \\ f \\ g
 
 fromInt :: forall {k} (a :: k) b m. (TracedMonoidal k) => (I a m ~> I b m) -> a ~> b
 fromInt (Int f) = trace @(~>) @m @a @b (swap @k @m @b . f)
@@ -46,7 +46,7 @@ instance (TracedMonoidal k) => Promonad (IntConstruction :: CAT (INT k)) where
   Int @bp @bm @cp @cm f . Int @ap @am g =
     Int
       ( trace @_ @(bp ** bm) @(ap ** cm) @(am ** cp)
-          (swapOuter @bm @cp @bp @am . (f `par` (swap @k @am @bp . g)) . swapFst @ap @cm @bp @bm)
+          (swapOuter @bm @cp @bp @am . (f ** (swap @k @am @bp . g)) . swapFst @ap @cm @bp @bm)
       )
       \\ obj2 @ap @cm
       \\ obj2 @am @cp
@@ -59,9 +59,9 @@ instance (TracedMonoidal k) => CategoryOf (INT k) where
   type Ob a = (a ~ I (IntPlus a) (IntMinus a), Ob (IntPlus a), Ob (IntMinus a))
 
 instance (TracedMonoidal k) => MonoidalProfunctor (IntConstruction :: CAT (INT k)) where
-  par0 = Int (swap @k @Unit @Unit)
-  Int @ap @am @bp @bm f `par` Int @cp @cm @dp @dm g =
-    Int (swapInner @am @bp @cm @dp . (f `par` g) . swapInner @ap @cp @bm @dm)
+  one = Int (swap @k @Unit @Unit)
+  Int @ap @am @bp @bm f ** Int @cp @cm @dp @dm g =
+    Int (swapInner @am @bp @cm @dp . (f ** g) . swapInner @ap @cp @bm @dm)
       \\ obj2 @(I ap am) @(I cp cm)
       \\ obj2 @(I bp bm) @(I dp dm)
 
@@ -71,29 +71,29 @@ instance (TracedMonoidal k) => Monoidal (INT k) where
   type a ** b = I (IntPlus a ** IntPlus b) (IntMinus a ** IntMinus b)
   withOb2 @a @b r = withOb2 @k @(IntPlus a) @(IntPlus b) (withOb2 @k @(IntMinus a) @(IntMinus b) r)
   leftUnitor @(I ap am) =
-    Int ((leftUnitorInv @k @am `par` obj @ap) . swap @k @ap @am . (leftUnitor @k @ap `par` obj @am))
+    Int ((leftUnitorInv @k @am ** obj @ap) . swap @k @ap @am . (leftUnitor @k @ap ** obj @am))
       \\ obj2 @Unit @ap
       \\ obj2 @Unit @am
   leftUnitorInv @(I ap am) =
-    Int ((obj @am `par` leftUnitorInv @k @ap) . swap @k @ap @am . (obj @ap `par` leftUnitor @k @am))
+    Int ((obj @am ** leftUnitorInv @k @ap) . swap @k @ap @am . (obj @ap ** leftUnitor @k @am))
       \\ obj2 @Unit @ap
       \\ obj2 @Unit @am
   rightUnitor @(I ap am) =
-    Int ((rightUnitorInv @k @am `par` obj @ap) . swap @k @ap @am . (rightUnitor @k @ap `par` obj @am))
+    Int ((rightUnitorInv @k @am ** obj @ap) . swap @k @ap @am . (rightUnitor @k @ap ** obj @am))
       \\ obj2 @ap @Unit
       \\ obj2 @am @Unit
   rightUnitorInv @(I ap am) =
-    Int ((obj @am `par` rightUnitorInv @k @ap) . swap @k @ap @am . (obj @ap `par` rightUnitor @k @am))
+    Int ((obj @am ** rightUnitorInv @k @ap) . swap @k @ap @am . (obj @ap ** rightUnitor @k @am))
       \\ obj2 @ap @Unit
       \\ obj2 @am @Unit
   associator @(I ap am) @(I bp bm) @(I cp cm) =
-    Int (swap @k @(ap ** (bp ** cp)) @((am ** bm) ** cm) . (associator @k @ap @bp @cp `par` associatorInv @k @am @bm @cm))
-      \\ obj2 @(I ap am) @(I bp bm) `par` obj @(I cp cm)
-      \\ obj @(I ap am) `par` obj2 @(I bp bm) @(I cp cm)
+    Int (swap @k @(ap ** (bp ** cp)) @((am ** bm) ** cm) . (associator @k @ap @bp @cp ** associatorInv @k @am @bm @cm))
+      \\ obj2 @(I ap am) @(I bp bm) ** obj @(I cp cm)
+      \\ obj @(I ap am) ** obj2 @(I bp bm) @(I cp cm)
   associatorInv @(I ap am) @(I bp bm) @(I cp cm) =
-    Int (swap @k @((ap ** bp) ** cp) @(am ** (bm ** cm)) . (associatorInv @k @ap @bp @cp `par` associator @k @am @bm @cm))
-      \\ obj2 @(I ap am) @(I bp bm) `par` obj @(I cp cm)
-      \\ obj @(I ap am) `par` obj2 @(I bp bm) @(I cp cm)
+    Int (swap @k @((ap ** bp) ** cp) @(am ** (bm ** cm)) . (associatorInv @k @ap @bp @cp ** associator @k @am @bm @cm))
+      \\ obj2 @(I ap am) @(I bp bm) ** obj @(I cp cm)
+      \\ obj @(I ap am) ** obj2 @(I bp bm) @(I cp cm)
 
 instance (TracedMonoidal k) => SymMonoidal (INT k) where
   swap @(I ap am) @(I bp bm) =
@@ -101,7 +101,7 @@ instance (TracedMonoidal k) => SymMonoidal (INT k) where
       withOb2 @k @am @bm $
         withOb2 @k @bp @ap $
           withOb2 @k @bm @am $
-            Int ((swap @k @bm @am `par` swap @k @ap @bp) . swap @k @(ap ** bp) @(bm ** am))
+            Int ((swap @k @bm @am ** swap @k @ap @bp) . swap @k @(ap ** bp) @(bm ** am))
 
 instance (TracedMonoidal k) => Closed (INT k) where
   type a ~~> b = ExpSA a b

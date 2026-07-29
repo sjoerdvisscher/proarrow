@@ -37,8 +37,8 @@ class (ob (a ** b)) => IsObMult (ob :: OB k) a b
 instance (ob (a ** b)) => IsObMult (ob :: OB k) a b
 
 instance (MonoidalProfunctor p, SubMonoidal ob) => MonoidalProfunctor (Sub p :: CAT (SUBCAT (ob :: OB k))) where
-  par0 = Sub par0
-  Sub f `par` Sub g = Sub (f `par` g)
+  one = Sub one
+  Sub f ** Sub g = Sub (f ** g)
 
 class (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SubMonoidal (ob :: OB k)
 instance (Monoidal k, ob Unit, forall a b. (ob a, ob b) => IsObMult ob a b) => SubMonoidal (ob :: OB k)

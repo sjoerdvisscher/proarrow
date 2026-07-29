@@ -50,8 +50,8 @@ instance (Monoidal k) => Representable (Tensor :: PROTENSOR k) where
   tabulate f = Tensor (Str.Str f) \\ f
   repMap = foldList
 instance (Monoidal k) => MonoidalProfunctor (Tensor :: PROTENSOR k) where
-  par0 = Tensor (Str.Str id)
-  Tensor f `par` Tensor g = let fg = f `par` g in fg // Str.unStr fg // Tensor (Str.Str (Str.unStr fg))
+  one = Tensor (Str.Str id)
+  Tensor f ** Tensor g = let fg = f ** g in fg // Str.unStr fg // Tensor (Str.Str (Str.unStr fg))
 instance (Monoidal k) => Protensor (Tensor :: PROTENSOR k) where
   compose (Tensor (Str.Str f) :.: l) = lmap f (foldList l)
   decompose @bss (Tensor (Str.Str f)) = lmap f (go (obj @bss))
@@ -66,8 +66,8 @@ instance (Monoidal k) => Protensor (Tensor :: PROTENSOR k) where
             let fas = foldList as; fass = foldList ass
             in fas //
                  fass //
-                   let fasg = Str.Str @(UN L as) @'[Str.Fold (UN L as)] fas `par` Str.Str @(UN L (Str.Fold ass')) @(UN L bs) (Str.unStr g)
-                   in foldList (as `par` fass) // fasg // Tensor (Str.Str (Str.unStr fasg)) :.: Cons (Tensor (Str.Str id)) l
+                   let fasg = Str.Str @(UN L as) @'[Str.Fold (UN L as)] fas ** Str.Str @(UN L (Str.Fold ass')) @(UN L bs) (Str.unStr g)
+                   in foldList (as ** fass) // fasg // Tensor (Str.Str (Str.unStr fasg)) :.: Cons (Tensor (Str.Str id)) l
 
 instance (MonoidalProfunctor p) => PromonoidalProfunctor Tensor p where
   parN (Tensor (Str.Str f) :.: l) = let fl = foldList l in lmap f fl :.: Tensor (Str.Str (tgt fl)) \\ fl \\ l

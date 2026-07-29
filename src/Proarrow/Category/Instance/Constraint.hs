@@ -53,8 +53,8 @@ instance HasBinaryProducts CONSTRAINT where
   Entails f &&& Entails g = Entails \r -> f (g r)
 
 instance MonoidalProfunctor (:-) where
-  par0 = id
-  f `par` g = f *** g
+  one = id
+  f ** g = f *** g
 
 -- | Products as monoidal structure.
 instance Monoidal CONSTRAINT where

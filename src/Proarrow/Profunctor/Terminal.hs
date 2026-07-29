@@ -19,8 +19,8 @@ instance (CategoryOf k) => Promonad (TerminalProfunctor :: k +-> k) where
   TerminalProfunctor . TerminalProfunctor = TerminalProfunctor
 
 instance (Monoidal j, Monoidal k) => MonoidalProfunctor (TerminalProfunctor :: j +-> k) where
-  par0 = TerminalProfunctor' par0 par0
-  TerminalProfunctor' a1 b1 `par` TerminalProfunctor' a2 b2 = TerminalProfunctor' (a1 `par` a2) (b1 `par` b2)
+  one = TerminalProfunctor' one one
+  TerminalProfunctor' a1 b1 ** TerminalProfunctor' a2 b2 = TerminalProfunctor' (a1 ** a2) (b1 ** b2)
 
 instance (Dagger k) => DaggerProfunctor (TerminalProfunctor :: k +-> k) where
   dagger TerminalProfunctor = TerminalProfunctor

@@ -14,7 +14,7 @@ import Proarrow.Category.Monoidal.Distributive (Distributive, DistributiveProfun
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), copar, copar0, unCoprod)
+import Proarrow.Object.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), nil, unCoprod, (++))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Identity (Id (..))
@@ -34,8 +34,8 @@ liftA3 :: forall f a b c d. (Applicative f, Ob a, Ob b, Ob c) => (a ** b ** c ~>
 liftA3 f = withOb2 @_ @a @b (liftA2 @_ @(a ** b) @c f . first @(f c) (liftA2 @f @a @b id))
 
 instance (MonoidalProfunctor (p :: j +-> k), Comonoid x) => Applicative (FromProfunctor p x) where
-  pure a () = FromProfunctor $ dimap counit a par0
-  liftA2 abc (FromProfunctor pxa, FromProfunctor pxb) = FromProfunctor $ dimap comult abc (pxa `par` pxb)
+  pure a () = FromProfunctor $ dimap counit a one
+  liftA2 abc (FromProfunctor pxa, FromProfunctor pxb) = FromProfunctor $ dimap comult abc (pxa ** pxb)
 instance (MonoidalProfunctor (p :: Type +-> Type)) => P.Applicative (FromProfunctor p x) where
   pure a = pure (\() -> a) ()
   liftA2 f = curry (liftA2 (P.uncurry f))
@@ -59,9 +59,9 @@ class (Distributive j, Functor f) => Alternative (f :: j -> k) where
 
 -- Note: Comonoid (COPR x) means we need x ~> InitialObject.
 instance (DistributiveProfunctor (p :: j +-> k), Distributive j, Comonoid (COPR x)) => Alternative (FromProfunctor p x) where
-  empty () = FromProfunctor (dimap (unId (unCoprod (counit @(COPR x)))) initiate (copar0 @p))
+  empty () = FromProfunctor (dimap (unId (unCoprod (counit @(COPR x)))) initiate (nil @p))
   alt abc (FromProfunctor pxa, FromProfunctor pyb) =
-    FromProfunctor $ dimap (unId (unCoprod (comult @(COPR x)))) abc (pxa `copar` pyb)
+    FromProfunctor $ dimap (unId (unCoprod (comult @(COPR x)))) abc (pxa ++ pyb)
 
 instance (P.Alternative f) => Alternative (Prelude f) where
   empty () = Prelude P.empty

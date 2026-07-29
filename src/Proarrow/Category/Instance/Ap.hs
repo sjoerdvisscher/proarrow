@@ -61,8 +61,8 @@ instance (Applicative f, HasBinaryCoproducts k) => HasBinaryCoproducts (AP f k) 
   Ap @al @bl f +++ Ap @ar @br g = withObCoprod @k @al @ar $ withObCoprod @k @bl @br $ Ap (liftA2 (+++) f g)
 
 instance (Applicative f, MonoidalProfunctor p) => MonoidalProfunctor (Ap (p :: j +-> k) :: AP f j +-> AP f k) where
-  par0 = arr par0
-  Ap @al @bl l `par` Ap @ar @br r = withOb2 @k @al @ar $ withOb2 @j @bl @br $ Ap (liftA2 par l r)
+  one = arr one
+  Ap @al @bl l ** Ap @ar @br r = withOb2 @k @al @ar $ withOb2 @j @bl @br $ Ap (liftA2 (**) l r)
 
 instance (Applicative f, Monoidal k) => Monoidal (AP f k) where
   type Unit = A Unit

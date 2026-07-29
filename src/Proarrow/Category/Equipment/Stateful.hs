@@ -175,6 +175,6 @@ ip1 = StT \p -> InjR p
 --   withObCoprod @k @a @b $
 --     STSq
 --       ( \(p :: p x y) ->
---           dimap ((toSelfAct @a @x +++ toSelfAct @b @x) . distR @k @a @b @x) (withObAct @k @k @c @y codiag) ((n p `copar` m p))
+--           dimap ((toSelfAct @a @x +++ toSelfAct @b @x) . distR @k @a @b @x) (withObAct @k @k @c @y codiag) ((n p ++ m p))
 --             \\ p
 --       )

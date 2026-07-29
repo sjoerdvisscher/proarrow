@@ -12,8 +12,8 @@ newtype Wrapped p a b = Wrapped {unWrapped :: p a b}
   deriving newtype (Profunctor, Promonad, MonoidalProfunctor, DaggerProfunctor, Representable, Corepresentable)
 
 instance (Comonoid c, Monoid m, MonoidalProfunctor p) => Monoid (Wrapped p c m) where
-  mempty () = dimap counit mempty par0
-  mappend (l, r) = dimap comult mappend (l `par` r)
+  mempty () = dimap counit mempty one
+  mappend (l, r) = dimap comult mappend (l ** r)
 
 wrapped :: Iso (p a b) (p a' b') (Wrapped p a b) (Wrapped p a' b')
 wrapped = iso Wrapped unWrapped

@@ -16,7 +16,7 @@ import Data.Vec.Lazy (Vec (..), reifyList)
 import GHC.TypeNats (KnownNat, Nat, natVal, withSomeSNat, pattern SNat, type SNat, type (+), type (-))
 import Numeric (showFFloat)
 import Unsafe.Coerce (unsafeCoerce)
-import Prelude hiding (Monoid, id, (.))
+import Prelude hiding (Monoid, id, (**), (.))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
@@ -138,8 +138,8 @@ instance DaggerProfunctor ZX where
   dagger (ZX m) = ZX $ Map.fromList [((i, o), conjugate v) | ((o, i), v) <- Map.toList m]
 
 instance MonoidalProfunctor ZX where
-  par0 = id
-  ZX @ni @no n `par` ZX @mi @mo m =
+  one = id
+  ZX @ni @no n ** ZX @mi @mo m =
     withOb2 @_ @ni @mi $
       withOb2 @_ @no @mo $
         ZX $
@@ -203,7 +203,7 @@ instance MonoidalAction Nat Nat where
   multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
 
 instance Strong Nat ZX where
-  act = par
+  act = (**)
 
 instance Costrong Nat ZX where
   coact @x = coactCC @x
@@ -272,7 +272,7 @@ not = xSpider pi
 
 -- | Controlled NOT gate
 cnot :: ZX 2 2
-cnot = (id `par` xSpider @2 0) . (zCopy `par` id)
+cnot = (id ** xSpider @2 0) . (zCopy ** id)
 
 -- | Greenberger–Horne–Zeilinger state
 ghzState :: ZX 0 3

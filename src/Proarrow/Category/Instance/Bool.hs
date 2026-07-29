@@ -143,8 +143,8 @@ instance HasBinaryCoproducts BOOL where
   Tru ||| _ = Tru
 
 instance MonoidalProfunctor Booleans where
-  par0 = id
-  f `par` g = f *** g
+  one = id
+  f ** g = f *** g
 
 -- | Products as monoidal structure.
 instance Monoidal BOOL where

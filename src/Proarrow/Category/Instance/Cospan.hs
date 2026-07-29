@@ -48,8 +48,8 @@ instance (HasPushouts k) => CategoryOf (COSPAN k) where
   type Ob a = (Is CS a, Ob (UN CS a))
 
 instance (HasPushouts k) => MonoidalProfunctor (Cospan :: CAT (COSPAN k)) where
-  par0 = id
-  Cospan l1 l2 `par` Cospan r1 r2 = Cospan (l1 +++ r1) (l2 +++ r2)
+  one = id
+  Cospan l1 l2 ** Cospan r1 r2 = Cospan (l1 +++ r1) (l2 +++ r2)
 instance (HasPushouts k) => Monoidal (COSPAN k) where
   type CS a ** CS b = CS (a || b)
   type Unit = CS InitialObject

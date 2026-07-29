@@ -34,7 +34,7 @@ import Testable
   , TestableType (..)
   , TestingEqShow
   , genWithNamed
-  , one
+  , oneElem
   , someP
   , pattern GenNonEmpty
   )
@@ -127,8 +127,8 @@ instance HasBinaryProducts CON where
       SC -> cons (l &&& Comp Wk r) (lmap r Vz)
 
 instance MonoidalProfunctor Sub where
-  par0 = id
-  par = (***)
+  one = id
+  (**) = (***)
 
 instance Monoidal CON where
   type a ** b = a && b
@@ -313,7 +313,7 @@ deriving instance Eq (Ty a b)
 instance (Ob a, Ob b) => TestingEqShow (Ty a b)
 instance (Ob a, Ob b) => TestableType (Ty a b) where
   gen = case eqOb @TY @a @b of
-    Just Refl -> one (ty @a)
+    Just Refl -> oneElem (ty @a)
     Nothing -> GenEmpty $ error "gen @Ty"
 instance TestableProfunctor Ty
 

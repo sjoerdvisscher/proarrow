@@ -4,7 +4,7 @@ module Proarrow.Category.Monoidal.Endo where
 
 import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
-import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapRan, dimapLan)
+import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapLan, dimapRan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -32,8 +32,8 @@ instance (Bicategory kk, Ob0 kk k) => CategoryOf (ENDO kk k) where
   type Ob p = (Is E p, Ob (UN E p))
 
 instance (Bicategory kk, Ob0 kk k, (Ob (I :: kk k k))) => MonoidalProfunctor (Endo :: CAT (ENDO kk k)) where
-  par0 = Endo id
-  Endo f `par` Endo g = mkEndo (f `o` g)
+  one = Endo id
+  Endo f ** Endo g = mkEndo (f `o` g)
 
 -- | The monoidal subcategory of a bicategory for a single object.
 instance (Bicategory kk, Ob0 kk k, (Ob (I :: kk k k))) => Monoidal (ENDO kk k) where

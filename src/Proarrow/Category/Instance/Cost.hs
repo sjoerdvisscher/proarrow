@@ -165,9 +165,9 @@ instance HasBinaryCoproducts COST where
       GTI -> GTE
 
 instance MonoidalProfunctor GTE where
-  par0 = GTE
-  par :: forall x1 x2 y1 y2. GTE x1 x2 -> GTE y1 y2 -> GTE (x1 ** y1) (x2 ** y2)
-  l `par` r = case (l, r) of
+  one = GTE
+  (**) :: forall x1 x2 y1 y2. GTE x1 x2 -> GTE y1 y2 -> GTE (x1 ** y1) (x2 ** y2)
+  l ** r = case (l, r) of
     (Inf, _) -> r // withOb2 @_ @x2 @y2 Inf
     (_, Inf) -> l // withOb2 @_ @x2 @y2 Inf
     (GTE @a @b, GTE @c @d) -> withPlusIsNat @a @c $ withPlusIsNat @b @d $ plusMonotone @b @a @d @c GTE

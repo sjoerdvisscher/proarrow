@@ -39,4 +39,4 @@ snd :: forall {k} a (b :: k). (CopyDiscard k, Ob a, Ob b) => (a ** b) ~> b
 snd = leftUnitorWith (discard @k @a)
 
 (&&&) :: forall {k} (a :: k) x y. (CopyDiscard k) => a ~> x -> a ~> y -> a ~> x ** y
-f &&& g = (f `par` g) . copy \\ f
+f &&& g = (f ** g) . copy \\ f

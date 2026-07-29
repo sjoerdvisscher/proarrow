@@ -26,7 +26,7 @@ import Testable
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
-  , one
+  , oneElem
   , optGen
   , pattern GenNonEmpty
   )
@@ -53,7 +53,7 @@ instance Testable Nat where
 instance (Ob a, Ob b) => TestingEqShow (Simplex a b)
 instance (Ob a, Ob b) => TestableType (Simplex a b) where
   gen = case (singNat @a, singNat @b) of
-    (SZ, SZ) -> one ZZ
+    (SZ, SZ) -> oneElem ZZ
     (SZ, SS @b') -> case gen @(Simplex Z b') of
       GenEmpty f -> GenEmpty (\(Y p) -> f p)
       GenNonEmpty gf -> GenNonEmpty (Y <$> gf)
@@ -80,8 +80,8 @@ instance (IsNat n) => Function (Fin n) where
 
 instance (TestableType a, IsNat n) => TestableType (Vec n a) where
   gen = case gen @a of
-    GenEmpty ax -> case universe @n of VNil -> one VNil; _ -> GenEmpty \(a ::: _) -> ax a
-    GenNonEmpty ga -> GenNonEmpty (traverse (\_ -> ga) universe)
+    GenEmpty ax -> case universe @n of VNil -> oneElem VNil; _ -> GenEmpty \(a ::: _) -> ax a
+    GenNonEmpty ga -> GenNonEmpty (traverse (const ga) universe)
 instance (TestingEqShow a, IsNat n) => TestingEqShow (Vec n a) where
   eqP VNil VNil = pure True
   eqP as bs = getAll <$> getAp (fold (zipWith (\l r -> Ap (fmap All (eqP l r))) as bs))
@@ -90,7 +90,7 @@ instance (TestingEqShow a, IsNat n) => TestingEqShow (Vec n a) where
 instance (IsNat n, Function a) => Function (Vec n a) where
   function = case singNat @n of
     SZ -> fmap (functionMap (\VNil -> ()) (\() -> VNil)) . function @()
-    SS @m -> fmap (functionMap (\(x ::: xs) -> (x, xs)) (\(x, xs) -> (x ::: xs))) . function @(a, Vec m a)
+    SS @m -> fmap (functionMap (\(x ::: xs) -> (x, xs)) (uncurry (:::))) . function @(a, Vec m a)
 
 instance TestableProfunctor (Rep Forget)
 instance TestableProfunctor (Rep (Pick Bool))

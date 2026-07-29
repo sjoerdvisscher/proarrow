@@ -148,8 +148,8 @@ instance HasBinaryProducts FINREL where
 instance HasBiproducts FINREL
 
 instance MonoidalProfunctor FinRel where
-  par0 = id
-  FinRel @nl @ml l `par` FinRel @nr @mr r =
+  one = id
+  FinRel @nl @ml l ** FinRel @nr @mr r =
     withOb2 @_ @(FR nl) @(FR nr) $
       withOb2 @_ @(FR ml) @(FR mr) $
         FinRel (concatMap (\l' -> P.fmap (mult l') r) l)
@@ -191,7 +191,7 @@ instance StarAutonomous FINREL where
   linDistInv @(FR a) @(FR b) @(FR c) (FinRel m) = withOb2 @_ @(FR a) @(FR b) $ FinRel (concatMap @_ @b @_ @a (splits @b @c) m)
 
 instance CompactClosed FINREL where
-  distribDual @m @n = dagger (obj @m) `par` dagger (obj @n)
+  distribDual @m @n = dagger (obj @m) ** dagger (obj @n)
   dualUnit = id
 
 instance MonoidalAction FINREL FINREL where
@@ -203,7 +203,7 @@ instance MonoidalAction FINREL FINREL where
   multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
 
 instance Strong FINREL FinRel where
-  act = par
+  act = (**)
 
 instance Costrong FINREL FinRel where
   coact @x = coactCC @x
@@ -234,8 +234,8 @@ instance FunctorForRep Fun where
   type Fun @ FS a = FR a
   fmap f = arr f \\ f
 instance MonoidalProfunctor (Rep Fun) where
-  par0 = Rep par0
-  Rep @_ @_ @b l `par` Rep @_ @_ @d r = withOb2 @_ @b @d $ Rep (l `par` r)
+  one = Rep one
+  Rep @_ @_ @b l ** Rep @_ @_ @d r = withOb2 @_ @b @d $ Rep (l ** r)
 instance MonoidalProfunctor (Coprod (Rep Fun)) where
-  par0 = Coprod (Rep id)
-  Coprod (Rep @_ @_ @b l) `par` Coprod (Rep @_ @_ @d r) = withObCoprod @_ @b @d $ Coprod (Rep (l +++ r))
+  one = Coprod (Rep id)
+  Coprod (Rep @_ @_ @b l) ** Coprod (Rep @_ @_ @d r) = withObCoprod @_ @b @d $ Coprod (Rep (l +++ r))

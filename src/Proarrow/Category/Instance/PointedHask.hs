@@ -74,8 +74,8 @@ instance HasInitialObject POINTED where
   initiate = Pt absurd
 
 instance MonoidalProfunctor Pointed where
-  par0 = Pt Just
-  Pt f `par` Pt g = Pt (\(a, b) -> liftA2 id (f a, g b))
+  one = Pt Just
+  Pt f ** Pt g = Pt (\(a, b) -> liftA2 id (f a, g b))
 
 -- | The smash product of pointed sets.
 -- Monoids relative to the smash product are absorption monoids.

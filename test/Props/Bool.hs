@@ -20,7 +20,7 @@ import Testable
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
-  , one
+  , oneElem
   , someElemNamed
   )
 
@@ -51,9 +51,9 @@ instance Testable BOOL where
 
 instance (Ob a, Ob b) => TestableType (Booleans a b) where
   gen = case (obj @a, obj @b) of
-    (Fls, Fls) -> one Fls
-    (Fls, Tru) -> one F2T
-    (Tru, Tru) -> one Tru
+    (Fls, Fls) -> oneElem Fls
+    (Fls, Tru) -> oneElem F2T
+    (Tru, Tru) -> oneElem Tru
     (Tru, Fls) -> GenEmpty \case {}
 instance (Ob a, Ob b) => TestingEqShow (Booleans a b) where
   eqP _ _ = pure True

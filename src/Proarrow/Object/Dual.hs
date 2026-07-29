@@ -58,7 +58,7 @@ applySA =
     \\ dualObj @c
 
 expSA :: forall {k} (a :: k) b x y. (StarAutonomous k) => b ~> y -> x ~> a -> ExpSA a b ~> ExpSA x y
-expSA f g = dual (g `par` dual f)
+expSA f g = dual (g ** dual f)
 
 dualityUnitSA :: forall {k} (a :: k). (StarAutonomous k, Ob a) => Unit ~> Dual (Dual a ** a)
 dualityUnitSA = linDist @k @_ @(Dual a) @a leftUnitor \\ dualObj @a
@@ -96,7 +96,7 @@ dualUnitInv :: forall {k}. (CompactClosed k) => (Unit :: k) ~> Dual Unit
 dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @Unit \\ dualObj @(Unit :: k)
 
 dualityUnit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Unit ~> a ** Dual a
-dualityUnit = let dualA = dualObj @a in (doubleNeg @a `par` dualA) . distribDual @k @(Dual a) @a . dualityUnitSA @a \\ dualA
+dualityUnit = let dualA = dualObj @a in (doubleNeg @a ** dualA) . distribDual @k @(Dual a) @a . dualityUnitSA @a \\ dualA
 
 dualityCounit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ** a ~> Unit
 dualityCounit = dualUnit . dualityCounitSA @a
@@ -114,13 +114,13 @@ combineDual =
     \\ dualObj @b
 
 dimension :: forall {k} (a :: k). (CompactClosed k, Ob a) => (Unit :: k) ~> Unit
-dimension = traceCC @Unit (unitObj `par` unitObj)
+dimension = traceCC @Unit (unitObj ** unitObj)
 
 traceCC :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** u ~> y ** u -> x ~> y
 traceCC f =
   rightUnitorWith (dualityCounit @u . swap @k @u @(Dual u))
     . associator @k @y @u @(Dual u)
-    . (f `par` obj @(Dual u))
+    . (f ** obj @(Dual u))
     . associatorInv @k @x @u @(Dual u)
     . rightUnitorInvWith (dualityUnit @u)
     \\ dualObj @u

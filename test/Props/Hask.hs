@@ -18,7 +18,7 @@ import Testable
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
-  , one
+  , oneElem
   , optGen
   , pattern GenNonEmpty
   )
@@ -46,7 +46,7 @@ instance TestableProfunctor (->)
 instance TestableType Bool where
   gen = optGen [False, True]
 instance TestableType () where
-  gen = one ()
+  gen = oneElem ()
 instance TestableType Void where
   gen = GenEmpty \case {}
 instance TestingEqShow Bool
@@ -77,7 +77,7 @@ instance (TestingEqShow a, TestingEqShow b) => TestingEqShow (Either a b) where
 
 instance (TestableType a) => TestableType (Maybe a) where
   gen = case gen @a of
-    GenEmpty _ -> one Nothing
+    GenEmpty _ -> oneElem Nothing
     GenNonEmpty ga -> GenNonEmpty (choose (pure Nothing) (Just <$> ga))
 instance (TestingEqShow a) => TestingEqShow (Maybe a) where
   eqP Nothing Nothing = pure True
