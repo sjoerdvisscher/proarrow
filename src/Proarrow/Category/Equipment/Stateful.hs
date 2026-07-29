@@ -37,7 +37,6 @@ import Proarrow.Promonad.Writer (Writer, pattern Writer)
 
 type STT' :: Kind -> CAT ()
 newtype STT' k i j = ST (k +-> k)
-type instance UN ST (ST p) = p
 type STT k = STT' k '() '()
 
 type StT :: CAT (STT' k i j)

@@ -17,7 +17,6 @@ import Proarrow.Core
   , Kind
   , Profunctor (..)
   , Promonad (..)
-  , UN
   , dimapDefault
   , type (+->)
   )
@@ -37,7 +36,6 @@ instance {-# OVERLAPPABLE #-} (c `Elem` cs) => c `Elem` (d ': cs)
 instance c `Elem` (c ': cs)
 
 newtype FREE (cs :: [Kind -> Constraint]) (p :: CAT j) = EMB j
-type instance UN EMB (EMB a) = a
 
 type Free :: CAT (FREE cs p)
 data Free a b where

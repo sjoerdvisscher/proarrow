@@ -56,7 +56,6 @@ import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep)
 
 newtype KIND = K Kind
-type instance UN K (K k) = k
 
 type Cat :: CAT KIND
 data Cat a b where

@@ -4,10 +4,9 @@ import Data.Type.Equality (type (~~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin qualified as Thin
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 newtype DISCRETE k = D k
-type instance UN D (D a) = a
 
 type Discrete :: CAT (DISCRETE k)
 data Discrete a b where
@@ -35,7 +34,6 @@ instance DaggerProfunctor Discrete where
   dagger Refl = Refl
 
 newtype CODISCRETE k = CD k
-type instance UN CD (CD a) = a
 
 type Codiscrete :: CAT (CODISCRETE k)
 data Codiscrete a b where

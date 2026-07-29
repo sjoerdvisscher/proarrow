@@ -21,7 +21,7 @@ import Prelude (type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal.Distributive (distLProd)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft', rgt')
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), fst', snd')
@@ -81,7 +81,6 @@ either f g m = Sum m (Uncurry f) (Uncurry g)
 
 type MultiCat k = [k] -> k -> Type
 type data FK k = F k
-type instance UN F (F a) = a
 
 infixr 2 -->
 

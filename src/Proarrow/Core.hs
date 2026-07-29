@@ -29,7 +29,7 @@ module Proarrow.Core
   , Obj, obj, src, tgt
     -- * Type Family Utilities
     -- ** Kind Unwrapping
-  , UN, Is
+  , UN, Is, WrappedOb
   ) where
 
 import Data.Kind (Constraint, Type)
@@ -187,10 +187,15 @@ instance CategoryOf Type where
 
 -- ** Kind Unwrapping
 
--- | A helper type family to unwrap a wrapped kind.
--- This is needed because the field selector functions of newtypes have to be
--- lower case and therefore cannot be used at the type level.
-type family UN (w :: j -> k) (wa :: k) :: j
+-- | A helper type family to unwrap a wrapped kind @w x@.
+type UN :: (j -> k) -> k -> j
+type family UN w wa where
+  UN w (w x) = x
 
 -- | @Is w a@ checks that the kind @a@ is a kind wrapped by @w@.
 type Is w a = a ~ w (UN w a)
+
+-- | @WrappedOb w a@ asserts both that @a@ is wrapped by @w@ ('Is' @w a@)
+-- and that its unwrapped kind satisfies @Ob@.
+type WrappedOb :: (j -> k) -> k -> Constraint
+type WrappedOb w a = (Is w a, Ob (UN w a))

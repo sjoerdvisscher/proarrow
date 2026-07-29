@@ -233,7 +233,6 @@ instance Profunctor (Nat :: CAT (k1 -> k2 -> k3 -> k4 -> Type)) where
   r \\ Nat{} = r
 
 newtype j .-> k = NT (j -> k)
-type instance UN NT (NT f) = f
 
 data Nat' f g where
   Nat'

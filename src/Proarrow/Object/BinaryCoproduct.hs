@@ -24,7 +24,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
@@ -119,7 +119,6 @@ instance (HasBinaryCoproducts k) => HasBinaryCoproducts (PROD k) where
   Prod l ||| Prod r = Prod (l ||| r)
 
 newtype COPROD k = COPR k
-type instance UN COPR (COPR k) = k
 
 type Coprod :: j +-> k -> COPROD j +-> COPROD k
 data Coprod p a b where
@@ -143,7 +142,7 @@ instance (Representable p) => Representable (Coprod p) where
 -- | The same category as the category of @k@, but with coproducts as the tensor.
 instance (CategoryOf k) => CategoryOf (COPROD k) where
   type (~>) = Coprod Id
-  type Ob a = (Is COPR a, Ob (UN COPR a))
+  type Ob a = WrappedOb COPR a
 
 instance (HasCoproducts k) => MonoidalProfunctor (Coprod (Id :: k +-> k)) where
   one = Coprod id

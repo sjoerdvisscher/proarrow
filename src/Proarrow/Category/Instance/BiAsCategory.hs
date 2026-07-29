@@ -8,7 +8,6 @@ import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), 
 import Proarrow.Functor (FunctorForRep (..))
 
 newtype BI (kk :: CAT s) = B s
-type instance UN B (B s) = s
 
 type Bi :: CAT (BI kk)
 data Bi a b where

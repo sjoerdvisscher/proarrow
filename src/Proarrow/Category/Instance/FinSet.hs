@@ -50,7 +50,6 @@ import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Optic (Iso', iso)
 
 type data FINSET = FS Nat
-type instance UN FS (FS n) = n
 
 type FinSet :: CAT FINSET
 data FinSet a b where

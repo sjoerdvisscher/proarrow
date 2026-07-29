@@ -101,7 +101,6 @@ coarr :: forall n m. FinSet (FS n) (FS m) -> FinRel (FR m) (FR n)
 coarr (FinSet v) = FinRel (P.fmap fromBools (P.traverse (toBools . bit) v))
 
 type data FINREL = FR Nat
-type instance UN FR (FR n) = n
 
 type FinRel :: CAT FINREL
 data FinRel a b where

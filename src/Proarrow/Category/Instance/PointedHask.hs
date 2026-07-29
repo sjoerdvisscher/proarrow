@@ -23,7 +23,6 @@ import Proarrow.Object.Power (Powered (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 type data POINTED = P Type
-type instance UN P (P a) = a
 
 type Pointed :: CAT POINTED
 data Pointed a b where

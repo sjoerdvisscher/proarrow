@@ -41,7 +41,6 @@ import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type data FAM (k :: Kind) = forall (x :: Kind). DEP_ (x +-> k)
-type instance UN DEP_ (DEP_ dx) = dx
 
 type family X (a :: FAM k) :: Kind where
   X (DEP_ (dx :: x +-> k)) = x

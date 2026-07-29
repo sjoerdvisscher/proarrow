@@ -24,10 +24,10 @@ import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveP
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
-  , Is
   , Profunctor (..)
   , Promonad (..)
   , UN
+  , WrappedOb
   , dimapDefault
   , lmap
   , rmap
@@ -42,7 +42,6 @@ import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
 
 newtype KLEISLI (p :: CAT k) = KL k
-type instance UN KL (KL k) = k
 
 type Kleisli :: CAT (KLEISLI p)
 data Kleisli (a :: KLEISLI p) b where
@@ -58,7 +57,7 @@ arr f = Kleisli (rmap f id) \\ f
 -- | Every promonad makes a category.
 instance (Promonad p) => CategoryOf (KLEISLI p) where
   type (~>) = Kleisli
-  type Ob a = (Is KL a, Ob (UN KL a))
+  type Ob a = WrappedOb KL a
 
 instance (Promonad p) => Promonad (Kleisli :: CAT (KLEISLI p)) where
   id = Kleisli id

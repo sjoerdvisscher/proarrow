@@ -55,7 +55,6 @@ import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 
 type data PROFK j k = PK (j +-> k)
-type instance UN PK (PK p) = p
 
 type Prof :: CAT (PROFK j k)
 data Prof p q where

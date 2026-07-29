@@ -16,7 +16,6 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type data LIST k = L [k]
-type instance UN L (L as) = as
 
 type List :: (j +-> k) -> LIST j +-> LIST k
 data List p as bs where

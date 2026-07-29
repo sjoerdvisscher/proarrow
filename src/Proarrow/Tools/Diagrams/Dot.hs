@@ -113,7 +113,6 @@ instance CategoryOf Symbol where
 
 type DOT :: Kind
 type data DOT = D [Symbol]
-type instance UN D (D ss) = ss
 
 data DotData as bs = DotData
   { inputs :: Vec as (Either (Fin bs) Port)

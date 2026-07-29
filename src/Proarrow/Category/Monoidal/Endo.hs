@@ -6,13 +6,12 @@ import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Bicategory qualified as B
 import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapLan, dimapRan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.Coexponential (Coclosed (..))
 import Proarrow.Object.Exponential (Closed (..))
 
 type data ENDO (kk :: CAT j) (k :: j) = E (kk k k)
-type instance UN E (E p) = p
 
 type Endo :: forall {kk} {k}. CAT (ENDO kk k)
 data Endo p q where
@@ -29,7 +28,7 @@ instance (Bicategory kk, Ob0 kk k) => Promonad (Endo :: CAT (ENDO kk k)) where
   Endo m . Endo n = Endo (m . n)
 instance (Bicategory kk, Ob0 kk k) => CategoryOf (ENDO kk k) where
   type (~>) = Endo
-  type Ob p = (Is E p, Ob (UN E p))
+  type Ob p = WrappedOb E p
 
 instance (Bicategory kk, Ob0 kk k, (Ob (I :: kk k k))) => MonoidalProfunctor (Endo :: CAT (ENDO kk k)) where
   one = Endo id

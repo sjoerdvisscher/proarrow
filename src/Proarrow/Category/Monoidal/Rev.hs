@@ -2,11 +2,10 @@ module Proarrow.Category.Monoidal.Rev where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
-import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, type (+->))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 
 type data REV k = R k
-type instance UN R (R a) = a
 
 type Rev :: j +-> k -> REV j +-> REV k
 data Rev p a b where
@@ -23,7 +22,7 @@ instance (Promonad p) => Promonad (Rev p) where
 -- | The reverse of the category of @k@, i.e. with the tensor flipped.
 instance (CategoryOf k) => CategoryOf (REV k) where
   type (~>) = Rev (~>)
-  type Ob a = (Is R a, Ob (UN R a))
+  type Ob a = WrappedOb R a
 
 instance (MonoidalProfunctor p) => MonoidalProfunctor (Rev p) where
   one = Rev one

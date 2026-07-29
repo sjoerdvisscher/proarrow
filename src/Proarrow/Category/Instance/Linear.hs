@@ -35,7 +35,6 @@ import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 newtype LINEAR = L Type
-type instance UN L (L a) = a
 
 type Linear :: CAT LINEAR
 data Linear a b where

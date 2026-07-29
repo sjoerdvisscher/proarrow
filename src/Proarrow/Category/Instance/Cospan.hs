@@ -5,7 +5,7 @@ import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius (..), Hypergraph, applyHG, curryHG, spiderDefault)
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, tgt, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct
@@ -25,7 +25,6 @@ import Proarrow.Object.Pullback (Cone (..), Cosink (..), HasPullbacks (..))
 import Proarrow.Object.Pushout (Cocone (..), HasPushouts (..), Sink (..))
 
 newtype COSPAN k = CS k
-type instance UN CS (CS k) = k
 
 type Cospan :: CAT (COSPAN k)
 data Cospan a b where
@@ -45,7 +44,7 @@ instance (HasPushouts k) => Promonad (Cospan :: CAT (COSPAN k)) where
   Cospan f g . Cospan h i = case pushout i f of Cocone (Coleg l (Coleg r Coapex)) -> Cospan (l . h) (r . g)
 instance (HasPushouts k) => CategoryOf (COSPAN k) where
   type (~>) = Cospan
-  type Ob a = (Is CS a, Ob (UN CS a))
+  type Ob a = WrappedOb CS a
 
 instance (HasPushouts k) => MonoidalProfunctor (Cospan :: CAT (COSPAN k)) where
   one = id

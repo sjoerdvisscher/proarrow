@@ -42,7 +42,6 @@ type n + m = Plus n m
 type (*) n m = Mult n m
 
 type data MatK (a :: Type) = M Nat
-type instance UN M (M n) = n
 
 data Mat :: CAT (MatK a) where
   Mat

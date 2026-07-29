@@ -27,7 +27,6 @@ type data ABK a b where
 
 type ADJK :: CAT AB
 type data ADJK i j = AK (Path ABK i j)
-type instance UN AK (AK ps) = ps
 
 type Adj :: CAT (ADJK i j)
 data Adj ps qs where

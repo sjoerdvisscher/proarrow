@@ -14,11 +14,10 @@ import Proarrow.Category.Bicategory.Kan
   , RightKanLift (..)
   )
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault)
 
 type COK :: CAT k -> CAT k
 newtype COK kk j k = CO (kk j k)
-type instance UN CO (CO k) = k
 
 type Co :: CAT (COK kk j k)
 data Co a b where
@@ -32,7 +31,7 @@ instance (CategoryOf (kk j k)) => Promonad (Co :: CAT (COK kk j k)) where
   Co f . Co g = Co (g . f)
 instance (CategoryOf (kk j k)) => CategoryOf (COK kk j k) where
   type (~>) = Co
-  type Ob a = (Is CO a, Ob (UN CO a))
+  type Ob a = WrappedOb CO a
 
 -- | Create a dual of a bicategory by reversing the 2-cells.
 instance (Bicategory kk) => Bicategory (COK kk) where

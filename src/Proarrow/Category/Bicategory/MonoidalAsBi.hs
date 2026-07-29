@@ -12,7 +12,7 @@ import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsO
 import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, parRep)
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), UN, WrappedOb, obj, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid qualified as M
 import Proarrow.Object.Coexponential (Coclosed (..), coeval, coevalUniv)
@@ -22,7 +22,6 @@ import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type MonK :: Kind -> CAT ()
 newtype MonK k i j = MK k
-type instance UN MK (MK k) = k
 
 type Mon2 :: forall {k} {i} {j}. CAT (MonK k i j)
 data Mon2 a b where
@@ -31,7 +30,7 @@ data Mon2 a b where
 
 instance (CategoryOf k) => CategoryOf (MonK k i j) where
   type (~>) = Mon2
-  type Ob a = (Is MK a, Ob (UN MK a))
+  type Ob a = WrappedOb MK a
 
 instance (CategoryOf k) => Functor (MK :: k -> MonK k i j) where
   map = Mon2

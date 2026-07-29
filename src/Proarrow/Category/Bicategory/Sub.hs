@@ -6,14 +6,13 @@ import Data.Kind (Constraint, Type)
 import Prelude (($))
 
 import Proarrow.Category.Bicategory (Bicategory (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault)
 
 type family IsOb (tag :: Type) (a :: kk i j) :: Constraint
 type family IsOb0 (tag :: Type) (k :: s) :: Constraint
 
 type SUBCAT :: forall {s}. Type -> CAT s -> CAT s
 type data SUBCAT tag kk i j = SUB (kk i j)
-type instance UN SUB (SUB p) = p
 
 type Sub :: CAT (SUBCAT ob kk i j)
 data Sub a b where
@@ -31,7 +30,7 @@ instance (Promonad ((~>) :: CAT (kk i j))) => Promonad (Sub :: CAT (SUBCAT tag k
 -- | The subcategory with objects with instances of the given constraint `IsOb tag`.
 instance (CategoryOf (kk i j)) => CategoryOf (SUBCAT tag kk i j) where
   type (~>) = Sub
-  type Ob (a :: SUBCAT tag kk i j) = (Is SUB a, Ob (UN SUB a), IsOb tag (UN SUB a), IsOb0 tag i, IsOb0 tag j)
+  type Ob (a :: SUBCAT tag kk i j) = (WrappedOb SUB a, IsOb tag (UN SUB a), IsOb0 tag i, IsOb0 tag j)
 
 class WithObO2 tag kk where
   withObO2

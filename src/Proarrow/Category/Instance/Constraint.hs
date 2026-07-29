@@ -17,7 +17,6 @@ import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 newtype CONSTRAINT = CNSTRNT Constraint
-type instance UN CNSTRNT (CNSTRNT a) = a
 
 data (:-) a b where
   Entails :: {unEntails :: forall r. (a) => ((b) => r) -> r} -> CNSTRNT a :- CNSTRNT b

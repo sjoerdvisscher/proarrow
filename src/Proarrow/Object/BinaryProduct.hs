@@ -22,7 +22,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -126,7 +126,6 @@ swapProd :: forall {k} (a :: k) b. (HasBinaryProducts k, Ob a, Ob b) => a && b ~
 swapProd = snd @k @a @b &&& fst @k @a @b
 
 newtype PROD k = PR k
-type instance UN PR (PR k) = k
 
 type Prod :: j +-> k -> PROD j +-> PROD k
 data Prod p (a :: PROD k) b where
@@ -145,7 +144,7 @@ instance (Promonad p) => Promonad (Prod p) where
 -- | The same category as the category of @k@, but with products as the tensor.
 instance (CategoryOf k) => CategoryOf (PROD k) where
   type (~>) = Prod (~>)
-  type Ob a = (Is PR a, Ob (UN PR a))
+  type Ob a = WrappedOb PR a
 
 instance (Representable p) => Representable (Prod p) where
   type Prod p % PR a = PR (p % a)

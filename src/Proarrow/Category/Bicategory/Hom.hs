@@ -5,13 +5,12 @@ import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Prof (LaxProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault, obj, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Identity (Id (..))
 
 newtype HK kk i j = HomK {unHomK :: kk i j}
-type instance UN HomK (HomK k) = k
 
 type HomW :: CAT (HK kk i j)
 data HomW a b where
@@ -24,7 +23,7 @@ instance (Promonad ((~>) :: CAT (kk i j))) => Promonad (HomW :: CAT (HK kk i j))
   HomW f . HomW g = HomW (f . g)
 instance (CategoryOf (kk i j)) => CategoryOf (HK kk i j) where
   type (~>) = HomW
-  type Ob k = (Is HomK k, Ob (UN HomK k))
+  type Ob k = WrappedOb HomK k
 
 instance
   (Bicategory kk, Ob s, Ob t, Ob0 kk h, Ob0 kk i, Ob0 kk j, Ob0 kk k)

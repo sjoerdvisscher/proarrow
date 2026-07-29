@@ -2,11 +2,10 @@ module Proarrow.Category.Instance.Opposite where
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, lmap, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, lmap, type (+->))
 import Proarrow.Functor (Functor (..))
 
 newtype OPPOSITE k = OP k
-type instance UN OP (OP k) = k
 
 type Op :: j +-> k -> OPPOSITE k +-> OPPOSITE j
 data Op p a b where
@@ -25,7 +24,7 @@ instance Functor Op where
 -- | The opposite category of the category of `k`.
 instance (CategoryOf k) => CategoryOf (OPPOSITE k) where
   type (~>) = Op (~>)
-  type Ob a = (Is OP a, Ob (UN OP a))
+  type Ob a = WrappedOb OP a
 
 instance (Promonad c) => Promonad (Op c) where
   id = Op id

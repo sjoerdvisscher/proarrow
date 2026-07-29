@@ -6,7 +6,7 @@ import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Applicative qualified as A
-import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
@@ -14,7 +14,6 @@ import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 type data AP (f :: Type -> Type) k = A k
-type instance UN A (A k) = k
 
 type Ap :: (j +-> k) -> AP f j +-> AP f k
 data Ap p a b where
@@ -31,7 +30,7 @@ instance (Applicative f, Promonad p) => Promonad (Ap (p :: k +-> k) :: AP f k +-
   Ap f . Ap g = Ap (liftA2 (.) f g)
 instance (Applicative f, CategoryOf k) => CategoryOf (AP f k) where
   type (~>) = Ap (~>)
-  type Ob a = (Is A a, Ob (UN A a))
+  type Ob a = WrappedOb A a
 
 instance (Applicative f, CategoryOf k) => Functor (A :: k -> AP f k) where
   map = arr

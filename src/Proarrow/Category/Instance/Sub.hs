@@ -4,13 +4,12 @@ import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), OB, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type SUBCAT :: forall {k}. OB k -> Type
 type data SUBCAT (ob :: OB k) = SUB k
-type instance UN SUB (SUB k) = k
 
 type Sub :: CAT k -> CAT (SUBCAT (ob :: OB k))
 data Sub p a b where
@@ -27,7 +26,7 @@ instance (Promonad p) => Promonad (Sub p) where
 -- | The subcategory with objects with instances of the given constraint `ob`.
 instance (CategoryOf k) => CategoryOf (SUBCAT (ob :: OB k)) where
   type (~>) = Sub (~>)
-  type Ob (a :: SUBCAT ob) = (Is SUB a, Ob (UN SUB a), ob (UN SUB a))
+  type Ob (a :: SUBCAT ob) = (WrappedOb SUB a, ob (UN SUB a))
 
 type On :: (k -> Constraint) -> forall (ob :: OB k) -> SUBCAT ob -> Constraint
 class (c (UN SUB a)) => (c `On` ob) a

@@ -4,7 +4,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius (..), Hypergraph, applyHG, curryHG, spiderDefault)
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, src)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, src)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts (..))
 import Proarrow.Object.BinaryProduct
@@ -23,7 +23,6 @@ import Proarrow.Object.Pullback (Cone (..), Cosink (..), HasPullbacks (..))
 import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 newtype SPAN k = SP k
-type instance UN SP (SP k) = k
 
 type Span :: CAT (SPAN k)
 data Span a b where
@@ -43,7 +42,7 @@ instance (HasPullbacks k) => Promonad (Span :: CAT (SPAN k)) where
   Span f g . Span h i = case pullback i f of Cone (Leg l (Leg r Apex)) -> Span (h . l) (g . r)
 instance (HasPullbacks k) => CategoryOf (SPAN k) where
   type (~>) = Span
-  type Ob a = (Is SP a, Ob (UN SP a))
+  type Ob a = WrappedOb SP a
 
 instance (HasPullbacks k) => MonoidalProfunctor (Span :: CAT (SPAN k)) where
   one = id
