@@ -7,11 +7,11 @@ import GHC.Base (Any)
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), Codiag, Lft, Rgt, (:++:) (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE)
 import Proarrow.Category.Instance.Product (Diag, Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
-import Proarrow.Category.Opposite (OPPOSITE)
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)

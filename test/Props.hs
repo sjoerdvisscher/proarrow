@@ -9,8 +9,8 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object.BinaryCoproduct qualified as BinaryCoproduct

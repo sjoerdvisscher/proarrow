@@ -5,9 +5,9 @@ module Proarrow.Category.Instance.Rep where
 import Data.Kind (Constraint)
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Profunctor.Representable (Representable (..), repObj)

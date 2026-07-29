@@ -5,6 +5,7 @@ module Proarrow.Category.Instance.CatProf where
 import Data.Type.Nat (Nat (..))
 
 import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Category.Instance.Product (Diag, Fst, Snd, (:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal
@@ -19,7 +20,6 @@ import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), St
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Category.Monoidal.Strictified ()
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)

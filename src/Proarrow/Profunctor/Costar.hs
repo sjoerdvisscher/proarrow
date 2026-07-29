@@ -8,10 +8,10 @@ import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat' (..), type (.->) (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))

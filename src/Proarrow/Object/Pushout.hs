@@ -4,8 +4,8 @@ module Proarrow.Object.Pushout where
 
 import Prelude (($))
 
+import Proarrow.Category.Instance.Opposite (OPPOSITE, Op (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Opposite (OPPOSITE, Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, obj, rmap, (//), type (+->))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Object.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)

@@ -1,4 +1,4 @@
-module Proarrow.Category.Opposite where
+module Proarrow.Category.Instance.Opposite where
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))

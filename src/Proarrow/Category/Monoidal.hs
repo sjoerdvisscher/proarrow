@@ -5,9 +5,9 @@ module Proarrow.Category.Monoidal where
 import Data.Kind (Constraint)
 import Prelude (($))
 
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)

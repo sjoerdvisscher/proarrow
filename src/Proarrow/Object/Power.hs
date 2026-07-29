@@ -8,11 +8,11 @@ import Data.Kind (Type)
 import Prelude (($), type (~))
 
 import Proarrow.Category.Enriched (Enriched, EnrichedProfunctor (..), GenArrow (..), HomObj, comp)
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (leftUnitorInvWith)
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Object.Exponential (Closed (..))

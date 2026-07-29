@@ -9,8 +9,8 @@ import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Category.Bicategory (Adj (..), Adjunction (..), Adjunction_ (..), Bicategory (..))
 import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)

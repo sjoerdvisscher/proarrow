@@ -4,14 +4,14 @@ module Proarrow.Profunctor.Yoneda where
 
 import Data.Function (($))
 
+import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (Prof))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..))
 import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Category.Opposite (OPPOSITE(..), Op(..))
-import Proarrow.Category.Instance.Nat (Nat(..))
 
 type Yoneda :: (j +-> k) -> j +-> k
 data Yoneda p a b where

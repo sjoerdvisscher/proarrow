@@ -20,12 +20,12 @@ import Proarrow.Category.Colimit qualified as L
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), Tight, TightAdjoint)
 import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Opposite qualified as Op
 import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Instance.Product qualified as C
 import Proarrow.Category.Instance.Prof qualified as Prof
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Limit qualified as L
-import Proarrow.Category.Opposite qualified as Op
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)

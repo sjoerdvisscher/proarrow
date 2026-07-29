@@ -5,10 +5,10 @@ module Proarrow.Category.Monoidal.Action where
 import Data.Kind (Constraint, Type)
 import Prelude (type (~))
 
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..), SubMonoidal)
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, OB, Profunctor (..), Promonad (..), UN, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)

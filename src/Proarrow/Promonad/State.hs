@@ -3,10 +3,10 @@ module Proarrow.Promonad.State where
 import Prelude (($))
 
 import Proarrow.Adjunction qualified as Adj
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), leftUnitorWith, swap')
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), arr, obj, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..))

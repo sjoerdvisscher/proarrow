@@ -16,6 +16,7 @@ import Proarrow.Category.Instance.Free
   , WithShow
   , type (**!)
   )
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal
@@ -25,7 +26,6 @@ import Proarrow.Category.Monoidal
   , associator
   , leftUnitor
   )
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)

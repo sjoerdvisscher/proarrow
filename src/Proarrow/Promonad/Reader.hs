@@ -4,6 +4,7 @@ import Prelude (($))
 
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Instance.Nat (Nat (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal
   ( Monoidal (..)
@@ -19,7 +20,6 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..))
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, src, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))

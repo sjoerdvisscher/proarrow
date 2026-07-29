@@ -5,11 +5,11 @@ module Proarrow.Profunctor.PastroTambara where
 
 import Prelude (($))
 
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
 import Proarrow.Category.Monoidal.Optic (ExOptic (..))
-import Proarrow.Category.Opposite (OPPOSITE (..))
 import Proarrow.Core (CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), obj, src, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..), cofreeComp)

@@ -3,7 +3,7 @@ module Proarrow.Universal where
 import Data.Kind (Constraint)
 
 import Proarrow.Adjunction (Adjunction)
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)

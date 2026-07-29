@@ -6,10 +6,10 @@ module Proarrow.Profunctor.Representable where
 import Data.Kind (Constraint)
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit ()
-import Proarrow.Category.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, rmap, (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..), Presheaf, withMappedOb)
 import Proarrow.Object (Obj, obj, src, tgt)
