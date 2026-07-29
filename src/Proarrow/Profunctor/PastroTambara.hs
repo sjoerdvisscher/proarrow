@@ -9,8 +9,8 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
-import Proarrow.Category.Monoidal.Optic (ExOptic (..))
-import Proarrow.Core (CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), obj, src, tgt, (//), (:~>), type (+->))
+import Proarrow.Category.Monoidal.Optic (WeightedOptic (..))
+import Proarrow.Core (CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), obj, src, tgt, (//), (:~>), type (+->), Hom)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..), cofreeComp)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
@@ -52,10 +52,10 @@ instance (MonoidalAction m j, MonoidalAction m k) => Promonad (Star (Pastro m) :
   id = Star (Prof pastro)
   Star n . Star m = Star (freeComp @(Strong m) n m)
 
-fromExOptic
+fromWeightedOptic
   :: forall {j} {k} m (a :: k) (b :: j)
-   . (MonoidalAction m j, MonoidalAction m k) => ExOptic m a b :~> (Pastro m (Yo a (OP b)) :: j +-> k)
-fromExOptic (ExOptic @x f w g) = Pastro @x f (Yo id id) (g . (w `act` obj @b)) \\ w
+   . (MonoidalAction m j, MonoidalAction m k) => WeightedOptic (Hom m) a b :~> (Pastro m (Yo a (OP b)) :: j +-> k)
+fromWeightedOptic (WeightedOptic @x f w g) = Pastro @x f (Yo id id) (g . (w `act` obj @b)) \\ w
 
 type Tambara :: Kind -> j +-> k -> j +-> k
 data Tambara m p a b where

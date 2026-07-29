@@ -30,7 +30,7 @@ import Proarrow.Category.Monoidal.Distributive qualified as Dist
 import Proarrow.Core
   ( Any
   , CategoryOf (..)
-  , Kind
+  , Hom
   , OB
   , Profunctor (..)
   , Promonad (..)
@@ -57,46 +57,45 @@ import Proarrow.Profunctor.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withObRep)
 import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
 
-type ExOptic :: Kind -> c -> d -> c -> d -> Type
-data ExOptic m a b s t where
-  ExOptic
-    :: forall {c} {d} {m} (x :: m) (x' :: m) a b s t
+type WeightedOptic :: m +-> m' -> c -> d -> c -> d -> Type
+data WeightedOptic w a b s t where
+  WeightedOptic
+    :: forall {c} {d} {m} {m'} (x :: m) (x' :: m') (w :: m' +-> m) a b s t
      . (Ob (a :: c), Ob (b :: d))
     => s ~> (x `Act` a)
-    -> x ~> x'
+    -> w x x'
     -> (x' `Act` b) ~> t
-    -> ExOptic m a b s t
+    -> WeightedOptic w a b s t
 
-type IsOptic m c d = (MonoidalAction m c, MonoidalAction m d)
+type IsOptic (w :: m' +-> m) c d = (MonoidalAction m c, MonoidalAction m' d)
 
-instance (CategoryOf c, CategoryOf d) => Profunctor (ExOptic m a b :: c +-> d) where
-  dimap l r (ExOptic f w g) = ExOptic (f . l) w (r . g)
-  r \\ ExOptic f _ g = r \\ f \\ g
+instance (CategoryOf c, CategoryOf d) => Profunctor (WeightedOptic w a b :: c +-> d) where
+  dimap l r (WeightedOptic f w g) = WeightedOptic (f . l) w (r . g)
+  r \\ WeightedOptic f _ g = r \\ f \\ g
 
-instance (IsOptic m c d) => Strong m (ExOptic m a b :: c +-> d) where
-  act
-    :: forall (a1 :: m) (b1 :: m) (s :: d) (t :: c). a1 ~> b1 -> ExOptic m a b s t -> ExOptic m a b (Act a1 s) (Act b1 t)
-  act w (ExOptic @x @x' f w' g) =
-    ExOptic (composeActs @a1 @x @a (src w `act` src f) f) (w ** w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
+instance (IsOptic w c d, w P.~ Hom m) => Strong m (WeightedOptic w a b :: c +-> d) where
+  act @a1 @b1 w (WeightedOptic @x @x' f w' g) =
+    WeightedOptic (composeActs @a1 @x @a (src w `act` src f) f) (w ** w') (decomposeActs @b1 @x' @b g (tgt w `act` tgt g))
       \\ w
       \\ w'
 
 ex2prof
-  :: forall {c} {d} m (a :: c) (b :: d) s t. (CategoryOf c, CategoryOf d) => ExOptic m a b s t -> Optic (Strong m) s t a b
-ex2prof (ExOptic l w r) = Optic (dimap l r . act w) \\ l \\ r
+  :: forall {c} {d} m (a :: c) (b :: d) s t
+   . (CategoryOf c, CategoryOf d) => WeightedOptic (Hom m) a b s t -> Optic (Strong m) s t a b
+ex2prof (WeightedOptic l w r) = Optic (dimap l r . act w) \\ l \\ r
 
 prof2ex
   :: forall {c} {d} m (a :: c) (b :: d) (s :: c) (t :: d)
-   . (IsOptic m c d, Ob a, Ob b)
+   . (IsOptic (Hom m) c d, Ob a, Ob b)
   => Optic (Strong m) s t a b
-  -> ExOptic m a b s t
-prof2ex p2p = over p2p (ExOptic (unitorInv @m) one (unitor @m))
+  -> WeightedOptic (Hom m) a b s t
+prof2ex p2p = over p2p (WeightedOptic (unitorInv @m) one (unitor @m))
 
 type MonoidalOptic (s :: k) (t :: k) a b = Optic (Strong (SUBCAT (Any :: OB k))) s t a b
 mkMonoidal
   :: forall {k} (m :: k) (a :: k) (b :: k) s t
    . (Monoidal k, Ob m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalOptic s t a b
-mkMonoidal sma mbt = ex2prof (ExOptic sma (Sub @(Any :: OB k) (obj @m)) mbt)
+mkMonoidal sma mbt = ex2prof (WeightedOptic sma (Sub @(Any :: OB k) (obj @m)) mbt)
 
 _1 :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => MonoidalOptic (a ** c) (b ** c) a b
 _1 = mkMonoidal @c (swap @k @a @c) (swap @k @c @b)
@@ -111,7 +110,7 @@ instance Strong (COPROD Type) (Rep (Constant (P.First c)) :: Type +-> Type) wher
 
 type Lens (s :: k) (t :: k) a b = Optic (Strong (PROD k)) s t a b
 mkLens :: forall {k} (s :: k) (t :: k) a b. (HasProducts k, Ob b) => (s ~> a) -> ((s && b) ~> t) -> Lens s t a b
-mkLens sa sbt = ex2prof (ExOptic (id &&& sa) (Prod (src sa)) sbt) \\ sa
+mkLens sa sbt = ex2prof (WeightedOptic (id &&& sa) (Prod (src sa)) sbt) \\ sa
 
 type VLLens s t a b = forall f. (P.Functor f) => (a -> f b) -> s -> f t
 toVLLens :: Lens s t a b -> VLLens s t a b
@@ -122,7 +121,7 @@ fromVLLens f = mkLens (getConst . f Const) (P.uncurry (f (const id)))
 
 type Prism (s :: k) t a b = Optic (Strong (COPROD k)) s t a b
 mkPrism :: forall {k} (s :: k) (t :: k) a b. (HasCoproducts k, Ob a) => (s ~> (t || a)) -> (b ~> t) -> Prism s t a b
-mkPrism sta bt = ex2prof (ExOptic sta (Coprod (Id (tgt bt))) (id ||| bt)) \\ bt
+mkPrism sta bt = ex2prof (WeightedOptic sta (Coprod (Id (tgt bt))) (id ||| bt)) \\ bt
 
 type Traversal s t a b = Optic Dist.StrongDistributiveProfunctor s t a b
 traversing :: forall t a b. (Dist.Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
@@ -146,7 +145,7 @@ instance (Monad m, Algebra m a, Algebra m b) => Algebra m (a, b) where
 
 type AlgebraicLens m s t a b = Optic (Strong (SUBCAT (Algebra m))) s t a b
 mkAlgebraicLens :: forall m s t a b. (Monad m) => (s -> a) -> (m s -> b -> t) -> AlgebraicLens m s t a b
-mkAlgebraicLens v u = ex2prof @(SUBCAT (Algebra m)) (ExOptic (\s -> (return @m s, v s)) id (uncurry u))
+mkAlgebraicLens v u = ex2prof @(SUBCAT (Algebra m)) (WeightedOptic (\s -> (return @m s, v s)) id (uncurry u))
 
 data Previewing a (b :: Type) s (t :: Type) where
   Previewing :: {unPreview :: s -> Maybe a} -> Previewing a b s t
