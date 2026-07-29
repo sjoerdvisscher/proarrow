@@ -6,6 +6,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius (..), Hypergraph, applyHG, curryHG, spiderDefault)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, src)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts (..))
 import Proarrow.Object.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -89,3 +90,20 @@ instance (HasPullbacks k) => CompactClosed (SPAN k) where
 
 instance (HasPullbacks k) => DaggerProfunctor (Span :: CAT (SPAN k)) where
   dagger = dual
+
+instance (HasPullbacks k, HasBinaryCoproducts k) => HasBinaryProducts (SPAN k) where
+  type SP a && SP b = SP (a || b)
+  withObProd @(SP a) @(SP b) r = withObCoprod @k @a @b r
+  fst @(SP a) @(SP b) = coarr (lft @k @a @b)
+  snd @(SP a) @(SP b) = coarr (rgt @k @a @b)
+  Span f g &&& Span h i = Span (f ||| h) (g +++ i)
+
+instance (HasPullbacks k, HasBinaryCoproducts k) => HasBinaryCoproducts (SPAN k) where
+  type SP a || SP b = SP (a || b)
+  withObCoprod @(SP a) @(SP b) r = withObCoprod @k @a @b r
+  lft @(SP a) @(SP b) = arr (lft @k @a @b)
+  rgt @(SP a) @(SP b) = arr (rgt @k @a @b)
+  Span f g ||| Span h i = Span (f +++ h) (g ||| i)
+
+instance (HasPullbacks k, HasBinaryCoproducts k) => HasBiproducts (SPAN k) where
+  Span f g `sum` Span h i = Span (f ||| h) (g ||| i)

@@ -472,9 +472,9 @@ mkLens f g = mkHaskOptic (\k -> k (\(s, x) -> (f s, (g s, x))) (\(b, (bt, x)) ->
 
 type Prism s t a b = HaskOptic (Either a) (Either b) (Either s) (Either t)
 mkPrism :: (s -> Either a t) -> (b -> t) -> Prism s t a b
-mkPrism f g = mkHaskOptic (\k -> k (either (either Left (Right . Left) . f) (Right . Right)) (either (Left . g) id))
+mkPrism f g = mkHaskOptic (\k -> k (either (map Left . f) (Right . Right)) (either (Left . g) id))
 
-data FlipApp a f = FlipApp {unFlipApp :: f a}
+newtype FlipApp a f = FlipApp {unFlipApp :: f a}
 instance (Ob a) => Functor (FlipApp a) where
   map (Nat f) (FlipApp x) = FlipApp (f x)
 type Traversal s t a b = HaskOptic (FlipApp a) (FlipApp b) (FlipApp s) (FlipApp t)

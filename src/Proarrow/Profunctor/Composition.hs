@@ -11,7 +11,7 @@ import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
-  (:.:) :: p a b -> q b c -> (p :.: q) a c
+  (:.:) :: forall b a c p q. p a b -> q b c -> (p :.: q) a c
 
 instance (Profunctor p, Profunctor q) => Profunctor (p :.: q) where
   dimap l r (p :.: q) = lmap l p :.: rmap r q

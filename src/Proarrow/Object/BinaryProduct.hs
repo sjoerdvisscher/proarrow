@@ -22,7 +22,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, src, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
 import Proarrow.Object.Initial (HasInitialObject (..))
@@ -117,16 +117,13 @@ rightUnitorProdInv :: forall {k} (a :: k). (HasProducts k, Ob a) => a ~> a && Te
 rightUnitorProdInv = id &&& terminate
 
 associatorProd :: forall {k} (a :: k) b c. (HasProducts k, Ob a, Ob b, Ob c) => (a && b) && c ~> a && (b && c)
-associatorProd = (fst @k @a @b . fst @k @(a && b) @c) &&& (snd @k @a @b *** obj @c) \\ (obj @a *** obj @b)
+associatorProd = withObProd @k @a @b ((fst @k @a @b . fst @k @(a && b) @c) &&& (snd @k @a @b *** obj @c))
 
 associatorProdInv :: forall {k} (a :: k) b c. (HasProducts k, Ob a, Ob b, Ob c) => a && (b && c) ~> (a && b) && c
-associatorProdInv = (obj @a *** fst @k @b @c) &&& (snd @k @b @c . snd @k @a @(b && c)) \\ (obj @b *** obj @c)
-
-swapProd' :: (HasBinaryProducts k) => (a :: k) ~> a' -> b ~> b' -> (a && b) ~> (b' && a')
-swapProd' a b = snd' (src a) b &&& fst' a (src b)
+associatorProdInv = withObProd @k @b @c ((obj @a *** fst @k @b @c) &&& (snd @k @b @c . snd @k @a @(b && c)))
 
 swapProd :: forall {k} (a :: k) b. (HasBinaryProducts k, Ob a, Ob b) => a && b ~> b && a
-swapProd = swapProd' (obj @a) (obj @b)
+swapProd = snd @k @a @b &&& fst @k @a @b
 
 newtype PROD k = PR k
 type instance UN PR (PR k) = k
@@ -196,6 +193,13 @@ instance (HasProducts k, Strong (PROD k) (Hom k)) => MonoidalAction (PROD k) k w
   unitorInv = leftUnitorProdInv
   multiplicator @(PR a) @(PR b) @c = associatorProd @a @b @c
   multiplicatorInv @(PR a) @(PR b) @c = associatorProdInv @a @b @c
+
+type FromProd :: (k -> Type) -> (PROD k -> Type)
+data FromProd f a where
+  FromProd :: {unFromProd :: f a} -> FromProd f (PR a)
+
+instance (Functor f) => Functor (FromProd f) where
+  map (Prod g) (FromProd f) = FromProd (map g f)
 
 instance MonoidalProfunctor (->) where
   par0 = id

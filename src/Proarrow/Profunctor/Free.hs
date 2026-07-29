@@ -127,9 +127,9 @@ data FreePromonad p a b where
 freePromonadAlg :: p :.: FreePromonad p :~> FreePromonad p
 freePromonadAlg (p :.: pp) = Comp p pp
 
-retractFreePromonad :: (Promonad p) => FreePromonad p :~> p
-retractFreePromonad (Unit f) = arr f
-retractFreePromonad (Comp p pp) = retractFreePromonad pp . p
+foldFreePromonad :: (Promonad q) => p :~> q -> FreePromonad p :~> q
+foldFreePromonad _ (Unit f) = arr f
+foldFreePromonad n (Comp p pp) = foldFreePromonad n pp . n p
 
 instance (Profunctor p) => Profunctor (FreePromonad p) where
   dimap l r (Unit f) = Unit (r . f . l)
@@ -149,7 +149,7 @@ instance Promonad (Star FreePromonad) where
 instance HasFree Promonad where
   type Free Promonad p = FreePromonad p
   lift = Prof \p -> p `Comp` Unit (tgt p)
-  foldMap n@Prof{} = Prof retractFreePromonad . map n
+  foldMap (Prof n) = Prof (foldFreePromonad n)
 
 class
   (forall k. (b k) => c (f k)) =>

@@ -14,6 +14,7 @@ import Proarrow.Category.Instance.Prof qualified as F
 import Proarrow.Category.Instance.Sub qualified as F
 import Proarrow.Category.Instance.Zero (Absurd, VOID)
 import Proarrow.Category.Monoidal qualified as M
+import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -42,7 +43,7 @@ instance HasInitialObject (BI FUNK) where
   initiate = Bi @(FUN (Rep Absurd))
 
 instance HasBinaryProducts (BI FUNK) where
-  type B l && B r = B (l, r)
+  type l && r = B (UN B l, UN B r)
   withObProd r = r
   fst = Bi @(FUN (Rep Fst))
   snd = Bi @(FUN (Rep Snd))
@@ -61,7 +62,7 @@ instance M.MonoidalProfunctor (Bi :: CAT (BI FUNK)) where
 
 instance M.Monoidal (BI FUNK) where
   type Unit = B ()
-  type B j ** B k = B (j, k)
+  type j ** k = B (UN B j, UN B k)
   withOb2 r = r
   leftUnitor = leftUnitorProd
   leftUnitorInv = leftUnitorProdInv
@@ -90,6 +91,12 @@ instance Closed (BI FUNK) where
   withObExp r = r
   curry (Bi @(FUN f)) = Bi @(FUN (Rep (Curry f)))
   apply = Bi @(FUN (Rep Apply))
+
+instance Distributive (BI FUNK) where
+  distL @a @b @c = distLProd @a @b @c
+  distR @a @b @c = distRProd @a @b @c
+  absorbL = snd
+  absorbR = fst
 
 instance (Bicategory kk) => EnrichedProfunctor (BI FUNK) (Bi :: CAT (BI kk)) where
   type ProObj (BI FUNK) (Bi :: CAT (BI kk)) (B j) (B k) = B (kk j k)

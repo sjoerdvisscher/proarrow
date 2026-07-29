@@ -80,7 +80,7 @@ either
 either f g m = Sum m (Uncurry f) (Uncurry g)
 
 type MultiCat k = [k] -> k -> Type
-data FK k = F k
+type data FK k = F k
 type instance UN F (F a) = a
 
 infixr 2 -->
@@ -201,7 +201,7 @@ instance (Closed k, IsFK a, IsFK b) => IsFK (a --> b :: FK k) where
   fromFreeObj = fromFreeObj @b ^^^ fromFreeObj @a
 
 -- | Adapted from Phil Freeman: https://blog.functorial.com/posts/2017-10-08-HOAS-CCCs.html
-toCCC :: forall {k} a b. (BiCCC k) => (IsFK (a :: FK k), IsFK b) => (Free '[] (a --> b)) -> FromFree a ~> FromFree b
+toCCC :: forall {k} a b. (BiCCC k) => (IsFK (a :: FK k), IsFK b) => Free '[] (a --> b) -> FromFree a ~> FromFree b
 toCCC f = fromFree (Uncurry f)
 
 -- debug :: (IsFK a, IsFK b) => Free '[] ((a :: FK ()) --> b) -> P.String

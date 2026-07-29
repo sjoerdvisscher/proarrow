@@ -97,6 +97,9 @@ toBools n = case snat @n of
 arr :: forall n m. FinSet (FS m) (FS n) -> FinRel (FR m) (FR n)
 arr (FinSet v) = FinRel (P.fmap bit v)
 
+coarr :: forall n m. FinSet (FS n) (FS m) -> FinRel (FR m) (FR n)
+coarr (FinSet v) = FinRel (P.fmap fromBools (P.traverse (toBools . bit) v))
+
 type data FINREL = FR Nat
 type instance UN FR (FR n) = n
 

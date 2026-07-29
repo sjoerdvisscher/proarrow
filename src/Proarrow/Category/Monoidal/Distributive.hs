@@ -7,31 +7,11 @@ import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), first, second)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second)
 import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
-import Proarrow.Core
-  ( CategoryOf (..)
-  , Profunctor (..)
-  , Promonad (..)
-  , lmap
-  , rmap
-  , src
-  , tgt
-  , (//)
-  , (:~>)
-  , type (+->)
-  )
-import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, copar, lft', rgt')
-import Proarrow.Object.BinaryProduct
-  ( Cartesian
-  , HasBinaryProducts (..)
-  , PROD (..)
-  , Prod (..)
-  , diag
-  , fst'
-  , snd'
-  , swapProd
-  )
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
+import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, copar)
+import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), PROD (..), Prod (..), diag, swapProd)
 import Proarrow.Object.Exponential (BiCCC, Closed (..), uncurry)
 import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
@@ -84,6 +64,20 @@ instance (BiCCC k) => Distributive (PROD k) where
   absorbL @(PR a) = Prod (snd @k @a)
   absorbR @(PR a) = Prod (fst @k @_ @a)
 
+distLClosed
+  :: forall {k} (a :: k) (b :: k) (c :: k)
+   . (Closed k, SymMonoidal k, HasBinaryCoproducts k, Ob a, Ob b, Ob c) => (a ** (b || c)) ~> (a ** b || a ** c)
+distLClosed = (swap @k @b @a +++ swap @k @c @a) . distRClosed @b @c @a . withObCoprod @k @b @c (swap @k @a @(b || c))
+
+distRClosed
+  :: forall {k} (a :: k) (b :: k) (c :: k)
+   . (Closed k, HasBinaryCoproducts k, Ob a, Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
+distRClosed =
+  withOb2 @k @a @c $
+    withOb2 @k @b @c $
+      withObCoprod @k @(a ** c) @(b ** c) $
+        uncurry @c (curry @k @a @c (lft @k @(a ** c) @(b ** c)) ||| curry @k @b @c (rgt @k @(a ** c) @(b ** c)))
+
 distLProd :: forall {k} (a :: k) (b :: k) (c :: k). (BiCCC k, Ob a, Ob b, Ob c) => (a && (b || c)) ~> (a && b || a && c)
 distLProd = (swapProd @b @a +++ swapProd @c @a) . distRProd @b @c @a . withObCoprod @k @b @c (swapProd @a @(b || c))
 
@@ -128,7 +122,7 @@ instance (Traversable p, Traversable q) => Traversable (p :.: q) where
 
 instance (Cartesian k, Traversable p, Traversable q) => Traversable ((p :: k +-> k) :*: q) where
   traverse ((p :*: q) :.: r) = case (traverse (p :.: r), traverse (q :.: r)) of
-    (r' :.: p', r'' :.: q') -> lmap diag (r' `par` r'') :.: (lmap (fst' (src p') (src q')) p' :*: lmap (snd' (src p') (src q')) q') \\ p
+    ((:.:) @a r' p', (:.:) @b r'' q') -> lmap diag (r' `par` r'') :.: (lmap (fst @k @a @b) p' :*: lmap (snd @k @a @b) q') \\ p \\ p' \\ q'
 
 instance (Traversable p, Traversable q) => Traversable (p :+: q) where
   traverse (InjL p :.: r) = case traverse (p :.: r) of r' :.: p' -> r' :.: InjL p'
@@ -151,7 +145,7 @@ instance (Cotraversable p, Cotraversable q) => Cotraversable (p :.: q) where
 
 instance (HasBinaryCoproducts k, Cotraversable p, Cotraversable q) => Cotraversable ((p :: k +-> k) :*: q) where
   cotraverse (r :.: (p :*: q)) = case (cotraverse (r :.: p), cotraverse (r :.: q)) of
-    (p' :.: r', q' :.: r'') -> (rmap (lft' (tgt p') (tgt q')) p' :*: rmap (rgt' (tgt p') (tgt q')) q') :.: rmap codiag (r' `copar` r'') \\ p
+    ((:.:) @a p' r', (:.:) @b q' r'') -> (rmap (lft @k @a @b) p' :*: rmap (rgt @k @a @b) q') :.: rmap codiag (r' `copar` r'') \\ p \\ p' \\ q'
 
 instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
   cotraverse (r :.: InjL p) = case cotraverse (r :.: p) of p' :.: r' -> InjL p' :.: r'

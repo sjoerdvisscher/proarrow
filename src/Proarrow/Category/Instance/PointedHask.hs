@@ -2,19 +2,21 @@ module Proarrow.Category.Instance.PointedHask where
 
 import Control.Monad ((>=>))
 import Data.Kind (Type)
+import Data.Map.Lazy qualified as Map
+import Data.Map.Merge.Lazy qualified as Map
 import Data.Maybe qualified as P
 import Data.Void (Void, absurd)
 import GHC.Generics (Generic)
-import Prelude (Eq, Maybe (..), Show, const, ($), (>>=), type (~))
+import Prelude (Eq, Maybe (..), Ord, Show, const, ($), (>>=), type (~))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Applicative (liftA2)
+import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object.BinaryProduct (FromProd (..), HasBinaryProducts (..), Prod (..))
 import Proarrow.Object.Copower (Copowered (..))
 import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Object.Power (Powered (..))
@@ -92,7 +94,8 @@ instance SymMonoidal POINTED where
   swap = Pt (Just . swap)
 
 -- This doesn't quite work, see tests.
--- There should be a closed structure, not sure if that can be done in Haskell.
+-- We should have a -> Maybe b = Maybe (a ~~> b)
+-- So a -> Maybe b as exponential is too big, it is not allowed to always return Nothing.
 -- https://ncatlab.org/nlab/show/pointed+object#ClosedMonoidalStructure
 -- instance Closed POINTED where
 --   type P a ~~> P b = P (a -> Maybe b)
@@ -158,3 +161,37 @@ mapMaybe f = unFromPointed . map (Pt f) . FromPointed
 
 instance Functor (FromPointed []) where
   map (Pt f) (FromPointed as) = FromPointed (P.mapMaybe f as)
+
+instance Functor (FromPointed (Map.Map k)) where
+  map (Pt f) (FromPointed m) = FromPointed (Map.mapMaybe f m)
+
+-- | Not quite Align from the semialign package.
+-- This requires being able to dynamically decide per position if it is included in the result.
+-- So more like @merge@ from Data.Map.
+type Align f = Applicative (FromProd (FromPointed f))
+
+alignWith :: (Align f) => (These a b -> Maybe c) -> f a -> f b -> f c
+alignWith f fa fb = unFromPointed $ unFromProd $ liftA2 (Prod (Pt f)) (FromProd (FromPointed fa), FromProd (FromPointed fb))
+
+nil :: (Align f) => f a
+nil = unFromPointed $ unFromProd $ pure (Prod (Pt (const Nothing))) ()
+
+instance Applicative (FromProd (FromPointed [])) where
+  pure a () = FromProd (FromPointed []) \\ a
+  liftA2 (Prod (Pt f)) (FromProd (FromPointed fa), FromProd (FromPointed fb)) = FromProd (FromPointed (merge fa fb))
+    where
+      merge as [] = mapMaybe (f . This) as
+      merge [] bs = mapMaybe (f . That) bs
+      merge (a : as) (b : bs) = case f (These a b) of
+        Nothing -> merge as bs
+        Just c -> c : merge as bs
+
+instance (Ord k) => Applicative (FromProd (FromPointed (Map.Map k))) where
+  pure a () = FromProd (FromPointed Map.empty) \\ a
+  liftA2 (Prod (Pt f)) (FromProd (FromPointed fa), FromProd (FromPointed fb)) = FromProd (FromPointed (merge fa fb))
+    where
+      merge =
+        Map.merge
+          (Map.mapMaybeMissing \_ a -> f (This a))
+          (Map.mapMaybeMissing \_ b -> f (That b))
+          (Map.zipWithMaybeMatched \_ a b -> f (These a b))
