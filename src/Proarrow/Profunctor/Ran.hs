@@ -13,7 +13,7 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rma
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
-import Proarrow.Profunctor.Representable (CorepStar, Rep (..), Representable (..), repUniv)
+import Proarrow.Profunctor.Representable (CorepStar, Rep (..), Representable (..), repUniv, withObRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..), RelativeMonad (..))
 
@@ -57,8 +57,7 @@ instance (p ~ j, Profunctor p) => Promonad (Ran (OP j) p) where
 instance (HasLimits j k, Representable d) => Representable (Ran (OP j) (d :: i +-> k)) where
   type Ran (OP j) d % a = Limit j d % a
   index = index @(Limit j d) . limitUniv @j @k @d (\(Ran k' :.: j) -> k' j)
-  tabulate f = Ran (\j -> limit (tabulate f :.: j)) \\ f
-  repMap = repMap @(Limit j d)
+  repUniv @a = withObRep @(Limit j d) @a (Ran \j -> limit (repUniv :.: j))
 
 type PWRan j p a = (j |> p) % a
 
@@ -97,6 +96,9 @@ ranHom = Prof \p -> p // Ran (`rmap` p)
 
 ranHomInv :: (Profunctor p) => (~>) |> p ~> p
 ranHomInv = Prof \(Ran k) -> k id
+
+compAsRan :: (Promonad p, Ob a) => (p |> (p |> p)) a a
+compAsRan = Ran \p -> p // Ran (. p)
 
 instance (Procomonad j) => Promonad (Star (Ran (OP j))) where
   id = Star (unNat (map (Op (Prof proextract))) . ranHom)

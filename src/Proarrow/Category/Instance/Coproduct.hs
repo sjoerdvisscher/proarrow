@@ -18,11 +18,11 @@ data (:++:) p q a b where
 
 type IsLR :: forall {j} {k}. COPRODUCT j k -> Constraint
 class IsLR (a :: COPRODUCT j k) where
-  caseLr :: (forall b. (a ~ L b, Ob b) => r) -> (forall b. (a ~ R b, Ob b) => r) -> r
+  lrCase :: (forall b. (a ~ L b, Ob b) => r) -> (forall b. (a ~ R b, Ob b) => r) -> r
 instance (Ob a) => IsLR (L a :: COPRODUCT j k) where
-  caseLr l _ = l
+  lrCase l _ = l
 instance (Ob a) => IsLR (R a :: COPRODUCT j k) where
-  caseLr _ r = r
+  lrCase _ r = r
 
 instance (Profunctor p, Profunctor q) => Profunctor (p :++: q) where
   dimap (InjL f) (InjL g) (InjL p) = InjL (dimap f g p)
@@ -34,7 +34,7 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :++: q) where
 
 -- | The coproduct of two promonads.
 instance (Promonad p, Promonad q) => Promonad (p :++: q) where
-  id @a = caseLr @a (InjL id) (InjR id)
+  id @a = lrCase @a (InjL id) (InjR id)
   InjL p . InjL q = InjL (p . q)
   InjR q . InjR r = InjR (q . r)
 
@@ -48,14 +48,14 @@ instance (Representable p, Representable q) => Representable (p :++: q) where
   type (p :++: q) % R a = R (q % a)
   index (InjL p) = InjL (index p)
   index (InjR q) = InjR (index q)
-  repUniv @a = caseLr @a (InjL (repUniv @p)) (InjR (repUniv @q))
+  repUniv @a = lrCase @a (InjL (repUniv @p)) (InjR (repUniv @q))
 
 instance (Corepresentable p, Corepresentable q) => Corepresentable (p :++: q) where
   type (p :++: q) %% L a = L (p %% a)
   type (p :++: q) %% R a = R (q %% a)
   coindex (InjL f) = InjL (coindex f)
   coindex (InjR f) = InjR (coindex f)
-  corepUniv @a = caseLr @a (InjL (corepUniv @p)) (InjR (corepUniv @q))
+  corepUniv @a = lrCase @a (InjL (corepUniv @p)) (InjR (corepUniv @q))
 
 instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :++: q) where
   dagger = \case

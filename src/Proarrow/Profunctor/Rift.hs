@@ -11,7 +11,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
 import Proarrow.Profunctor.Representable (Rep (..), RepCostar, Representable (..), repUniv, withObRep)
 import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..), RelativeComonad (..))
@@ -63,8 +63,7 @@ instance (p ~ j, Profunctor p) => Promonad (Rift (OP j) p) where
 instance (HasColimits j k, Corepresentable d) => Corepresentable (Rift (OP j) (d :: k +-> i)) where
   type Rift (OP j) d %% a = Colimit j d %% a
   coindex = coindex @(Colimit j d) . colimitUniv @j @k @d (\(j :.: Rift k') -> k' j)
-  cotabulate f = Rift (\j -> colimit (j :.: cotabulate f)) \\ f
-  corepMap = corepMap @(Colimit j d)
+  corepUniv @a = withObCorep @(Colimit j d) @a (Rift \j -> colimit (j :.: corepUniv))
 
 type PWLan j p a = (p <| j) %% a
 
@@ -96,6 +95,9 @@ riftHom = Prof \p -> p // Rift (`lmap` p)
 
 riftHomInv :: (Profunctor p) => p <| (~>) ~> p
 riftHomInv = Prof \(Rift k) -> k id
+
+compAsRift :: (Promonad p, Ob a) => ((p <| p) <| p) a a
+compAsRift = Rift \p -> p // Rift (p .)
 
 instance (Procomonad j) => Promonad (Star (Rift (OP j))) where
   id = Star (unNat (map (Op (Prof proextract))) . riftHom)
