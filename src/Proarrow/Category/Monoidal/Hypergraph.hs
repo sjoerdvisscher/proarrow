@@ -13,9 +13,7 @@ import Proarrow.Category.Monoidal
   , leftUnitorWith
   , rightUnitorInvWith
   , rightUnitorWith
-  , (**)
   , (==)
-  , (||)
   )
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -66,7 +64,7 @@ class (k `Supplies` Frobenius, CompactClosed k) => Hypergraph k
 dualHG :: forall {k} (a :: k) b. (Hypergraph k) => a ~> b -> b ~> a
 dualHG f =
   leftUnitorInvWith (cup @a)
-    == obj @a || f || obj @b
+    == obj @a ** f ** obj @b
     == associator @k @a @b @b
     == rightUnitorWith (cap @b)
     \\ f
@@ -75,14 +73,14 @@ linDistHG :: forall {k} (a :: k) b c. (Hypergraph k, Ob a, Ob b) => a ** b ~> c 
 linDistHG f =
   rightUnitorInvWith (cup @b)
     == associatorInv @k @a @b @b
-    == f || obj @b
+    == f ** obj @b
     == swap @k @c @b
     \\ f
 
 linDistInvHG :: forall {k} (a :: k) b c. (Hypergraph k, Ob b, Ob c) => a ~> b ** c -> a ** b ~> c
 linDistInvHG f =
   swap @k @a @b
-    == obj @b || f
+    == obj @b ** f
     == associatorInv @k @b @b @c
     == leftUnitorWith (cap @b)
     \\ f
@@ -92,7 +90,7 @@ traceHG :: forall {k} u (x :: k) y. (Hypergraph k, Ob x, Ob y, Ob u) => u ** x ~
 traceHG f =
   leftUnitorInvWith (cup @u)
     == associator @k @u @u @x
-    == obj @u || f
+    == obj @u ** f
     == associatorInv @k @u @u @y
     == leftUnitorWith (cap @u)
 

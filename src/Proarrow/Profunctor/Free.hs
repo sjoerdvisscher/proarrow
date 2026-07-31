@@ -18,7 +18,7 @@ import Proarrow.Category.Instance.Sub (Forget, On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
 import Proarrow.Category.Monoidal.Action (TracedMonoidal)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
-import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==), (||))
+import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -177,6 +177,6 @@ instance HasFreeK TracedMonoidal CompactClosed INT where
     dualObj @am //
       dualObj @bm //
         unStr $
-          Str @[ap, Dual am] @[Dual am, ap] (swap @_ @ap @(Dual am)) || Str @'[] @[bm, Dual bm] (dualityUnit @bm)
-            == obj @'[Dual am] || Str @[ap, bm] @[am, bp] f || obj @'[Dual bm]
-            == Str @[Dual am, am] @'[] (dualityCounit @am) || obj @'[bp] || obj @'[Dual bm]
+          Str @[ap, Dual am] @[Dual am, ap] (swap @_ @ap @(Dual am)) ** Str @'[] @[bm, Dual bm] (dualityUnit @bm)
+            == obj @'[Dual am] ** Str @[ap, bm] @[am, bp] f ** obj @'[Dual bm]
+            == Str @[Dual am, am] @'[] (dualityCounit @am) ** obj @'[bp] ** obj @'[Dual bm]

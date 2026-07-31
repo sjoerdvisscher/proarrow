@@ -27,7 +27,7 @@ import Proarrow.Profunctor.Constant (review, view)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
 import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), repUniv)
 
-infixl 8 ||
+infixl 8 **
 infixl 7 ==
 
 -- This is equal to a lax monoidal functor for representable profunctors
@@ -139,9 +139,6 @@ instance (Monoidal k) => Monoidal (OPPOSITE k) where
 
 instance (SymMonoidal k) => SymMonoidal (OPPOSITE k) where
   swap @(OP a) @(OP b) = Op (swap @k @b @a)
-
-(||) :: (Monoidal k) => (a :: k) ~> b -> c ~> d -> a ** c ~> b ** d
-(||) = (**)
 
 (==) :: (CategoryOf k) => (a :: k) ~> b -> b ~> c -> a ~> c
 f == g = g . f
