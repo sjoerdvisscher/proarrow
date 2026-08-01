@@ -6,12 +6,7 @@ module Proarrow.Category.Monoidal.Strictified where
 import Data.Kind (Constraint)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Monoidal
-  ( Monoidal (..)
-  , MonoidalProfunctor (..)
-  , SymMonoidal (..)
-  )
-import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
 
 infixl 7 ==
@@ -32,7 +27,7 @@ class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
 instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
 
 type IsList :: forall {k}. [k] -> Constraint
-class (CategoryOf k, as ~ as ++ '[], forall bs cs. Assoc as bs cs) => IsList (as :: [k]) where
+class (CategoryOf k, as ~ as ++ '[], Obs as, forall bs cs. Assoc as bs cs) => IsList (as :: [k]) where
   listCase
     :: ((as ~ '[]) => r)
     -> (forall a. (Ob a, as ~ '[a]) => r)
@@ -77,6 +72,13 @@ fold = listCase @as one obj \ @b @bs -> obj @b ** fold @bs
 withObFold :: forall {k} (as :: [k]) r. (Monoidal k, Ob as) => ((Ob (Fold as)) => r) -> r
 withObFold r = listCase @as r r \ @b @bs -> withObFold @bs $ withOb2 @k @b @(Fold bs) r
 
+type family Obs (as :: [k]) :: Constraint where
+  Obs '[] = ()
+  Obs (a ': as) = (Ob a, Obs as)
+
+withObs :: forall {k} (as :: [k]) r. (Monoidal k, Ob as) => ((Obs as) => r) -> r
+withObs r = listCase @as r r \ @_ @bs -> withObs @bs r
+
 concatFold
   :: forall {k} (as :: [k]) (bs :: [k])
    . (Ob as, Ob bs, Monoidal k)
@@ -114,9 +116,18 @@ data Strictified as bs where
 singleton :: (CategoryOf k) => (a :: k) ~> b -> '[a] ~> '[b]
 singleton a = Str a \\ a
 
+obj1 :: forall {k} (a :: k). (Monoidal k, Ob a) => Obj '[a]
+obj1 = obj @'[a]
+
+concatMany :: forall {k} (as :: [k]). (Ob as, Monoidal k) => as ~> '[Fold as]
+concatMany = withObFold @as (Str id)
+
+splitMany :: forall {k} (as :: [k]). (Ob as, Monoidal k) => '[Fold as] ~> as
+splitMany = withObFold @as (Str id)
+
 instance (Monoidal k) => Profunctor (Strictified :: CAT [k]) where
   dimap = dimapDefault
-  r \\ Str f = r \\ f
+  r \\ Str{} = r
 
 instance (Monoidal k) => Promonad (Strictified :: CAT [k]) where
   id @as = Str (fold @as)
@@ -149,15 +160,5 @@ instance (Monoidal k) => Monoidal [k] where
 instance (SymMonoidal k) => SymMonoidal [k] where
   swap @as @bs = swap' @as @bs
 
-instance (SymMonoidal k, CopyDiscard k) => CopyDiscard [k] where
-  copy @as0 =
-    listCase @as0
-      id
-      (\ @a -> Str @'[a] @'[a, a] copy)
-      ( \ @a @as -> (obj @'[a] ** (associator @_ @as @'[a] @as . (swap @[k] @'[a] @as ** obj @as))) . (Str @'[a] @'[a, a] copy ** copy)
-      )
-  discard @as =
-    listCase @as
-      id
-      (Str discard)
-      (\ @a -> Str @'[a] @'[] discard ** discard)
+swap2 :: forall {k} (a :: k) (b :: k). (SymMonoidal k, Ob a, Ob b) => '[a, b] ~> '[b, a]
+swap2 = swap @[k] @'[a] @'[b]

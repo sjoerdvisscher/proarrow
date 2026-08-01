@@ -41,7 +41,7 @@ type Free :: CAT (FREE cs p)
 data Free a b where
   Id :: (Ob a) => Free a a
   Emb :: (Ob a, Ob b, Typeable a, Typeable b) => p a b %1 -> Free (i :: FREE cs p) (EMB a) %1 -> Free i (EMB b)
-  Str
+  St
     :: forall {j} {cs} {p :: CAT j} (c :: Kind -> Constraint) (a :: FREE cs p) b i
      . (HasStructure cs p c, Ob a, Ob b)
     => Struct c a b %1 -> Free i a %1 -> Free i b
@@ -64,7 +64,7 @@ instance (Ok c p, Eq2 p) => WithEq (a :: FREE c (p :: CAT j))
 instance (WithEq a) => Eq (Free a b) where
   Id == Id = True
   Emb @al p1 g1 == Emb @ar p2 g2 = case eqT @al @ar of Just Refl -> p1 == p2 && g1 == g2; Nothing -> False
-  Str @strl @a1 s1 g1 == Str @strr @a2 s2 g2 = case (eqT @strl @strr, eqT @a1 @a2) of
+  St @strl @a1 s1 g1 == St @strr @a2 s2 g2 = case (eqT @strl @strr, eqT @a1 @a2) of
     (Just Refl, Just Refl) -> s1 == s2 && g1 == g2
     _ -> False
   _ == _ = False
@@ -75,7 +75,7 @@ instance (Show2 p) => WithShow (a :: FREE c (p :: CAT j))
 instance (WithShow a) => Show (Free a b) where
   showsPrec _ Id = P.showString "id"
   showsPrec d (Emb p g) = P.map toLower . showPostComp d p g
-  showsPrec d (Str s g) = P.map toLower . showPostComp d s g
+  showsPrec d (St s g) = P.map toLower . showPostComp d s g
 
 showPostComp :: (Show p, WithShow a) => P.Int -> p -> Free a b -> P.ShowS
 showPostComp d p Id = P.showsPrec d p
@@ -115,7 +115,7 @@ fold pn = go
     go :: forall (x :: FREE cs p) y. x ~> y -> Lower f x ~> Lower f y
     go Id = withLowerOb @x @f id
     go (Emb p g) = pn p . go g
-    go (Str s g) = foldStructure @_ @_ @_ @_ @f go s . go g
+    go (St s g) = foldStructure @_ @_ @_ @_ @f go s . go g
 
 retract
   :: forall {j} {k} cs (f :: j +-> k) a b
@@ -131,13 +131,13 @@ instance (Ok cs p) => Promonad (Free :: CAT (FREE cs p)) where
   Id . g = g
   f . Id = f
   Emb p f . g = Emb p (f . g)
-  Str s f . g = Str s (f . g)
+  St s f . g = St s (f . g)
 
 instance (Ok cs p) => Profunctor (Free :: CAT (FREE cs p)) where
   dimap = dimapDefault
   r \\ Id = r
   r \\ Emb _ f = r \\ f
-  r \\ Str _ f = r \\ f
+  r \\ St _ f = r \\ f
 
 data family UnitF :: k
 instance (Monoidal `Elem` cs) => IsFreeOb (UnitF :: FREE cs p) where
@@ -168,18 +168,18 @@ instance (Monoidal `Elem` cs) => HasStructure cs p Monoidal where
 deriving instance (WithEq a) => Eq (Struct Monoidal a b)
 deriving instance (WithShow a) => Show (Struct Monoidal a b)
 instance (Ok cs p, Monoidal `Elem` cs) => MonoidalProfunctor (Free :: CAT (FREE cs p)) where
-  one = Str Par0 Id
-  f ** g = Str (Par f g) Id \\ f \\ g
+  one = St Par0 Id
+  f ** g = St (Par f g) Id \\ f \\ g
 instance (Ok cs p, Monoidal `Elem` cs) => Monoidal (FREE cs p) where
   type Unit = UnitF
   type a ** b = a **! b
   withOb2 r = r
-  leftUnitor = Str LeftUnitor Id
-  leftUnitorInv = Str LeftUnitorInv Id
-  rightUnitor = Str RightUnitor Id
-  rightUnitorInv = Str RightUnitorInv Id
-  associator = Str Associator Id
-  associatorInv = Str AssociatorInv Id
+  leftUnitor = St LeftUnitor Id
+  leftUnitorInv = St LeftUnitorInv Id
+  rightUnitor = St RightUnitor Id
+  rightUnitorInv = St RightUnitorInv Id
+  associator = St Associator Id
+  associatorInv = St AssociatorInv Id
 
 instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
   data Struct SymMonoidal i o where
@@ -188,4 +188,4 @@ instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
 deriving instance (WithEq a) => Eq (Struct SymMonoidal a b)
 deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
 instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
-  swap = Str Swap Id
+  swap = St Swap Id

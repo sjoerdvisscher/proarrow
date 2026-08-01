@@ -16,7 +16,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), Hypergraph, spiderDefault)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -223,8 +223,7 @@ instance (SNatI a) => Comonoid (FR a) where
   counit = arr counit
   comult = arr comult
 
-instance (SNatI a) => Frobenius (FR a) where
-  spider @x @y = spiderDefault @x @y @(FR a)
+instance (SNatI a) => Frobenius (FR a)
 instance Hypergraph FINREL
 instance CopyDiscard FINREL
 

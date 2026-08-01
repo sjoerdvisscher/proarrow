@@ -12,12 +12,12 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , associator
   , leftUnitorWith
-  , rightUnitorInvWith
   , rightUnitorWith
   , swap
   , unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
+import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
 import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj, (//))
 import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Optic (Iso, iso)
@@ -46,6 +46,14 @@ doubleNegInv =
 doubleNegIso
   :: forall {k} (a :: k) (a' :: k). (StarAutonomous k, Ob a, Ob a') => Iso a a' (Dual (Dual a)) (Dual (Dual a'))
 doubleNegIso = iso doubleNegInv doubleNeg
+
+linDistS
+  :: forall {k} (a :: k) (b :: k) c. (StarAutonomous k, Ob c) => '[a, b] ~> '[Dual c] -> '[a] ~> '[Dual (b ** c)]
+linDistS f@Str{} = withOb2 @k @b @c (Str (linDist @k @a @b @c (unStr f)))
+
+linDistInvS
+  :: forall {k} (a :: k) (b :: k) c. (StarAutonomous k, Ob b, Ob c) => '[a] ~> '[Dual (b ** c)] -> '[a, b] ~> '[Dual c]
+linDistInvS f@Str{} = Str (linDistInv @k @a @b @c (unStr f))
 
 type ExpSA a b = Dual (a ** Dual b)
 
@@ -98,8 +106,14 @@ dualUnitInv = leftUnitor @k @(Dual Unit) . dualityUnit @Unit \\ dualObj @(Unit :
 dualityUnit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Unit ~> a ** Dual a
 dualityUnit = let dualA = dualObj @a in (doubleNeg @a ** dualA) . distribDual @k @(Dual a) @a . dualityUnitSA @a \\ dualA
 
+dualityUnitS :: forall {k} (a :: k). (CompactClosed k, Ob a) => '[] ~> [a, Dual a]
+dualityUnitS = Str @'[] @[a, Dual a] (dualityUnit @a)
+
 dualityCounit :: forall {k} (a :: k). (CompactClosed k, Ob a) => Dual a ** a ~> Unit
 dualityCounit = dualUnit . dualityCounitSA @a
+
+dualityCounitS :: forall {k} (a :: k). (CompactClosed k, Ob a) => [Dual a, a] ~> '[]
+dualityCounitS = Str @[Dual a, a] @'[] (dualityCounit @a)
 
 combineDual :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => Dual a ** Dual b ~> Dual (a ** b)
 combineDual =
@@ -110,20 +124,21 @@ combineDual =
             . swap @k @(Dual a ** Dual b) @a
         )
     )
-    \\ dualObj @a
-    \\ dualObj @b
+
+combineDualS :: forall {k} a b. (CompactClosed k, Ob (a :: k), Ob b) => '[Dual a, Dual b] ~> '[Dual (a ** b)]
+combineDualS = withOb2 @k @a @b (Str (combineDual @a @b))
 
 dimension :: forall {k} (a :: k). (CompactClosed k, Ob a) => (Unit :: k) ~> Unit
 dimension = traceCC @Unit (unitObj ** unitObj)
 
+traceCCS :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => [x, u] ~> [y, u] -> '[x] ~> '[y]
+traceCCS f =
+  obj1 @x ** dualityUnitS @u
+    == f ** obj1 @(Dual u)
+    == obj1 @y ** (swap2 @u @(Dual u) == dualityCounitS @u)
+
 traceCC :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** u ~> y ** u -> x ~> y
-traceCC f =
-  rightUnitorWith (dualityCounit @u . swap @k @u @(Dual u))
-    . associator @k @y @u @(Dual u)
-    . (f ** obj @(Dual u))
-    . associatorInv @k @x @u @(Dual u)
-    . rightUnitorInvWith (dualityUnit @u)
-    \\ dualObj @u
+traceCC f = unStr (traceCCS @u (Str f))
 
 coactCC
   :: forall {m} {k} (u :: m) (x :: k) (y :: k)

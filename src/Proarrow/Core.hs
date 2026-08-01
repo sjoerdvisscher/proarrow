@@ -1,35 +1,59 @@
-{-|
-Description: < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < Start here!
--}
+{- HLINT ignore "Redundant lambda" -}
+
+-- |
+-- Description: < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < Start here!
 module Proarrow.Core
   ( -- * Type Infrastructure
+
     -- ** Basic Type Definitions
-    type (+->), CAT, OB, Kind
+    type (+->)
+  , CAT
+  , OB
+  , Kind
+
     -- ** Universal Constraint
   , Any
+
     -- * Category Infrastructure
+
     -- ** CategoryOf Class
-  , CategoryOf(..)
+  , CategoryOf (..)
   , Hom
+
     -- * Profunctors
+
     -- ** Profunctor Class
-  , Profunctor(..)
+  , Profunctor (..)
+
     -- ** Natural Transformations
   , type (:~>)
+
     -- ** Profunctor Utilities
   , (//)
+
     -- ** Default Implementation
   , dimapDefault
+
     -- * Promonads
+
     -- ** Promonad Class
-  , Promonad(..)
+  , Promonad (..)
+
     -- ** Promonad Utilities
   , arr
+
     -- * Object Identities
-  , Obj, obj, src, tgt
+  , Obj
+  , obj
+  , src
+  , tgt
+
     -- * Type Family Utilities
+
     -- ** Kind Unwrapping
-  , UN, Is, WrappedOb
+  , UN
+  , Is
+  , WrappedOb
   ) where
 
 import Data.Kind (Constraint, Type)
@@ -63,6 +87,7 @@ type Kind = Type
 -- | A constraint that's always satisfied, used as a default when no specific
 -- object constraints are needed.
 class Any (a :: k)
+
 instance Any a
 
 -- * Category Infrastructure
@@ -73,9 +98,13 @@ instance Any a
 class (Promonad ((~>) :: CAT k)) => CategoryOf k where
   -- | The type of morphisms in the category.
   type (~>) :: CAT k
+
   -- | What constraints objects must satisfy.
   type Ob (a :: k) :: Constraint
-  type Ob a = Any a  -- ^ Default: no constraints
+
+  type Ob a = Any a
+
+-- \^ Default: no constraints
 
 -- | A type synonym for @(~>) :: CAT k@, the type of morphisms in the category of kind @k@.
 type Hom k = ((~>) :: CAT k)
@@ -96,12 +125,15 @@ class (CategoryOf j, CategoryOf k) => Profunctor (p :: j +-> k) where
   -- | Map contravariantly over the first argument and covariantly over the second.
   dimap :: c ~> a -> b ~> d -> p a b -> p c d
   dimap l r = lmap l . rmap r
+
   -- | Left mapping (contravariant mapping over first argument).
   lmap :: c ~> a -> p a b -> p c b
   lmap l p = dimap l id p \\ p
+
   -- | Right mapping (covariant mapping over second argument).
   rmap :: b ~> d -> p a b -> p a d
   rmap r p = dimap id r p \\ p
+
   -- | Constraint elimination, extracts object constraints from a profunctor heteromorphism.
   (\\) :: ((Ob a, Ob b) => r) -> p a b -> r
   default (\\) :: (Ob a, Ob b) => ((Ob a, Ob b) => r) -> p a b -> r
@@ -142,6 +174,7 @@ dimapDefault f g h = g . h . f
 class (Profunctor p) => Promonad p where
   -- | Identity morphisms.
   id :: (Ob a) => p a a
+
   -- | Composition (note the parameter order matches function composition).
   (.) :: p b c -> p a b -> p a c
 

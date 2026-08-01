@@ -9,6 +9,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), (**))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
+import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
 import Proarrow.Object.BinaryCoproduct
   ( COPROD (..)
@@ -35,6 +36,12 @@ class (Monoidal k, Ob m) => Monoid (m :: k) where
 
 combine :: (Monoid m) => Unit ~> m -> Unit ~> m -> Unit ~> m
 combine f g = mappend . (f ** g) . leftUnitorInv
+
+memptyS :: (Monoid m) => '[] ~> '[m]
+memptyS = Str mempty
+
+mappendS :: (Monoid m) => '[m, m] ~> '[m]
+mappendS = Str mappend
 
 class (Monoid m) => CommutativeMonoid (m :: k)
 
@@ -67,6 +74,12 @@ type Comonoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob c) => Comonoid (c :: k) where
   counit :: c ~> Unit
   comult :: c ~> c ** c
+
+counitS :: (Comonoid c) => '[c] ~> '[]
+counitS = Str counit
+
+comultS :: (Comonoid c) => '[c] ~> '[c, c]
+comultS = Str comult
 
 instance Comonoid (a :: Type) where
   counit _ = ()

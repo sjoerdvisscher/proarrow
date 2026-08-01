@@ -26,14 +26,12 @@ import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type Star' :: j .-> k -> j +-> k
 data Star' f a b where
-  Star' :: (Ob b) => a ~> f b -> Star' (NT f) a b
+  Star' :: (Ob b) => {unStar :: a ~> f b} -> Star' (NT f) a b
 
 type Star f = Star' (NT f)
 pattern Star :: () => (Ob b) => (a ~> f b) -> Star f a b
 pattern Star f = Star' f
 {-# COMPLETE Star #-}
-unStar :: Star f a b -> a ~> f b
-unStar (Star f) = f
 
 instance (Functor f) => Profunctor (Star f) where
   dimap = dimapRep

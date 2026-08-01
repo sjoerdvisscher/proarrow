@@ -10,7 +10,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Free
   ( Elem
   , FREE (..)
-  , Free (Str)
+  , Free (St)
   , HasStructure (..)
   , IsFreeOb (..)
   , Ok
@@ -282,9 +282,9 @@ instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
 instance (Ok cs p, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE cs p) where
   type a || b = a + b
   withObCoprod r = r
-  lft = Str Lft F.Id
-  rgt = Str Rgt F.Id
-  f ||| g = Str (Sum f g) F.Id \\ f \\ g
+  lft = St Lft F.Id
+  rgt = St Rgt F.Id
+  f ||| g = St (Sum f g) F.Id \\ f \\ g
 
 class ((a && b) ~ (a || b)) => CheckBiproduct a b
 instance ((a && b) ~ (a || b)) => CheckBiproduct a b

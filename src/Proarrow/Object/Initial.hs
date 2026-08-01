@@ -63,7 +63,7 @@ deriving instance Eq (Struct HasInitialObject a b)
 deriving instance Show (Struct HasInitialObject a b)
 instance (Ok cs p, HasInitialObject `Elem` cs) => HasInitialObject (FREE cs p) where
   type InitialObject = InitF
-  initiate = Str Initial Id
+  initiate = St Initial Id
 
 instance (HasInitialObject k) => HasTerminalObject (OPPOSITE k) where
   type TerminalObject = OP InitialObject

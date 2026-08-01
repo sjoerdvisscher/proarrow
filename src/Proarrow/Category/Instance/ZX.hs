@@ -22,7 +22,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Hypergraph (Frobenius (..), spiderDefault)
+import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.Dual (CompactClosed (..), ExpSA, StarAutonomous (..), applySA, coactCC, currySA, expSA)
@@ -226,9 +226,8 @@ instance (KnownNat n) => Comonoid (n :: Nat) where
   counit = ZX $ Map.fromList [((minBound, i), 1) | i <- enumAll @n]
   comult = withPlusIsNat @n @n $ ZX $ Map.fromList [((combine i i, i), 1) | i <- enumAll @n]
 
-instance (KnownNat a) => Frobenius (a :: Nat) where
-  spider @n @m = spiderDefault @n @m @a
-
+instance (KnownNat a) => Frobenius (a :: Nat)
+instance Hypergraph Nat
 instance CopyDiscard Nat
 
 zSpider :: (KnownNat i, KnownNat o) => Double -> ZX i o

@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
+
 module Proarrow.Object.Terminal where
 
 import Data.Kind (Type)
@@ -10,8 +11,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (CategoryOf k, Ob (TerminalObject :: k)) => HasTerminalObject k where
   type TerminalObject :: k
@@ -55,9 +56,9 @@ instance (HasTerminalObject `Elem` cs) => IsFreeOb (TermF :: FREE cs p) where
 instance (HasTerminalObject `Elem` cs) => HasStructure cs p HasTerminalObject where
   data Struct HasTerminalObject a b where
     Terminate :: (Ob a) => Struct HasTerminalObject a TermF
-  foldStructure @f _ (Terminate @a) = withLowerOb @a @f (terminate)
+  foldStructure @f _ (Terminate @a) = withLowerOb @a @f terminate
 deriving instance Eq (Struct HasTerminalObject a b)
 deriving instance Show (Struct HasTerminalObject a b)
 instance (Ok cs p, HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs p) where
   type TerminalObject = TermF
-  terminate = Str Terminate Id
+  terminate = St Terminate Id

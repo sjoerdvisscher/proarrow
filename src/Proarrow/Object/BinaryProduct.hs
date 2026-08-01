@@ -279,9 +279,9 @@ instance (WithShow a) => Show (Struct HasBinaryProducts a b) where
 instance (Ok cs p, HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs p) where
   type a && b = a *! b
   withObProd r = r
-  fst = Str Fst Id
-  snd = Str Snd Id
-  f &&& g = Str (Prd f g) Id \\ f \\ g
+  fst = St Fst Id
+  snd = St Snd Id
+  f &&& g = St (Prd f g) Id \\ f \\ g
 
 -- | The right adjoint to the diagonal functor.
 instance (HasBinaryProducts k) => Representable (Corep Diag :: (k, k) +-> k) where

@@ -3,6 +3,7 @@
 module Proarrow.Object.Exponential where
 
 import Data.Kind (Type)
+import Prelude (($))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free
@@ -19,13 +20,8 @@ import Proarrow.Category.Instance.Free
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal
-  ( Monoidal (..)
-  , MonoidalProfunctor (..)
-  , SymMonoidal (..)
-  , associator
-  , leftUnitor
-  )
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), concatMany, obj1, singleton, splitMany, (==))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Object.BinaryCoproduct (HasCoproducts)
@@ -44,24 +40,48 @@ class (Monoidal k) => Closed k where
   f ^^^ g =
     f //
       g //
-        withObExp @k @a @b P.$
+        withObExp @k @a @b $
           let ab = obj @(a ~~> b) in curry @k @(a ~~> b) @x (f . apply @k @a @b . (ab ** g))
 
 uncurry :: forall {k} b c (a :: k). (Closed k) => (Ob b, Ob c) => a ~> b ~~> c -> a ** b ~> c
 uncurry f = apply @k @b @c . (f ** obj @b)
 
+curryS :: forall {k} b c (a :: k). (Closed k) => [a, b] ~> '[c] -> '[a] ~> '[b ~~> c]
+curryS (Str f) = withObExp @k @b @c $ Str (curry @k @a @b @c f)
+
+curryS'
+  :: forall {k} as c (b :: k). (Closed k, Ob as, Ob b) => (as ** '[b]) ~> '[c] -> as ~> '[b ~~> c]
+curryS' f = concatMany == curryS @b @c @(Fold as) (splitMany @as ** obj1 == f)
+
+applyS :: forall {k} (a :: k) b. (Closed k, Ob a, Ob b) => '[a ~~> b, a] ~> '[b]
+applyS = withObExp @k @a @b $ Str (apply @k @a @b)
+
+uncurryS :: forall {k} b c (a :: k). (Closed k, Ob b, Ob c) => '[a] ~> '[b ~~> c] -> '[a, b] ~> '[c]
+uncurryS f = f ** obj1 == applyS
+
+uncurryS' :: forall {k} as b (c :: k). (Closed k, Ob b, Ob c) => as ~> '[b ~~> c] -> (as ** '[b]) ~> '[c]
+uncurryS' f@Str{} = concatMany @as ** obj1 == uncurryS @b @c @(Fold as) (splitMany == f)
+
+compS :: forall {k} (a :: k) b c. (Closed k, Ob a, Ob b, Ob c) => '[b ~~> c, a ~~> b] ~> '[a ~~> c]
+compS =
+  withObExp @k @b @c $
+    withObExp @k @a @b $
+      curryS' (obj1 ** applyS @a @b == applyS @b @c)
+
 comp :: forall {k} (a :: k) b c. (Closed k, Ob a, Ob b, Ob c) => (b ~~> c) ** (a ~~> b) ~> a ~~> c
-comp =
-  withObExp @k @b @c P.$
-    withObExp @k @a @b P.$
-      withOb2 @k @(b ~~> c) @(a ~~> b) P.$
-        curry @_ @_ @a (apply @k @b @c . (obj @(b ~~> c) ** apply @k @a @b) . associator @k @(b ~~> c) @(a ~~> b) @a)
+comp = unStr (compS @a @b @c)
+
+mkExponentialS :: forall {k} (a :: k) b. (Closed k) => '[a] ~> '[b] -> '[] ~> '[a ~~> b]
+mkExponentialS f@Str{} = curryS' f
 
 mkExponential :: forall {k} a b. (Closed k) => (a :: k) ~> b -> Unit ~> (a ~~> b)
-mkExponential ab = curry @_ @_ @a (ab . leftUnitor) \\ ab
+mkExponential ab = unStr (mkExponentialS (singleton ab))
+
+lowerS :: forall {k} (a :: k) b. (Closed k, Ob a, Ob b) => ('[] ~> '[a ~~> b]) -> '[a] ~> '[b]
+lowerS = uncurryS'
 
 lower :: forall {k} (a :: k) b. (Closed k, Ob a, Ob b) => (Unit ~> (a ~~> b)) -> a ~> b
-lower f = uncurry @a @b f . leftUnitorInv
+lower f = unStr (lowerS (Str f)) \\ f
 
 toEl :: forall {k} (a :: k). (Closed k, Ob a) => a ~> Unit ~~> a
 toEl = curry @k @a @Unit @a rightUnitor
@@ -136,5 +156,5 @@ deriving instance (WithShow a) => P.Show (Struct Closed a b)
 instance (Ok cs p, Closed `Elem` cs, Monoidal `Elem` cs) => Closed (FREE cs p) where
   type a ~~> b = a --> b
   withObExp r = r
-  curry f = Str (Curry f) Id \\ f
-  apply = Str Apply Id
+  curry f = St (Curry f) Id \\ f
+  apply = St Apply Id

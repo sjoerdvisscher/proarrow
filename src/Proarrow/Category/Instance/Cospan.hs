@@ -4,7 +4,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius (..), Hypergraph, applyHG, curryHG, spiderDefault)
+import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -68,8 +68,7 @@ instance (HasPushouts k, Ob a) => Monoid (CS (a :: k)) where
 instance (HasPushouts k, Ob a) => Comonoid (CS (a :: k)) where
   counit = coarr initiate
   comult = coarr (id ||| id)
-instance (HasPushouts k, Ob a) => Frobenius (CS (a :: k)) where
-  spider @x @y = spiderDefault @x @y @(CS a)
+instance (HasPushouts k, Ob a) => Frobenius (CS (a :: k))
 instance (HasPushouts k) => Hypergraph (COSPAN k)
 instance (HasPushouts k) => CopyDiscard (COSPAN k)
 
