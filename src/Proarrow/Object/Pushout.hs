@@ -5,6 +5,8 @@ module Proarrow.Object.Pushout where
 import Prelude (($))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE, Op (..))
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, obj, rmap, (//), type (+->))
 import Proarrow.Object (pattern Objs)
@@ -38,18 +40,26 @@ data Sink (as :: [k]) where
 -- | Pushouts are an inherently dependently typed concept:
 -- The type of the apex object depends on the values of the given arrows.
 -- But at runtime we can still calculate the arrows and the type, which we hide behind an existential.
-class (HasCoproducts k) => HasPushouts k where
+class (CategoryOf k) => HasPushouts k where
   pushout :: forall (o :: k) a b. o ~> a -> o ~> b -> Sink [a, b]
+
+instance HasPushouts () where
+  pushout Unit Unit = Cocone (Coleg Unit (Coleg Unit Coapex))
+
+instance (HasPushouts k1, HasPushouts k2) => HasPushouts (k1, k2) where
+  pushout (l1 :**: l2) (r1 :**: r2) = case (pushout l1 r1, pushout l2 r2) of
+    (Cocone (Coleg f1 (Coleg g1 Coapex)), Cocone (Coleg f2 (Coleg g2 Coapex))) ->
+      Cocone (Coleg (f1 :**: f2) (Coleg (g1 :**: g2) Coapex))
 
 -- | In a thin category, arrows don't carry information, so pushouts are just coproducts.
 thinPushout :: forall {k} (o :: k) a b. (HasCoproducts k) => o ~> a -> o ~> b -> Sink [a, b]
 thinPushout l r = l // r // withObCoprod @k @a @b $ Cocone $ Coleg (lft @k @a @b) $ Coleg (rgt @k @a @b) Coapex
 
-coequalizer :: forall {k} (a :: k) b. (HasPushouts k) => a ~> b -> a ~> b -> Sink '[b]
+coequalizer :: forall {k} (a :: k) b. (HasPushouts k, HasCoproducts k) => a ~> b -> a ~> b -> Sink '[b]
 coequalizer f@Objs g = case pushout (obj @b ||| f) (obj @b ||| g) of
   Cocone (Coleg _ cocone) -> Cocone cocone
 
-cokernel :: (HasPushouts k, HasZeroObject k) => (a :: k) ~> b -> Sink '[b]
+cokernel :: (HasPushouts k, HasZeroObject k, HasCoproducts k) => (a :: k) ~> b -> Sink '[b]
 cokernel f@Objs = coequalizer zero f
 
 instance (HasPullbacks k) => HasPushouts (OPPOSITE k) where

@@ -10,6 +10,7 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Object.BinaryCoproduct
   ( HasBinaryCoproducts (..)
+  , HasCoproducts
   , associatorCoprod
   , associatorCoprodInv
   , leftUnitorCoprod
@@ -46,10 +47,10 @@ instance (HasPushouts k) => CategoryOf (COSPAN k) where
   type (~>) = Cospan
   type Ob a = WrappedOb CS a
 
-instance (HasPushouts k) => MonoidalProfunctor (Cospan :: CAT (COSPAN k)) where
+instance (HasPushouts k, HasCoproducts k) => MonoidalProfunctor (Cospan :: CAT (COSPAN k)) where
   one = id
   Cospan l1 l2 ** Cospan r1 r2 = Cospan (l1 +++ r1) (l2 +++ r2)
-instance (HasPushouts k) => Monoidal (COSPAN k) where
+instance (HasPushouts k, HasCoproducts k) => Monoidal (COSPAN k) where
   type CS a ** CS b = CS (a || b)
   type Unit = CS InitialObject
   withOb2 @(CS a) @(CS b) r = withObCoprod @k @a @b r
@@ -59,37 +60,44 @@ instance (HasPushouts k) => Monoidal (COSPAN k) where
   rightUnitorInv = arr rightUnitorCoprodInv
   associator @(CS a) @(CS b) @(CS c) = arr (associatorCoprod @a @b @c)
   associatorInv @(CS a) @(CS b) @(CS c) = arr (associatorCoprodInv @a @b @c)
-instance (HasPushouts k) => SymMonoidal (COSPAN k) where
+instance (HasPushouts k, HasCoproducts k) => SymMonoidal (COSPAN k) where
   swap @(CS a) @(CS b) = arr (swapCoprod @a @b)
 
-instance (HasPushouts k, Ob a) => Monoid (CS (a :: k)) where
+instance (HasPushouts k, HasCoproducts k, Ob a) => Monoid (CS (a :: k)) where
   mempty = arr initiate
   mappend = arr (id ||| id)
-instance (HasPushouts k, Ob a) => Comonoid (CS (a :: k)) where
+instance (HasPushouts k, HasCoproducts k, Ob a) => Comonoid (CS (a :: k)) where
   counit = coarr initiate
   comult = coarr (id ||| id)
-instance (HasPushouts k, Ob a) => Frobenius (CS (a :: k))
-instance (HasPushouts k) => Hypergraph (COSPAN k)
-instance (HasPushouts k) => CopyDiscard (COSPAN k)
+instance (HasPushouts k, HasCoproducts k, Ob a) => Frobenius (CS (a :: k))
+instance (HasPushouts k, HasCoproducts k) => Hypergraph (COSPAN k)
+instance (HasPushouts k, HasCoproducts k) => CopyDiscard (COSPAN k)
 
-instance (HasPushouts k) => Closed (COSPAN k) where
+instance (HasPushouts k, HasCoproducts k) => Closed (COSPAN k) where
   type a ~~> b = ExpHG a b
   withObExp @(CS a) @(CS b) r = withObCoprod @k @a @b r
   curry @a @b = curryHG @a @b
   apply @b @c = applyHG @b @c
 
-instance (HasPushouts k) => StarAutonomous (COSPAN k) where
+instance (HasPushouts k, HasCoproducts k) => StarAutonomous (COSPAN k) where
   type Dual a = a
-  dual (Cospan f g) = Cospan g f
-  dualInv (Cospan f g) = Cospan g f
+  dual = dagger
+  dualInv = dagger
   linDist @(CS a) @(CS b) (Cospan f g) = Cospan (f . lft @k @a @b) (f . rgt @k @a @b ||| g)
   linDistInv @_ @(CS b) @(CS c) (Cospan f g) = Cospan (f ||| g . lft @k @b @c) (g . rgt @k @b @c)
-instance (HasPushouts k) => CompactClosed (COSPAN k) where
+instance (HasPushouts k, HasCoproducts k) => CompactClosed (COSPAN k) where
   distribDual @(CS a) @(CS b) = withObCoprod @k @a @b id
   dualUnit = id
 
 instance (HasPushouts k) => DaggerProfunctor (Cospan :: CAT (COSPAN k)) where
-  dagger = dual
+  dagger (Cospan f g) = Cospan g f
+
+instance (HasPushouts k) => HasPushouts (COSPAN k) where
+  pushout (Cospan f g) (Cospan h i) = case pushout f h of
+    Cocone (Coleg l (Coleg r Coapex)) -> Cocone (Coleg (arr (l . g)) (Coleg (arr (r . i)) Coapex))
+instance (HasPushouts k) => HasPullbacks (COSPAN k) where
+  pullback (Cospan f g) (Cospan h i) = case pushout g i of
+    Cocone (Coleg l (Coleg r Coapex)) -> Cone (Leg (coarr (l . f)) (Leg (coarr (r . h)) Apex))
 
 data family Pushout :: SPAN k +-> COSPAN k
 instance (HasPushouts k, HasPullbacks k) => FunctorForRep (Pushout :: SPAN k +-> COSPAN k) where
