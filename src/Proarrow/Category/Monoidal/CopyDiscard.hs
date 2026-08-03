@@ -17,8 +17,8 @@ import Proarrow.Category.Monoidal
   )
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), listCase)
 import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), obj)
+import Proarrow.Limit.BinaryProduct (HasProducts, PROD (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryProduct (HasProducts, PROD (..))
 
 class (Monoidal k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a

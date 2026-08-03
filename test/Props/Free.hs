@@ -9,10 +9,10 @@ import Prelude hiding (fst, id, snd, (.))
 
 import Proarrow.Category.Instance.Free (FREE (..), Free (..))
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), (&&&), type (*!))
-import Proarrow.Object.Initial (HasInitialObject (..), InitF)
-import Proarrow.Object.Terminal (HasTerminalObject (..), TermF)
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), (&&&), type (*!))
+import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
+import Proarrow.Limit.Terminal (HasTerminalObject (..), TermF)
 import Proarrow.Profunctor.Initial (InitialProfunctor)
 
 import Props

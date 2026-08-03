@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Object.Copower where
+module Proarrow.Colimit.Copower where
 
 import Data.Kind (Type)
 import Prelude (type (~))
@@ -13,8 +13,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (rightUnitorInvWith)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (dimap, (\\)), Promonad (..), obj, (//), type (+->))
-import Proarrow.Object.Exponential (Closed)
-import Proarrow.Object.Power (Powered (..))
+import Proarrow.Limit.Exponential (Closed)
+import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 -- | Categories copowered over @v@.

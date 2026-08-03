@@ -10,8 +10,8 @@ import Proarrow.Category.Instance.Free (FREE (..), Free (..), UnitF, fold, type 
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), (**))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts, (&&&), type (*!))
-import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts, (&&&), type (*!))
+import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
 import Unsafe.Coerce (unsafeCoerce)
 

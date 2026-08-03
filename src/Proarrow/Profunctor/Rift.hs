@@ -4,10 +4,10 @@ module Proarrow.Profunctor.Rift where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Colimit (HasColimits (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Colimit (HasColimits (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Profunctor.Composition ((:.:) (..))

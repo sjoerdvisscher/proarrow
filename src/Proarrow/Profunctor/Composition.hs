@@ -3,9 +3,9 @@ module Proarrow.Profunctor.Composition where
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Colimit.BinaryCoproduct (Coprod (..), nil, (++))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, tgt, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
-import Proarrow.Object.BinaryCoproduct (Coprod (..), nil, (++))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 

@@ -16,7 +16,6 @@ import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
 import Proarrow.Category.Bicategory.Limit qualified as Bi
 import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..), WithObO2 (..))
-import Proarrow.Category.Colimit qualified as L
 import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), Tight, TightAdjoint)
 import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
@@ -25,7 +24,7 @@ import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Instance.Product qualified as C
 import Proarrow.Category.Instance.Prof qualified as Prof
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Limit qualified as L
+import Proarrow.Colimit qualified as L
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -45,6 +44,7 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
+import Proarrow.Limit qualified as L
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))

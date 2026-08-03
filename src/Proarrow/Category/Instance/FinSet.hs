@@ -29,9 +29,10 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
@@ -42,12 +43,13 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Pullback (Cone (..), Cosink (..), HasPullbacks (..), InternalIn (..))
-import Proarrow.Object.Pushout (Cocone (..), HasPushouts (..), Sink (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Limit.Pullback (HasPullbacks (..), InternalIn (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Optic (Iso', iso)
+import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
+import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
 
 type data FINSET = FS Nat
 
@@ -209,7 +211,7 @@ instance HasPullbacks FINSET where
 -- >>> import Data.Fin
 -- >>> import Data.Type.Nat
 -- >>> import Data.Vec.Lazy
--- >>> import Proarrow.Object.Pullback (equalizer)
+-- >>> import Proarrow.Limit.Pullback (equalizer)
 -- >>> let f :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin1 ::: fin0 ::: VNil
 -- >>> let g :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: fin0 ::: VNil
 -- >>> (case equalizer f g of Cone (Leg (FinSet f) Apex) -> P.show f) :: P.String

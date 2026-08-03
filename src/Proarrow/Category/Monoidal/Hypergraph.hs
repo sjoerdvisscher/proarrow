@@ -7,10 +7,10 @@ import Prelude (($))
 
 import Proarrow.Category (Supplies)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), (==))
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, singleton, swap2)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..), comultS, mappendS)
-import Proarrow.Object.Dual (CompactClosed)
 
 type family NFold (n :: Nat) (x :: k) :: k where
   NFold Z x = Unit

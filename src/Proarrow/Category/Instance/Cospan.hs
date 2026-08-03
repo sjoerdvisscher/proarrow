@@ -3,12 +3,11 @@ module Proarrow.Category.Instance.Cospan where
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt, type (+->))
-import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.BinaryCoproduct
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
+import Proarrow.Colimit.BinaryCoproduct
   ( HasBinaryCoproducts (..)
   , HasCoproducts
   , associatorCoprod
@@ -19,11 +18,15 @@ import Proarrow.Object.BinaryCoproduct
   , rightUnitorCoprodInv
   , swapCoprod
   )
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..))
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Pullback (Cone (..), Cosink (..), HasPullbacks (..))
-import Proarrow.Object.Pushout (Cocone (..), HasPushouts (..), Sink (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt, type (+->))
+import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Limit.Pullback (HasPullbacks (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
+import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
 
 newtype COSPAN k = CS k
 

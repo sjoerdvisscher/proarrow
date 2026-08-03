@@ -6,8 +6,8 @@ import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
 import Proarrow.Category.Instance.Constraint (reifyExp, (:=>) (..), type (:-) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, (//), type (+->))
-import Proarrow.Object.BinaryProduct (PROD (..), Prod (..))
-import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
+import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Profunctor.Product ((:*:) (..))
 
 data (p :~>: q) a b where

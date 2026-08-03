@@ -2,12 +2,12 @@ module Proarrow.Category.Instance.Fin where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 type data NAT = Z | S NAT
 
@@ -60,6 +60,7 @@ instance Promonad LTE where
   ZLT b . ZEQ = ZLT b
   SLT ab . ZLT za = ZLT (ab . za)
   SLT ab . SLT bc = SLT (ab . bc)
+
 -- | The (thin) category of finite ordinals. An arrow from a to b means that a is less than or equal to b.
 instance CategoryOf (FIN n) where
   type (~>) = LTE

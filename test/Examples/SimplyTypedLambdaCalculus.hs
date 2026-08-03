@@ -11,10 +11,10 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj, (//), type (+->))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Object.BinaryProduct
+import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
@@ -23,7 +23,7 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Limit.Exponential (Closed (..))
 import Props (propCategory, propProfunctor, propTerminalObject)
 import Testable
   ( GenTotal (..)

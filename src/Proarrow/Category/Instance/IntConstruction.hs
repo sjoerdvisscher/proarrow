@@ -14,9 +14,10 @@ import Proarrow.Category.Monoidal
   , (**)
   )
 import Proarrow.Category.Monoidal.Action (TracedMonoidal, trace)
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
-import Proarrow.Object.Dual (CompactClosed (..), Dual, ExpSA, StarAutonomous (..), applySA, currySA, expSA)
-import Proarrow.Object.Exponential (Closed (..))
+import Proarrow.Limit.Exponential (Closed (..))
 
 data INT k = I k k
 

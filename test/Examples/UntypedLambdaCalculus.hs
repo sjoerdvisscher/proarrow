@@ -14,9 +14,9 @@ import Test.Tasty.Falsify (testProperty)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (//))
 import Proarrow.Functor (Presheaf)
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Props (propBinaryProducts_, propCategory, propProfunctor, propTerminalObject)
 import Testable
   ( GenTotal (..)

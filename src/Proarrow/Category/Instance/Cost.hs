@@ -12,11 +12,11 @@ import Prelude (Num ((+)), error, ($))
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (//))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 type data COST = C Nat | INF
 

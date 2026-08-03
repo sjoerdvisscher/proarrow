@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Object.Initial where
+module Proarrow.Colimit.Initial where
 
 import Data.Kind (Type)
 import Data.Void (Void, absurd)
@@ -12,7 +12,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))

@@ -15,10 +15,11 @@ import Proarrow.Category.Instance.Sub qualified as F
 import Proarrow.Category.Instance.Zero (Absurd, VOID)
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct
+import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
@@ -27,9 +28,8 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withObRep)

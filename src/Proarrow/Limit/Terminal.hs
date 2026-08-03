@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Object.Terminal where
+module Proarrow.Limit.Terminal where
 
 import Data.Kind (Type)
 import Prelude (Eq, Show, type (~))

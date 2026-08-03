@@ -1,4 +1,4 @@
-module Proarrow.Object.NaturalNumbers where
+module Proarrow.Colimit.NaturalNumbers where
 
 import Data.Kind (Type)
 import Data.Nat qualified as N
@@ -7,7 +7,7 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
-import Proarrow.Object.BinaryProduct ()
+import Proarrow.Limit.BinaryProduct ()
 
 class (SymMonoidal k, Ob (NNO :: k)) => HasParamNNO k where
   type NNO :: k

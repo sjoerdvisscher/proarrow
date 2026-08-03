@@ -31,8 +31,8 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
+import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.Exponential (Closed (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Coproduct ((:+:) (..))
 

@@ -2,7 +2,7 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Object.Power where
+module Proarrow.Limit.Power where
 
 import Data.Kind (Type)
 import Prelude (($), type (~))
@@ -14,9 +14,9 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (leftUnitorInvWith)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (//), type (+->))
-import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..))
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Terminal (TerminalObject, terminate)
+import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
+import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Limit.Terminal (TerminalObject, terminate)
 import Proarrow.Profunctor.Representable (Representable (..))
 
 -- | Categories powered over @v@.

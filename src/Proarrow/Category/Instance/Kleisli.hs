@@ -21,6 +21,8 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveProfunctor)
+import Proarrow.Colimit.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, (++))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -33,11 +35,9 @@ import Proarrow.Core
   , rmap
   , type (+->)
   )
+import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (tgt, pattern Obj, type Obj)
-import Proarrow.Object.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, (++))
-import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
 

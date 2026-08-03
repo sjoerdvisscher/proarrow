@@ -6,10 +6,10 @@ import Prelude (($))
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
-import Proarrow.Object.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
-import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
-import Proarrow.Object.Exponential (Closed (..), curry, uncurry)
+import Proarrow.Limit.Exponential (Closed (..), curry, uncurry)
 
 data Cont r a b where
   Cont :: (Ob a, Ob b) => {runCont :: (b ~> r) -> (a ~> r)} -> Cont r a b

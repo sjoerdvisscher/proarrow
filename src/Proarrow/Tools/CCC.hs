@@ -21,13 +21,13 @@ import Prelude (type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal.Distributive (distLProd)
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), lft', rgt')
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
+import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), fst', snd')
+import Proarrow.Limit.Exponential (BiCCC, Closed (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate')
 import Proarrow.Object (Obj, obj)
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft', rgt')
-import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), fst', snd')
-import Proarrow.Object.Exponential (BiCCC, Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..), terminate')
 
 type Cast :: forall {k}. [FK k] -> [FK k] -> Constraint
 class Cast i j where

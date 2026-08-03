@@ -7,10 +7,13 @@ import Proarrow.Category.Instance.Sub (FUN, SUBCAT (..), (!))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA)
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.NaturalNumbers (HasParamNNO (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..), thinPushout)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct
+import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
@@ -20,13 +23,10 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Object.Dual (ExpSA, StarAutonomous (..), applySA, currySA)
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.NaturalNumbers (HasParamNNO (..))
-import Proarrow.Object.Pullback (HasPullbacks (..), thinPullback)
-import Proarrow.Object.Pushout (HasPushouts (..), thinPushout)
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Prelude qualified as P

@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Colimit where
+module Proarrow.Colimit where
 
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
@@ -11,11 +11,11 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
+import Proarrow.Colimit.Copower (Copowered (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..), initiate)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
-import Proarrow.Object.Copower (Copowered (..))
-import Proarrow.Object.Initial (HasInitialObject (..), initiate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))

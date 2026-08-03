@@ -17,21 +17,12 @@ import Proarrow.Category.Monoidal
   , unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual, dualityCounit, dualityUnit)
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
+import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), doubleNeg, doubleNegInv, expSA)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.Dual
-  ( CompactClosed (..)
-  , ExpSA
-  , StarAutonomous (..)
-  , combineDual
-  , doubleNeg
-  , doubleNegInv
-  , dualityCounit
-  , dualityUnit
-  , expSA
-  )
 import Proarrow.Profunctor.Composition (compComp, (:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Day (Day (..))

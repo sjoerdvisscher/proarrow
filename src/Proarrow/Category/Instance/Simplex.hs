@@ -12,11 +12,11 @@ import Prelude (Eq, Show (..), (++), type (~))
 import Data.Typeable (Typeable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Monoid (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
 
 type n + m = Plus n m
 

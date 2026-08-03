@@ -11,12 +11,12 @@ import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), first, leftUnitorInvWith)
 import Proarrow.Category.Monoidal.Distributive (Distributive, DistributiveProfunctor)
+import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), nil, unCoprod, (++))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
+import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Object.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), nil, unCoprod, (++))
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
 import Proarrow.Profunctor.Identity (Id (..))
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint

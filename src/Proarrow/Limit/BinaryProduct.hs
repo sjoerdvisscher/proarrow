@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Object.BinaryProduct where
+module Proarrow.Limit.BinaryProduct where
 
 import Data.Kind (Type)
 import Prelude (Eq, Show, type (~))
@@ -25,8 +25,8 @@ import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Se
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Object (Obj, obj)
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..), Semicartesian)
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)

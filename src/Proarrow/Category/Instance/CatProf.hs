@@ -17,9 +17,14 @@ import Proarrow.Category.Monoidal
   , swap
   )
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strictified ()
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.NaturalNumbers (HasParamNNO (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -32,9 +37,7 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
-import Proarrow.Object.BinaryProduct
+import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
   , associatorProdInv
@@ -44,11 +47,9 @@ import Proarrow.Object.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..), coactCC)
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.NaturalNumbers (HasParamNNO (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Composition ((:.:))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corep)

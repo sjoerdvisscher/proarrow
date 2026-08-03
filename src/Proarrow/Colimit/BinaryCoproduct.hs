@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Object.BinaryCoproduct where
+module Proarrow.Colimit.BinaryCoproduct where
 
 import Data.Kind (Type)
 import Prelude (Eq, Show, ($), type (~))
@@ -24,12 +24,12 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (Obj, obj, tgt)
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
-import Proarrow.Object.Initial (HasInitialObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Identity (Id (..))

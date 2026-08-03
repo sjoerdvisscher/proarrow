@@ -11,14 +11,14 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
+import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
+import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
-import Proarrow.Object.BinaryCoproduct qualified as BinaryCoproduct
-import Proarrow.Object.BinaryProduct qualified as BinaryProduct
-import Proarrow.Object.Dual qualified as Dual
-import Proarrow.Object.Exponential qualified as Exponential
-import Proarrow.Object.Initial qualified as Initial
-import Proarrow.Object.Terminal qualified as Terminal
+import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
+import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
+import Proarrow.Limit.Exponential qualified as Exponential
+import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Optic (Iso)
 import Proarrow.Profunctor.Constant (review, view)
 import Proarrow.Profunctor.Representable (Rep)
@@ -282,25 +282,25 @@ propClosed_ =
 
 propStarAutonomous
   :: forall k
-   . (Testable k, Dual.StarAutonomous k, TestOb (M.Unit @k))
+   . (Testable k, SA.StarAutonomous k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
-  -> (forall (a :: k) r. (TestOb a) => ((TestOb (Dual.Dual a)) => r) -> r)
+  -> (forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r)
   -> TestTree
 propStarAutonomous _withTestOb2 withTestObDual = testProperty "*-autonomous" $ do
   -- TODO: more
   Some @a <- genOb @k
   withTestObDual @a $
-    withTestObDual @(Dual.Dual a) $
-      propIso' (Dual.doubleNegIso @a)
+    withTestObDual @(SA.Dual a) $
+      propIso' (SA.doubleNegIso @a)
 
 propStarAutonomous_
   :: forall k
-   . (Testable k, Dual.StarAutonomous k, TestOb (M.Unit @k), TestObIsOb k)
+   . (Testable k, SA.StarAutonomous k, TestOb (M.Unit @k), TestObIsOb k)
   => TestTree
 propStarAutonomous_ =
   propStarAutonomous
     (\ @a @b r -> M.withOb2 @k @a @b r)
-    (\ @a r -> r \\ Dual.dualObj @a)
+    (\ @a r -> r \\ SA.dualObj @a)
 
 testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
 testProfunctor = testProperty "Profunctor" (propProfunctor @p)

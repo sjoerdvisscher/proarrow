@@ -7,6 +7,7 @@ import Prelude (($))
 
 import Proarrow.Adjunction (AdjMonad, Adjunction)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), StrongMonoidalCorep, SymMonoidal (..))
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -20,8 +21,7 @@ import Proarrow.Core
   , (//)
   , type (+->)
   )
-import Proarrow.Object.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv, withObCorep)
 import Proarrow.Profunctor.Representable (CorepStar (..), Representable (..), repUniv, withObRep)

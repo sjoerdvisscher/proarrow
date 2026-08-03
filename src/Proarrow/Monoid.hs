@@ -9,9 +9,10 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), (**))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
+import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
-import Proarrow.Object.BinaryCoproduct
+import Proarrow.Colimit.BinaryCoproduct
   ( COPROD (..)
   , Coprod (..)
   , HasBinaryCoproducts (..)
@@ -19,11 +20,11 @@ import Proarrow.Object.BinaryCoproduct
   , HasCoproducts
   , codiag
   )
-import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
-import Proarrow.Object.Dual (CompactClosed (..), StarAutonomous (..))
-import Proarrow.Object.Exponential (Closed (..))
-import Proarrow.Object.Initial (HasInitialObject (..), HasZeroObject (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..), HasZeroObject (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
+import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
+import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Identity (Id (..))

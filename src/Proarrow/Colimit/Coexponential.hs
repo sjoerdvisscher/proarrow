@@ -1,11 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Object.Coexponential where
+module Proarrow.Colimit.Coexponential where
 
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (Monoidal (..))
+import Proarrow.Colimit.BinaryCoproduct (Cocartesian)
 import Proarrow.Core (CategoryOf (..))
-import Proarrow.Object.BinaryCoproduct (Cocartesian)
 
 class (Monoidal k) => Coclosed k where
   type (a :: k) <~~ (b :: k) :: k

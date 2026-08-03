@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Limit where
+module Proarrow.Limit where
 
 import Data.Function (($))
 import Data.Kind (Constraint, Type)
@@ -13,9 +13,9 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Object.BinaryProduct (HasBinaryProducts (..), fst, snd)
-import Proarrow.Object.Power (Powered (..))
-import Proarrow.Object.Terminal (HasTerminalObject (..), terminate)
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), fst, snd)
+import Proarrow.Limit.Power (Powered (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), corepUniv)
 import Proarrow.Profunctor.HaskValue (HaskValue (..))

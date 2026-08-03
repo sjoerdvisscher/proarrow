@@ -27,6 +27,14 @@ import Proarrow.Category.Monoidal.Action
   , strongPar0
   )
 import Proarrow.Category.Monoidal.Distributive qualified as Dist
+import Proarrow.Colimit.BinaryCoproduct
+  ( COPROD (..)
+  , Coprod (..)
+  , HasBinaryCoproducts (..)
+  , HasCoproducts
+  , nil
+  , (++)
+  )
 import Proarrow.Core
   ( Any
   , CategoryOf (..)
@@ -41,16 +49,8 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (FromProfunctor (..), Prelude (..))
+import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Object (src, tgt)
-import Proarrow.Object.BinaryCoproduct
-  ( COPROD (..)
-  , Coprod (..)
-  , HasBinaryCoproducts (..)
-  , HasCoproducts
-  , nil
-  , (++)
-  )
-import Proarrow.Object.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..), (:&&:))
 import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Identity (Id (..))
