@@ -23,8 +23,8 @@ import Proarrow.Core
   )
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Optic (Iso, iso)
-import Proarrow.Profunctor.Constant (review, view)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
+import Proarrow.Profunctor.Instance.Constant (review, view)
 import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), repUniv)
 
 infixl 8 **

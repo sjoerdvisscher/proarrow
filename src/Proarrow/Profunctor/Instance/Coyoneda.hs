@@ -1,13 +1,13 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.Coyoneda where
+module Proarrow.Profunctor.Instance.Coyoneda where
 
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CategoryOf (..), type (+->), Profunctor (..), Promonad (..), (:~>))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Free (HasFree (..))
-import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 
 type Coyoneda :: (j +-> k) -> j +-> k
 data Coyoneda p a b where

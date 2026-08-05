@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.HaskValue where
+module Proarrow.Profunctor.Instance.HaskValue where
 
 import Data.Kind (Type)
 import Prelude (Monoid (..), ($))
@@ -7,7 +7,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Category.Monoidal.Action (SelfAction, strongPar0)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Profunctor.Composition ((:.:) ((:.:)))
+import Proarrow.Profunctor.Instance.Composition ((:.:) ((:.:)))
 
 type HaskValue :: Type -> j +-> k
 data HaskValue c a b where

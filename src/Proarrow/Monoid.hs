@@ -9,6 +9,7 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), (**))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
@@ -23,11 +24,10 @@ import Proarrow.Colimit.BinaryCoproduct
 import Proarrow.Colimit.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Constant (Constant)
+import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 type Monoid :: forall {k}. k -> Constraint

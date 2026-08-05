@@ -5,10 +5,20 @@ import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
 import Proarrow.Category.Bicategory.Prof (LaxProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault, obj, type (+->))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Profunctor (..)
+  , Promonad (..)
+  , UN
+  , WrappedOb
+  , dimapDefault
+  , obj
+  , type (+->)
+  )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 
 newtype HK kk i j = HomK {unHomK :: kk i j}
 
@@ -53,5 +63,5 @@ instance (Bicategory kk) => LaxProfunctor kk kk (HK kk) where
   laxComp (Hom @a @b @s @t n :.: Hom @_ @c @s' @t' m) =
     let s = obj @s; t = obj @t; s' = obj @s'; t' = obj @t'
     in Hom (associatorInv @_ @a @s @s' == n || s' == associator @_ @t @b @s' == t || m == associatorInv @_ @t @t' @c)
-        \\\ (s || s')
-        \\\ (t || t')
+         \\\ (s || s')
+         \\\ (t || t')

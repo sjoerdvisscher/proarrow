@@ -11,8 +11,8 @@ import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasCoproducts
 import Proarrow.Core (CategoryOf (..), obj, (//))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Object (pattern Objs)
-import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
+import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 -- | Pushouts are an inherently dependently typed concept:
 -- The type of the apex object depends on the values of the given arrows.

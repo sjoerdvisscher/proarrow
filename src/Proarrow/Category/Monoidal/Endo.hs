@@ -8,8 +8,8 @@ import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtensio
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Colimit.Coexponential (Coclosed (..))
-import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Category.Monoidal.Coclosed (Coclosed (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 
 type data ENDO (kk :: CAT j) (k :: j) = E (kk k k)
 

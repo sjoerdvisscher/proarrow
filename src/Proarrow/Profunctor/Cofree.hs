@@ -9,7 +9,7 @@ import Prelude (Int, fst, snd)
 import Proarrow.Category.Instance.Sub (Forget, SUBCAT (..), Sub (..))
 import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
-import Proarrow.Profunctor.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
 
 type HasCofree :: forall {k}. OB k -> Constraint

@@ -1,10 +1,10 @@
-module Proarrow.Profunctor.Cocone where
+module Proarrow.Profunctor.Instance.Cocone where
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, rmap, type (+->))
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.List (LIST (..), List (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.List (LIST (..), List (..))
 
 -- | A cocone is a bunch of arrows with a shared target.
 data Cocone (bs :: LIST k) (a :: COPROD k) where

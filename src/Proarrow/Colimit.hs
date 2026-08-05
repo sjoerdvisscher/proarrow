@@ -16,12 +16,12 @@ import Proarrow.Colimit.Copower (Copowered (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..), initiate)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
-import Proarrow.Profunctor.HaskValue (HaskValue (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.HaskValue (HaskValue (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type Unweighted = TerminalProfunctor
 

@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.Arrow where
+module Proarrow.Profunctor.Instance.Arrow where
 
 import Control.Arrow
   ( Arrow (..)
@@ -23,7 +23,7 @@ import Proarrow.Colimit.BinaryCoproduct (COPROD, Coprod (..), (++))
 import Proarrow.Core (CAT, Profunctor (..), Promonad (..), rmap, type (+->))
 import Proarrow.Functor (FromProfunctor (..))
 import Proarrow.Limit.BinaryProduct ()
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 swap :: (b, a) -> (a, b)

@@ -8,10 +8,10 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, lmap, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Optic (Iso', iso)
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
-import Proarrow.Profunctor.Direpresentable (Direp)
-import Proarrow.Profunctor.Identity (Id)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Direp (Direp)
+import Proarrow.Profunctor.Instance.Identity (Id)
 import Proarrow.Profunctor.Representable (Rep (..))
 
 type data GRAPH (p :: k +-> j) = GR j k

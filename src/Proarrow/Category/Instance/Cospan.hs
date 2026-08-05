@@ -3,6 +3,7 @@ module Proarrow.Category.Instance.Cospan where
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
@@ -22,11 +23,10 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
+import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 newtype COSPAN k = CS k
 

@@ -13,7 +13,7 @@ import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), (&&&), type (*!))
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
 import Proarrow.Limit.Terminal (HasTerminalObject (..), TermF)
-import Proarrow.Profunctor.Initial (InitialProfunctor)
+import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 
 import Props
 import Testable

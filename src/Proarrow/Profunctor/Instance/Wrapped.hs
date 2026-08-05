@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.Wrapped where
+module Proarrow.Profunctor.Instance.Wrapped where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))

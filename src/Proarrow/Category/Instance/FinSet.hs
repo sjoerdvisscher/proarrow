@@ -25,6 +25,7 @@ import Prelude qualified as P
 import Data.Data (Proxy (..))
 import Data.IntMap qualified as IM
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
@@ -44,13 +45,12 @@ import Proarrow.Limit.BinaryProduct
   , swapProd
   )
 import Proarrow.Limit.Equalizer (HasEqualizers (equalize))
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Optic (Iso', iso)
-import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
+import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 type data FINSET = FS Nat
 

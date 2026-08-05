@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Profunctor.Costar where
+module Proarrow.Profunctor.Instance.Costar where
 
 import Control.Monad qualified as P
 import Data.Functor.Compose (Compose (..))
@@ -14,12 +14,12 @@ import Proarrow.Category.Monoidal (MonoidalProfunctor (..), withOb2)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), dimapCorep)
-import Proarrow.Profunctor.Product ((:*:) (..))
-import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Product ((:*:) (..))
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
 
 type Costar' :: OPPOSITE (j .-> k) -> k +-> j

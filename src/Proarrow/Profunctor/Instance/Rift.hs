@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.Rift where
+module Proarrow.Profunctor.Instance.Rift where
 
 import Prelude (type (~))
 
@@ -10,10 +10,10 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Colimit (HasColimits (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (Rep (..), RepCostar, Representable (..), repUniv, withObRep)
-import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..), RelativeComonad (..))
 
 -- Note: Ran and Rift are swapped compared to the profunctors package.

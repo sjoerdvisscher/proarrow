@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Profunctor.Star where
+module Proarrow.Profunctor.Instance.Star where
 
 import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
@@ -19,9 +19,9 @@ import Proarrow.Colimit.Initial (initiate)
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Coproduct ((:+:) (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type Star' :: j .-> k -> j +-> k

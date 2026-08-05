@@ -30,12 +30,12 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (Obj, obj, tgt)
-import Proarrow.Profunctor.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Product ((:*:) (..))
+import Proarrow.Profunctor.Instance.Coproduct (coproduct, (:+:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Product ((:*:) (..))
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 infixl 4 ||
 infixl 4 |||

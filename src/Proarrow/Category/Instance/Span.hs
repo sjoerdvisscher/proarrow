@@ -2,6 +2,7 @@ module Proarrow.Category.Instance.Span where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
@@ -20,12 +21,11 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
+import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 newtype SPAN k = SP k
 

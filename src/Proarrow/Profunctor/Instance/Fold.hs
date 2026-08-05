@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- from Data.Fold.M of the Folds package
-module Proarrow.Profunctor.Fold where
+module Proarrow.Profunctor.Instance.Fold where
 
 import Data.Kind (Type)
 import Prelude qualified as P
@@ -9,16 +9,16 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swapInner)
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
+import Proarrow.Category.Monoidal.Closed (BiCCC)
 import Proarrow.Category.Monoidal.Distributive (distLProd, distRProd)
+import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), CoprodAction, HasBinaryCoproducts (..), right)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (map)
-import Proarrow.Monoid (Monoid (..))
-import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), CoprodAction, HasBinaryCoproducts (..), right)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), ProdAction)
-import Proarrow.Limit.Exponential (BiCCC)
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Promonad (Procomonad (..))
 
 data Fold a b where

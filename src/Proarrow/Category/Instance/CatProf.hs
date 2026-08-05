@@ -17,6 +17,7 @@ import Proarrow.Category.Monoidal
   , swap
   )
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
@@ -47,13 +48,12 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Composition ((:.:))
-import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corep)
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:))
+import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep)
 
 newtype KIND = K Kind

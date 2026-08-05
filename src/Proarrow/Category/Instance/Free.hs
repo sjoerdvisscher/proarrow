@@ -20,7 +20,7 @@ import Proarrow.Core
   , dimapDefault
   , type (+->)
   )
-import Proarrow.Profunctor.Initial (InitialProfunctor)
+import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type family All (cs :: [Kind -> Constraint]) (k :: Kind) :: Constraint where

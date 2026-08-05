@@ -10,7 +10,7 @@ import Data.Vec.Lazy (Vec (..))
 import Proarrow.Category.Instance.Bool (BOOL)
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Core (CategoryOf (..))
-import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 -- | An internal category in a category @k@.
 class ik `InternalIn` k where

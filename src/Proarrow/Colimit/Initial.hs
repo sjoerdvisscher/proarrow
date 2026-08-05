@@ -14,8 +14,8 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Initial (InitialProfunctor)
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
+import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 
 class (CategoryOf k, Ob (InitialObject :: k)) => HasInitialObject k where
   type InitialObject :: k

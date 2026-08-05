@@ -12,10 +12,10 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), leftUnitorInvWith, rightUnitorInvWith)
+import Proarrow.Category.Monoidal.Closed (uncurry)
+import Proarrow.Category.Monoidal.Closed qualified as E
 import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor ((\\)), Promonad (..), type (+->))
 import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
-import Proarrow.Limit.Exponential (uncurry)
-import Proarrow.Limit.Exponential qualified as E
 import Proarrow.Profunctor qualified as P
 
 -- | Working with enriched categories and profunctors in Haskell is hard.

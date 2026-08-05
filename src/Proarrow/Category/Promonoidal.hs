@@ -21,8 +21,8 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.List (LIST (..), List (..), foldList)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.List (LIST (..), List (..), foldList)
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type PROTENSOR k = LIST k +-> k

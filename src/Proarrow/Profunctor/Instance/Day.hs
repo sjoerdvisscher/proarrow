@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.Day where
+module Proarrow.Profunctor.Instance.Day where
 
 import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Nat (Nat (..))
@@ -15,6 +15,7 @@ import Proarrow.Category.Monoidal
   , unitObj
   )
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), first', second')
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Core
@@ -31,10 +32,9 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Coproduct ((:+:) (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b

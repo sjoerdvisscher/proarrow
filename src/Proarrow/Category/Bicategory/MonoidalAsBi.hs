@@ -12,13 +12,13 @@ import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsO
 import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, parRep)
 import Proarrow.Category.Monoidal qualified as M
+import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.Coclosed (Coclosed (..), coeval, coevalUniv)
 import Proarrow.Category.Monoidal.CompactClosed qualified as M
 import Proarrow.Category.Monoidal.StarAutonomous qualified as M
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), UN, WrappedOb, obj, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid qualified as M
-import Proarrow.Colimit.Coexponential (Coclosed (..), coeval, coevalUniv)
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type MonK :: Kind -> CAT ()

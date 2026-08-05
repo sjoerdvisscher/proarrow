@@ -12,6 +12,7 @@ import Proarrow.Category.Enriched.Thin
 import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..))
 import Proarrow.Category.Instance.Coproduct qualified as C
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..), initiate')
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -27,9 +28,8 @@ import Proarrow.Core
   )
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate')
-import Proarrow.Colimit.Initial (HasInitialObject (..), initiate')
 import Proarrow.Optic (Iso', iso)
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 

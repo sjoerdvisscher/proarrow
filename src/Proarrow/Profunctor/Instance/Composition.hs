@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.Composition where
+module Proarrow.Profunctor.Instance.Composition where
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))

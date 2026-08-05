@@ -1,11 +1,11 @@
-module Proarrow.Profunctor.Initial where
+module Proarrow.Profunctor.Instance.Initial where
 
-import Prelude (Show, Eq)
+import Prelude (Eq, Show)
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
-import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..), Thin)
+import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Zero (Bottom (..))
+import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
 
 type InitialProfunctor :: j +-> k
 data InitialProfunctor a b

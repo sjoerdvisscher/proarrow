@@ -19,9 +19,9 @@ module Proarrow.Promonad
 import Data.Kind (Constraint)
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), src, (:~>), type (+->), type (~>))
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type Procomonad :: k +-> k -> Constraint

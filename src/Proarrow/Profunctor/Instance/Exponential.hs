@@ -1,14 +1,14 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.Exponential where
+module Proarrow.Profunctor.Instance.Exponential where
 
 import Proarrow.Category.Enriched.Thin (Discrete, ThinProfunctor (..), withEq)
 import Proarrow.Category.Instance.Constraint (reifyExp, (:=>) (..), type (:-) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, (//), type (+->))
 import Proarrow.Limit.BinaryProduct (PROD (..), Prod (..))
-import Proarrow.Limit.Exponential (Closed (..))
-import Proarrow.Profunctor.Product ((:*:) (..))
+import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 
 data (p :~>: q) a b where
   Exp :: (Ob a, Ob b) => (forall c d. c ~> a -> b ~> d -> p c d -> q c d) -> (p :~>: q) a b

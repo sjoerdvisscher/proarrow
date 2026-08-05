@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.Fix where
+module Proarrow.Profunctor.Instance.Fix where
 
 import Data.Functor.Const (Const (..))
 
@@ -9,8 +9,8 @@ import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
 import Proarrow.Core (Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 
 type Fix :: k +-> k -> k +-> k
 data Fix p a b where

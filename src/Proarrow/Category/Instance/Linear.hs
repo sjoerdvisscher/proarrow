@@ -17,6 +17,7 @@ import Prelude (Bool (..), Either (..), Eq (..), Show (..), error, showParen, sh
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), Strong (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..))
@@ -25,13 +26,12 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 newtype LINEAR = L Type

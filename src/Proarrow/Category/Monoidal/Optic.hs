@@ -52,10 +52,10 @@ import Proarrow.Functor (FromProfunctor (..), Prelude (..))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD, Prod (..))
 import Proarrow.Object (src, tgt)
 import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..), (:&&:))
-import Proarrow.Profunctor.Constant (Constant)
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), withObRep)
-import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
 
 type WeightedOptic :: m +-> m' -> c -> d -> c -> d -> Type
 data WeightedOptic w a b s t where

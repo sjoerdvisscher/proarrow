@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.List where
+module Proarrow.Profunctor.Instance.List where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -12,7 +12,7 @@ import Proarrow.Category.Monoidal.Strictified qualified as Str
 import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Functor (..))
 
--- import Proarrow.Profunctor.Identity (Id (..))
+-- import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 type data LIST k = L [k]

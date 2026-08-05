@@ -7,9 +7,9 @@ module Proarrow.Category.Monoidal.StarAutonomous where
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap)
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Optic (Iso, iso)
 
 class (Ob (Dual a)) => ObDual a

@@ -33,12 +33,12 @@ import Proarrow.Core
 import Proarrow.Functor (FunctorForRep (..), Presheaf)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv)
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 type data FAM (k :: Kind) = forall (x :: Kind). DEP_ (x +-> k)
 

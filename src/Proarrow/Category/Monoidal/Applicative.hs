@@ -10,14 +10,14 @@ import Data.List.NonEmpty qualified as P
 import Prelude qualified as P
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), first, leftUnitorInvWith)
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, DistributiveProfunctor)
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), nil, unCoprod, (++))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
-import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
 class (Monoidal j, Monoidal k, Functor f) => Applicative (f :: j -> k) where

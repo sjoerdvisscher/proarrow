@@ -12,7 +12,7 @@ import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Bicategory.ThinCategoryAsBi (THINK (..))
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
 data DISPLAY (f :: THINK k :-> PROFK) = forall (i :: k). D_ (Proxy i) (Map0 f i)
 

@@ -1,7 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.PastroTambara where
+module Proarrow.Profunctor.Instance.PastroTambara where
 
 import Prelude (($))
 
@@ -10,14 +10,27 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..), composeActs, decomposeActs)
 import Proarrow.Category.Monoidal.Optic (WeightedOptic (..))
-import Proarrow.Core (CategoryOf (..), Kind, OB, Profunctor (..), Promonad (..), obj, src, tgt, (//), (:~>), type (+->), Hom)
+import Proarrow.Core
+  ( CategoryOf (..)
+  , Hom
+  , Kind
+  , OB
+  , Profunctor (..)
+  , Promonad (..)
+  , obj
+  , src
+  , tgt
+  , (//)
+  , (:~>)
+  , type (+->)
+  )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..), cofreeComp)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Free (HasFree (..), freeComp)
-import Proarrow.Profunctor.Star (Star, pattern Star)
-import Proarrow.Profunctor.Yoneda (Yo (..))
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
+import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
 type Pastro :: Kind -> j +-> k -> j +-> k
 data Pastro m p a b where

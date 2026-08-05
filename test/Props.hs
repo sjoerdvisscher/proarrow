@@ -17,10 +17,10 @@ import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
-import Proarrow.Limit.Exponential qualified as Exponential
+import Proarrow.Category.Monoidal.Closed qualified as Exponential
 import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Optic (Iso)
-import Proarrow.Profunctor.Constant (review, view)
+import Proarrow.Profunctor.Instance.Constant (review, view)
 import Proarrow.Profunctor.Representable (Rep)
 import Testable
   ( Some (..)

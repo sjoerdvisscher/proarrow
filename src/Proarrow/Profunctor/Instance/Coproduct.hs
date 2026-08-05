@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.Coproduct where
+module Proarrow.Profunctor.Instance.Coproduct where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))

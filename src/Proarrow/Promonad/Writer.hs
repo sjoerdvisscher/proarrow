@@ -23,11 +23,11 @@ import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), do
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Composition (compComp, (:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Day (Day (..))
+import Proarrow.Profunctor.Instance.Composition (compComp, (:.:) (..))
+import Proarrow.Profunctor.Instance.Day (Day (..))
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
-import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..))
 
 data Writer w a b where

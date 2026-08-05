@@ -8,7 +8,7 @@ import Proarrow.Colimit.Initial (HasZeroObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts)
 import Proarrow.Object (pattern Objs)
-import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 -- | Equalizers are an inherently dependently typed concept:
 -- The type of the base object depends on the values of the given arrows.

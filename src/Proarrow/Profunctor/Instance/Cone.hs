@@ -1,9 +1,9 @@
-module Proarrow.Profunctor.Cone where
+module Proarrow.Profunctor.Instance.Cone where
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Prod (..))
-import Proarrow.Profunctor.List (LIST (..), List (..))
+import Proarrow.Profunctor.Instance.List (LIST (..), List (..))
 
 -- | A cone is a bunch of arrows with a shared source.
 data Cone (a :: PROD k) (bs :: LIST k) where

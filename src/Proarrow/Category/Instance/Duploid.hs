@@ -22,8 +22,8 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv, withObCorep)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Representable (..), repUniv, withObRep)
 
 type DUPLOID :: forall {n} {p}. n +-> p -> Kind

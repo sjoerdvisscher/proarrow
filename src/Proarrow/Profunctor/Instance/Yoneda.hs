@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Profunctor.Yoneda where
+module Proarrow.Profunctor.Instance.Yoneda where
 
 import Data.Function (($))
 
@@ -10,8 +10,8 @@ import Proarrow.Category.Instance.Prof (Prof (Prof))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..))
-import Proarrow.Profunctor.Costar (Costar, pattern Costar)
-import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 
 type Yoneda :: (j +-> k) -> j +-> k
 data Yoneda p a b where

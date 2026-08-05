@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.Identity where
+module Proarrow.Profunctor.Instance.Identity where
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))

@@ -21,8 +21,6 @@ import Proarrow.Limit (HasLimits (..), mapLimit)
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Optic (Iso, iso, re)
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Constant (review, view)
 import Proarrow.Profunctor.Corepresentable
   ( Corep
   , Corepresentable (..)
@@ -30,8 +28,11 @@ import Proarrow.Profunctor.Corepresentable
   , corepUniv
   , cotabulated
   )
-import Proarrow.Profunctor.Costar (Costar, pattern Costar)
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Constant (review, view)
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable
   ( CorepStar (..)
   , Rep
@@ -42,7 +43,6 @@ import Proarrow.Profunctor.Representable
   , repUniv
   , tabulated
   )
-import Proarrow.Profunctor.Star (Star, pattern Star)
 import Proarrow.Promonad (Procomonad (..), bind, extend, extract, return)
 
 -- | Adjunctions as heteromorphisms.

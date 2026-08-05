@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Colimit.Coexponential where
+module Proarrow.Category.Monoidal.Coclosed where
 
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (Monoidal (..))

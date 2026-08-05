@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Limit.Exponential where
+module Proarrow.Category.Monoidal.Closed where
 
 import Data.Kind (Type)
 import Prelude (($))
@@ -22,9 +22,9 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), concatMany, obj1, singleton, splitMany, (==))
+import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
 import Proarrow.Limit.BinaryProduct (Cartesian, diag)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Rep (..))

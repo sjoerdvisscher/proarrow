@@ -23,7 +23,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Props (propCategory, propProfunctor, propTerminalObject)
 import Testable
   ( GenTotal (..)

@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.Terminal (TerminalProfunctor (.., TerminalProfunctor)) where
+module Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (.., TerminalProfunctor)) where
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))

@@ -25,9 +25,9 @@ import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), (:~>), (\\), type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Costar (Costar, pattern Costar)
-import Proarrow.Profunctor.Star (Star, pattern Star)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 
 -- | The kind of a square @'(q, f) '(p, g)@.
 --

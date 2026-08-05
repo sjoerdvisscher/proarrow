@@ -13,8 +13,8 @@ import Prelude hiding (id, (.))
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
-import Proarrow.Profunctor.Costar (Costar, unCostar, pattern Costar)
-import Proarrow.Profunctor.Star (Star, unStar, pattern Star)
+import Proarrow.Profunctor.Instance.Costar (Costar, unCostar, pattern Costar)
+import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Promonad.Cont (Cont (..))
 
 import Props

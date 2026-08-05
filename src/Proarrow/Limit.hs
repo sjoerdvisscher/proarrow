@@ -16,12 +16,12 @@ import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate)
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), corepUniv)
-import Proarrow.Profunctor.HaskValue (HaskValue (..))
-import Proarrow.Profunctor.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.HaskValue (HaskValue (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv, withObRep)
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (Representable (Limit j d)) => IsRepresentableLimit j d
 instance (Representable (Limit j d)) => IsRepresentableLimit j d

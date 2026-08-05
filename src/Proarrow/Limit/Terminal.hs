@@ -11,8 +11,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
-import Proarrow.Profunctor.Terminal (TerminalProfunctor (..))
 
 class (CategoryOf k, Ob (TerminalObject :: k)) => HasTerminalObject k where
   type TerminalObject :: k

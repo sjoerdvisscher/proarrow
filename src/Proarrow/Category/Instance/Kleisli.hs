@@ -38,7 +38,7 @@ import Proarrow.Core
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (tgt, pattern Obj, type Obj)
-import Proarrow.Profunctor.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
 
 newtype KLEISLI (p :: CAT k) = KL k

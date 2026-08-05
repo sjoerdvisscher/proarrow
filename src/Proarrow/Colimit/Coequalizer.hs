@@ -12,8 +12,8 @@ import Proarrow.Colimit.Initial (HasZeroObject (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Object (pattern Objs)
-import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
+import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 -- | Coequalizers are an inherently dependently typed concept:
 -- The type of the apex object depends on the values of the given arrows.

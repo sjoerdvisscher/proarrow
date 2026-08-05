@@ -45,13 +45,13 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Limit qualified as L
-import Proarrow.Profunctor.Composition ((:.:) (..))
-import Proarrow.Profunctor.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.Identity (Id (..))
-import Proarrow.Profunctor.Ran qualified as R
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Ran qualified as R
+import Proarrow.Profunctor.Instance.Rift qualified as R
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..))
-import Proarrow.Profunctor.Rift qualified as R
 import Proarrow.Promonad (Procomonad (..))
 
 type data PROFK j k = PK (j +-> k)

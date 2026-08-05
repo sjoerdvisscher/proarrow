@@ -22,13 +22,13 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
+import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Object (Obj, obj)
-import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
+import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
-import Proarrow.Profunctor.Product (prod, (:*:) (..))
+import Proarrow.Profunctor.Instance.Product (prod, (:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 infixl 5 &&

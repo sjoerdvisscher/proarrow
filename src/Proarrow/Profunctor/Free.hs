@@ -39,11 +39,11 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Monoid (..))
-import Proarrow.Profunctor.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
-import Proarrow.Profunctor.List (LIST (..), List (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.List (LIST (..), List (..))
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (Rep (..))
-import Proarrow.Profunctor.Star (Star, pattern Star)
 
 type HasFree :: forall {k}. OB k -> Constraint
 class (CategoryOf k, forall a. (Ob a) => ob (Free ob a)) => HasFree (ob :: OB k) where

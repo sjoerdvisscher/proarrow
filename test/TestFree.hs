@@ -11,7 +11,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), (**))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, (&&&), type (*!))
-import Proarrow.Limit.Exponential (Closed (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
 import Unsafe.Coerce (unsafeCoerce)
 

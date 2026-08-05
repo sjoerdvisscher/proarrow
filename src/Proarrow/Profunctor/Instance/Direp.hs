@@ -1,4 +1,4 @@
-module Proarrow.Profunctor.Direpresentable where
+module Proarrow.Profunctor.Instance.Direp where
 
 import Prelude (($))
 
