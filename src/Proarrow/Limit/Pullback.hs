@@ -1,5 +1,3 @@
-{-# LANGUAGE AllowAmbiguousTypes #-}
-
 module Proarrow.Limit.Pullback where
 
 import Prelude (($))
@@ -7,13 +5,12 @@ import Prelude (($))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CategoryOf (..), obj, (//))
-import Proarrow.Object (pattern Objs)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts)
-import Proarrow.Colimit.Initial (HasZeroObject (..))
+import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
 
 -- | Pullbacks are an inherently dependently typed concept:
--- The type of the apex object depends on the values of the given arrows.
+-- The type of the base object depends on the values of the given arrows.
 -- But at runtime we can still calculate the arrows and the type, which we hide behind an existential.
 class (CategoryOf k) => HasPullbacks k where
   pullback :: forall (o :: k) a b. a ~> o -> b ~> o -> Cosink [a, b]
@@ -33,14 +30,3 @@ thinPullback l r = l // r // withObProd @k @a @b $ Cone $ Leg (fst @k @a @b) $ L
 equalizerDefault :: forall {k} (a :: k) b. (HasPullbacks k, HasProducts k) => a ~> b -> a ~> b -> Cosink '[a]
 equalizerDefault f@Objs g = case pullback (obj @a &&& f) (obj @a &&& g) of
   Cone (Leg _ cone) -> Cone cone
-
-kernelDefault :: (HasPullbacks k, HasProducts k, HasZeroObject k) => (a :: k) ~> b -> Cosink '[a]
-kernelDefault f@Objs = equalizerDefault zero f
-
-class ik `InternalIn` k where
-  type C0 ik :: k
-  type C1 ik :: k
-  source :: C1 ik ~> (C0 ik :: k)
-  target :: C1 ik ~> (C0 ik :: k)
-  identity :: C0 ik ~> (C1 ik :: k)
-  compose :: Cosink [C1 ik, C1 ik, C1 ik :: k] -- first arrow projection, second arrow projection, composite

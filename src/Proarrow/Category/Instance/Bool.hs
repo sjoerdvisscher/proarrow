@@ -9,6 +9,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.NaturalNumbers (HasParamNNO (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..), thinPushout)
@@ -23,6 +24,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
+import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Exponential (Closed (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
@@ -111,6 +113,12 @@ instance HasBinaryProducts BOOL where
   Fls &&& _ = Fls
   F2T &&& b = b
   Tru &&& Tru = Tru
+
+instance HasEqualizers BOOL where
+  equalize = thinEqualize
+
+instance HasCoequalizers BOOL where
+  coequalize = thinCoequalize
 
 instance HasPullbacks BOOL where
   pullback = thinPullback

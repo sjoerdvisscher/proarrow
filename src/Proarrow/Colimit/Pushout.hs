@@ -8,7 +8,6 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE, Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasCoproducts)
-import Proarrow.Colimit.Initial (HasZeroObject (..))
 import Proarrow.Core (CategoryOf (..), obj, (//))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Object (pattern Objs)
@@ -33,12 +32,9 @@ instance (HasPushouts k1, HasPushouts k2) => HasPushouts (k1, k2) where
 thinPushout :: forall {k} (o :: k) a b. (HasCoproducts k) => o ~> a -> o ~> b -> Sink [a, b]
 thinPushout l r = l // r // withObCoprod @k @a @b $ Cocone $ Coleg (lft @k @a @b) $ Coleg (rgt @k @a @b) Coapex
 
-coequalizer :: forall {k} (a :: k) b. (HasPushouts k, HasCoproducts k) => a ~> b -> a ~> b -> Sink '[b]
-coequalizer f@Objs g = case pushout (obj @b ||| f) (obj @b ||| g) of
+coequalizerDefault :: forall {k} (a :: k) b. (HasPushouts k, HasCoproducts k) => a ~> b -> a ~> b -> Sink '[b]
+coequalizerDefault f@Objs g = case pushout (obj @b ||| f) (obj @b ||| g) of
   Cocone (Coleg _ cocone) -> Cocone cocone
-
-cokernel :: (HasPushouts k, HasZeroObject k, HasCoproducts k) => (a :: k) ~> b -> Sink '[b]
-cokernel f@Objs = coequalizer zero f
 
 instance (HasPullbacks k) => HasPushouts (OPPOSITE k) where
   pushout (Op l) (Op r) = case pullback l r of Cone (Leg f (Leg g Apex)) -> Cocone (Coleg (Op f) (Coleg (Op g) Coapex))

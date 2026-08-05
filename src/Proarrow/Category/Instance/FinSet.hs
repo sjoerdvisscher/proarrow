@@ -2,9 +2,9 @@
 
 module Proarrow.Category.Instance.FinSet where
 
-import Data.Fin (Fin (..), fin0, fin1, fin2, split, weakenLeft, weakenRight)
+import Data.Fin (Fin (..), fin0, split, weakenLeft, weakenRight)
 import Data.Maybe (fromMaybe)
-import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Nat2, Nat3, Plus, SNat (..), SNatI, snat, snatToNatural)
+import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Plus, SNat (..), SNatI, snat, snatToNatural)
 import Data.Vec.Lazy
   ( Vec (..)
   , chunks
@@ -19,19 +19,19 @@ import Data.Vec.Lazy
   , (!)
   , (++)
   )
-import Prelude (Either (..), Num (..), fromIntegral, ($))
+import Prelude (Num (..), fromIntegral, ($))
 import Prelude qualified as P
 
 import Data.Data (Proxy (..))
 import Data.IntMap qualified as IM
-import Proarrow.Category.Instance.Bool (BOOL)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
+import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -43,10 +43,11 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
+import Proarrow.Limit.Equalizer (HasEqualizers (equalize))
 import Proarrow.Limit.Exponential (Closed (..))
-import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Limit.Pullback (HasPullbacks (..), InternalIn (..))
-import Proarrow.Colimit.Pushout (HasPushouts (..))
+import Proarrow.Limit.Pullback (HasPullbacks (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Optic (Iso', iso)
 import Proarrow.Profunctor.Cocone (Cocone (..), Sink (..))
 import Proarrow.Profunctor.Cone (Cone (..), Cosink (..))
@@ -195,6 +196,18 @@ findArr = go (repeat P.Nothing)
       P.Just f | f P./= f2 -> P.Nothing
       _ -> go (tabulate (\i -> if i P.== f1 then P.Just f2 else v ! i)) ps
 
+-- >>> import Data.Fin
+-- >>> import Data.Type.Nat
+-- >>> import Data.Vec.Lazy
+-- >>> let f :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin1 ::: fin0 ::: VNil
+-- >>> let g :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: fin0 ::: VNil
+-- >>> (case equalize f g of Cone (Leg (FinSet f) Apex) -> P.show f) :: P.String
+-- "2 ::: 3 ::: VNil"
+instance HasEqualizers FINSET where
+  equalize (FinSet f) (FinSet g) =
+    let groups = [x | x <- toList universe, f ! x P.== g ! x]
+    in reifyList groups \vec -> Cone $ Leg (FinSet vec) Apex
+
 -- Exercise 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
 -- >>> import Data.Fin
 -- >>> import Data.Type.Nat
@@ -208,64 +221,31 @@ instance HasPullbacks FINSET where
     let groups = [(x, y) | x <- toList universe, y <- toList universe, f ! x P.== g ! y]
     in reifyList groups \vec -> Cone $ Leg (FinSet $ P.fmap fst vec) $ Leg (FinSet $ P.fmap snd vec) Apex
 
--- >>> import Data.Fin
--- >>> import Data.Type.Nat
--- >>> import Data.Vec.Lazy
--- >>> import Proarrow.Limit.Pullback (equalizer)
--- >>> let f :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin1 ::: fin0 ::: VNil
--- >>> let g :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: fin0 ::: VNil
--- >>> (case equalizer f g of Cone (Leg (FinSet f) Apex) -> P.show f) :: P.String
--- "2 ::: 3 ::: VNil"
+instance HasCoequalizers FINSET where
+  coequalize (FinSet @_ @a f) (FinSet g) =
+    let
+      size = fromIntegral (snatToNatural (snat @a))
+      find m i = P.maybe i (find m) $ IM.lookup i m
+      union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else IM.insert ri rj m
+      unionFind = P.foldl union IM.empty (zipWith (\u v -> (fromIntegral u, fromIntegral v)) f g)
+      groups = IM.elems $ P.foldl @[] (\m x -> IM.insertWith (P.++) (find unionFind x) [x] m) IM.empty [0 .. size - 1]
+    in
+      reifyList groups \vec ->
+        Cocone $ Coleg (FinSet (tabulate (\a -> findIndex (P.elem (fromIntegral a)) vec))) Coapex
 
 -- Exercise 6.22 of Seven Sketches
 -- >>> import Data.Fin
 -- >>> import Data.Type.Nat
+-- >>> import Data.Type.Nat
 -- >>> let l :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin0 ::: fin1 ::: fin2 ::: VNil
 -- >>> let r :: FinSet (FS Nat4) (FS Nat5) = FinSet $ fin0 ::: fin2 ::: fin4 ::: fin4 ::: VNil
--- >>> (case pushout l r of Cospan (FinSet l) (FinSet r) -> (P.show l, P.show r)) :: (P.String, P.String)
+-- >>> (case pushout l r of Cocone (Coleg (FinSet l) (Coleg (FinSet r) Coapex)) -> (P.show l, P.show r)) :: (P.String, P.String)
 -- ("1 ::: 3 ::: 3 ::: VNil","1 ::: 0 ::: 1 ::: 2 ::: 3 ::: VNil")
 instance HasPushouts FINSET where
-  pushout (FinSet @_ @a f) (FinSet @_ @b g) =
-    let
-      sizeA = fromIntegral (snatToNatural (snat @a))
-      sizeB = fromIntegral (snatToNatural (snat @b))
-      toI (Left a) = fromIntegral a
-      toI (Right b) = sizeA + fromIntegral b
-      find m i = P.maybe i (find m) $ IM.lookup i m
-      union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else IM.insert ri rj m
-      unionFind = P.foldl union IM.empty (zipWith (\u v -> (toI (Left u), toI (Right v))) f g)
-      groups = IM.elems $ P.foldl @[] (\m x -> IM.insertWith (P.++) (find unionFind x) [x] m) IM.empty [0 .. sizeA + sizeB - 1]
-    in
-      reifyList groups \vec ->
-        let mapA = tabulate @a (\a -> findIndex (P.elem (toI $ Left a)) vec)
-            mapB = tabulate @b (\b -> findIndex (P.elem (toI $ Right b)) vec)
-        in Cocone $ Coleg (FinSet mapA) $ Coleg (FinSet mapB) Coapex
+  pushout = pushoutDefault
 
 findIndex :: (a -> P.Bool) -> Vec n a -> Fin n
 findIndex _ VNil = P.error "unexpected missing element"
 findIndex f (a ::: as)
   | f a = FZ
   | P.otherwise = FS $ findIndex f as
-
--- >>> import Data.Fin
--- >>> import Data.Type.Nat
--- >>> import Data.Vec.Lazy
--- >>> (case pullback (source @BOOL @FINSET) (target @BOOL @FINSET) of Cone (Leg (FinSet l) (Leg (FinSet r) Apex)) -> P.show (l, r)) :: P.String
--- "(0 ::: 1 ::: 2 ::: 2 ::: VNil,0 ::: 0 ::: 1 ::: 2 ::: VNil)"
-instance BOOL `InternalIn` FINSET where
-  type C0 BOOL = FS Nat2 -- Fin0 = FLS, Fin1 = TRU
-  type C1 BOOL = FS Nat3 -- Fin0 = Fls, Fin1 = F2T, Fin2 = Tru
-  source = FinSet $ fin0 ::: fin0 ::: fin1 ::: VNil
-  target = FinSet $ fin0 ::: fin1 ::: fin1 ::: VNil
-  identity = FinSet $ fin0 ::: fin2 ::: VNil
-
-  -- 4 different ways to compose, read vertically.
-  compose =
-    Cone $
-      Leg (FinSet $ fin0 ::: fin1 ::: fin2 ::: fin2 ::: VNil) $
-        Leg (FinSet $ fin0 ::: fin0 ::: fin1 ::: fin2 ::: VNil) $
-          Leg
-            (FinSet $ fin0 ::: fin1 ::: fin1 ::: fin2 ::: VNil)
-            Apex
-
-type Finite k = k `InternalIn` FINSET
