@@ -6,7 +6,7 @@ module Proarrow.Category.Monoidal.Strictified where
 import Data.Kind (Constraint)
 import Prelude (($), type (~))
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly, SymMonoidal (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), dimapDefault, obj)
 
 infixl 7 ==
@@ -23,11 +23,8 @@ data SList as where
   SSing :: (Ob a) => SList '[a]
   SCons :: (Ob a, Ob as, Ob bs, as ~ b ': bs) => SList (a ': as)
 
-class ((as ++ bs) ++ cs ~ as ++ (bs ++ cs)) => Assoc as bs cs
-instance (as ++ (bs ++ cs) ~ (as ++ bs) ++ cs) => Assoc as bs cs
-
 type IsList :: forall {k}. [k] -> Constraint
-class (CategoryOf k, as ~ as ++ '[], Obs as, forall bs cs. Assoc as bs cs) => IsList (as :: [k]) where
+class (CategoryOf k, Obs as, Strictly as) => IsList (as :: [k]) where
   listCase
     :: ((as ~ '[]) => r)
     -> (forall a. (Ob a, as ~ '[a]) => r)

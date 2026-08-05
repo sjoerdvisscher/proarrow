@@ -3,7 +3,7 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
-import Prelude (($))
+import Prelude (($), type (~))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
@@ -24,7 +24,6 @@ import Proarrow.Core
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
-import Proarrow.Profunctor.Instance.Constant (review, view)
 import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), repUniv)
 
 infixl 8 **
@@ -80,13 +79,10 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Mono
   withOb2 :: (Ob (a :: k), Ob b) => ((Ob (a ** b)) => r) -> r
   leftUnitor :: (Ob (a :: k)) => Unit ** a ~> a
   leftUnitorInv :: (Ob (a :: k)) => a ~> Unit ** a
-  leftUnitorInv = review leftUnitorIso
   rightUnitor :: (Ob (a :: k)) => a ** Unit ~> a
   rightUnitorInv :: (Ob (a :: k)) => a ~> a ** Unit
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
-  associator @a @b @c = view (associatorIso @k @a @b @c @a @b @c)
   associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
-  associatorInv @a @b @c = review (associatorIso @k @a @b @c @a @b @c)
 
 leftUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => Iso (Unit ** a) (Unit ** a') a a'
 leftUnitorIso = iso leftUnitor leftUnitorInv
@@ -98,6 +94,28 @@ associatorIso
   :: (Monoidal k, Ob (a :: k), Ob b, Ob c, Ob (a' :: k), Ob b', Ob c')
   => Iso ((a ** b) ** c) ((a' ** b') ** c') (a ** (b ** c)) (a' ** (b' ** c'))
 associatorIso @k @a @b @c @a' @b' @c' = iso (associator @k @a @b @c) (associatorInv @k @a' @b' @c')
+
+class (((a ** b) ** c) ~ (a ** (b ** c))) => StrictlyAssoc a b c
+instance (((a ** b) ** c) ~ (a ** (b ** c))) => StrictlyAssoc a b c
+
+-- | If your monoidal category is a strict monoidal category, add 'Strictly' to your 'Ob' constraint.
+-- This will let GHC know that the unitors and associators are strict, so you won't have to provide proof of that.
+-- You can use 'associatorDefault' as implementation for both 'associator' and 'associatorInv':
+--
+-- @
+-- leftUnitor = id
+-- leftUnitorInv = id
+-- rightUnitor = id
+-- rightUnitorInv = id
+-- associator \@a \@b \@c = associatorDefault \@a \@b \@c
+-- associatorInv \@a \@b \@c = associatorDefault \@a \@b \@c
+-- @
+type Strictly :: forall {k}. k -> Constraint
+class (a ** Unit ~ a, Unit ** a ~ a, forall b c. (Ob b, Ob c) => StrictlyAssoc a b c) => Strictly (a :: k) where
+  associatorDefault :: forall b c. (Monoidal k, Ob a, Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
+
+instance (a ** Unit ~ a, Unit ** a ~ a, forall b c. (Ob b, Ob c) => StrictlyAssoc a b c) => Strictly (a :: k) where
+  associatorDefault @b @c = withOb2 @_ @b @c (withOb2 @_ @a @(b ** c) id)
 
 instance Monoidal () where
   type Unit = '()

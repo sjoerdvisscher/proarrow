@@ -5,7 +5,7 @@ module Proarrow.Profunctor.Instance.List where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly (..))
 
 -- import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.Strictified qualified as Str
@@ -75,8 +75,8 @@ instance (CategoryOf k) => Monoidal (LIST k) where
   leftUnitorInv = id
   rightUnitor = id
   rightUnitorInv = id
-  associator @as @bs @cs = withOb2 @_ @as @bs (withOb2 @_ @(as ** bs) @cs (id @(List (~>))))
-  associatorInv @as @bs @cs = withOb2 @_ @bs @cs (withOb2 @_ @as @(bs ** cs) (id @(List (~>))))
+  associator @as @bs @cs = associatorDefault @as @bs @cs
+  associatorInv @as @bs @cs = associatorDefault @as @bs @cs
 
 instance (Representable p) => Representable (List p) where
   type List p % L '[] = L '[]

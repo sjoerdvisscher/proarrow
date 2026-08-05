@@ -34,7 +34,7 @@ import Prelude
   , (++)
   )
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
@@ -177,8 +177,8 @@ instance Monoidal DOT where
   leftUnitorInv = id
   rightUnitor = id
   rightUnitorInv = id
-  associator @as @bs @cs = obj @as ** obj @bs ** obj @cs
-  associatorInv @as @bs @cs = obj @as ** obj @bs ** obj @cs
+  associator @as @bs @cs = associatorDefault @as @bs @cs
+  associatorInv @as @bs @cs = associatorDefault @as @bs @cs
 instance SymMonoidal DOT where
   swap @(D as) @(D bs) =
     withIsList2 @as @bs $

@@ -11,7 +11,7 @@ import Prelude (Eq, Show (..), (++), type (~))
 
 import Data.Typeable (Typeable)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, src, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
@@ -27,10 +27,10 @@ instance Show (SNat n) where
   show SZ = "Z"
   show (SS @n') = "S" ++ show (singNat @n')
 
-class (a + Z ~ a, a + S b ~ S (a + b), (a + b) + c ~ a + (b + c)) => Rules a b c
-instance (a + Z ~ a, a + S b ~ S (a + b), (a + b) + c ~ a + (b + c)) => Rules a b c
+class (a + S b ~ S (a + b), Strictly a) => Rules a b
+instance (a + S b ~ S (a + b), Strictly a) => Rules a b
 
-class (forall b c. Rules a b c, SNatI a, Typeable a) => IsNat (a :: Nat) where singNat :: SNat a
+class (forall b. Rules a b, SNatI a, Typeable a) => IsNat (a :: Nat) where singNat :: SNat a
 instance IsNat Z where singNat = SZ
 instance (IsNat a) => IsNat (S a) where singNat = SS
 
