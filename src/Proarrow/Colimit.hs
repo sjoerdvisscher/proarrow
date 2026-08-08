@@ -15,13 +15,15 @@ import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), lft, rgt)
 import Proarrow.Colimit.Copower (Copowered (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..), initiate)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
-import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
-import Proarrow.Profunctor.Representable
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 
 type Unweighted = TerminalProfunctor
 
@@ -40,12 +42,8 @@ mapColimit
    . (HasColimits j k, Corepresentable p, Corepresentable q) => (p :: k +-> i) ~> q -> Colimit j p ~> Colimit j q
 mapColimit (Prof n) = Prof (colimitUniv @j (n . colimit @j))
 
-data family InitialLimit :: k +-> VOID -> () +-> k
-instance (HasInitialObject k) => FunctorForRep (InitialLimit (d :: k +-> VOID)) where
-  type InitialLimit d @ '() = InitialObject
-  fmap Unit = id
 instance (HasInitialObject k) => HasColimits (Unweighted :: () +-> VOID) k where
-  type Colimit Unweighted d = Corep (InitialLimit d)
+  type Colimit Unweighted d = Corep (Constant InitialObject)
   colimit = \case {}
   colimitUniv _ p = p // Corep initiate
 
@@ -116,3 +114,15 @@ instance (FunctorForRep f) => HasColimits (Rep f) k where
   type Colimit (Rep f) d = Corep f :.: d
   colimit (Rep f :.: (Corep g :.: d)) = lmap (g . f) d
   colimitUniv n p = p // corepUniv :.: n (repUniv :.: p)
+
+newtype AnyColimit j a b = AnyColimit (j a b)
+  deriving newtype (Profunctor)
+type Lan :: (a +-> i) -> (Type +-> i) -> a -> Type
+data Lan j d a where
+  Lan :: j b a -> d %% b -> Lan j d a
+instance (Profunctor j, Corepresentable d) => Functor (Lan j d) where
+  map f (Lan j d) = Lan (rmap f j) d
+instance (Profunctor j) => HasColimits (AnyColimit j) Type where
+  type Colimit (AnyColimit j) d = Costar (Lan j d)
+  colimit (AnyColimit j :.: Costar f) = cotabulate (\db -> f (Lan j db)) \\ j
+  colimitUniv n p = p // Costar (\(Lan j db) -> coindex (n (AnyColimit j :.: p)) db)

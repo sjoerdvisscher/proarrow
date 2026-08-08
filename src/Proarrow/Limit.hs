@@ -12,14 +12,16 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Instance.Zero (VOID)
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), rmap, (//), (:~>), type (+->))
-import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), fst, snd)
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate)
 import Proarrow.Profunctor.Corepresentable (Corep (..), corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.HaskValue (HaskValue (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv, withObRep)
 
@@ -39,13 +41,8 @@ mapLimit (Prof n) = Prof (limitUniv @j (n . limit @j))
 
 type Unweighted = TerminalProfunctor
 
-data family TerminalLimit :: VOID +-> k -> () +-> k
-instance (HasTerminalObject k) => FunctorForRep (TerminalLimit d :: () +-> k) where
-  type TerminalLimit d @ a = TerminalObject
-  fmap Unit = id
-
 instance (HasTerminalObject k) => HasLimits (Unweighted :: VOID +-> ()) k where
-  type Limit Unweighted d = Rep (TerminalLimit d)
+  type Limit Unweighted d = Rep (Constant TerminalObject)
   limit = \case {}
   limitUniv _ p = p // Rep terminate
 
@@ -111,3 +108,14 @@ instance (FunctorForRep f) => HasLimits (Corep f) k where
   type Limit (Corep f) d = d :.: Rep f
   limit ((d :.: Rep f) :.: Corep g) = rmap (g . f) d
   limitUniv n p = p // n (p :.: corepUniv) :.: repUniv
+
+newtype AnyLimit j a b = AnyLimit (j a b)
+  deriving newtype (Profunctor)
+type Ran :: (i +-> a) -> (i +-> Type) -> a -> Type
+newtype Ran j d a = Ran {runRan :: forall b. j a b -> d % b}
+instance (Profunctor j, Representable d) => Functor (Ran j d) where
+  map f (Ran g) = Ran \j -> g (lmap f j)
+instance (Profunctor j) => HasLimits (AnyLimit j) Type where
+  type Limit (AnyLimit j) d = Star (Ran j d)
+  limit (Star f :.: AnyLimit j) = tabulate (\a -> runRan (f a) j) \\ j
+  limitUniv n p = p // Star (\a -> Ran \j -> index (n (p :.: AnyLimit j)) a)
