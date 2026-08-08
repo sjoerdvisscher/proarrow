@@ -53,7 +53,7 @@ tabulatedCopresheaf = cotabulated
 
 type Corep :: (j +-> k) -> (k +-> j)
 data Corep f a b where
-  Corep :: forall f a b. (Ob a) => {unCorep :: f @ a ~> b} -> Corep f a b
+  Corep :: forall a f b. (Ob a) => {unCorep :: f @ a ~> b} -> Corep f a b
 instance (FunctorForRep f) => Profunctor (Corep f) where
   dimap = dimapCorep
   r \\ Corep f = r \\ f

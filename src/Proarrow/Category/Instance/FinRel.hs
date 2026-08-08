@@ -234,7 +234,7 @@ instance FunctorForRep Fun where
   fmap f = arr f \\ f
 instance MonoidalProfunctor (Rep Fun) where
   one = Rep one
-  Rep @_ @_ @b l ** Rep @_ @_ @d r = withOb2 @_ @b @d $ Rep (l ** r)
+  Rep @b l ** Rep @d r = withOb2 @_ @b @d $ Rep (l ** r)
 instance MonoidalProfunctor (Coprod (Rep Fun)) where
   one = Coprod (Rep id)
-  Coprod (Rep @_ @_ @b l) ** Coprod (Rep @_ @_ @d r) = withObCoprod @_ @b @d $ Coprod (Rep (l +++ r))
+  Coprod (Rep @b l) ** Coprod (Rep @d r) = withObCoprod @_ @b @d $ Coprod (Rep (l +++ r))

@@ -25,8 +25,8 @@ import Proarrow.Colimit.Initial (HasInitialObject (..), HasZeroObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
@@ -181,10 +181,10 @@ instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => CommutativeMon
 
 instance (Monoidal k, Monoid r) => MonoidalProfunctor (Rep (Constant r) :: k +-> k) where
   one = Rep mempty
-  Rep @_ @_ @x l ** Rep @_ @_ @y r = withOb2 @k @x @y (Rep (mappend . (l ** r)))
+  Rep @x l ** Rep @y r = withOb2 @k @x @y (Rep (mappend . (l ** r)))
 instance (HasCoproducts k, Ob r) => MonoidalProfunctor (Coprod (Rep (Constant r)) :: COPROD k +-> COPROD k) where
   one = Coprod (Rep initiate)
   Coprod @_ @_ @x (Rep l) ** Coprod @_ @_ @y (Rep r) = withObCoprod @k @x @y (Coprod (Rep (l ||| r)))
 instance (Monoidal k, Comonoid r) => MonoidalProfunctor (Corep (Constant r) :: k +-> k) where
   one = Corep counit
-  Corep @_ @x l ** Corep @_ @y r = withOb2 @k @x @y (Corep ((l ** r) . comult))
+  Corep @x l ** Corep @y r = withOb2 @k @x @y (Corep ((l ** r) . comult))

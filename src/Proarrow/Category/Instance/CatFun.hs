@@ -81,7 +81,7 @@ instance (Representable f, Ob (a :: i), CategoryOf i, CategoryOf j) => FunctorFo
 data family Curry :: ((i, j) +-> k) -> (i +-> F.FUN j k)
 instance (Representable f, CategoryOf i, CategoryOf j) => FunctorForRep (Curry f :: i +-> F.FUN j k) where
   type Curry f @ a = F.SUB (Rep (CurryH f a))
-  fmap f = F.Sub (F.Prof \(Rep @_ @_ @c g) -> Rep (repMap @f (f :**: obj @c) . g)) \\ f
+  fmap f = F.Sub (F.Prof \(Rep @c g) -> Rep (repMap @f (f :**: obj @c) . g)) \\ f
 data family Apply :: (F.FUN j k, j) +-> k
 instance (CategoryOf j, CategoryOf k) => FunctorForRep (Apply :: (F.FUN j k, j) +-> k) where
   type Apply @ '(f, x) = UN F.SUB f % x

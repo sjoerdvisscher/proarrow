@@ -237,4 +237,4 @@ instance (P.Num a) => FunctorForRep (App :: MatK a +-> Type) where
   fmap (Mat m) = app m
 instance (P.Num a) => MonoidalProfunctor (Rep App :: MatK a +-> Type) where
   one = Rep \() -> 1 ::: VNil
-  Rep @_ @_ @b f ** Rep @_ @_ @c g = withOb2 @_ @b @c $ Rep (\(x, y) -> concatMap (\a -> (a P.*) P.<$> f x) (g y))
+  Rep @b f ** Rep @c g = withOb2 @_ @b @c $ Rep (\(x, y) -> concatMap (\a -> (a P.*) P.<$> f x) (g y))

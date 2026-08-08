@@ -126,7 +126,7 @@ unflipCorep n f = cotabulate (n (CorepStar (corepMap @p f))) \\ f
 
 type Rep :: (j +-> k) -> j +-> k
 data Rep f a b where
-  Rep :: forall f a b. (Ob b) => {unRep :: a ~> f @ b} -> Rep f a b
+  Rep :: forall b f a. (Ob b) => {unRep :: a ~> f @ b} -> Rep f a b
 instance (FunctorForRep f) => Profunctor (Rep f) where
   dimap = dimapRep
   r \\ Rep f = r \\ f

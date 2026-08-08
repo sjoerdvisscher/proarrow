@@ -94,7 +94,7 @@ instance (CategoryOf k) => FunctorForRep (Initiate :: VOID +-> k) where
 
 instance (CategoryOf k) => HasInitialObject (FAM k) where
   type InitialObject = DEP VOID (Rep Initiate)
-  initiate = Fam @(Rep Initiate) \(Rep @_ @_ @b _) -> case obj @b of {}
+  initiate = Fam @(Rep Initiate) \(Rep @b _) -> case obj @b of {}
 
 instance (CategoryOf k) => HasBinaryCoproducts (FAM k) where
   type a || b = DEP (COPRODUCT (X a) (X b)) (Rep Codiag :.: (DX a :++: DX b))

@@ -53,7 +53,7 @@ diagonalElement (Graph f g) = withArr @p @aj @bk (lmap f (arr @p @bj @bk) \\ f \
 graphUniv :: forall {j} {k} (p :: k +-> j). (ThinProfunctor p) => Iso' p (Rep (ProjJ p) :.: Corep (ProjK p))
 graphUniv =
   iso
-    (Prof \ @a @b p -> withArr p (Rep @_ @_ @(GR a b) id :.: Corep id))
+    (Prof \ @a @b p -> withArr p (Rep @(GR a b) id :.: Corep id))
     (Prof \(Rep l :.: Corep r) -> dimap l r arr)
 
 data family ProdAsGraph :: (j, k) +-> GRAPH (p :: k +-> j)
