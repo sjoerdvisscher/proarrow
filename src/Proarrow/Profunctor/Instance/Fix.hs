@@ -5,8 +5,8 @@ import Data.Functor.Const (Const (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Core (Profunctor (..), Promonad (..), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -37,8 +37,8 @@ instance (Traversable p) => Traversable (Fix p) where
 instance (Cotraversable p) => Cotraversable (Fix p) where
   cotraverse (r :.: In pfp) = case cotraverse (r :.: pfp) of pfp' :.: r' -> In pfp' :.: r'
 
-instance (Strong m p) => Strong m (Fix p) where
-  act f (In p) = In (act f p)
+instance (Strong t p) => Strong t (Fix p) where
+  act @x (In p) = In (act @t @_ @x p)
 
 hylo :: (Profunctor p, Profunctor a, Profunctor b) => (p :.: b :~> b) -> (a :~> p :.: a) -> a :~> b
 hylo alg coalg = unProf go where go = Prof alg . map go . Prof coalg

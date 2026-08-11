@@ -2,159 +2,139 @@
 
 module Proarrow.Category.Monoidal.Action where
 
-import Data.Kind (Constraint, Type)
-import Prelude (type (~))
+import Data.Kind (Constraint)
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..), SubMonoidal)
+import Proarrow.Category.Instance.Product ((:**:) (..))
+import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Kind, OB, Profunctor (..), Promonad (..), UN, obj, type (+->))
+import Proarrow.Category.Monoidal (Monoidal (..), Tensor)
+import Proarrow.Colimit.BinaryCoproduct
+  ( COPROD (..)
+  , Coprod (..)
+  , HasBinaryCoproducts (..)
+  , HasCoproducts
+  , associatorCoprod
+  , associatorCoprodInv
+  , leftUnitorCoprod
+  , leftUnitorCoprodInv
+  )
+import Proarrow.Core (CategoryOf (..), OB, Promonad (..), obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repUniv)
+import Proarrow.Limit.BinaryProduct
+  ( HasBinaryProducts (..)
+  , HasProducts
+  , PROD (..)
+  , Prod (..)
+  , associatorProd
+  , associatorProdInv
+  , leftUnitorProd
+  , leftUnitorProdInv
+  )
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 
--- | Profuntorial strength for a monoidal action.
--- Gives functorial strength for representable profunctors,
--- and functorial costrength for corepresentable profunctors.
-type Strong :: forall {j} {k}. Kind -> j +-> k -> Constraint
-class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Strong m (p :: c +-> d) where
-  act :: forall (a :: m) b x y. a ~> b -> p x y -> p (Act a x) (Act b y)
+type Act :: (m, k) +-> k -> m -> k -> k
+type Act t a x = t % '(a, x)
 
-class (Monoidal m, CategoryOf k, Strong m (Hom k)) => MonoidalAction m k where
-  -- I would like to default Act to `**`, but that doesn't seem possible without GHC thinking `m` and `k` are the same.
-  type Act (a :: m) (x :: k) :: k
-  withObAct :: (Ob (a :: m), Ob (x :: k)) => ((Ob (Act a x)) => r) -> r
-  unitor :: (Ob (x :: k)) => Act (Unit :: m) x ~> x
-  unitorInv :: (Ob (x :: k)) => x ~> Act (Unit :: m) x
-  multiplicator :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act (a ** b) x ~> Act a (Act b x)
-  multiplicatorInv :: (Ob (a :: m), Ob (b :: m), Ob (x :: k)) => Act a (Act b x) ~> Act (a ** b) x
+type MonoidalAction :: forall {m} {k}. (m, k) +-> k -> Constraint
+class (Representable t, Monoidal m) => MonoidalAction (t :: (m, k) +-> k) where
+  unitor :: (Ob x) => Act t Unit x ~> x
+  unitorInv :: (Ob x) => x ~> Act t Unit x
+  multiplicator :: (Ob a, Ob b, Ob x) => Act t (a ** b) x ~> Act t a (Act t b x)
+  multiplicatorInv :: (Ob a, Ob b, Ob x) => Act t a (Act t b x) ~> Act t (a ** b) x
 
-instance (CategoryOf k, Strong () (Hom k)) => MonoidalAction () k where
-  type Act '() x = x
-  withObAct r = r
+actHom :: (Representable t) => a ~> b -> x ~> y -> Act t a x ~> Act t b y
+actHom @t l r = repMap @t (l :**: r)
+
+composeActs
+  :: forall {m} {k} t (x :: m) (y :: m) (c :: k) (a :: k) (b :: k)
+   . (MonoidalAction t, Ob x, Ob y, Ob c)
+  => a ~> Act t x b
+  -> b ~> Act t y c
+  -> a ~> Act t (x ** y) c
+composeActs f g = multiplicatorInv @t @x @y @c . actHom @t (obj @x) g . f
+
+decomposeActs
+  :: forall {m} {k} t (x :: m) (y :: m) (c :: k) (a :: k) (b :: k)
+   . (MonoidalAction t, Ob x, Ob y, Ob c)
+  => Act t y c ~> b
+  -> Act t x b ~> a
+  -> Act t (x ** y) c ~> a
+decomposeActs f g = g . actHom @t (obj @x) f . multiplicator @t @x @y @c
+
+data family NoAction :: ((), k) +-> k
+instance (CategoryOf k) => FunctorForRep (NoAction :: ((), k) +-> k) where
+  type NoAction @ '(a, x) = x
+  fmap (U.Unit :**: f) = f
+instance (CategoryOf k) => MonoidalAction (Rep NoAction :: ((), k) +-> k) where
   unitor = id
   unitorInv = id
   multiplicator = id
   multiplicatorInv = id
 
-instance (Strong k p) => Strong (OPPOSITE k) (Op p) where
-  act (Op w) (Op p) = Op (act w p)
-instance (MonoidalAction m k) => MonoidalAction (OPPOSITE m) (OPPOSITE k) where
-  type Act (OP a) (OP b) = OP (Act a b)
-  withObAct @(OP a) @(OP b) r = withObAct @m @k @a @b r
-  unitor = Op (unitorInv @m)
-  unitorInv = Op (unitor @m)
-  multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @m @k @a @b @x)
-  multiplicatorInv @(OP a) @(OP b) @(OP x) = Op (multiplicator @m @k @a @b @x)
+data family OpAction :: (m, k) +-> k -> (OPPOSITE m, OPPOSITE k) +-> OPPOSITE k
+instance (Representable (t :: (m, k) +-> k), CategoryOf m) => FunctorForRep (OpAction t) where
+  type OpAction t @ '(OP a, OP x) = OP (t % '(a, x))
+  fmap (Op l :**: Op r) = Op (actHom @t l r)
+instance (MonoidalAction t) => MonoidalAction (Rep (OpAction t)) where
+  unitor = Op (unitorInv @t)
+  unitorInv = Op (unitor @t)
+  multiplicator @(OP a) @(OP b) @(OP x) = Op (multiplicatorInv @t @a @b @x)
+  multiplicatorInv @(OP a) @(OP b) @(OP x) = Op (multiplicator @t @a @b @x)
 
-instance (SubMonoidal ob) => Strong (SUBCAT (ob :: OB Type)) (->) where
-  act (Sub f) g = f ** g
-instance (SubMonoidal ob) => Strong (SUBCAT (ob :: OB ())) U.Unit where
-  act (Sub f) g = f ** g
+type SubAction ob t = Rep (SubAction' ob t)
+data family SubAction' :: forall (ob :: OB m) -> (m, k) +-> k -> (SUBCAT ob, k) +-> k
+instance (Monoidal k, Monoidal (SUBCAT (ob :: OB k)), Representable t) => FunctorForRep (SubAction' ob t) where
+  type SubAction' ob t @ '(SUB a, x) = t % '(a, x)
+  fmap (Sub f :**: g) = repMap @t (f :**: g)
+instance (Monoidal k, Monoidal (SUBCAT (ob :: OB k)), MonoidalAction t) => MonoidalAction (SubAction ob t) where
+  unitor = unitor @t
+  unitorInv = unitorInv @t
+  multiplicator @(SUB p) @(SUB q) @x = multiplicator @t @p @q @x
+  multiplicatorInv @(SUB p) @(SUB q) @x = multiplicatorInv @t @p @q @x
 
-instance
-  (Monoidal k, Monoidal (SUBCAT (ob :: OB k)), Strong (SUBCAT (ob :: OB k)) (Hom k))
-  => MonoidalAction (SUBCAT (ob :: OB k)) k
-  where
-  type Act (p :: SUBCAT ob) (x :: k) = UN SUB p ** x
-  withObAct @(SUB a) @x r = withOb2 @k @a @x r
+instance (Monoidal k) => MonoidalAction (Tensor :: (k, k) +-> k) where
   unitor = leftUnitor @k
   unitorInv = leftUnitorInv @k
-  multiplicator @(SUB p) @(SUB q) @x = associator @_ @p @q @x
-  multiplicatorInv @(SUB p) @(SUB q) @x = associatorInv @_ @p @q @x
+  multiplicator @a @b @x = associator @k @a @b @x
+  multiplicatorInv @a @b @x = associatorInv @k @a @b @x
 
-newtype Action a x y = Action (Rep (Action' a) x y)
-deriving newtype instance (Ob (a :: m), MonoidalAction m k) => Profunctor (Action a :: k +-> k)
-deriving newtype instance (Ob (a :: m), MonoidalAction m k) => Representable (Action a :: k +-> k)
+type ProdAction = Rep ProdAction'
+data family ProdAction' :: (PROD k, k) +-> k
+instance (HasProducts k) => FunctorForRep (ProdAction' :: (PROD k, k) +-> k) where
+  type ProdAction' @ '(PR a, b) = a && b
+  fmap (Prod p :**: q) = p *** q
+instance (HasProducts k) => MonoidalAction (ProdAction :: (PROD k, k) +-> k) where
+  unitor = leftUnitorProd
+  unitorInv = leftUnitorProdInv
+  multiplicator @(PR a) @(PR b) @x = associatorProd @a @b @x
+  multiplicatorInv @(PR a) @(PR b) @x = associatorProdInv @a @b @x
 
-data family Action' :: m -> k +-> k
-instance (MonoidalAction m k, Ob a) => FunctorForRep (Action' (a :: m) :: k +-> k) where
-  type Action' a @ x = Act a x
-  fmap = act @m (obj @a)
+type CoprodAction = Rep CoprodAction'
+data family CoprodAction' :: (COPROD k, k) +-> k
+instance (HasCoproducts k) => FunctorForRep (CoprodAction' :: (COPROD k, k) +-> k) where
+  type CoprodAction' @ '(COPR a, x) = a || x
+  fmap (Coprod (Id l) :**: r) = l +++ r
+instance (HasCoproducts k) => MonoidalAction (CoprodAction :: (COPROD k, k) +-> k) where
+  unitor = leftUnitorCoprod
+  unitorInv = leftUnitorCoprodInv
+  multiplicator @(COPR a) @(COPR b) @x = associatorCoprod @a @b @x
+  multiplicatorInv @(COPR a) @(COPR b) @x = associatorCoprodInv @a @b @x
 
-par0Action :: (MonoidalAction m k, Ob (x :: k)) => Action (Unit :: m) x x
-par0Action @m @k = Action (Rep (unitorInv @m @k))
+-- newtype Action a x y = Action (Rep (Action' a) x y)
+-- deriving newtype instance (Ob (a :: m), MonoidalAction m k) => Profunctor (Action a :: k +-> k)
+-- deriving newtype instance (Ob (a :: m), MonoidalAction m k) => Representable (Action a :: k +-> k)
 
-parAction
-  :: forall {m} {k} a b x y z
-   . (MonoidalAction m k, Ob a, Ob b) => Action (a :: m) (x :: k) y -> Action (b :: m) y z -> Action (a ** b) x z
-parAction (Action (Rep f)) (Action (Rep g)) = Action (Rep (composeActs @a @b @z f g))
+-- data family Action' :: m -> k +-> k
+-- instance (MonoidalAction m k, Ob a) => FunctorForRep (Action' (a :: m) :: k +-> k) where
+--   type Action' a @ x = Act a x
+--   fmap = act @m (obj @a)
 
-class (MonoidalAction m k, SymMonoidal m) => SymMonoidalAction m k
-instance (MonoidalAction m k, SymMonoidal m) => SymMonoidalAction m k
+-- par0Action :: (MonoidalAction m k, Ob (x :: k)) => Action (Unit :: m) x x
+-- par0Action @m @k = Action (Rep (unitorInv @m @k))
 
-class (Act a b ~ a ** b) => ActIsTensor a b
-instance (Act a b ~ a ** b) => ActIsTensor a b
-class (Act a (Act b c) ~ a ** (b ** c), a ** Act b c ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
-instance (Act a (Act b c) ~ a ** (b ** c), a ** Act b c ~ a ** (b ** c), Act a (b ** c) ~ a ** (b ** c)) => ActIsTensor3 a b c
-class
-  ( SymMonoidalAction k k
-  , Strong k ((~>) :: k +-> k)
-  , forall (a :: k) (b :: k). ActIsTensor a b
-  , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
-  ) =>
-  SelfAction k
-instance
-  ( SymMonoidalAction k k
-  , Strong k ((~>) :: k +-> k)
-  , forall (a :: k) (b :: k). ActIsTensor a b
-  , forall (a :: k) (b :: k) (c :: k). ActIsTensor3 a b c
-  )
-  => SelfAction k
-
-toSelfAct :: forall {k} (a :: k) b. (SelfAction k, Ob a, Ob b) => a ** b ~> Act a b
-toSelfAct = obj @a `act` obj @b
-
-fromSelfAct :: forall {k} (a :: k) b. (SelfAction k, Ob a, Ob b) => Act a b ~> a ** b
-fromSelfAct = obj @a `act` obj @b
-
-composeActs
-  :: forall {m} {k} (x :: m) y (c :: k) a b
-   . (MonoidalAction m k, Ob x, Ob y, Ob c)
-  => a ~> Act x b
-  -> b ~> Act y c
-  -> a ~> Act (x ** y) c
-composeActs f g = multiplicatorInv @m @k @x @y @c . act (obj @x) g . f
-
-decomposeActs
-  :: forall {m} {k} (x :: m) y (c :: k) a b
-   . (MonoidalAction m k, Ob x, Ob y, Ob c)
-  => Act y c ~> b
-  -> Act x b ~> a
-  -> Act (x ** y) c ~> a
-decomposeActs f g = g . act (obj @x) f . multiplicator @m @k @x @y @c
-
-first' :: forall {k} {p :: CAT k} c a b. (SelfAction k, Strong k p, Ob c) => p a b -> p (a ** c) (b ** c)
-first' p = dimap (swap @k @a @c) (swap @k @c @b) (second' @c p) \\ p
-
-second' :: forall {k} {p :: CAT k} c a b. (SelfAction k, Strong k p, Ob c) => p a b -> p (c ** a) (c ** b)
-second' p = act (obj @c) p
-
--- | If a strong profunctor is representable, we get the usual strength for the representing functor.
-strength :: forall {m} p a b. (Representable p, Strong m p, Ob (a :: m), Ob b) => Act a (p % b) ~> p % Act a b
-strength = index (act (obj @a) (repUniv @p @b))
-
--- | If a strong profunctor is corepresentable, we get the usual costrength for the representing functor.
-costrength :: forall {m} p a b. (Corepresentable p, Strong m p, Ob (a :: m), Ob b) => p %% Act a b ~> Act a (p %% b)
-costrength = coindex (act (obj @a) (corepUniv @p @b))
-
--- | This is not monoidal ** but premonoidal, i.e. no sliding.
--- So with `prepar f g` the effects of f happen before the effects of g.
--- p needs to be a commutative promonad for this to be monoidal **.
-prepar
-  :: forall {k} {p :: CAT k} a b c d. (SelfAction k, Strong k p, Promonad p) => p a b -> p c d -> p (a ** c) (b ** d)
-prepar f g = second' @b g . first' @c f \\ f \\ g
-
-strongPar0 :: forall {k} {p :: CAT k} a. (SelfAction k, Strong k p, MonoidalProfunctor p, Ob a) => p a a
-strongPar0 = dimap rightUnitorInv rightUnitor (act (obj @a) one)
-
-type Costrong :: forall {j} {k}. Kind -> j +-> k -> Constraint
-class (MonoidalAction m c, MonoidalAction m d, Profunctor p) => Costrong m (p :: c +-> d) where
-  coact :: forall (a :: m) (x :: d) (y :: c). (Ob a, Ob x, Ob y) => p (Act a x) (Act a y) -> p x y
-
-trace :: forall {k} (p :: k +-> k) u x y. (SelfAction k, Costrong k p, Ob x, Ob y, Ob u) => p (x ** u) (y ** u) -> p x y
-trace p = coact @k @p @u @x @y (dimap (swap @k @u @x) (swap @k @y @u) p) \\ p
-
-class (SelfAction k, Costrong k (Hom k)) => TracedMonoidal k
-instance (SelfAction k, Costrong k (Hom k)) => TracedMonoidal k
+-- parAction
+--   :: forall {m} {k} a b x y z
+--    . (MonoidalAction m k, Ob a, Ob b) => Action (a :: m) (x :: k) y -> Action (b :: m) y z -> Action (a ** b) x z
+-- parAction (Action (Rep f)) (Action (Rep g)) = Action (Rep (composeActs @a @b @z f g))

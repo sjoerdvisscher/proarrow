@@ -24,7 +24,7 @@ import Proarrow.Core
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Optic (Iso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
-import Proarrow.Profunctor.Representable (CorepStar, RepCostar, Representable (..), repUniv)
+import Proarrow.Profunctor.Representable (CorepStar, Rep, RepCostar, Representable (..), repUniv)
 
 infixl 8 **
 infixl 7 ==
@@ -260,3 +260,4 @@ data MultRep :: (k, k) +-> k
 instance (Monoidal k) => FunctorForRep (MultRep :: (k, k) +-> k) where
   type MultRep @ '(a, b) = a ** b
   fmap (f :**: g) = f ** g
+type Tensor = Rep MultRep

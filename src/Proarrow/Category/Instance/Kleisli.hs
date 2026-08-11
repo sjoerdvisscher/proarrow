@@ -11,14 +11,11 @@ module Proarrow.Category.Instance.Kleisli
   , pattern LiftF
   ) where
 
-import Data.Kind (Type)
-
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin qualified as T
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), DistributiveProfunctor)
 import Proarrow.Colimit.BinaryCoproduct (Coprod, HasBinaryCoproducts (..), codiag, (++))
@@ -116,16 +113,6 @@ instance (Distributive k, Promonad p, DistributiveProfunctor p) => Distributive 
   distR @(KL a) @(KL b) @(KL c) = arr (distR @k @a @b @c)
   absorbL @(KL a) = arr (absorbL @k @a)
   absorbR @(KL a) = arr (absorbR @k @a)
-
-instance (Promonad p, MonoidalProfunctor p) => Strong Type (Kleisli :: CAT (KLEISLI (p :: Type +-> Type))) where
-  act f (Kleisli p) = arr f ** Kleisli p
-instance (Promonad p, MonoidalProfunctor p) => MonoidalAction Type (KLEISLI (p :: Type +-> Type)) where
-  type Act y (KL x) = KL (y ** x)
-  withObAct @y @(KL x) r = withOb2 @Type @y @x r
-  unitor = arr (unitor @Type)
-  unitorInv = arr (unitorInv @Type)
-  multiplicator @a @b @(KL c) = arr (multiplicator @Type @Type @a @b @c)
-  multiplicatorInv @a @b @(KL c) = arr (multiplicatorInv @Type @Type @a @b @c)
 
 instance (DaggerProfunctor p, Promonad p) => DaggerProfunctor (Kleisli :: CAT (KLEISLI p)) where
   dagger (Kleisli p) = Kleisli (dagger p)

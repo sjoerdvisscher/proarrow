@@ -8,6 +8,7 @@ import Proarrow.Category.Monoidal
   ( Monoidal (..)
   , MonoidalProfunctor (..)
   , SymMonoidal (..)
+  , Tensor
   , first
   , leftUnitorInvWith
   , leftUnitorWith
@@ -16,10 +17,10 @@ import Proarrow.Category.Monoidal
   , swapInner
   , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), combineDual, dualityCounit, dualityUnit)
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), doubleNeg, doubleNegInv, expSA)
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -45,7 +46,7 @@ instance (Ob (w :: k), Monoidal k) => Representable (Writer w :: k +-> k) where
   repMap = second @w
 
 -- | The cowriter comonad given the Promonad instance.
-instance (Ob (w :: k), SelfAction k, CompactClosed k) => Corepresentable (Writer w :: k +-> k) where
+instance (Ob (w :: k), CompactClosed k) => Corepresentable (Writer w :: k +-> k) where
   type Writer w %% a = ExpSA w a
   coindex (Writer @b @a f) =
     leftUnitorWith (dualityCounit @w)
@@ -74,11 +75,10 @@ instance (Comonoid (w :: k), Monoidal k) => Procomonad (Writer w :: k +-> k) whe
   proextract (Writer f) = leftUnitorWith (counit @w) . f
   produplicate (Writer @b f) = Writer (associator @k @w @w @b . first @b (comult @w) . f) :.: Writer id \\ f
 
-instance (Ob (w :: k), SelfAction k) => Strong k (Writer w :: k +-> k) where
-  act @_ @b @_ @y f (Writer g) =
-    f //
-      withObAct @k @k @b @y $
-        Writer (associator @k @w @b @y . first @y (swap @_ @b @w) . associatorInv @k @b @w @y . (f ** g))
+instance (Ob (w :: k), SymMonoidal k) => Strong Tensor (Writer w :: k +-> k) where
+  act @b @_ @y (Writer g) =
+    withOb2 @k @b @y $
+      Writer (associator @k @w @b @y . first @y (swap @_ @b @w) . associatorInv @k @b @w @y . (obj @b ** g))
 
 -- | Note: This is only premonoidal, not monoidal, unless the monoid is commutative.
 instance (Monoid (w :: k), SymMonoidal k) => MonoidalProfunctor (Writer w :: k +-> k) where
@@ -96,8 +96,8 @@ instance (Monoid (w :: k), SymMonoidal k) => MonoidalProfunctor (Writer w :: k +
               )
 
 -- | A version of traverse specialized to `Writer`, with fewer requirements on @p@.
-traverseWriter :: forall {k} p (w :: k). (Strong k p, SelfAction k, Ob w) => Writer w :.: p :~> p :.: Writer w
-traverseWriter (Writer f :.: p) = let wp = obj @w `act` p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p
+traverseWriter :: forall {k} p (w :: k). (Strong Tensor p, Ob w) => Writer w :.: p :~> p :.: Writer w
+traverseWriter (Writer f :.: p) = let wp = act @Tensor @p @w p in lmap f wp :.: Writer (tgt wp) \\ wp \\ p
 
 instance (Monoid (w :: k), Monoidal k) => Traversable (Writer w :: k +-> k) where
   traverse = traverseWriter
@@ -130,12 +130,12 @@ censor f (WriterT (p :.: Writer w)) = WriterT (p :.: Writer (first @b f . w))
 
 deriving newtype instance (Profunctor p, Monoidal k, Ob (w :: k)) => Profunctor (WriterT w p)
 deriving newtype instance (Representable p, Ob (w :: k), Monoidal k) => Representable (WriterT w p)
-deriving newtype instance
-  (Corepresentable p, Ob (w :: k), SelfAction k, CompactClosed k) => Corepresentable (WriterT w p)
-deriving newtype instance (Strong k p, Ob (w :: k), SelfAction k) => Strong k (WriterT w p)
-deriving newtype instance
-  (MonoidalProfunctor p, Monoid (w :: k), SelfAction k, SymMonoidal k) => MonoidalProfunctor (WriterT w p)
-deriving newtype instance (Traversable p, Monoid (w :: k), SelfAction k) => Traversable (WriterT w p)
+deriving newtype instance (Corepresentable p, Ob (w :: k), CompactClosed k) => Corepresentable (WriterT w p)
+deriving newtype instance (MonoidalProfunctor p, Monoid (w :: k), SymMonoidal k) => MonoidalProfunctor (WriterT w p)
+deriving newtype instance (Traversable p, Monoid (w :: k)) => Traversable (WriterT w p)
+
+instance (Strong Tensor p, Ob (w :: k), SymMonoidal k) => Strong Tensor (WriterT w p) where
+  act @a (WriterT p) = WriterT (act @Tensor @_ @a p)
 
 instance (Monoidal k, Ob w) => Functor (WriterT w :: k +-> k -> k +-> k) where
   map n@Prof{} = Prof \(WriterT p) -> WriterT (unProf (unNat (map n)) p)
@@ -143,7 +143,7 @@ instance (Monoidal k, Ob w) => Functor (WriterT w :: k +-> k -> k +-> k) where
 instance (Monoidal k) => Functor (WriterT :: k -> k +-> k -> k +-> k) where
   map f = f // Nat $ Prof \(WriterT p) -> WriterT (unProf (map (map f)) p)
 
-instance (Monoid (w :: k), SelfAction k, Strong k p, Promonad p) => Promonad (WriterT w p) where
+instance (Monoid (w :: k), Strong Tensor p, Promonad p) => Promonad (WriterT w p) where
   id = WriterT (id :.: id)
   WriterT l . WriterT r = WriterT (compComp traverseWriter l r)
 

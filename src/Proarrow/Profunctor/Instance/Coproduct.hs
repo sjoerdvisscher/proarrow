@@ -2,7 +2,6 @@ module Proarrow.Profunctor.Instance.Coproduct where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Core (Profunctor (..), type (+->))
 import Proarrow.Functor (Functor (..))
 
@@ -24,10 +23,6 @@ coproduct _ r (InjR q) = r q
 instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :+: q) where
   dagger (InjL p) = InjL (dagger p)
   dagger (InjR q) = InjR (dagger q)
-
-instance (Strong m p, Strong m q) => Strong m (p :+: q) where
-  act f (InjL p) = InjL (act f p)
-  act f (InjR q) = InjR (act f q)
 
 instance (Profunctor p) => Functor ((:+:) p) where
   map (Prof n) = Prof \case

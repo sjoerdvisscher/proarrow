@@ -3,7 +3,6 @@ module Proarrow.Profunctor.Instance.Identity where
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction, Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
@@ -42,9 +41,3 @@ instance (Thin k) => ThinProfunctor (Id :: CAT k) where
   type HasArrow (Id :: CAT k) a b = HasArrow (Hom k) a b
   arr = Id arr
   withArr (Id f) r = withArr f r
-
-instance (MonoidalAction m k, Strong m (Hom k)) => Strong m (Id :: CAT k) where
-  act f (Id g) = Id (act f g)
-
-instance (MonoidalAction m k, Costrong m (Hom k)) => Costrong m (Id :: CAT k) where
-  coact @a (Id g) = Id (coact @m @(Hom k) @a g)

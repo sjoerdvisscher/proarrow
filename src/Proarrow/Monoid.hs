@@ -8,7 +8,7 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), (**))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
+import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
@@ -61,15 +61,12 @@ instance (HasCoproducts k, Ob a) => Monoid (COPR (a :: k)) where
   mempty = Coprod (Id initiate)
   mappend = Coprod (Id codiag)
 
-memptyAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => n ~> Act a n
-memptyAct = act (mempty @a) (obj @n) . unitorInv @m
+memptyAct :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Monoid a, Ob n) => n ~> Act t a n
+memptyAct = actHom @t (mempty @a) (obj @n) . unitorInv @t
 
-mappendAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Monoid a, Ob n) => Act a (Act a n) ~> Act a n
-mappendAct = act (mappend @a) (obj @n) . multiplicatorInv @m @c @a @a @n
-
-type ModuleObject :: forall {m} {c}. m -> c -> Constraint
-class (MonoidalAction m c, Monoid a, Ob n) => ModuleObject (a :: m) (n :: c) where
-  action :: Act a n ~> n
+mappendAct
+  :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Monoid a, Ob n) => Act t a (Act t a n) ~> Act t a n
+mappendAct = actHom @t (mappend @a) (obj @n) . multiplicatorInv @t @a @a @n
 
 type Comonoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob c) => Comonoid (c :: k) where
@@ -94,11 +91,12 @@ instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
   counit = Prod terminate
   comult = Prod diag
 
-counitAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> n
-counitAct = unitor @m . act (counit @a) (obj @n)
+counitAct :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> n
+counitAct = unitor @t . actHom @t (counit @a) (obj @n)
 
-comultAct :: forall {m} {c} (a :: m) (n :: c). (MonoidalAction m c, Comonoid a, Ob n) => Act a n ~> Act a (Act a n)
-comultAct = multiplicator @m @c @a @a @n . act (comult @a) (obj @n)
+comultAct
+  :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> Act t a (Act t a n)
+comultAct = multiplicator @t @a @a @n . actHom @t (comult @a) (obj @n)
 
 type data MONOIDK (m :: k) = M
 data Mon a b where

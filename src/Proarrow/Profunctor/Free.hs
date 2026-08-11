@@ -16,10 +16,10 @@ import Proarrow.Category.Instance.Nat (Nat (..), first)
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Sub (Forget, On, SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), swap)
-import Proarrow.Category.Monoidal.Action (TracedMonoidal)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), dualityCounit, dualityUnit)
 import Proarrow.Category.Monoidal.StarAutonomous (Dual, dualObj)
+import Proarrow.Category.Monoidal.Strength (TracedMonoidal)
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==))
 import Proarrow.Core
   ( CAT

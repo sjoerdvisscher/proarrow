@@ -21,9 +21,8 @@ import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), SelfAction, Strong (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Object (Obj, obj)
@@ -100,9 +99,6 @@ instance (HasBinaryProducts k, Representable (p :: j +-> k), Representable q) =>
   tabulate @b f =
     withObRep @p @b (withObRep @q @b (tabulate (fst @_ @(p % b) @(q % b) . f) :*: tabulate (snd @_ @(p % b) @(q % b) . f)))
   repMap f = repMap @p f *** repMap @q f
-
-instance (CategoryOf j, CategoryOf k) => Strong (PROD (j +-> k)) (Prof :: CAT (j +-> k)) where
-  act (Prod n) m = n *** m
 
 leftUnitorProd :: forall {k} (a :: k). (HasProducts k, Ob a) => TerminalObject && a ~> a
 leftUnitorProd = snd @k @TerminalObject
@@ -185,14 +181,6 @@ instance (HasProducts k) => Monoidal (PROD k) where
 instance (HasProducts k) => SymMonoidal (PROD k) where
   swap @(PR a) @(PR b) = Prod (swapProd @a @b)
 
-instance (HasProducts k, Strong (PROD k) (Hom k)) => MonoidalAction (PROD k) k where
-  type Act (PR x) y = x && y
-  withObAct @(PR a) @b r = withObProd @k @a @b r
-  unitor = leftUnitorProd
-  unitorInv = leftUnitorProdInv
-  multiplicator @(PR a) @(PR b) @c = associatorProd @a @b @c
-  multiplicatorInv @(PR a) @(PR b) @c = associatorProdInv @a @b @c
-
 type FromProd :: (k -> Type) -> (PROD k -> Type)
 data FromProd f a where
   FromProd :: {unFromProd :: f a} -> FromProd f (PR a)
@@ -218,44 +206,6 @@ instance Monoidal Type where
 
 instance SymMonoidal Type where
   swap = swapProd
-
-instance Strong Type (->) where
-  act = (**)
-instance Strong (PROD Type) (->) where
-  act (Prod f) g = f *** g
-instance MonoidalAction Type Type where
-  type Act p x = p ** x
-  withObAct r = r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator = associator
-  multiplicatorInv = associatorInv
-
-instance Costrong Type (->) where
-  coact f x = let (u, y) = f (u, x) in y
-
--- | Products as monoidal structure.
-class (Act a b ~ a && b) => ActIsProd a b
-
-instance (Act a b ~ a && b) => ActIsProd a b
-class (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c
-instance (Act a (Act b c) ~ a && (b && c)) => ActIsProd3 a b c
-class
-  ( Cartesian k
-  , SelfAction k
-  , forall (a :: k) (b :: k). ActIsProd a b
-  , forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c
-  ) =>
-  ProdAction k
-instance
-  ( Cartesian k
-  , SelfAction k
-  , forall (a :: k) (b :: k). ActIsProd a b
-  , forall (a :: k) (b :: k) (c :: k). ActIsProd3 a b c
-  )
-  => ProdAction k
-class (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
-instance (Strong k p, ProdAction k) => StrongProd (p :: CAT k)
 
 data family (*!) (a :: k) (b :: k) :: k
 instance (Ob (a :: FREE cs p), Ob b, HasBinaryProducts `Elem` cs) => IsFreeOb (a *! b) where

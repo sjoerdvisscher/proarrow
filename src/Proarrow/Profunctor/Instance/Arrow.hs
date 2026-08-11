@@ -16,14 +16,14 @@ import Control.Monad.Fix (MonadFix)
 import Data.Kind (Type)
 import Prelude (Either (..), Functor (..), Monad (..))
 
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), Strong (..))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..), Tensor)
+import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Distributive (DistributiveProfunctor)
-import Proarrow.Colimit.BinaryCoproduct (COPROD, Coprod (..), (++))
+import Proarrow.Category.Monoidal.Strength (Costrong (..), Strong (..))
+import Proarrow.Colimit.BinaryCoproduct (Coprod (..), (++))
 import Proarrow.Core (CAT, Profunctor (..), Promonad (..), rmap, type (+->))
 import Proarrow.Functor (FromProfunctor (..))
 import Proarrow.Limit.BinaryProduct ()
-import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
 swap :: (b, a) -> (a, b)
@@ -39,10 +39,10 @@ instance (Arrow arr) => Promonad (Arr arr) where
   id = Arr (arr id)
   Arr f . Arr g = Arr (g >>> f)
 
-instance (Arrow arr) => Strong Type (Arr arr) where
-  act f (Arr a) = Arr (arr f *** a)
+instance (Arrow arr) => Strong Tensor (Arr arr) where
+  act (Arr a) = Arr (second a)
 
-instance (ArrowLoop arr) => Costrong Type (Arr arr) where
+instance (ArrowLoop arr) => Costrong Tensor (Arr arr) where
   coact (Arr f) = Arr (loop (arr swap >>> f >>> arr swap))
 
 instance (Arrow arr) => MonoidalProfunctor (Arr arr) where
@@ -66,13 +66,13 @@ instance (Monad m) => Promonad (Kleisli m) where
   id = arr id
   f . g = g >>> f
 
-instance (Monad m) => Strong Type (Kleisli m) where
-  act f a = arr f *** a
+instance (Monad m) => Strong Tensor (Kleisli m) where
+  act = second
 
-instance (MonadPlus m) => Strong (COPROD Type) (Kleisli m) where
-  act (Coprod (Id f)) (Kleisli a) = Kleisli ((f >>> (return . Left)) ||| (a >>> fmap Right))
+instance (MonadPlus m) => Strong CoprodAction (Kleisli m) where
+  act (Kleisli a) = Kleisli ((return . Left) ||| (a >>> fmap Right))
 
-instance (MonadFix m) => Costrong Type (Kleisli m) where
+instance (MonadFix m) => Costrong Tensor (Kleisli m) where
   coact f = loop (arr swap >>> f >>> arr swap)
 
 instance (Monad m) => MonoidalProfunctor (Kleisli m) where
@@ -103,5 +103,5 @@ instance (DistributiveProfunctor p, Promonad p) => ArrowChoice (FromProfunctor p
 instance (Representable p, MonoidalProfunctor p, Promonad p) => ArrowApply (FromProfunctor p :: Type +-> Type) where
   app = FromProfunctor (tabulate \(FromProfunctor p, b) -> index p b)
 
-instance (Costrong Type p, MonoidalProfunctor p, Promonad p) => ArrowLoop (FromProfunctor p :: Type +-> Type) where
-  loop (FromProfunctor p) = FromProfunctor (coact @Type (dimap swap swap p))
+instance (Costrong Tensor p, MonoidalProfunctor p, Promonad p) => ArrowLoop (FromProfunctor p :: Type +-> Type) where
+  loop (FromProfunctor p) = FromProfunctor (coact @Tensor (dimap swap swap p))

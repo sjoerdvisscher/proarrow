@@ -16,11 +16,12 @@ import Unsafe.Coerce (unsafeCoerce)
 import Prelude (Bool (..), Either (..), Eq (..), Show (..), error, showParen, showString, (&&), (>))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
-import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..))
+import Proarrow.Category.Monoidal.Strength (Costrong (..))
+import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..))
 import Proarrow.Colimit.Copower (Copowered (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
@@ -31,7 +32,6 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 newtype LINEAR = L Type
@@ -133,10 +133,7 @@ instance HasInitialObject LINEAR where
   type InitialObject = L Void
   initiate = Linear \case {}
 
-instance Strong (COPROD LINEAR) Linear where
-  act (Coprod (Id f)) g = f +++ g
-
-instance Costrong (COPROD LINEAR) Linear where
+instance Costrong CoprodAction Linear where
   coact (Linear uxuy) = loop . Linear Right
     where
       loop = Linear \ux -> case uxuy ux of Left x -> unLinear loop (Left x); Right b -> b

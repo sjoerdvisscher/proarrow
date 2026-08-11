@@ -16,12 +16,13 @@ import Proarrow.Category.Monoidal
   , UnitRep
   , swap
   )
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
+import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified ()
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -204,16 +205,5 @@ instance HasParamNNO KIND where
   succ = Cat @(Rep Succ)
   nnoUniv (Cat @z) (Cat @s) = Cat @(NNOUniv z s)
 
-instance MonoidalAction KIND KIND where
-  type Act a x = a ** x
-  withObAct r = r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator = associator
-  multiplicatorInv = associatorInv
-
-instance Strong KIND Cat where
-  act = (**)
-
-instance Costrong KIND Cat where
-  coact @u = coactCC @u
+instance (MonoidalAction (t :: (KIND, KIND) +-> KIND)) => Costrong t Cat where
+  coact @u = coactCC @t @u

@@ -4,10 +4,10 @@ import Data.Kind (Type)
 import Prelude (($))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Category.Monoidal (MonoidalProfunctor (..), Tensor)
 import Proarrow.Category.Monoidal.Closed (Closed (..), curry, uncurry)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
 
@@ -19,8 +19,8 @@ instance (CategoryOf k) => Profunctor (Cont (r :: k)) where
 instance (CategoryOf k) => Promonad (Cont (r :: k)) where
   id = Cont id
   Cont f . Cont g = Cont (g . f)
-instance Strong Type (Cont (r :: Type)) where
-  act ab (Cont yrxy) = Cont \byr -> uncurry (yrxy . curry byr . ab)
+instance Strong Tensor (Cont (r :: Type)) where
+  act (Cont yrxy) = Cont \byr -> uncurry (yrxy . curry byr)
 
 -- Not costrong
 

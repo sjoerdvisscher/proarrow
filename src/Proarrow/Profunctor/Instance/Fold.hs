@@ -6,19 +6,19 @@ module Proarrow.Profunctor.Instance.Fold where
 import Data.Kind (Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swapInner)
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, leftUnitorInvWith, swapInner)
+import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction)
 import Proarrow.Category.Monoidal.Applicative (Applicative (..))
 import Proarrow.Category.Monoidal.Closed (BiCCC)
 import Proarrow.Category.Monoidal.Distributive (distLProd, distRProd)
-import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), CoprodAction, HasBinaryCoproducts (..), right)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Category.Monoidal.Strength (Costrong (..), Strong (..))
+import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), right)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Functor (map)
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), ProdAction)
+import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), PROD (..))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Promonad (Procomonad (..))
 
 data Fold a b where
@@ -38,14 +38,14 @@ instance (SymMonoidal k) => MonoidalProfunctor (Fold :: k +-> k) where
     withOb2 @k @m @n P.$
       Fold (f ** f') (g ** g') ((m ** m') . swapInner @m @n @m @n) ((z ** z') . leftUnitorInv)
 
-instance (CoprodAction k, BiCCC k) => Strong (COPROD k) (Fold :: k +-> k) where
-  act (Coprod @_ @a (Id f)) (Fold @m k h m z) = f // withObCoprod @k @a @m P.$ Fold (f +++ k) (right @a h) (step m) (rgt @_ @a @m . z)
+instance (BiCCC k) => Strong CoprodAction (Fold :: k +-> k) where
+  act @(COPR a) (Fold @m k h m z) = withObCoprod @k @a @m P.$ Fold (obj @a +++ k) (right @a h) (step m) (rgt @_ @a @m . z)
     where
       step :: (Ob m, Ob a, Ob (a || m)) => (m && m) ~> m -> (a || m) && (a || m) ~> (a || m)
       step mult = (lft @k @a @m . fst @k @a @(a || m) ||| (snd @k @m @a +++ mult) . distLProd @m @a @m) . distRProd @a @m @(a || m)
 
-instance (ProdAction k) => Costrong k (Fold :: k +-> k) where
-  coact @a @x @y (Fold f g m z) = Fold (snd @k @a @y . f) (g . act (fst @k @a @y . f . z) (obj @x) . unitorInv @k @k @x) m z
+instance (Cartesian k) => Costrong ProdAction (Fold :: k +-> k) where
+  coact @(PR a) @_ @y (Fold f g m z) = Fold (snd @k @a @y . f) (g . leftUnitorInvWith (fst @k @a @y . f . z)) m z
 
 trav :: (Applicative f) => Fold a b -> Fold (f a) (f b)
 trav (Fold @m k h m z) = Fold (map k) (map h) (liftA2 @_ @m @m m) (pure z)

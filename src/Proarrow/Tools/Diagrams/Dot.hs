@@ -34,11 +34,11 @@ import Prelude
   , (++)
   )
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Strictly (..), SymMonoidal (..), Tensor)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
+import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 
 type Port = String -- Basically a shown int, but may contain an additional direction (:n, :e, :s, :w)
@@ -201,9 +201,7 @@ instance (Ob as) => Comonoid (D as) where
   counit = node' (Vec (repeat ":n")) (Vec []) "shape=point; width=0.07"
   comult = withIsList2 @as @as $ node' (Vec (repeat ":n")) (Vec (cycle [":sw", ":se"])) "shape=point; width=0.07"
 instance CopyDiscard DOT
-instance Strong DOT Dot where
-  act = (**)
-instance Costrong DOT Dot where
+instance Costrong Tensor Dot where
   coact @(D as) @(D xs) @(D ys) (Dot f) = Dot \n ->
     case f n of
       (n', DotData is os es ns) ->
@@ -224,13 +222,6 @@ instance Costrong DOT Dot where
               , nodeOpts = ns
               }
           )
-instance MonoidalAction DOT DOT where
-  type Act a x = a ** x
-  withObAct @a @x r = withOb2 @_ @a @x r
-  unitor = id
-  unitorInv = id
-  multiplicator @as @bs @cs = obj @as ** obj @bs ** obj @cs
-  multiplicatorInv @as @bs @cs = obj @as ** obj @bs ** obj @cs
 
 swap2 :: (Ob a, Ob b) => Dot (D [a, b]) (D [b, a])
 swap2 @a @b = swap @_ @(D '[a]) @(D '[b])

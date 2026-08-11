@@ -8,8 +8,8 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second)
-import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
 import Proarrow.Category.Monoidal.Closed (BiCCC, Closed (..), uncurry)
+import Proarrow.Category.Monoidal.Strength (MonStrong)
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, (++))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
@@ -88,8 +88,8 @@ distRProd =
       withObCoprod @k @(a && c) @(b && c) $
         uncurry @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
 
-class (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => StrongDistributiveProfunctor (p :: k +-> k)
-instance (DistributiveProfunctor (p :: k +-> k), Strong k p, SelfAction k) => StrongDistributiveProfunctor (p :: k +-> k)
+class (DistributiveProfunctor (p :: k +-> k), MonStrong p) => StrongDistributiveProfunctor (p :: k +-> k)
+instance (DistributiveProfunctor (p :: k +-> k), MonStrong p) => StrongDistributiveProfunctor (p :: k +-> k)
 
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where

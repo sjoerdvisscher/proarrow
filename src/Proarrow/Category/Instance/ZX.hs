@@ -20,14 +20,15 @@ import Prelude hiding (Monoid, id, (**), (.))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 
@@ -195,19 +196,8 @@ instance CompactClosed Nat where
   distribDual @a @b = withOb2 @_ @a @b id
   dualUnit = ZX Map.empty
 
-instance MonoidalAction Nat Nat where
-  type Act p x = p ** x
-  withObAct @b @c r = withOb2 @_ @b @c r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator @b @c @d = associator @_ @b @c @d
-  multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
-
-instance Strong Nat ZX where
-  act = (**)
-
-instance Costrong Nat ZX where
-  coact @x = coactCC @x
+instance (MonoidalAction (t :: (Nat, Nat) +-> Nat)) => Costrong t ZX where
+  coact @x = coactCC @t @x
 
 instance HasTerminalObject Nat where
   type TerminalObject = 0

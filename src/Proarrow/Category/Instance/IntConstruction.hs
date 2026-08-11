@@ -13,10 +13,10 @@ import Proarrow.Category.Monoidal
   , swapOuter
   , (**)
   )
-import Proarrow.Category.Monoidal.Action (TracedMonoidal, trace)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Category.Monoidal.Strength (TracedMonoidal, trace)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 
 data INT k = I k k

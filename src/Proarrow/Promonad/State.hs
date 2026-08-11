@@ -5,10 +5,17 @@ import Prelude (($))
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), leftUnitorWith, swap')
-import Proarrow.Category.Monoidal.Action (SelfAction, Strong (..))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , Tensor
+  , leftUnitorWith
+  , swap'
+  )
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), arr, obj, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.BinaryProduct ((&&&))
@@ -61,12 +68,13 @@ put = StateT (Reader (leftUnitorWith (counit @s)) :.: id :.: Writer (rightUnitor
 
 deriving newtype instance (Profunctor p, Monoidal k, Ob (s :: k)) => Profunctor (StateT s p)
 deriving newtype instance (Representable p, Ob (s :: k), SymMonoidal k, Closed k) => Representable (StateT s p)
-deriving newtype instance
-  (Corepresentable p, Ob (s :: k), SelfAction k, CompactClosed k) => Corepresentable (StateT s p)
-deriving newtype instance (Strong k p, Ob (s :: k), SelfAction k) => Strong k (StateT s p)
+deriving newtype instance (Corepresentable p, Ob (s :: k), Monoidal k, CompactClosed k) => Corepresentable (StateT s p)
 
-instance (Ob (s :: k), SelfAction k, Strong k p, Promonad p) => Promonad (StateT s p) where
-  id @a = withOb2 @k @s @a $ StateT (Reader id :.: act (obj @s) (id @p @a) :.: Writer id)
+instance (Strong Tensor p, Ob (s :: k), SymMonoidal k) => Strong Tensor (StateT s p) where
+  act @a (StateT p) = StateT (act @Tensor @_ @a p)
+
+instance (Ob (s :: k), Monoidal k, Strong Tensor p, Promonad p) => Promonad (StateT s p) where
+  id @a = withOb2 @k @s @a $ StateT (Reader id :.: act @Tensor @p @s (id @p @a) :.: Writer id)
   StateT (r1 :.: p1 :.: w1) . StateT (r2 :.: p2 :.: w2) = StateT (r2 :.: (p1 . arr (Adj.counit (w2 :.: r1)) . p2) :.: w1)
 
 instance (Monoidal k, Ob s) => Functor (StateT s :: k +-> k -> k +-> k) where

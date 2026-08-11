@@ -23,9 +23,8 @@ import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
@@ -214,31 +213,6 @@ associatorCoprodInv = (withObCoprod @k @a @b (lft @k @(a || b) @c) . lft @k @a @
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
   swap @(COPR a) @(COPR b) = Coprod (Id (swapCoprod @a @b))
 
-instance (HasCoproducts k, Strong (COPROD k) ((~>) :: CAT k)) => MonoidalAction (COPROD k) k where
-  type Act a b = UN COPR a || b
-  withObAct @(COPR a) @b r = withObCoprod @k @a @b r
-  unitor = unId (unCoprod leftUnitor)
-  unitorInv = unId (unCoprod leftUnitorInv)
-  multiplicator @a @b @x = unId (unCoprod (associator @(COPROD k) @a @b @(COPR x)))
-  multiplicatorInv @a @b @x = unId (unCoprod (associatorInv @(COPROD k) @a @b @(COPR x)))
-
-instance Costrong (COPROD Type) (Id :: CAT Type) where
-  coact (Id uxuy) = Id (let loop ux = P.either (loop . P.Left) id (uxuy ux) in loop . P.Right)
-
-instance Strong Type (Coprod Id :: CAT (COPROD Type)) where
-  l `act` Coprod (Id r) = Coprod (Id (l ** r))
-
-instance MonoidalAction Type (COPROD Type) where
-  type Act p (COPR x) = COPR (p ** x)
-  withObAct r = r
-  unitor = Coprod (Id leftUnitor)
-  unitorInv = Coprod (Id leftUnitorInv)
-  multiplicator = Coprod (Id associator)
-  multiplicatorInv = Coprod (Id associatorInv)
-
-instance Strong (COPROD Type) (->) where
-  Coprod (Id f) `act` g = f +++ g
-
 type Uncoprod :: (COPROD j +-> COPROD k) -> j +-> k
 data Uncoprod p a b where
   Uncoprod :: p (COPR a) (COPR b) -> Uncoprod p a b
@@ -246,19 +220,6 @@ data Uncoprod p a b where
 instance (Profunctor p, CategoryOf j, CategoryOf k) => Profunctor (Uncoprod p :: j +-> k) where
   dimap l r (Uncoprod p) = Uncoprod (dimap (Coprod (Id l)) (Coprod (Id r)) p \\ p)
   r \\ Uncoprod f = r \\ f
-
-class (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b
-instance (Act (COPR a) b ~ (a || b)) => ActIsCoprod a b
-class (HasCoproducts k, forall (a :: k) (b :: k). ActIsCoprod a b, MonoidalAction (COPROD k) k) => CoprodAction k
-instance (HasCoproducts k, forall (a :: k) (b :: k). ActIsCoprod a b, MonoidalAction (COPROD k) k) => CoprodAction k
-class (Strong (COPROD k) p, CoprodAction k) => StrongCoprod (p :: CAT k)
-instance (Strong (COPROD k) p, CoprodAction k) => StrongCoprod (p :: CAT k)
-
-left' :: forall {k} (p :: CAT k) c a b. (StrongCoprod p, Ob c) => p a b -> p (a || c) (b || c)
-left' p = dimap (swapCoprod @a @c) (swapCoprod @c @b) (right' @_ @c p) \\ p
-
-right' :: forall {k} (p :: CAT k) c a b. (StrongCoprod p, Ob c) => p a b -> p (c || a) (c || b)
-right' p = act (obj @(COPR c)) p
 
 data family (+) (a :: k) (b :: k) :: k
 instance (Ob (a :: FREE cs p), Ob b, HasBinaryCoproducts `Elem` cs) => IsFreeOb (a + b) where

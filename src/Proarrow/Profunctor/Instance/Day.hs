@@ -14,10 +14,10 @@ import Proarrow.Category.Monoidal
   , swapInner'
   , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), SelfAction, Strong (..), first', second')
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Category.Monoidal.Strength (MonStrong, first', second')
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
@@ -164,19 +164,9 @@ multDayExp = Prof \(Day @c @d @e @f g (DayExp pq) (DayExp pq') h) ->
                      (r . (h ** j) . swapInner' d d' f f')
         )
 
-instance (Monoidal j, Monoidal k) => Strong (j +-> k) (Prof :: CAT (j +-> k)) where
-  act = (**)
-instance (Monoidal j, Monoidal k) => MonoidalAction (j +-> k) (j +-> k) where
-  type Act p q = p ** q
-  withObAct r = r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator = associator
-  multiplicatorInv = associatorInv
-
 -- Day p q :: j +-> k can be Strong in multiple ways:
 -- 1. Either p or q is strong, and we have: Act a (b ** c) ~ (Act a b) ** c.
 -- 2. Or p and q are both strong, and we have: Act a (b ** c) ~ (Act a b) ** (Act a c)
 
-day2comp :: (Strong k (p :: k +-> k), Strong k q, SelfAction k) => Day p q ~> p :.: q
+day2comp :: (MonStrong (p :: k +-> k), MonStrong q, Monoidal k) => Day p q ~> p :.: q
 day2comp = Prof \(Day @_ @d @e f p q g) -> lmap f (first' @e p) :.: rmap g (second' @d q) \\ p \\ q

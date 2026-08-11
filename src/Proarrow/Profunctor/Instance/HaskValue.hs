@@ -4,8 +4,8 @@ import Data.Kind (Type)
 import Prelude (Monoid (..), ($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (SelfAction, strongPar0)
 import Proarrow.Category.Monoidal.Distributive (Cotraversable (..), Traversable (..))
+import Proarrow.Category.Monoidal.Strength (strongId)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Profunctor.Instance.Composition ((:.:) ((:.:)))
 
@@ -25,8 +25,8 @@ instance (Monoid c, Monoidal j, Monoidal k) => MonoidalProfunctor (HaskValue c :
   one = HaskValue mempty
   HaskValue @a1 @b1 c1 ** HaskValue @a2 @b2 c2 = withOb2 @k @a1 @a2 $ withOb2 @j @b1 @b2 $ HaskValue (mappend c1 c2)
 
-instance (SelfAction k) => Traversable (HaskValue c :: k +-> k) where
-  traverse (HaskValue c :.: r) = strongPar0 :.: HaskValue c \\ r
+instance (Monoidal k) => Traversable (HaskValue c :: k +-> k) where
+  traverse (HaskValue c :.: r) = strongId :.: HaskValue c \\ r
 
-instance (SelfAction k) => Cotraversable (HaskValue c :: k +-> k) where
-  cotraverse (r :.: HaskValue c) = HaskValue c :.: strongPar0 \\ r
+instance (Monoidal k) => Cotraversable (HaskValue c :: k +-> k) where
+  cotraverse (r :.: HaskValue c) = HaskValue c :.: strongId \\ r

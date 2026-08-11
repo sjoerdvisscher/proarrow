@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Limit.Power where
@@ -13,14 +12,13 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (leftUnitorInvWith)
-import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (TerminalObject, terminate)
 import Proarrow.Profunctor.Representable (Representable (..))
 
 -- | Categories powered over @v@.
-class (Enriched v k, Closed v) => Powered v k where
+class (Enriched v k) => Powered v k where
   type (a :: k) ^ (n :: v) :: k
   withObPower :: (Ob (a :: k), Ob (n :: v)) => ((Ob (a ^ n)) => r) -> r
   power :: (Ob (a :: k), Ob b) => (n ~> HomObj v a b) -> a ~> (b ^ n)
@@ -38,12 +36,12 @@ mapPower :: forall {k} {v} (a :: k) (n :: v) m. (Powered v k, Ob a) => (n ~> m) 
 mapPower f = withObPower @v @k @a @m (power @v @k @(a ^ m) @a @n (unpower @v @k @a id . f)) \\ f
 
 instance Powered Type Type where
-  type a ^ n = n ~~> a
+  type a ^ n = n -> a
   withObPower r = r
   power f a n = f n a
   unpower f n a = f a n
 
-instance (Enriched v (), Closed v, HomObj v '() '() ~ TerminalObject, Cartesian v) => Powered v () where
+instance (Enriched v (), HomObj v '() '() ~ TerminalObject, Cartesian v) => Powered v () where
   type a ^ n = '()
   withObPower r = r
   power _ = U.Unit

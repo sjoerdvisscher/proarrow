@@ -16,7 +16,7 @@ import Proarrow.Category.Monoidal
   , swap
   , unitObj
   )
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), act)
+import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.StarAutonomous
   ( StarAutonomous (..)
   , doubleNeg
@@ -25,7 +25,7 @@ import Proarrow.Category.Monoidal.StarAutonomous
   , dualityUnitSA
   )
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 
 class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
@@ -80,16 +80,16 @@ traceCC :: forall {k} u (x :: k) y. (CompactClosed k, Ob x, Ob y, Ob u) => x ** 
 traceCC f = unStr (traceCCS @u (Str f))
 
 coactCC
-  :: forall {m} {k} (u :: m) (x :: k) (y :: k)
-   . (CompactClosed m, MonoidalAction m k, Ob x, Ob y, Ob u) => Act u x ~> Act u y -> x ~> y
+  :: forall {m} {k} (t :: (m, k) +-> k) (u :: m) (x :: k) (y :: k)
+   . (CompactClosed m, MonoidalAction t, Ob x, Ob y, Ob u) => Act t u x ~> Act t u y -> x ~> y
 coactCC f =
-  unitor @m @k @y
-    . act (dualityCounit @u) (obj @y)
-    . multiplicatorInv @m @k @(Dual u) @u @y
-    . act (obj @(Dual u)) f
-    . multiplicator @m @k @(Dual u) @u @x
-    . act (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
-    . unitorInv @m @k @x
+  unitor @t @y
+    . actHom @t (dualityCounit @u) (obj @y)
+    . multiplicatorInv @t @(Dual u) @u @y
+    . actHom @t (obj @(Dual u)) f
+    . multiplicator @t @(Dual u) @u @x
+    . actHom @t (swap @m @u @(Dual u) . dualityUnit @u) (obj @x)
+    . unitorInv @t @x
     \\ dualObj @u
 
 instance CompactClosed () where

@@ -2,9 +2,9 @@ module Proarrow.Profunctor.Instance.Composition where
 
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Strong (..))
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), nil, (++))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, tgt, (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)
@@ -49,18 +49,18 @@ instance
   one = Coprod (nil :.: nil)
   Coprod (f :.: g) ** Coprod (h :.: i) = Coprod ((f ++ h) :.: (g ++ i))
 
-instance (Strong m p, Strong m q) => Strong m (p :.: q) where
-  act f (p :.: q) = act f p :.: act (tgt f) q
+instance (Strong t p, Strong t q) => Strong t (p :.: q) where
+  act @x (p :.: q) = act @t @_ @x p :.: act @t @_ @x q
 
 -- No instance for ThinProfunctor (p :.: q) because you can't do existentials in constraints.
 
 -- | Horizontal composition
 o
   :: forall {i} {j} {k} (p :: j +-> k) (q :: j +-> k) (r :: i +-> j) (s :: i +-> j)
-   . Prof p q
-  -> Prof r s
-  -> Prof (p :.: r) (q :.: s)
-Prof pq `o` Prof rs = Prof \(p :.: r) -> pq p :.: rs r
+   . p :~> q
+  -> r :~> s
+  -> p :.: r :~> q :.: s
+pq `o` rs = \(p :.: r) -> pq p :.: rs r
 
 -- | @p :.: q@ is a `Promonad` if @p@ and @q@ are and if there's a distributive law between @p@ and @q@.
 compComp :: (Promonad p, Promonad q) => q :.: p :~> p :.: q -> (p :.: q) b c -> (p :.: q) a b -> (p :.: q) a c

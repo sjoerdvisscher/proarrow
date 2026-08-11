@@ -14,13 +14,14 @@ import Proarrow.Adjunction (Involution)
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLInv, distRInv)
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
@@ -188,19 +189,8 @@ instance (P.Num a) => CompactClosed (MatK a) where
   distribDual @m @n = withMultNat @(UN M m) @(UN M n) $ dagger (obj @m) ** dagger (obj @n)
   dualUnit = id
 
-instance (P.Num a) => MonoidalAction (MatK a) (MatK a) where
-  type Act p x = p ** x
-  withObAct @b @c r = withOb2 @_ @b @c r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator @b @c @d = associator @_ @b @c @d
-  multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
-
-instance (P.Num a) => Strong (MatK a) (Mat :: CAT (MatK a)) where
-  act = (**)
-
-instance (P.Num a) => Costrong (MatK a) (Mat :: CAT (MatK a)) where
-  coact @x = coactCC @x
+instance (P.Num a, MonoidalAction (t :: (MatK a, MatK a) +-> MatK a)) => Costrong t (Mat :: CAT (MatK a)) where
+  coact @x = coactCC @t @x
 
 -- | Monoids are associative, unital algebras.
 instance (P.Num a, IsNat n) => Monoid (M n :: MatK a) where

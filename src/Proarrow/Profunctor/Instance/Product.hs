@@ -4,7 +4,6 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (Strong (..))
 import Proarrow.Core (Profunctor (..), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
 
@@ -30,9 +29,6 @@ instance (ThinProfunctor p, ThinProfunctor q) => ThinProfunctor (p :*: q) where
   type HasArrow (p :*: q) a b = (HasArrow p a b, HasArrow q a b)
   arr = arr :*: arr
   withArr (p :*: q) r = withArr p (withArr q r)
-
-instance (Strong m p, Strong m q) => Strong m (p :*: q) where
-  act f (p :*: q) = act f p :*: act f q
 
 instance (Profunctor p) => Functor ((:*:) p) where
   map (Prof n) = Prof \(p :*: q) -> p :*: n q

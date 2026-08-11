@@ -13,13 +13,14 @@ import Prelude qualified as P
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
-import Proarrow.Category.Monoidal.Action (Costrong (..), MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..), coactCC)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
+import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasBiproducts)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
@@ -194,19 +195,8 @@ instance CompactClosed FINREL where
   distribDual @m @n = dagger (obj @m) ** dagger (obj @n)
   dualUnit = id
 
-instance MonoidalAction FINREL FINREL where
-  type Act p x = p ** x
-  withObAct @b @c r = withOb2 @_ @b @c r
-  unitor = leftUnitor
-  unitorInv = leftUnitorInv
-  multiplicator @b @c @d = associator @_ @b @c @d
-  multiplicatorInv @b @c @d = associatorInv @_ @b @c @d
-
-instance Strong FINREL FinRel where
-  act = (**)
-
-instance Costrong FINREL FinRel where
-  coact @x = coactCC @x
+instance (MonoidalAction (t :: (FINREL, FINREL) +-> FINREL)) => Costrong t FinRel where
+  coact @x = coactCC @t @x
 
 -- >>> import Data.Type.Nat
 -- >>> mappend @(FR Nat3)

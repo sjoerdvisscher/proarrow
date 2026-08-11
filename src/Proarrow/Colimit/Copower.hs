@@ -12,13 +12,12 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (rightUnitorInvWith)
-import Proarrow.Category.Monoidal.Closed (Closed)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (dimap, (\\)), Promonad (..), obj, (//), type (+->))
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 
 -- | Categories copowered over @v@.
-class (Enriched v k, Closed v) => Copowered v k where
+class (Enriched v k) => Copowered v k where
   type (n :: v) *. (a :: k) :: k
   withObCopower :: (Ob (a :: k), Ob (n :: v)) => ((Ob (n *. a)) => r) -> r
   copower :: (Ob (a :: k), Ob b) => n ~> HomObj v a b -> (n *. a) ~> b
@@ -38,7 +37,7 @@ mapCopower f = withObCopower @v @k @a @m (copower @v @k @a @(m *. a) @n (uncopow
 instance Copowered Type Type where
   type n *. a = (n, a)
   withObCopower r = r
-  copower f = \(n, a) -> f n a
+  copower f (n, a) = f n a
   uncopower f n a = f (n, a)
 
 instance Copowered Type () where

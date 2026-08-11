@@ -12,22 +12,23 @@ import Data.Kind (Type)
 import Data.Void (Void, absurd)
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (MonoidalAction (..), Strong (..))
+import Proarrow.Category.Monoidal.Action (MonoidalAction (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Coclosed (Coclosed (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Copower (Copowered (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, OB, Profunctor (..), Promonad (..), UN, dimapDefault, (//))
-import Proarrow.Functor (Functor (..), type (.~>))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, (//), type (+->))
+import Proarrow.Functor (Functor (..), FunctorForRep (..), type (.~>))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..))
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Representable (Rep)
 
 type Nat :: CAT (j -> k)
 data Nat f g where
@@ -115,28 +116,29 @@ instance Monoidal (Type -> Type) where
   associator = Nat (Compose . map Compose . getCompose . getCompose)
   associatorInv = Nat (Compose . Compose . map getCompose . getCompose)
 
-instance Strong (Type -> Type) (->) where
-  act (Nat n) f = n . map f
-instance MonoidalAction (Type -> Type) Type where
-  type Act (p :: Type -> Type) (x :: Type) = p x
-  withObAct r = r
+type ApplyAction = Rep ApplyAction'
+data family ApplyAction' :: (Type -> Type, Type) +-> Type
+instance FunctorForRep ApplyAction' where
+  type ApplyAction' @ '(f, x) = f x
+  fmap (n :**: f) = n ! f
+instance MonoidalAction ApplyAction where
   unitor = runIdentity
   unitorInv = Identity
   multiplicator = getCompose
   multiplicatorInv = Compose
 
-instance (ob Identity, forall a b. (ob a, ob b) => ob (Compose a b)) => Strong (SUBCAT (ob :: OB (Type -> Type))) (->) where
-  act (Sub (Nat n)) f = n . map f
-instance
-  (Monoidal (SUBCAT (ob :: OB (Type -> Type))), Strong (SUBCAT (ob :: OB (Type -> Type))) ((~>) :: CAT Type))
-  => MonoidalAction (SUBCAT (ob :: OB (Type -> Type))) Type
-  where
-  type Act (p :: SUBCAT ob) (x :: Type) = UN SUB p x
-  withObAct r = r
-  unitor = runIdentity
-  unitorInv = Identity
-  multiplicator = getCompose
-  multiplicatorInv = Compose
+-- instance (ob Identity, forall a b. (ob a, ob b) => ob (Compose a b)) => Strong (SUBCAT (ob :: OB (Type -> Type))) (->) where
+--   act (Sub (Nat n)) f = n . map f
+-- instance
+--   (Monoidal (SUBCAT (ob :: OB (Type -> Type))), Strong (SUBCAT (ob :: OB (Type -> Type))) ((~>) :: CAT Type))
+--   => MonoidalAction (SUBCAT (ob :: OB (Type -> Type))) Type
+--   where
+--   type Act (p :: SUBCAT ob) (x :: Type) = UN SUB p x
+--   withObAct r = r
+--   unitor = runIdentity
+--   unitorInv = Identity
+--   multiplicator = getCompose
+--   multiplicatorInv = Compose
 
 type Ran :: (j -> k) -> (j -> Type) -> k -> Type
 newtype Ran j h a = Ran {runRan :: forall b. (a ~> j b) -> h b}
