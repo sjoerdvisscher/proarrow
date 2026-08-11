@@ -3,6 +3,7 @@
 module Proarrow.Profunctor.Instance.Star where
 
 import Data.Functor.Compose (Compose (..))
+import Data.Kind (Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
@@ -19,7 +20,6 @@ import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap
 import Proarrow.Functor (Functor (..), Prelude (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
-import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 
 type Star' :: j .-> k -> j +-> k
@@ -68,7 +68,7 @@ type CoprodDom :: j +-> k -> COPROD j +-> k
 data CoprodDom p a b where
   Co :: {unCo :: p a b} -> CoprodDom p a (COPR b)
 instance (Profunctor p) => Profunctor (CoprodDom p) where
-  dimap l (Coprod (Id r)) (Co p) = Co (dimap l r p)
+  dimap l (Coprod r) (Co p) = Co (dimap l r p)
   r \\ Co p = r \\ p
 
 instance (Alternative f, Monoidal k, Distributive j) => MonoidalProfunctor (CoprodDom (Star (f :: j -> k))) where
@@ -100,8 +100,8 @@ instance Traversable (Star []) where
           (one ++ (p ** go))
 
 starTraverse
-  :: forall {k} t f a b
-   . (Applicative (f :: k -> k), Functor t, Traversable (Star t), MonStrong (Star f), HasCoproducts k, Ob b)
+  :: forall t f a b
+   . (Applicative (f :: Type -> Type), Functor t, Traversable (Star t), MonStrong (Star f), Ob b)
   => (a ~> f b) -> t a ~> f (t b)
 starTraverse = baseTraverse @(Star t) @(Star f)
 

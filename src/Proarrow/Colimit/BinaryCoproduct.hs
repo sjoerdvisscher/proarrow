@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE IncoherentInstances #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 module Proarrow.Colimit.BinaryCoproduct where
@@ -24,14 +25,13 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
+import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
 import Proarrow.Profunctor.Instance.Coproduct (coproduct, (:+:) (..))
-import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
@@ -47,7 +47,7 @@ class (CategoryOf k) => HasBinaryCoproducts k where
   rgt :: (Ob (a :: k), Ob b) => b ~> (a || b)
   (|||) :: (x :: k) ~> a -> y ~> a -> (x || y) ~> a
   (+++) :: forall a b x y. (a :: k) ~> x -> b ~> y -> a || b ~> x || y
-  l +++ r = (lft @k @x @y . l) ||| (rgt @k @x @y . r) \\ l \\ r
+  l +++ r = lft @k @x @y . l ||| rgt @k @x @y . r \\ l \\ r
 
 lft' :: forall {k} (a :: k) a' b. (HasBinaryCoproducts k) => a ~> a' -> Obj b -> a ~> (a' || b)
 lft' a b = lft @k @a' @b . a \\ a \\ b
@@ -124,28 +124,28 @@ data Coprod p a b where
   Coprod :: {unCoprod :: p a b} -> Coprod p (COPR a) (COPR b)
 
 instance (CategoryOf k) => Functor (COPR :: k -> COPROD k) where
-  map f = Coprod (Id f)
+  map = Coprod
 
 instance (Profunctor p) => Profunctor (Coprod p) where
-  dimap (Coprod (Id l)) (Coprod (Id r)) (Coprod p) = Coprod (dimap l r p)
+  dimap (Coprod l) (Coprod r) (Coprod p) = Coprod (dimap l r p)
   r \\ Coprod f = r \\ f
 instance (Promonad p) => Promonad (Coprod p) where
   id = Coprod id
   Coprod f . Coprod g = Coprod (f . g)
 instance (Representable p) => Representable (Coprod p) where
   type Coprod p % (COPR a) = COPR (p % a)
-  index (Coprod p) = Coprod (Id (index p))
-  tabulate (Coprod (Id f)) = Coprod (tabulate f)
-  repMap (Coprod (Id f)) = Coprod (Id (repMap @p f))
+  index (Coprod p) = Coprod (index p)
+  tabulate (Coprod f) = Coprod (tabulate f)
+  repMap (Coprod f) = Coprod (repMap @p f)
 
 -- | The same category as the category of @k@, but with coproducts as the tensor.
 instance (CategoryOf k) => CategoryOf (COPROD k) where
-  type (~>) = Coprod Id
+  type (~>) = Coprod (~>)
   type Ob a = WrappedOb COPR a
 
-instance (HasCoproducts k) => MonoidalProfunctor (Coprod (Id :: k +-> k)) where
+instance (HasCoproducts k, cat ~ Hom k) => MonoidalProfunctor (Coprod cat :: COPROD k +-> COPROD k) where
   one = Coprod id
-  Coprod (Id f) ** Coprod (Id g) = Coprod (Id (f +++ g))
+  Coprod f ** Coprod g = Coprod (f +++ g)
 
 instance (HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (TerminalProfunctor :: j +-> k)) where
   one = Coprod TerminalProfunctor
@@ -160,37 +160,37 @@ p ++ q = unCoprod (Coprod p ** Coprod q)
 
 instance (HasInitialObject k) => HasInitialObject (COPROD k) where
   type InitialObject = COPR InitialObject
-  initiate = Coprod (Id initiate)
+  initiate = Coprod initiate
 
 instance (HasBinaryCoproducts k) => HasBinaryCoproducts (COPROD k) where
   type COPR a || COPR b = COPR (a || b)
   withObCoprod @(COPR a) @(COPR b) r = withObCoprod @k @a @b r
-  lft @(COPR a) @(COPR b) = Coprod (Id (lft @k @a @b))
-  rgt @(COPR a) @(COPR b) = Coprod (Id (rgt @k @a @b))
-  Coprod (Id f) ||| Coprod (Id g) = Coprod (Id (f ||| g))
+  lft @(COPR a) @(COPR b) = Coprod (lft @k @a @b)
+  rgt @(COPR a) @(COPR b) = Coprod (rgt @k @a @b)
+  Coprod f ||| Coprod g = Coprod (f ||| g)
 
 instance (HasTerminalObject k) => HasTerminalObject (COPROD k) where
   type TerminalObject = COPR TerminalObject
-  terminate = Coprod (Id terminate)
+  terminate = Coprod terminate
 
 instance (HasBinaryProducts k) => HasBinaryProducts (COPROD k) where
   type COPR a && COPR b = COPR (a && b)
   withObProd @(COPR a) @(COPR b) r = withObProd @k @a @b r
-  fst @(COPR a) @(COPR b) = Coprod (Id (fst @k @a @b))
-  snd @(COPR a) @(COPR b) = Coprod (Id (snd @k @a @b))
-  Coprod (Id f) &&& Coprod (Id g) = Coprod (Id (f &&& g))
+  fst @(COPR a) @(COPR b) = Coprod (fst @k @a @b)
+  snd @(COPR a) @(COPR b) = Coprod (snd @k @a @b)
+  Coprod f &&& Coprod g = Coprod (f &&& g)
 
 -- | Coproducts as monoidal tensor.
 instance (HasCoproducts k) => Monoidal (COPROD k) where
   type Unit = COPR InitialObject
   type a ** b = COPR (UN COPR a || UN COPR b)
   withOb2 @(COPR a) @(COPR b) r = withObCoprod @k @a @b r
-  leftUnitor = Coprod (Id leftUnitorCoprod)
-  leftUnitorInv = Coprod (Id leftUnitorCoprodInv)
-  rightUnitor = Coprod (Id rightUnitorCoprod)
-  rightUnitorInv = Coprod (Id rightUnitorCoprodInv)
-  associator @(COPR a) @(COPR b) @(COPR c) = Coprod (Id (associatorCoprod @a @b @c))
-  associatorInv @(COPR a) @(COPR b) @(COPR c) = Coprod (Id (associatorCoprodInv @a @b @c))
+  leftUnitor = Coprod leftUnitorCoprod
+  leftUnitorInv = Coprod leftUnitorCoprodInv
+  rightUnitor = Coprod rightUnitorCoprod
+  rightUnitorInv = Coprod rightUnitorCoprodInv
+  associator @(COPR a) @(COPR b) @(COPR c) = Coprod (associatorCoprod @a @b @c)
+  associatorInv @(COPR a) @(COPR b) @(COPR c) = Coprod (associatorCoprodInv @a @b @c)
 
 leftUnitorCoprod :: forall {k} (a :: k). (HasCoproducts k, Ob a) => (InitialObject || a) ~> a
 leftUnitorCoprod = initiate ||| id
@@ -205,20 +205,20 @@ rightUnitorCoprodInv :: forall {k} (a :: k). (HasCoproducts k, Ob a) => a ~> (a 
 rightUnitorCoprodInv = lft @k @a @InitialObject
 
 associatorCoprod :: forall {k} (a :: k) b c. (HasCoproducts k, Ob a, Ob b, Ob c) => (a || b) || c ~> a || (b || c)
-associatorCoprod = (obj @a +++ lft @k @b @c) ||| (withObCoprod @k @b @c (rgt @k @a @(b || c)) . rgt @k @b @c)
+associatorCoprod = (obj @a +++ lft @k @b @c) ||| withObCoprod @k @b @c (rgt @k @a @(b || c)) . rgt @k @b @c
 
 associatorCoprodInv :: forall {k} (a :: k) b c. (HasCoproducts k, Ob a, Ob b, Ob c) => a || (b || c) ~> (a || b) || c
-associatorCoprodInv = (withObCoprod @k @a @b (lft @k @(a || b) @c) . lft @k @a @b) ||| (rgt @k @a @b +++ obj @c)
+associatorCoprodInv = withObCoprod @k @a @b (lft @k @(a || b) @c) . lft @k @a @b ||| (rgt @k @a @b +++ obj @c)
 
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
-  swap @(COPR a) @(COPR b) = Coprod (Id (swapCoprod @a @b))
+  swap @(COPR a) @(COPR b) = Coprod (swapCoprod @a @b)
 
 type Uncoprod :: (COPROD j +-> COPROD k) -> j +-> k
 data Uncoprod p a b where
   Uncoprod :: p (COPR a) (COPR b) -> Uncoprod p a b
 
 instance (Profunctor p, CategoryOf j, CategoryOf k) => Profunctor (Uncoprod p :: j +-> k) where
-  dimap l r (Uncoprod p) = Uncoprod (dimap (Coprod (Id l)) (Coprod (Id r)) p \\ p)
+  dimap l r (Uncoprod p) = Uncoprod (dimap (Coprod l) (Coprod r) p \\ p)
   r \\ Uncoprod f = r \\ f
 
 data family (+) (a :: k) (b :: k) :: k

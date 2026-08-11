@@ -17,7 +17,6 @@ import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (..), Prelude (..))
 import Proarrow.Monoid (Comonoid (..))
-import Proarrow.Profunctor.Instance.Identity (Id (..))
 
 type Applicative :: forall {j} {k}. (j -> k) -> Constraint
 class (Monoidal j, Monoidal k, Functor f) => Applicative (f :: j -> k) where
@@ -59,9 +58,9 @@ class (Distributive j, Functor f) => Alternative (f :: j -> k) where
 
 -- Note: Comonoid (COPR x) means we need x ~> InitialObject.
 instance (DistributiveProfunctor (p :: j +-> k), Distributive j, Comonoid (COPR x)) => Alternative (FromProfunctor p x) where
-  empty () = FromProfunctor (dimap (unId (unCoprod (counit @(COPR x)))) initiate (nil @p))
+  empty () = FromProfunctor (dimap (unCoprod (counit @(COPR x))) initiate (nil @p))
   alt abc (FromProfunctor pxa, FromProfunctor pyb) =
-    FromProfunctor $ dimap (unId (unCoprod (comult @(COPR x)))) abc (pxa ++ pyb)
+    FromProfunctor $ dimap (unCoprod (comult @(COPR x))) abc (pxa ++ pyb)
 
 instance (P.Alternative f) => Alternative (Prelude f) where
   empty () = Prelude P.empty

@@ -58,8 +58,8 @@ instance (Monoid m, Cartesian k, Ob x) => P.Monoid (GenElt x (m :: k)) where
   mempty = GenElt (mempty . arr terminate)
 
 instance (HasCoproducts k, Ob a) => Monoid (COPR (a :: k)) where
-  mempty = Coprod (Id initiate)
-  mappend = Coprod (Id codiag)
+  mempty = Coprod initiate
+  mappend = Coprod codiag
 
 memptyAct :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Monoid a, Ob n) => n ~> Act t a n
 memptyAct = actHom @t (mempty @a) (obj @n) . unitorInv @t

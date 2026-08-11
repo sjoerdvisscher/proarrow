@@ -31,7 +31,6 @@ import Proarrow.Limit.BinaryProduct
   , leftUnitorProd
   , leftUnitorProdInv
   )
-import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 
 type Act :: (m, k) +-> k -> m -> k -> k
@@ -115,7 +114,7 @@ type CoprodAction = Rep CoprodAction'
 data family CoprodAction' :: (COPROD k, k) +-> k
 instance (HasCoproducts k) => FunctorForRep (CoprodAction' :: (COPROD k, k) +-> k) where
   type CoprodAction' @ '(COPR a, x) = a || x
-  fmap (Coprod (Id l) :**: r) = l +++ r
+  fmap (Coprod l :**: r) = l +++ r
 instance (HasCoproducts k) => MonoidalAction (CoprodAction :: (COPROD k, k) +-> k) where
   unitor = leftUnitorCoprod
   unitorInv = leftUnitorCoprodInv
