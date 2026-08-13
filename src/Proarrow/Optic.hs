@@ -49,6 +49,8 @@ class c :=> d where
 type Iso s t a b = Optic Profunctor s t a b
 type Iso' s a = Iso s s a a
 
+-- | Create an isomorphism from two arrows. Note that this doesn't enforce that the
+-- arrows are actually inverses!
 iso :: forall {j} {k} (s :: k) (t :: j) a b. (CategoryOf j, CategoryOf k) => (s ~> a) -> (b ~> t) -> Iso s t a b
 iso sa bt = Optic (dimap sa bt) \\ sa \\ bt
 

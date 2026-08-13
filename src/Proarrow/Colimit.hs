@@ -44,7 +44,7 @@ mapColimit (Prof n) = Prof (colimitUniv @j (n . colimit @j))
 
 instance (HasInitialObject k) => HasColimits (Unweighted :: () +-> VOID) k where
   type Colimit Unweighted d = Corep (Constant InitialObject)
-  colimit = \case {}
+  colimit (t :.: _) = case t of {}
   colimitUniv _ p = p // Corep initiate
 
 type O1 = L '()

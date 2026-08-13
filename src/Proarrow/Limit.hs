@@ -43,7 +43,7 @@ type Unweighted = TerminalProfunctor
 
 instance (HasTerminalObject k) => HasLimits (Unweighted :: VOID +-> ()) k where
   type Limit Unweighted d = Rep (Constant TerminalObject)
-  limit = \case {}
+  limit (_ :.: t) = case t of {}
   limitUniv _ p = p // Rep terminate
 
 type O1 = L '()
