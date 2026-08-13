@@ -10,7 +10,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinFactorCoequalizer)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.NaturalNumbers (HasParamNNO (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..), thinPushout)
@@ -25,7 +25,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
+import Proarrow.Limit.Equalizer (HasEqualizers (..), thinFactorEqualizer)
 import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -115,10 +115,10 @@ instance HasBinaryProducts BOOL where
   Tru &&& Tru = Tru
 
 instance HasEqualizers BOOL where
-  equalize = thinEqualize
+  factorEqualizer = thinFactorEqualizer
 
 instance HasCoequalizers BOOL where
-  coequalize = thinCoequalize
+  factorCoequalizer = thinFactorCoequalizer
 
 instance HasPullbacks BOOL where
   pullback = thinPullback

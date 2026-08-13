@@ -19,11 +19,8 @@ instance ThinProfunctor Zero where
   arr = no
   withArr = \case {}
 
-class (HasArrow (Hom k) a a) => HasIdArrow k a
-instance (HasArrow (Hom k) a a) => HasIdArrow k a
-
-class (ThinProfunctor (Hom k), CategoryOf k, forall a. (Ob a) => HasIdArrow k a) => Thin k
-instance (ThinProfunctor (Hom k), CategoryOf k, forall a. (Ob a) => HasIdArrow k a) => Thin k
+class (ThinProfunctor (Hom k), CategoryOf k) => Thin k
+instance (ThinProfunctor (Hom k), CategoryOf k) => Thin k
 
 class (ThinProfunctor p, Ob a, Ob b, HasArrow p a b) => HasArrow' p a b where arr' :: p a b
 instance (ThinProfunctor p, Ob a, Ob b, HasArrow p a b) => HasArrow' p a b where arr' = arr

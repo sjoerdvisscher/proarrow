@@ -25,7 +25,13 @@ instance (Thin k) => CategoryOf (THINK k i j) where
   type (~>) = ThinCategory
   type Ob (a :: THINK k i j) = (a ~ THIN, Ob i, Ob j, HasArrow (Hom k) i j)
 
-instance (Thin k) => Bicategory (THINK k) where
+class (HasArrow (Hom k) a a) => HasIdArrow k a
+instance (HasArrow (Hom k) a a) => HasIdArrow k a
+
+class (Thin k, forall a. (Ob a) => HasIdArrow k a) => Thin' k
+instance (Thin k, forall a. (Ob a) => HasIdArrow k a) => Thin' k
+
+instance (Thin' k) => Bicategory (THINK k) where
   type Ob0 (THINK k) a = Ob a
   type I = THIN
   type O THIN THIN = THIN
@@ -45,7 +51,7 @@ data family ThinFunctor (p :: j +-> k) :: THINK j :-> THINK k
 
 type instance Map0 (ThinFunctor p) a = p % a
 type instance Map1 (ThinFunctor p) THIN = THIN
-instance (Representable p, Thin j, Thin k) => LaxFunctor (ThinFunctor (p :: j +-> k)) where
+instance (Representable p, Thin' j, Thin' k) => LaxFunctor (ThinFunctor (p :: j +-> k)) where
   map2 @a Id = withMap1Ob @(ThinFunctor p) @a Id
   laxId @i = withObRep @p @i Id
   laxComp @(THIN :: THINK j b c) @(THIN :: THINK j a b) =

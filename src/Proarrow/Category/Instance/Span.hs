@@ -24,8 +24,6 @@ import Proarrow.Limit.BinaryProduct
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 newtype SPAN k = SP k
 
@@ -44,7 +42,7 @@ instance (HasPullbacks k) => Profunctor (Span :: CAT (SPAN k)) where
   r \\ Span f g = r \\ f \\ g
 instance (HasPullbacks k) => Promonad (Span :: CAT (SPAN k)) where
   id = Span id id
-  Span f g . Span h i = case pullback i f of Cone (Leg l (Leg r Apex)) -> Span (h . l) (g . r)
+  Span f g . Span h i = pullback i f \l r -> Span (h . l) (g . r)
 instance (HasPullbacks k) => CategoryOf (SPAN k) where
   type (~>) = Span
   type Ob a = WrappedOb SP a
@@ -112,8 +110,6 @@ instance (HasPullbacks k, HasBinaryCoproducts k) => HasBiproducts (SPAN k) where
   Span f g `sum` Span h i = Span (f ||| h) (g ||| i)
 
 instance (HasPullbacks k) => HasPushouts (SPAN k) where
-  pushout (Span f g) (Span h i) = case pullback f h of
-    Cone (Leg l (Leg r Apex)) -> Cocone (Coleg (coarr (g . l)) (Coleg (coarr (i . r)) Coapex))
+  pushout (Span f g) (Span h i) k = pullback f h \l r -> k (coarr (g . l)) (coarr (i . r))
 instance (HasPullbacks k) => HasPullbacks (SPAN k) where
-  pullback (Span f g) (Span h i) = case pullback g i of
-    Cone (Leg l (Leg r Apex)) -> Cone (Leg (arr (f . l)) (Leg (arr (h . r)) Apex))
+  pullback (Span f g) (Span h i) k = pullback g i \l r -> k (arr (f . l)) (arr (h . r))

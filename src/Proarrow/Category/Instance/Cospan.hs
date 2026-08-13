@@ -25,8 +25,6 @@ import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), Wrap
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
 
 newtype COSPAN k = CS k
 
@@ -45,7 +43,7 @@ instance (HasPushouts k) => Profunctor (Cospan :: CAT (COSPAN k)) where
   r \\ Cospan f g = r \\ f \\ g
 instance (HasPushouts k) => Promonad (Cospan :: CAT (COSPAN k)) where
   id = Cospan id id
-  Cospan f g . Cospan h i = case pushout i f of Cocone (Coleg l (Coleg r Coapex)) -> Cospan (l . h) (r . g)
+  Cospan f g . Cospan h i = pushout i f \l r -> Cospan (l . h) (r . g)
 instance (HasPushouts k) => CategoryOf (COSPAN k) where
   type (~>) = Cospan
   type Ob a = WrappedOb CS a
@@ -96,18 +94,16 @@ instance (HasPushouts k) => DaggerProfunctor (Cospan :: CAT (COSPAN k)) where
   dagger (Cospan f g) = Cospan g f
 
 instance (HasPushouts k) => HasPushouts (COSPAN k) where
-  pushout (Cospan f g) (Cospan h i) = case pushout f h of
-    Cocone (Coleg l (Coleg r Coapex)) -> Cocone (Coleg (arr (l . g)) (Coleg (arr (r . i)) Coapex))
+  pushout (Cospan f g) (Cospan h i) k = pushout f h \l r -> k (arr (l . g)) (arr (r . i))
 instance (HasPushouts k) => HasPullbacks (COSPAN k) where
-  pullback (Cospan f g) (Cospan h i) = case pushout g i of
-    Cocone (Coleg l (Coleg r Coapex)) -> Cone (Leg (coarr (l . f)) (Leg (coarr (r . h)) Apex))
+  pullback (Cospan f g) (Cospan h i) k = pushout g i \l r -> k (coarr (l . f)) (coarr (r . h))
 
 data family Pushout :: SPAN k +-> COSPAN k
 instance (HasPushouts k, HasPullbacks k) => FunctorForRep (Pushout :: SPAN k +-> COSPAN k) where
   type Pushout @ (SP a) = CS a
-  fmap (Span l r) = case pushout l r of Cocone (Coleg f (Coleg g Coapex)) -> Cospan f g
+  fmap (Span l r) = pushout l r Cospan
 
 data family Pullback :: COSPAN k +-> SPAN k
 instance (HasPushouts k, HasPullbacks k) => FunctorForRep (Pullback :: COSPAN k +-> SPAN k) where
   type Pullback @ (CS a) = SP a
-  fmap (Cospan l r) = case pullback l r of Cone (Leg f (Leg g Apex)) -> Span f g
+  fmap (Cospan l r) = pullback l r Span

@@ -2,9 +2,12 @@
 
 module Proarrow.Category.Instance.FinSet where
 
-import Data.Fin (Fin (..), fin0, split, weakenLeft, weakenRight)
+import Data.Containers.ListUtils (nubOrd)
+import Data.Data (Proxy (..))
+import Data.Fin (Fin (..), fin0, fin1, split, weakenLeft, weakenRight)
+import Data.IntMap qualified as IM
 import Data.Maybe (fromMaybe)
-import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Plus, SNat (..), SNatI, snat, snatToNatural)
+import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Nat2, Plus, SNat (..), SNatI, snat)
 import Data.Vec.Lazy
   ( Vec (..)
   , chunks
@@ -19,15 +22,14 @@ import Data.Vec.Lazy
   , (!)
   , (++)
   )
-import Prelude (Num (..), fromIntegral, ($))
+import Prelude (($))
 import Prelude qualified as P
 
-import Data.Data (Proxy (..))
-import Data.IntMap qualified as IM
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
+import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization (..), HasSubobjectClassifier (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
@@ -44,13 +46,12 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Limit.Equalizer (HasEqualizers (equalize))
+import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Optic (Iso', iso)
-import Proarrow.Profunctor.Instance.Cocone (Cocone (..), Sink (..))
-import Proarrow.Profunctor.Instance.Cone (Cone (..), Cosink (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
 type data FINSET = FS Nat
 
@@ -87,7 +88,7 @@ instance HasTerminalObject FINSET where
   type TerminalObject = FS Nat1
   terminate = FinSet (repeat fin0)
 instance HasBinaryProducts FINSET where
-  type a && b = FS (Mult (UN FS a) (UN FS b))
+  type FS a && FS b = FS (Mult a b)
   withObProd @(FS a) @b r = case snat @a of
     SZ -> r
     SS @a' -> withObProd @_ @(FS a') @b $ withObCoprod @_ @b @(FS (Mult a' (UN FS b))) r
@@ -201,12 +202,13 @@ findArr = go (repeat P.Nothing)
 -- >>> import Data.Vec.Lazy
 -- >>> let f :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin1 ::: fin0 ::: VNil
 -- >>> let g :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: fin0 ::: VNil
--- >>> (case equalize f g of Cone (Leg (FinSet f) Apex) -> P.show f) :: P.String
--- "2 ::: 3 ::: VNil"
+-- >>> let h :: FinSet (FS Nat3) (FS Nat4) = FinSet $ fin3 ::: fin2 ::: fin3 ::: VNil
+-- >>> (case factorEqualizer f g h of p :.: q -> P.show (p, q, q . p)) :: P.String
+-- "(FinSet {unFinSet = 1 ::: 0 ::: 1 ::: VNil},FinSet {unFinSet = 2 ::: 3 ::: VNil},FinSet {unFinSet = 3 ::: 2 ::: 3 ::: VNil})"
 instance HasEqualizers FINSET where
-  equalize (FinSet f) (FinSet g) =
+  factorEqualizer (FinSet f) (FinSet g) (FinSet h) =
     let groups = [x | x <- toList universe, f ! x P.== g ! x]
-    in reifyList groups \vec -> Cone $ Leg (FinSet vec) Apex
+    in reifyList groups \vec -> FinSet (tabulate (\c -> findIndex (P.== (h ! c)) vec)) :.: FinSet vec
 
 -- Exercise 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
 -- >>> import Data.Fin
@@ -217,30 +219,30 @@ instance HasEqualizers FINSET where
 -- >>> (case pullback f g of Cone (Leg (FinSet l) (Leg (FinSet r) Apex)) -> P.show (l, r)) :: P.String
 -- "(0 ::: 0 ::: 1 ::: 2 ::: 2 ::: 3 ::: 3 ::: 4 ::: 5 ::: VNil,1 ::: 3 ::: 2 ::: 1 ::: 3 ::: 1 ::: 3 ::: 0 ::: 2 ::: VNil)"
 instance HasPullbacks FINSET where
-  pullback (FinSet f) (FinSet g) =
+  pullback (FinSet f) (FinSet g) k =
     let groups = [(x, y) | x <- toList universe, y <- toList universe, f ! x P.== g ! y]
-    in reifyList groups \vec -> Cone $ Leg (FinSet $ P.fmap fst vec) $ Leg (FinSet $ P.fmap snd vec) Apex
+    in reifyList groups \vec -> k (FinSet $ P.fmap fst vec) (FinSet $ P.fmap snd vec)
 
 instance HasCoequalizers FINSET where
-  coequalize (FinSet @_ @a f) (FinSet g) =
+  factorCoequalizer (FinSet @_ @a f) (FinSet g) (FinSet h) =
     let
-      size = fromIntegral (snatToNatural (snat @a))
-      find m i = P.maybe i (find m) $ IM.lookup i m
-      union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else IM.insert ri rj m
-      unionFind = P.foldl union IM.empty (zipWith (\u v -> (fromIntegral u, fromIntegral v)) f g)
-      groups = IM.elems $ P.foldl @[] (\m x -> IM.insertWith (P.++) (find unionFind x) [x] m) IM.empty [0 .. size - 1]
+      find m i = P.maybe i (find m) $ IM.lookup (P.fromEnum i) m
+      union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else IM.insert (P.fromEnum ri) rj m
+      unionFind = P.foldl union IM.empty (zipWith (\u v -> (u, v)) f g)
+      step m x = IM.insertWith (P.++) (P.fromEnum $ find unionFind x) [x] m
+      groups = IM.elems $ P.foldl step IM.empty (universe @a)
     in
       reifyList groups \vec ->
-        Cocone $ Coleg (FinSet (tabulate (\a -> findIndex (P.elem (fromIntegral a)) vec))) Coapex
+        FinSet (tabulate (\a -> findIndex (P.elem a) vec))
+          :.: FinSet (tabulate (\i -> h ! (vec ! i P.!! 0)))
 
 -- Exercise 6.22 of Seven Sketches
 -- >>> import Data.Fin
 -- >>> import Data.Type.Nat
--- >>> import Data.Type.Nat
 -- >>> let l :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin0 ::: fin1 ::: fin2 ::: VNil
 -- >>> let r :: FinSet (FS Nat4) (FS Nat5) = FinSet $ fin0 ::: fin2 ::: fin4 ::: fin4 ::: VNil
--- >>> (case pushout l r of Cocone (Coleg (FinSet l) (Coleg (FinSet r) Coapex)) -> (P.show l, P.show r)) :: (P.String, P.String)
--- ("1 ::: 3 ::: 3 ::: VNil","1 ::: 0 ::: 1 ::: 2 ::: 3 ::: VNil")
+-- >>> (pushout l r \(FinSet l) (FinSet r) -> P.show (l, r)) :: P.String
+-- "(1 ::: 3 ::: 3 ::: VNil,1 ::: 0 ::: 1 ::: 2 ::: 3 ::: VNil)"
 instance HasPushouts FINSET where
   pushout = pushoutDefault
 
@@ -249,3 +251,38 @@ findIndex _ VNil = P.error "unexpected missing element"
 findIndex f (a ::: as)
   | f a = FZ
   | P.otherwise = FS $ findIndex f as
+
+-- >>> import Proarrow.Colimit.Pushout (isEpi)
+-- >>> import Data.Fin
+-- >>> import Data.Type.Nat
+-- >>> let f :: FinSet (FS Nat3) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: VNil
+-- >>> (pushout f f \(FinSet g1) (FinSet g2) -> P.show (g1, g2)) :: P.String
+-- "(0 ::: 1 ::: 2 ::: VNil,0 ::: 1 ::: 2 ::: VNil)"
+-- >>> isEpi f
+-- True
+-- >>> import Proarrow.Limit.Pullback (isMono)
+-- >>> (pullback f f \(FinSet l) (FinSet r) -> P.show (l, r)) :: P.String
+-- "(0 ::: 1 ::: 2 ::: VNil,0 ::: 1 ::: 2 ::: VNil)"
+-- >>> isMono f
+-- True
+-- >>> import Proarrow.Category.Topos (classifyImage, classifyKernelPair, and, or, implies, false)
+-- >>> (classifyImage f, classifyKernelPair f)
+-- (FinSet {unFinSet = 1 ::: 1 ::: 1 ::: VNil},FinSet {unFinSet = 1 ::: 0 ::: 0 ::: 0 ::: 1 ::: 0 ::: 0 ::: 0 ::: 1 ::: VNil})
+-- >>> [and, or, implies] :: [FinSet (FS Nat4) (FS Nat2)]
+-- [FinSet {unFinSet = 0 ::: 0 ::: 0 ::: 1 ::: VNil},FinSet {unFinSet = 0 ::: 1 ::: 1 ::: 1 ::: VNil},FinSet {unFinSet = 1 ::: 1 ::: 0 ::: 1 ::: VNil}]
+-- >>> false :: FinSet (FS Nat1) (FS Nat2)
+-- FinSet {unFinSet = 0 ::: VNil}
+
+instance HasSubobjectClassifier FINSET where
+  type Omega = FS Nat2
+  true = FinSet $ fin1 ::: VNil
+  classifyGraph (FinSet @n @m f) = withObProd @_ @(FS n) @(FS m) $ FinSet $ tabulate
+    \(unmult @n @m -> (n, m)) -> if f ! n P.== m then fin1 else fin0
+
+instance HasEpiMonoFactorization FINSET where
+  factorize (FinSet f) = reifyList (nubOrd (toList f)) \vec ->
+    let revMap = IM.fromList (toList (zipWith (\k v -> (P.fromEnum k, v)) vec universe))
+    in FinSet (tabulate (\a -> revMap IM.! P.fromEnum (f ! a)))
+         :.: FinSet vec
+
+instance ElementaryTopos FINSET
