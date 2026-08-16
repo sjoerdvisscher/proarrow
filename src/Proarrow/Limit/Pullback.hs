@@ -35,4 +35,4 @@ kernelPair :: (HasPullbacks k) => (a :: k) ~> b -> (forall p. p ~> a -> p ~> a -
 kernelPair f = pullback f f
 
 isMono :: (HasPullbacks k, Eq2 (Hom k)) => (a :: k) ~> b -> Bool
-isMono f = kernelPair f (==)
+isMono f = kernelPair f \l@Objs r -> l == r

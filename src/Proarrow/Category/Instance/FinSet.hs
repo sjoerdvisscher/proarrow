@@ -210,13 +210,13 @@ instance HasEqualizers FINSET where
     let groups = [x | x <- toList universe, f ! x P.== g ! x]
     in reifyList groups \vec -> FinSet (tabulate (\c -> findIndex (P.== (h ! c)) vec)) :.: FinSet vec
 
--- Exercise 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
+-- Example 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
 -- >>> import Data.Fin
 -- >>> import Data.Type.Nat
 -- >>> import Data.Vec.Lazy
 -- >>> let f :: FinSet (FS Nat6) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin0 ::: fin0 ::: fin2 ::: fin1 ::: VNil
 -- >>> let g :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: fin0 ::: VNil
--- >>> (case pullback f g of Cone (Leg (FinSet l) (Leg (FinSet r) Apex)) -> P.show (l, r)) :: P.String
+-- >>> (pullback f g \(FinSet l) (FinSet r) -> P.show (l, r)) :: P.String
 -- "(0 ::: 0 ::: 1 ::: 2 ::: 2 ::: 3 ::: 3 ::: 4 ::: 5 ::: VNil,1 ::: 3 ::: 2 ::: 1 ::: 3 ::: 1 ::: 3 ::: 0 ::: 2 ::: VNil)"
 instance HasPullbacks FINSET where
   pullback (FinSet f) (FinSet g) k =

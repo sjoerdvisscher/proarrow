@@ -16,6 +16,8 @@ class (CategoryOf k) => HasEqualizers k where
   equalize :: forall (a :: k) b r. a ~> b -> a ~> b -> (forall e. e ~> a -> r) -> r
   default equalize :: forall (a :: k) b r. (HasInitialObject k) => a ~> b -> a ~> b -> (forall e. e ~> a -> r) -> r
   equalize l@Objs r k = case factorEqualizer l r initiate of _ :.: f@Objs -> k f
+
+  -- | @factorEqualizer f g h@ requires @f . h == g . h@.
   factorEqualizer :: forall (a :: k) b c. a ~> b -> a ~> b -> c ~> a -> (Hom k :.: Hom k) c a
 
 instance HasEqualizers () where

@@ -21,6 +21,8 @@ class (CategoryOf k) => HasCoequalizers k where
   coequalize :: forall (a :: k) b r. a ~> b -> a ~> b -> (forall c. b ~> c -> r) -> r
   default coequalize :: forall (a :: k) b r. (HasTerminalObject k) => a ~> b -> a ~> b -> (forall c. b ~> c -> r) -> r
   coequalize l@Objs r k = case factorCoequalizer l r terminate of f@Objs :.: _ -> k f
+
+  -- | @factorCoequalizer f g h@ requires @h . f == h . g@.
   factorCoequalizer :: forall (a :: k) b c. a ~> b -> a ~> b -> b ~> c -> (Hom k :.: Hom k) b c
 
 instance HasCoequalizers () where

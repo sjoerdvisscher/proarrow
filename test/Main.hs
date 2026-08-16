@@ -10,6 +10,7 @@ import Examples.UntypedLambdaCalculus qualified as ULC
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
 import Props.Dot qualified as Dot
+import Props.FinHask qualified as FinHask
 import Props.FinRel qualified as FinRel
 import Props.FinSet qualified as FinSet
 import Props.Free qualified as Free
@@ -31,6 +32,7 @@ main =
           [ Bool.test
           , Cospan.test
           , Dot.test
+          , FinHask.test
           , FinRel.test
           , FinSet.test
           , Free.test

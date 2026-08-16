@@ -39,7 +39,7 @@ cokernelPair :: (HasPushouts k) => (a :: k) ~> b -> (forall p. b ~> p -> b ~> p 
 cokernelPair f = pushout f f
 
 isEpi :: (HasPushouts k, Eq2 (Hom k)) => (a :: k) ~> b -> Bool
-isEpi f = cokernelPair f (==)
+isEpi f@Objs = cokernelPair f \l@Objs r -> l == r
 
 instance (HasPullbacks k) => HasPushouts (OPPOSITE k) where
   pushout (Op l) (Op r) k = pullback l r \f g -> k (Op f) (Op g)
