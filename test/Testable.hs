@@ -7,7 +7,7 @@ import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
 import Data.Typeable (Typeable, eqT, (:~:) (..))
 import GHC.Exts qualified as GHC
-import Test.Falsify.Generator (Fun, Function, Gen, applyFun, elem, fun, minimalValue, oneof)
+import Test.Falsify.Generator (Fun, Function (..), Gen, applyFun, elem, fun, functionMap, minimalValue, oneof)
 import Test.Tasty.Falsify (Property, discard, genWith)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
@@ -23,12 +23,11 @@ import Proarrow.Functor qualified as Rep
 import Proarrow.Object (Ob')
 import Proarrow.Profunctor.Representable (Rep (..))
 import Test.Falsify.Interactive (falsify)
-import Unsafe.Coerce (unsafeCoerce)
 
 data GenTotal a where
   GenEmpty :: ~(forall x. a -> x) -> GenTotal a
   GenNENonFun :: Gen a -> GenTotal a
-  GenFun :: (TestableType a, TestableType b) => ((a -> b) -> p) -> Gen (Fun a b) -> GenTotal p
+  GenFun :: (TestableType a, TestableType b) => ((a -> b) -> p) -> Gen (Fun (ShowP a) (ShowP b)) -> GenTotal p
 
 invmap :: (a -> b) -> (b -> a) -> GenTotal a -> GenTotal b
 invmap _ f' (GenEmpty g) = GenEmpty (g . f')
@@ -37,7 +36,7 @@ invmap f _ (GenFun f' g) = GenFun (f . f') g
 
 flatten :: GenTotal a -> Gen a
 flatten (GenNENonFun g) = g
-flatten (GenFun f g) = f . applyFun <$> g
+flatten (GenFun f g) = f . applyFunP <$> g
 flatten (GenEmpty _) = error "flatten: Match on GenEmpty first"
 
 pattern GenNonEmpty :: Gen a -> GenTotal a
@@ -82,23 +81,35 @@ class TestingEqShow a where
 class (TestingEqShow a) => TestableType a where
   gen :: GenTotal a
 
+-- | Supplies a 'Show' instance derived from 'showP'.
+--
+-- falsify's 'Show' instance for 'Fun' needs 'Show' on both parameters, and we
+-- only ever have 'TestingEqShow'. Rather than reinterpret a @'Fun' a b@ at the
+-- wrapped type after the fact, 'GenFun' generates at
+-- @'Fun' ('ShowP' a) ('ShowP' b)@ from the start, so 'show' applies directly and
+-- no coercion is involved. 'applyFunP' unwraps on the way back out.
 newtype ShowP a = ShowP {unShowP :: a}
 instance (TestingEqShow a) => Show (ShowP a) where
   show (ShowP a) = showP a
 
-showFun :: forall a b. (TestingEqShow a, TestingEqShow b) => Fun a b -> String
-showFun = show . unsafeCoerce @(Fun a b) @(Fun (ShowP a) (ShowP b))
+instance (Function a) => Function (ShowP a) where
+  function = fmap (functionMap unShowP ShowP) . function
+
+-- | Apply a generated function, wrapping and unwrapping the 'ShowP' it was
+-- generated at. Both directions are ordinary newtype constructor applications.
+applyFunP :: Fun (ShowP a) (ShowP b) -> a -> b
+applyFunP f = unShowP . applyFun f . ShowP
 
 genP :: (TestableType a) => Property a
 genP = case gen of
   GenNENonFun g -> genWith (Just . showP) g
-  GenFun f g -> f . applyFun <$> genWith (Just . showFun) g
+  GenFun f g -> f . applyFunP <$> genWith (Just . show) g
   GenEmpty _ -> discard
 
 genNamed :: (TestableType a) => String -> Property a
 genNamed nm = case gen of
   GenNENonFun g -> genWithNamed nm (Just . showP) g
-  GenFun f g -> f . applyFun <$> genWithNamed nm (Just . showFun) g
+  GenFun f g -> f . applyFunP <$> genWithNamed nm (Just . show) g
   GenEmpty _ -> discard
 
 genWithNamed :: String -> (a -> Maybe String) -> Gen a -> Property a
@@ -233,7 +244,7 @@ instance (Function a, TestableType a, TestableType b) => TestableType (a -> b) w
     GenEmpty absurd -> case gen @a of
       GenEmpty absurda -> oneElem absurda
       GenNonEmpty g -> GenEmpty \ab -> absurd (ab (minimalValue g))
-    GenNonEmpty gb -> GenFun id (fun gb)
+    GenNonEmpty gb -> GenFun id (fun (ShowP <$> gb))
 
 eqHask :: (TestableType a, TestingEqShow b) => (a -> b) -> (a -> b) -> Property Bool
 eqHask l r =

@@ -11,14 +11,15 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
+import Proarrow.Category.Monoidal.Closed qualified as Exponential
+import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
+import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
+import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
+import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
-import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
-import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
-import Proarrow.Category.Monoidal.Closed qualified as Exponential
-import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Optic (Iso)
 import Proarrow.Profunctor.Instance.Constant (review, view)
 import Proarrow.Profunctor.Representable (Rep)
@@ -220,6 +221,42 @@ propSymMonoidal_
    . (Testable k, M.SymMonoidal k, TestOb (M.Unit @k), TestObIsOb k)
   => TestTree
 propSymMonoidal_ = propSymMonoidal @k (\ @a @b r -> M.withOb2 @k @a @b r)
+
+propDistributive
+  :: forall k
+   . (Testable k, Distributive.Distributive k, TestOb (Initial.InitialObject :: k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a BinaryCoproduct.|| b)) => r) -> r)
+  -> TestTree
+propDistributive withTestOb2 withTestObCoprod = testProperty "Distributive" $ do
+  Some @a <- genOb @k
+  Some @b <- genOb
+  Some @c <- genOb
+  withTestObCoprod @b @c $
+    withTestObCoprod @a @b $
+      withTestOb2 @a @b $
+        withTestOb2 @a @c $
+          withTestOb2 @b @c $
+            withTestOb2 @a @(b BinaryCoproduct.|| c) $
+              withTestOb2 @(a BinaryCoproduct.|| b) @c $
+                withTestObCoprod @(a M.** b) @(a M.** c) $
+                  withTestObCoprod @(a M.** c) @(b M.** c) $
+                    withTestOb2 @a @(Initial.InitialObject :: k) $
+                      withTestOb2 @(Initial.InitialObject :: k) @a $
+                        do
+                          propIso (Distributive.distL @k @a @b @c) (Distributive.distLInv @a @b @c)
+                          propIso (Distributive.distR @k @a @b @c) (Distributive.distRInv @a @b @c)
+                          propIso (Distributive.absorbL @k @a) Initial.initiate
+                          propIso (Distributive.absorbR @k @a) Initial.initiate
+
+propDistributive_
+  :: forall k
+   . (Testable k, Distributive.Distributive k, TestOb (Initial.InitialObject :: k), TestObIsOb k)
+  => TestTree
+propDistributive_ =
+  propDistributive @k
+    (\ @a @b r -> M.withOb2 @k @a @b r)
+    (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
 
 propClosed
   :: forall k

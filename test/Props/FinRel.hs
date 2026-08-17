@@ -27,6 +27,7 @@ test =
     , propBinaryCoproducts_ @FINREL
     , propMonoidal_ @FINREL
     , propSymMonoidal_ @FINREL
+    , propDistributive_ @FINREL
     , propClosed_ @FINREL
     , propStarAutonomous_ @FINREL
     , testMonoid_ @(FR Nat0)

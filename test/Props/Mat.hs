@@ -41,6 +41,7 @@ test =
     , propBinaryCoproducts_ @(MatK Int)
     , propMonoidal_ @(MatK Int)
     , propSymMonoidal_ @(MatK Int)
+    , propDistributive_ @(MatK Int)
     , propClosed_ @(MatK Int)
     , propStarAutonomous_ @(MatK Int)
     , testMonoid_ @(M Nat0 :: MatK Int)

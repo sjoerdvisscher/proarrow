@@ -170,7 +170,7 @@ instance Monoid (FH ()) where
   mempty = terminate
   mappend = terminate
 
--- >>> let f :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,0), (1,1), (2,1), (3,0)]
+-- | >>> let f :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,0), (1,1), (2,1), (3,0)]
 -- >>> let g :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,2), (1,0), (2,1), (3,0)]
 -- >>> let h :: FinHask (FH (Fin 3)) (FH (Fin 4)) = fromList [(0,3), (1,2), (2,3)]
 -- >>> (case factorEqualizer f g h of p :.: q -> P.show (p, q, q . p)) :: P.String
@@ -183,7 +183,7 @@ instance HasEqualizers FINHASK where
          let invE = M.fromList [(FinHask e ! b, b) | b <- universeF]
          in FinHask ((invE M.!) P.<$> h) :.: FinHask e
 
--- Example 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
+-- | Example 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
 -- >>> data Color = Red | Blue | Black deriving (P.Eq, P.Ord, P.Show, P.Enum, P.Bounded, Universe, Finite)
 -- >>> let f :: FinHask (FH (Fin 6)) (FH Color) = fromList [(0,Red), (1,Blue), (2,Red), (3,Red), (4,Black), (5,Blue)]
 -- >>> let g :: FinHask (FH (Fin 4)) (FH Color) = fromList [(0,Black), (1,Red), (2,Blue), (3,Red)]
@@ -205,15 +205,15 @@ instance HasCoequalizers FINHASK where
         let invMap = M.fromList $ P.concatMap (\(l, bs) -> P.map (,l) bs) $ M.toList ce
         in FinHask invMap :.: FinHask (((h M.!) . (P.!! 0)) P.<$> ce)
 
--- Exercise 6.22 of Seven Sketches
+-- | Exercise 6.22 of Seven Sketches
 -- >>> let l :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,0), (1,0), (2,1), (3,2)]
 -- >>> let r :: FinHask (FH (Fin 4)) (FH (Fin 5)) = fromList [(0,0), (1,2), (2,4), (3,4)]
--- >>> (pushout l r \l r -> P.show (l, r)) :: P.String
+-- >>> (pushout l r \l' r' -> P.show (l', r')) :: P.String
 -- "(fromList [(0,1),(1,3),(2,3)],fromList [(0,1),(1,0),(2,1),(3,2),(4,3)])"
 instance HasPushouts FINHASK where
   pushout = pushoutDefault
 
--- >>> import Proarrow.Colimit.Pushout (isEpi)
+-- | >>> import Proarrow.Colimit.Pushout (isEpi)
 -- >>> let f :: FinHask (FH (Fin 3)) (FH (Fin 3)) = fromList [(0,2), (1,0), (2,1)]
 -- >>> (pushout f f \(FinHask g1) (FinHask g2) -> P.show (g1, g2)) :: P.String
 -- "(fromList [(0,0),(1,1),(2,2)],fromList [(0,0),(1,1),(2,2)])"

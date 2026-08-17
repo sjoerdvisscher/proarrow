@@ -198,7 +198,7 @@ instance CompactClosed FINREL where
 instance (MonoidalAction (t :: (FINREL, FINREL) +-> FINREL)) => Costrong t FinRel where
   coact @x = coactCC @t @x
 
--- >>> import Data.Type.Nat
+-- | >>> import Data.Type.Nat
 -- >>> mappend @(FR Nat3)
 -- FinRel {unFinRel = 100 ::: 000 ::: 000 ::: 000 ::: 010 ::: 000 ::: 000 ::: 000 ::: 001 ::: VNil}
 instance (SNatI a) => Monoid (FR a) where
@@ -207,7 +207,7 @@ instance (SNatI a) => Monoid (FR a) where
     withOb2 @_ @(FR a) @(FR a) $
       FinRel (concatMap @_ @a @_ @a (\i -> P.fmap (\j -> if i P.== j then bit i else 0) universe) universe)
 
--- >>> import Data.Type.Nat
+-- | >>> import Data.Type.Nat
 -- >>> comult @(FR Nat3)
 -- FinRel {unFinRel = 100000000 ::: 000010000 ::: 000000001 ::: VNil}
 instance (SNatI a) => Comonoid (FR a) where

@@ -32,6 +32,7 @@ test =
     , propInitialObject @Type
     , propBinaryProducts @Type (\r -> r)
     , propBinaryCoproducts @Type (\r -> r)
+    , propDistributive @Type (\r -> r) (\r -> r)
     , propClosed @Type (\r -> r) (\r -> r)
     , testMonoid @[()] (\r -> r)
     ]

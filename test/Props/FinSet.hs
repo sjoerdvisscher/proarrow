@@ -37,6 +37,7 @@ test =
     , propInitialObject @FINSET
     , propBinaryProducts_ @FINSET
     , propBinaryCoproducts_ @FINSET
+    , propDistributive_ @FINSET
     , propClosed_ @FINSET
     , testComonoid_ @(FS Nat0)
     , testComonoid_ @(FS Nat1)

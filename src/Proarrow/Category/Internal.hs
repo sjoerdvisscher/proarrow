@@ -21,11 +21,12 @@ class ik `InternalIn` k where
   identity :: C0 ik ~> (C1 ik :: k)
   compose :: Cosink [C1 ik, C1 ik, C1 ik :: k] -- first arrow projection, second arrow projection, composite
 
--- >>> import Data.Fin
+-- | >>> import Data.Fin
 -- >>> import Data.Type.Nat
 -- >>> import Data.Vec.Lazy
 -- >>> import Proarrow.Limit.Pullback
--- >>> (case pullback (source @BOOL @FINSET) (target @BOOL @FINSET) of Cone (Leg (FinSet l) (Leg (FinSet r) Apex)) -> P.show (l, r)) :: P.String
+-- >>> import Prelude qualified as P
+-- >>> (pullback (source @BOOL @FINSET) (target @BOOL @FINSET) \(FinSet l) (FinSet r) -> P.show (l, r)) :: P.String
 -- "(0 ::: 1 ::: 2 ::: 2 ::: VNil,0 ::: 0 ::: 1 ::: 2 ::: VNil)"
 instance BOOL `InternalIn` FINSET where
   type C0 BOOL = FS Nat2 -- Fin0 = FLS, Fin1 = TRU

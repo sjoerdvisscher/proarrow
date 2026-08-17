@@ -38,6 +38,7 @@ test =
     , propInitialObject @FINHASK
     , propBinaryProducts @FINHASK (\r -> r)
     , propBinaryCoproducts @FINHASK (\r -> r)
+    , propDistributive @FINHASK (\r -> r) (\r -> r)
     , propClosed @FINHASK (\r -> r) (\r -> r)
     ]
 

@@ -33,6 +33,7 @@ test =
     , propInitialObject @BOOL
     , propBinaryProducts_ @BOOL
     , propBinaryCoproducts_ @BOOL
+    , propDistributive_ @BOOL
     , propClosed_ @BOOL
     , testProperty "FF,FT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(FLS, TRU))

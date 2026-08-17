@@ -9,6 +9,7 @@ import Prelude
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
+import Props.Cost qualified as Cost
 import Props.Dot qualified as Dot
 import Props.FinHask qualified as FinHask
 import Props.FinRel qualified as FinRel
@@ -31,6 +32,7 @@ main =
           "Proarrow"
           [ Bool.test
           , Cospan.test
+          , Cost.test
           , Dot.test
           , FinHask.test
           , FinRel.test

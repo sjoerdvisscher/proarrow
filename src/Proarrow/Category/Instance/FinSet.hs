@@ -28,7 +28,7 @@ import Prelude qualified as P
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
-import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, distRProd)
+import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization (..), HasSubobjectClassifier (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
@@ -97,12 +97,34 @@ instance HasBinaryProducts FINSET where
   FinSet @_ @a l &&& FinSet @_ @b r = withObProd @_ @(FS a) @(FS b) $ FinSet (zipWith mult l r)
 
 instance Distributive FINSET where
-  distL @a @b @c = distLProd @a @b @c
-  distR @a @b @c = distRProd @a @b @c
+  distL @(FS a) @(FS b) @(FS c) =
+    withObCoprod @_ @(FS b) @(FS c) $
+      withObProd @_ @(FS a) @(FS (Plus b c)) $
+        withObProd @_ @(FS a) @(FS b) $
+          withObProd @_ @(FS a) @(FS c) $
+            withObCoprod @_ @(FS (Mult a b)) @(FS (Mult a c)) $
+              FinSet $
+                concat @a @(Plus b c) $
+                  P.fmap
+                    ( \i ->
+                        P.fmap (\j -> weakenLeft (Proxy @(Mult a c)) (mult @a @b i j)) (universe @b)
+                          ++ P.fmap (\j -> weakenRight (Proxy @(Mult a b)) (mult @a @c i j)) (universe @c)
+                    )
+                    (universe @a)
+  distR @(FS a) @(FS b) @(FS c) =
+    withObCoprod @_ @(FS a) @(FS b) $
+      withObProd @_ @(FS (Plus a b)) @(FS c) $
+        withObProd @_ @(FS a) @(FS c) $
+          withObProd @_ @(FS b) @(FS c) $
+            withObCoprod @_ @(FS (Mult a c)) @(FS (Mult b c)) $
+              FinSet $
+                concat @(Plus a b) @c $
+                  P.fmap (\i -> P.fmap (\j -> weakenLeft (Proxy @(Mult b c)) (mult @a @c i j)) (universe @c)) (universe @a)
+                    ++ P.fmap (\i -> P.fmap (\j -> weakenRight (Proxy @(Mult a c)) (mult @b @c i j)) (universe @c)) (universe @b)
   absorbL @(FS a) = withObProd @_ @(FS a) @(FS Z) $ FinSet (concat @a @Z (repeat VNil))
   absorbR = FinSet VNil
 
--- >>> import Data.Type.Nat
+-- | >>> import Data.Type.Nat
 -- >>> import Data.Fin
 -- >>> mult @Nat5 @Nat4 fin4 fin2 -- 4*4+2
 -- 18
@@ -155,7 +177,7 @@ instance Closed FINSET where
       withObProd @_ @(FS (Exp b a)) @(FS a) $
         FinSet (concatMap @_ @a @_ @(Exp b a) unExp universe)
 
--- >>> import Data.Type.Nat
+-- | >>> import Data.Type.Nat
 -- >>> import Data.Fin
 -- >>> exp @_ @Nat2 (fin1 ::: fin0 ::: fin1 ::: fin1 ::: VNil)
 -- 11
@@ -164,7 +186,7 @@ exp VNil = FZ
 exp (x ::: xs) = case snat @n of
   SS @n' -> withObExp @_ @(FS n') @(FS m) $ mult x (exp @n' @m xs)
 
--- >>> import Data.Type.Nat
+-- | >>> import Data.Type.Nat
 -- >>> import Data.Fin
 -- >>> unExp @Nat3 @Nat2 fin6
 -- 1 ::: 1 ::: 0 ::: VNil
@@ -173,12 +195,13 @@ unExp f = case snat @n of
   SZ -> VNil
   SS @n' -> withObExp @_ @(FS n') @(FS m) $ let (x, xs) = unmult @m @(Exp m n') f in x ::: unExp @n' @m xs
 
--- >>> import Data.Type.Nat
+-- | >>> import Data.Type.Nat
 -- >>> comult @(FS Nat4)
--- FinSet (0 ::: 5 ::: 10 ::: 15 ::: VNil)
+-- FinSet {unFinSet = 0 ::: 5 ::: 10 ::: 15 ::: VNil}
 instance (SNatI a) => Comonoid (FS a) where
   counit = terminate
   comult = diag
+
 instance CopyDiscard FINSET
 
 instance Monoid (FS Nat1) where
@@ -197,7 +220,7 @@ findArr = go (repeat P.Nothing)
       P.Just f | f P./= f2 -> P.Nothing
       _ -> go (tabulate (\i -> if i P.== f1 then P.Just f2 else v ! i)) ps
 
--- >>> import Data.Fin
+-- | >>> import Data.Fin
 -- >>> import Data.Type.Nat
 -- >>> import Data.Vec.Lazy
 -- >>> let f :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin1 ::: fin0 ::: VNil
@@ -211,7 +234,8 @@ instance HasEqualizers FINSET where
     in reifyList groups \vec -> FinSet (tabulate (\c -> findIndex (P.== (h ! c)) vec)) :.: FinSet vec
 
 -- Example 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
--- >>> import Data.Fin
+
+-- | >>> import Data.Fin
 -- >>> import Data.Type.Nat
 -- >>> import Data.Vec.Lazy
 -- >>> let f :: FinSet (FS Nat6) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin0 ::: fin0 ::: fin2 ::: fin1 ::: VNil
@@ -220,8 +244,11 @@ instance HasEqualizers FINSET where
 -- "(0 ::: 0 ::: 1 ::: 2 ::: 2 ::: 3 ::: 3 ::: 4 ::: 5 ::: VNil,1 ::: 3 ::: 2 ::: 1 ::: 3 ::: 1 ::: 3 ::: 0 ::: 2 ::: VNil)"
 instance HasPullbacks FINSET where
   pullback (FinSet f) (FinSet g) k =
-    let groups = [(x, y) | x <- toList universe, y <- toList universe, f ! x P.== g ! y]
-    in reifyList groups \vec -> k (FinSet $ P.fmap fst vec) (FinSet $ P.fmap snd vec)
+    let
+      gByValue = IM.fromListWith (P.flip (P.++)) [(P.fromEnum (g ! y), [y]) | y <- toList universe]
+      groups = [(x, y) | x <- toList universe, y <- fromMaybe [] (IM.lookup (P.fromEnum (f ! x)) gByValue)]
+    in
+      reifyList groups \vec -> k (FinSet $ P.fmap fst vec) (FinSet $ P.fmap snd vec)
 
 instance HasCoequalizers FINSET where
   factorCoequalizer (FinSet @_ @a f) (FinSet g) (FinSet h) =
@@ -237,11 +264,12 @@ instance HasCoequalizers FINSET where
           :.: FinSet (tabulate (\i -> h ! (vec ! i P.!! 0)))
 
 -- Exercise 6.22 of Seven Sketches
--- >>> import Data.Fin
+
+-- | >>> import Data.Fin
 -- >>> import Data.Type.Nat
 -- >>> let l :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin0 ::: fin1 ::: fin2 ::: VNil
 -- >>> let r :: FinSet (FS Nat4) (FS Nat5) = FinSet $ fin0 ::: fin2 ::: fin4 ::: fin4 ::: VNil
--- >>> (pushout l r \(FinSet l) (FinSet r) -> P.show (l, r)) :: P.String
+-- >>> (pushout l r \(FinSet l') (FinSet r') -> P.show (l', r')) :: P.String
 -- "(1 ::: 3 ::: 3 ::: VNil,1 ::: 0 ::: 1 ::: 2 ::: 3 ::: VNil)"
 instance HasPushouts FINSET where
   pushout = pushoutDefault
@@ -252,7 +280,7 @@ findIndex f (a ::: as)
   | f a = FZ
   | P.otherwise = FS $ findIndex f as
 
--- >>> import Proarrow.Colimit.Pushout (isEpi)
+-- | >>> import Proarrow.Colimit.Pushout (isEpi)
 -- >>> import Data.Fin
 -- >>> import Data.Type.Nat
 -- >>> let f :: FinSet (FS Nat3) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: VNil
@@ -272,7 +300,6 @@ findIndex f (a ::: as)
 -- [FinSet {unFinSet = 0 ::: 0 ::: 0 ::: 1 ::: VNil},FinSet {unFinSet = 0 ::: 1 ::: 1 ::: 1 ::: VNil},FinSet {unFinSet = 1 ::: 1 ::: 0 ::: 1 ::: VNil}]
 -- >>> false :: FinSet (FS Nat1) (FS Nat2)
 -- FinSet {unFinSet = 0 ::: VNil}
-
 instance HasSubobjectClassifier FINSET where
   type Omega = FS Nat2
   true = FinSet $ fin1 ::: VNil
