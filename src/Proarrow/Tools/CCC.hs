@@ -1,228 +1,263 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+{- HLINT ignore "Redundant $" -}
+
+-- | A small HOAS (higher-order abstract syntax) front end for building morphisms in any
+-- 'BiCCC', compiling through "Proarrow.Category.Instance.FreeBiCCC"'s free bicartesian closed
+-- category rather than a bespoke one. A 'Free' term tracks its free variables via a context
+-- list, the way a well-scoped lambda calculus does; 'lam' binds an ordinary Haskell-level
+-- variable that 'Cast' automatically "weakens" across nested lambdas so inner lambdas can still
+-- refer to outer ones. 'toCCC' interprets a closed term (no free variables) into an actual
+-- morphism of the target category.
 module Proarrow.Tools.CCC
   ( toCCC
   , lam
   , ($)
   , lift
   , pattern (:&)
-  , Free (Lft, Rgt)
   , either
-  , InitF
-  , TermF
-  , type (*!)
-  , type (+)
-  , type (-->)
-  , FK (..)
+  , lft
+  , rgt
+  , Free
+  , FBC (..)
+  , type F
+  , injectRight
+  , swapProduct
+  , applyPair
+  , curryPair
+  , flipCurried3
+  , swapSum
+  , caseEither
   ) where
 
-import Data.Kind (Constraint, Type)
+import Data.Kind (Constraint)
 import Prelude (type (~))
-import Prelude qualified as P
 
-import Proarrow.Category.Monoidal.Closed (BiCCC, Closed (..))
+import Proarrow.Category.Instance.FreeBiCCC (FBC (..), KnownFBCOb, Lower, Term (Emb), fbcOb, interp)
+import Proarrow.Category.Monoidal.Closed (BiCCC, Closed (..), lower)
 import Proarrow.Category.Monoidal.Distributive (distLProd)
-import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), lft', rgt')
-import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), fst', snd')
-import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate')
-import Proarrow.Object (Obj, obj)
+import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts ((|||)), type (||))
+import Proarrow.Colimit.BinaryCoproduct qualified as BC
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Object (Obj)
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 
-type Cast :: forall {k}. [FK k] -> [FK k] -> Constraint
-class Cast i j where
-  cast :: (IsFK a) => Free j a -> Free i a
+infixr 0 $
 
-instance {-# OVERLAPPABLE #-} (Cast i j, (a ': i) ~ i', IsFK a, IsFKs i) => Cast i' j where
-  cast = Tail . cast @i @j
+-- | The generating profunctor for the free BiCCC below: @k@'s own hom-sets, i.e. 'Id'
+-- (rather than @(~>)@ itself, which — being an unsaturated type family application — isn't
+-- allowed as a type index wherever 'FBC' is pattern-matched on below, in 'Mul').
+type Ctx k = [FBC (Id :: CAT k)]
+
+-- | A short alias for embedding a base-category object, so type applications built from it read
+-- closer to the target signature's own use of '&&'\/'||'\/'~~>' (e.g. @(F a ~~> F b) && F a@
+-- instead of @'PROD' ('EXPO' ('OBJ' a) ('OBJ' b)) ('OBJ' a)@) — those are already the very same
+-- operators 'FBC' gets from 'HasBinaryProducts'\/'HasBinaryCoproducts'\/'Closed', just spelled
+-- out as their underlying constructors.
+type F a = OBJ a
+
+-- | The context product: @'Mul' i@ is the single object standing in for "all the bound
+-- variables in @i@", right fold with the most-recently-bound variable last — the mirror image
+-- of "Proarrow.Category.Monoidal.Strictified"'s @Fold@ (which puts its head /leftmost/), needed
+-- here since 'curry'\/'fst'\/'snd' expect the thing being abstracted over on the /right/ of the
+-- product, not the left, so @Fold@ itself can't be reused for this.
+type family Mul (i :: Ctx k) :: FBC (Id :: CAT k) where
+  Mul '[] = UNIT
+  Mul (a ': as) = Mul as && a
+
+-- | A term with free variables @i@ (innermost\/most-recently-bound first) and result type
+-- @a@ — literally a morphism from the context product to @a@ in the free BiCCC. A newtype
+-- (rather than a bare type synonym for @'Term' ('Mul' i) a@) so that @i@ is recoverable from
+-- a 'Free' term's type: 'Mul' is many-to-one at the type-family level as far as GHC's
+-- injectivity checker is concerned (even though it's mathematically injective here), which
+-- would otherwise leave @i@ ambiguous wherever it has to be inferred rather than given
+-- explicitly (e.g. picking which context a HOAS variable reference in 'lam' denotes).
+newtype Free (i :: Ctx k) (a :: FBC (Id :: CAT k)) = MkFree {unFree :: Term (Mul i) a}
+
+type KnownCtx :: forall {k}. Ctx k -> Constraint
+class (BiCCC k) => KnownCtx (i :: Ctx k) where
+  ctxOb :: Obj (Mul i)
+  pushOb :: forall a. (KnownFBCOb a) => Obj (Mul (a ': i))
+
+instance (BiCCC k) => KnownCtx ('[] :: Ctx k) where
+  ctxOb = id
+  pushOb @a = withObProd @(FBC (Id :: CAT k)) @UNIT @a id \\ fbcOb @a
+
+instance (KnownCtx i, KnownFBCOb (b :: FBC (Id :: CAT k))) => KnownCtx (b ': i) where
+  ctxOb = pushOb @i @b
+  pushOb @a = withObProd @(FBC (Id :: CAT k)) @(Mul (b ': i)) @a id \\ ctxOb @(b ': i) \\ fbcOb @a
+
+-- | The most-recently-bound variable.
+headT :: forall {k} a i. (KnownCtx (i :: Ctx k), KnownFBCOb (a :: FBC (Id :: CAT k))) => Free (a ': i) a
+headT = MkFree (snd @(FBC (Id :: CAT k)) @(Mul i) @a \\ ctxOb @i \\ fbcOb @a)
+
+-- | Weaken a term by one more bound variable it doesn't use.
+tailT :: forall {k} a i b. (KnownCtx (i :: Ctx k), KnownFBCOb (a :: FBC (Id :: CAT k))) => Free i b -> Free (a ': i) b
+tailT (MkFree f) = MkFree (f . fst @(FBC (Id :: CAT k)) @(Mul i) @a \\ ctxOb @i \\ fbcOb @a)
+
+-- | @'Cast' i j@ holds when context @i@ is context @j@ with zero or more extra variables
+-- pushed on top, letting a term built for @j@ be used anywhere \"deeper\" than @j@.
+type Cast :: forall {k}. Ctx k -> Ctx k -> Constraint
+class Cast (i :: Ctx k) (j :: Ctx k) where
+  cast :: (KnownFBCOb (a :: FBC (Id :: CAT k))) => Free j a -> Free i a
 
 instance Cast i i where
   cast f = f
 
-pattern Uncurry
-  :: (IsFK (a :: FK k), IsFK (b :: FK k), IsFKs (i :: [FK k]), Closed k) => Free i (a --> b) -> Free (a : i) b
-pattern Uncurry f = Apply (Tail f) Head
+instance
+  {-# OVERLAPPABLE #-}
+  (Cast i j, KnownCtx (i :: Ctx k), KnownFBCOb (b :: FBC (Id :: CAT k)), (b ': i) ~ i')
+  => Cast i' j
+  where
+  cast f = tailT (cast f)
 
+-- | Bind a variable, HOAS-style: the function argument stands for the newly bound variable,
+-- usable (via 'Cast') in the body of this 'lam' and any 'lam' nested inside it.
 lam
   :: forall {k} a b i
-   . (IsFK a, IsFK b, IsFKs i)
-  => ((forall (x :: [FK k]). (Cast x (a ': i)) => Free x a) -> Free (a ': i) b)
-  -> Free i (a --> b)
-lam f = Curry (f xa)
+   . (KnownCtx (i :: Ctx k), KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b)
+  => ((forall (x :: Ctx k). (Cast x (a ': i)) => Free x a) -> Free (a ': i) b)
+  -> Free i (EXPO a b)
+lam f = MkFree (curry @(FBC (Id :: CAT k)) @(Mul i) @a @b (unFree (f xa)) \\ ctxOb @i \\ fbcOb @a)
   where
-    xa :: forall (x :: [FK k]). (Cast x (a ': i)) => Free x a
-    xa = cast @x @(a ': i) Head
+    xa :: forall (x :: Ctx k). (Cast x (a ': i)) => Free x a
+    xa = cast (headT @a @i)
 
-infixr 0 $
-($) :: (IsFK a, IsFK b, IsFKs i) => Free i (a --> b) -> Free i a -> Free i b
-($) = Apply
+-- | Function application.
+($)
+  :: forall {k} a b i
+   . (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i (EXPO a b) -> Free i a -> Free i b
+MkFree f $ MkFree g = MkFree (apply @(FBC (Id :: CAT k)) @a @b . (f &&& g) \\ fbcOb @a \\ fbcOb @b)
 
-lift :: a ~> b -> Free i (F a) -> Free i (F b)
-lift = L
+-- | Embed a morphism of the target category as a term between embedded objects.
+lift :: forall {k} a b i. (BiCCC k, Ob (a :: k), Ob b) => a ~> b -> Free i (OBJ a) -> Free i (OBJ b)
+lift f (MkFree g) = MkFree (Emb (Id f) . g)
 
-fstSnd :: (IsFK a, IsFK b, IsFKs i) => Free i (a *! b) -> (Free i a, Free i b)
-fstSnd f = (Fst f, Snd f)
+fstSnd
+  :: forall {k} a b i
+   . (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i (PROD a b) -> (Free i a, Free i b)
+fstSnd (MkFree f) =
+  (MkFree (fst @(FBC (Id :: CAT k)) @a @b . f), MkFree (snd @(FBC (Id :: CAT k)) @a @b . f)) \\ fbcOb @a \\ fbcOb @b
 
-pattern (:&) :: (IsFK a, IsFK b, IsFKs i) => Free i a -> Free i b -> Free i (a *! b)
+pattern (:&)
+  :: (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i a -> Free i b -> Free i (PROD a b)
 pattern x :& y <- (fstSnd -> (x, y))
   where
-    x :& y = Prd x y
+    x :& y = MkFree (unFree x &&& unFree y)
 
 {-# COMPLETE (:&) #-}
 
+-- | Inject as the left\/right branch of a sum.
+lft :: forall {k} a b i. (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i a -> Free i (SUM a b)
+lft (MkFree f) = MkFree (BC.lft @(FBC (Id :: CAT k)) @a @b . f \\ fbcOb @a \\ fbcOb @b)
+
+rgt :: forall {k} a b i. (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free i b -> Free i (SUM a b)
+rgt (MkFree f) = MkFree (BC.rgt @(FBC (Id :: CAT k)) @a @b . f \\ fbcOb @a \\ fbcOb @b)
+
+-- | Uncurry a function term into the body of a 'lam' binding its argument.
+uncurryF
+  :: forall {k} a b i
+   . (KnownCtx (i :: Ctx k), KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b)
+  => Free i (EXPO a b) -> Free (a ': i) b
+uncurryF f =
+  withObExp @(FBC (Id :: CAT k)) @a @b
+    (MkFree (apply @(FBC (Id :: CAT k)) @a @b . (unFree (tailT f) &&& unFree (headT @a @i))))
+    \\ fbcOb @a
+    \\ fbcOb @b
+
+-- | Case analysis on a sum, in the presence of a shared context: distributes the context over
+-- the sum (via 'distLProd', which any 'BiCCC' — hence the free one — gets for free) so each
+-- branch still has access to it.
+caseT
+  :: forall {k} a b c i
+   . (KnownCtx (i :: Ctx k), KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b)
+  => Free i (SUM a b) -> Free (a ': i) c -> Free (b ': i) c -> Free i c
+caseT m f g =
+  MkFree ((unFree f ||| unFree g) . distLProd @(Mul i) @a @b . (id &&& unFree m) \\ ctxOb @i \\ fbcOb @a \\ fbcOb @b)
+
 either
-  :: forall {k} (a :: FK k) b c i
-   . (IsFK a, IsFK b, IsFK c, IsFKs i, Closed k)
-  => Free i (a --> c)
-  -> Free i (b --> c)
-  -> Free i (a + b)
-  -> Free i c
-either f g m = Sum m (Uncurry f) (Uncurry g)
+  :: forall {k} a b c i
+   . (KnownCtx (i :: Ctx k), KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b, KnownFBCOb c)
+  => Free i (EXPO a c) -> Free i (EXPO b c) -> Free i (SUM a b) -> Free i c
+either f g m = caseT m (uncurryF f) (uncurryF g)
 
-type MultiCat k = [k] -> k -> Type
-type data FK k = F k
+-- | Interpret a closed term (no free variables) into an actual morphism of the target
+-- category, via 'lower' (a closed function-valued term needs no arguments to uncurry, since
+-- its domain is already the monoidal unit) followed by 'interp' (with generators interpreted
+-- by unwrapping 'Id' — the free category was built over @k@'s own hom-sets directly).
+toCCC
+  :: forall {k} a b
+   . (BiCCC k, KnownFBCOb (a :: FBC (Id :: CAT k)), KnownFBCOb b) => Free '[] (EXPO a b) -> Lower a ~> Lower b
+toCCC (MkFree f) = interp unId (lower @a @b f) \\ fbcOb @a \\ fbcOb @b
 
-infixr 2 -->
+-- $
+-- The examples below double as a regression test for the whole front end: each one exercises
+-- 'lam'\/'Cast' (including nested lambdas), and\/or 'toCCC', on a concrete instantiation
+-- (@k = 'Type'@) so the doctest can compare against an actual printed value.
 
-data family InitF :: k
-data family TermF :: k
-data family (+) (a :: k) (b :: k) :: k
-data family (*!) (a :: k) (b :: k) :: k
-data family (-->) (a :: k) (b :: k) :: k
+-- | Inject as the right element of a sum.
+--
+-- >>> import Prelude (Bool (..))
+-- >>> injectRight @Bool @Bool True
+-- Right True
+injectRight :: forall {k} (a :: k) b. (BiCCC k, Ob (a :: k), Ob b) => a ~> (b || a)
+injectRight = toCCC @(F a) @(F b || F a) (lam (\x -> rgt x))
 
-type family Mul as where
-  Mul '[] = TermF
-  Mul '[a] = a
-  Mul (a ': as) = Mul as *! a
+-- | Swap a product.
+--
+-- >>> import Prelude (Bool (..))
+-- >>> swapProduct @Bool @Bool (True, False)
+-- (False,True)
+swapProduct :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => (a && b) ~> (b && a)
+swapProduct = toCCC @(F a && F b) @(F b && F a) (lam (\p -> let (x :& y) = p in y :& x))
 
-data Free :: MultiCat (FK k) where
-  Id :: (IsFK a) => Free '[a] a
-  L :: a ~> b -> Free i (F a) -> Free i (F b)
-  Head :: (IsFK a, IsFKs i) => Free (a ': i) a
-  Tail :: (IsFK a, IsFK b, IsFKs i) => Free i b -> Free (a ': i) b
-  Ini :: (IsFK a, IsFKs i) => Free i InitF -> Free i a
-  Ter :: (IsFKs i) => Free i TermF
-  Fst :: (IsFK a, IsFK b, IsFKs i) => Free i (a *! b) -> Free i a
-  Snd :: (IsFK a, IsFK b, IsFKs i) => Free i (a *! b) -> Free i b
-  Prd :: (IsFK a, IsFK b, IsFKs i) => Free i a -> Free i b -> Free i (a *! b)
-  Lft :: (IsFK a, IsFK b, IsFKs i) => Free i a -> Free i (a + b)
-  Rgt :: (IsFK a, IsFK b, IsFKs i) => Free i b -> Free i (a + b)
-  Sum :: (IsFK a, IsFK b, IsFK c, IsFKs i) => Free i (a + b) -> Free (a ': i) c -> Free (b ': i) c -> Free i c
-  Curry :: (IsFK a, IsFK b, IsFKs i) => Free (a ': i) b -> Free i (a --> b)
-  Apply :: (IsFK a, IsFK b, IsFKs i) => Free i (a --> b) -> Free i a -> Free i b
+-- | Apply a function to an argument, both bundled in a product.
+--
+-- >>> import Prelude (Bool (..), not)
+-- >>> applyPair @Bool @Bool (not, True)
+-- False
+applyPair :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => ((a ~~> b) && a) ~> b
+applyPair = toCCC @((F a ~~> F b) && F a) @(F b) (lam (\p -> let (f :& a) = p in f $ a))
 
-instance P.Show (Free a b) where
-  show Id = "fst"
-  show (L _ Id) = "<arrow>"
-  show (L _ f) = "(<arrow> . " P.++ P.show f P.++ ")"
-  show Head = "snd"
-  show (Tail f) = "(" P.++ P.show f P.++ " . fst)"
-  show (Ini f) = "(initiate . " P.++ P.show f P.++ ")"
-  show Ter = "terminate"
-  show (Lft Id) = "lft"
-  show (Lft f) = "(lft . " P.++ P.show f P.++ ")"
-  show (Rgt Id) = "rgt"
-  show (Rgt f) = "(rgt . " P.++ P.show f P.++ ")"
-  show (Sum Id f g) = "(" P.++ P.show f P.++ " ||| " P.++ P.show g P.++ ")"
-  show (Sum m f g) = "((" P.++ P.show f P.++ " ||| " P.++ P.show g P.++ ") . " P.++ P.show m P.++ ")"
-  show (Fst Id) = "fst"
-  show (Fst f) = "(fst . " P.++ P.show f P.++ ")"
-  show (Snd Id) = "snd"
-  show (Snd f) = "(snd . " P.++ P.show f P.++ ")"
-  show (Prd f g) = "(" P.++ P.show f P.++ " &&& " P.++ P.show g P.++ ")"
-  show (Curry f) = "(curry " P.++ P.show f P.++ ")"
-  show (Apply f a) = "(" P.++ P.show f P.++ " $ " P.++ P.show a P.++ ")"
+-- | Curry a pairing function.
+--
+-- >>> import Prelude (Bool (..))
+-- >>> curryPair @Bool @Bool True False
+-- (True,False)
+curryPair :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => a ~> (b ~~> (a && b))
+curryPair = toCCC @(F a) @(F b ~~> (F a && F b)) (lam (\x -> lam (\y -> x :& y)))
 
-type family FromFree (t :: FK k) :: k
-type instance FromFree (F a) = a
-type instance FromFree InitF = InitialObject
-type instance FromFree TermF = TerminalObject
-type instance FromFree (a + b) = FromFree a || FromFree b
-type instance FromFree (a *! b) = FromFree a && FromFree b
-type instance FromFree (a --> b) = FromFree a ~~> FromFree b
+-- | Flip the argument order of a 3-argument curried function, applying the last argument
+-- twice — exercises three levels of nested 'lam' and 'Cast' weakening across all of them.
+--
+-- >>> import Prelude (Bool (..))
+-- >>> flipCurried3 @Bool @Bool @Bool (\_ a _ -> a) True False
+-- True
+flipCurried3 :: forall {k} a b c. (BiCCC k, Ob (a :: k), Ob b, Ob c) => (b ~~> a ~~> b ~~> c) ~> (a ~~> b ~~> c)
+flipCurried3 =
+  toCCC @(F b ~~> (F a ~~> (F b ~~> F c))) @(F a ~~> (F b ~~> F c))
+    (lam (\x -> lam (\y -> lam (\z -> ((x $ z) $ y) $ z))))
 
-type IsFKs :: forall {k}. [FK k] -> Constraint
-class (Cartesian k) => IsFKs (i :: [FK k]) where
-  head :: (IsFK b) => FromFree (Mul (b : i)) ~> FromFree b
-  tail :: (IsFK b) => FromFree (Mul (b : i)) ~> FromFree (Mul i)
-  snoc :: (IsFK b) => FromFree (Mul i) && FromFree b ~> FromFree (Mul (b : i))
-  fromFreeObjs :: Obj (FromFree (Mul i))
-  fromFreeObjs1 :: (IsFK b) => Obj (FromFree (Mul (b : i)))
-instance (Cartesian k) => IsFKs ('[] :: [FK k]) where
-  head @b = fromFreeObj @b
-  tail @b = terminate \\ fromFreeObj @b
-  snoc @b = snd @_ @TerminalObject \\ fromFreeObj @b
-  fromFreeObjs = id
-  fromFreeObjs1 @b = fromFreeObj @b
-instance (IsFKs i, IsFK (a :: FK k)) => IsFKs (a : i) where
-  head @b = snd' (fromFreeObjs1 @i @a) (fromFreeObj @b)
-  tail @b = fst' (fromFreeObjs1 @i @a) (fromFreeObj @b)
-  snoc @b = fromFreeObjs1 @i @a *** fromFreeObj @b
-  fromFreeObjs = fromFreeObjs1 @i @a
-  fromFreeObjs1 @b = fromFreeObjs1 @i @a *** fromFreeObj @b
+-- | Swap a sum, via 'either'.
+--
+-- >>> import Prelude (Bool (..), Either (..))
+-- >>> swapSum @Bool @Bool (Left True)
+-- Right True
+-- >>> swapSum @Bool @Bool (Right False)
+-- Left False
+swapSum :: forall {k} a b. (BiCCC k, Ob (a :: k), Ob b) => (a || b) ~> (b || a)
+swapSum = toCCC @(F a || F b) @(F b || F a) (lam (\x -> either (lam (\y -> rgt y)) (lam (\y -> lft y)) x))
 
-fromFree :: (BiCCC k) => Free (i :: [FK k]) a -> FromFree (Mul i) ~> FromFree a
-fromFree (Id @a) = head @'[] @a
-fromFree (L f g) = f . fromFree g
-fromFree (Head @a @i) = head @i @a
-fromFree (Tail @a @_ @i f) = fromFree f . tail @i @a
-fromFree (Ini @a f) = initiate @_ @(FromFree a) . fromFree f \\ fromFreeObj @a
-fromFree (Ter @i) = terminate' (fromFreeObjs @i)
-fromFree (Lft @a @b f) = lft' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
-fromFree (Rgt @a @b f) = rgt' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
-fromFree (Sum @a @b @_ @i m f g) =
-  let ff = fromFree f; fg = fromFree g; fi = fromFreeObjs @i
-  in ((ff . snoc @i @a ||| fg . snoc @i @b) . distLProd @(FromFree (Mul i)) @(FromFree a) @(FromFree b) . (fi &&& fromFree m))
-       \\ fi
-       \\ fromFreeObj @a
-       \\ fromFreeObj @b
-fromFree (Fst @a @b f) = fst' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
-fromFree (Snd @a @b f) = snd' (fromFreeObj @a) (fromFreeObj @b) . fromFree f
-fromFree (Prd f g) = fromFree f &&& fromFree g
-fromFree (Curry @a @b @i f) =
-  curry @_ @(FromFree (Mul i)) @(FromFree a) @(FromFree b) (fromFree f . snoc @i @a) \\ fromFreeObj @a \\ fromFreeObjs @i
-fromFree (Apply @a @b f g) = apply @_ @(FromFree a) @(FromFree b) . (fromFree f &&& fromFree g) \\ fromFreeObj @a \\ fromFreeObj @b
-
-type IsFK :: forall {k}. FK k -> Constraint
-class IsFK (a :: FK k) where
-  fromFreeObj :: Obj (FromFree a)
-instance (CategoryOf k, Ob a) => IsFK (F (a :: k)) where
-  fromFreeObj = id
-instance (HasInitialObject k) => IsFK (InitF :: FK k) where
-  fromFreeObj = obj
-instance (HasTerminalObject k) => IsFK (TermF :: FK k) where
-  fromFreeObj = obj
-instance (HasBinaryCoproducts k, IsFK a, IsFK b) => IsFK (a + b :: FK k) where
-  fromFreeObj = fromFreeObj @a +++ fromFreeObj @b
-instance (HasBinaryProducts k, IsFK a, IsFK b) => IsFK (a *! b :: FK k) where
-  fromFreeObj = fromFreeObj @a *** fromFreeObj @b
-instance (Closed k, IsFK a, IsFK b) => IsFK (a --> b :: FK k) where
-  fromFreeObj = fromFreeObj @b ^^^ fromFreeObj @a
-
--- | Adapted from Phil Freeman: https://blog.functorial.com/posts/2017-10-08-HOAS-CCCs.html
-toCCC :: forall {k} a b. (BiCCC k) => (IsFK (a :: FK k), IsFK b) => Free '[] (a --> b) -> FromFree a ~> FromFree b
-toCCC f = fromFree (Uncurry f)
-
--- debug :: (IsFK a, IsFK b) => Free '[] ((a :: FK ()) --> b) -> P.String
--- debug f = P.show (Uncurry f)
-
--- test1 :: forall {k} (a :: k) b. (BiCCC k, Ob (a :: k), Ob b) => a ~> b || a
--- test1 = toCCC @(F a) @(F b + F a) (lam \x -> Rgt x)
--- test2 :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => a && b ~> b && a
--- test2 = toCCC @(F a *! F b) @(F b *! F a) (lam \(x :& y) -> (y :& x))
--- test3 :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => (a ~~> b) && a ~> b
--- test3 = toCCC @((F a --> F b) *! F a) @(F b) (lam \(f :& a) -> f $ a)
--- test4 :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => a ~> b ~~> (a && b)
--- test4 = toCCC @(F a) @(F b --> F a *! F b) (lam \x -> lam \y -> (x :& y))
--- test5 :: forall {k} (a :: k) b. (BiCCC k, Ob a, Ob b) => (a && b) ~> (b && a)
--- test5 = toCCC @(F a *! F b) @(F b *! F a) (lam \(a :& b) -> lam (\c -> (b :& c)) $ a)
--- test6 :: forall {k} a b c. (BiCCC k, Ob (a :: k), Ob b, Ob c) => b ~~> a ~~> b ~~> c ~> a ~~> b ~~> c
--- test6 = toCCC @(F b --> F a --> F b --> F c) @(F a --> F b --> F c) (lam (\x -> lam (\y -> lam (\z -> ((x $ z) $ y) $ z))))
--- test7 :: forall {k} a b. (BiCCC k, Ob (a :: k), Ob b) => (a || b) ~> (b || a)
--- test7 = toCCC @(F a + F b) @(F b + F a) (lam \x -> either (lam \y -> Rgt y) (lam \y -> Lft y) x)
--- test8 :: forall {k} (a :: k) b c. (BiCCC k, Ob a, Ob b, Ob c) => a && (b || c) ~> (a && b) || (a && c)
--- test8 =
---   toCCC @(F a *! (F b + F c)) @((F a *! F b) + (F a *! F c))
---     (lam \(a :& bc) -> either (lam \b -> Lft (Tail a :& b)) (lam \c -> Rgt (Tail a :& c)) bc)
--- test9 :: forall {k} (a :: k) b c. (BiCCC k, Ob a, Ob b, Ob c) => (a || b) && ((a ~~> c) && (b ~~> c)) ~> c
--- test9 = toCCC @((F a + F b) *! ((F a --> F c) *! (F b --> F c))) @(F c) (lam \(ab :& (ac :& bc)) -> either ac bc ab)
+-- | Eliminate a sum by applying whichever of the two functions matches the branch actually
+-- present.
+--
+-- >>> import Prelude (Bool (..), Either (..), not)
+-- >>> caseEither @Bool @Bool @Bool (Left True, (not, id))
+-- False
+-- >>> caseEither @Bool @Bool @Bool (Right True, (not, id))
+-- True
+caseEither :: forall {k} (a :: k) b c. (BiCCC k, Ob a, Ob b, Ob c) => ((a || b) && ((a ~~> c) && (b ~~> c))) ~> c
+caseEither =
+  toCCC @((F a || F b) && ((F a ~~> F c) && (F b ~~> F c))) @(F c)
+    (lam (\p -> let (ab :& q) = p in let (ac :& bc) = q in either ac bc ab))

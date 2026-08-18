@@ -5,6 +5,7 @@ module Testable where
 
 import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))
+import Data.Maybe (mapMaybe)
 import Data.Typeable (Typeable, eqT, (:~:) (..))
 import GHC.Exts qualified as GHC
 import Test.Falsify.Generator (Fun, Function (..), Gen, applyFun, elem, fun, functionMap, minimalValue, oneof)
@@ -60,6 +61,19 @@ instance Alternative GenTotal where
   f <|> GenEmpty _ = f
   GenNonEmpty g <|> GenNonEmpty h = GenNonEmpty (oneof (g :| [h]))
 
+-- | Uniformly choose among any number of alternatives, dropping the empty ones. Plain '<|>'
+-- only combines two generators at 50\/50, so chaining it over more than two alternatives
+-- associates pairwise and skews weight towards whichever branch ends up outermost in the
+-- resulting tree instead of splitting evenly — use this instead whenever there are more than
+-- two alternatives to pick fairly among.
+oneOfTotal :: [GenTotal a] -> GenTotal a
+oneOfTotal gts = case mapMaybe toGen gts of
+  [] -> empty
+  g : gs -> GenNonEmpty (oneof (g :| gs))
+  where
+    toGen (GenEmpty _) = Nothing
+    toGen (GenNonEmpty g) = Just g
+
 instance Monad GenTotal where
   GenEmpty _ >>= _ = GenEmpty (error ">>= GenEmpty")
   GenNonEmpty g >>= f = case f (minimalValue g) of
@@ -89,6 +103,7 @@ class (TestingEqShow a) => TestableType a where
 -- @'Fun' ('ShowP' a) ('ShowP' b)@ from the start, so 'show' applies directly and
 -- no coercion is involved. 'applyFunP' unwraps on the way back out.
 newtype ShowP a = ShowP {unShowP :: a}
+
 instance (TestingEqShow a) => Show (ShowP a) where
   show (ShowP a) = showP a
 
@@ -116,6 +131,46 @@ genWithNamed :: String -> (a -> Maybe String) -> Gen a -> Property a
 genWithNamed nm f = genWith (fmap named . f)
   where
     named s = "for " ++ nm ++ ": " ++ s
+
+-- | 'True' if a type's generator is non-empty. A pure check on 'TestableType's 'gen' — it
+-- doesn't sample anything, so it's safe (and cheap) to call as many times as convenient, e.g.
+-- once in a 'genSomeSuchThat' predicate and again via the real 'gen'\/'genNamed' call that
+-- actually produces a value.
+isGenNonEmpty :: forall a. (TestableType a) => Bool
+isGenNonEmpty = case gen @a of
+  GenEmpty _ -> False
+  _ -> True
+
+-- | Resample @genKey@ (cheaply, within 'Gen') up to 'maxTries' times until @isUsable@ accepts
+-- the draw, before ever asking 'Property' to commit to a choice.
+--
+-- 'Property'-level 'discard' restarts the *whole* property from scratch (and can trip
+-- falsify's per-slot discard-ratio limit, aborting the entire test run early) — so when a
+-- later, dependent draw (e.g. \"a morphism out of this object\") is likely to be empty for a
+-- \"bad\" choice made here, it's far cheaper to reject that choice immediately, inside 'Gen',
+-- than to commit to it via 'Property' and let the dependent draw discover the problem. A
+-- choice that's still unusable after 'maxTries' attempts is returned anyway, so a genuinely
+-- unsatisfiable requirement still falls through to whatever ordinary 'discard' the caller's
+-- own dependent generation triggers.
+genSuchThat :: Gen key -> (key -> Bool) -> Gen key
+genSuchThat genKey isUsable = go maxTries
+  where
+    go n = do
+      k <- genKey
+      if isUsable k || n <= (0 :: Int) then pure k else go (n - 1)
+
+-- | How many times 'genSuchThat' resamples before giving up. There's no principled formula
+-- for this — it depends on how sparse the specific requirement being searched for is, which
+-- 'genSuchThat' has no way to know in advance. 100 is a pragmatic default: comfortably more
+-- than the number of candidates a small test object palette usually offers (so a single
+-- unlucky pick is very unlikely to exhaust it), while still cheap, since each attempt is a
+-- plain 'Gen' sample rather than a 'Property'-level 'discard'.
+maxTries :: Int
+maxTries = 100
+
+-- | 'genOb', but resampled (see 'genSuchThat') until @isUsable@ accepts the object.
+genObSuchThat :: forall k. (Testable k) => (Some k -> Bool) -> Property (Some k)
+genObSuchThat = genWith (Just . show) . genSuchThat (genSome @k)
 
 type SomeProfunctorElt :: (j +-> k) -> Type
 data SomeProfunctorElt p where

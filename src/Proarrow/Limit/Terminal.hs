@@ -3,7 +3,7 @@
 module Proarrow.Limit.Terminal where
 
 import Data.Kind (Type)
-import Prelude (Eq, Show, type (~))
+import Prelude (Show, type (~))
 
 import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok)
 import Proarrow.Category.Instance.Product ((:**:) (..))
@@ -57,7 +57,6 @@ instance (HasTerminalObject `Elem` cs) => HasStructure cs p HasTerminalObject wh
   data Struct HasTerminalObject a b where
     Terminate :: (Ob a) => Struct HasTerminalObject a TermF
   foldStructure @f _ (Terminate @a) = withLowerOb @a @f terminate
-deriving instance Eq (Struct HasTerminalObject a b)
 deriving instance Show (Struct HasTerminalObject a b)
 instance (Ok cs p, HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs p) where
   type TerminalObject = TermF

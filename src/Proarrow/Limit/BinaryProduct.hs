@@ -4,7 +4,7 @@
 module Proarrow.Limit.BinaryProduct where
 
 import Data.Kind (Type)
-import Prelude (Eq, Show, type (~))
+import Prelude (Show, type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free
@@ -14,7 +14,6 @@ import Proarrow.Category.Instance.Free
   , HasStructure (..)
   , IsFreeOb (..)
   , Ok
-  , WithEq
   , WithShow
   )
 import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
@@ -219,7 +218,6 @@ instance (HasBinaryProducts `Elem` cs) => HasStructure cs p HasBinaryProducts wh
   foldStructure @f _ (Fst @a @b) = withLowerOb @a @f (withLowerOb @b @f (fst @_ @(Lower f a) @(Lower f b)))
   foldStructure @f _ (Snd @a @b) = withLowerOb @a @f (withLowerOb @b @f (snd @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Prd f g) = go f &&& go g
-deriving instance (WithEq a) => Eq (Struct HasBinaryProducts a b)
 instance (WithShow a) => Show (Struct HasBinaryProducts a b) where
   showsPrec _ Fst = P.showString "fst"
   showsPrec _ Snd = P.showString "snd"

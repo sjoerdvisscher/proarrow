@@ -3,85 +3,208 @@
 
 module Props.Free where
 
-import Test.Falsify.Generator (choose)
+import Control.Applicative (Alternative (..))
+import Data.Kind (Type)
+import Data.Type.Equality ((:~:) (..))
 import Test.Tasty (TestTree, testGroup)
-import Prelude hiding (fst, id, snd, (.))
+import Prelude hiding (curry, fst, id, snd, (.))
 
-import Proarrow.Category.Instance.Free (FREE (..), Free (..))
-import Proarrow.Core (CAT, CategoryOf (..), Promonad (..))
+import Proarrow.Category.Instance.Free (FREE (..), Free (..), IsFreeOb (..), retract)
+import Proarrow.Category.Instance.Unit (Unit (..))
+import Proarrow.Category.Monoidal (Monoidal, UnitF, type (**!))
+import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, type (-->))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), (&&&), type (*!))
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
+import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), type (+->))
+import Proarrow.Functor (FunctorForRep (..), type (@))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), type (*!))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), TermF)
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
+import Proarrow.Profunctor.Representable (Rep (..))
 
 import Props
+import Props.Hask ()
 import Testable
   ( GenTotal (..)
+  , MkSomeList (..)
+  , Some (..)
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
-  , TestingEqShow
+  , TestingEqShow (..)
+  , eqHask
   , genSomeDef
-  , oneElem
-  , pattern GenNonEmpty
+  , oneOfTotal
   )
 
-type FREEKIND =
-  FREE '[HasInitialObject, HasTerminalObject, HasBinaryProducts, HasBinaryCoproducts] (InitialProfunctor :: CAT ())
+type FREECS = '[HasInitialObject, HasTerminalObject, HasBinaryProducts, HasBinaryCoproducts, Monoidal, Closed]
+type FREEKIND = FREE FREECS (InitialProfunctor :: CAT ())
+
+-- | The free category has no generating morphisms to interpret (@'InitialProfunctor'@ is
+-- uninhabited), so any object at all works as the interpretation of @'()@ — 'Bool' is as good
+-- as any, and gives 'retract' below plenty to sample from.
+data family Interp :: () +-> Type
+
+instance FunctorForRep Interp where
+  type Interp @ '() = Bool
+  fmap Unit = id
+
+-- | The object @a@ interpreted in 'Type', by folding its structure through 'Interp' — e.g.
+-- >>> :kind! LowerT (InitF + TermF)
+-- LowerT (InitF + TermF) :: Type
+-- = Either Void ()
+type LowerT a = Lower (Rep Interp) a
 
 test :: TestTree
 test =
   testGroup
     "Free"
     [ propCategory @FREEKIND
-    -- , propTerminalObject @FREEKIND
-    -- , propInitialObject @FREEKIND
-    -- , propBinaryProducts @FREEKIND (\r -> r)
-    -- , propBinaryCoproducts @FREEKIND (\r -> r)
-    -- , propClosed @FREEKIND (\r -> r) (\r -> r)
+    , propTerminalObject @FREEKIND
+    , propInitialObject @FREEKIND
+    , propBinaryProducts @FREEKIND (\r -> r)
+    , propBinaryCoproducts @FREEKIND (\r -> r)
+    , propClosed @FREEKIND (\r -> r) (\r -> r)
     ]
 
+-- | A singleton witnessing the shape of an object expression, so 'genTerm' can pattern-match
+-- on source and target shapes directly instead of needing a type class per shape.
+data SFree (a :: FREEKIND) where
+  SInit :: SFree InitF
+  STerm :: SFree TermF
+  SProd :: (Ob a, Ob b) => SFree a -> SFree b -> SFree (a *! b)
+  SSum :: (Ob a, Ob b) => SFree a -> SFree b -> SFree (a + b)
+  SUnit :: SFree UnitF
+  STen :: (Ob a, Ob b) => SFree a -> SFree b -> SFree (a **! b)
+  SExp :: (Ob a, Ob b) => SFree a -> SFree b -> SFree (a --> b)
+
+class (Ob a) => KnownFree (a :: FREEKIND) where
+  theFree :: SFree a
+instance KnownFree InitF where
+  theFree = SInit
+instance KnownFree TermF where
+  theFree = STerm
+instance (KnownFree a, KnownFree b) => KnownFree (a *! b) where
+  theFree = SProd theFree theFree
+instance (KnownFree a, KnownFree b) => KnownFree (a + b) where
+  theFree = SSum theFree theFree
+instance KnownFree UnitF where
+  theFree = SUnit
+instance (KnownFree a, KnownFree b) => KnownFree (a **! b) where
+  theFree = STen theFree theFree
+instance (KnownFree a, KnownFree b) => KnownFree (a --> b) where
+  theFree = SExp theFree theFree
+
+-- | Decides whether two object shapes are the same, structurally — 'genTerm' uses this to
+-- check whether a generator branch's source\/target actually lines up with the shape it wants
+-- to produce, without needing runtime type reflection.
+eqSFree :: SFree a -> SFree b -> Maybe (a :~: b)
+eqSFree SInit SInit = Just Refl
+eqSFree STerm STerm = Just Refl
+eqSFree (SProd a1 a2) (SProd b1 b2) = case (eqSFree a1 b1, eqSFree a2 b2) of
+  (Just Refl, Just Refl) -> Just Refl
+  _ -> Nothing
+eqSFree (SSum a1 a2) (SSum b1 b2) = case (eqSFree a1 b1, eqSFree a2 b2) of
+  (Just Refl, Just Refl) -> Just Refl
+  _ -> Nothing
+eqSFree SUnit SUnit = Just Refl
+eqSFree (STen a1 a2) (STen b1 b2) = case (eqSFree a1 b1, eqSFree a2 b2) of
+  (Just Refl, Just Refl) -> Just Refl
+  _ -> Nothing
+eqSFree (SExp a1 a2) (SExp b1 b2) = case (eqSFree a1 b1, eqSFree a2 b2) of
+  (Just Refl, Just Refl) -> Just Refl
+  _ -> Nothing
+eqSFree _ _ = Nothing
+
+-- | Render an object shape for test failure output.
+showSFree :: SFree a -> String
+showSFree SInit = "InitF"
+showSFree STerm = "TermF"
+showSFree (SProd a b) = "(" ++ showSFree a ++ " *! " ++ showSFree b ++ ")"
+showSFree (SSum a b) = "(" ++ showSFree a ++ " + " ++ showSFree b ++ ")"
+showSFree SUnit = "UnitF"
+showSFree (STen a b) = "(" ++ showSFree a ++ " **! " ++ showSFree b ++ ")"
+showSFree (SExp a b) = "(" ++ showSFree a ++ " --> " ++ showSFree b ++ ")"
+
+-- | The finite palette of shapes 'Testable' picks 'Some' objects from — reused here (via
+-- 'theFree', recovered from each 'Some' value's bundled 'KnownFree') so 'genTerm' can try
+-- composing through each of them (see 'genTerm'\'s @composeB@, and the note on why it avoids
+-- 'Testable.genSome' there).
+type Palette = '[InitF, TermF, TermF *! TermF, TermF + TermF, UnitF, TermF **! TermF]
+
+palette :: [Some FREEKIND]
+palette = mkSomeList @FREEKIND @Palette
+
+-- | Generate a random term between two (given) object shapes. Most branches recurse
+-- structurally on a strictly smaller sub-shape of the source or target, so they always
+-- terminate on their own; @composeB@ is the exception (it can reach into an unrelated object
+-- via composition), so it's the one branch bounded by @fuel@, which decreases on every
+-- recursive call and cuts it off at zero.
+genTerm :: forall a b. (Ob a, Ob b) => Int -> SFree a -> SFree b -> GenTotal (Free a b)
+genTerm fuel sa sb =
+  oneOfTotal [idB, initiateB, terminateB, fstSndB, applyB, recB]
+  where
+    recB
+      | fuel <= 0 = empty
+      | otherwise = oneOfTotal [prodB, sumSrcB, sumTgtB, curryB, composeB]
+    idB = case eqSFree sa sb of
+      Just Refl -> pure id
+      Nothing -> empty
+    initiateB = case sa of
+      SInit -> pure initiate
+      _ -> empty
+    terminateB = case sb of
+      STerm -> pure terminate
+      _ -> empty
+    fstSndB = case sa of
+      SProd sa1 sa2 ->
+        oneOfTotal
+          [ case eqSFree sb sa1 of Just Refl -> pure fst; Nothing -> empty
+          , case eqSFree sb sa2 of Just Refl -> pure snd; Nothing -> empty
+          ]
+      _ -> empty
+    prodB = case sb of
+      SProd b1 b2 -> (&&&) <$> genTerm (fuel - 1) sa b1 <*> genTerm (fuel - 1) sa b2
+      _ -> empty
+    sumSrcB = case sa of
+      SSum a1 a2 -> (|||) <$> genTerm (fuel - 1) a1 sb <*> genTerm (fuel - 1) a2 sb
+      _ -> empty
+    sumTgtB = case sb of
+      SSum b1 b2 -> oneOfTotal [(lft .) <$> genTerm (fuel - 1) sa b1, (rgt .) <$> genTerm (fuel - 1) sa b2]
+      _ -> empty
+    -- a ~ (b --> c) **! b, with c ~ the target.
+    applyB = case sa of
+      STen sl sr -> case sl of
+        SExp sea1 sea2 -> case (eqSFree sr sea1, eqSFree sb sea2) of
+          (Just Refl, Just Refl) -> pure apply
+          _ -> empty
+        _ -> empty
+      _ -> empty
+    curryB = case sb of
+      SExp b1 b2 -> curry <$> genTerm (fuel - 1) (STen sa b1) b2
+      _ -> empty
+    -- Route through every palette shape as a possible intermediate object. This is what lets
+    -- the generator ever compose two otherwise-unrelated terms together.
+    composeB =
+      oneOfTotal
+        [ (.) <$> genTerm (fuel - 1) (theFree @mid) sb <*> genTerm (fuel - 1) sa (theFree @mid)
+        | Some @mid <- palette
+        ]
+
 instance Testable FREEKIND where
-  type TestOb a = TestObFree a
-  genSome = genSomeDef @'[TermF, TermF + TermF, (TermF + TermF) *! (TermF + TermF)]
-  showOb @a = showObFree @a
+  type TestOb a = (KnownFree a, TestOb (LowerT a))
+  showOb @a = showSFree (theFree @a)
+  eqOb @a @b = eqSFree (theFree @a) (theFree @b)
+  genSome = genSomeDef @Palette
 
-instance (TestObFree a, TestObFree b) => TestingEqShow (Free a (b :: FREEKIND))
-instance (TestObFree a, TestObFree b) => TestableType (Free a (b :: FREEKIND)) where
-  gen = genFree
+-- | Two terms are equal iff they denote the same function once interpreted into 'Type' via
+-- 'retract' — decided semantically (by sampling, via 'eqHask'). Structural equality on 'Free'
+-- terms would be too strict for testing categorical laws: e.g. @'terminate' . f@ and
+-- @'terminate'@ are built from different 'Free' constructors even though uniqueness of the
+-- terminal object makes them denote the same morphism.
+instance (TestOb a, TestOb b) => TestingEqShow (Free (a :: FREEKIND) b) where
+  eqP l r = eqHask (retract @FREECS @(Rep Interp) l) (retract @FREECS @(Rep Interp) r)
+
+instance (TestOb a, TestOb b) => TestableType (Free (a :: FREEKIND) b) where
+  gen = genTerm 3 (theFree @a) (theFree @b)
 instance TestableProfunctor (Free :: CAT FREEKIND)
-
-class (Ob a) => TestObFree (a :: FREEKIND) where
-  genFree :: (TestObFree b) => GenTotal (Free a b)
-  genFreeTerm :: GenTotal (Free TermF a)
-  showObFree :: String
-instance TestObFree InitF where
-  genFree = oneElem initiate
-  genFreeTerm = GenEmpty undefined
-  showObFree = "InitF"
-instance TestObFree TermF where
-  genFree = genFreeTerm
-  genFreeTerm = oneElem id
-  showObFree = "TermF"
-instance (TestObFree a, TestObFree b) => TestObFree (a + b) where
-  genFree @c = case (genFree @a @c, genFree @b @c) of
-    (GenEmpty l, _) -> GenEmpty (l . (. lft))
-    (_, GenEmpty r) -> GenEmpty (r . (. rgt))
-    (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (liftA2 (|||) gl gr)
-  genFreeTerm = case (genFreeTerm @a, genFreeTerm @b) of
-    (GenEmpty _, GenEmpty _) -> GenEmpty undefined
-    (GenNonEmpty gl, GenEmpty _) -> GenNonEmpty ((lft .) <$> gl)
-    (GenEmpty _, GenNonEmpty gr) -> GenNonEmpty ((rgt .) <$> gr)
-    (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (choose ((lft .) <$> gl) ((rgt .) <$> gr))
-  showObFree = "(" ++ showObFree @a ++ " + " ++ showObFree @b ++ ")"
-instance (TestObFree a, TestObFree b) => TestObFree (a *! b) where
-  genFree @c = case (genFree @a @c, genFree @b @c) of
-    (GenEmpty _, GenEmpty _) -> GenEmpty undefined
-    (GenNonEmpty gl, _) -> GenNonEmpty ((. fst) <$> gl)
-    (_, GenNonEmpty gr) -> GenNonEmpty ((. snd) <$> gr)
-  genFreeTerm = case (genFreeTerm @a, genFreeTerm @b) of
-    (GenEmpty l, _) -> GenEmpty (\t -> l (fst . t))
-    (_, GenEmpty r) -> GenEmpty (\t -> r (snd . t))
-    (GenNonEmpty gl, GenNonEmpty gr) -> GenNonEmpty (liftA2 (&&&) gl gr)
-  showObFree = "(" ++ showObFree @a ++ " *! " ++ showObFree @b ++ ")"

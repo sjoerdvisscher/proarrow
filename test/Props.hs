@@ -6,7 +6,7 @@ module Props where
 
 import Control.Monad (unless)
 import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Falsify (Property, testFailed, testProperty)
+import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -33,6 +33,9 @@ import Testable
   , TestingEqShow (..)
   , genNamed
   , genOb
+  , genObSuchThat
+  , genSuchThat
+  , isGenNonEmpty
   )
 
 testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
@@ -152,40 +155,82 @@ propMonoidal withTestOb2 = testProperty "Monoidal" $ do
   Some @b <- genOb
   Some @c <- genOb
   Some @d <- genOb
-  -- f <- genNamed @(a ~> b) "f"
-  -- g <- genNamed @(b ~> c) "g"
-  -- h <- genNamed @(c ~> d) "h"
+  f <- genNamed @(a ~> b) "f"
+  g <- genNamed @(b ~> c) "g"
+  h <- genNamed @(c ~> d) "h"
   withTestOb2 @a @b $
     withTestOb2 @b @c $
       withTestOb2 @c @d $
-        withTestOb2 @M.Unit @a $
-          withTestOb2 @M.Unit @b $
-            withTestOb2 @a @M.Unit $
-              withTestOb2 @b @M.Unit $
-                withTestOb2 @(a M.** M.Unit) @b $
-                  withTestOb2 @(a M.** b) @c $
-                    withTestOb2 @a @(b M.** c) $
-                      withTestOb2 @(b M.** c) @d $
-                        withTestOb2 @b @(c M.** d) $
-                          withTestOb2 @a @(b M.** (c M.** d)) $
-                            withTestOb2 @((a M.** b) M.** c) @d $
-                              do
-                                propIso (M.associator @k @a @b @c) (M.associatorInv @k @a @b @c)
-                                propIso (M.leftUnitor @k @a) (M.leftUnitorInv @k @a)
-                                propIso (M.rightUnitor @k @a) (M.rightUnitorInv @k @a)
-
--- [ associator . ((f ** g) ** h) :=: (f ** (g ** h)) . associator
---       , associatorInv . (f ** (g ** h)) :=: ((f ** g) ** h) . associatorInv
---       , leftUnitor . (one ** f) :=: f . leftUnitor
---       , leftUnitorInv . f :=: (one ** f) . leftUnitorInv
---       , rightUnitor . (f ** one) :=: f . rightUnitor
---       , rightUnitorInv . f :=: (f ** one) . rightUnitorInv
---       , (id ** leftUnitor) . associator @_ @(EMB "A") @_ @(EMB "B") :=: rightUnitor ** id
---       , (id ** associator @_ @(EMB "B") @(EMB "C") @(EMB "D"))
---           . associator
---           . (associator @_ @(EMB "A") @(EMB "B") @(EMB "C") ** id)
---           :=: associator . associator
---       ]
+        withTestOb2 @(a M.** b) @(c M.** d) $
+          withTestOb2 @M.Unit @a $
+            withTestOb2 @M.Unit @b $
+              withTestOb2 @a @(M.Unit M.** b) $
+                withTestOb2 @a @M.Unit $
+                  withTestOb2 @b @M.Unit $
+                    withTestOb2 @(a M.** M.Unit) @b $
+                      withTestOb2 @(a M.** b) @c $
+                        withTestOb2 @a @(b M.** c) $
+                          withTestOb2 @(a M.** (b M.** c)) @d $
+                            withTestOb2 @(b M.** c) @d $
+                              withTestOb2 @a @((b M.** c) M.** d) $
+                                withTestOb2 @b @(c M.** d) $
+                                  withTestOb2 @a @(b M.** (c M.** d)) $
+                                    withTestOb2 @((a M.** b) M.** c) @d $
+                                      do
+                                        propIso (M.associator @k @a @b @c) (M.associatorInv @k @a @b @c)
+                                        propIso (M.leftUnitor @k @a) (M.leftUnitorInv @k @a)
+                                        propIso (M.rightUnitor @k @a) (M.rightUnitorInv @k @a)
+                                        testEq
+                                          "associator naturality"
+                                          "associator . ((f ** g) ** h)"
+                                          (M.associator @k @b @c @d . ((f M.** g) M.** h))
+                                          "(f ** (g ** h)) . associator"
+                                          ((f M.** (g M.** h)) . M.associator @k @a @b @c)
+                                        testEq
+                                          "associatorInv naturality"
+                                          "associatorInv . (f ** (g ** h))"
+                                          (M.associatorInv @k @b @c @d . (f M.** (g M.** h)))
+                                          "((f ** g) ** h) . associatorInv"
+                                          (((f M.** g) M.** h) . M.associatorInv @k @a @b @c)
+                                        testEq
+                                          "leftUnitor naturality"
+                                          "leftUnitor . (one ** f)"
+                                          (M.leftUnitor @k @b . (obj @M.Unit M.** f))
+                                          "f . leftUnitor"
+                                          (f . M.leftUnitor @k @a)
+                                        testEq
+                                          "leftUnitorInv naturality"
+                                          "leftUnitorInv . f"
+                                          (M.leftUnitorInv @k @b . f)
+                                          "(one ** f) . leftUnitorInv"
+                                          ((obj @M.Unit M.** f) . M.leftUnitorInv @k @a)
+                                        testEq
+                                          "rightUnitor naturality"
+                                          "rightUnitor . (f ** one)"
+                                          (M.rightUnitor @k @b . (f M.** obj @M.Unit))
+                                          "f . rightUnitor"
+                                          (f . M.rightUnitor @k @a)
+                                        testEq
+                                          "rightUnitorInv naturality"
+                                          "rightUnitorInv . f"
+                                          (M.rightUnitorInv @k @b . f)
+                                          "(f ** one) . rightUnitorInv"
+                                          ((f M.** obj @M.Unit) . M.rightUnitorInv @k @a)
+                                        testEq
+                                          "triangle identity"
+                                          "(id ** leftUnitor) . associator"
+                                          ((obj @a M.** M.leftUnitor @k @b) . M.associator @k @a @M.Unit @b)
+                                          "rightUnitor ** id"
+                                          (M.rightUnitor @k @a M.** obj @b)
+                                        testEq
+                                          "pentagon identity"
+                                          "(id ** associator) . associator . (associator ** id)"
+                                          ( (obj @a M.** M.associator @k @b @c @d)
+                                              . M.associator @k @a @(b M.** c) @d
+                                              . (M.associator @k @a @b @c M.** obj @d)
+                                          )
+                                          "associator . associator"
+                                          (M.associator @k @a @b @(c M.** d) . M.associator @k @(a M.** b) @c @d)
 
 propMonoidal_
   :: forall k
@@ -270,9 +315,12 @@ propClosed withTestOb2 withTestObExp =
     [ testProperty "Exponential is functorial" $ do
         propProfunctorWith @(Rep (Exponential.ExpRep @k))
           ( do
-              Some @a <- genOb
-              Some @b1 <- genOb
-              Some @b2 <- genOb
+              (Some @a, Some @b1, Some @b2) <-
+                genWith
+                  (Just . show)
+                  ( genSuchThat ((,,) <$> genSome @k <*> genSome @k <*> genSome @k) \(Some @a, Some @b1, Some @b2) ->
+                      withTestObExp @b1 @b2 (isGenNonEmpty @(Rep (Exponential.ExpRep @k) a '(OP b1, b2)))
+                  )
               p <- withTestObExp @b1 @b2 (genNamed @(Rep (Exponential.ExpRep @k) a '(OP b1, b2)) "p")
               pure $ SomeP @a @'(OP b1, b2) p
           )
@@ -355,14 +403,14 @@ propProfunctorWith genPro withEqShow = do
   SomeP @a @b p <- genPro
   withEqShow @a @b $
     testEq "identity" "dimap id id p" (dimap id id p) "p" p
-  Some @c <- genOb @k
-  Some @d <- genOb @j
+  Some @c <- genObSuchThat @k \(Some @c) -> isGenNonEmpty @(c ~> a)
+  Some @d <- genObSuchThat @j \(Some @d) -> isGenNonEmpty @(b ~> d)
   f <- genNamed @(c ~> a) "f"
   g <- genNamed @(b ~> d) "g"
   withEqShow @c @d $
     testEq "interchange" "lmap f (rmap g p)" (lmap f (rmap g p)) "rmap g (lmap f p)" (rmap g (lmap f p))
-  Some @e <- genOb @k
-  Some @h <- genOb @j
+  Some @e <- genObSuchThat @k \(Some @e) -> isGenNonEmpty @(e ~> c)
+  Some @h <- genObSuchThat @j \(Some @h) -> isGenNonEmpty @(d ~> h)
   f' <- genNamed @(e ~> c) "f'"
   g' <- genNamed @(d ~> h) "g'"
   withEqShow @e @h $

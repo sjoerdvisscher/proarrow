@@ -3,8 +3,17 @@
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
-import Prelude (($), type (~))
+import Prelude (Show, ($), type (~))
 
+import Proarrow.Category.Instance.Free
+  ( Elem
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Ok
+  , WithShow
+  )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
@@ -261,3 +270,61 @@ instance (Monoidal k) => FunctorForRep (MultRep :: (k, k) +-> k) where
   type MultRep @ '(a, b) = a ** b
   fmap (f :**: g) = f ** g
 type Tensor = Rep MultRep
+
+data family UnitF :: k
+instance (Monoidal `Elem` cs) => IsFreeOb (UnitF :: FREE cs p) where
+  type Lower f UnitF = Unit
+  withLowerOb r = r
+data family (**!) (a :: k) (b :: k) :: k
+instance (Ob (a :: FREE cs p), Ob b, Monoidal `Elem` cs) => IsFreeOb (a **! b) where
+  type Lower f (a **! b) = Lower f a ** Lower f b
+  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withOb2 @_ @(Lower f a) @(Lower f b) r))
+instance (Monoidal `Elem` cs) => HasStructure cs p Monoidal where
+  data Struct Monoidal i o where
+    Par0 :: Struct Monoidal UnitF UnitF
+    Par :: a ~> b -> c ~> d -> Struct Monoidal (a **! c) (b **! d)
+    LeftUnitor :: (Ob a) => Struct Monoidal (UnitF **! a) a
+    LeftUnitorInv :: (Ob a) => Struct Monoidal a (UnitF **! a)
+    RightUnitor :: (Ob a) => Struct Monoidal (a **! UnitF) a
+    RightUnitorInv :: (Ob a) => Struct Monoidal a (a **! UnitF)
+    Associator :: (Ob a, Ob b, Ob c) => Struct Monoidal ((a **! b) **! c) (a **! (b **! c))
+    AssociatorInv :: (Ob a, Ob b, Ob c) => Struct Monoidal (a **! (b **! c)) ((a **! b) **! c)
+  foldStructure _ Par0 = one
+  foldStructure go (Par f g) = go f ** go g
+  foldStructure @f _ (LeftUnitor @a) = withLowerOb @a @f leftUnitor
+  foldStructure @f _ (LeftUnitorInv @a) = withLowerOb @a @f leftUnitorInv
+  foldStructure @f _ (RightUnitor @a) = withLowerOb @a @f rightUnitor
+  foldStructure @f _ (RightUnitorInv @a) = withLowerOb @a @f rightUnitorInv
+  foldStructure @f _ (Associator @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+  foldStructure @f _ (AssociatorInv @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
+deriving instance (WithShow a) => Show (Struct Monoidal a b)
+
+-- 'MonoidalProfunctor'/'Monoidal' are mutual superclasses of each other (via 'Monoidal'\'s own
+-- 'MonoidalProfunctor ((~>) :: CAT k)' superclass), so each instance below directly requires the
+-- other's concrete instance: without 'Monoidal (FREE cs p)' spelled out explicitly here, GHC's
+-- superclass solver doesn't derive it on its own when building 'MonoidalProfunctor's dictionary
+-- (and symmetrically for 'CategoryOf (FREE cs p)' below).
+instance (Monoidal (FREE cs p), Monoidal `Elem` cs) => MonoidalProfunctor (Free :: CAT (FREE cs p)) where
+  one = St Par0 Id
+  f ** g = St (Par f g) Id \\ f \\ g
+instance
+  (CategoryOf (FREE cs p), MonoidalProfunctor ((~>) :: CAT (FREE cs p)), Monoidal `Elem` cs)
+  => Monoidal (FREE cs p)
+  where
+  type Unit = UnitF
+  type a ** b = a **! b
+  withOb2 r = r
+  leftUnitor = St LeftUnitor Id
+  leftUnitorInv = St LeftUnitorInv Id
+  rightUnitor = St RightUnitor Id
+  rightUnitorInv = St RightUnitorInv Id
+  associator = St Associator Id
+  associatorInv = St AssociatorInv Id
+
+instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
+  data Struct SymMonoidal i o where
+    Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
+  foldStructure @f _ (Swap @a @b) = withLowerOb @a @f (withLowerOb @b @f (swap @_ @(Lower f a) @(Lower f b)))
+deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
+instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
+  swap = St Swap Id

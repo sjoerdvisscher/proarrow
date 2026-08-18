@@ -5,7 +5,7 @@
 module Proarrow.Colimit.BinaryCoproduct where
 
 import Data.Kind (Type)
-import Prelude (Eq, Show, ($), type (~))
+import Prelude (Show, ($), type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free
@@ -15,7 +15,6 @@ import Proarrow.Category.Instance.Free
   , HasStructure (..)
   , IsFreeOb (..)
   , Ok
-  , WithEq
   , WithShow
   )
 import Proarrow.Category.Instance.Free qualified as F
@@ -233,7 +232,6 @@ instance (HasBinaryCoproducts `Elem` cs) => HasStructure cs p HasBinaryCoproduct
   foldStructure @f _ (Lft @a @b) = withLowerOb @a @f (withLowerOb @b @f (lft @_ @(Lower f a) @(Lower f b)))
   foldStructure @f _ (Rgt @a @b) = withLowerOb @a @f (withLowerOb @b @f (rgt @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Sum g h) = go g ||| go h
-deriving instance (WithEq a) => Eq (Struct HasBinaryCoproducts a b)
 instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
   showsPrec _ Lft = P.showString "lft"
   showsPrec _ Rgt = P.showString "rgt"

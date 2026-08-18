@@ -4,7 +4,7 @@ module Proarrow.Colimit.Initial where
 
 import Data.Kind (Type)
 import Data.Void (Void, absurd)
-import Prelude (Eq, Show, type (~))
+import Prelude (Show, type (~))
 
 import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -59,7 +59,6 @@ instance (HasInitialObject `Elem` cs) => HasStructure cs p HasInitialObject wher
   data Struct HasInitialObject a b where
     Initial :: (Ob b) => Struct HasInitialObject InitF b
   foldStructure @f _ (Initial @b) = withLowerOb @b @f initiate
-deriving instance Eq (Struct HasInitialObject a b)
 deriving instance Show (Struct HasInitialObject a b)
 instance (Ok cs p, HasInitialObject `Elem` cs) => HasInitialObject (FREE cs p) where
   type InitialObject = InitF

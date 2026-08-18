@@ -6,12 +6,12 @@ import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Discrete (DISCRETE (..), Discrete (..))
-import Proarrow.Category.Instance.Free (FREE (..), Free (..), UnitF, fold, type (**!))
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), (**))
+import Proarrow.Category.Instance.Free (FREE (..), Free (..), fold)
+import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), UnitF, (**), type (**!))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, (&&&), type (*!))
-import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
 import Unsafe.Coerce (unsafeCoerce)
 
