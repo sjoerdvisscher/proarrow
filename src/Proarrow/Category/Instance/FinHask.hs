@@ -39,7 +39,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Limit.Equalizer (HasEqualizers (..), pullbackDefault)
+import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -190,7 +190,12 @@ instance HasEqualizers FINHASK where
 -- >>> (pullback f g \(FinHask l) (FinHask r) -> P.show (P.zip (M.elems l) (M.elems r))) :: P.String
 -- "[(0,1),(0,3),(1,2),(2,1),(2,3),(3,1),(3,3),(4,0),(5,2)]"
 instance HasPullbacks FINHASK where
-  pullback = pullbackDefault
+  pullback (FinHask f) (FinHask g) k =
+    let
+      gByValue = M.fromListWith (P.flip (P.++)) [(v, [y]) | (y, v) <- M.toList g]
+      groups = [(x, y) | (x, v) <- M.toList f, y <- M.findWithDefault [] v gByValue]
+    in
+      reifyList groups \e -> k (FinHask (P.fst P.<$> e)) (FinHask (P.snd P.<$> e))
 
 instance HasCoequalizers FINHASK where
   factorCoequalizer (FinHask @_ @b f) (FinHask g) (FinHask h) =
