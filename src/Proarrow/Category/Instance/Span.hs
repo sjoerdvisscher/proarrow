@@ -81,6 +81,7 @@ instance (HasPullbacks k, HasProducts k) => Closed (SPAN k) where
 
 instance (HasPullbacks k, HasProducts k) => StarAutonomous (SPAN k) where
   type Dual a = a
+  withObDual r = r
   dual (Span f g) = Span g f
   dualInv (Span f g) = Span g f
   linDist @(SP a) @(SP b) (Span f g) = Span (fst @k @a @b . f) (snd @k @a @b . f &&& g)

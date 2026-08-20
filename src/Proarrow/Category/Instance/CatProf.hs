@@ -162,6 +162,7 @@ instance Closed KIND where
 
 instance StarAutonomous KIND where
   type Dual (K a) = K (OPPOSITE a)
+  withObDual r = r
   dual (Cat @p) = Cat @(Op p)
   dualInv (Cat @p) = Cat @(UnOp p)
   linDist (Cat @p) = Cat @(Rep CombineDual :.: Curry p)

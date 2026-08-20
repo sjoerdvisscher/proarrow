@@ -190,6 +190,7 @@ instance Closed BOOL where
 instance StarAutonomous BOOL where
   type Dual FLS = TRU
   type Dual TRU = FLS
+  withObDual r = r
   dual Fls = Tru
   dual F2T = F2T
   dual Tru = Fls

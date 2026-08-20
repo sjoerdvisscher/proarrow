@@ -38,6 +38,7 @@ instance (HasCoproducts k) => MonoidalProfunctor (Coprod (Cont (r :: k))) where
 
 instance StarAutonomous (KLEISLI (Cont (r :: Type))) where
   type Dual @(KLEISLI (Cont r)) (KL a) = KL (a ~~> r)
+  withObDual r = r
   dual (Kleisli (Cont f)) = Kleisli (Cont \k br -> k (f br))
   dualInv (Kleisli (Cont f)) = Kleisli (Cont \k b -> f (\g -> g b) k)
   linDist (Kleisli (Cont f)) = Kleisli (Cont \k a -> k (\(b, c) -> f (\g -> g c) (a, b)))

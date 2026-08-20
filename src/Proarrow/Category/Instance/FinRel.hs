@@ -186,6 +186,7 @@ instance Closed FINREL where
 
 instance StarAutonomous FINREL where
   type Dual n = n
+  withObDual r = r
   dual = dagger
   dualInv = dagger
   linDist @(FR a) @(FR b) @(FR c) (FinRel m) = withOb2 @_ @(FR b) @(FR c) $ FinRel (P.fmap combines (chunks @a @b m))

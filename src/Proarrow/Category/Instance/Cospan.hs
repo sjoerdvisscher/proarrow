@@ -82,6 +82,7 @@ instance (HasPushouts k, HasCoproducts k) => Closed (COSPAN k) where
 
 instance (HasPushouts k, HasCoproducts k) => StarAutonomous (COSPAN k) where
   type Dual a = a
+  withObDual r = r
   dual = dagger
   dualInv = dagger
   linDist @(CS a) @(CS b) (Cospan f g) = Cospan (f . lft @k @a @b) (f . rgt @k @a @b ||| g)

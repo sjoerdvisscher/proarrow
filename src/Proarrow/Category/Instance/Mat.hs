@@ -180,6 +180,7 @@ instance (P.Num a) => Closed (MatK a) where
 
 instance (P.Num a) => StarAutonomous (MatK a) where
   type Dual n = n
+  withObDual r = r
   dual = dagger
   dualInv = dagger
   linDist @(M x) @(M y) @(M z) (Mat m) = withMultNat @z @y $ Mat (concat (P.fmap (chunks @y @x) m))

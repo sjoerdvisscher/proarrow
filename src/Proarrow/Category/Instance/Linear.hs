@@ -234,6 +234,7 @@ questPar (Par f) = Quest (\(Ur g) -> f (\(Quest nuna) -> nuna (Ur (\a -> g (Left
 -- since any star autonomous category with a trace is compact closed.
 instance StarAutonomous LINEAR where
   type Dual (L a) = L (Not a)
+  withObDual r = r
   dual (Linear f) = Linear (\nb a -> nb (f a))
   dualInv (Linear f) = Linear (\b -> dn (\na -> f na b))
   linDist (Linear f) = Linear (\a (b, c) -> f (a, b) c)

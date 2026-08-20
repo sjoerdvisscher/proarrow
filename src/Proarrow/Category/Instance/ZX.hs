@@ -183,6 +183,7 @@ instance Closed Nat where
 
 instance StarAutonomous Nat where
   type Dual x = x
+  withObDual r = r
   dual (ZX m) = ZX (transpose m)
   dualInv = dual
   linDist @_ @b @c (ZX m) =

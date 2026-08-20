@@ -113,6 +113,7 @@ instance (TracedMonoidal k) => Closed (INT k) where
 
 instance (TracedMonoidal k) => StarAutonomous (INT k) where
   type Dual (I p n) = I n p
+  withObDual r = r
   dual (Int @ap @am @bp @bm f) = Int (swap @k @am @bp . f . swap @k @bm @ap)
   dualInv (Int @ap @am @bp @bm f) = Int (swap @k @am @bp . f . swap @k @bm @ap)
   linDist @(I ap am) @(I bp bm) @(I cp cm) (Int f) = Int (associator @k @am @bm @cm . f . associatorInv @k @ap @bp @cp) \\ obj2 @(I bp bm) @(I cp cm)

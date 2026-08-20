@@ -11,7 +11,6 @@ import Proarrow.Category.Instance.Free
   , Free (..)
   , HasStructure (..)
   , IsFreeOb (..)
-  , Ok
   , WithShow
   )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -326,5 +325,10 @@ instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
     Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
   foldStructure @f _ (Swap @a @b) = withLowerOb @a @f (withLowerOb @b @f (swap @_ @(Lower f a) @(Lower f b)))
 deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
-instance (Ok cs p, SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
+
+-- Requires 'Monoidal (FREE cs p)' directly rather than the usual 'Ok cs p', for the same reason
+-- as 'Closed (FREE cs p)' below: going through 'Ok cs p' bundles 'All cs (FREE cs p)', which
+-- reflexively includes 'SymMonoidal (FREE cs p)' — this very instance — whenever 'SymMonoidal' is
+-- in @cs@, and GHC can't tie that knot productively.
+instance (Monoidal (FREE cs p), SymMonoidal `Elem` cs, Monoidal `Elem` cs) => SymMonoidal (FREE cs p) where
   swap = St Swap Id

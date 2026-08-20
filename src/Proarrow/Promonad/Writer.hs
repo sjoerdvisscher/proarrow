@@ -49,17 +49,24 @@ instance (Ob (w :: k), Monoidal k) => Representable (Writer w :: k +-> k) where
 instance (Ob (w :: k), CompactClosed k) => Corepresentable (Writer w :: k +-> k) where
   type Writer w %% a = ExpSA w a
   coindex (Writer @b @a f) =
-    leftUnitorWith (dualityCounit @w)
-      . associatorInv @k @(Dual w) @w @b
-      . (obj @(Dual w) ** (f . doubleNeg @a))
-      . distribDual @k @w @(Dual a)
+    withObDual @k @w
+      ( withObDual @k @a $
+          leftUnitorWith (dualityCounit @w)
+            . associatorInv @k @(Dual w) @w @b
+            . (obj @(Dual w) ** (f . doubleNeg @a))
+            . distribDual @k @w @(Dual a)
+      )
       \\ f
   cotabulate @a f =
-    Writer
-      ( (obj @w ** (f . combineDual @w @(Dual a)))
-          . associator @k @w @(Dual w) @(Dual (Dual a))
-          . leftUnitorInvWith (dualityUnit @w)
-          . doubleNegInv @a
+    withObDual @k @w
+      ( withObDual @k @a $
+          withObDual @k @(Dual a) $
+            Writer
+              ( (obj @w ** (f . combineDual @w @(Dual a)))
+                  . associator @k @w @(Dual w) @(Dual (Dual a))
+                  . leftUnitorInvWith (dualityUnit @w)
+                  . doubleNegInv @a
+              )
       )
       \\ f
   corepMap f = expSA f (obj @w)

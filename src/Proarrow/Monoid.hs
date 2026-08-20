@@ -150,6 +150,7 @@ instance (CommutativeMonoid m) => SymMonoidal (MONOIDK m) where
 
 instance (CommutativeMonoid m) => StarAutonomous (MONOIDK m) where
   type Dual (M :: MONOIDK m) = M
+  withObDual r = r
   dual f@Mon{} = f
   dualInv f = f
   linDist _ = id
