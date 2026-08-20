@@ -12,6 +12,7 @@ import Prelude hiding (elem, fst, id, snd, (.), (>>))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
+import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
@@ -365,18 +366,109 @@ propClosed_ =
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a @b r -> Exponential.withObExp @k @a @b r)
 
+-- | Laws of a *-autonomous category: 'SA.dual' is a contravariant functor and, together with
+-- 'SA.dualInv', establishes a bijection on hom-sets; 'SA.linDist'\/'SA.linDistInv' establish a
+-- bijection @Hom(a ** b, Dual c) ≅ Hom(a, Dual (b ** c))@, natural in all three variables; and
+-- 'SA.doubleNegIso' witnesses that double dualization is (naturally) isomorphic to the identity.
 propStarAutonomous
   :: forall k
    . (Testable k, SA.StarAutonomous k, TestOb (M.Unit @k))
   => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
   -> (forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r)
   -> TestTree
-propStarAutonomous _withTestOb2 withTestObDual = testProperty "*-autonomous" $ do
-  -- TODO: more
+propStarAutonomous withTestOb2 withTestObDual = testProperty "*-autonomous" $ do
   Some @a <- genOb @k
+  Some @b <- genOb
+  Some @c <- genOb
+  Some @a' <- genOb @k
+  Some @b' <- genOb @k
+  Some @c' <- genOb @k
   withTestObDual @a $
     withTestObDual @(SA.Dual a) $
-      propIso' (SA.doubleNegIso @a)
+      withTestObDual @b $
+        withTestObDual @c $
+          withTestObDual @c' $
+            withTestOb2 @a @b $
+              withTestOb2 @b @c $
+                withTestOb2 @a' @b $
+                  withTestOb2 @a @b' $
+                    withTestOb2 @b' @c $
+                      withTestOb2 @b @c' $
+                        withTestObDual @(b M.** c) $
+                          withTestObDual @(b' M.** c) $
+                            withTestObDual @(b M.** c') $ do
+                              f <- genNamed @(a ~> b) "f"
+                              g <- genNamed @(b ~> c) "g"
+                              g' <- genNamed @(SA.Dual b ~> SA.Dual a) "g"
+                              p <- genNamed @(a M.** b ~> SA.Dual c) "p"
+                              q <- genNamed @(a ~> SA.Dual (b M.** c)) "q"
+                              fa <- genNamed @(a' ~> a) "f"
+                              gb <- genNamed @(b' ~> b) "g"
+                              hc <- genNamed @(c ~> c') "h"
+                              p2 <- genNamed @(a M.** b ~> SA.Dual c') "p"
+
+                              propIso' (SA.doubleNegIso @a)
+
+                              -- dual is a contravariant functor
+                              testEq "dual id" "dual id" (SA.dual @k @a @a (id @_ @a)) "id" id
+                              testEq
+                                "dual composition"
+                                "dual (g . f)"
+                                (SA.dual @k @a @c (g . f))
+                                "dual f . dual g"
+                                (SA.dual @k @a @b f . SA.dual @k @b @c g)
+
+                              -- dual / dualInv establish a bijection on hom-sets
+                              testEq
+                                "dualInv (dual f)"
+                                "dualInv (dual f)"
+                                (SA.dualInv @k @b @a (SA.dual @k @a @b f))
+                                "f"
+                                f
+                              testEq
+                                "dual (dualInv g)"
+                                "dual (dualInv g)"
+                                (SA.dual @k @a @b (SA.dualInv @k @b @a g'))
+                                "g"
+                                g'
+
+                              -- linDist / linDistInv establish a bijection Hom(a**b, Dual c) ≅ Hom(a, Dual (b**c))
+                              testEq
+                                "linDistInv (linDist p)"
+                                "linDistInv (linDist p)"
+                                (SA.linDistInv @k @a @b @c (SA.linDist @k @a @b @c p))
+                                "p"
+                                p
+                              testEq
+                                "linDist (linDistInv q)"
+                                "linDist (linDistInv q)"
+                                (SA.linDist @k @a @b @c (SA.linDistInv @k @a @b @c q))
+                                "q"
+                                q
+
+                              -- naturality of linDist in a
+                              testEq
+                                "linDist naturality (a)"
+                                "linDist p . f"
+                                (SA.linDist @k @a @b @c p . fa)
+                                "linDist (p . (f ** id))"
+                                (SA.linDist @k @a' @b @c (p . (fa M.** obj @b)))
+
+                              -- naturality of linDist in b
+                              testEq
+                                "linDist naturality (b)"
+                                "dual (g ** id) . linDist p"
+                                (SA.dual @k @(b' M.** c) @(b M.** c) (gb M.** obj @c) . SA.linDist @k @a @b @c p)
+                                "linDist (p . (id ** g))"
+                                (SA.linDist @k @a @b' @c (p . (obj @a M.** gb)))
+
+                              -- naturality of linDist in c
+                              testEq
+                                "linDist naturality (c)"
+                                "linDist (dual h . p)"
+                                (SA.linDist @k @a @b @c (SA.dual @k @c @c' hc . p2))
+                                "dual (id ** h) . linDist p"
+                                (SA.dual @k @(b M.** c) @(b M.** c') (obj @b M.** hc) . SA.linDist @k @a @b @c' p2)
 
 propStarAutonomous_
   :: forall k
@@ -384,6 +476,99 @@ propStarAutonomous_
   => TestTree
 propStarAutonomous_ =
   propStarAutonomous
+    (\ @a @b r -> M.withOb2 @k @a @b r)
+    (\ @a r -> r \\ SA.dualObj @a)
+
+-- | Laws of a compact closed category: 'CC.distribDual'\/'CC.combineDual' establish an
+-- isomorphism @Dual (a ** b) ≅ Dual a ** Dual b@ and 'CC.dualUnit'\/'CC.dualUnitInv' establish
+-- @Dual Unit ≅ Unit@ (i.e. 'SA.Dual' is a strong monoidal functor); and the yanking\/zigzag
+-- identities witness that @a@ and @Dual a@ are genuinely dual to one another via
+-- 'CC.dualityUnit'\/'CC.dualityCounit'.
+propCompactClosed
+  :: forall k
+   . (Testable k, CC.CompactClosed k, TestOb (M.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> (forall (a :: k) r. (TestOb a) => ((TestOb (SA.Dual a)) => r) -> r)
+  -> TestTree
+propCompactClosed withTestOb2 withTestObDual = testProperty "Compact closed" $ do
+  Some @a <- genOb @k
+  Some @b <- genOb
+  withTestObDual @a $
+    withTestObDual @b $
+      withTestObDual @(M.Unit @k) $
+        withTestOb2 @a @b $
+          withTestOb2 @(SA.Dual a) @(SA.Dual b) $
+            withTestOb2 @a @(SA.Dual a) $
+              withTestOb2 @(SA.Dual a) @a $
+                withTestOb2 @a @M.Unit $
+                  withTestOb2 @M.Unit @a $
+                    withTestOb2 @(SA.Dual a) @M.Unit $
+                      withTestOb2 @M.Unit @(SA.Dual a) $
+                        withTestObDual @(a M.** b) $
+                          withTestOb2 @(a M.** SA.Dual a) @a $
+                            withTestOb2 @a @(SA.Dual a M.** a) $
+                              withTestOb2 @(SA.Dual a M.** a) @(SA.Dual a) $
+                                withTestOb2 @(SA.Dual a) @(a M.** SA.Dual a) $ do
+                                  -- distribDual / combineDual establish an isomorphism Dual (a**b) ≅ Dual a ** Dual b
+                                  testEq
+                                    "combineDual . distribDual"
+                                    "combineDual (distribDual p)"
+                                    (CC.combineDual @a @b . CC.distribDual @k @a @b)
+                                    "id"
+                                    id
+                                  testEq
+                                    "distribDual . combineDual"
+                                    "distribDual (combineDual p)"
+                                    (CC.distribDual @k @a @b . CC.combineDual @a @b)
+                                    "id"
+                                    id
+
+                                  -- dualUnit / dualUnitInv establish an isomorphism Dual Unit ≅ Unit
+                                  testEq
+                                    "dualUnit . dualUnitInv"
+                                    "dualUnit . dualUnitInv"
+                                    (CC.dualUnit @k . CC.dualUnitInv)
+                                    "id"
+                                    id
+                                  testEq
+                                    "dualUnitInv . dualUnit"
+                                    "dualUnitInv . dualUnit"
+                                    (CC.dualUnitInv . CC.dualUnit @k)
+                                    "id"
+                                    id
+
+                                  -- yanking / zigzag identity for a
+                                  testEq
+                                    "zigzag (a)"
+                                    "rightUnitor . (id ** dualityCounit) . assoc . (dualityUnit ** id) . leftUnitorInv"
+                                    ( M.rightUnitor @k @a
+                                        . (obj @a M.** CC.dualityCounit @a)
+                                        . M.associator @k @a @(SA.Dual a) @a
+                                        . (CC.dualityUnit @a M.** obj @a)
+                                        . M.leftUnitorInv @k @a
+                                    )
+                                    "id"
+                                    id
+
+                                  -- yanking / zigzag identity for Dual a
+                                  testEq
+                                    "zigzag (Dual a)"
+                                    "leftUnitor . (dualityCounit ** id) . assocInv . (id ** dualityUnit) . rightUnitorInv"
+                                    ( M.leftUnitor @k @(SA.Dual a)
+                                        . (CC.dualityCounit @a M.** obj @(SA.Dual a))
+                                        . M.associatorInv @k @(SA.Dual a) @a @(SA.Dual a)
+                                        . (obj @(SA.Dual a) M.** CC.dualityUnit @a)
+                                        . M.rightUnitorInv @k @(SA.Dual a)
+                                    )
+                                    "id"
+                                    id
+
+propCompactClosed_
+  :: forall k
+   . (Testable k, CC.CompactClosed k, TestOb (M.Unit @k), TestObIsOb k)
+  => TestTree
+propCompactClosed_ =
+  propCompactClosed
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
 

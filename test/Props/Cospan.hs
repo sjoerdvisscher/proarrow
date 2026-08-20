@@ -36,6 +36,7 @@ test =
     , propSymMonoidal_ @(COSPAN FINSET)
     , propClosed_ @(COSPAN FINSET)
     , propStarAutonomous_ @(COSPAN FINSET)
+    , propCompactClosed_ @(COSPAN FINSET)
     , testMonoid_ @(CS (FS Nat0))
     , testMonoid_ @(CS (FS Nat1))
     , testMonoid_ @(CS (FS Nat2))
@@ -73,7 +74,7 @@ instance (Ob a, Ob b) => TestingEqShow (Cospan a (b :: COSPAN FINSET)) where
 
 -- instance (TestOb a, TestOb b, Testable k, TestObIsOb k) => TestableType (Cospan a (b :: COSPAN k)) where
 instance (TestOb a, TestOb b) => TestableType (Cospan a (b :: COSPAN FINSET)) where
-  gen = GenNonEmpty $ loop
+  gen = GenNonEmpty loop
     where
       loop = do
         Some @c <- genSome @_

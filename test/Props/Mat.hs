@@ -44,6 +44,7 @@ test =
     , propDistributive_ @(MatK Int)
     , propClosed_ @(MatK Int)
     , propStarAutonomous_ @(MatK Int)
+    , propCompactClosed_ @(MatK Int)
     , testMonoid_ @(M Nat0 :: MatK Int)
     , testMonoid_ @(M Nat1 :: MatK Int)
     , testMonoid_ @(M Nat2 :: MatK Int)

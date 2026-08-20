@@ -14,7 +14,15 @@ import Proarrow.Category.Instance.FinRel (Bitstring, FINREL (..), FinRel (..))
 import Props
 import Props.Hask ()
 import Props.Mat ()
-import Testable (Testable (..), TestableType (..), TestingEqShow (..), genSomeDef, invmap, pattern GenNonEmpty, TestableProfunctor)
+import Testable
+  ( Testable (..)
+  , TestableProfunctor
+  , TestableType (..)
+  , TestingEqShow (..)
+  , genSomeDef
+  , invmap
+  , pattern GenNonEmpty
+  )
 
 test :: TestTree
 test =
@@ -30,6 +38,7 @@ test =
     , propDistributive_ @FINREL
     , propClosed_ @FINREL
     , propStarAutonomous_ @FINREL
+    , propCompactClosed_ @FINREL
     , testMonoid_ @(FR Nat0)
     , testMonoid_ @(FR Nat1)
     , testMonoid_ @(FR Nat2)

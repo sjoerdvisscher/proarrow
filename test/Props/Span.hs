@@ -36,6 +36,7 @@ test =
     , propSymMonoidal_ @(SPAN FINSET)
     , propClosed_ @(SPAN FINSET)
     , propStarAutonomous_ @(SPAN FINSET)
+    , propCompactClosed_ @(SPAN FINSET)
     , testMonoid_ @(SP (FS Nat0))
     , testMonoid_ @(SP (FS Nat1))
     , testMonoid_ @(SP (FS Nat2))
@@ -69,7 +70,7 @@ instance (Ob a, Ob b) => TestingEqShow (Span a (b :: SPAN FINSET)) where
 
 -- instance (TestOb a, TestOb b, Testable k, TestObIsOb k) => TestableType (Span a (b :: SPAN k)) where
 instance (TestOb a, TestOb b) => TestableType (Span a (b :: SPAN FINSET)) where
-  gen = GenNonEmpty $ loop
+  gen = GenNonEmpty loop
     where
       loop = do
         Some @c <- genSome @_
