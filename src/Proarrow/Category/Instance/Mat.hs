@@ -4,8 +4,8 @@ module Proarrow.Category.Instance.Mat where
 
 import Data.Complex (Complex, conjugate)
 import Data.Kind (Type)
-import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat, type Mult, type Plus)
-import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, tabulate, (++))
+import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat, snatToNat, type Mult, type Plus)
+import Data.Vec.Lazy (Vec (..), chunks, concat, concatMap, reifyList, tabulate, toList, zipWith, (++))
 import Prelude (($), type (~))
 import Prelude qualified as P
 
@@ -22,14 +22,20 @@ import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLInv, dis
 import Proarrow.Category.Monoidal.Hypergraph (Frobenius, Hypergraph)
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA, expSA)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts)
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Equalizer (HasEqualizers (..), pullbackDefault)
+import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 type n + m = Plus n m
@@ -141,6 +147,117 @@ instance (P.Num a) => HasBinaryProducts (MatK a) where
   snd @(M m) @(M n) = withPlusNat @m @n (Mat (P.fmap ((0 P.<$ matId @m @a) ++) (matId @n)))
   Mat @_ @m a &&& Mat @_ @n b = withPlusNat @m @n (Mat (a ++ b))
 instance (P.Num a) => HasBiproducts (MatK a)
+
+-- | The equalizer of two linear maps @f, g :: M m ~> M n@ is the kernel of @f - g@: the subspace of
+-- @M m@ on which they agree. Computed by row-reducing @f - g@ to reduced row echelon form; the free
+-- (non-pivot) columns of the result index a basis of the kernel.
+--
+-- >>> import Data.Vec.Lazy (Vec(..))
+-- >>> let f = Mat @(S (S Z)) @(S Z) ((1 ::: 2 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S Z) :: MatK P.Double)
+-- >>> let g = Mat @(S (S Z)) @(S Z) ((3 ::: 0 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S Z) :: MatK P.Double)
+-- >>> let h = Mat @(S Z) @(S (S Z)) ((1 ::: VNil) ::: (1 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
+-- >>> (case factorEqualizer f g h of p :.: q -> case (p, q) of (Mat pv, Mat qv) -> (toList pv, P.fmap toList qv, unMat (q . p))) :: ([Vec (S Z) P.Double], Vec (S (S Z)) [P.Double], Vec (S (S Z)) (Vec (S Z) P.Double))
+-- ([1.0 ::: VNil],[1.0] ::: [1.0] ::: VNil,(1.0 ::: VNil) ::: (1.0 ::: VNil) ::: VNil)
+instance (P.Fractional a, P.Eq a) => HasEqualizers (MatK a) where
+  factorEqualizer (Mat @m @_ l) (Mat r) (Mat @c j) =
+    let
+      diffRows = toList (zipWith (zipWith (P.-)) l r) :: [Vec m a]
+      numCols = P.fromIntegral (snatToNat (snat @m)) :: P.Int
+      (pivotCols, finalRows) = rref numCols diffRows
+      pivotMap = P.zip pivotCols finalRows
+      freeCols = P.filter (`P.notElem` pivotCols) [0 .. numCols P.- 1]
+      basisFor :: P.Int -> Vec m a
+      basisFor j' = tabulate entryAt
+        where
+          entryAt fi =
+            let i = P.fromEnum fi
+            in if i P.== j'
+                 then 1
+                 else
+                   if i `P.elem` freeCols
+                     then 0
+                     else P.maybe 0 (P.negate . (`at` j')) (P.lookup i pivotMap)
+      jRows = toList j :: [Vec c a]
+      combined = [(basisFor fc, jRows P.!! fc) | fc <- freeCols]
+    in
+      reifyList combined \(vecs :: Vec e (Vec m a, Vec c a)) ->
+        withIsNat @e $
+          let
+            incl = Mat (P.traverse P.fst vecs) :: Mat (M e :: MatK a) (M m)
+            k = Mat (P.fmap P.snd vecs) :: Mat (M c :: MatK a) (M e)
+          in
+            k :.: incl
+
+-- | The coequalizer of @f, g :: M m ~> M n@ is the cokernel of @f - g@, i.e. the quotient of @M n@ by
+-- its image. Rather than a separate algorithm, this reuses 'factorEqualizer' via @dagger@: since
+-- @dagger@ is a contravariant involution on 'Mat', a coequalizer of @f, g@ is exactly an equalizer of
+-- @dagger f, dagger g@ transported back across @dagger@.
+--
+-- >>> let f = Mat @(S Z) @(S (S Z)) ((2 ::: VNil) ::: (0 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
+-- >>> let g = Mat @(S Z) @(S (S Z)) ((0 ::: VNil) ::: (3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
+-- >>> let w = Mat @(S (S Z)) @(S Z) ((3 ::: 2 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S Z) :: MatK P.Double)
+-- >>> (case factorCoequalizer f g w of q :.: s -> case (q, s) of (Mat qv, Mat sv) -> P.show (qv, sv, unMat (s . q))) :: P.String
+-- "((1.5 ::: 1.0 ::: VNil) ::: VNil,(2.0 ::: VNil) ::: VNil,(3.0 ::: 2.0 ::: VNil) ::: VNil)"
+instance (P.Fractional a, P.Eq a) => HasCoequalizers (MatK a) where
+  factorCoequalizer f g w = case factorEqualizer (dagger f) (dagger g) (dagger w) of
+    s :.: incl -> dagger incl :.: dagger s
+
+-- | Pullbacks are computed via 'pullbackDefault', as the equalizer of @f . fst@ and @g . snd@ on the
+-- product @a && b@ -- the standard linear-algebra construction of a fiber product of vector spaces.
+--
+-- >>> let f = Mat @(S Z) @(S Z) ((2 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
+-- >>> let g = Mat @(S Z) @(S Z) ((3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
+-- >>> (pullback f g \p q -> case (p, q) of (Mat pv, Mat qv) -> P.show (pv, qv)) :: P.String
+-- "((1.5 ::: VNil) ::: VNil,(1.0 ::: VNil) ::: VNil)"
+instance (P.Fractional a, P.Eq a) => HasPullbacks (MatK a) where
+  pullback = pullbackDefault
+
+-- | Pushouts are computed via 'pushoutDefault', as the coequalizer of @lft . f@ and @rgt . g@ on the
+-- coproduct @a || b@ -- the standard linear-algebra construction of a cofiber product of vector spaces.
+--
+-- >>> let f = Mat @(S Z) @(S Z) ((2 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
+-- >>> let g = Mat @(S Z) @(S Z) ((3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S Z) :: MatK P.Double)
+-- >>> (pushout f g \p q -> case (p, q) of (Mat pv, Mat qv) -> P.show (pv, qv)) :: P.String
+-- "((1.5 ::: VNil) ::: VNil,(1.0 ::: VNil) ::: VNil)"
+instance (P.Fractional a, P.Eq a) => HasPushouts (MatK a) where
+  pushout = pushoutDefault
+
+-- | Epi-mono factorization is computed via 'defaultFactorize': @f@ factors as the coequalizer of its
+-- cokernel pair (the epi onto its image) followed by the equalizer factorization of @f@ through that
+-- epi (the mono inclusion of the image).
+--
+-- >>> let h = Mat @(S (S Z)) @(S (S Z)) ((1 ::: 2 ::: VNil) ::: (2 ::: 4 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S (S Z)) :: MatK P.Double)
+-- >>> (case factorize h of e :.: m -> case (e, m) of (Mat ev, Mat mv) -> P.show (ev, mv, unMat (m . e))) :: P.String
+-- "((2.0 ::: 4.0 ::: VNil) ::: VNil,(0.5 ::: VNil) ::: (1.0 ::: VNil) ::: VNil,(1.0 ::: 2.0 ::: VNil) ::: (2.0 ::: 4.0 ::: VNil) ::: VNil)"
+instance (P.Fractional a, P.Eq a) => HasEpiMonoFactorization (MatK a) where
+  factorize = defaultFactorize
+
+-- | Reads the entry of a row at a runtime column index.
+at :: Vec m a -> P.Int -> a
+at v i = toList v P.!! i
+
+-- | Row-reduces the given matrix, given as a list of rows of the given width, to reduced row echelon
+-- form, returning the ascending pivot column indices together with the reduced rows.
+rref :: (P.Fractional a, P.Eq a) => P.Int -> [Vec m a] -> ([P.Int], [Vec m a])
+rref numCols rows0 = go 0 0 rows0
+  where
+    numRows = P.length rows0
+    go rowPtr col rows
+      | col P.>= numCols P.|| rowPtr P.>= numRows = ([], rows)
+      | P.otherwise =
+          let (before, atOrAfter) = P.splitAt rowPtr rows
+          in case P.break (\row -> row `at` col P./= 0) atOrAfter of
+               (_, []) -> go rowPtr (col P.+ 1) rows
+               (skipped, pivotRow : rest) ->
+                 let
+                   normalized = P.fmap (P./ (pivotRow `at` col)) pivotRow
+                   eliminate row =
+                     let f = row `at` col
+                     in if f P.== 0 then row else zipWith (\x y -> x P.- f P.* y) row normalized
+                   rows' = P.map eliminate before P.++ (normalized : P.map eliminate (skipped P.++ rest))
+                 in
+                   case go (rowPtr P.+ 1) (col P.+ 1) rows' of
+                     (pivots, final) -> (col : pivots, final)
 
 instance (P.Num a) => MonoidalProfunctor (Mat :: CAT (MatK a)) where
   one = id
