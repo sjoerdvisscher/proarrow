@@ -35,6 +35,10 @@ test =
     , propBinaryCoproducts_ @BOOL
     , propDistributive_ @BOOL
     , propClosed_ @BOOL
+    , propEqualizers_ @BOOL
+    , propCoequalizers_ @BOOL
+    , propPullbacks_ @BOOL
+    , propPushouts_ @BOOL
     , testProperty "FF,FT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(FLS, TRU))
     , testProperty "FF,FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, TRU))

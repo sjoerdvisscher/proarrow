@@ -54,19 +54,25 @@ test =
     , testComonoid_ @(M Nat2 :: MatK Int)
     , testComonoid_ @(M Nat3 :: MatK Int)
     , testProperty "App functor" $ propProfunctor @(Rep App :: MatK Int +-> Type)
+    , propEqualizers_ @(MatK Rational)
+    , propCoequalizers_ @(MatK Rational)
+    , propPullbacks_ @(MatK Rational)
+    , propPushouts_ @(MatK Rational)
     ]
 
-instance Testable (MatK Int) where
+type TestableNum n = (Num n, Eq n, Show n, TestableType n)
+
+instance (TestableNum n) => Testable (MatK n) where
   showOb @(M a) = show $ snatToNat $ snat @a
   eqOb @(M a) @(M b) = (\Refl -> Refl) <$> testEquality (snat @a) (snat @b)
   genSome = genSomeDef @'[M Z, M (S Z), M (S (S Z)), M (S (S (S Z)))]
 
-instance (TestOb (a :: MatK Int), TestOb b) => TestableType (Mat a b) where
+instance (TestOb (a :: MatK n), TestOb b, TestableNum n) => TestableType (Mat a b) where
   gen = invmap Mat unMat gen
-instance (TestOb (a :: MatK Int), TestOb b) => TestingEqShow (Mat a b) where
+instance (TestOb (a :: MatK n), TestOb b, TestableNum n) => TestingEqShow (Mat a b) where
   eqP (Mat l) (Mat r) = pure $ l == r
   showP (Mat m) = show m
-instance TestableProfunctor (Mat :: CAT (MatK Int))
+instance (TestableNum n) => TestableProfunctor (Mat :: CAT (MatK n))
 
 instance (Eq a, Show a) => TestingEqShow (Vec n a)
 instance (Eq a, Show a, TestableType a, SNatI n) => TestableType (Vec n a) where
@@ -79,5 +85,9 @@ instance (Eq a, Show a, TestableType a, SNatI n) => TestableType (Vec n a) where
 instance TestingEqShow Int
 instance TestableType Int where
   gen = GenNonEmpty $ liftA2 (*) (elem [1, -1]) (elem [0 .. 9])
+
+instance TestingEqShow Rational
+instance TestableType Rational where
+  gen = GenNonEmpty $ liftA2 (*) (elem [1, -1]) (fromInteger <$> elem [0 .. 9])
 
 instance TestableProfunctor (Rep App :: MatK Int +-> Type)

@@ -156,10 +156,10 @@ instance (P.Num a) => HasBiproducts (MatK a)
 -- >>> let f = Mat @(S (S Z)) @(S Z) ((1 ::: 2 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S Z) :: MatK P.Double)
 -- >>> let g = Mat @(S (S Z)) @(S Z) ((3 ::: 0 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S Z) :: MatK P.Double)
 -- >>> let h = Mat @(S Z) @(S (S Z)) ((1 ::: VNil) ::: (1 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
--- >>> (case factorEqualizer f g h of p :.: q -> case (p, q) of (Mat pv, Mat qv) -> (toList pv, P.fmap toList qv, unMat (q . p))) :: ([Vec (S Z) P.Double], Vec (S (S Z)) [P.Double], Vec (S (S Z)) (Vec (S Z) P.Double))
--- ([1.0 ::: VNil],[1.0] ::: [1.0] ::: VNil,(1.0 ::: VNil) ::: (1.0 ::: VNil) ::: VNil)
+-- >>> (equalize f g \incl@(Mat inclv) -> case factorEqualizer incl h of p@(Mat pv) -> P.show (inclv, pv, unMat (incl . p))) :: P.String
+-- "((1.0 ::: VNil) ::: (1.0 ::: VNil) ::: VNil,(1.0 ::: VNil) ::: VNil,(1.0 ::: VNil) ::: (1.0 ::: VNil) ::: VNil)"
 instance (P.Fractional a, P.Eq a) => HasEqualizers (MatK a) where
-  factorEqualizer (Mat @m @_ l) (Mat r) (Mat @c j) =
+  equalize (Mat @m @_ l) (Mat r) cont =
     let
       diffRows = toList (zipWith (zipWith (P.-)) l r) :: [Vec m a]
       numCols = P.fromIntegral (snatToNat (snat @m)) :: P.Int
@@ -177,30 +177,38 @@ instance (P.Fractional a, P.Eq a) => HasEqualizers (MatK a) where
                    if i `P.elem` freeCols
                      then 0
                      else P.maybe 0 (P.negate . (`at` j')) (P.lookup i pivotMap)
-      jRows = toList j :: [Vec c a]
-      combined = [(basisFor fc, jRows P.!! fc) | fc <- freeCols]
     in
-      reifyList combined \(vecs :: Vec e (Vec m a, Vec c a)) ->
-        withIsNat @e $
-          let
-            incl = Mat (P.traverse P.fst vecs) :: Mat (M e :: MatK a) (M m)
-            k = Mat (P.fmap P.snd vecs) :: Mat (M c :: MatK a) (M e)
-          in
-            k :.: incl
+      reifyList (P.map basisFor freeCols) \(vecs :: Vec e (Vec m a)) ->
+        withIsNat @e $ cont (Mat (P.sequenceA vecs) :: Mat (M e :: MatK a) (M m))
+
+  -- @incl@ need not literally be the RREF-derived basis 'equalize' produces; any mono @incl@ works,
+  -- since we row-reduce the columns of @incl@ and @h@ concatenated (bounding pivot search to just
+  -- @incl@'s width): full column rank turns @incl@'s part into an identity submatrix for free, and
+  -- Gaussian elimination carries the same row operations through @h@'s columns alongside it.
+  factorEqualizer (Mat @e @_ incl) (Mat @e' j) =
+    let
+      numColsE = P.fromIntegral (snatToNat (snat @e)) :: P.Int
+      combinedRows = P.zipWith (++) (toList incl) (toList j)
+      (_, finalRows) = rref numColsE combinedRows
+      hRow fi =
+        let rest = P.drop numColsE (toList (finalRows P.!! P.fromEnum fi))
+        in tabulate (\fj -> rest P.!! P.fromEnum fj) :: Vec e' a
+    in
+      Mat (tabulate hRow)
 
 -- | The coequalizer of @f, g :: M m ~> M n@ is the cokernel of @f - g@, i.e. the quotient of @M n@ by
--- its image. Rather than a separate algorithm, this reuses 'factorEqualizer' via @dagger@: since
+-- its image. Rather than a separate algorithm, this reuses the equalizer machinery via @dagger@: since
 -- @dagger@ is a contravariant involution on 'Mat', a coequalizer of @f, g@ is exactly an equalizer of
 -- @dagger f, dagger g@ transported back across @dagger@.
 --
 -- >>> let f = Mat @(S Z) @(S (S Z)) ((2 ::: VNil) ::: (0 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
 -- >>> let g = Mat @(S Z) @(S (S Z)) ((0 ::: VNil) ::: (3 ::: VNil) ::: VNil) :: Mat (M (S Z)) (M (S (S Z)) :: MatK P.Double)
 -- >>> let w = Mat @(S (S Z)) @(S Z) ((3 ::: 2 ::: VNil) ::: VNil) :: Mat (M (S (S Z))) (M (S Z) :: MatK P.Double)
--- >>> (case factorCoequalizer f g w of q :.: s -> case (q, s) of (Mat qv, Mat sv) -> P.show (qv, sv, unMat (s . q))) :: P.String
+-- >>> (coequalize f g \q@(Mat qv) -> case factorCoequalizer q w of s@(Mat sv) -> P.show (qv, sv, unMat (s . q))) :: P.String
 -- "((1.5 ::: 1.0 ::: VNil) ::: VNil,(2.0 ::: VNil) ::: VNil,(3.0 ::: 2.0 ::: VNil) ::: VNil)"
 instance (P.Fractional a, P.Eq a) => HasCoequalizers (MatK a) where
-  factorCoequalizer f g w = case factorEqualizer (dagger f) (dagger g) (dagger w) of
-    s :.: incl -> dagger incl :.: dagger s
+  coequalize f g cont = equalize (dagger f) (dagger g) \incl -> cont (dagger incl)
+  factorCoequalizer q h = dagger (factorEqualizer (dagger q) (dagger h))
 
 -- | Pullbacks are computed via 'pullbackDefault', as the equalizer of @f . fst@ and @g . snd@ on the
 -- product @a && b@ -- the standard linear-algebra construction of a fiber product of vector spaces.
@@ -230,6 +238,7 @@ instance (P.Fractional a, P.Eq a) => HasPushouts (MatK a) where
 -- >>> (case factorize h of e :.: m -> case (e, m) of (Mat ev, Mat mv) -> P.show (ev, mv, unMat (m . e))) :: P.String
 -- "((2.0 ::: 4.0 ::: VNil) ::: VNil,(0.5 ::: VNil) ::: (1.0 ::: VNil) ::: VNil,(1.0 ::: 2.0 ::: VNil) ::: (2.0 ::: 4.0 ::: VNil) ::: VNil)"
 instance (P.Fractional a, P.Eq a) => HasEpiMonoFactorization (MatK a) where
+  factorize :: forall (x :: MatK a) y. (x ~> y) -> (Mat :.: Mat) x y
   factorize = defaultFactorize
 
 -- | Reads the entry of a row at a runtime column index.

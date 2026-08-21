@@ -94,11 +94,6 @@ instance (HasPushouts k, HasCoproducts k) => CompactClosed (COSPAN k) where
 instance (HasPushouts k) => DaggerProfunctor (Cospan :: CAT (COSPAN k)) where
   dagger (Cospan f g) = Cospan g f
 
-instance (HasPushouts k) => HasPushouts (COSPAN k) where
-  pushout (Cospan f g) (Cospan h i) k = pushout f h \l r -> k (arr (l . g)) (arr (r . i))
-instance (HasPushouts k) => HasPullbacks (COSPAN k) where
-  pullback (Cospan f g) (Cospan h i) k = pushout g i \l r -> k (coarr (l . f)) (coarr (r . h))
-
 data family Pushout :: SPAN k +-> COSPAN k
 instance (HasPushouts k, HasPullbacks k) => FunctorForRep (Pushout :: SPAN k +-> COSPAN k) where
   type Pushout @ (SP a) = CS a

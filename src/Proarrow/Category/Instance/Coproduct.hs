@@ -4,8 +4,13 @@ import Data.Kind (Constraint)
 import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Limit.Equalizer (HasEqualizers (..))
+import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -61,6 +66,36 @@ instance (DaggerProfunctor p, DaggerProfunctor q) => DaggerProfunctor (p :++: q)
   dagger = \case
     InjL f -> InjL (dagger f)
     InjR f -> InjR (dagger f)
+
+-- | Morphisms of 'COPRODUCT' never cross sides, so this is a straight case split reusing @j@'s or
+-- @k@'s own equalizer -- never a mix of the two.
+instance (HasEqualizers j, HasEqualizers k) => HasEqualizers (COPRODUCT j k) where
+  equalize (InjL f) (InjL g) k = equalize f g \e -> k (InjL e)
+  equalize (InjR f) (InjR g) k = equalize f g \e -> k (InjR e)
+  factorEqualizer (InjL incl) (InjL h) = InjL (factorEqualizer incl h)
+  factorEqualizer (InjR incl) (InjR h) = InjR (factorEqualizer incl h)
+
+-- | Dual to the 'HasEqualizers' instance above.
+instance (HasCoequalizers j, HasCoequalizers k) => HasCoequalizers (COPRODUCT j k) where
+  coequalize (InjL f) (InjL g) k = coequalize f g \c -> k (InjL c)
+  coequalize (InjR f) (InjR g) k = coequalize f g \c -> k (InjR c)
+  factorCoequalizer (InjL q) (InjL h) = InjL (factorCoequalizer q h)
+  factorCoequalizer (InjR q) (InjR h) = InjR (factorCoequalizer q h)
+
+instance (HasPullbacks j, HasPullbacks k) => HasPullbacks (COPRODUCT j k) where
+  pullback (InjL f) (InjL g) k = pullback f g \p1 p2 -> k (InjL p1) (InjL p2)
+  pullback (InjR f) (InjR g) k = pullback f g \p1 p2 -> k (InjR p1) (InjR p2)
+  factorPullback (InjL p1) (InjL p2) (InjL k1) (InjL k2) = InjL (factorPullback p1 p2 k1 k2)
+  factorPullback (InjR p1) (InjR p2) (InjR k1) (InjR k2) = InjR (factorPullback p1 p2 k1 k2)
+
+instance (HasPushouts j, HasPushouts k) => HasPushouts (COPRODUCT j k) where
+  pushout (InjL f) (InjL g) k = pushout f g \p1 p2 -> k (InjL p1) (InjL p2)
+  pushout (InjR f) (InjR g) k = pushout f g \p1 p2 -> k (InjR p1) (InjR p2)
+  factorPushout (InjL p1) (InjL p2) (InjL k1) (InjL k2) = InjL (factorPushout p1 p2 k1 k2)
+  factorPushout (InjR p1) (InjR p2) (InjR k1) (InjR k2) = InjR (factorPushout p1 p2 k1 k2)
+
+instance (HasPushouts j, HasEqualizers j, HasPushouts k, HasEqualizers k) => HasEpiMonoFactorization (COPRODUCT j k) where
+  factorize = defaultFactorize
 
 data family Lft :: j +-> COPRODUCT j k
 instance (CategoryOf j, CategoryOf k) => FunctorForRep (Lft :: j +-> COPRODUCT j k) where

@@ -13,7 +13,7 @@ import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (pattern Objs)
-import Proarrow.Profunctor.Instance.Composition ((:.:))
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
 class (HasProducts k, Ob (Omega :: k)) => HasSubobjectClassifier k where
   type Omega :: k
@@ -39,10 +39,10 @@ class (CategoryOf k) => HasEpiMonoFactorization k where
   factorize :: (a ~> b) -> (Hom k :.: Hom k) a b
 
 defaultFactorize :: (HasPushouts k, HasEqualizers k) => (a ~> b) -> (Hom k :.: Hom k) a b
-defaultFactorize f = pushout f f \q1 q2 -> factorEqualizer q1 q2 f
+defaultFactorize f = pushout f f \q1 q2 -> equalize q1 q2 \incl -> factorEqualizer incl f :.: incl
 
 defaultFactorizeDual :: (HasPullbacks k, HasCoequalizers k) => a ~> b -> (Hom k :.: Hom k) a b
-defaultFactorizeDual f = pullback f f \p1 p2 -> factorCoequalizer p1 p2 f
+defaultFactorizeDual f = pullback f f \p1 p2 -> coequalize p1 p2 \incl -> incl :.: factorCoequalizer incl f
 
 type HasFiniteLimits k = (HasProducts k, HasPullbacks k, HasEqualizers k)
 type HasFiniteColimits k = (HasCoproducts k, HasPushouts k, HasCoequalizers k)

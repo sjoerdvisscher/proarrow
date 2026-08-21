@@ -12,10 +12,15 @@ import Prelude (Num ((+)), error, ($))
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), factorPushoutDefault, thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..), thinPushout)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, (//))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Equalizer (HasEqualizers (..), factorPullbackDefault, thinEqualize)
+import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 type data COST = C Nat | INF
@@ -243,3 +248,46 @@ instance Distributive COST where
 #endif
   absorbL = Inf
   absorbR = Inf
+
+-- | @COST@ is thin and totally ordered, so equalizers are trivial; @factorEqualizer incl h@ just
+-- compares @e@ and @e'@ directly (their common bound @x@ turns out not to matter), erroring exactly
+-- when @e'@ is finite and strictly less than @e@, or @e@ is 'INF' while @e'@ is finite.
+instance HasEqualizers COST where
+  equalize = thinEqualize
+  factorEqualizer @e @_ @e' incl h =
+    ( case (sing @e', sing @e) of
+        (SINF, _) -> Inf
+        (SC, SINF) -> error "factorEqualizer: h's image must lie within incl's image"
+        (SC @b, SC @a) -> case cmpNat (Proxy @a) (Proxy @b) of
+          LTI -> GTE
+          EQI -> GTE
+          GTI -> error "factorEqualizer: h's image must lie within incl's image"
+    )
+      \\ incl
+      \\ h
+
+-- | Dual to the 'HasEqualizers' instance above.
+instance HasCoequalizers COST where
+  coequalize = thinCoequalize
+  factorCoequalizer @c @_ @c' q h =
+    ( case (sing @c, sing @c') of
+        (SINF, _) -> Inf
+        (SC, SINF) -> error "factorCoequalizer: h must be constant on q's fibers"
+        (SC @a, SC @b) -> case cmpNat (Proxy @b) (Proxy @a) of
+          LTI -> GTE
+          EQI -> GTE
+          GTI -> error "factorCoequalizer: h must be constant on q's fibers"
+    )
+      \\ q
+      \\ h
+
+instance HasPullbacks COST where
+  pullback = thinPullback
+  factorPullback = factorPullbackDefault
+
+instance HasPushouts COST where
+  pushout = thinPushout
+  factorPushout = factorPushoutDefault
+
+instance HasEpiMonoFactorization COST where
+  factorize = defaultFactorize

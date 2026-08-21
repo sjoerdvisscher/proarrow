@@ -16,11 +16,16 @@ import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
+import Proarrow.Colimit.Coequalizer qualified as Coequalizer
 import Proarrow.Colimit.Initial qualified as Initial
+import Proarrow.Colimit.Pushout qualified as Pushout
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
+import Proarrow.Limit.Equalizer qualified as Equalizer
+import Proarrow.Limit.Pullback qualified as Pullback
 import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
+import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (Iso)
 import Proarrow.Profunctor.Instance.Constant (review, view)
 import Proarrow.Profunctor.Representable (Rep)
@@ -145,6 +150,172 @@ propBinaryCoproducts_
    . (Testable k, BinaryCoproduct.HasBinaryCoproducts k, TestObIsOb k)
   => TestTree
 propBinaryCoproducts_ = propBinaryCoproducts @k (\ @a @b r -> BinaryCoproduct.withObCoprod @k @a @b r)
+
+-- | Checks the equalizer laws: the equalizer arrow @e@ equalizes @f@ and @g@; any @h@ that factors
+-- through @e@ (built here as @e . p@ for an arbitrary @p@, so the precondition holds by construction)
+-- is correctly recovered by 'Equalizer.factorEqualizer'; and @e@ is mono (composing with it on the
+-- left reflects equality).
+--
+-- Unlike 'propBinaryProducts', the equalizer object isn't computed from @a@, @b@ by a type family --
+-- it's an arbitrary object revealed at runtime, whose 'Ob' evidence 'Objs' recovers generically from
+-- the equalizer arrow. So @withTestOb@ only ever needs to bridge that single recovered 'Ob' to 'TestOb'.
+propEqualizers
+  :: forall k
+   . (Testable k, Equalizer.HasEqualizers k)
+  => (forall (e :: k) r. (Ob e) => ((TestOb e) => r) -> r)
+  -> TestTree
+propEqualizers withTestOb = testProperty "Equalizers" $ do
+  Some @a <- genOb @k
+  Some @b <- genOb
+  f <- genNamed @(a ~> b) "f"
+  g <- genNamed @(a ~> b) "g"
+  Equalizer.equalize f g \ @e ee@Objs -> withTestOb @e $ do
+    testEq "equalizing" "f . e" (f . ee) "g . e" (g . ee)
+    Some @z <- genOb
+    p <- genNamed @(z ~> e) "p"
+    let h = ee . p
+        factored = Equalizer.factorEqualizer ee h
+    testEq "factorization" "e . factored" (ee . factored) "h" h
+    k1 <- genNamed @(z ~> e) "k1"
+    k2 <- genNamed @(z ~> e) "k2"
+    eqComposed <- eqP (ee . k1) (ee . k2)
+    eqDirect <- eqP k1 k2
+    unless (eqComposed == eqDirect) $
+      testFailed $
+        "Failed mono: (e . k1 == e . k2) = "
+          ++ show eqComposed
+          ++ " but (k1 == k2) = "
+          ++ show eqDirect
+
+propEqualizers_
+  :: forall k
+   . (Testable k, Equalizer.HasEqualizers k, TestObIsOb k)
+  => TestTree
+propEqualizers_ = propEqualizers @k (\r -> r)
+
+-- | Checks the coequalizer laws, dual to 'propEqualizers': the coequalizer arrow @c@ coequalizes @f@
+-- and @g@; any @h@ that factors through @c@ (built here as @p . c@ for an arbitrary @p@, so the
+-- precondition holds by construction) is correctly recovered by 'Coequalizer.factorCoequalizer'; and
+-- @c@ is epi (post-composing with it on the right reflects equality).
+propCoequalizers
+  :: forall k
+   . (Testable k, Coequalizer.HasCoequalizers k)
+  => (forall (c :: k) r. (Ob c) => ((TestOb c) => r) -> r)
+  -> TestTree
+propCoequalizers withTestOb = testProperty "Coequalizers" $ do
+  Some @a <- genOb @k
+  Some @b <- genOb
+  f <- genNamed @(a ~> b) "f"
+  g <- genNamed @(a ~> b) "g"
+  Coequalizer.coequalize f g \ @c cq@Objs -> withTestOb @c $ do
+    testEq "coequalizing" "c . f" (cq . f) "c . g" (cq . g)
+    Some @z <- genOb
+    p <- genNamed @(c ~> z) "p"
+    let h = p . cq
+        factored = Coequalizer.factorCoequalizer cq h
+    testEq "factorization" "factored . c" (factored . cq) "h" h
+    k1 <- genNamed @(c ~> z) "k1"
+    k2 <- genNamed @(c ~> z) "k2"
+    eqComposed <- eqP (k1 . cq) (k2 . cq)
+    eqDirect <- eqP k1 k2
+    unless (eqComposed == eqDirect) $
+      testFailed $
+        "Failed epi: (k1 . c == k2 . c) = "
+          ++ show eqComposed
+          ++ " but (k1 == k2) = "
+          ++ show eqDirect
+
+propCoequalizers_
+  :: forall k
+   . (Testable k, Coequalizer.HasCoequalizers k, TestObIsOb k)
+  => TestTree
+propCoequalizers_ = propCoequalizers @k (\r -> r)
+
+-- | Checks the pullback laws: the pullback cone commutes; it's jointly monic (composing with both
+-- legs at once reflects equality); and any compatible cone (built here as @(p1 . j, p2 . j)@ for an
+-- arbitrary @j@, so compatibility holds by construction) is correctly recovered by
+-- 'Pullback.factorPullback'.
+propPullbacks
+  :: forall k
+   . (Testable k, Pullback.HasPullbacks k)
+  => (forall (p :: k) r. (Ob p) => ((TestOb p) => r) -> r)
+  -> TestTree
+propPullbacks withTestOb = testProperty "Pullbacks" $ do
+  Some @o <- genOb @k
+  Some @a <- genOb
+  Some @b <- genOb
+  f <- genNamed @(a ~> o) "f"
+  g <- genNamed @(b ~> o) "g"
+  Pullback.pullback f g \ @p p1@Objs p2 -> withTestOb @p $ do
+    testEq "commutes" "f . p1" (f . p1) "g . p2" (g . p2)
+    Some @z <- genOb
+    k1' <- genNamed @(z ~> p) "k1"
+    k2' <- genNamed @(z ~> p) "k2"
+    eq1 <- eqP (p1 . k1') (p1 . k2')
+    eq2 <- eqP (p2 . k1') (p2 . k2')
+    let eqBoth = eq1 && eq2
+    eqDirect <- eqP k1' k2'
+    unless (eqBoth == eqDirect) $
+      testFailed $
+        "Failed jointly monic: (p1 . k1 == p1 . k2 && p2 . k1 == p2 . k2) = "
+          ++ show eqBoth
+          ++ " but (k1 == k2) = "
+          ++ show eqDirect
+    j <- genNamed @(z ~> p) "j"
+    let k1 = p1 . j
+        k2 = p2 . j
+        factored = Pullback.factorPullback p1 p2 k1 k2
+    testEq "factorization (1)" "p1 . factored" (p1 . factored) "k1" k1
+    testEq "factorization (2)" "p2 . factored" (p2 . factored) "k2" k2
+
+propPullbacks_
+  :: forall k
+   . (Testable k, Pullback.HasPullbacks k, TestObIsOb k)
+  => TestTree
+propPullbacks_ = propPullbacks @k (\r -> r)
+
+-- | Checks the pushout laws, dual to 'propPullbacks': the pushout cocone commutes; it's jointly epic
+-- (post-composing with both legs at once reflects equality); and any compatible cocone (built here as
+-- @(j . p1, j . p2)@ for an arbitrary @j@, so compatibility holds by construction) is correctly
+-- recovered by 'Pushout.factorPushout'.
+propPushouts
+  :: forall k
+   . (Testable k, Pushout.HasPushouts k)
+  => (forall (p :: k) r. (Ob p) => ((TestOb p) => r) -> r)
+  -> TestTree
+propPushouts withTestOb = testProperty "Pushouts" $ do
+  Some @o <- genOb @k
+  Some @a <- genOb
+  Some @b <- genOb
+  f <- genNamed @(o ~> a) "f"
+  g <- genNamed @(o ~> b) "g"
+  Pushout.pushout f g \ @p p1@Objs p2 -> withTestOb @p $ do
+    testEq "commutes" "p1 . f" (p1 . f) "p2 . g" (p2 . g)
+    Some @z <- genOb
+    k1' <- genNamed @(p ~> z) "k1"
+    k2' <- genNamed @(p ~> z) "k2"
+    eq1 <- eqP (k1' . p1) (k2' . p1)
+    eq2 <- eqP (k1' . p2) (k2' . p2)
+    let eqBoth = eq1 && eq2
+    eqDirect <- eqP k1' k2'
+    unless (eqBoth == eqDirect) $
+      testFailed $
+        "Failed jointly epic: (k1 . p1 == k2 . p1 && k1 . p2 == k2 . p2) = "
+          ++ show eqBoth
+          ++ " but (k1 == k2) = "
+          ++ show eqDirect
+    j <- genNamed @(p ~> z) "j"
+    let k1 = j . p1
+        k2 = j . p2
+        factored = Pushout.factorPushout p1 p2 k1 k2
+    testEq "factorization (1)" "factored . p1" (factored . p1) "k1" k1
+    testEq "factorization (2)" "factored . p2" (factored . p2) "k2" k2
+
+propPushouts_
+  :: forall k
+   . (Testable k, Pushout.HasPushouts k, TestObIsOb k)
+  => TestTree
+propPushouts_ = propPushouts @k (\r -> r)
 
 propMonoidal
   :: forall k

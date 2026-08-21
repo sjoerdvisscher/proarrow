@@ -39,6 +39,10 @@ test =
     , propBinaryCoproducts_ @FINSET
     , propDistributive_ @FINSET
     , propClosed_ @FINSET
+    , propEqualizers_ @FINSET
+    , propCoequalizers_ @FINSET
+    , propPullbacks_ @FINSET
+    , propPushouts_ @FINSET
     , testComonoid_ @(FS Nat0)
     , testComonoid_ @(FS Nat1)
     , testComonoid_ @(FS Nat2)

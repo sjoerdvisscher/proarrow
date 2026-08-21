@@ -173,15 +173,15 @@ instance Monoid (FH ()) where
 -- | >>> let f :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,0), (1,1), (2,1), (3,0)]
 -- >>> let g :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,2), (1,0), (2,1), (3,0)]
 -- >>> let h :: FinHask (FH (Fin 3)) (FH (Fin 4)) = fromList [(0,3), (1,2), (2,3)]
--- >>> (case factorEqualizer f g h of p :.: q -> P.show (p, q, q . p)) :: P.String
--- "(fromList [(0,1),(1,0),(2,1)],fromList [(0,2),(1,3)],fromList [(0,3),(1,2),(2,3)])"
-
+-- >>> (equalize f g \incl -> let p = factorEqualizer incl h in P.show (incl, p, incl . p)) :: P.String
+-- "(fromList [(0,2),(1,3)],fromList [(0,1),(1,0),(2,1)],fromList [(0,3),(1,2),(2,3)])"
 instance HasEqualizers FINHASK where
-  factorEqualizer f@FinHask{} g (FinHask h) =
+  equalize f@FinHask{} g k =
     let groups = [x | x <- universeF, f ! x P.== g ! x]
-    in reifyList groups \e ->
-         let invE = M.fromList [(FinHask e ! b, b) | b <- universeF]
-         in FinHask ((invE M.!) P.<$> h) :.: FinHask e
+    in reifyList groups \e -> k (FinHask e)
+  factorEqualizer (FinHask incl) (FinHask h) =
+    let invIncl = M.fromList [(v, ky) | (ky, v) <- M.toList incl]
+    in FinHask ((invIncl M.!) P.<$> h)
 
 -- | Example 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
 -- >>> data Color = Red | Blue | Black deriving (P.Eq, P.Ord, P.Show, P.Enum, P.Bounded, Universe, Finite)
@@ -198,7 +198,7 @@ instance HasPullbacks FINHASK where
       reifyList groups \e -> k (FinHask (P.fst P.<$> e)) (FinHask (P.snd P.<$> e))
 
 instance HasCoequalizers FINHASK where
-  factorCoequalizer (FinHask @_ @b f) (FinHask g) (FinHask h) =
+  coequalize (FinHask @_ @b f) (FinHask g) k =
     let
       find m i = P.maybe i (find m) $ M.lookup i m
       union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else M.insert ri rj m
@@ -208,7 +208,10 @@ instance HasCoequalizers FINHASK where
     in
       reifyList groups \ce ->
         let invMap = M.fromList $ P.concatMap (\(l, bs) -> P.map (,l) bs) $ M.toList ce
-        in FinHask invMap :.: FinHask (((h M.!) . (P.!! 0)) P.<$> ce)
+        in k (FinHask invMap)
+  factorCoequalizer (FinHask q) (FinHask h) =
+    let reps = M.fromListWith (\_ old -> old) [(v, ky) | (ky, v) <- M.toList q]
+    in FinHask ((h M.!) P.<$> reps)
 
 -- | Exercise 6.22 of Seven Sketches
 -- >>> let l :: FinHask (FH (Fin 4)) (FH (Fin 3)) = fromList [(0,0), (1,0), (2,1), (3,2)]
@@ -238,7 +241,6 @@ instance HasPushouts FINHASK where
 -- [fromList [((False,False),False),((False,True),False),((True,False),False),((True,True),True)],fromList [((False,False),False),((False,True),True),((True,False),True),((True,True),True)],fromList [((False,False),True),((False,True),True),((True,False),False),((True,True),True)]]
 -- >>> false :: FinHask (FH ()) (FH Bool)
 -- fromList [((),False)]
-
 instance HasSubobjectClassifier FINHASK where
   type Omega = FH Bool
   true = arr \_ -> True

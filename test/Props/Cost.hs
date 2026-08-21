@@ -48,6 +48,10 @@ test =
     , propMonoidal_ @COST
     , propSymMonoidal_ @COST
     , propDistributive_ @COST
+    , propEqualizers_ @COST
+    , propCoequalizers_ @COST
+    , propPullbacks_ @COST
+    , propPushouts_ @COST
     ]
 
 instance Testable COST where

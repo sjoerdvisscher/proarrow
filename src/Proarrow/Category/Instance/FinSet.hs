@@ -226,12 +226,13 @@ findArr = go (repeat P.Nothing)
 -- >>> let f :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin0 ::: fin1 ::: fin1 ::: fin0 ::: VNil
 -- >>> let g :: FinSet (FS Nat4) (FS Nat3) = FinSet $ fin2 ::: fin0 ::: fin1 ::: fin0 ::: VNil
 -- >>> let h :: FinSet (FS Nat3) (FS Nat4) = FinSet $ fin3 ::: fin2 ::: fin3 ::: VNil
--- >>> (case factorEqualizer f g h of p :.: q -> P.show (p, q, q . p)) :: P.String
--- "(FinSet {unFinSet = 1 ::: 0 ::: 1 ::: VNil},FinSet {unFinSet = 2 ::: 3 ::: VNil},FinSet {unFinSet = 3 ::: 2 ::: 3 ::: VNil})"
+-- >>> (equalize f g \incl -> let p = factorEqualizer incl h in P.show (incl, p, incl . p)) :: P.String
+-- "(FinSet {unFinSet = 2 ::: 3 ::: VNil},FinSet {unFinSet = 1 ::: 0 ::: 1 ::: VNil},FinSet {unFinSet = 3 ::: 2 ::: 3 ::: VNil})"
 instance HasEqualizers FINSET where
-  factorEqualizer (FinSet f) (FinSet g) (FinSet h) =
+  equalize (FinSet f) (FinSet g) k =
     let groups = [x | x <- toList universe, f ! x P.== g ! x]
-    in reifyList groups \vec -> FinSet (tabulate (\c -> findIndex (P.== (h ! c)) vec)) :.: FinSet vec
+    in reifyList groups \vec -> k (FinSet vec)
+  factorEqualizer (FinSet incl) (FinSet h) = FinSet (tabulate (\c -> findIndex (P.== (h ! c)) incl))
 
 -- Example 3.84 of Seven Sketches (A: 0=red, 1=blue, 2=black)
 
@@ -251,7 +252,7 @@ instance HasPullbacks FINSET where
       reifyList groups \vec -> k (FinSet $ P.fmap fst vec) (FinSet $ P.fmap snd vec)
 
 instance HasCoequalizers FINSET where
-  factorCoequalizer (FinSet @_ @a f) (FinSet g) (FinSet h) =
+  coequalize (FinSet @_ @a f) (FinSet g) k =
     let
       find m i = P.maybe i (find m) $ IM.lookup (P.fromEnum i) m
       union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else IM.insert (P.fromEnum ri) rj m
@@ -259,9 +260,10 @@ instance HasCoequalizers FINSET where
       step m x = IM.insertWith (P.++) (P.fromEnum $ find unionFind x) [x] m
       groups = IM.elems $ P.foldl step IM.empty (universe @a)
     in
-      reifyList groups \vec ->
-        FinSet (tabulate (\a -> findIndex (P.elem a) vec))
-          :.: FinSet (tabulate (\i -> h ! (vec ! i P.!! 0)))
+      reifyList groups \vec -> k (FinSet (tabulate (\a -> findIndex (P.elem a) vec)))
+  factorCoequalizer (FinSet q) (FinSet h) =
+    let reps = IM.fromListWith (\_ old -> old) [(P.fromEnum (q ! b), b) | b <- toList universe]
+    in FinSet (tabulate (\i -> h ! (reps IM.! P.fromEnum i)))
 
 -- Exercise 6.22 of Seven Sketches
 

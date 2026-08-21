@@ -8,7 +8,6 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Hypergraph (ExpHG, Frobenius, Hypergraph, applyHG, curryHG)
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), HasBiproducts (..))
-import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, src)
 import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
@@ -109,8 +108,3 @@ instance (HasPullbacks k, HasBinaryCoproducts k) => HasBinaryCoproducts (SPAN k)
 
 instance (HasPullbacks k, HasBinaryCoproducts k) => HasBiproducts (SPAN k) where
   Span f g `sum` Span h i = Span (f ||| h) (g ||| i)
-
-instance (HasPullbacks k) => HasPushouts (SPAN k) where
-  pushout (Span f g) (Span h i) k = pullback f h \l r -> k (coarr (g . l)) (coarr (i . r))
-instance (HasPullbacks k) => HasPullbacks (SPAN k) where
-  pullback (Span f g) (Span h i) k = pullback g i \l r -> k (arr (f . l)) (arr (h . r))

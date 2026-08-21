@@ -3,11 +3,17 @@ module Proarrow.Category.Instance.Fin where
 import Data.Kind (Constraint, Type)
 
 import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Category.Topos (HasEpiMonoFactorization (..), defaultFactorize)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
+import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj)
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
+import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
+import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Prelude qualified as P
 
 type data NAT = Z | S NAT
 
@@ -184,3 +190,49 @@ instance (HasBinaryProducts (FIN (S n))) => HasBinaryProducts (FIN (S (S n))) wh
   ZEQ &&& ZLT _ = ZEQ
   ZLT a &&& ZLT b = ZLT (a &&& b)
   SLT a &&& SLT b = SLT (a &&& b)
+
+-- | @LTE@ is thin, so equalizers are trivial; @factorEqualizer incl h@ just needs @h@'s domain to be
+-- @<=@ @incl@'s domain, which -- since both share the codomain @x@ -- can only fail when @incl@'s
+-- domain is @FZ@ (nothing below it) but @h@'s domain is a successor (necessarily above @FZ@).
+instance HasEqualizers (FIN n) where
+  equalize = thinEqualize
+  factorEqualizer ZEQ ZEQ = ZEQ
+  factorEqualizer (ZLT _) (ZLT _) = ZEQ
+  factorEqualizer (SLT @e0 incl) (ZLT _) = ZLT (initiate @_ @e0 \\ incl)
+  factorEqualizer (SLT incl) (SLT h) = SLT (factorEqualizer incl h)
+  factorEqualizer (ZLT _) (SLT _) = P.error "factorEqualizer: h's image must lie within incl's image"
+
+-- | Dual to the 'HasEqualizers' instance above.
+instance HasCoequalizers (FIN n) where
+  coequalize = thinCoequalize
+  factorCoequalizer ZEQ ZEQ = ZEQ
+  factorCoequalizer ZEQ (ZLT @c0' h) = ZLT (initiate @_ @c0' \\ h)
+  factorCoequalizer (ZLT _) ZEQ = P.error "factorCoequalizer: h must be constant on q's fibers"
+  factorCoequalizer (ZLT q) (ZLT h) = SLT (factorCoequalizer q h)
+  factorCoequalizer (SLT q) (SLT h) = SLT (factorCoequalizer q h)
+
+-- | Pullbacks in a thin category are just meets; computed directly (rather than via 'thinPullback',
+-- which would need @HasProducts (FIN n)@ -- unavailable for an abstract @n@, since 'HasBinaryProducts'
+-- and 'HasTerminalObject' are only resolvable for a syntactically concrete @n@).
+instance HasPullbacks (FIN n) where
+  pullback (ZLT _) (ZLT _) k = k ZEQ ZEQ
+  pullback (ZLT _) (SLT @b' g) k = k ZEQ (ZLT (initiate @_ @b' \\ g))
+  pullback (SLT @a' f) (ZLT _) k = k (ZLT (initiate @_ @a' \\ f)) ZEQ
+  pullback (SLT f) (SLT g) k = pullback f g \p1 p2 -> k (SLT p1) (SLT p2)
+  pullback ZEQ ZEQ k = k ZEQ ZEQ
+
+  -- @p1@ and @k1@ already share a codomain (@a@), which is all 'factorEqualizer' needs to compare
+  -- @q@ against @p@ -- @p2@/@k2@ carry no extra information once @p1, p2@ are known to be a pullback.
+  factorPullback p1 _ k1 _ = factorEqualizer p1 k1
+
+-- | Dual to the 'HasPullbacks' instance above: pushouts in a thin category are joins.
+instance HasPushouts (FIN n) where
+  pushout ZEQ g k = k g (id \\ g)
+  pushout f ZEQ k = k (id \\ f) f
+  pushout (ZLT f) (ZLT g) k = pushout f g \q1 q2 -> k (SLT q1) (SLT q2)
+  pushout (SLT f) (SLT g) k = pushout f g \q1 q2 -> k (SLT q1) (SLT q2)
+
+  factorPushout p1 _ k1 _ = factorCoequalizer p1 k1
+
+instance HasEpiMonoFactorization (FIN n) where
+  factorize = defaultFactorize

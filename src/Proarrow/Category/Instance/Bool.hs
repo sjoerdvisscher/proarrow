@@ -10,7 +10,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Distributive (Distributive (..))
 import Proarrow.Category.Monoidal.StarAutonomous (ExpSA, StarAutonomous (..), applySA, currySA)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
-import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinFactorCoequalizer)
+import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), thinCoequalize)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.NaturalNumbers (HasParamNNO (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..), thinPushout)
@@ -25,7 +25,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   , swapProd
   )
-import Proarrow.Limit.Equalizer (HasEqualizers (..), thinFactorEqualizer)
+import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
@@ -114,11 +114,27 @@ instance HasBinaryProducts BOOL where
   F2T &&& b = b
   Tru &&& Tru = Tru
 
+-- | @factorEqualizer incl h@ requires @h@'s image to lie within @incl@'s -- i.e. (since @BOOL@ is the
+-- 2-element total order @FLS <= TRU@) that @incl@'s domain is @<=@ @h@'s domain. That's always true
+-- when @incl@ actually came from 'equalize' (which only ever produces the identity), but 'BOOL' being
+-- totally ordered lets us just case on the (at most 5 reachable, since both share a codomain) shapes
+-- directly instead of appealing to that.
 instance HasEqualizers BOOL where
-  factorEqualizer = thinFactorEqualizer
+  equalize = thinEqualize
+  factorEqualizer Fls Fls = Fls
+  factorEqualizer F2T F2T = Fls
+  factorEqualizer Tru F2T = F2T
+  factorEqualizer Tru Tru = Tru
+  factorEqualizer F2T Tru = P.error "factorEqualizer: h's image must lie within incl's image"
 
+-- | Dual to the 'HasEqualizers' instance above.
 instance HasCoequalizers BOOL where
-  factorCoequalizer = thinFactorCoequalizer
+  coequalize = thinCoequalize
+  factorCoequalizer Fls Fls = Fls
+  factorCoequalizer Fls F2T = F2T
+  factorCoequalizer F2T F2T = Tru
+  factorCoequalizer Tru Tru = Tru
+  factorCoequalizer F2T Fls = P.error "factorCoequalizer: h must be constant on q's fibers"
 
 instance HasPullbacks BOOL where
   pullback = thinPullback
