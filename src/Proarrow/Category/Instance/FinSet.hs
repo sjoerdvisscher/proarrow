@@ -6,7 +6,8 @@ import Data.Containers.ListUtils (nubOrd)
 import Data.Data (Proxy (..))
 import Data.Fin (Fin (..), fin0, fin1, split, weakenLeft, weakenRight)
 import Data.IntMap qualified as IM
-import Data.Maybe (fromMaybe)
+import Data.List qualified as List
+import Data.Maybe (fromJust, fromMaybe, isNothing)
 import Data.Type.Nat (Mult, Nat (..), Nat0, Nat1, Nat2, Plus, SNat (..), SNatI, snat)
 import Data.Vec.Lazy
   ( Vec (..)
@@ -208,17 +209,40 @@ instance Monoid (FS Nat1) where
   mempty = terminate
   mappend = terminate
 
-findIso :: (SNatI n) => [(Fin n, Fin n)] -> P.Maybe (Iso' (FS n) (FS n))
-findIso ps = iso P.<$> findArr ps P.<*> findArr (P.fmap swap ps)
-
-findArr :: forall n. (SNatI n) => [(Fin n, Fin n)] -> P.Maybe (FS n ~> FS n)
-findArr = go (repeat P.Nothing)
+-- | Finds an isomorphism between 'FS n' and itself that's consistent with the given (source, target)
+-- pairs, if one exists.
+findIso :: forall n. (SNatI n) => [(Fin n, Fin n)] -> P.Maybe (Iso' (FS n) (FS n))
+findIso ps = mkIso P.<$> findBijection ps
   where
-    go :: Vec n (P.Maybe (Fin n)) -> [(Fin n, Fin n)] -> P.Maybe (FS n ~> FS n)
-    go v [] = P.Just $ FinSet $ zipWith fromMaybe universe v
-    go v ((f1, f2) : ps) = case v ! f1 of
-      P.Just f | f P./= f2 -> P.Nothing
-      _ -> go (tabulate (\i -> if i P.== f1 then P.Just f2 else v ! i)) ps
+    mkIso :: Vec n (Fin n) -> Iso' (FS n) (FS n)
+    mkIso fwd = iso (FinSet fwd) (FinSet (tabulate (\j -> findIndex (P.== j) fwd)))
+
+-- | Extends the given (source, target) pairs to a full bijection on @Fin n@, if they're consistent
+-- with being a partial injection (checked in both directions as they're added, so two different
+-- sources claiming the same target is rejected just as readily as one source getting conflicting
+-- targets). Unconstrained sources are matched up with whatever targets are left over, in order.
+findBijection :: forall n. (SNatI n) => [(Fin n, Fin n)] -> P.Maybe (Vec n (Fin n))
+findBijection ps = do
+  (fwd, bwd) <- go (repeat P.Nothing) (repeat P.Nothing) ps
+  let freeSrcs = P.filter (\i -> isNothing (fwd ! i)) (toList universe)
+      freeTgts = P.filter (\j -> isNothing (bwd ! j)) (toList universe)
+      completion = P.zip freeSrcs freeTgts
+  P.pure (tabulate (\i -> fromMaybe (fromJust (List.lookup i completion)) (fwd ! i)))
+  where
+    go
+      :: Vec n (P.Maybe (Fin n))
+      -> Vec n (P.Maybe (Fin n))
+      -> [(Fin n, Fin n)]
+      -> P.Maybe (Vec n (P.Maybe (Fin n)), Vec n (P.Maybe (Fin n)))
+    go fwd bwd [] = P.Just (fwd, bwd)
+    go fwd bwd ((s, t) : rest) = case (fwd ! s, bwd ! t) of
+      (P.Just t', _) | t' P./= t -> P.Nothing
+      (_, P.Just s') | s' P./= s -> P.Nothing
+      _ ->
+        go
+          (tabulate (\i -> if i P.== s then P.Just t else fwd ! i))
+          (tabulate (\j -> if j P.== t then P.Just s else bwd ! j))
+          rest
 
 -- | >>> import Data.Fin
 -- >>> import Data.Type.Nat
