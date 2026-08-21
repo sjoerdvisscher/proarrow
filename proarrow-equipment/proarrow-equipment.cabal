@@ -1,0 +1,77 @@
+cabal-version:      2.4
+name:               proarrow-equipment
+version:            0
+synopsis:           Bicategories and proarrow equipments, built on proarrow
+homepage:           https://github.com/sjoerdvisscher/proarrow
+bug-reports:        https://github.com/sjoerdvisscher/proarrow/issues
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Sjoerd Visscher
+maintainer:         sjoerd@w3future.com
+category:           Math, Categories
+tested-with:        GHC ==9.10.3 || ==9.12.2
+
+extra-doc-files:
+    CHANGELOG.md
+
+common extensions
+    default-language: GHC2024
+    ghc-options:      -Wall
+    default-extensions:
+        BlockArguments
+        DefaultSignatures
+        DeriveAnyClass
+        DerivingVia
+        FunctionalDependencies
+        OverloadedLists
+        NoImplicitPrelude
+        NoStarIsType
+        PatternSynonyms
+        RecordWildCards
+        QuantifiedConstraints
+        StrictData
+        TypeAbstractions
+        TypeData
+        TypeFamilies
+        UndecidableInstances
+        UndecidableSuperClasses
+        ViewPatterns
+
+library
+    import: extensions
+    exposed-modules:
+        Proarrow.Category.Bicategory
+        Proarrow.Category.Bicategory.Adj
+        Proarrow.Category.Bicategory.Bidiscrete
+        Proarrow.Category.Bicategory.Co
+        Proarrow.Category.Bicategory.Hom
+        Proarrow.Category.Bicategory.Kan
+        Proarrow.Category.Bicategory.LaxFunctor
+        Proarrow.Category.Bicategory.Limit
+        -- Proarrow.Category.Bicategory.Mod
+        Proarrow.Category.Bicategory.MonoidalAsBi
+        Proarrow.Category.Bicategory.Op
+        Proarrow.Category.Bicategory.Product
+        Proarrow.Category.Bicategory.Prof
+        Proarrow.Category.Bicategory.Relative
+        Proarrow.Category.Bicategory.Strictified
+        Proarrow.Category.Bicategory.Sub
+        Proarrow.Category.Bicategory.Terminal
+        Proarrow.Category.Bicategory.ThinCategoryAsBi
+        Proarrow.Category.Equipment
+        Proarrow.Category.Equipment.Limit
+        Proarrow.Category.Equipment.Stateful
+        Proarrow.Category.Instance.BiAsCategory
+        Proarrow.Category.Instance.CatFun
+        Proarrow.Category.Instance.CatProf
+        -- Proarrow.Category.Instance.Display
+        Proarrow.Category.Monoidal.Endo
+        Proarrow.Squares
+        Proarrow.Squares.Limit
+        Proarrow.Squares.Relative
+
+    build-depends:
+        , base >=4.20 && <5
+        , fin >= 0.3.2 && <1
+        , proarrow
+    hs-source-dirs:   src
