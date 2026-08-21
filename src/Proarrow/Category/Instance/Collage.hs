@@ -29,9 +29,7 @@ import Proarrow.Core
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate')
 import Proarrow.Optic (Iso', iso)
-import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..))
-import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Profunctor.Instance.Direp (Direp (..))
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind
 type data COLLAGE (p :: k +-> j) = L j | R k
@@ -105,14 +103,8 @@ instance (Profunctor p) => FunctorForRep (InjR p) where
   type InjR p @ a = R a
   fmap = InR
 
-collageUniv :: forall {j} {k} (p :: k +-> j). (ThinProfunctor p) => Iso' p (Corep (InjL p) :.: Rep (InjR p))
-collageUniv =
-  iso
-    (Prof \p -> Corep (L2R p) :.: Rep id \\ p)
-    ( Prof \case
-        (Corep (L2R p) :.: Rep (InR r)) -> rmap r p
-        (Corep (InL l) :.: Rep (L2R p)) -> lmap l p
-    )
+collageUniv :: forall {j} {k} (p :: k +-> j). (Profunctor p) => Iso' p (Direp (InjL p) (InjR p))
+collageUniv = iso (Prof \p -> Direp (L2R p) \\ p) (Prof \case Direp (L2R q) -> q)
 
 data family CollageAsCoprod :: COLLAGE (p :: k +-> j) +-> C.COPRODUCT j k
 instance (DiscreteProfunctor p) => FunctorForRep (CollageAsCoprod :: COLLAGE (p :: k +-> j) +-> C.COPRODUCT j k) where
