@@ -2,9 +2,9 @@
 
 module Proarrow.Category.Monoidal.Endo where
 
-import Proarrow.Category.Bicategory (Bicategory (..), Comonad (..), Monad (..))
-import Proarrow.Category.Bicategory qualified as B
-import Proarrow.Category.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapLan, dimapRan)
+import Proarrow.Bicategory (Bicategory (..), Comonad (..), Monad (..))
+import Proarrow.Bicategory qualified as B
+import Proarrow.Bicategory.Kan (LeftKanExtension (..), RightKanExtension (..), dimapLan, dimapRan)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, obj)
 import Proarrow.Monoid (Comonoid (..), Monoid (..))

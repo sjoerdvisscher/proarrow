@@ -1,16 +1,16 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Squares where
+module Proarrow.Equipment.Squares where
 
 import Data.Functor.Compose (Compose (..))
 import Prelude (Either (..), Traversable, either, ($))
 
 import Data.Functor.Const (Const (..))
 import Data.Kind (Type)
-import Proarrow.Category.Bicategory (Adjunction, Bicategory (..), obj1, (||))
-import Proarrow.Category.Bicategory qualified as Adj
-import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
-import Proarrow.Category.Bicategory.Strictified
+import Proarrow.Bicategory (Adjunction, Bicategory (..), obj1, (||))
+import Proarrow.Bicategory qualified as Adj
+import Proarrow.Bicategory.Prof (PROFK (..), Prof (..))
+import Proarrow.Bicategory.Strictified
   ( Fold
   , Path (..)
   , Strictified (..)
@@ -19,11 +19,11 @@ import Proarrow.Category.Bicategory.Strictified
   , withIsObTagFold
   , type (+++)
   )
-import Proarrow.Category.Bicategory.Sub (SUBCAT (..), Sub (Sub))
-import Proarrow.Category.Equipment (Equipment, IsCotight, IsTight, Tight, TightPair)
+import Proarrow.Bicategory.Sub (SUBCAT (..), Sub (Sub))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), (:~>), (\\), type (+->))
+import Proarrow.Equipment (Equipment, IsCotight, IsTight, Tight, TightPair)
 import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)

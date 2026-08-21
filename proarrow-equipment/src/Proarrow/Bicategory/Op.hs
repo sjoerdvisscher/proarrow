@@ -1,16 +1,23 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Category.Bicategory.Op where
+module Proarrow.Bicategory.Op where
 
-import Proarrow.Category.Bicategory (Adjunction_ (..), Bicategory (..), Bimodule (..), Comonad (..), Monad (..), Adj (..))
-import Proarrow.Category.Bicategory.Kan
+import Proarrow.Bicategory
+  ( Adj (..)
+  , Adjunction_ (..)
+  , Bicategory (..)
+  , Bimodule (..)
+  , Comonad (..)
+  , Monad (..)
+  )
+import Proarrow.Bicategory.Kan
   ( LeftKanExtension (..)
   , LeftKanLift (..)
   , RightKanExtension (..)
   , RightKanLift (..)
   )
-import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault)
+import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 
 type OPK :: CAT k -> CAT k
 newtype OPK kk j k = OP (kk k j)
@@ -56,7 +63,6 @@ instance (WithObO2 Tight kk) => WithObO2 Cotight (OPK kk) where
 instance (Equipment kk) => Equipment (OPK kk) where
   withTightAdjoint @(OP f) r = withCotightAdjoint @kk @f r
   withCotightAdjoint @(OP f) r = withTightAdjoint @kk @f r
-
 
 -- instance (Equipment hk vk) => HasCompanions (OPK hk) (COK vk) where
 --   type Companion (OPK hk) f = OP (Conjoint hk (UN CO f))
@@ -125,7 +131,7 @@ instance (LeftKanLift j f) => LeftKanExtension (OP j) (OP f) where
   lanUniv (Op n) = Op (liftUniv @j @f n)
 
 instance (Adjunction_ f g) => Adjunction_ (OP g) (OP f) where
-  adj = case adj @f @g of Adj un coun -> Adj { adjUnit = Op un, adjCounit = Op coun }
+  adj = case adj @f @g of Adj un coun -> Adj{adjUnit = Op un, adjCounit = Op coun}
 
 instance (Monad t) => Monad (OP t) where
   eta = Op eta

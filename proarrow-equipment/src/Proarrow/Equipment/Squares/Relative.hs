@@ -1,12 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Squares.Relative where
+module Proarrow.Equipment.Squares.Relative where
 
-import Proarrow.Category.Bicategory (flipLeftAdjoint, flipRightAdjointInv)
-import Proarrow.Category.Bicategory.Relative qualified as Rel
-import Proarrow.Category.Bicategory.Strictified (Path (..), Strictified (..))
-import Proarrow.Category.Equipment (Equipment (..), IsTight, TightPair)
-import Proarrow.Squares (Sq, Sq' (..))
+import Proarrow.Bicategory (flipLeftAdjoint, flipRightAdjointInv)
+import Proarrow.Bicategory.Relative qualified as Rel
+import Proarrow.Bicategory.Strictified (Path (..), Strictified (..))
+import Proarrow.Equipment (Equipment (..), IsTight, TightPair)
+import Proarrow.Equipment.Squares (Sq, Sq' (..))
 
 -- | The unit square for a @j@-relative monad @t@.
 --

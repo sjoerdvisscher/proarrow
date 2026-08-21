@@ -1,11 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Bicategory.Sub where
+module Proarrow.Bicategory.Sub where
 
 import Data.Kind (Constraint, Type)
 import Prelude (($))
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Bicategory (Bicategory (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault)
 
 type family IsOb (tag :: Type) (a :: kk i j) :: Constraint
@@ -16,7 +16,8 @@ type data SUBCAT tag kk i j = SUB (kk i j)
 
 type Sub :: CAT (SUBCAT ob kk i j)
 data Sub a b where
-  Sub :: forall {i} {j} {tag} {kk} a b
+  Sub
+    :: forall {i} {j} {tag} {kk} a b
      . (IsOb tag a, IsOb tag b, IsOb0 tag i, IsOb0 tag j) => a ~> b -> Sub (SUB a :: SUBCAT tag kk i j) (SUB b)
 
 instance (Profunctor ((~>) :: CAT (kk i j))) => Profunctor (Sub :: CAT (SUBCAT tag kk i j)) where
@@ -34,7 +35,8 @@ instance (CategoryOf (kk i j)) => CategoryOf (SUBCAT tag kk i j) where
 
 class WithObO2 tag kk where
   withObO2
-    :: forall {i} {j} {k} (a :: kk j k) (b :: kk i j) r. (Ob a, Ob b, IsOb tag a, IsOb tag b) => ((IsOb tag (a `O` b), Ob (a `O` b)) => r) -> r
+    :: forall {i} {j} {k} (a :: kk j k) (b :: kk i j) r
+     . (Ob a, Ob b, IsOb tag a, IsOb tag b) => ((IsOb tag (a `O` b), Ob (a `O` b)) => r) -> r
 
 class (IsOb tag (I :: kk i i)) => IsObI tag kk i
 instance (IsOb tag (I :: kk i i)) => IsObI tag kk i

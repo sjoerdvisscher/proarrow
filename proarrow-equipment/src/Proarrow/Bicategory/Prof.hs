@@ -1,10 +1,10 @@
-module Proarrow.Category.Bicategory.Prof where
+module Proarrow.Bicategory.Prof where
 
 import Data.Kind (Constraint)
 import Prelude (type (~))
 
 import Proarrow.Adjunction qualified as A
-import Proarrow.Category.Bicategory
+import Proarrow.Bicategory
   ( Adj (..)
   , Adjunction_ (..)
   , Bicategory (..)
@@ -12,12 +12,12 @@ import Proarrow.Category.Bicategory
   , Comonad (..)
   , Monad (..)
   )
-import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
-import Proarrow.Category.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
-import Proarrow.Category.Bicategory.Limit qualified as Bi
-import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..), WithObO2 (..))
-import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), Tight, TightAdjoint)
-import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
+import Proarrow.Bicategory.Co (COK (..), Co (..))
+import Proarrow.Bicategory.Kan (RightKanExtension (..), RightKanLift (..))
+import Proarrow.Bicategory.Limit qualified as Bi
+import Proarrow.Bicategory.Sub (IsOb, SUBCAT (..), Sub (..), WithObO2 (..))
+import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), Tight, TightAdjoint)
+import Proarrow.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Opposite qualified as Op
 import Proarrow.Category.Instance.Product (Diag, (:**:) (..))

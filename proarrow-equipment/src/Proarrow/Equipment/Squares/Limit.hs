@@ -1,18 +1,18 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Squares.Limit where
+module Proarrow.Equipment.Squares.Limit where
 
 import Prelude (($))
 
-import Proarrow.Category.Bicategory
+import Proarrow.Bicategory
   ( Adjunction
   , Bicategory (..)
   )
-import Proarrow.Category.Bicategory.Strictified (Path (..), Strictified (..))
-import Proarrow.Category.Equipment (Equipment, IsCotight, IsTight, Tight, withObO2)
-import Proarrow.Category.Equipment.Limit qualified as L
+import Proarrow.Bicategory.Strictified (Path (..), Strictified (..))
 import Proarrow.Core (CategoryOf (..))
-import Proarrow.Squares
+import Proarrow.Equipment (Equipment, IsCotight, IsTight, Tight, withObO2)
+import Proarrow.Equipment.Limit qualified as L
+import Proarrow.Equipment.Squares
   ( Sq
   , Sq' (..)
   , counit

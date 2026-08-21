@@ -1,9 +1,9 @@
-module Proarrow.Category.Bicategory.ThinCategoryAsBi where
+module Proarrow.Bicategory.ThinCategoryAsBi where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Bicategory (Bicategory (..))
-import Proarrow.Category.Bicategory.LaxFunctor (LaxFunctor (..), Map0, Map1, (:->))
+import Proarrow.Bicategory (Bicategory (..))
+import Proarrow.Bicategory.LaxFunctor (LaxFunctor (..), Map0, Map1, (:->))
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)

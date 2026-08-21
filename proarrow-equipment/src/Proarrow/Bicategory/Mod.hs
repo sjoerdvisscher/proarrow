@@ -1,7 +1,7 @@
-module Proarrow.Category.Bicategory.Mod where
+module Proarrow.Bicategory.Mod where
 
-import Proarrow.Category.Bicategory (Bicategory (..), Monad (..))
-import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, Obj, dimapDefault)
+import Proarrow.Bicategory (Bicategory (..), Monad (..))
+import Proarrow.Core (CAT, CategoryOf (..), Is, Obj, Profunctor (..), Promonad (..), UN, dimapDefault)
 
 type data MONK kk where
   MON :: kk a a -> MONK kk
@@ -18,7 +18,10 @@ type IsMON kk s = Is (MON @kk @(MONObj0 s)) s
 type Mod :: forall {kk} {s} {t}. CAT (MODK kk s t)
 data Mod p q where
   Mod
-    :: (s :: kk i i) `O` (p :: kk j i) `O` (t :: kk j j) ~> p -> p ~> q -> s `O` q `O` t ~> q -> Mod (MOD p :: MODK kk (MON s) (MON t)) (MOD q)
+    :: (s :: kk i i) `O` (p :: kk j i) `O` (t :: kk j j) ~> p
+    -> p ~> q
+    -> s `O` q `O` t ~> q
+    -> Mod (MOD p :: MODK kk (MON s) (MON t)) (MOD q)
 instance (Bicategory kk, Ob0 kk (MONObj0 s), Ob0 kk (MONObj0 t), IsMON kk s, IsMON kk t) => Profunctor (Mod :: CAT (MODK kk s t)) where
   dimap = dimapDefault
   r \\ Mod _ f _ = r \\ f
@@ -35,4 +38,5 @@ instance (Bicategory kk) => Bicategory (MODK kk) where
   type I @(MODK kk) @(i :: MONK kk) = MOD (UN MON i)
   type MOD p `O` MOD q = MOD (q `O` p)
   Mod p f q `o` Mod p' g q' = let fg = f `o` g in Mod _ fg _
-  -- leftUnitor (Mod p) = let lp = leftUnitor p in Mod lp \\ lp
+
+-- leftUnitor (Mod p) = let lp = leftUnitor p in Mod lp \\ lp

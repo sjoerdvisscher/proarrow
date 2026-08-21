@@ -1,11 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Equipment.Limit where
+module Proarrow.Equipment.Limit where
 
 import Data.Kind (Constraint)
 import Prelude (($))
 
-import Proarrow.Category.Bicategory
+import Proarrow.Bicategory
   ( Bicategory (..)
   , flipLeftAdjoint
   , flipLeftAdjointInv
@@ -13,8 +13,8 @@ import Proarrow.Category.Bicategory
   , flipRightAdjointInv
   , obj1
   )
-import Proarrow.Category.Equipment (CotightAdjoint, Equipment (..), IsCotight, IsTight, TightAdjoint)
 import Proarrow.Core (CAT, CategoryOf (..), (.))
+import Proarrow.Equipment (CotightAdjoint, Equipment (..), IsCotight, IsTight, TightAdjoint)
 
 -- | weighted limits
 type HasLimits :: forall {s} {kk :: CAT s} {a :: s} {i :: s}. kk i a -> s -> Constraint

@@ -1,16 +1,17 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-module Proarrow.Category.Bicategory.Limit where
+
+module Proarrow.Bicategory.Limit where
 
 import Data.Kind (Constraint)
 
+import Proarrow.Bicategory (Bicategory (..))
 import Proarrow.Core (CAT, CategoryOf (..), Obj)
-import Proarrow.Category.Bicategory (Bicategory(..))
 
 type family TerminalObject (kk :: CAT s) :: s
 type HasTerminalObject :: forall {s}. CAT s -> Constraint
 class HasTerminalObject (kk :: CAT s) where
   type Terminate kk (j :: s) :: kk j (TerminalObject kk)
-  terminate :: Ob0 kk j => Obj (Terminate kk j)
+  terminate :: (Ob0 kk j) => Obj (Terminate kk j)
   termUniv :: (Ob0 kk j, Ob f, Ob g) => (f :: kk j (TerminalObject kk)) ~> (g :: kk j (TerminalObject kk))
 
 type family Product (kk :: CAT s) (a :: s) (b :: s) :: s
@@ -22,5 +23,6 @@ class HasBinaryProducts (kk :: CAT s) where
   sndObj :: (Ob0 kk a, Ob0 kk b) => Obj (Snd kk a b)
   type (&&&) (f :: kk j a) (g :: kk j b) :: kk j (Product kk a b)
   prodObj :: (Ob0 kk j, Ob0 kk a, Ob0 kk b, Ob (f :: kk j a), Ob (g :: kk j b)) => Obj (f &&& g)
-  prodUniv :: (Ob0 kk j, Ob0 kk a, Ob0 kk b, Ob (h :: kk j (Product kk a b)), Ob (k :: kk j (Product kk a b)))
+  prodUniv
+    :: (Ob0 kk j, Ob0 kk a, Ob0 kk b, Ob (h :: kk j (Product kk a b)), Ob (k :: kk j (Product kk a b)))
     => (Fst kk a b `O` h ~> Fst kk a b `O` k) -> (Snd kk a b `O` h ~> Snd kk a b `O` k) -> h ~> k

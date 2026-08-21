@@ -2,7 +2,7 @@
 
 module Proarrow.Category.Instance.BiAsCategory where
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Bicategory (Bicategory (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, type (+->))
 import Proarrow.Functor (FunctorForRep (..))

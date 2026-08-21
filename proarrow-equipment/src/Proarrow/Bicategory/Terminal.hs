@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
-module Proarrow.Category.Bicategory.Terminal where
+module Proarrow.Bicategory.Terminal where
 
 import Data.Type.Equality (type (~), type (~~))
 
-import Proarrow.Category.Bicategory (Bicategory (..), Monad (..))
+import Proarrow.Bicategory (Bicategory (..), Monad (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 

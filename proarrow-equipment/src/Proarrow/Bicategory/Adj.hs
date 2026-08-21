@@ -1,21 +1,21 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Bicategory.Adj where
+module Proarrow.Bicategory.Adj where
 
 import Data.Kind (Constraint, Type)
 import Prelude (type (~))
 
-import Proarrow.Category.Bicategory
+import Proarrow.Bicategory
   ( Adjunction_ (..)
   , Bicategory (..)
   , Comonad (..)
   , Monad (..)
   )
-import Proarrow.Category.Bicategory qualified as Bi
-import Proarrow.Category.Bicategory.Strictified (Assoc, Path (..), type (+++))
-import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
+import Proarrow.Bicategory qualified as Bi
+import Proarrow.Bicategory.Strictified (Assoc, Path (..), type (+++))
 import Proarrow.Category.Instance.Simplex (Nat (..), Simplex (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault, obj)
+import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Object (src, tgt)
 
 type data AB = A | B

@@ -1,8 +1,8 @@
-module Proarrow.Category.Bicategory.Hom where
+module Proarrow.Bicategory.Hom where
 
-import Proarrow.Category.Bicategory (Bicategory (..), (==), (||))
-import Proarrow.Category.Bicategory.Co (COK (..), Co (..))
-import Proarrow.Category.Bicategory.Prof (LaxProfunctor (..))
+import Proarrow.Bicategory (Bicategory (..), (==), (||))
+import Proarrow.Bicategory.Co (COK (..), Co (..))
+import Proarrow.Bicategory.Prof (LaxProfunctor (..))
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core

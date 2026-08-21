@@ -1,14 +1,13 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ImpredicativeTypes #-}
 
-module Proarrow.Category.Equipment.Stateful where
+module Proarrow.Equipment.Stateful where
 
 import Prelude (type (~))
 
 import Proarrow.Adjunction (Proadjunction)
-import Proarrow.Category.Bicategory (Adj (..), Adjunction (..), Adjunction_ (..), Bicategory (..))
-import Proarrow.Category.Bicategory.Prof (PROFK (..), Prof (..))
-import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
+import Proarrow.Bicategory (Adj (..), Adjunction (..), Adjunction_ (..), Bicategory (..))
+import Proarrow.Bicategory.Prof (PROFK (..), Prof (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, Tensor)
 import Proarrow.Category.Monoidal.Strength (Strong (..))
@@ -29,6 +28,7 @@ import Proarrow.Core
   , (:~>)
   , type (+->)
   )
+import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))

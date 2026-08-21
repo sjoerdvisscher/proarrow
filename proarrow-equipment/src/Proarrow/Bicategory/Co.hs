@@ -1,20 +1,20 @@
-module Proarrow.Category.Bicategory.Co where
+module Proarrow.Bicategory.Co where
 
-import Proarrow.Category.Bicategory
+import Proarrow.Bicategory
   ( Adj (..)
   , Adjunction_ (..)
   , Bicategory (..)
   , Comonad (..)
   , Monad (..)
   )
-import Proarrow.Category.Bicategory.Kan
+import Proarrow.Bicategory.Kan
   ( LeftKanExtension (..)
   , LeftKanLift (..)
   , RightKanExtension (..)
   , RightKanLift (..)
   )
-import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, WrappedOb, dimapDefault)
+import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 
 type COK :: CAT k -> CAT k
 newtype COK kk j k = CO (kk j k)

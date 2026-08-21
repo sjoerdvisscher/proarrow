@@ -1,10 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Bicategory.Strictified where
+module Proarrow.Bicategory.Strictified where
 
 import Data.Kind (Constraint, Type)
 
-import Proarrow.Category.Bicategory
+import Proarrow.Bicategory
   ( Adj (..)
   , Adjunction (..)
   , Adjunction_ (..)
@@ -15,7 +15,7 @@ import Proarrow.Category.Bicategory
   , associatorInv'
   , (||)
   )
-import Proarrow.Category.Bicategory.Sub (IsOb, SUBCAT, WithObO2 (..))
+import Proarrow.Bicategory.Sub (IsOb, SUBCAT, WithObO2 (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, id)
 import Proarrow.Object (Obj, obj)
 import Prelude (type (~))

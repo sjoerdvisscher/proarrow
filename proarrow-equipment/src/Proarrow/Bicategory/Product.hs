@@ -1,11 +1,11 @@
-module Proarrow.Category.Bicategory.Product where
+module Proarrow.Bicategory.Product where
 
 import Prelude (type (~))
 
-import Proarrow.Category.Bicategory (Adj (..), Adjunction_ (..), Bicategory (..), Comonad (..), Monad (..))
-import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
+import Proarrow.Bicategory (Adj (..), Adjunction_ (..), Bicategory (..), Comonad (..), Monad (..))
 import Proarrow.Category.Instance.Product (Fst, Snd)
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
 import Proarrow.Functor (type (@))
 
 type PRODK :: CAT j -> CAT k -> CAT (j, k)

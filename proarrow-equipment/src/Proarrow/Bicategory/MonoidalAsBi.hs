@@ -1,17 +1,15 @@
-module Proarrow.Category.Bicategory.MonoidalAsBi where
+module Proarrow.Bicategory.MonoidalAsBi where
 
 import Prelude (($))
 
-import Proarrow.Category.Bicategory (Adj (..), Bicategory (..), Comonad (..), Monad (..), flipLeftAdjoint, withAdj)
-import Proarrow.Category.Bicategory.Kan
+import Proarrow.Bicategory (Adj (..), Bicategory (..), Comonad (..), Monad (..), flipLeftAdjoint, withAdj)
+import Proarrow.Bicategory.Kan
   ( LeftKanExtension (..)
   , LeftKanLift (..)
   , RightKanExtension (..)
   , RightKanLift (..)
   )
-import Proarrow.Category.Bicategory.LaxFunctor (LaxFunctor (..), Map0, Map1, type (:->))
-import Proarrow.Category.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
-import Proarrow.Category.Equipment.Limit (HasColimits (..), HasLimits (..))
+import Proarrow.Bicategory.LaxFunctor (LaxFunctor (..), Map0, Map1, type (:->))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..), SymMonoidal, parRep)
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed (Closed (..))
@@ -19,6 +17,8 @@ import Proarrow.Category.Monoidal.Coclosed (Coclosed (..), coeval, coevalUniv)
 import Proarrow.Category.Monoidal.CompactClosed qualified as M
 import Proarrow.Category.Monoidal.StarAutonomous qualified as M
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), UN, WrappedOb, obj, type (+->))
+import Proarrow.Equipment (Cotight, CotightAdjoint, Equipment (..), IsOb, Tight, TightAdjoint, WithObO2 (..))
+import Proarrow.Equipment.Limit (HasColimits (..), HasLimits (..))
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid qualified as M
 import Proarrow.Profunctor.Representable (Representable (..), withObRep)

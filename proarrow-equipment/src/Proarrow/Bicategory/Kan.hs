@@ -1,18 +1,22 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Bicategory.Kan where
+module Proarrow.Bicategory.Kan where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Bicategory
+import Proarrow.Bicategory
   ( Adjunction (..)
   , Bicategory (..)
   , Comonad (..)
   , Monad (..)
+  , flipLeftAdjoint
+  , flipLeftAdjointInv
+  , flipRightAdjoint
+  , flipRightAdjointInv
   , rightUnitorInvWith
   , rightUnitorWith
   , (==)
-  , (||), flipRightAdjointInv, flipRightAdjoint, flipLeftAdjointInv, flipLeftAdjoint
+  , (||)
   )
 
 import Proarrow.Core (CAT, CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (\\))

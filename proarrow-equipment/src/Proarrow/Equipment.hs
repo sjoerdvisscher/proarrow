@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Equipment
+module Proarrow.Equipment
   ( Equipment (..)
   , TightAdjoint
   , CotightAdjoint
@@ -13,8 +13,8 @@ module Proarrow.Category.Equipment
   , TightPair
   ) where
 
-import Proarrow.Category.Bicategory (Adjunction, Adjunction_, Bicategory (..))
-import Proarrow.Category.Bicategory.Sub (IsOb, IsOb0, SUBCAT, WithObO2 (..))
+import Proarrow.Bicategory (Adjunction, Adjunction_, Bicategory (..))
+import Proarrow.Bicategory.Sub (IsOb, IsOb0, SUBCAT, WithObO2 (..))
 import Proarrow.Core (Any, CategoryOf (..))
 
 type data Tight

@@ -3,8 +3,8 @@
 
 module Proarrow.Category.Instance.CatFun where
 
-import Proarrow.Category.Bicategory (Bicategory (..))
-import Proarrow.Category.Bicategory.Prof
+import Proarrow.Bicategory (Bicategory (..))
+import Proarrow.Bicategory.Prof
 import Proarrow.Category.Enriched (EnrichedProfunctor (..))
 import Proarrow.Category.Instance.BiAsCategory (BI (..), Bi (..), Comp)
 import Proarrow.Category.Instance.CatProf (Swap)

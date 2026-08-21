@@ -1,14 +1,14 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Bicategory.Relative where
+module Proarrow.Bicategory.Relative where
 
 import Data.Kind (Constraint)
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Bicategory (Bicategory (..))
 import Proarrow.Core (CAT, CategoryOf (..))
 
 -- | A @j@-relative monad @t@. Note that @j@ is the opposite of the usual convention.
--- See 'Proarrow.Squares.Relative' how to use this with a conjoint and a companion to get the regular definition.
+-- See 'Proarrow.Equipment.Squares.Relative' how to use this with a conjoint and a companion to get the regular definition.
 type Monad :: forall {s} {kk :: CAT s} {a :: s} {e :: s}. kk e a -> kk a e -> Constraint
 class (Bicategory kk, Ob0 kk a, Ob0 kk e, Ob j, Ob t) => Monad (j :: kk e a) (t :: kk a e) where
   unit :: I ~> j `O` t

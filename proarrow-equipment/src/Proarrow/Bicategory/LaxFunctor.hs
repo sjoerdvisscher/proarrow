@@ -1,12 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Bicategory.LaxFunctor where
+module Proarrow.Bicategory.LaxFunctor where
 
 import Data.Kind (Constraint, Type)
 import Data.Proxy (Proxy)
 import Prelude (type (~))
 
-import Proarrow.Category.Bicategory (Bicategory (..))
+import Proarrow.Bicategory (Bicategory (..))
 import Proarrow.Core (CAT, CategoryOf (..))
 
 type family Sort (kk :: CAT s) :: Type where

@@ -1,6 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
-module Proarrow.Category.Bicategory
+module Proarrow.Bicategory
   ( -- * Bicategories
     Bicategory (..)
   , iObj
