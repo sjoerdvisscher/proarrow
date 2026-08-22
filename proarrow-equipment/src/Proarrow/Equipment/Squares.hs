@@ -324,9 +324,9 @@ hSplitAll = let n = splitAll @ps in Sq n \\ n
 -- | The unit of an adjunction.
 --
 -- > J-------J
--- > |   /-->g
+-- > |   /---g
 -- > |   @   |
--- > |   \--<f
+-- > |   \---f
 -- > J-------J
 unit
   :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
@@ -334,12 +334,12 @@ unit
   => Sq Nil (f ::: g ::: Nil) Nil Nil
 unit = withOb0s @kk @f $ hCombineAll ||| hArr (Adj.unit @f @g) ||| hSplitAll
 
--- | The count of an adjunction.
+-- | The counit of an adjunction.
 --
 -- > K-------K
--- > f>--\   |
+-- > f---\   |
 -- > |   @   |
--- > g<--/   |
+-- > g---/   |
 -- > K-------K
 counit
   :: forall {kk} {j} {k} (f :: kk j k) (g :: kk k j)
