@@ -120,20 +120,3 @@ instance (HasCoproducts k) => MonoidalAction (CoprodAction :: (COPROD k, k) +-> 
   unitorInv = leftUnitorCoprodInv
   multiplicator @(COPR a) @(COPR b) @x = associatorCoprod @a @b @x
   multiplicatorInv @(COPR a) @(COPR b) @x = associatorCoprodInv @a @b @x
-
--- newtype Action a x y = Action (Rep (Action' a) x y)
--- deriving newtype instance (Ob (a :: m), MonoidalAction m k) => Profunctor (Action a :: k +-> k)
--- deriving newtype instance (Ob (a :: m), MonoidalAction m k) => Representable (Action a :: k +-> k)
-
--- data family Action' :: m -> k +-> k
--- instance (MonoidalAction m k, Ob a) => FunctorForRep (Action' (a :: m) :: k +-> k) where
---   type Action' a @ x = Act a x
---   fmap = act @m (obj @a)
-
--- par0Action :: (MonoidalAction m k, Ob (x :: k)) => Action (Unit :: m) x x
--- par0Action @m @k = Action (Rep (unitorInv @m @k))
-
--- parAction
---   :: forall {m} {k} a b x y z
---    . (MonoidalAction m k, Ob a, Ob b) => Action (a :: m) (x :: k) y -> Action (b :: m) y z -> Action (a ** b) x z
--- parAction (Action (Rep f)) (Action (Rep g)) = Action (Rep (composeActs @a @b @z f g))

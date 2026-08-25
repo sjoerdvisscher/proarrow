@@ -14,23 +14,42 @@
 -- at all, since e.g. @'Nil' '+++' ps@ and @ps '+++' 'Nil'@ both reduce to @ps@ for free.
 module Proarrow.Squares where
 
-import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
-import Prelude (Either (..), Traversable, either, ($))
+import Prelude (($))
 
-import Data.Functor.Const (Const (..))
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
-import Proarrow.Category.Instance.Nat (Nat (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), rmap, (:~>), (\\))
-import Proarrow.Functor (Functor (..))
+import Proarrow.Category.Instance.Prof qualified as P
+import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom)
+import Proarrow.Category.Monoidal.Endo (ENDO (..), Precomp)
+import Proarrow.Category.Monoidal.Optic (ExOptic (..))
+import Proarrow.Category.Monoidal.Rev (REV (..))
+import Proarrow.Category.Monoidal.Strength (Strong (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, (//), (:~>), (\\), type (+->))
+import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Path
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
+  ( Fold
+  , IsPath
+  , IsTight
+  , Path (..)
+  , SPath (..)
+  , Tag (..)
+  , appendPath
+  , idN
+  , singPath
+  , weakenTight
+  , whiskerL
+  , whiskerR
+  , withAssoc
+  , withFoldOb
+  , withFoldRep
+  , withObAppend
+  , type (+++)
+  )
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
-import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
-import Proarrow.Profunctor.Representable (Representable (..))
+import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), Representable (..))
 
 infixl 6 |||
 infixl 5 ===
@@ -340,41 +359,43 @@ counit = hCombineAll @(q ::: p ::: Nil) ||| hArr (counitNat @p @q) ||| hSplitAll
 -- > |   @   |
 -- > t<--@--<b
 -- > K-------K
-type Optic a b s t = (IsOptic a b s t) => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
+type EqpOptic a b s t = (IsOptic a b s t) => Sq (t ::: s ::: Nil) (b ::: a ::: Nil) Nil Nil
 
-type IsOptic a b s t = (Representable a, Corepresentable b, Representable s, Corepresentable t)
+type IsOptic a b s t = (Representable s, Corepresentable t, Representable a, Corepresentable b)
 
-mkOptic :: forall a b s t. (IsOptic a b s t) => s :.: t :~> a :.: b -> Optic a b s t
-mkOptic n = Sq n
+mkOptic
+  :: (IsOptic a b s t)
+  => (forall x r. (Ob x) => (forall y. (Ob y) => (s % x ~> a % y) -> (b %% y ~> t %% x) -> r) -> r)
+  -> EqpOptic a b s t
+mkOptic k = Sq \((:.:) @x s t) -> s // k @x \ @y get put -> tabulate @_ @y (get . index s) :.: cotabulate (coindex t . put)
 
 -- | Sequential composition of optics, with 2 holes.
 seq
   :: forall a b s t a' b' u v
    . (Proadjunction u t, IsOptic a b s t, IsOptic a' b' u v)
-  => Optic a b s t -> Optic a' b' u v -> Sq (v ::: s ::: Nil) (b' ::: a' ::: b ::: a ::: Nil) Nil Nil
+  => EqpOptic a b s t -> EqpOptic a' b' u v -> Sq (v ::: s ::: Nil) (b' ::: a' ::: b ::: a ::: Nil) Nil Nil
 seq st uv = (hId @s === unit @u @t === hId @v) ||| (st === uv)
 
-type HaskOptic a b s t = Optic (Star a) (Costar b) (Star s) (Costar t)
-mkHaskOptic
-  :: (Functor a, Functor b, Functor s, Functor t)
-  => (forall x r. (Ob x) => (forall y. (Ob y) => (s x ~> a y) -> (b y ~> t x) -> r) -> r) -> HaskOptic a b s t
-mkHaskOptic k = mkOptic \(Star @y s :.: Costar t) -> k @y \get put -> Star (get . s) :.: Costar (t . put)
+data family Action :: (m, k) +-> k -> k -> m +-> k
+instance (MonoidalAction act, Ob a) => FunctorForRep (Action act a :: m +-> k) where
+  type Action act a @ x = Act act x a
+  fmap f = actHom @act f (obj @a)
 
-type Iso s t a b = HaskOptic (Const a :: Type -> Type) (Const b) (Const s :: Type -> Type) (Const t)
-mkIso :: (s -> a) -> (b -> t) -> Iso s t a b
-mkIso f g = mkHaskOptic (\k -> k @() (Const . f . getConst) (Const . g . getConst))
+type ActionOptic act a b s t =
+  EqpOptic (Rep (Action act a)) (Corep (Action act b)) (Rep (Action act s)) (Corep (Action act t))
 
-type Lens s t a b = HaskOptic ((,) a) ((,) b) ((,) s) ((,) t)
-mkLens :: (s -> a) -> (s -> b -> t) -> Lens s t a b
-mkLens f g = mkHaskOptic (\k -> k (\(s, x) -> (f s, (g s, x))) (\(b, (bt, x)) -> (bt b, x)))
+fromOptic :: (MonoidalAction act, Ob a, Ob b, Ob s, Ob t) => ExOptic act a b s t -> ActionOptic act a b s t
+fromOptic @act l = mkOptic \ @x k -> case act @act @_ @x l of ExOptic @m f g -> k @m f g
 
-type Prism s t a b = HaskOptic (Either a) (Either b) (Either s) (Either t)
-mkPrism :: (s -> Either a t) -> (b -> t) -> Prism s t a b
-mkPrism f g = mkHaskOptic (\k -> k (either (map Left . f) (Right . Right)) (either (Left . g) id))
+toOptic
+  :: forall h x (s :: x +-> h) (t :: h +-> x) (a :: x +-> h) (b :: h +-> x)
+   . (CategoryOf h, CategoryOf x, Representable s, Corepresentable t, Representable a, Corepresentable b)
+  => EqpOptic a b s t
+  -> ExOptic (Rep Precomp) a (CorepStar b) s (CorepStar t)
+toOptic (Sq pl) = ExOptic @(R (E (b :.: CorepStar t))) (P.Prof get) (P.Prof put)
+  where
+    get :: s :~> a :.: (b :.: CorepStar t)
+    get s = s // case Adj.unit @(CorepStar t) @t of t :.: t' -> case pl (s :.: t) of a :.: b -> a :.: (b :.: t')
 
-newtype FlipApp a f = FlipApp {unFlipApp :: f a}
-instance (Ob a) => Functor (FlipApp a) where
-  map (Nat f) (FlipApp x) = FlipApp (f x)
-type Traversal s t a b = HaskOptic (FlipApp a) (FlipApp b) (FlipApp s) (FlipApp t)
-mkTraversal :: (Traversable f, Functor f) => Traversal (f a) (f b) a b
-mkTraversal = mkHaskOptic (\k -> k (FlipApp . Compose . unFlipApp) (FlipApp . getCompose . unFlipApp))
+    put :: CorepStar b :.: (b :.: CorepStar t) :~> CorepStar t
+    put (b' :.: (b :.: t')) = lmap (Adj.counit @(CorepStar b) @b (b' :.: b)) t'

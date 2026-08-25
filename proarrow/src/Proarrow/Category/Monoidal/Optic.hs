@@ -7,29 +7,32 @@ module Proarrow.Category.Monoidal.Optic where
 import Data.Kind (Type)
 import Data.Monoid qualified as P
 import GHC.Generics qualified as G
-import Prelude (Either (..), Maybe (..), Monad (..), const, either, flip, fmap, uncurry, ($))
+import Prelude (Either (..), Maybe (..), Monad (..), const, either, flip, uncurry, ($))
 import Prelude qualified as P
 
 import Data.Functor.Const (Const (..))
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Instance.Nat (ApplyAction)
+import Proarrow.Category.Instance.Sub (SUBCAT (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor, obj2, swap)
 import Proarrow.Category.Monoidal.Action
   ( Act
   , CoprodAction
   , MonoidalAction (..)
+  , NoAction
   , ProdAction
   , SubAction
   , composeActs
   , decomposeActs
   )
 import Proarrow.Category.Monoidal.Distributive qualified as Dist
+import Proarrow.Category.Monoidal.Endo (ENDO (..), TravAction)
 import Proarrow.Category.Monoidal.Strength (Costrong (..), Strong (..), strongId)
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), HasCoproducts, nil, (++))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, type (+->))
 import Proarrow.Functor (FromProfunctor (..), Functor (map), Prelude (..))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..))
-import Proarrow.Optic (InvertableOptic, Optic, Optic_ (..), Re (..), (:&&:))
+import Proarrow.Optic (InvertableOptic, Iso, Optic, Optic_ (..), Re (..), (:&&:))
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..), repObj, withObRep)
@@ -57,15 +60,22 @@ instance (MonoidalAction act) => Strong act (ExOptic act a b :: k +-> k) where
 
 ex2prof
   :: forall {k} {m} {act :: (m, k) +-> k} (a :: k) (b :: k) (s :: k) (t :: k)
-   . (CategoryOf k, CategoryOf m, MonoidalAction act)
-  => ExOptic act a b s t -> Optic (Strong act) s t a b
+   . (MonoidalAction act) => ExOptic act a b s t -> Optic (Strong act) s t a b
 ex2prof (ExOptic @x l r) = Optic (dimap l r . act @act @_ @x) \\ l \\ r
 
 prof2ex
-  :: forall {k} {m} {act} (a :: k) (b :: k) (s :: k) (t :: k)
-   . (CategoryOf k, CategoryOf m, MonoidalAction act)
-  => Optic (Strong act) s t a b -> ExOptic act a b s t
-prof2ex p2p@Optic{} = over p2p (ExOptic @Unit (unitorInv @act) (unitor @act))
+  :: forall {k} {act} (a :: k) (b :: k) (s :: k) (t :: k)
+   . (MonoidalAction act) => Optic (Strong act) s t a b -> ExOptic act a b s t
+prof2ex (Optic p2p) = p2p (ExOptic @Unit (unitorInv @act) (unitor @act))
+
+instance (Profunctor p) => Strong (Rep NoAction) p where
+  act = id
+
+toIso :: Optic (Strong (Rep NoAction)) s t a b -> Iso s t a b
+toIso (Optic l) = Optic l
+
+fromIso :: Iso s t a b -> Optic (Strong (Rep NoAction)) s t a b
+fromIso (Optic l) = Optic l
 
 type MonoidalOptic (s :: k) (t :: k) a b = Optic (Strong Tensor) s t a b
 mkMonoidal
@@ -105,6 +115,12 @@ type Traversal s t a b = Optic Dist.StrongDistributiveProfunctor s t a b
 traversing :: forall t a b. (Dist.Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
 traversing = withObRep @t @a $ withObRep @t @b $ Optic (Dist.repTraverse @t)
 
+instance (Dist.StrongDistributiveProfunctor p) => Strong TravAction p where
+  act @(SUB (E f)) = Dist.repTraverse @f
+
+toTraversal :: Optic (Strong TravAction) s t a b -> Traversal s t a b
+toTraversal (Optic l) = Optic l
+
 type HaskTraversal s t a b = Optic (Dist.StrongDistributiveProfunctor :&&: Representable) s t a b
 haskTraversing :: (P.Traversable t) => HaskTraversal (t a) (t b) a b
 haskTraversing @t =
@@ -119,7 +135,7 @@ class (Monad m) => Algebra m a where algebra :: m a -> a
 instance (Monad m) => Algebra m (m a) where algebra = (>>= id)
 instance (Monad m) => Algebra m () where algebra _ = ()
 instance (Monad m, Algebra m a, Algebra m b) => Algebra m (a, b) where
-  algebra mab = (algebra (fmap fst mab), algebra (fmap snd mab))
+  algebra mab = (algebra (P.fmap fst mab), algebra (P.fmap snd mab))
 
 type AlgAction m = SubAction (Algebra m) Tensor
 type AlgebraicLens m s t a b = Optic (Strong (AlgAction m)) s t a b
@@ -149,7 +165,7 @@ instance (Monad m) => Profunctor (Updating a b :: KlCat m +-> KlCat m) where
   dimap (Kleisli (Star l)) (Kleisli (Star r)) (Update u) = Update (\b x -> do y <- unPrelude (l x); z <- u b y; unPrelude (r z))
   r \\ Update u = r \\ u
 instance (Monad m) => Strong Tensor (Updating a b :: KlCat m +-> KlCat m) where
-  act (Update u) = Update (\b (a, x) -> (a,) `fmap` u b x)
+  act (Update u) = Update (\b (a, x) -> (a,) `P.fmap` u b x)
 
 mupdate
   :: (Monad m)
@@ -180,9 +196,9 @@ l .~ b = l %~ const b
 newtype Classifying m a b s t = Classifying
   {unClassify :: (Monad m) => m s -> b -> t}
 instance (Monad m) => Profunctor (Classifying m a b) where
-  dimap l r (Classifying f) = Classifying (\u -> r . f (fmap l u))
+  dimap l r (Classifying f) = Classifying (\u -> r . f (P.fmap l u))
 instance (Monad m) => Strong (AlgAction m) (Classifying m a b) where
-  act (Classifying f) = Classifying (\m b -> (algebra (fmap fst m), f (fmap snd m) b))
+  act (Classifying f) = Classifying (\m b -> (algebra (P.fmap fst m), f (P.fmap snd m) b))
 
 infixl 8 .?
 (.?) :: (Monad m) => (Classifying m a b a b -> Classifying m a b s t) -> b -> m s -> t
