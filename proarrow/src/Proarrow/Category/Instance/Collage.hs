@@ -28,7 +28,8 @@ import Proarrow.Core
   )
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), terminate')
-import Proarrow.Optic (Iso', iso)
+import Proarrow.Optic (iso)
+import Proarrow.Optic.Iso (Iso')
 import Proarrow.Profunctor.Instance.Direp (Direp (..))
 
 type COLLAGE :: forall {j} {k}. k +-> j -> Kind

@@ -33,8 +33,10 @@ import Proarrow.Core
   )
 import Proarrow.Functor (Functor (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
+import Proarrow.Promonad (Procomonad (..))
 
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
@@ -55,6 +57,11 @@ day p q = Day (src p ** src q) p q (tgt p ** tgt q)
 instance (Profunctor p, Profunctor q) => Profunctor (Day p q) where
   dimap l r (Day f p q g) = Day (lmap l f) p q (rmap r g)
   r \\ Day f _ _ g = r \\ f \\ g
+
+instance (Procomonad p, Procomonad q, Monoidal k) => Procomonad (Day p q :: k +-> k) where
+  proextract (Day f p q g) = g . (proextract p ** proextract q) . f
+  produplicate (Day f p q g) = case (produplicate p, produplicate q) of
+    (p' :.: p'', q' :.: q'') -> let bb = tgt p' ** tgt q' in Day f p' q' bb :.: Day bb p'' q'' g
 
 instance (Profunctor p) => Functor (Day p) where
   map (Prof n) = Prof \(Day f p q g) -> Day f p (n q) g
@@ -81,24 +88,18 @@ instance (Monoidal j, Monoidal k) => Monoidal (j +-> k) where
   leftUnitorInv = Prof \q -> Day leftUnitorInv (DayUnit one one) q leftUnitor \\ q
   rightUnitor = Prof \(Day f p (DayUnit h i) g) -> dimap (rightUnitor . (src p ** h) . f) (g . (tgt p ** i) . rightUnitorInv) p \\ p
   rightUnitorInv = Prof \p -> Day rightUnitorInv p (DayUnit one one) rightUnitor \\ p
-  associator = Prof \(Day @_ @_ @e1 @f1 f1 (Day @c2 @d2 @e2 @f2 f2 p2 q2 g2) q1 g1) ->
+  associator = Prof \(Day @_ @_ @e1 @f1 f1 (Day @c2 @d2 @e2 @f2 f2 p2@Objs q2@Objs g2) q1@Objs g1) ->
     Day
       (associator @_ @c2 @e2 @e1 . (f2 ** src q1) . f1)
       p2
       (day q2 q1)
       (g1 . (g2 ** tgt q1) . associatorInv @_ @d2 @f2 @f1)
-      \\ p2
-      \\ q2
-      \\ q1
-  associatorInv = Prof \(Day @c1 @d1 f1 p1 (Day @c2 @d2 @e2 @f2 f2 p2 q2 g2) g1) ->
+  associatorInv = Prof \(Day @c1 @d1 f1 p1@Objs (Day @c2 @d2 @e2 @f2 f2 p2@Objs q2@Objs g2) g1) ->
     Day
       (associatorInv @_ @c1 @c2 @e2 . (src p1 ** f2) . f1)
       (day p1 p2)
       q2
       (g1 . (tgt p1 ** g2) . associator @_ @d1 @d2 @f2)
-      \\ p1
-      \\ p2
-      \\ q2
 
 instance (SymMonoidal j, SymMonoidal k) => SymMonoidal (j +-> k) where
   swap = Prof \(Day @c @d @e @f f p q g) -> Day (swap @_ @c @e . f) q p (g . swap @_ @f @d) \\ p \\ q

@@ -8,12 +8,14 @@ import Prelude qualified as P
 
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second)
+import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Closed (BiCCC, Closed (..), uncurry)
-import Proarrow.Category.Monoidal.Strength (MonStrong)
+import Proarrow.Category.Monoidal.Strength (MonStrong, Strong)
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts, codiag, (++))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), PROD (..), Prod (..), diag, swapProd)
+import Proarrow.Profunctor.Corepresentable (Corepresentable (..), coindex, corepUniv)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -29,6 +31,8 @@ class (Monoidal k, HasCoproducts k) => Distributive k where
   distR :: (Ob (a :: k), Ob b, Ob c) => ((a || b) ** c) ~> (a ** c || b ** c)
   absorbL :: (Ob (a :: k)) => (a ** InitialObject) ~> InitialObject
   absorbR :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
+
+type Bicartesian k = (Cartesian k, Distributive k)
 
 distLInv
   :: forall {k} a b c. (Distributive k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
@@ -88,8 +92,12 @@ distRProd =
       withObCoprod @k @(a && c) @(b && c) $
         uncurry @c (curry @k @a @c (lft @k @(a && c) @(b && c)) ||| curry @k @b @c (rgt @k @(a && c) @(b && c)))
 
-class (DistributiveProfunctor (p :: k +-> k), MonStrong p) => StrongDistributiveProfunctor (p :: k +-> k)
-instance (DistributiveProfunctor (p :: k +-> k), MonStrong p) => StrongDistributiveProfunctor (p :: k +-> k)
+class
+  (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p) =>
+  StrongDistributiveProfunctor (p :: k +-> k)
+instance
+  (DistributiveProfunctor (p :: k +-> k), MonStrong p, Strong CoprodAction p)
+  => StrongDistributiveProfunctor (p :: k +-> k)
 
 type Traversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Traversable (t :: k +-> k) where
@@ -131,6 +139,13 @@ instance (Traversable p, Traversable q) => Traversable (p :+: q) where
 type Cotraversable :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor t) => Cotraversable (t :: k +-> k) where
   cotraverse :: (StrongDistributiveProfunctor (p :: k +-> k)) => p :.: t :~> t :.: p
+
+-- | With a corepresentable cotraversable profunctor, you get a co-traversal a la one-liner.
+corepTraverse
+  :: forall {k} (t :: k +-> k) p a b
+   . (Cotraversable t, Corepresentable t, StrongDistributiveProfunctor p)
+  => p a b -> p (t %% a) (t %% b)
+corepTraverse p = p // case cotraverse (p :.: corepUniv) of x :.: y -> lmap (coindex @t x) y
 
 instance (CategoryOf k) => Cotraversable (Id :: k +-> k) where
   cotraverse (p :.: Id f) = Id id :.: rmap f p \\ p

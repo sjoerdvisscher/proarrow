@@ -20,13 +20,14 @@ import Prelude (($))
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Adjunction qualified as Adj
 import Proarrow.Category.Instance.Prof qualified as P
-import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom)
+import Proarrow.Category.Monoidal (Monoidal (..), type (**))
+import Proarrow.Category.Monoidal.Action (Act, ActionAt, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Endo (ENDO (..), Precomp)
-import Proarrow.Category.Monoidal.Optic (ExOptic (..))
 import Proarrow.Category.Monoidal.Rev (REV (..))
-import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, (//), (:~>), (\\), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
+import Proarrow.Optic (CompactFlavor (..), ExOptic (..))
+import Proarrow.Optic.Action (ActRes (..))
 import Proarrow.Path
   ( Fold
   , IsPath
@@ -384,15 +385,24 @@ instance (MonoidalAction act, Ob a) => FunctorForRep (Action act a :: m +-> k) w
 type ActionOptic act a b s t =
   EqpOptic (Rep (Action act a)) (Corep (Action act b)) (Rep (Action act s)) (Corep (Action act t))
 
-fromOptic :: (MonoidalAction act, Ob a, Ob b, Ob s, Ob t) => ExOptic act a b s t -> ActionOptic act a b s t
-fromOptic @act l = mkOptic \ @x k -> case act @act @_ @x l of ExOptic @m f g -> k @m f g
+fromOptic :: (MonoidalAction act, Ob a, Ob b, Ob s, Ob t) => ExOptic (ActRes act) a b s t -> ActionOptic act a b s t
+fromOptic @act @a @b ex = compress ex \ @p @q l r -> mkOptic \ @x k ->
+  withActP @act @p @q l r \ @z f g ->
+    withOb2 @_ @x @z $
+      k @(x ** z)
+        (multiplicatorInv @act @x @z @a . actHom @act (obj @x) f)
+        (actHom @act (obj @x) g . multiplicator @act @x @z @b)
 
 toOptic
   :: forall h x (s :: x +-> h) (t :: h +-> x) (a :: x +-> h) (b :: h +-> x)
    . (CategoryOf h, CategoryOf x, Representable s, Corepresentable t, Representable a, Corepresentable b)
   => EqpOptic a b s t
-  -> ExOptic (Rep Precomp) a (CorepStar b) s (CorepStar t)
-toOptic (Sq pl) = ExOptic @(R (E (b :.: CorepStar t))) (P.Prof get) (P.Prof put)
+  -> ExOptic (ActRes (Rep Precomp)) a (CorepStar b) s (CorepStar t)
+toOptic (Sq pl) =
+  ExProstrong
+    @(Rep (ActionAt (Rep Precomp) (R (E (b :.: CorepStar t)))))
+    @(Corep (ActionAt (Rep Precomp) (R (E (b :.: CorepStar t)))))
+    (Rep (P.Prof get) :.: ExIso id id :.: Corep (P.Prof put))
   where
     get :: s :~> a :.: (b :.: CorepStar t)
     get s = s // case Adj.unit @(CorepStar t) @t of t :.: t' -> case pl (s :.: t) of a :.: b -> a :.: (b :.: t')

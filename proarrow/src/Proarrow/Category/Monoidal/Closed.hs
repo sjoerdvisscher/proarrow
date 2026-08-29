@@ -122,6 +122,13 @@ instance (Closed k, Ob r) => FunctorForRep (Not (r :: k)) where
   type Not r @ OP a = a ~~> r
   fmap (Op f) = obj @r ^^^ f
 
+-- | The "reader"\/exponential-by-@m@ functor, covariant unlike 'Not' (which fixes the codomain).
+data family Exp (m :: k) :: k +-> k
+
+instance (Closed k, Ob m) => FunctorForRep (Exp m :: k +-> k) where
+  type Exp m @ a = m ~~> a
+  fmap f = f ^^^ obj @m
+
 -- | The Op-Op adjunction, giving rise to the continuation monad.
 instance (Closed k, SymMonoidal k, Ob r) => Corepresentable (Rep (Not (r :: k))) where
   type Rep (Not r) %% a = OP (a ~~> r)

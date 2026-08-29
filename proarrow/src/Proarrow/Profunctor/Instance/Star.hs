@@ -9,11 +9,11 @@ import Prelude qualified as P
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Nat (ApplyAction, Nat' (..), type (.->) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (ProdAction, SubAction)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
+import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction, SubAction)
 import Proarrow.Category.Monoidal.Applicative (Alternative (..), Applicative (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, Traversable (..), baseTraverse)
-import Proarrow.Category.Monoidal.Strength (MonStrong, Strong (..))
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCoproducts (..), HasCoproducts, (++))
 import Proarrow.Colimit.Initial (initiate)
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, obj, (:~>), type (+->))
@@ -78,6 +78,13 @@ instance (Alternative f, Monoidal k, Distributive j) => MonoidalProfunctor (Copr
 instance (P.Functor f) => Strong ProdAction (Star (Prelude f)) where
   act (Star k) = Star (\(a, x) -> P.fmap (a,) (k x))
 
+instance (Functor f) => Strong Tensor (Star (f :: Type -> Type)) where
+  act (Star k) = Star (\(a, x) -> map (a,) (k x))
+instance (Applicative f) => Strong CoprodAction (Star (f :: Type -> Type)) where
+  act (Star k) = Star (f ||| map P.Right . k)
+    where
+      f a = pure (\() -> P.Left a) ()
+
 instance (P.Applicative f) => Strong (SubAction P.Traversable ApplyAction) (Star (Prelude f)) where
   act (Star f) = Star (P.traverse f)
 
@@ -101,7 +108,11 @@ instance Traversable (Star []) where
 
 starTraverse
   :: forall t f a b
-   . (Applicative (f :: Type -> Type), Functor t, Traversable (Star t), MonStrong (Star f), Ob b)
+   . ( Applicative (f :: Type -> Type)
+     , Functor t
+     , Traversable (Star t)
+     , Ob b
+     )
   => (a ~> f b) -> t a ~> f (t b)
 starTraverse = baseTraverse @(Star t) @(Star f)
 

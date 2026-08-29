@@ -62,6 +62,14 @@ decomposeActs
   -> Act t (x ** y) c ~> a
 decomposeActs f g = g . actHom @t (obj @x) f . multiplicator @t @x @y @c
 
+-- | The dual of 'Act' partially applied at a fixed acted-on object: 'Act' fixes the acted-on
+-- object and varies the index, this fixes the index @x@ and varies the acted-on object.
+data family ActionAt :: (m, k) +-> k -> m -> k +-> k
+
+instance (MonoidalAction act, Ob (x :: m)) => FunctorForRep (ActionAt act x :: k +-> k) where
+  type ActionAt act x @ a = Act act x a
+  fmap = actHom @act (obj @x)
+
 data family NoAction :: ((), k) +-> k
 instance (CategoryOf k) => FunctorForRep (NoAction :: ((), k) +-> k) where
   type NoAction @ '(a, x) = x

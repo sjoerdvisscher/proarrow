@@ -22,7 +22,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
-import Proarrow.Functor (Functor (..))
+import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -56,6 +56,14 @@ second f = obj @c *** f
 
 diag :: forall {k} (a :: k). (HasBinaryProducts k, Ob a) => a ~> a && a
 diag = id &&& id
+
+data family Product :: k -> k +-> k
+instance (HasBinaryProducts k, Ob a) => FunctorForRep (Product a :: k +-> k) where
+  type Product a @ b = a && b
+  fmap f = second @a f
+instance (HasBinaryProducts k, Ob a) => Promonad (Corep (Product a) :: k +-> k) where
+  id @b = Corep (snd @k @a @b)
+  Corep f . Corep @c g = Corep (f . second @a g . associatorProd @a @a @c . first @c (diag @a))
 
 type HasProducts k = (HasTerminalObject k, HasBinaryProducts k)
 
@@ -111,10 +119,10 @@ rightUnitorProd = fst @k @_ @TerminalObject
 rightUnitorProdInv :: forall {k} (a :: k). (HasProducts k, Ob a) => a ~> a && TerminalObject
 rightUnitorProdInv = id &&& terminate
 
-associatorProd :: forall {k} (a :: k) b c. (HasProducts k, Ob a, Ob b, Ob c) => (a && b) && c ~> a && (b && c)
+associatorProd :: forall {k} (a :: k) b c. (HasBinaryProducts k, Ob a, Ob b, Ob c) => (a && b) && c ~> a && (b && c)
 associatorProd = withObProd @k @a @b ((fst @k @a @b . fst @k @(a && b) @c) &&& (snd @k @a @b *** obj @c))
 
-associatorProdInv :: forall {k} (a :: k) b c. (HasProducts k, Ob a, Ob b, Ob c) => a && (b && c) ~> (a && b) && c
+associatorProdInv :: forall {k} (a :: k) b c. (HasBinaryProducts k, Ob a, Ob b, Ob c) => a && (b && c) ~> (a && b) && c
 associatorProdInv = withObProd @k @b @c ((obj @a *** fst @k @b @c) &&& (snd @k @b @c . snd @k @a @(b && c)))
 
 swapProd :: forall {k} (a :: k) b. (HasBinaryProducts k, Ob a, Ob b) => a && b ~> b && a

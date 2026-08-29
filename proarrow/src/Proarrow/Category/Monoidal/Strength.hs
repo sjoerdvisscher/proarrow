@@ -13,6 +13,7 @@ import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
+import Proarrow.Profunctor.Instance.Composition ((:.:)(..))
 
 -- | Profuntorial strength for a monoidal actions.
 -- Gives functorial strength for representable profunctors,
@@ -30,6 +31,9 @@ instance (Strong t p, Strong t q) => Strong t (p :+: q) where
 
 instance (MonoidalAction t) => Strong t (Id :: CAT k) where
   act @a (Id g) = Id (actHom @t (obj @a) g)
+
+instance (Strong t p, Strong t q) => Strong t (p :.: q) where
+  act @x (p :.: q) = act @t @_ @x p :.: act @t @_ @x q
 
 type MonStrong (p :: k +-> k) = (Strong Tensor p, SymMonoidal k)
 

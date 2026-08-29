@@ -13,8 +13,10 @@ import Proarrow.Category.Instance.Unit ()
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), lmap, rmap, (:~>), type (+->))
 import Proarrow.Functor (FunctorForRep (..), Presheaf, withMappedOb)
 import Proarrow.Object (Obj, obj, src, tgt)
-import Proarrow.Optic (Iso, iso)
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv, dimapCorep)
+import Proarrow.Optic (PIso, iso)
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, dimapCorep)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 
 infixl 8 %
 
@@ -45,6 +47,19 @@ instance (Representable p, Representable q) => Representable (p :**: q) where
   repMap (f :**: g) = repMap @p f :**: repMap @q g
   repUniv = repUniv :**: repUniv
 
+instance (CategoryOf k) => Representable (Id :: k +-> k) where
+  type Id % a = a
+  index = unId
+  tabulate = Id
+  repMap = id
+
+instance (Representable p, Representable q) => Representable (p :.: q) where
+  type (p :.: q) % a = p % (q % a)
+  index (p :.: q) = repMap @p (index q) . index p
+  tabulate :: forall a b. (Ob b) => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
+  tabulate f = withObRep @q @b (tabulate f :.: tabulate id)
+  repMap f = repMap @p (repMap @q f)
+
 repObj :: forall p a. (Representable p, Ob a) => Obj (p % a)
 repObj = repMap @p (obj @a)
 
@@ -54,14 +69,14 @@ withObRep r = r \\ repObj @p @a
 dimapRep :: forall p a b c d. (Representable p) => (c ~> a) -> (b ~> d) -> p a b -> p c d
 dimapRep l r = tabulate @p . dimap l (repMap @p r) . index \\ r
 
-tabulated :: forall p a a' b b'. (Representable p, Ob b) => Iso (a ~> p % b) (a' ~> p % b') (p a b) (p a' b')
+tabulated :: forall p a a' b b'. (Representable p, Ob b) => PIso (a ~> p % b) (a' ~> p % b') (p a b) (p a' b')
 tabulated = iso tabulate index
 
 -- | A representable presheaf is a contravariant representable functor in the Haskell sense.
 type RepresentablePresheaf (f :: Presheaf k) = Representable f
 
 type Key (f :: Presheaf k) = f % '()
-tabulatedPresheaf :: (RepresentablePresheaf f, Ob a) => Iso (a ~> Key f) (a' ~> Key f) (f a '()) (f a' '())
+tabulatedPresheaf :: (RepresentablePresheaf f, Ob a) => PIso (a ~> Key f) (a' ~> Key f) (f a '()) (f a' '())
 tabulatedPresheaf = tabulated
 
 instance (Representable p) => Corepresentable (Op p) where
@@ -140,5 +155,9 @@ instance (FunctorForRep f, Thin k) => ThinProfunctor (Rep f :: j +-> k) where
   arr @_ @b = withMappedOb @f @b (Rep arr)
   withArr (Rep f) r = withArr f r
 
-rep :: forall f a b a' b'. (FunctorForRep f, Ob b) => Iso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
+rep :: forall f a b a' b'. (FunctorForRep f, Ob b) => PIso (a ~> f @ b) (a' ~> f @ b') (Rep f a b) (Rep f a' b')
 rep = tabulated
+
+instance (FunctorForRep f, Promonad (Corep f)) => Promonad (RepCostar (Rep f)) where
+  id @b = RepCostar (unCorep (id @(Corep f) @b))
+  RepCostar @a l . RepCostar @b r = RepCostar (unCorep (Corep @a @f l . Corep @b @f r))

@@ -25,12 +25,14 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
-import Proarrow.Functor (Functor (..))
+import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (Obj, obj, tgt)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct (coproduct, (:+:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
@@ -68,6 +70,11 @@ swapCoprod' a b = rgt' (tgt b) a ||| lft' b (tgt a)
 
 swapCoprod :: forall {k} (a :: k) b. (HasBinaryCoproducts k, Ob a, Ob b) => a || b ~> b || a
 swapCoprod = swapCoprod' (obj @a) (obj @b)
+
+data family Coproduct :: k -> k +-> k
+instance (HasBinaryCoproducts k, Ob a) => FunctorForRep (Coproduct a :: k +-> k) where
+  type Coproduct a @ b = a || b
+  fmap f = right @a f
 
 type HasCoproducts k = (HasInitialObject k, HasBinaryCoproducts k)
 
@@ -137,6 +144,13 @@ instance (Representable p) => Representable (Coprod p) where
   tabulate (Coprod f) = Coprod (tabulate f)
   repMap (Coprod f) = Coprod (repMap @p f)
 
+instance
+  (Profunctor f, Profunctor g, MonoidalProfunctor (Coprod f), MonoidalProfunctor (Coprod g))
+  => MonoidalProfunctor (Coprod (f :.: g))
+  where
+  one = Coprod (nil :.: nil)
+  Coprod (f :.: g) ** Coprod (h :.: i) = Coprod ((f ++ h) :.: (g ++ i))
+
 -- | The same category as the category of @k@, but with coproducts as the tensor.
 instance (CategoryOf k) => CategoryOf (COPROD k) where
   type (~>) = Coprod (~>)
@@ -145,6 +159,10 @@ instance (CategoryOf k) => CategoryOf (COPROD k) where
 instance (HasCoproducts k, cat ~ Hom k) => MonoidalProfunctor (Coprod cat :: COPROD k +-> COPROD k) where
   one = Coprod id
   Coprod f ** Coprod g = Coprod (f +++ g)
+
+instance (HasCoproducts k) => MonoidalProfunctor (Coprod (Id :: k +-> k)) where
+  one = Coprod (Id id)
+  Coprod (Id f) ** Coprod (Id g) = Coprod (Id (f +++ g))
 
 instance (HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Coprod (TerminalProfunctor :: j +-> k)) where
   one = Coprod TerminalProfunctor

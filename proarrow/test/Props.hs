@@ -26,8 +26,10 @@ import Proarrow.Limit.Pullback qualified as Pullback
 import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (Iso)
-import Proarrow.Profunctor.Instance.Constant (review, view)
+import Proarrow.Optic (Optic)
+import Proarrow.Optic.Getter (review, view)
+import Proarrow.Profunctor.Corepresentable (Corep)
+import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Representable (Rep)
 import Testable
   ( Some (..)
@@ -792,8 +794,11 @@ propIso f g = do
   testEq "right inverse" "f . g" (f . g) "id" id
   testEq "left inverse" "g . f" (g . f) "id" id
 
-propIso' :: forall {k} (a :: k) b. (Testable k, TestOb a, TestOb b) => Iso a a b b -> Property ()
-propIso' iso = propIso (view iso) (review iso)
+propIso'
+  :: forall {k} c (a :: k) b
+   . (Testable k, TestOb a, TestOb b, (Ob b) => c (Rep (Constant b)), (Ob b) => c (Corep (Constant b)))
+  => Optic c a a b b -> Property ()
+propIso' o = propIso (view o) (review o)
 
 propIsoP
   :: forall p q a b c d

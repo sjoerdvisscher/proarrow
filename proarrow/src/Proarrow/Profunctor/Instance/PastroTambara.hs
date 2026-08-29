@@ -7,92 +7,97 @@ import Prelude (($))
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom, composeActs, decomposeActs)
-import Proarrow.Category.Monoidal.Optic (ExOptic (..))
-import Proarrow.Category.Monoidal.Strength (Strong (..))
-import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), obj, (//), (:~>), type (+->))
+import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), src, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
+import Proarrow.Optic (ClosedUnder, CompactFlavor (..), ExOptic (..), FLAVOR, Prostrong (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..), cofreeComp)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Free (HasFree (..), freeComp)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Instance.Ran (Ran (..), runRan, type (|>))
+import Proarrow.Profunctor.Instance.Rift (Rift (..), runRift, type (<|))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
-import Proarrow.Profunctor.Representable (repObj, withObRep)
 
-type Pastro :: (m, k) +-> k -> k +-> k -> k +-> k
-data Pastro t p a b where
+type Pastro :: FLAVOR j k -> j +-> k -> j +-> k
+data Pastro w r a b where
   Pastro
-    :: forall {m} {k} {t :: (m, k) +-> k} (z :: m) x y p a b
-     . (Ob z) => a ~> Act t z x -> p x y -> Act t z y ~> b -> Pastro t p a b
+    :: forall {k} {j} (p :: k +-> k) (q :: j +-> j) w r a b
+     . (w p q, Profunctor p, Profunctor q) => (p :.: r :.: q) a b -> Pastro w r a b
 
-pastro :: forall {k} t (p :: k +-> k). (Profunctor p, MonoidalAction t) => p :~> Pastro t p
-pastro p = Pastro @Unit (unitorInv @t) p (unitor @t) \\ p
+pastro :: forall {j} {k} (w :: FLAVOR j k) (p :: j +-> k). (Profunctor p, ClosedUnder w) => p :~> Pastro w p
+pastro p = Pastro (Id id :.: p :.: Id id) \\ p
 
-unpastro :: forall {k} t (p :: k +-> k). (Strong t p, MonoidalAction t) => Pastro t p :~> p
-unpastro (Pastro @z f p g) = dimap f g (act @t @p @z p)
+unpastro :: forall {j} {k} (w :: FLAVOR j k) (p :: j +-> k). (Prostrong w p) => Pastro w p :~> p
+unpastro (Pastro fpg) = proact @w fpg
 
-instance (CategoryOf k) => Profunctor (Pastro t p :: k +-> k) where
-  dimap l r (Pastro @z f p g) = Pastro @z (f . l) p (r . g)
-  r \\ Pastro f _ g = r \\ f \\ g
-instance (MonoidalAction t, Profunctor p) => Strong t (Pastro t p :: k +-> k) where
-  act @a @x @y (Pastro @z @x1 @y1 f p g) =
-    withOb2 @_ @a @z
-      (Pastro @(a ** z) (composeActs @t @a @z @x1 (repObj @t @'(a, x)) f) p (decomposeActs @t @a @z @y1 g (repObj @t @'(a, y))))
-      \\ f
-      \\ g
-      \\ p
+instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (Pastro t p :: j +-> k) where
+  dimap l r (Pastro fpg) = Pastro (dimap l r fpg)
+  r \\ Pastro fpg = r \\ fpg
+instance (ClosedUnder w, Profunctor p) => Prostrong w (Pastro w p :: j +-> k) where
+  proact (p :.: Pastro (p' :.: r :.: q') :.: q) = Pastro ((p :.: p') :.: r :.: (q' :.: q))
 
-instance (MonoidalAction t) => HasFree (Strong t :: OB (k +-> k)) where
-  type Free (Strong t) p = Pastro t p
+instance (ClosedUnder w) => HasFree (Prostrong w :: OB (j +-> k)) where
+  type Free (Prostrong w) p = Pastro w p
   lift = Prof pastro
   foldMap n = Prof unpastro . map n
 
 instance Functor (Pastro t) where
-  map (Prof n) = Prof \(Pastro @z f p g) -> Pastro @z f (n p) g
-instance (MonoidalAction t) => Promonad (Star (Pastro t) :: (k +-> k) +-> (k +-> k)) where
+  map (Prof n) = Prof \(Pastro (f :.: p :.: g)) -> Pastro (f :.: n p :.: g)
+instance (ClosedUnder w) => Promonad (Star (Pastro w) :: (j +-> k) +-> (j +-> k)) where
   id = Star (Prof pastro)
-  Star n . Star m = Star (freeComp @(Strong t) n m)
+  Star n . Star m = Star (freeComp @(Prostrong w) n m)
 
-fromWeightedOptic
-  :: forall {k} t (a :: k) (b :: k)
-   . (MonoidalAction t) => ExOptic t a b :~> (Pastro t (Yo a (OP b)) :: k +-> k)
-fromWeightedOptic (ExOptic @x f g) = Pastro @x f (Yo id id) g
+fromExOptic
+  :: forall {j} {k} w (a :: k) (b :: j)
+   . (CompactFlavor w, CategoryOf j, CategoryOf k) => ExOptic w a b :~> (Pastro w (Yo a (OP b)) :: j +-> k)
+fromExOptic ex = compress ex \f g -> Pastro (f :.: Yo (tgt f) (src g) :.: g)
 
-type Tambara :: (m, k) +-> k -> k +-> k -> k +-> k
-data Tambara t p a b where
-  Tambara :: (Ob a, Ob b) => (forall (z :: m). (Ob z) => p (Act t z a) (Act t z b)) -> Tambara t p a b
+type Tambara :: FLAVOR j k -> j +-> k -> j +-> k
+data Tambara w r a b where
+  Tambara
+    :: (Ob a, Ob b)
+    => (forall (p :: k +-> k) (q :: j +-> j). (w p q, Profunctor p, Profunctor q) => (q |> r <| p) a b)
+    -> Tambara w r a b
 
-tambara :: forall {k} t (p :: k +-> k). (Strong t p, MonoidalAction t) => p :~> Tambara t p
-tambara p = Tambara (\ @z -> act @t @p @z p) \\ p
+mkTambara
+  :: (Ob a, Ob b)
+  => (forall (p :: k +-> k) (q :: j +-> j) x y. (w p q, Profunctor p, Profunctor q) => p x a -> q b y -> r x y)
+  -> Tambara w r a b
+mkTambara f = Tambara (Rift \p -> p // Ran \q -> f p q)
+
+runTambara :: (w p q, Profunctor p, Profunctor q) => ((Ob a) => p x a) -> ((Ob b) => q b y) -> Tambara w r a b -> r x y
+runTambara p q (Tambara qrp) = runRan q $ runRift p qrp
+
+tambara :: forall {j} {k} w (p :: j +-> k). (Prostrong w p) => p :~> Tambara w p
+tambara r = mkTambara (\p q -> proact @w (p :.: r :.: q)) \\ r
 
 untambara
-  :: forall {k} t (p :: k +-> k). (Profunctor p, MonoidalAction t) => Tambara t p :~> p
-untambara (Tambara p) = dimap (unitorInv @t) (unitor @t) (p @Unit)
+  :: forall {j} {k} w (p :: j +-> k). (Profunctor p, ClosedUnder w) => Tambara w p :~> p
+untambara = runTambara @w @Id @Id (Id id) (Id id)
 
-instance (MonoidalAction t, Profunctor p) => Profunctor (Tambara t p :: k +-> k) where
-  dimap l r (Tambara p) = Tambara (\ @z -> dimap (actHom @t (obj @z) l) (actHom @t (obj @z) r) (p @z)) \\ l \\ r
+instance (Profunctor p) => Profunctor (Tambara w p :: j +-> k) where
+  dimap l r (Tambara n) = Tambara (dimap l r n) \\ l \\ r
   r \\ Tambara{} = r
-instance (MonoidalAction t, Profunctor p) => Strong t (Tambara t p :: k +-> k) where
-  act @a @x @y (Tambara p) = withObRep @t @'(a, x) $ withObRep @t @'(a, y) $ Tambara \ @z ->
-    withOb2 @_ @z @a $
-      dimap (multiplicatorInv @t @z @a @x) (multiplicator @t @z @a @y) (p @(z ** a))
 
-instance (MonoidalAction t) => HasCofree (Strong t :: OB (k +-> k)) where
-  type Cofree (Strong t) p = Tambara t p
+instance (ClosedUnder w, Profunctor p) => Prostrong w (Tambara w p :: j +-> k) where
+  proact (p :.: n :.: q) = mkTambara (\p' q' -> runTambara (p' :.: p) (q :.: q') n) \\ p \\ q
+
+instance (ClosedUnder w) => HasCofree (Prostrong w :: OB (j +-> k)) where
+  type Cofree (Prostrong w) p = Tambara w p
   lower = Prof untambara
   unfoldMap n = map n . Prof tambara
 
-instance (MonoidalAction t) => Functor (Tambara t :: (k +-> k) -> (k +-> k)) where
-  map (Prof n) = Prof \(Tambara p) -> Tambara \ @z -> n (p @z)
-instance (MonoidalAction t) => Promonad (Costar (Tambara t) :: (k +-> k) +-> (k +-> k)) where
+instance Functor (Tambara w :: (j +-> k) -> (j +-> k)) where
+  map (Prof n) = Prof \t -> t // mkTambara \p q -> n (runTambara p q t)
+instance (ClosedUnder w) => Promonad (Costar (Tambara w) :: (j +-> k) +-> (j +-> k)) where
   id = Costar (Prof untambara)
-  Costar n . Costar m = Costar (cofreeComp @(Strong t) n m)
+  Costar n . Costar m = Costar (cofreeComp @(Prostrong w) n m)
 
 -- | @Pastro t@ ⊣ @Tambara t@
-instance (MonoidalAction t) => Corepresentable (Star (Tambara t) :: (k +-> k) +-> (k +-> k)) where
-  type Star (Tambara t) %% p = Pastro t p
-  coindex (Star (Prof n)) = Prof \(Pastro @z f p g) -> case n p of Tambara q -> dimap f g (q @z)
-  cotabulate (Prof n) = Star (Prof \ @a @b p -> p // Tambara \ @z -> n (Pastro @z (repObj @t @'(z, a)) p (repObj @t @'(z, b))))
-  corepMap = map
+instance Corepresentable (Star (Tambara w) :: (j +-> k) +-> (j +-> k)) where
+  type Star (Tambara w) %% p = Pastro w p
+  coindex (Star (Prof n)) = Prof \(Pastro @p @q (p :.: r :.: q)) -> case n r of m -> runTambara @w @p @q p q m
+  corepUniv = Star (Prof \r -> r // mkTambara \p q -> Pastro (p :.: r :.: q))

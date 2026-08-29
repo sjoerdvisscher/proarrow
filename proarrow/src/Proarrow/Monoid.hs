@@ -7,11 +7,12 @@ import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), (**))
-import Proarrow.Category.Monoidal.Action (Act, MonoidalAction (..), actHom)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor, (**))
+import Proarrow.Category.Monoidal.Action (Act, CoprodAction, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
+import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Colimit.BinaryCoproduct
   ( COPROD (..)
@@ -187,3 +188,9 @@ instance (HasCoproducts k, Ob r) => MonoidalProfunctor (Coprod (Rep (Constant r)
 instance (Monoidal k, Comonoid r) => MonoidalProfunctor (Corep (Constant r) :: k +-> k) where
   one = Corep counit
   Corep @x l ** Corep @y r = withOb2 @k @x @y (Corep ((l ** r) . comult))
+
+instance (Cartesian k, Ob r) => Strong Tensor (Rep (Constant r) :: k +-> k) where
+  act @a (Rep @y p) = withOb2 @k @a @y (Rep (p . snd @k @a)) \\ p
+
+instance (Cartesian k, HasCoproducts k, Monoid r) => Strong CoprodAction (Rep (Constant r) :: k +-> k) where
+  act @(COPR a) (Rep @y p) = withObCoprod @k @a @y (Rep (mempty @r . terminate @k @a ||| p))

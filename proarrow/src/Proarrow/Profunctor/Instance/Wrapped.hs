@@ -4,7 +4,7 @@ import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
 import Proarrow.Core (Profunctor (..), Promonad (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Optic (Iso, iso)
+import Proarrow.Optic (PIso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -15,5 +15,5 @@ instance (Comonoid c, Monoid m, MonoidalProfunctor p) => Monoid (Wrapped p c m) 
   mempty () = dimap counit mempty one
   mappend (l, r) = dimap comult mappend (l ** r)
 
-wrapped :: Iso (p a b) (p a' b') (Wrapped p a b) (Wrapped p a' b')
+wrapped :: PIso (p a b) (p a' b') (Wrapped p a b) (Wrapped p a' b')
 wrapped = iso Wrapped unWrapped

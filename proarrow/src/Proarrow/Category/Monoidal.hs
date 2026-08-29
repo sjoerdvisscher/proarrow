@@ -30,8 +30,10 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (FunctorForRep (..))
-import Proarrow.Optic (Iso, iso)
+import Proarrow.Optic (PIso, iso)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Identity qualified as Id
 import Proarrow.Profunctor.Representable (CorepStar, Rep, RepCostar, Representable (..), repUniv)
 
 infixl 8 **
@@ -51,6 +53,14 @@ instance MonoidalProfunctor U.Unit where
 instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :**: q) where
   one = one :**: one
   (f1 :**: f2) ** (g1 :**: g2) = (f1 ** g1) :**: (f2 ** g2)
+
+instance (Monoidal k) => MonoidalProfunctor (Id.Id :: k +-> k) where
+  one = Id.Id one
+  Id.Id f ** Id.Id g = Id.Id (f ** g)
+
+instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
+  one = one :.: one
+  (p :.: q) ** (r :.: s) = (p ** r) :.: (q ** s)
 
 par0Rep :: (Representable p, MonoidalProfunctor p) => Unit ~> p % Unit
 par0Rep @p = index @p one
@@ -92,15 +102,15 @@ class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Mono
   associator :: (Ob (a :: k), Ob b, Ob c) => (a ** b) ** c ~> a ** (b ** c)
   associatorInv :: (Ob (a :: k), Ob b, Ob c) => a ** (b ** c) ~> (a ** b) ** c
 
-leftUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => Iso (Unit ** a) (Unit ** a') a a'
+leftUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => PIso (Unit ** a) (Unit ** a') a a'
 leftUnitorIso = iso leftUnitor leftUnitorInv
 
-rightUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => Iso (a ** Unit) (a' ** Unit) a a'
+rightUnitorIso :: (Monoidal k, Ob (a :: k), Ob (a' :: k)) => PIso (a ** Unit) (a' ** Unit) a a'
 rightUnitorIso = iso rightUnitor rightUnitorInv
 
 associatorIso
   :: (Monoidal k, Ob (a :: k), Ob b, Ob c, Ob (a' :: k), Ob b', Ob c')
-  => Iso ((a ** b) ** c) ((a' ** b') ** c') (a ** (b ** c)) (a' ** (b' ** c'))
+  => PIso ((a ** b) ** c) ((a' ** b') ** c') (a ** (b ** c)) (a' ** (b' ** c'))
 associatorIso @k @a @b @c @a' @b' @c' = iso (associator @k @a @b @c) (associatorInv @k @a' @b' @c')
 
 class (((a ** b) ** c) ~ (a ** (b ** c))) => StrictlyAssoc a b c

@@ -14,7 +14,7 @@ import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (leftUnitorInvWith)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
-import Proarrow.Limit.Terminal (TerminalObject, terminate)
+import Proarrow.Limit.Terminal (HasTerminalObject, TerminalObject, terminate)
 import Proarrow.Profunctor.Representable (Representable (..))
 
 -- | Categories powered over @v@.
@@ -41,7 +41,7 @@ instance Powered Type Type where
   power f a n = f n a
   unpower f n a = f a n
 
-instance (Enriched v (), HomObj v '() '() ~ TerminalObject, Cartesian v) => Powered v () where
+instance (Enriched v (), HomObj v '() '() ~ TerminalObject, HasTerminalObject v) => Powered v () where
   type a ^ n = '()
   withObPower r = r
   power _ = U.Unit

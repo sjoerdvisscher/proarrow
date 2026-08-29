@@ -1,5 +1,6 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+{- HLINT ignore "Use elemIndex" -}
 module Proarrow.Category.Instance.FinSet where
 
 import Data.Containers.ListUtils (nubOrd)
@@ -51,7 +52,8 @@ import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid (..), Monoid (..))
-import Proarrow.Optic (Iso', iso)
+import Proarrow.Optic (iso)
+import Proarrow.Optic.Iso (Iso')
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
 type data FINSET = FS Nat
@@ -280,7 +282,7 @@ instance HasCoequalizers FINSET where
     let
       find m i = P.maybe i (find m) $ IM.lookup (P.fromEnum i) m
       union m (i, j) = let ri = find m i; rj = find m j in if ri P.== rj then m else IM.insert (P.fromEnum ri) rj m
-      unionFind = P.foldl union IM.empty (zipWith (\u v -> (u, v)) f g)
+      unionFind = P.foldl union IM.empty (zipWith (,) f g)
       step m x = IM.insertWith (P.++) (P.fromEnum $ find unionFind x) [x] m
       groups = IM.elems $ P.foldl step IM.empty (universe @a)
     in

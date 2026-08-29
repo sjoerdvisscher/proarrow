@@ -13,7 +13,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMo
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
 import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
-import Proarrow.Optic (Iso, iso)
+import Proarrow.Optic (PIso, iso)
 
 class (SymMonoidal k, Closed k, Ob (Unit :: k)) => StarAutonomous k where
   type Dual (a :: k) :: k
@@ -35,7 +35,7 @@ doubleNegInv =
     \\ dualObj @a
 
 doubleNegIso
-  :: forall {k} (a :: k) (a' :: k). (StarAutonomous k, Ob a, Ob a') => Iso a a' (Dual (Dual a)) (Dual (Dual a'))
+  :: forall {k} (a :: k) (a' :: k). (StarAutonomous k, Ob a, Ob a') => PIso a a' (Dual (Dual a)) (Dual (Dual a'))
 doubleNegIso = iso doubleNegInv doubleNeg
 
 linDistS

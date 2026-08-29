@@ -1,13 +1,8 @@
 module Proarrow.Profunctor.Instance.Composition where
 
 import Proarrow.Category.Instance.Prof (Prof (..))
-import Proarrow.Category.Monoidal (MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Strength (Strong (..))
-import Proarrow.Colimit.BinaryCoproduct (Coprod (..), nil, (++))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (:~>), type (+->))
+import Proarrow.Core (Profunctor (..), Promonad (..), lmap, rmap, (:~>), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
-import Proarrow.Profunctor.Corepresentable (Corepresentable (..), withObCorep)
-import Proarrow.Profunctor.Representable (Representable (..), withObRep)
 
 type (:.:) :: (j +-> k) -> (i +-> j) -> (i +-> k)
 data (p :.: q) a c where
@@ -20,37 +15,9 @@ instance (Profunctor p, Profunctor q) => Profunctor (p :.: q) where
 instance (Profunctor p) => Functor ((:.:) p) where
   map (Prof n) = Prof \(p :.: q) -> p :.: n q
 
-instance (Representable p, Representable q) => Representable (p :.: q) where
-  type (p :.: q) % a = p % (q % a)
-  index (p :.: q) = repMap @p (index q) . index p
-  tabulate :: forall a b. (Ob b) => (a ~> ((p :.: q) % b)) -> (:.:) p q a b
-  tabulate f = withObRep @q @b (tabulate f :.: tabulate id)
-  repMap f = repMap @p (repMap @q f)
-
-instance (Corepresentable p, Corepresentable q) => Corepresentable (p :.: q) where
-  type (p :.: q) %% a = q %% (p %% a)
-  coindex (p :.: q) = coindex q . corepMap @q (coindex p)
-  cotabulate :: forall a b. (Ob a) => (((p :.: q) %% a) ~> b) -> (:.:) p q a b
-  cotabulate f = withObCorep @p @a (cotabulate id :.: cotabulate f)
-  corepMap f = corepMap @q (corepMap @p f)
-
 instance (FunctorForRep p, FunctorForRep q) => FunctorForRep (p :.: q) where
   type (p :.: q) @ b = p @ (q @ b)
   fmap = fmap @p . fmap @q
-
-instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :.: q) where
-  one = one :.: one
-  (p :.: q) ** (r :.: s) = (p ** r) :.: (q ** s)
-
-instance
-  (Profunctor f, Profunctor g, MonoidalProfunctor (Coprod f), MonoidalProfunctor (Coprod g))
-  => MonoidalProfunctor (Coprod (f :.: g))
-  where
-  one = Coprod (nil :.: nil)
-  Coprod (f :.: g) ** Coprod (h :.: i) = Coprod ((f ++ h) :.: (g ++ i))
-
-instance (Strong t p, Strong t q) => Strong t (p :.: q) where
-  act @x (p :.: q) = act @t @_ @x p :.: act @t @_ @x q
 
 -- No instance for ThinProfunctor (p :.: q) because you can't do existentials in constraints.
 

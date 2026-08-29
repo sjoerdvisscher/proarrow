@@ -3,33 +3,27 @@
 
 module Proarrow.Adjunction where
 
-import Data.Kind (Constraint, Type)
-import Prelude (const, type (~))
+import Data.Kind (Constraint)
+import Prelude (type (~))
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Rep (COREP, COREPK, REP, REPK)
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
 import Proarrow.Colimit (HasColimits (..))
-import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
-import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), UN, lmap, rmap, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor, FunctorForRep, map)
 import Proarrow.Limit (HasLimits (..), mapLimit)
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Optic (Iso, iso, re)
+import Proarrow.Object (pattern Objs)
+import Proarrow.Optic (PIso, iso, re)
 import Proarrow.Profunctor.Corepresentable
   ( Corep
   , Corepresentable (..)
-  , corepObj
   , corepUniv
   , cotabulated
   )
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Instance.Constant (review, view)
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
@@ -39,7 +33,6 @@ import Proarrow.Profunctor.Representable
   , RepCostar (..)
   , Representable (..)
   , mapRepCostar
-  , repObj
   , repUniv
   , tabulated
   )
@@ -58,7 +51,7 @@ rightAdjunct = coindex . tabulate @p
 
 -- | The isomorphism between @leftAdjunct@ and @rightAdjunct@.
 adjuncted
-  :: forall p a b a' b'. (Adjunction p, Ob a, Ob b') => Iso (b ~> p % a) (b' ~> p % a') (p %% b ~> a) (p %% b' ~> a')
+  :: forall p a b a' b'. (Adjunction p, Ob a, Ob b') => PIso (b ~> p % a) (b' ~> p % a') (p %% b ~> a) (p %% b' ~> a')
 adjuncted = tabulated @p . re cotabulated
 
 -- | The monad induced by an adjunction as a representable promonad.
@@ -103,7 +96,7 @@ instance (forall a. (Ob a) => SelfAdjointPoint p a, Adjunction p) => SelfAdjoint
 
 -- | Involution functors are self-adjoint functors where the unit and counit form an isomorphism.
 class (SelfAdjoint p) => Involution p where
-  involuted :: forall a a'. (Ob a, Ob a') => Iso a a' (p % (p % a)) (p % (p % a'))
+  involuted :: forall a a'. (Ob a, Ob a') => PIso a a' (p % (p % a)) (p % (p % a'))
   involuted = iso (unitRep @p) (counitRep @p)
 
 instance (CategoryOf k) => Involution (Id :: CAT k)
@@ -132,9 +125,9 @@ instance
   => Ambidextrous p
 
 class (Ambidextrous p) => AdjointEquivalence (p :: j +-> k) where
-  unitIso :: (Ob a, Ob a') => Iso a a' (AdjMonad p % a) (AdjMonad p % a')
+  unitIso :: (Ob a, Ob a') => PIso a a' (AdjMonad p % a) (AdjMonad p % a')
   unitIso @a @a' = iso (unitRep @p @a) (counitRep @(RepCostar p) @a')
-  counitIso :: (Ob a, Ob a') => Iso (AdjComonad p %% a) (AdjComonad p %% a') a a'
+  counitIso :: (Ob a, Ob a') => PIso (AdjComonad p %% a) (AdjComonad p %% a') a a'
   counitIso @a @a' = iso (counitRep @p @a) (unitRep @(CorepStar p) @a')
 
 type GaloisConnection (p :: j +-> k) = (ThinProfunctor p, Thin j, Thin k, Adjunction p)
@@ -144,6 +137,15 @@ type Proadjunction :: forall {j} {k}. j +-> k -> k +-> j -> Constraint
 class (Profunctor p, Profunctor q) => Proadjunction (p :: j +-> k) (q :: k +-> j) where
   unit :: (Ob a) => (q :.: p) a a -- (~>) :~> q :.: p
   counit :: p :.: q :~> (~>)
+
+unit' :: forall p q. (Proadjunction p q) => (~>) :~> q :.: p
+unit' (f :: a ~> b) = rmap f (unit @p @q @a) \\ f
+
+flipMate :: forall p q. (Proadjunction p q) => (~>) :~> p -> q :~> (~>)
+flipMate n q = counit (n id :.: q) \\ q
+
+unflipMate :: forall p q. (Proadjunction p q) => q :~> (~>) -> (~>) :~> p
+unflipMate n f = case unit' @p @q f of q :.: p -> lmap (n q) p
 
 instance (Representable p) => Proadjunction p (RepCostar p) where
   unit = corepUniv :.: repUniv
@@ -238,12 +240,11 @@ rightAdjointPreservesLimits
   :: forall {k} {k'} {i} {a} (j :: i +-> a) (p :: k +-> k') (d :: i +-> k)
    . (Adjunction p, Representable d, HasLimits j k, HasLimits j k')
   => Limit j (p :.: d) :~> p :.: Limit j d
-rightAdjointPreservesLimits lim =
+rightAdjointPreservesLimits lim@Objs =
   corepUniv @p
     :.: limitUniv @j @k @d
       (\((f' :.: lim') :.: j) -> case limit @j @k' @(p :.: d) (lim' :.: j) of g' :.: d -> lmap (coindex g' . index f') d)
       (repUniv @(CorepStar p) :.: lim)
-    \\ lim
 
 rightAdjointPreservesLimitsInv
   :: forall {k} {k'} {i} {a} (p :: k +-> k') (d :: i +-> k) (j :: i +-> a)
@@ -255,57 +256,14 @@ leftAdjointPreservesColimits
   :: forall {k} {k'} {i} {a} (p :: k' +-> k) (d :: k +-> i) (j :: a +-> i)
    . (Adjunction p, Corepresentable d, HasColimits j k, HasColimits j k')
   => Colimit j (d :.: p) :~> Colimit j d :.: p
-leftAdjointPreservesColimits colim =
+leftAdjointPreservesColimits colim@Objs =
   colimitUniv @j @k @d
     (\(j :.: (colim' :.: g')) -> case colimit @j @k' @(d :.: p) (j :.: colim') of d :.: f' -> rmap (coindex g' . index f') d)
     (colim :.: corepUniv @(RepCostar p))
     :.: repUniv @p
-    \\ colim
 
 leftAdjointPreservesColimitsInv
   :: forall {k} {k'} {i} {a} (p :: k' +-> k) (d :: k +-> i) (j :: a +-> i)
    . (Corepresentable p, Corepresentable d, HasColimits j k, HasColimits j k')
   => Colimit j d :.: p :~> Colimit j (d :.: p)
 leftAdjointPreservesColimitsInv = colimitUniv @j @k' @(d :.: p) (\(j :.: (colim :.: p)) -> colimit (j :.: colim) :.: p)
-
--- | Preservation of limits and colimits makes the adjunction heteromorphism a distributive profunctor.
-newtype Adj p a b = Adj (p a b)
-  deriving newtype (Profunctor, Representable, Corepresentable)
-
-instance (Cartesian j, Cartesian k, Corepresentable p) => MonoidalProfunctor (Adj p :: j +-> k) where
-  one = cotabulate terminate \\ corepObj @p @TerminalObject
-  Adj @_ @x l ** Adj @_ @y r =
-    withOb2 @_ @x @y
-      ( cotabulate
-          ( coindex @p @(x ** y) (lmap (fst @_ @x @y) l)
-              &&& coindex @p @(x ** y) (lmap (snd @_ @x @y) r)
-          )
-      )
-      \\ l
-      \\ r
-
-instance (HasCoproducts j, HasCoproducts k, Representable p) => MonoidalProfunctor (Coprod (Adj p :: j +-> k)) where
-  one = tabulate initiate \\ repObj @p @InitialObject
-  Coprod (Adj @_ @_ @x l) ** Coprod (Adj @_ @_ @y r) =
-    withObCoprod @_ @x @y
-      ( Coprod
-          ( Adj
-              ( tabulate
-                  ( index @p @_ @(x || y) (rmap (lft @_ @x @y) l)
-                      ||| index @p @_ @(x || y) (rmap (rgt @_ @x @y) r)
-                  )
-              )
-          )
-      )
-      \\ l
-      \\ r
-
--- | Every adjunction between Hask endofunctors is equivalent to the curry-uncurry adjunction.
-haskAdjIsCurryAdj
-  :: forall p a b a' b'. (Adjunction (p :: Type +-> Type)) => Iso (p %% () -> a -> b) (p %% () -> a' -> b') (p a b) (p a' b')
-haskAdjIsCurryAdj =
-  iso (\kab -> tabulate \a -> index @p (cotabulate (`kab` a)) ()) (\p k a -> coindex p (corepMap @p (\() -> a) k))
-
-instance (Adjunction p) => Promonad (Adj p :: Type +-> Type) where
-  id = Adj (view (haskAdjIsCurryAdj @p) (const id))
-  Adj l . Adj r = Adj (view (haskAdjIsCurryAdj @p) (\k -> review haskAdjIsCurryAdj l k . review haskAdjIsCurryAdj r k))
