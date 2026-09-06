@@ -7,8 +7,8 @@ import GHC.TypeError (ErrorMessage (..), TypeError)
 import Prelude (type (~))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, (:~>), type (+->))
-import Proarrow.Category.Instance.Opposite (OPPOSITE (..), UnOp (..))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -212,22 +212,10 @@ class
 
 instance ReversibleOptic Profunctor Profunctor
 instance (ReversibleOptic l l', ReversibleOptic r r') => ReversibleOptic (l :&&: r) (l' :&&: r')
+instance ReversibleOptic (Prostrong w) (Prostrong (Flip w))
 
 re :: (Ob a, Ob b, ReversibleOptic c coc) => Optic c s t a b -> Optic coc b a t s
 re (Optic l) = Optic (unRe (l (Re id)))
-
--- | A flavor @c@ reinterpreted over the opposite category: it holds for a carrier @q@ over
--- @'OPPOSITE' k@ exactly when the original @c@ holds for @q@ unwrapped back to @k@ (via 'UnOp').
-class (c (UnOp q)) => UnOpFlavor c (q :: OPPOSITE k +-> OPPOSITE k)
-instance (c (UnOp q)) => UnOpFlavor c q
-
--- | Transport an optic into the opposite category: the same existential data, arrows reversed.
--- With 'foldMapOf' this is what turns a 'Proarrow.Monoid.Monoid' fold into a
--- 'Proarrow.Monoid.Comonoid' unfold (see 'Proarrow.Optic.Fold.unfold').
-opOptic
-  :: forall {k} c (s :: k) t a b
-   . Optic c s t a b -> Optic (UnOpFlavor c) (OP t) (OP s) (OP b) (OP a)
-opOptic (Optic n) = Optic (\ @q qba -> unUnOp (n @(UnOp q) (UnOp qba)))
 
 class (w p q) => Flip w q p
 instance (w p q) => Flip w q p
@@ -246,7 +234,28 @@ instance SubFlavor (Flip (Flip w)) w where subFlavor r = r
 instance (CategoryOf j, CategoryOf k, Prostrong (Flip w) p) => Prostrong w (Re p s t :: k +-> j) where
   proact (f@Objs :.: Re n :.: g@Objs) = Re \p -> n (proact @(Flip w) @p (g :.: p :.: f))
 
-instance ReversibleOptic (Prostrong w) (Prostrong (Flip w))
+class (c (Op q)) => OpConstraint c q
+instance (c (Op q)) => OpConstraint c q
+
+class (w (Op g) (Op f)) => OpFlavor w f g
+instance (w (Op g) (Op f)) => OpFlavor w f g
+
+instance (Prostrong w p, CategoryOf j, CategoryOf k) => Prostrong (OpFlavor w) (UnOp p :: j +-> k) where
+  proact (f :.: UnOp p :.: g) = UnOp (proact @w (Op g :.: p :.: Op f))
+
+instance (Prostrong w p, CategoryOf j, CategoryOf k) => Prostrong w (Op (UnOp p :: j +-> k)) where
+  proact (f@Objs :.: Op (UnOp p) :.: g@Objs) = Op (UnOp (proact @w (f :.: p :.: g)))
+
+opOptic
+  :: forall {k} c (s :: k) t a b
+   . (forall p. (c p) => c (Op (UnOp p)))
+  => Optic (OpConstraint c) s t a b -> Optic c (OP t) (OP s) (OP b) (OP a)
+opOptic (Optic n) = Optic (unUnOp . n . UnOp)
+
+unOpOptic
+  :: forall {k} c (s :: k) t a b
+   . Optic c (OP t) (OP s) (OP b) (OP a) -> Optic (OpConstraint c) s t a b
+unOpOptic (Optic n) = Optic (unOp . n . Op)
 
 class CompactFlavor (w :: FLAVOR j k) where
   compress

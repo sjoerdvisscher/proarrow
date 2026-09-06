@@ -2,6 +2,7 @@
 
 module Proarrow.Optic.Prism where
 
+import Proarrow.Category.Instance.Opposite (Op (..))
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), HasCoproducts, left)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Object (pattern Objs)
@@ -10,16 +11,20 @@ import Proarrow.Optic
   , ExOptic (..)
   , FLAVOR
   , Flip
+  , OpConstraint
   , Optic
   , Optic_ (..)
   , Prostrong (..)
   , SubFlavor (..)
   , ex2prof
+  , opOptic
+  , unOpOptic
   )
 import Proarrow.Optic.AffineFold (AffineFoldRes)
 import Proarrow.Optic.AffineTraversal (AffineTravRes (..))
 import Proarrow.Optic.Fold (FoldRes)
 import Proarrow.Optic.Getter (GetterRes (..))
+import Proarrow.Optic.Lens (LensRes, lens, withLens)
 import Proarrow.Optic.Setter (SetterRes)
 import Proarrow.Optic.Traversal (TravRes)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -84,3 +89,16 @@ withPrism
   => Optic c s t a b -> ((b ~> t) -> (s ~> (t || a)) -> r) -> r
 withPrism (Optic l) k = case l @(Market a b) (Market id (rgt @k @b @a)) of Market bt sta -> k bt sta
 
+-- | A 'Prism' and its op-lens encoding ('Proarrow.Optic.Lens.Prism', a 'Proarrow.Optic.Lens.Lens'
+-- over the opposite category) carry the same data -- the two legs @(b '~>' t, s '~>' t '||' a)@ --
+-- so they are equivalent. 'toOpLens' eliminates a 'PrismRes' prism to its legs (via 'Market') and
+-- rebuilds the op-lens; 'fromOpLens' eliminates the op-lens (via 'Proarrow.Optic.Lens.withLens' on
+-- 'opOptic', i.e. as a lens over 'OPPOSITE') and rebuilds the 'PrismRes' prism.
+-- | The __op-lens__ encoding of a prism: a 'Proarrow.Optic.Lens.Lens' over the opposite category.
+type OpLens (s :: k) t a b = Optic (OpConstraint (Prostrong LensRes)) s t a b
+
+toOpLens :: forall {k} (s :: k) t a b. (HasCoproducts k, Ob a, Ob b) => Prism s t a b -> OpLens s t a b
+toOpLens o = withPrism o (\bt sta -> unOpOptic (lens (Op bt) (Op sta)))
+
+fromOpLens :: forall {k} (s :: k) t a b. (HasCoproducts k, Ob a) => OpLens s t a b -> Prism s t a b
+fromOpLens o = withLens (opOptic o) (\rev match -> prism (unOp rev) (unOp match))

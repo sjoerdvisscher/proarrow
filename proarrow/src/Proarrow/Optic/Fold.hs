@@ -2,6 +2,7 @@
 
 module Proarrow.Optic.Fold where
 
+import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp)
 import Proarrow.Category.Monoidal.Distributive
   ( Bicartesian
   , Cotraversable (..)
@@ -13,9 +14,17 @@ import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, rgt, (|||))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Monoid (Comonoid, Monoid (..))
-import Proarrow.Optic (CompactFlavor, FLAVOR, Optic, Optic_ (..), Prostrong (..), ReversibleOptic, SubFlavor (..), UnOpFlavor, opOptic, re)
+import Proarrow.Optic
+  ( CompactFlavor
+  , FLAVOR
+  , OpConstraint
+  , Optic
+  , Optic_ (..)
+  , Prostrong (..)
+  , SubFlavor (..)
+  , opOptic
+  )
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -75,21 +84,11 @@ foldMapOf
   => Optic c s t a b -> (a ~> m) -> (s ~> m)
 foldMapOf (Optic l) am = unForget (l @(Forget m) (Forget am))
 
--- | The mirror of 'foldMapOf': fold through the /reversed/ optic (@'foldMapOf' . 're'@). For any
--- optic whose reverse lands in the fold chain -- a 'Proarrow.Optic.Prism.Prism' or
--- 'Proarrow.Optic.Iso.Iso' -- this measures the build side. No 'Comonoid' or new class is needed:
--- @'re'@ gives a @'Flip' 'FoldRes'@-flavored optic and the ordinary 'Forget' carrier folds it.
-refold
-  :: forall {j} {k} c coc m (s :: k) (t :: j) a b
-   . (CategoryOf j, CategoryOf k, Ob m, Ob a, Ob b, ReversibleOptic c coc, coc (Forget m))
-  => Optic c s t a b -> (t ~> m) -> (b ~> m)
-refold o = foldMapOf (re o)
-
 -- | The genuine unfold: build @t@ from a 'Comonoid' seed @cm@ through the @b@-foci. It is
 -- 'foldMapOf' run in @'OPPOSITE' k@, where 'Monoid' becomes 'Comonoid' and consumption becomes
 -- construction. (Inhabitable once the flavor's 'Prostrong' transports through 'OP'.)
 unfold
-  :: forall {k} c cm (s :: k) t a b
-   . (Comonoid cm, Ob (OP cm), UnOpFlavor c (Forget (OP cm)))
-  => Optic c s t a b -> (cm ~> b) -> (cm ~> t)
-unfold o cb = unOp (foldMapOf @(UnOpFlavor c) @(OP cm) (opOptic o) (Op cb))
+  :: forall {k} c (cm :: k) (s :: k) t a b
+   . (Comonoid cm, Ob cm, forall p. (c p) => c (Op (UnOp p)), c (Forget (OP cm)))
+  => Optic (OpConstraint c) s t a b -> (cm ~> b) -> (cm ~> t)
+unfold o cb = unOp (foldMapOf @c (opOptic o) (Op cb))

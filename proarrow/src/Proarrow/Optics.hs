@@ -109,7 +109,7 @@ module Proarrow.Optics
   , (%~)
   , (.~)
   , foldMapOf
-  , refold
+  , unfold
   , traverseOf
   , kaleidoscopeOf
 
@@ -127,7 +127,7 @@ module Proarrow.Optics
 import Proarrow.Optic (Optic, Optic', convert, iso, re, (%))
 import Proarrow.Optic.AffineFold (AffineFold, preview, (^?))
 import Proarrow.Optic.AffineTraversal (AffineTraversal)
-import Proarrow.Optic.Fold (Fold, foldMapOf, refold)
+import Proarrow.Optic.Fold (Fold, foldMapOf, unfold)
 import Proarrow.Optic.Getter (Getter, Review, review, to, unto, view, (#), (^.))
 import Proarrow.Optic.Grate (Grate, grate, withGrate)
 import Proarrow.Optic.Iso (Iso, Iso', withIso)

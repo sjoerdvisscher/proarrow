@@ -26,13 +26,13 @@ import Proarrow.Limit.BinaryProduct (HasBinaryProducts, type (&&))
 import Proarrow.Optic qualified as O
 import Proarrow.Optic.AffineFold (AffineFold, preview, (^?))
 import Proarrow.Optic.AffineTraversal (AffineTraversal)
-import Proarrow.Optic.Fold (Fold, foldMapOf, refold)
+import Proarrow.Optic.Fold (Fold, foldMapOf)
 import Proarrow.Optic.Getter (Getter, Review, review, view, (#), (^.))
 import Proarrow.Optic.Grate (Grate, grate, withGrate)
 import Proarrow.Optic.Iso (Iso, fromPIso, toPIso, withIso)
 import Proarrow.Optic.Kaleidoscope (Kaleidoscope, Nat (..), kaleidoscope, kaleidoscopeN, kaleidoscopeOf)
 import Proarrow.Optic.Lens (Lens, lens, withLens)
-import Proarrow.Optic.Prism (Prism, prism, withPrism)
+import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterRes (..), over, set, (%~))
 
 import Proarrow.Optic.Traversal
@@ -270,8 +270,12 @@ test =
     , propFnEq @(Maybe Bool) "prism as setter" (_Just %~ not) (fmap not)
     , propFnEq @(Maybe Bool) "prism as affine fold" (preview _Just) (maybe (Right ()) Left)
     , propFnEq @(Maybe Bool) "prism as fold" (foldMapOf _Just (: [])) maybeToList
-    , propFnEq @Bool "prism as refold (re-fold, builds via review)" (refold _Just (: [])) (\b -> [Just b])
     , propFnEq @(Maybe Bool) "prism as preview" (^? _Just) id
+    , propFnEq @Bool "prism ~ op-lens: fromOpLens . toOpLens preserves review" (review (fromOpLens (toOpLens _Just))) Just
+    , propFnEq @(Maybe Bool)
+        "prism ~ op-lens: fromOpLens . toOpLens preserves setter"
+        (fromOpLens (toOpLens _Just) %~ not)
+        (fmap not)
     , propFnEq @Bool "iso as getter" (view notIso) not
     , propFnEq @Bool "iso as review" (review notIso) not
     , propFnEq @Bool "iso as setter" (over notIso not) not

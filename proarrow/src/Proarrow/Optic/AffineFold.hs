@@ -64,7 +64,7 @@ instance
 -- | Preview through any optic that can act as an affine fold, in either encoding.
 preview
   :: forall {j} {k} c (s :: k) (t :: j) a b
-   . (Bicartesian k, CategoryOf j, (Ob a) => c (PreviewP a))
+   . (Bicartesian k, CategoryOf j, c (PreviewP a))
   => Optic c s t a b -> s ~> (a || TerminalObject)
 preview (Optic l) = unPreviewP (l @(PreviewP a) (PreviewP (lft @k @a @TerminalObject)))
 
