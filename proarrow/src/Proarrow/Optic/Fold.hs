@@ -3,6 +3,7 @@
 module Proarrow.Optic.Fold where
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp)
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive
   ( Bicartesian
   , Cotraversable (..)
@@ -13,7 +14,6 @@ import Proarrow.Category.Monoidal.Distributive
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, rgt, (|||))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
-import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (Comonoid, Monoid (..))
 import Proarrow.Optic
   ( CompactFlavor
@@ -56,8 +56,8 @@ instance (Bicartesian k, Cotraversable t, Corepresentable t) => FoldRes (CorepSt
 
 instance (HasCoproducts k, Ob t) => FoldRes (Corep (Coproduct t) :: k +-> k) (Rep (Coproduct t)) where
   foldMapP (Corep f) am = am . f . rgt @k @t
-instance (Semicartesian k, HasCoproducts k, Ob t) => FoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
-  foldMapP @m (Rep p) am = (mempty @m . terminate @k @t ||| am) . p
+instance (CopyDiscard k, HasCoproducts k, Ob t) => FoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+  foldMapP @m (Rep p) am = (mempty @m . discard @k @t ||| am) . p
 
 instance CompactFlavor FoldRes
 

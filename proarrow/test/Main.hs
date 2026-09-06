@@ -19,8 +19,9 @@ import Props.FreeBiCCC qualified as FreeBiCCC
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
-import Props.Optic qualified as Optic
-import Props.OpticLinear qualified as OpticLinear
+import Props.Optic.Hask qualified as Optic
+import Props.Optic.Linear qualified as OpticLinear
+import Props.Optic.FinRel qualified as OpticFinRel
 import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
@@ -47,6 +48,7 @@ main =
           , Mat.test
           , Optic.test
           , OpticLinear.test
+          , OpticFinRel.test
           , PointedHask.test
           , Simplex.test
           , Span.test

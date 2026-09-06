@@ -3,9 +3,9 @@
 module Proarrow.Optic.Prism where
 
 import Proarrow.Category.Instance.Opposite (Op (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), HasCoproducts, left)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
-import Proarrow.Limit.Terminal (Semicartesian)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( CompactFlavor
@@ -27,18 +27,18 @@ import Proarrow.Optic.Fold (FoldRes)
 import Proarrow.Optic.Getter (GetterRes (..))
 import Proarrow.Optic.Lens (LensRes, lens, withLens)
 import Proarrow.Optic.Setter (SetterRes)
-import Proarrow.Optic.Traversal (TravRes)
+import Proarrow.Optic.Traversal (MonTravRes, TravRes)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 type PrismRes :: forall {k}. FLAVOR k k
-class (AffineTravRes p q, GetterRes q p) => PrismRes (p :: k +-> k) (q :: k +-> k) where
+class (AffineTravRes p q, GetterRes q p, MonTravRes p q) => PrismRes (p :: k +-> k) (q :: k +-> k) where
   -- | Like 'affineMatch', but with an honest constraint: prism witnesses only ever need binary
   -- coproducts, so prisms stay usable in categories without products.
   matchingP :: (HasBinaryCoproducts k) => p (s :: k) a -> q (b :: k) t -> s ~> (t || a)
-instance (Semicartesian k, HasCoproducts k, Ob t) => PrismRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+instance (CopyDiscard k, HasCoproducts k, Ob t) => PrismRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   matchingP @_ @a @b (Rep p) (Corep q) = left @a (q . lft @k @t @b) . p
 instance (CategoryOf k) => PrismRes (Id :: k +-> k) Id where
   matchingP @_ @a @_ @t (Id sa) bt = rgt @k @t @a . sa \\ sa \\ bt
@@ -49,6 +49,7 @@ instance (PrismRes f g, PrismRes f' g') => PrismRes (f :.: f') (g' :.: g) where
 instance CompactFlavor PrismRes
 
 instance SubFlavor PrismRes AffineTravRes where subFlavor r = r
+instance SubFlavor PrismRes MonTravRes where subFlavor r = r
 instance SubFlavor PrismRes (Flip GetterRes) where subFlavor r = r
 instance SubFlavor PrismRes TravRes where subFlavor r = r
 instance SubFlavor PrismRes SetterRes where subFlavor r = r
@@ -65,7 +66,7 @@ type Prism (s :: k) t a b = Optic (Prostrong PrismRes) s t a b
 type Prism' s a = Prism s s a a
 prism
   :: forall {k} (s :: k) (t :: k) a b
-   . (Semicartesian k, HasCoproducts k, Ob a) => (b ~> t) -> (s ~> (t || a)) -> Prism s t a b
+   . (CopyDiscard k, HasCoproducts k, Ob a) => (b ~> t) -> (s ~> (t || a)) -> Prism s t a b
 prism bt sta =
   ex2prof (ExProstrong @(Rep (Coproduct t)) @(Corep (Coproduct t)) (Rep sta :.: ExIso id id :.: Corep (id ||| bt))) \\ bt
 
@@ -103,5 +104,5 @@ type OpLens (s :: k) t a b = Optic (OpConstraint (Prostrong LensRes)) s t a b
 toOpLens :: forall {k} (s :: k) t a b. (HasCoproducts k, Ob a, Ob b) => Prism s t a b -> OpLens s t a b
 toOpLens o = withPrism o (\bt sta -> unOpOptic (lens (Op bt) (Op sta)))
 
-fromOpLens :: forall {k} (s :: k) t a b. (Semicartesian k, HasCoproducts k, Ob a) => OpLens s t a b -> Prism s t a b
+fromOpLens :: forall {k} (s :: k) t a b. (CopyDiscard k, HasCoproducts k, Ob a) => OpLens s t a b -> Prism s t a b
 fromOpLens o = withLens (opOptic o) (\rev match -> prism (unOp rev) (unOp match))

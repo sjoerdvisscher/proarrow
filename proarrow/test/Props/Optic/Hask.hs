@@ -7,7 +7,7 @@
 -- corresponding 'SubFlavor' instance exists. The 'TestTree' then checks at runtime that a lens,
 -- prism or iso handed directly to the getter\/setter\/fold\/review\/preview consumers still acts
 -- like the optic it came from.
-module Props.Optic where
+module Props.Optic.Hask where
 
 import Control.Monad (unless)
 import Data.Bifunctor (bimap, first, second)
@@ -37,17 +37,18 @@ import Proarrow.Optic.Lens (Lens, lens, withLens)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterRes (..), over, set, (%~))
 
-import Proarrow.Optic.Traversal
-  ( PTraversal
-  , Traversal
+import Proarrow.Optic.MonoidalTraversal
+  ( MonoidalTraversal
+  , PTraversal
   , fromPTraversal
+  , monTraverseOf
   , multOptic
   , par1Optic
   , plusOptic
   , toPTraversal
-  , traverseOf
   , u1Optic
   )
+import Proarrow.Optic.Traversal (Traversal, traverseOf)
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Functor (Prelude (..))
@@ -339,10 +340,16 @@ test =
     , propFnEq @(Maybe Bool) "preview on a PIso" (^? cMaybeNot) (Just . fmap not)
     , propFnEq @Bool "PIso round trip" (view (fromPIso (toPIso notIso))) not
     , propFnEq @Bool "over via fromPIso" (over (fromPIso cNot) not) not
-    , propFnEq @(Bool, Bool)
-        "PTraversal round trip"
-        (over (fromPTraversal (toPTraversal (lensToTraversal _1))) not)
-        (first not)
+    , propFnEq @(Maybe Bool)
+        "PTraversal round trip (prism is a MonoidalTraversal)"
+        (over (fromPTraversal (toPTraversal (O.convert _Just :: MonoidalTraversal (Maybe Bool) (Maybe Bool) Bool Bool))) not)
+        (fmap not)
+    , -- Step 4: monTraverseOf distributes an SDP carrier through a prism (a MonoidalTraversal) with
+      -- NO product-strength constraint on the carrier -- that's the point of the MonTravRes split.
+      propFnEq @(Maybe Bool)
+        "monTraverseOf a prism (MonoidalTraversal) with a list effect"
+        (\m -> unPrelude (unStar (monTraverseOf _Just (Star (Prelude . ((\b -> [b, not b]) :: Bool -> [Bool])))) m))
+        (traverse (\b -> [b, not b]))
     , propFnEq @(Bool, Bool)
         "fromPTraversal over both"
         (\(x, y) -> unPar2 (over fromBoth not (par2 x y)))

@@ -6,13 +6,13 @@
 -- optic constraints were loosened off @Cartesian@: 'over' on a 'Setter' needs no @Bicartesian@,
 -- and a lens's @'Proarrow.Profunctor.Representable.Rep' ('Proarrow.Limit.BinaryProduct.Product' s)@
 -- witness needs only 'Proarrow.Limit.BinaryProduct.HasBinaryProducts', not @tensor = product@.
-module Props.OpticLinear (test) where
+module Props.Optic.Linear (test) where
 
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 import Prelude (Bool (..), ($))
 
-import Proarrow.Category.Instance.Linear (LINEAR (..), Linear (..), With, mkWith, unLinear)
+import Proarrow.Category.Instance.Linear (LINEAR (..), Linear (..), mkWith, unLinear)
 import Proarrow.Core (Promonad (..), type (~>))
 import Proarrow.Limit.BinaryProduct (fst, snd, (&&&), type (&&))
 import Proarrow.Optic.Getter (view)
@@ -21,7 +21,7 @@ import Proarrow.Optic.Setter (over)
 import Proarrow.Optic.Traversal (traverseOf)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 
-import Props.Optic (assertEq)
+import Props.Optic.Hask (assertEq)
 
 -- | The @_1@ lens over @LINEAR@: focus the first component of the additive product @With@.
 -- Built exactly like Hask's @_1@ (@'lens' 'fst' put@), but the product here is @With@, not a tuple.

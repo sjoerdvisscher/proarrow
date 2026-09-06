@@ -58,7 +58,7 @@ import Proarrow.Optic
   )
 import Proarrow.Optic.Fold (FoldRes (..))
 import Proarrow.Optic.Setter (SetterRes (..))
-import Proarrow.Optic.Traversal (TravRes (..))
+import Proarrow.Optic.Traversal (MonTravRes (..), TravRes (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 
@@ -68,7 +68,7 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 -- so a kaleidoscope folds, sets, and traverses. The extra power is distributing the /non/-SDP
 -- monoidal profunctors as well.
 type KaleidoRes :: forall {k}. FLAVOR k k
-class (TravRes p q) => KaleidoRes (p :: k +-> k) (q :: k +-> k) where
+class (MonTravRes p q) => KaleidoRes (p :: k +-> k) (q :: k +-> k) where
   kaleidoP :: (MonoidalProfunctor r) => p s a -> q b t -> r a b -> r s t
 
 instance (CategoryOf k) => KaleidoRes (Id :: k +-> k) (Id :: k +-> k) where
@@ -97,8 +97,9 @@ instance (Monoidal k) => SetterRes (Two :: k +-> k) (CoTwo :: k +-> k) where
   overP (Two sl) (CoTwo rt) f = rt . (f ** f) . sl
 instance (Monoidal k) => FoldRes (Two :: k +-> k) (CoTwo :: k +-> k) where
   foldMapP (Two sl) am = mappend . (am ** am) . sl
-instance (Monoidal k) => TravRes (Two :: k +-> k) (CoTwo :: k +-> k) where
-  travP (Two sl) (CoTwo rt) rab = dimap sl rt (rab ** rab)
+instance (Monoidal k) => TravRes (Two :: k +-> k) (CoTwo :: k +-> k)
+instance (Monoidal k) => MonTravRes (Two :: k +-> k) (CoTwo :: k +-> k) where
+  monTravP (Two sl) (CoTwo rt) rab = dimap sl rt (rab ** rab)
 instance (Monoidal k) => KaleidoRes (Two :: k +-> k) (CoTwo :: k +-> k) where
   kaleidoP (Two sl) (CoTwo rt) rab = dimap sl rt (rab ** rab)
 instance (Monoidal k) => Proadjunction (Two :: k +-> k) CoTwo where
@@ -107,6 +108,7 @@ instance (Monoidal k) => Proadjunction (Two :: k +-> k) CoTwo where
 
 instance CompactFlavor KaleidoRes
 
+instance SubFlavor KaleidoRes MonTravRes where subFlavor r = r
 instance SubFlavor KaleidoRes TravRes where subFlavor r = r
 instance SubFlavor KaleidoRes FoldRes where subFlavor r = r
 instance SubFlavor KaleidoRes SetterRes where subFlavor r = r
@@ -178,8 +180,9 @@ instance (Monoidal k, KnownNat n) => SetterRes (Pow n :: k +-> k) (CoPow n :: k 
   overP (Pow sl) (CoPow rt) f = rt . powDist @n f . sl
 instance (Monoidal k, KnownNat n) => FoldRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   foldMapP (Pow sl) am = powFold @n . powDist @n am . sl
-instance (Monoidal k, KnownNat n) => TravRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
-  travP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
+instance (Monoidal k, KnownNat n) => TravRes (Pow n :: k +-> k) (CoPow n :: k +-> k)
+instance (Monoidal k, KnownNat n) => MonTravRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+  monTravP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
 instance (Monoidal k, KnownNat n) => KaleidoRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   kaleidoP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
 instance (Monoidal k, KnownNat n) => Proadjunction (Pow n :: k +-> k) (CoPow n) where
