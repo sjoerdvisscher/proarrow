@@ -26,6 +26,7 @@
 module Proarrow.Optic.Kaleidoscope
   ( KaleidoRes (..)
   , Kaleidoscope
+  , Kaleidoscope'
   , Two (..)
   , CoTwo (..)
   , kaleidoscope
@@ -114,6 +115,7 @@ instance SubFlavor KaleidoRes FoldRes where subFlavor r = r
 instance SubFlavor KaleidoRes SetterRes where subFlavor r = r
 
 type Kaleidoscope (s :: k) (t :: k) a b = Optic (Prostrong KaleidoRes) s t a b
+type Kaleidoscope' s a = Kaleidoscope s s a a
 
 -- | Build a binary kaleidoscope from a tensor decomposition of @s@ and recomposition of @t@.
 kaleidoscope

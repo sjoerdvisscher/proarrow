@@ -59,6 +59,7 @@ import Proarrow.Profunctor.Representable (Rep (..))
 import Prelude (Either (..), const, either, uncurry, ($))
 
 type MonoidalTraversal (s :: k) (t :: k) a b = Optic (Prostrong MonTravRes) s t a b
+type MonoidalTraversal' s a = MonoidalTraversal s s a a
 
 -- | Witness pair for __tensor strength__: the focus @x@ sits inside @a '**' x@ with the residual
 -- @a@ carried on the left. This is the tensor-action dual of the coproduct-action prism witness
@@ -167,6 +168,8 @@ instance IsOptic StrongDistributiveProfunctor where withProfunctor r = r
 -- the "GHC.Generics" combinators below. Equivalent to 'Traversal' via 'toPTraversal' and
 -- 'fromPTraversal'.
 type PTraversal s t a b = Optic StrongDistributiveProfunctor s t a b
+
+type PTraversal' s a = PTraversal s s a a
 
 -- | Half of the equivalence between the two traversal encodings: eliminate the existential
 -- witnesses with 'travP' at the caller's profunctor.

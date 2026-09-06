@@ -84,3 +84,4 @@ instance SubFlavor AffineTravRes FoldRes where subFlavor r = r
 instance CompactFlavor AffineTravRes
 
 type AffineTraversal (s :: k) (t :: k) a b = Optic (Prostrong AffineTravRes) s t a b
+type AffineTraversal' s a = AffineTraversal s s a a

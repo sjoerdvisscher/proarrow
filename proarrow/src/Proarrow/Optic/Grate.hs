@@ -58,6 +58,7 @@ instance CompactFlavor GrateRes
 instance SubFlavor GrateRes SetterRes where subFlavor r = r
 
 type Grate (s :: k) (t :: k) a b = Optic (Prostrong GrateRes) s t a b
+type Grate' s a = Grate s s a a
 
 -- | The eliminating carrier for grates: the polymorphic zipping function, as a profunctor in
 -- @s@\/@t@.

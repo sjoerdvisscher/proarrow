@@ -22,13 +22,14 @@ import Proarrow.Optic.Getter (GetterRes, getP)
 import Proarrow.Optic.Grate (GrateRes)
 import Proarrow.Optic.Kaleidoscope (KaleidoRes)
 import Proarrow.Optic.Lens (LensRes)
+import Proarrow.Optic.MonoidalLens (MonLensRes)
 import Proarrow.Optic.Prism (PrismRes)
 import Proarrow.Optic.Setter (SetterRes)
 import Proarrow.Optic.Traversal (TravRes)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
-class (LensRes p q, PrismRes p q, GrateRes p q, KaleidoRes p q) => IsoRes p q
-instance (LensRes p q, PrismRes p q, GrateRes p q, KaleidoRes p q) => IsoRes p q
+class (LensRes p q, PrismRes p q, GrateRes p q, KaleidoRes p q, MonLensRes p q) => IsoRes p q
+instance (LensRes p q, PrismRes p q, GrateRes p q, KaleidoRes p q, MonLensRes p q) => IsoRes p q
 
 instance CompactFlavor IsoRes
 
@@ -48,6 +49,7 @@ instance SubFlavor IsoRes AffineFoldRes where subFlavor r = r
 instance SubFlavor IsoRes FoldRes where subFlavor r = r
 instance SubFlavor IsoRes GrateRes where subFlavor r = r
 instance SubFlavor IsoRes KaleidoRes where subFlavor r = r
+instance SubFlavor IsoRes MonLensRes where subFlavor r = r
 
 -- | Reversed isos still view\/preview\/fold: @'Proarrow.Optic.re' iso@ is a getter (and more).
 instance SubFlavor (Flip IsoRes) GetterRes where subFlavor r = r

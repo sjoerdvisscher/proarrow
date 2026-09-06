@@ -13,10 +13,12 @@ import Test.Tasty.Falsify (testProperty)
 import Prelude (Bool (..), ($))
 
 import Proarrow.Category.Instance.Linear (LINEAR (..), Linear (..), mkWith, unLinear)
+import Proarrow.Category.Monoidal (type (**))
 import Proarrow.Core (Promonad (..), type (~>))
 import Proarrow.Limit.BinaryProduct (fst, snd, (&&&), type (&&))
 import Proarrow.Optic.Getter (view)
 import Proarrow.Optic.Lens (Lens, lens)
+import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
 import Proarrow.Optic.Setter (over)
 import Proarrow.Optic.Traversal (traverseOf)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -32,6 +34,13 @@ _wfst = lens fst (snd &&& (snd . fst))
 notL :: L Bool ~> L Bool
 notL = Linear \case True -> False; False -> True
 
+-- | The second-component __monoidal__ lens over a @LINEAR@ tensor pair @L Bool '**' L Bool@.
+-- Unlike '_wfst' (a /product/ lens), it focuses through the tensor and carries the first
+-- component as an existential residual, so 'over' needs only 'Proarrow.Category.Monoidal.Monoidal'
+-- -- no discard. @LINEAR@ cannot discard, so this lens can modify but not view.
+_2mon :: MonoidalLens (L Bool ** L Bool) (L Bool ** L Bool) (L Bool) (L Bool)
+_2mon = monLens @(L Bool) id id
+
 test :: TestTree
 test =
   testGroup
@@ -45,4 +54,10 @@ test =
     , -- exercises travP's  act @ProdAction @(PR s)  over a category where tensor /= product
       testProperty "traverseOf a lens in LINEAR (distributes Id via the product action)" $
         assertEq (unLinear (unId (traverseOf _wfst (Id notL))) (mkWith True False)) (mkWith False False)
+    , -- a MonoidalLens modifies through the tensor, carrying the residual with no discard --
+      -- impossible for a product lens or a view here, since LINEAR is not CopyDiscard.
+      testProperty "over a MonoidalLens in LINEAR (tensor focus; residual carried, never discarded)" $
+        assertEq (unLinear (over _2mon notL) (True, False)) (True, True)
+    , testProperty "over a MonoidalLens leaves the residual (first component) alone" $
+        assertEq (unLinear (over _2mon notL) (False, True)) (False, False)
     ]
