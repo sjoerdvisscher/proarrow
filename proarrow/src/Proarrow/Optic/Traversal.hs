@@ -6,7 +6,7 @@ module Proarrow.Optic.Traversal where
 import GHC.Generics qualified as G
 import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
-import Proarrow.Category.Monoidal.Action (CoprodAction)
+import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction)
 import Proarrow.Category.Monoidal.Distributive
   ( Bicartesian
   , Cotraversable (..)
@@ -28,7 +28,8 @@ import Proarrow.Colimit.BinaryCoproduct
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, (\\), type (+->))
-import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), Product)
+import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Product)
+import Proarrow.Limit.Terminal (Semicartesian)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
@@ -42,6 +43,7 @@ import Proarrow.Optic
   , SubFlavor (..)
   , convert
   , withLegs
+  , type (:&&:)
   )
 import Proarrow.Optic.Fold (FoldRes (..))
 import Proarrow.Optic.Setter (SetterRes (..))
@@ -53,20 +55,20 @@ import Prelude (Either (..), const, either, uncurry, ($))
 
 type TravRes :: forall {k}. FLAVOR k k
 class (SetterRes p q, FoldRes p q) => TravRes (p :: k +-> k) (q :: k +-> k) where
-  travP :: (StrongDistributiveProfunctor r, Cartesian k) => p s a -> q b t -> r a b -> r s t
-instance (Traversable t, Representable t) => TravRes t (RepCostar t) where
+  travP :: (StrongDistributiveProfunctor r, Strong ProdAction r) => p s a -> q b t -> r a b -> r s t
+instance (Bicartesian k, Traversable t, Representable t) => TravRes (t :: k +-> k) (RepCostar t) where
   travP l (RepCostar r) = dimap (index l) r . repTraverse @t
 
 -- | The former cotraversal witness: a corepresentable 'Cotraversable' functor builds @s@ from a
 -- shape of @a@'s. Its 'travP' distributes an SDP exactly as the old @cotravP@ did -- for these
 -- (representable) witnesses a cotraversal /is/ a traversal, which is why there is no separate
 -- 'Cotraversal' optic.
-instance (Cotraversable t, Corepresentable t) => TravRes (CorepStar t) t where
+instance (Bicartesian k, Cotraversable t, Corepresentable t) => TravRes (CorepStar t) (t :: k +-> k) where
   travP (CorepStar l) co = dimap l (coindex co) . corepTraverse @t
 
 instance (HasBinaryProducts k, Ob (s :: k)) => TravRes (Rep (Product s)) (Corep (Product s)) where
-  travP (Rep p) (Corep q) r = dimap p q (act @Tensor @_ @s r)
-instance (HasCoproducts k, Ob t) => TravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+  travP (Rep p) (Corep q) r = dimap p q (act @ProdAction @_ @(PR s) r)
+instance (Semicartesian k, HasCoproducts k, Ob t) => TravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   travP (Rep p) (Corep q) r = dimap p q (act @CoprodAction @_ @(COPR t) r)
 instance (CategoryOf k) => TravRes (Id :: k +-> k) (Id :: k +-> k) where
   travP (Id l) (Id r) = dimap l r
@@ -87,7 +89,7 @@ type Traversal' s a = Traversal s s a a
 -- @'Prostrong' w p@ bridge (which could only ever cover specific carrier heads).
 traverseOf
   :: forall {k} w (s :: k) (t :: k) a b p
-   . (Distributive k, Cartesian k, StrongDistributiveProfunctor p, SubFlavor w TravRes)
+   . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, SubFlavor w TravRes)
   => Optic (Prostrong w) s t a b -> p a b -> p s t
 traverseOf o pab = withLegs (\l r -> travP l r pab) (convert @(Prostrong w) @TravRes o)
 
@@ -96,13 +98,13 @@ instance IsOptic StrongDistributiveProfunctor where withProfunctor r = r
 -- | A traversal in the profunctor-class-flavored encoding (cf. 'Proarrow.Optic.PIso'), used by
 -- the "GHC.Generics" combinators below. Equivalent to 'Traversal' via 'toPTraversal' and
 -- 'fromPTraversal'.
-type PTraversal s t a b = Optic StrongDistributiveProfunctor s t a b
+type PTraversal s t a b = Optic (StrongDistributiveProfunctor :&&: Strong ProdAction) s t a b
 
 -- | Half of the equivalence between the two traversal encodings: eliminate the existential
 -- witnesses with 'travP' at the caller's profunctor.
 toPTraversal
   :: forall {k} (s :: k) (t :: k) a b
-   . (Distributive k, Cartesian k)
+   . (Distributive k)
   => Traversal s t a b -> PTraversal s t a b
 toPTraversal = withLegs \l@Objs r@Objs -> Optic (travP l r)
 
@@ -280,7 +282,7 @@ instance (HasInitialObject k) => Proadjunction (ZeroW :: k +-> k) CoZeroW where
 
 besideTensor
   :: forall {k} (a :: k) b s1 t1 s2 t2
-   . (Bicartesian k, Ob a, Ob b)
+   . (Monoidal k, Ob a, Ob b)
   => ExOptic TravRes a b s1 t1 -> ExOptic TravRes a b s2 t2 -> ExOptic TravRes a b (s1 ** s2) (t1 ** t2)
 besideTensor l r =
   compress l \p1@Objs q1@Objs ->
@@ -291,7 +293,7 @@ besideTensor l r =
 
 besideSum
   :: forall {k} (a :: k) b s1 t1 s2 t2
-   . (Bicartesian k, Ob a, Ob b)
+   . (HasBinaryCoproducts k, Ob a, Ob b)
   => ExOptic TravRes a b s1 t1 -> ExOptic TravRes a b s2 t2 -> ExOptic TravRes a b (s1 || s2) (t1 || t2)
 besideSum l r =
   compress l \p1@Objs q1@Objs ->
@@ -302,15 +304,15 @@ besideSum l r =
 
 -- | The free 'TravRes'-strong profunctor is itself a 'StrongDistributiveProfunctor': together
 -- with the instances below, this is the theorem making 'fromPTraversal' possible.
-instance (Bicartesian k, Ob (a :: k), Ob b) => MonoidalProfunctor (ExOptic TravRes a b :: k +-> k) where
+instance (Monoidal k, Ob (a :: k), Ob b) => MonoidalProfunctor (ExOptic TravRes a b :: k +-> k) where
   one = ExProstrong (UnitW id :.: ExIso id id :.: CoUnitW id)
   l ** r = besideTensor l r
 
-instance (Bicartesian k, Ob (a :: k), Ob b) => MonoidalProfunctor (Coprod (ExOptic TravRes a b :: k +-> k)) where
+instance (HasCoproducts k, Ob (a :: k), Ob b) => MonoidalProfunctor (Coprod (ExOptic TravRes a b :: k +-> k)) where
   one = Coprod (ExProstrong (ZeroW id :.: ExIso id id :.: CoZeroW id))
   Coprod l ** Coprod r = Coprod (besideSum l r)
 
-instance (Bicartesian k, Ob (a :: k), Ob b) => Strong Tensor (ExOptic TravRes a b :: k +-> k) where
+instance (Cartesian k, Ob (a :: k), Ob b) => Strong Tensor (ExOptic TravRes a b :: k +-> k) where
   act @x @y @z e@Objs =
     withOb2 @k @x @y $
       withOb2 @k @x @z $
@@ -318,7 +320,13 @@ instance (Bicartesian k, Ob (a :: k), Ob b) => Strong Tensor (ExOptic TravRes a 
           withObProd @k @x @z $
             ExProstrong @(Rep (Product x)) @(Corep (Product x)) (Rep id :.: e :.: Corep id)
 
-instance (Bicartesian k, Ob (a :: k), Ob b) => Strong CoprodAction (ExOptic TravRes a b :: k +-> k) where
+instance (HasProducts k, Ob (a :: k), Ob b) => Strong ProdAction (ExOptic TravRes a b :: k +-> k) where
+  act @px @y @z e@Objs =
+    withObProd @k @(UN PR px) @y $
+      withObProd @k @(UN PR px) @z $
+        ExProstrong @(Rep (Product (UN PR px))) @(Corep (Product (UN PR px))) (Rep id :.: e :.: Corep id)
+
+instance (HasCoproducts k, Semicartesian k, Ob (a :: k), Ob b) => Strong CoprodAction (ExOptic TravRes a b :: k +-> k) where
   act @cx @y @z e@Objs =
     withObCoprod @k @(UN COPR cx) @y $
       withObCoprod @k @(UN COPR cx) @z $

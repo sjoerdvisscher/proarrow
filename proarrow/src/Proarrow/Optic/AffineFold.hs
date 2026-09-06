@@ -9,7 +9,7 @@ import Proarrow.Category.Monoidal.Distributive (Bicartesian)
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Optic (CompactFlavor, FLAVOR, Optic, Optic_ (..), Prostrong (..), SubFlavor (..))
 import Proarrow.Optic.Fold (FoldRes)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -35,7 +35,7 @@ instance (AffineFoldRes f g, AffineFoldRes f' g') => AffineFoldRes (f :.: f') (g
   previewP @_ @a (f :.: f') = (previewP @f' @g' f' ||| rgt @_ @a @TerminalObject) . previewP @f @g f \\ f'
 instance (HasCoproducts k, Ob t) => AffineFoldRes (Corep (Coproduct t) :: k +-> k) (Rep (Coproduct t)) where
   previewP @_ @a (Corep f) = lft @k @a @TerminalObject . f . rgt @k @t \\ f
-instance (HasCoproducts k, Ob t) => AffineFoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+instance (Semicartesian k, HasCoproducts k, Ob t) => AffineFoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   previewP @_ @a (Rep p) = ((rgt @k @a @TerminalObject . terminate @k @t) ||| lft @k @a @TerminalObject) . p
 
 instance CompactFlavor AffineFoldRes

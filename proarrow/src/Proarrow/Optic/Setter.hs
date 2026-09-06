@@ -10,7 +10,6 @@ import Prelude qualified as P
 import Proarrow.Adjunction (Proadjunction)
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
-import Proarrow.Category.Monoidal.Distributive (Bicartesian)
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, right)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Functor (Prelude (..))
@@ -30,7 +29,7 @@ import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (.
 -- is lawful.
 type SetterRes :: forall {k}. FLAVOR k k
 class (Proadjunction p q) => SetterRes (p :: k +-> k) (q :: k +-> k) where
-  overP :: (Bicartesian k) => p s a -> q b t -> (a ~> b) -> (s ~> t)
+  overP :: p s a -> q b t -> (a ~> b) -> (s ~> t)
 
 instance CompactFlavor SetterRes
 
@@ -65,7 +64,7 @@ type Setter (s :: k) (t :: k) a b = Optic (Prostrong SetterRes) s t a b
 type Setter' s a = Setter s s a a
 
 -- | Any flavor whose optics can set has strength for the hom carrier 'Id'.
-instance (Bicartesian k, SubFlavor w SetterRes) => Prostrong (w :: FLAVOR k k) (Id :: k +-> k) where
+instance (CategoryOf k, SubFlavor w SetterRes) => Prostrong (w :: FLAVOR k k) (Id :: k +-> k) where
   proact @f @g (f :.: Id h :.: g) = subFlavor @w @SetterRes @f @g (Id (overP @f @g f g h))
 
 -- | Map over any optic that can act as a setter, in either encoding: a 'Prostrong'-flavored optic

@@ -4,16 +4,17 @@ module Proarrow.Category.Monoidal.Strength where
 
 import Data.Kind (Constraint)
 
+import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor)
-import Proarrow.Category.Monoidal.Action (Act, CoprodAction, MonoidalAction, actHom)
+import Proarrow.Category.Monoidal.Action (Act, CoprodAction, MonoidalAction, ProdAction, actHom)
 import Proarrow.Colimit.BinaryCoproduct (COPROD (..), HasBinaryCoproducts (..), swapCoprod)
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), obj, type (+->))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), corepUniv)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Representable (Representable (..), repUniv)
-import Proarrow.Profunctor.Instance.Composition ((:.:)(..))
 
 -- | Profuntorial strength for a monoidal actions.
 -- Gives functorial strength for representable profunctors,
@@ -34,6 +35,9 @@ instance (MonoidalAction t) => Strong t (Id :: CAT k) where
 
 instance (Strong t p, Strong t q) => Strong t (p :.: q) where
   act @x (p :.: q) = act @t @_ @x p :.: act @t @_ @x q
+
+instance (CategoryOf j, CategoryOf k) => Strong ProdAction (Prof :: CAT (j +-> k)) where
+  act (Prof n) = Prof \(p :*: q) -> p :*: n q
 
 type MonStrong (p :: k +-> k) = (Strong Tensor p, SymMonoidal k)
 

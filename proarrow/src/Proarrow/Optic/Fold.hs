@@ -13,7 +13,7 @@ import Proarrow.Category.Monoidal.Distributive
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, rgt, (|||))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
-import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Monoid (Comonoid, Monoid (..))
 import Proarrow.Optic
   ( CompactFlavor
@@ -36,7 +36,7 @@ import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar, R
 -- @a@'s it can see into any monoid object of @k@ -- it can never reconstruct a @t@.
 type FoldRes :: forall {j} {k}. FLAVOR j k
 class (Profunctor p, Profunctor q) => FoldRes (p :: k +-> k) (q :: j +-> j) where
-  foldMapP :: (Bicartesian k, Monoid m) => p s a -> (a ~> m) -> (s ~> m)
+  foldMapP :: (Monoid m) => p s a -> (a ~> m) -> (s ~> m)
 
 instance (HasBinaryProducts k, Ob (s :: k)) => FoldRes (Rep (Product s)) (Corep (Product s)) where
   foldMapP (Rep p) am = am . snd @k @s . p
@@ -46,17 +46,17 @@ instance (CategoryOf k, CategoryOf j) => FoldRes (Id :: k +-> k) (TerminalProfun
   foldMapP (Id sa) am = am . sa
 instance (FoldRes f g, FoldRes f' g') => FoldRes (f :.: f') (g' :.: g) where
   foldMapP (f :.: f') = foldMapP @f @g f . foldMapP @f' @g' f'
-instance (Traversable t, Representable t) => FoldRes (t :: k +-> k) (RepCostar t) where
+instance (Bicartesian k, Traversable t, Representable t) => FoldRes (t :: k +-> k) (RepCostar t) where
   foldMapP @m @_ @a l am = (case repTraverse @t @(Rep (Constant m)) (Rep @a am) of Rep sm -> sm . index l) \\ am
 
 -- | The corepresentable-cotraversable witness folds by cotraversing at the fold profunctor @'Rep' ('Constant' m)@
 -- -- the residual shape is simply discarded.
-instance (Cotraversable t, Corepresentable t) => FoldRes (CorepStar t) (t :: k +-> k) where
+instance (Bicartesian k, Cotraversable t, Corepresentable t) => FoldRes (CorepStar t) (t :: k +-> k) where
   foldMapP @m @_ @a (CorepStar l) am = (case corepTraverse @t @(Rep (Constant m)) (Rep @a am) of Rep sm -> sm . l) \\ am
 
 instance (HasCoproducts k, Ob t) => FoldRes (Corep (Coproduct t) :: k +-> k) (Rep (Coproduct t)) where
   foldMapP (Corep f) am = am . f . rgt @k @t
-instance (HasCoproducts k, Ob t) => FoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+instance (Semicartesian k, HasCoproducts k, Ob t) => FoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   foldMapP @m (Rep p) am = (mempty @m . terminate @k @t ||| am) . p
 
 instance CompactFlavor FoldRes
@@ -74,7 +74,7 @@ instance (CategoryOf j, CategoryOf k, Ob (m :: k)) => Profunctor (Forget m :: j 
   r \\ Forget f = r \\ f
 
 -- | Any flavor whose optics can fold has strength for the 'Forget' carrier.
-instance (Bicartesian k, CategoryOf j, Monoid m, SubFlavor w FoldRes) => Prostrong (w :: FLAVOR j k) (Forget m :: j +-> k) where
+instance (CategoryOf j, Monoid m, SubFlavor w FoldRes) => Prostrong (w :: FLAVOR j k) (Forget m :: j +-> k) where
   proact @f @g (f :.: Forget h :.: g) = subFlavor @w @FoldRes @f @g (Forget (foldMapP @f @g f h)) \\ g
 
 -- | Fold through any optic that can act as a fold, in either encoding.

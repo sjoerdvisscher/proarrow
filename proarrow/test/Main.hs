@@ -20,6 +20,7 @@ import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
 import Props.Optic qualified as Optic
+import Props.OpticLinear qualified as OpticLinear
 import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
@@ -45,6 +46,7 @@ main =
           , Kleisli.test
           , Mat.test
           , Optic.test
+          , OpticLinear.test
           , PointedHask.test
           , Simplex.test
           , Span.test

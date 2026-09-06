@@ -19,14 +19,16 @@ import Prelude
 
 import GHC.Generics qualified as G
 import Proarrow.Category.Monoidal (Monoidal)
-import Proarrow.Category.Monoidal.Distributive (Bicartesian, StrongDistributiveProfunctor)
+import Proarrow.Category.Monoidal.Action (ProdAction)
+import Proarrow.Category.Monoidal.Distributive (Bicartesian, StrongDistributiveProfunctor, baseTraverse)
+import Proarrow.Category.Monoidal.Strength (Strong)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts, type (||))
 import Proarrow.Core (CategoryOf (..), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, type (&&))
 import Proarrow.Optic qualified as O
 import Proarrow.Optic.AffineFold (AffineFold, preview, (^?))
 import Proarrow.Optic.AffineTraversal (AffineTraversal)
-import Proarrow.Optic.Fold (Fold, foldMapOf)
+import Proarrow.Optic.Fold (Fold, foldMapOf, unfold)
 import Proarrow.Optic.Getter (Getter, Review, review, view, (#), (^.))
 import Proarrow.Optic.Grate (Grate, grate, withGrate)
 import Proarrow.Optic.Iso (Iso, fromPIso, toPIso, withIso)
@@ -51,9 +53,10 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Instance.Star (unStar, pattern Star)
+import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Representable)
 import Proarrow.Promonad.Reader (Reader (..))
+import Proarrow.Promonad.Writer (Writer)
 
 import Props.Hask ()
 import Testable (GenTotal (..), TestableType (..), pattern GenNonEmpty)
@@ -159,7 +162,8 @@ traversalToFold = O.convert
 -- | Compile-time proof that 'traverseOf' distributes an /arbitrary/ 'StrongDistributiveProfunctor'
 -- (Traversable-style), not just a @'Star' f@: this only typechecks because the carrier @p@ is
 -- fully polymorphic.
-traverseOfIsGeneric :: (StrongDistributiveProfunctor p) => p Bool Bool -> p (Bool, Bool) (Bool, Bool)
+traverseOfIsGeneric
+  :: (StrongDistributiveProfunctor p, Strong ProdAction p) => p Bool Bool -> p (Bool, Bool) (Bool, Bool)
 traverseOfIsGeneric = traverseOf _1
 
 affineFoldToFold :: (CategoryOf j, CategoryOf k) => AffineFold (s :: k) (t :: j) a b -> Fold s t a b
@@ -272,6 +276,7 @@ test =
     , propFnEq @(Maybe Bool) "prism as fold" (foldMapOf _Just (: [])) maybeToList
     , propFnEq @(Maybe Bool) "prism as preview" (^? _Just) id
     , propFnEq @Bool "prism ~ op-lens: fromOpLens . toOpLens preserves review" (review (fromOpLens (toOpLens _Just))) Just
+    , propFnEq @Bool "prism unfold: build a Maybe through the review leg" (unfold (toOpLens _Just) not) (\x -> Just (not x))
     , propFnEq @(Maybe Bool)
         "prism ~ op-lens: fromOpLens . toOpLens preserves setter"
         (fromOpLens (toOpLens _Just) %~ not)
@@ -371,6 +376,12 @@ test =
         "cross-encoding composite over"
         (over (_1 O.% cMaybeNot) (fmap not))
         (first (fmap not))
+    , -- exercise Writer's category-generic Traversable instance: distribute a real list effect
+      -- through the writer functor (@Writer w % a = w ** a@, tensor-strength, any monoidal category).
+      testProperty "Writer Traversable distributes a list effect" $
+        assertEq
+          (unPrelude (baseTraverse @(Writer [Bool]) @(Star (Prelude [])) (Prelude . \b -> [b, not b]) ([True], False)))
+          [([True], False), ([True], True)]
     ]
   where
     bothPar = multOptic par1Optic par1Optic

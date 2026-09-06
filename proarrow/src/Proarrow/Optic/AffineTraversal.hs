@@ -8,6 +8,7 @@ import Proarrow.Category.Monoidal.Distributive (Bicartesian, Distributive (..))
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), HasCoproducts, left)
 import Proarrow.Core (CategoryOf (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), Product, TensorIsProduct, first, second)
+import Proarrow.Limit.Terminal (Semicartesian)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (CompactFlavor, FLAVOR, Optic, Prostrong, SubFlavor (..))
 import Proarrow.Optic.AffineFold (AffineFoldRes)
@@ -44,7 +45,7 @@ instance (HasBinaryProducts k, Ob (s :: k)) => AffineTravRes (Rep (Product s)) (
   -- a lens always matches
   affineMatch @_ @a @_ @t (Rep p) q = rgt @k @t @a . snd @k @s @a . p \\ p \\ q
   affineSet @_ @a @b (Rep p) (Corep q) = q . first @b (fst @k @s @a . p)
-instance (HasCoproducts k, Ob t) => AffineTravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+instance (Semicartesian k, HasCoproducts k, Ob t) => AffineTravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   affineMatch @_ @a @b (Rep p) (Corep q) = left @a (q . lft @k @t @b) . p
 
   -- a prism's set never needs the original value, it just reviews
