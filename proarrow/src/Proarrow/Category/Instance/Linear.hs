@@ -120,6 +120,13 @@ instance Comonoid (L (Ur a)) where
   counit = Linear \(Ur _) -> ()
   comult = Linear \(Ur a) -> (Ur a, Ur a)
 
+-- | @L Bool@ is a comonoid: a @Bool@ is duplicated and discarded by /case-analysis/, which is
+-- perfectly linear (it consumes the input exactly once). The same holds for any finite,
+-- pattern-matchable classical type; only the @Bool@ instance is spelled out here.
+instance Comonoid (L Bool) where
+  counit = Linear \case True -> (); False -> ()
+  comult = Linear \case True -> (True, True); False -> (False, False)
+
 instance HasBinaryCoproducts LINEAR where
   type L a || L b = L (Either a b)
   withObCoprod r = r

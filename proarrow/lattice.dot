@@ -1,0 +1,15 @@
+digraph optics {
+  rankdir=TB; node [shape=box, style=rounded, fontname="Helvetica"]; edge [dir=none];
+  { rank=same; Fold; Setter; }
+  { rank=same; Getter; AffineTraversal; MonoidalTraversal; Review; }
+  { rank=same; Lens; MonoidalLens; Prism; Kaleidoscope; }
+  Fold -> AffineFold;  Fold -> Traversal;  Setter -> Traversal; Setter -> Grate;
+  AffineFold -> Getter; AffineFold -> AffineTraversal;
+  Traversal -> AffineTraversal; Traversal -> MonoidalTraversal;
+  Getter -> Lens; Getter -> MonoidalLens;
+  AffineTraversal -> Lens; AffineTraversal -> Prism;
+  MonoidalTraversal -> MonoidalLens; MonoidalTraversal -> Prism; MonoidalTraversal -> Kaleidoscope;
+  Review -> Prism;
+  Grate -> Kaleidoscope;
+  Lens -> Iso; MonoidalLens -> Iso; Prism -> Iso; Kaleidoscope -> Iso;
+}

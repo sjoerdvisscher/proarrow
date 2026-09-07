@@ -44,7 +44,9 @@ module Proarrow.Optic.Kaleidoscope
 import Data.Kind (Constraint)
 import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), type (**))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard, discard, fst, snd, (&&&))
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Optic
   ( CompactFlavor
@@ -58,6 +60,7 @@ import Proarrow.Optic
   , withLegs
   )
 import Proarrow.Optic.Fold (FoldRes (..))
+import Proarrow.Optic.Grate (GrateRes (..))
 import Proarrow.Optic.Setter (SetterRes (..))
 import Proarrow.Optic.Traversal (MonTravRes (..), TravRes (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -69,7 +72,7 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 -- so a kaleidoscope folds, sets, and traverses. The extra power is distributing the /non/-SDP
 -- monoidal profunctors as well.
 type KaleidoRes :: forall {k}. FLAVOR k k
-class (MonTravRes p q) => KaleidoRes (p :: k +-> k) (q :: k +-> k) where
+class (MonTravRes p q, GrateRes p q) => KaleidoRes (p :: k +-> k) (q :: k +-> k) where
   kaleidoP :: (MonoidalProfunctor r) => p s a -> q b t -> r a b -> r s t
 
 instance (CategoryOf k) => KaleidoRes (Id :: k +-> k) (Id :: k +-> k) where
@@ -101,7 +104,9 @@ instance (Monoidal k) => FoldRes (Two :: k +-> k) (CoTwo :: k +-> k) where
 instance (Monoidal k) => TravRes (Two :: k +-> k) (CoTwo :: k +-> k)
 instance (Monoidal k) => MonTravRes (Two :: k +-> k) (CoTwo :: k +-> k) where
   monTravP (Two sl) (CoTwo rt) rab = dimap sl rt (rab ** rab)
-instance (Monoidal k) => KaleidoRes (Two :: k +-> k) (CoTwo :: k +-> k) where
+instance (CopyDiscard k) => GrateRes (Two :: k +-> k) (CoTwo :: k +-> k) where
+  zipWithP (Two @a sl) (CoTwo rt) @x kk = rt . (kk ** kk) . ((fst @a @a ^^^ obj @x) &&& (snd @a @a ^^^ obj @x)) . (sl ^^^ obj @x)
+instance (CopyDiscard k) => KaleidoRes (Two :: k +-> k) (CoTwo :: k +-> k) where
   kaleidoP (Two sl) (CoTwo rt) rab = dimap sl rt (rab ** rab)
 instance (Monoidal k) => Proadjunction (Two :: k +-> k) CoTwo where
   unit @x = withOb2 @k @x @x (CoTwo id :.: Two id)
@@ -110,6 +115,7 @@ instance (Monoidal k) => Proadjunction (Two :: k +-> k) CoTwo where
 instance CompactFlavor KaleidoRes
 
 instance SubFlavor KaleidoRes MonTravRes where subFlavor r = r
+instance SubFlavor KaleidoRes GrateRes where subFlavor r = r
 instance SubFlavor KaleidoRes TravRes where subFlavor r = r
 instance SubFlavor KaleidoRes FoldRes where subFlavor r = r
 instance SubFlavor KaleidoRes SetterRes where subFlavor r = r
@@ -120,7 +126,7 @@ type Kaleidoscope' s a = Kaleidoscope s s a a
 -- | Build a binary kaleidoscope from a tensor decomposition of @s@ and recomposition of @t@.
 kaleidoscope
   :: forall {k} (s :: k) (t :: k) a b
-   . (Monoidal k, Ob a, Ob b)
+   . (CopyDiscard k, Ob a, Ob b)
   => (s ~> (a ** a)) -> ((b ** b) ~> t) -> Kaleidoscope s t a b
 kaleidoscope sl rt = ex2prof (ExProstrong (Two sl :.: ExIso id id :.: CoTwo rt))
 
@@ -154,12 +160,26 @@ class KnownNat (n :: Nat) where
   -- | Collapse the @n@-fold tensor power of a monoid via 'mappend'\/'mempty'.
   powFold :: (Monoid m) => Tensor n m ~> m
 
+  -- | Distribute the internal hom over the tensor power: split @x ~~> aⁿ@ into @(x ~~> a)ⁿ@ using
+  -- 'CopyDiscard' projections. The @n@-fold form of the 'Two' split -- this is what makes an
+  -- @n@-ary kaleidoscope a 'Proarrow.Optic.Grate.Grate'.
+  splitPow :: forall k (x :: k) a. (Closed k, CopyDiscard k, Ob x, Ob a) => (x ~~> Tensor n a) ~> Tensor n (x ~~> a)
+
+  -- | @Tensor n a@ is an object whenever @a@ is.
+  withObTensor :: forall k (a :: k) r. (Monoidal k, Ob a) => ((Ob (Tensor n a)) => r) -> r
+
 instance KnownNat Z where
   powDist _ = one
   powFold = mempty
+  splitPow @k @x = withObExp @k @x @Unit (discard @k @(x ~~> Unit))
+  withObTensor r = r
 instance (KnownNat n) => KnownNat (S n) where
   powDist rab = rab ** powDist @n rab
   powFold @m = mappend . ((id :: m ~> m) ** powFold @n @m)
+  splitPow @k @x @a =
+    withObTensor @n @k @a
+      ((fst @a @(Tensor n a) ^^^ obj @x) &&& (splitPow @n @k @x @a . (snd @a @(Tensor n a) ^^^ obj @x)))
+  withObTensor @k @a r = withObTensor @n @k @a (withOb2 @k @a @(Tensor n a) r)
 
 -- | The arity-@n@ aggregation witness: @s@ presents @n@ foci via the tensor power.
 type Pow :: forall {k}. Nat -> k +-> k
@@ -185,7 +205,9 @@ instance (Monoidal k, KnownNat n) => FoldRes (Pow n :: k +-> k) (CoPow n :: k +-
 instance (Monoidal k, KnownNat n) => TravRes (Pow n :: k +-> k) (CoPow n :: k +-> k)
 instance (Monoidal k, KnownNat n) => MonTravRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   monTravP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
-instance (Monoidal k, KnownNat n) => KaleidoRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+instance (CopyDiscard k, KnownNat n) => GrateRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+  zipWithP (Pow @_ @_ @a sl) (CoPow rt) @x kk = rt . powDist @n kk . splitPow @n @_ @x @a . (sl ^^^ obj @x)
+instance (CopyDiscard k, KnownNat n) => KaleidoRes (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   kaleidoP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
 instance (Monoidal k, KnownNat n) => Proadjunction (Pow n :: k +-> k) (CoPow n) where
   unit @x = (CoPow id :.: Pow id) \\ powDist @n (id :: x ~> x)
@@ -195,6 +217,6 @@ instance (Monoidal k, KnownNat n) => Proadjunction (Pow n :: k +-> k) (CoPow n) 
 -- @t@. @'kaleidoscope'@ is the arity-two case.
 kaleidoscopeN
   :: forall {k} (n :: Nat) (s :: k) (t :: k) a b
-   . (Monoidal k, KnownNat n, Ob a, Ob b)
+   . (CopyDiscard k, KnownNat n, Ob a, Ob b)
   => (s ~> Tensor n a) -> (Tensor n b ~> t) -> Kaleidoscope s t a b
 kaleidoscopeN sl rt = ex2prof (ExProstrong (Pow @n sl :.: ExIso id id :.: CoPow @n rt))

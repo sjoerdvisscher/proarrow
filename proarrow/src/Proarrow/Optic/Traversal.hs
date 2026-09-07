@@ -31,11 +31,13 @@ import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Product)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Optic
   ( CompactFlavor (..)
+  , ExOptic (..)
   , FLAVOR
   , Optic
   , Prostrong (..)
   , SubFlavor (..)
   , convert
+  , ex2prof
   , withLegs
   )
 import Proarrow.Optic.Fold (FoldRes (..))
@@ -108,6 +110,16 @@ traverseOf
    . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, SubFlavor w TravRes)
   => Optic (Prostrong w) s t a b -> p a b -> p s t
 traverseOf o pab = withLegs (\l r -> travP l r pab) (convert @(Prostrong w) @TravRes o)
+
+-- | Build a traversal from a 'Traversable' (representable) functor @t@: it focuses every element
+-- the functor holds. This is the one weak-flavor builder that is genuinely primitive -- a
+-- 'Traversable's traversal is not reachable by 'convert' from any single stronger optic. The
+-- witness is @t@ itself paired with @'RepCostar' t@ (see 'TravRes' above); the two legs are the
+-- representable universal @'repUniv'@ and the identity 'RepCostar'.
+traversed
+  :: forall {k} (t :: k +-> k) a b
+   . (Bicartesian k, Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
+traversed = ex2prof (ExProstrong @t @(RepCostar t) (repUniv :.: ExIso id id :.: corepUniv))
 
 -- * The free traversal profunctor
 

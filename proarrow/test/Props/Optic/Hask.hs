@@ -34,7 +34,7 @@ import Proarrow.Optic.Grate (Grate, grate, withGrate)
 import Proarrow.Optic.Iso (Iso, fromPIso, toPIso, withIso)
 import Proarrow.Optic.Kaleidoscope (Kaleidoscope, Nat (..), kaleidoscope, kaleidoscopeN, kaleidoscopeOf)
 import Proarrow.Optic.Lens (Lens, lens, withLens)
-import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens, viewMon)
+import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterRes (..), over, set, (%~))
 
@@ -214,7 +214,7 @@ _Just :: Prism (Maybe a) (Maybe b) a b
 _Just = prism Just (maybe (Left Nothing) Right)
 
 -- | A monoidal lens onto the second component (@Type@'s tensor is @(,)@, so it coincides with a
--- product lens here). 'over' rides the plain 'SetterRes'; 'viewMon' uses the 'CopyDiscard' bridge.
+-- product lens here).
 _2mon :: MonoidalLens (Bool, Bool) (Bool, Bool) Bool Bool
 _2mon = monLens @Bool id id
 
@@ -273,7 +273,7 @@ test =
     , propFnEq @(Bool, Bool) "lens as affine fold" (preview _1) (Left . fst)
     , propFnEq @(Bool, Bool) "lens as fold" (foldMapOf _1 (: [])) (\(a, _) -> [a])
     , propFnEq @(Bool, Bool) "monoidal lens as setter" (over _2mon not) (second not)
-    , propFnEq @(Bool, Bool) "monoidal lens view (CopyDiscard bridge)" (viewMon _2mon) snd
+    , propFnEq @(Bool, Bool) "monoidal lens as getter" (view _2mon) snd
     , propFnEq @(Bool, Bool)
         "traverseOf lens"
         (unPrelude . unStar (traverseOf _1 (Star (Prelude . Just . not))))
@@ -294,7 +294,7 @@ test =
     , propFnEq @Bool "iso as review" (review notIso) not
     , propFnEq @Bool "iso as setter" (over notIso not) not
     , propFnEq @Bool "iso as kaleidoscope" (kaleidoscopeOf notIso not) not
-    , propFnEq @Bool "iso as monoidal lens (viewMon)" (viewMon (O.convert notIso :: MonoidalLens Bool Bool Bool Bool)) not
+    , propFnEq @Bool "iso as monoidal lens (view)" (view (O.convert notIso :: MonoidalLens Bool Bool Bool Bool)) not
     , propFnEq @Bool "iso as monoidal lens (over)" (over (O.convert notIso :: MonoidalLens Bool Bool Bool Bool) not) not
     , propFnEq @(Bool, Bool) "lens as traversal as setter" (over (lensToTraversal _1) not) (first not)
     , propFnEq @(Maybe Bool) "prism as traversal as fold" (foldMapOf (prismToTraversal _Just) (: [])) maybeToList

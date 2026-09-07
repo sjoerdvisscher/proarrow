@@ -17,15 +17,17 @@ import Proarrow.Optic
   , Optic_ (..)
   , Prostrong (..)
   , SubFlavor (..)
+  , convert
   , ex2prof
   , opOptic
   , unOpOptic
+  , (%)
   )
 import Proarrow.Optic.AffineFold (AffineFoldRes)
-import Proarrow.Optic.AffineTraversal (AffineTravRes (..))
+import Proarrow.Optic.AffineTraversal (AffineTravRes (..), AffineTraversal)
 import Proarrow.Optic.Fold (FoldRes)
 import Proarrow.Optic.Getter (GetterRes (..))
-import Proarrow.Optic.Lens (LensRes, lens, withLens)
+import Proarrow.Optic.Lens (Lens, LensRes, lens, withLens)
 import Proarrow.Optic.Setter (SetterRes)
 import Proarrow.Optic.Traversal (MonTravRes, TravRes)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -69,6 +71,14 @@ prism
    . (CopyDiscard k, HasCoproducts k, Ob a) => (b ~> t) -> (s ~> (t || a)) -> Prism s t a b
 prism bt sta =
   ex2prof (ExProstrong @(Rep (Coproduct t)) @(Corep (Coproduct t)) (Rep sta :.: ExIso id id :.: Corep (id ||| bt))) \\ bt
+
+-- | Build an 'AffineTraversal' by composing a 'Lens' with a 'Prism': focus a field with the lens,
+-- then match a case of that field with the prism. There is no from-legs builder for a bare affine
+-- traversal (its witness only ever arises by composition), so this is the design-aligned way to
+-- make one -- the same @'convert' (l '%' p)@ idiom the test suite uses.
+affineTraversal
+  :: forall {k} (s :: k) t x y a b. (CategoryOf k) => Lens s t x y -> Prism x y a b -> AffineTraversal s t a b
+affineTraversal l p = convert (l % p)
 
 -- | The eliminating carrier for prisms: a prism's two legs, as a profunctor in @s@\/@t@.
 type Market :: forall {k}. k -> k -> k +-> k

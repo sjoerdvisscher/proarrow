@@ -1,25 +1,36 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
--- | The __monoidal lens__: the coend optic for the tensor action,
+-- | The __monoidal lens__: the coend optic for the tensor action with a __comonoidal residual__,
 --
--- > MonoidalLens s t a b = exists m. (s ~> m ** a, m ** b ~> t)
+-- > MonoidalLens s t a b = exists m. Comonoid m => (s ~> m ** a, m ** b ~> t)
 --
--- The residual @m@ is carried through the tensor and __never discarded__, so a monoidal lens needs
--- only 'Monoidal' -- no products, no 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard'. Its
--- witness pair is exactly 'Proarrow.Optic.MonoidalTraversal.TensorW'\/'Proarrow.Optic.MonoidalTraversal.CoTensorW'.
+-- The residual @m@ is carried through the tensor, and being a 'Comonoid' it can be /discarded/
+-- (@'counit' :: m ~> 'Unit'@) and /copied/ -- which is exactly what a lens's @get@ needs. So a
+-- monoidal lens is a genuine lens (it views, sets, folds and traverses), and it sits below
+-- 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal' and 'Proarrow.Optic.Getter.Getter' in the
+-- lattice, mirroring the ordinary 'Proarrow.Optic.Lens.Lens' below
+-- 'Proarrow.Optic.AffineTraversal.AffineTraversal':
 --
--- Because the residual is carried rather than projected, a monoidal lens can @'Proarrow.Optic.Setter.over'@\/modify
--- with only 'Monoidal', but can only /view/ or /fold/ where the category is
--- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' (view = discard the residual). It is
--- therefore a 'Proarrow.Optic.Setter.SetterRes' unconditionally, and gains the traversal\/fold\/view
--- capability through the explicit @CopyDiscard@ bridges below ('monLensToMonTraversal', 'viewMon'),
--- not through a 'SubFlavor'. The ordinary 'Proarrow.Optic.Lens.Lens' is the @tensor = product@
--- specialization, where @m@ is recoverable from @s@ and the classical get\/put laws return.
+-- > Lens         <: { Getter, AffineTraversal }      -- product residual
+-- > MonoidalLens <: { Getter, MonoidalTraversal }    -- comonoidal tensor residual
+--
+-- Crucially it asks 'Comonoid' of __the residual only__, not
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' of the whole category: it works in every
+-- @CopyDiscard@ category (there every object is a comonoid) /and/ in genuinely non-cartesian ones
+-- like @LINEAR@ for the residuals that are comonoids (the duplicable @Ur@ objects). The ordinary
+-- 'Proarrow.Optic.Lens.Lens' is the @tensor = product@ specialization, where the residual is
+-- recoverable from @s@ by projection.
 module Proarrow.Optic.MonoidalLens where
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
+import Proarrow.Adjunction (Proadjunction (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
+import Proarrow.Category.Monoidal.Strength (Strong (..))
+import Proarrow.Colimit.BinaryCoproduct (lft)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
+import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (Comonoid)
+import Proarrow.Monoid qualified as Mon
 import Proarrow.Optic
   ( ExOptic (..)
   , FLAVOR
@@ -29,21 +40,55 @@ import Proarrow.Optic
   , SubFlavor (..)
   , ex2prof
   )
-import Proarrow.Optic.MonoidalTraversal (CoTensorW (..), MonoidalTraversal, TensorW (..))
+import Proarrow.Optic.AffineFold (AffineFoldRes (..))
+import Proarrow.Optic.Fold (FoldRes (..))
+import Proarrow.Optic.Getter (GetterRes (..))
 import Proarrow.Optic.Setter (SetterRes (..))
+import Proarrow.Optic.Traversal (MonTravRes (..), TravRes (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 
--- | The monoidal-lens flavor: a 'Proarrow.Optic.Setter.SetterRes' whose witness carries a single
--- existential tensor residual, recoverable as the two legs @(s ~> m ** a, m ** b ~> t)@.
+-- | Witness pair for a monoidal lens: the focus @a@ sits inside @m ** a@ with a __comonoidal__
+-- residual @m@. Being a comonoid, @m@ can be discarded (for @get@\/fold) and carried (for @set@).
+type LensW :: forall {k}. k -> k +-> k
+data LensW m s a where
+  LensW :: (Comonoid m, Ob a) => (s ~> (m ** a)) -> LensW m s a
+
+type CoLensW :: forall {k}. k -> k +-> k
+data CoLensW m b t where
+  CoLensW :: (Comonoid m, Ob b) => ((m ** b) ~> t) -> CoLensW m b t
+
+instance (Comonoid (m :: k)) => Profunctor (LensW m :: k +-> k) where
+  dimap l r (LensW h) = LensW ((obj @m ** r) . h . l) \\ r
+  r \\ LensW h = r \\ h
+instance (Comonoid (m :: k)) => Profunctor (CoLensW m :: k +-> k) where
+  dimap l r (CoLensW i) = CoLensW (r . i . (obj @m ** l)) \\ l
+  r \\ CoLensW i = r \\ i
+
+instance (Comonoid (m :: k)) => Proadjunction (LensW m :: k +-> k) (CoLensW m) where
+  unit @c = withOb2 @k @m @c (CoLensW id :.: LensW id)
+  counit (LensW h :.: CoLensW i) = i . h
+instance (Comonoid (m :: k)) => SetterRes (LensW m :: k +-> k) (CoLensW m) where
+  overP (LensW h) (CoLensW i) f = i . (obj @m ** f) . h
+instance (Comonoid (m :: k)) => FoldRes (LensW m :: k +-> k) (CoLensW m) where
+  foldMapP (LensW h) am = leftUnitor . (Mon.counit @m ** am) . h
+instance (Comonoid (m :: k)) => AffineFoldRes (LensW m :: k +-> k) (CoLensW m) where
+  previewP @_ @a (LensW h) = lft @k @a @TerminalObject . leftUnitor . (Mon.counit @m ** obj @a) . h
+instance (Comonoid (m :: k)) => GetterRes (LensW m :: k +-> k) (CoLensW m) where
+  getP @_ @a (LensW h) = leftUnitor . (Mon.counit @m ** obj @a) . h
+instance (Comonoid (m :: k)) => TravRes (LensW m :: k +-> k) (CoLensW m)
+instance (Comonoid (m :: k)) => MonTravRes (LensW m :: k +-> k) (CoLensW m) where
+  monTravP (LensW h) (CoLensW i) r = dimap h i (act @Tensor @_ @m r)
+
+-- | The monoidal-lens flavor: a lens whose residual is a comonoid, so it is both a
+-- 'Proarrow.Optic.Getter.Getter' and a 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal'.
 type MonLensRes :: forall {k}. FLAVOR k k
-class (SetterRes p q) => MonLensRes (p :: k +-> k) (q :: k +-> k) where
-  -- | Recover a monoidal lens's two legs, with the residual @m@ existential. Needs only
-  -- 'Monoidal' -- the residual is threaded, never discarded.
+class (GetterRes p q, MonTravRes p q) => MonLensRes (p :: k +-> k) (q :: k +-> k) where
+  -- | Recover a monoidal lens's two legs, with the (comonoidal) residual @m@ existential.
   withMonLensP :: (Monoidal k) => p s a -> q b t -> (forall (m :: k). (Ob m) => (s ~> m ** a) -> (m ** b ~> t) -> r) -> r
 
-instance (Monoidal k, Ob (m :: k)) => MonLensRes (TensorW m :: k +-> k) (CoTensorW m) where
-  withMonLensP (TensorW h) (CoTensorW i) k = k @m h i
+instance (Comonoid (m :: k)) => MonLensRes (LensW m :: k +-> k) (CoLensW m) where
+  withMonLensP (LensW h) (CoLensW i) k = k @m h i
 
 instance (CategoryOf k) => MonLensRes (Id :: k +-> k) (Id :: k +-> k) where
   withMonLensP (Id sa) (Id bt) k = k @Unit (leftUnitorInv . sa) (bt . leftUnitor) \\ sa \\ bt
@@ -64,16 +109,21 @@ instance
           \\ f'
           \\ g'
 
+instance SubFlavor MonLensRes GetterRes where subFlavor r = r
+instance SubFlavor MonLensRes MonTravRes where subFlavor r = r
+instance SubFlavor MonLensRes TravRes where subFlavor r = r
 instance SubFlavor MonLensRes SetterRes where subFlavor r = r
+instance SubFlavor MonLensRes AffineFoldRes where subFlavor r = r
+instance SubFlavor MonLensRes FoldRes where subFlavor r = r
 
 type MonoidalLens (s :: k) (t :: k) a b = Optic (Prostrong MonLensRes) s t a b
 type MonoidalLens' s a = MonoidalLens s s a a
 
--- | Build a monoidal lens from its two legs and a chosen residual @m@.
+-- | Build a monoidal lens from its two legs and a chosen __comonoidal__ residual @m@.
 monLens
   :: forall {k} (m :: k) (s :: k) t a b
-   . (Monoidal k, Ob m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalLens s t a b
-monLens h i = ex2prof (ExProstrong @(TensorW m) @(CoTensorW m) (TensorW h :.: ExIso id id :.: CoTensorW i))
+   . (Comonoid m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalLens s t a b
+monLens h i = ex2prof (ExProstrong @(LensW m) @(CoLensW m) (LensW h :.: ExIso id id :.: CoLensW i))
 
 -- | The eliminating carrier for monoidal lenses: the two legs with the residual @m@ existential.
 type MonShop :: forall {k}. k -> k -> k +-> k
@@ -105,17 +155,3 @@ withMonLens
   => Optic c s t a b -> (forall m. (Ob m) => (s ~> m ** a) -> (m ** b ~> t) -> r) -> r
 withMonLens (Optic l) k = case l @(MonShop a b) (MonShop @a @b @Unit leftUnitorInv leftUnitor) of
   MonShop @_ @_ @m h i -> k @m h i
-
--- * Bridges to the fold\/traversal side, available only under 'CopyDiscard'
-
--- | A monoidal lens is a 'MonoidalTraversal' once the residual can be discarded.
-monLensToMonTraversal
-  :: forall {k} (s :: k) t a b
-   . (CopyDiscard k, Ob a, Ob b)
-  => MonoidalLens s t a b -> MonoidalTraversal s t a b
-monLensToMonTraversal o =
-  withMonLens o \ @m h i -> ex2prof (ExProstrong @(TensorW m) @(CoTensorW m) (TensorW h :.: ExIso id id :.: CoTensorW i))
-
--- | View a monoidal lens's focus, discarding the residual. Needs 'CopyDiscard'.
-viewMon :: forall {k} (s :: k) t a b. (CopyDiscard k, Ob a) => MonoidalLens s t a b -> s ~> a
-viewMon o = withMonLens o \ @m h _ -> leftUnitor . (discard @k @m ** obj @a) . h
