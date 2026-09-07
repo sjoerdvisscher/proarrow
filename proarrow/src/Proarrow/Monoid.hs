@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Monoids and comonoids internal to a monoidal category: a 'Monoid' @m@ has @'mempty' :: 'Unit' '~>' m@
+-- and @'mappend' :: m '**' m '~>' m@; dually a 'Comonoid' has 'counit' and 'comult'. Monoids in
+-- 'Data.Kind.Type' are exactly Prelude monoids, and in a cartesian category every object is a comonoid.
 module Proarrow.Monoid where
 
 import Data.Kind (Constraint, Type)

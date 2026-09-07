@@ -1,6 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __augmented simplex category__: objects are the finite ordinals (as type-level 'Nat's,
+-- including the empty ordinal 'Z') and morphisms are order-preserving maps, built from the
+-- constructors 'ZZ', 'Y' (skip a target) and 'X' (repeat a source). Ordinal sum makes it monoidal,
+-- and it is the walking monoid: monoids in a monoidal category correspond to monoidal functors out
+-- of it.
 module Proarrow.Category.Instance.Simplex (module Proarrow.Category.Instance.Simplex, Nat (..)) where
 
 import Data.Fin (Fin (..))

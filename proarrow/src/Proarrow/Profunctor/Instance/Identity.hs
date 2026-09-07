@@ -1,3 +1,5 @@
+-- | The identity profunctor 'Id', wrapping the hom arrows of a category. It is the unit of profunctor
+-- composition ("Proarrow.Profunctor.Instance.Composition") and the identity 'Promonad'.
 module Proarrow.Profunctor.Instance.Identity where
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))

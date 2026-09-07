@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The @Fam@ construction, a.k.a. the __free coproduct completion__ of a category: an object of
+-- @'FAM' k@ is a family of @k@-objects indexed by some kind @x@ (a representable profunctor
+-- @dx :: x '+->' k@, packaged as @'DEP' x dx@), and a morphism is a reindexing functor together
+-- with a componentwise map of families.
 module Proarrow.Category.Instance.Fam where
 
 import Data.Kind (Type)

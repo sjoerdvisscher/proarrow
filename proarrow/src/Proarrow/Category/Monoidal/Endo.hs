@@ -79,7 +79,7 @@ instance (Is E a, c (UN E a)) => OnE c a
 -- 'TravSub' for a further restriction.
 type RepSub k = SUBCAT (OnE Representable :: OB (ENDO k))
 
--- | The action of 'RepSub' on @k@ by application: @'Act' 'RepAction' ('SUB' ('E' f)) x = f '%' x@.
+-- | The action of 'RepSub' on @k@ by application: @'Proarrow.Category.Monoidal.Action.Act' 'RepAction' ('SUB' ('E' f)) x = f '%' x@.
 type RepAction = Rep RepAction'
 
 data family RepAction' :: (RepSub k, k) +-> k
@@ -100,7 +100,7 @@ instance (CategoryOf k) => MonoidalAction (RepAction :: (RepSub k, k) +-> k) whe
 -- instances closing them under @:.:@\/'Id'.
 type TravSub k = SUBCAT (OnE (Representable :&&: Traversable) :: OB (ENDO k))
 
--- | The action of 'TravSub' on @k@ by application: @'Act' 'TravAction' ('SUB' ('E' f)) x = f '%' x@.
+-- | The action of 'TravSub' on @k@ by application: @'Proarrow.Category.Monoidal.Action.Act' 'TravAction' ('SUB' ('E' f)) x = f '%' x@.
 type TravAction = Rep TravAction'
 
 data family TravAction' :: (TravSub k, k) +-> k
@@ -115,7 +115,7 @@ instance (CategoryOf k) => MonoidalAction (TravAction :: (TravSub k, k) +-> k) w
   multiplicatorInv @(SUB (E p)) @(SUB (E q)) @x = withObRep @q @x (withObRep @p @(q % x) id)
 
 -- | Endo-profunctors on @x@ (any, not just representable ones) act on profunctors
--- @x +-> h@ by precomposition: @'Act' 'Precomp' ('E' g) q = q ':.:' g@. Unlike 'RepAction'\/
+-- @x +-> h@ by precomposition: @'Proarrow.Category.Monoidal.Action.Act' 'Precomp' ('E' g) q = q ':.:' g@. Unlike 'RepAction'\/
 -- 'TravAction', the acted-upon kind here isn't @x@ or @h@ itself but the whole profunctor
 -- kind @x +-> h@, so the witness @g@ never has to be 'Representable' -- only the assembled
 -- action (@'Rep' 'Precomp'@) does, which is automatic. This is what lets

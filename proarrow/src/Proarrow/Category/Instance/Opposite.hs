@@ -1,3 +1,7 @@
+-- | The __opposite category__: the kind @'OPPOSITE' k@ wraps @k@ in 'OP', and an arrow
+-- @'OP' a '~>' 'OP' b@ is an arrow @b '~>' a@ of @k@. 'Op' (and its inverse 'UnOp') also flips
+-- profunctors, swapping their two arguments -- the prototypical use of a newtype wrapper on a kind
+-- to give one collection of types a second category structure.
 module Proarrow.Category.Instance.Opposite where
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))

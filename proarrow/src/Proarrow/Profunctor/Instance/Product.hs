@@ -1,3 +1,4 @@
+-- | The pointwise product of two profunctors: a @(p ':*:' q) a b@ is a pair of a @p a b@ and a @q a b@.
 module Proarrow.Profunctor.Instance.Product where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))

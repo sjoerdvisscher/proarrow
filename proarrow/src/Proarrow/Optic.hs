@@ -1,5 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The encoding-agnostic core of the optics machinery: the 'Optic' type (a rank-2 profunctor
+-- transformation @forall p. c p => p a b -> p s t@), optic flavors as witness-pair constraints
+-- ('FLAVOR') with subtyping via 'SubFlavor', carrier strength ('Prostrong'), and the existential
+-- encoding 'ExOptic' with 'ex2prof'\/'prof2ex'\/'convert' mediating between the two. Also home to
+-- the flavor-generic combinators 'iso', 're' and '(%)'. The concrete optic kinds live in the
+-- @Proarrow.Optic.*@ submodules, and the user-facing vocabulary (with the full subtyping lattice
+-- drawn out) is re-exported from "Proarrow.Optics".
 module Proarrow.Optic where
 
 import Data.Kind (Constraint, Type)

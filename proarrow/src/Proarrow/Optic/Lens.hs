@@ -1,5 +1,14 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The __lens__: the optic for the categorical product, with legs
+--
+-- > Lens s t a b = (s ~> a, (s && b) ~> t)
+--
+-- witnessed by @'Rep'@\/@'Corep'@ @('Product' s)@ ('LensRes' \/ 'putP') -- the product residual is
+-- the whole source @s@. A lens both views and sets, sitting below 'Proarrow.Optic.Getter.Getter'
+-- and 'Proarrow.Optic.AffineTraversal.AffineTraversal' in the lattice. Build with 'lens' (or from
+-- the van-Laarhoven form with 'lensVL'), eliminate to the two legs with 'withLens', via the
+-- 'Shop' carrier.
 module Proarrow.Optic.Lens where
 
 import Data.Functor.Const (Const (..))

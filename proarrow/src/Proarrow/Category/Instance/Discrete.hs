@@ -1,3 +1,7 @@
+-- | The __discrete__ category on a kind @k@ (@'DISCRETE' k@): every type of kind @k@ is an object
+-- and the only arrows are identities ('Refl'). Its mirror image, the __codiscrete__ category
+-- @CODISCRETE k@, has exactly one arrow between any two objects. All (co)limits that exist are
+-- trivially computed.
 module Proarrow.Category.Instance.Discrete where
 
 import Data.Type.Equality (type (~~))

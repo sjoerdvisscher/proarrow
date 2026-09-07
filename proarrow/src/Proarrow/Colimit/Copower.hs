@@ -1,6 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Copowers (tensors) of a category enriched in @v@: 'Copowered' provides @n '*.' a@, characterized by
+-- the isomorphism between @(n '*.' a) '~>' b@ and @n '~>' 'HomObj' v a b@ ('copower'\/'uncopower').
 module Proarrow.Colimit.Copower where
 
 import Data.Kind (Type)

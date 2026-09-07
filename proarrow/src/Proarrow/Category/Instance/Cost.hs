@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE CPP #-}
 
+-- | The Lawvere __cost__ category: extended natural numbers (@'C' n@ or 'INF') as a thin category
+-- with an arrow @a '~>' b@ exactly when @a >= b@ ('GTE'). Addition of costs provides a symmetric
+-- monoidal structure with @'C' 0@ as unit (and terminal object; 'INF' is initial), so categories
+-- enriched in @COST@ are generalized (Lawvere) metric spaces.
 module Proarrow.Category.Instance.Cost where
 
 import Data.Proxy (Proxy (..))

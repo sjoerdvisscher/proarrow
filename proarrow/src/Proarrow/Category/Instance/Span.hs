@@ -1,3 +1,7 @@
+-- | The category of __spans__ in @k@: objects are those of @k@ (wrapped in 'SP'), and a morphism
+-- @a '~>' b@ is a span @a <- x -> b@, composed by pullback. With the product of @k@ as tensor every
+-- object is a Frobenius monoid, giving the hypergraph\/dagger structure dual to
+-- "Proarrow.Category.Instance.Cospan".
 module Proarrow.Category.Instance.Span where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))

@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Profunctor-weighted colimits: @'HasColimits' j k@ says @k@ has colimits of @k '+->' i@-diagrams
+-- weighted by @j@, given by the 'Colimit' profunctor with 'colimit' and 'colimitUniv'. The 'Unweighted'
+-- (terminal profunctor) weight recovers ordinary conical colimits, e.g. initial objects, binary
+-- coproducts and copowers as special shapes.
 module Proarrow.Colimit where
 
 import Data.Function (($))

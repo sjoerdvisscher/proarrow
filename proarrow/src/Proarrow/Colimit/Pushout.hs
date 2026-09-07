@@ -1,5 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Pushouts: 'HasPushouts' with 'pushout' in continuation-passing style -- the apex type depends on the
+-- given arrows, so it is hidden behind an existential -- and 'factorPushout' for the universal property,
+-- defaulting to coproduct-then-coequalizer where those exist.
 module Proarrow.Colimit.Pushout where
 
 import Prelude (Bool, const, ($), (==))

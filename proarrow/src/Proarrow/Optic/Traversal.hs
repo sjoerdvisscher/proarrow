@@ -1,6 +1,15 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __traversal__: the many-focus optic, distributing any
+-- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' with product strength
+-- through the foci. This module keeps the mutually-recursive 'TravRes'\/'MonTravRes' flavor
+-- classes and their leaf witnesses ('Traversable' and 'Cotraversable' functors, the product lens,
+-- the coproduct prism, 'Beside'\/'BesideSum' juxtaposition and the unit\/zero witnesses); the
+-- free-profunctor apparatus lives in "Proarrow.Optic.MonoidalTraversal". A traversal subtypes to
+-- 'Proarrow.Optic.Fold.Fold' and 'Proarrow.Optic.Setter.Setter'. Build with 'traversed' (from a
+-- 'Traversable') or 'Proarrow.Optic.MonoidalTraversal.traversal' (from the van-Laarhoven form),
+-- eliminate with 'traverseOf'.
 module Proarrow.Optic.Traversal where
 
 import Proarrow.Adjunction (Proadjunction (..))
@@ -70,7 +79,7 @@ instance (Bicartesian k, Traversable t, Representable t) => MonTravRes (t :: k +
 -- | The former cotraversal witness: a corepresentable 'Cotraversable' functor builds @s@ from a
 -- shape of @a@'s. Its 'travP' distributes an SDP exactly as the old @cotravP@ did -- for these
 -- (representable) witnesses a cotraversal /is/ a traversal, which is why there is no separate
--- 'Cotraversal' optic.
+-- @Cotraversal@ optic.
 instance (Bicartesian k, Cotraversable t, Corepresentable t) => TravRes (CorepStar t) (t :: k +-> k)
 
 instance (Bicartesian k, Cotraversable t, Corepresentable t) => MonTravRes (CorepStar t) (t :: k +-> k) where
@@ -164,7 +173,7 @@ instance (Proadjunction p1 q1, Proadjunction p2 q2, Monoidal k) => Proadjunction
 
 -- | Witness pair for traversing one of two alternative (coproduct) parts: the same one-sided
 -- Day convolution as 'Beside'\/'CoBeside', but over the coproduct monoidal structure (cf.
--- 'Coprod').
+-- 'Proarrow.Colimit.BinaryCoproduct.Coprod').
 type BesideSum :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 data BesideSum p1 p2 s x where
   BesideSum :: (s ~> (s1 || s2)) -> p1 s1 x -> p2 s2 x -> BesideSum p1 p2 s x

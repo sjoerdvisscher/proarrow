@@ -1,6 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __setter__: the weakest write-side optic, applying a morphism to every focus ('SetterRes'
+-- \/ 'overP', whose 'Proadjunction' superclass certifies the witness pair is a genuine adjoint
+-- pair, i.e. the optic is lawful). It sits at the write-only top of the subtyping lattice
+-- alongside 'Proarrow.Optic.Fold.Fold', so it has no builder of its own
+-- ('Proarrow.Optic.convert' a stronger optic); its canonical eliminator is 'over' -- with 'set',
+-- '(%~)' and '(.~)' as shorthands -- via the hom carrier 'Id'.
 module Proarrow.Optic.Setter where
 
 import Data.Kind (Type)
@@ -34,7 +40,7 @@ class (Proadjunction p q) => SetterRes (p :: k +-> k) (q :: k +-> k) where
 instance CompactFlavor SetterRes
 
 -- | Every /representable/ residual is a setter: map the focus through the residual functor with
--- 'repMap'. This needs only 'Representable' @t@ -- no 'Traversable' -- which is exactly why
+-- 'repMap'. This needs only 'Representable' @t@ -- no 'Proarrow.Category.Monoidal.Distributive.Traversable' -- which is exactly why
 -- 'Proarrow.Optic.Setter.Setter' sits at the top of the lattice: functoriality of the residual is
 -- all @over@ ever uses. Richer optics ('Proarrow.Optic.Lens.Lens', 'Proarrow.Optic.Traversal.Traversal', ...)
 -- are this witness plus extra algebra on @t@.
@@ -51,7 +57,7 @@ instance (SetterRes f g, SetterRes f' g') => SetterRes (f :.: f') (g' :.: g) whe
   overP (f :.: f') (g' :.: g) = overP @f @g f g . overP @f' @g' f' g'
 
 -- | Dually, every /corepresentable/ residual is a setter: map with 'corepMap'. Needs only
--- 'Corepresentable' @t@, not 'Cotraversable'.
+-- 'Corepresentable' @t@, not 'Proarrow.Category.Monoidal.Distributive.Cotraversable'.
 instance (Corepresentable t) => SetterRes (CorepStar t) t where
   overP (CorepStar l) co f = coindex co . corepMap @t f . l
 

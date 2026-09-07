@@ -1,3 +1,6 @@
+-- | Working with objects through their identity arrows: 'Obj' @a@ is @a '~>' a@ used as a witness that
+-- @a@ is an object, with 'obj', 'src' and 'tgt' to produce them and the 'Obj'\/'Objs' pattern synonyms
+-- to recover 'Ob' constraints from arrows and profunctor values.
 module Proarrow.Object
   ( Obj
   , pattern Obj
@@ -13,7 +16,7 @@ module Proarrow.Object
 
 import Data.Kind (Type)
 
-import Proarrow.Core (CategoryOf (..), Obj, obj, src, tgt, (\\), Profunctor)
+import Proarrow.Core (CategoryOf (..), Obj, Profunctor, obj, src, tgt, (\\))
 
 class (Ob a, CategoryOf k) => Ob' (a :: k)
 instance (Ob a, CategoryOf k) => Ob' (a :: k)

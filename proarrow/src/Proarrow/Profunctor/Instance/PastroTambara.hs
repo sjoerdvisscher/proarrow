@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | 'Pastro' and 'Tambara' are the free and cofree 'Prostrong' profunctors for an optic flavor @w@ (the
+-- 'HasFree' and 'HasCofree' instances for @'Prostrong' w@): @Pastro w r@ sandwiches @r@ between an
+-- existential witness pair, while @Tambara w r@ provides strength against every witness pair at once.
 module Proarrow.Profunctor.Instance.PastroTambara where
 
 import Prelude (($))

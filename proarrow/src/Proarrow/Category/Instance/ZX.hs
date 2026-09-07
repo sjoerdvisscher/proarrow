@@ -2,6 +2,10 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __ZX calculus__ for reasoning about quantum computations: objects are numbers of qubits
+-- and a morphism @'ZX' i o@ is a complex matrix between the corresponding state spaces, stored
+-- sparsely. Provides the generators -- 'zSpider', 'xSpider' and 'hadamard' -- as a dagger monoidal
+-- category.
 module Proarrow.Category.Instance.ZX where
 
 import Data.Bits (Bits (..), shiftL, (.|.))

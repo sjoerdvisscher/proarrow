@@ -1,5 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Classic "Control.Arrow" arrows as promonads: 'Arr' wraps any 'Control.Arrow.Arrow' as a 'Promonad',
+-- with the strength and monoidal instances corresponding to the arrow's capabilities
+-- ('Control.Arrow.ArrowChoice', 'Control.Arrow.ArrowLoop', 'Control.Arrow.ArrowApply', ...).
 module Proarrow.Profunctor.Instance.Arrow where
 
 import Control.Arrow

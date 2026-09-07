@@ -1,6 +1,13 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __iso__: the bottom of the subtyping lattice, usable as every other flavor. 'IsoRes' is
+-- simply the conjunction of the four maximal flavors ('Proarrow.Optic.Lens.LensRes',
+-- 'Proarrow.Optic.Prism.PrismRes', 'Proarrow.Optic.Kaleidoscope.KaleidoRes' and
+-- 'Proarrow.Optic.MonoidalLens.MonLensRes'). Build with 'iso', eliminate to the two legs with
+-- 'withIso' via the 'Yo' carrier -- which also eliminates 'Proarrow.Optic.re'-versed isos, a
+-- conversion the 'SubFlavor' lattice itself cannot express; 'fromPIso'\/'toPIso' mediate with the
+-- profunctor-class-flavored 'PIso'.
 module Proarrow.Optic.Iso where
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -81,7 +88,7 @@ withIso (Optic l) k = case l @(Yo a (OP b)) (Yo id id) of Yo sa bt -> k sa bt
 
 -- | The two iso encodings are equivalent: this direction instantiates the
 -- profunctor-class-flavored iso at the free 'IsoRes'-strong profunctor @ExOptic 'IsoRes' a b@,
--- which needs nothing beyond its 'Profunctor' instance.
+-- which needs nothing beyond its 'Proarrow.Core.Profunctor' instance.
 fromPIso :: forall {k} (s :: k) (t :: k) a b. (CategoryOf k) => PIso s t a b -> Iso s t a b
 fromPIso = convert
 

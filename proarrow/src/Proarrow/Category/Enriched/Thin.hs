@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Thin categories, where any two parallel arrows are equal: a 'ThinProfunctor' has at most one
+-- element between any two objects, mere existence being captured by the constraint
+-- @'HasArrow' p a b@. Also defines the codiscrete (always exactly one arrow) and discrete (only
+-- identity arrows) special cases.
 module Proarrow.Category.Enriched.Thin where
 
 import Data.Kind (Constraint)

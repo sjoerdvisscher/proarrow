@@ -1,6 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 {- HLINT ignore "Use elemIndex" -}
+
+-- | The skeleton of the category of __finite sets__: objects are natural numbers (@'FS' n@) and a
+-- morphism @'FS' n '~>' 'FS' m@ is a function stored as its table, a length-@n@ vector of indices
+-- below @m@. Distributive and cartesian closed (exponentials via the 'Exp' type family), with all
+-- structure computed concretely.
 module Proarrow.Category.Instance.FinSet where
 
 import Data.Containers.ListUtils (nubOrd)

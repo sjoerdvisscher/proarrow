@@ -1,5 +1,16 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The __prism__: the optic for the coproduct, with legs
+--
+-- > Prism s t a b = (b ~> t, s ~> (t || a))
+--
+-- witnessed by @'Rep'@\/@'Corep'@ @('Coproduct' t)@ ('PrismRes' \/ 'matchingP'). A prism reviews
+-- and matches, sitting below 'Proarrow.Optic.Getter.Review',
+-- 'Proarrow.Optic.AffineTraversal.AffineTraversal' and
+-- 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal' in the lattice. Build with 'prism',
+-- eliminate to the two legs with 'withPrism' via the 'Market' carrier;
+-- 'toOpLens'\/'fromOpLens' witness the equivalence with the op-lens encoding, and this module also
+-- hosts 'affineTraversal', the lens-then-prism builder for affine traversals.
 module Proarrow.Optic.Prism where
 
 import Proarrow.Category.Instance.Opposite (Op (..))
@@ -107,7 +118,7 @@ withPrism (Optic l) k = case l @(Market a b) (Market id (rgt @k @b @a)) of Marke
 -- over the opposite category) carry the same data -- the two legs @(b '~>' t, s '~>' t '||' a)@ --
 -- so they are equivalent. 'toOpLens' eliminates a 'PrismRes' prism to its legs (via 'Market') and
 -- rebuilds the op-lens; 'fromOpLens' eliminates the op-lens (via 'Proarrow.Optic.Lens.withLens' on
--- 'opOptic', i.e. as a lens over 'OPPOSITE') and rebuilds the 'PrismRes' prism.
+-- 'opOptic', i.e. as a lens over 'Proarrow.Category.Instance.Opposite.OPPOSITE') and rebuilds the 'PrismRes' prism.
 -- | The __op-lens__ encoding of a prism: a 'Proarrow.Optic.Lens.Lens' over the opposite category.
 type OpLens (s :: k) t a b = Optic (OpConstraint (Prostrong LensRes)) s t a b
 

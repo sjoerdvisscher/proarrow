@@ -1,3 +1,5 @@
+-- | Parametrized natural numbers objects: 'HasParamNNO' provides 'NNO' with 'zero', 'succ' and the
+-- parametrized recursor 'nnoUniv', from which arithmetic like 'add' is definable.
 module Proarrow.Colimit.NaturalNumbers where
 
 import Data.Kind (Type)

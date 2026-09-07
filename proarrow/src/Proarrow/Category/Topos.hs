@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Elementary toposes: 'HasSubobjectClassifier' provides the object 'Omega' of truth values
+-- classifying monomorphisms, 'HasEpiMonoFactorization' the image factorization, and
+-- 'ElementaryTopos' combines these with finite (co)limits and exponentials, yielding the internal
+-- logic ('false', 'and', 'or', 'implies').
 module Proarrow.Category.Topos where
 
 import Proarrow.Category.Monoidal.Closed (CCC)

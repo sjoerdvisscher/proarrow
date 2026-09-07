@@ -1,3 +1,7 @@
+-- | Universal properties of a functor at a single object: 'InitUniversal' @a r@ gives the universal
+-- arrow from @a@ to the functor @r@, 'TermUniversal' dually. The 'AsRightAdjoint'\/'AsLeftAdjoint'
+-- newtypes upgrade a functor with a universal property at /every/ object to a full
+-- 'Proarrow.Adjunction.Adjunction'.
 module Proarrow.Universal where
 
 import Data.Kind (Constraint)

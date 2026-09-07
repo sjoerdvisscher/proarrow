@@ -1,5 +1,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The right Kan lift of a profunctor @p@ along @j@, written @p '<|' j@: the universal @g@ with
+-- @j ':.:' g ~> p@. (Note: 'Proarrow.Profunctor.Instance.Ran.Ran' and 'Rift' are swapped compared to the @profunctors@ package.)
 module Proarrow.Profunctor.Instance.Rift where
 
 import Prelude (type (~))

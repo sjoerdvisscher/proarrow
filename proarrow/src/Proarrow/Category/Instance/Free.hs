@@ -2,6 +2,11 @@
 {-# LANGUAGE LinearTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The category __freely generated__ by a quiver @p@ of generator arrows, extended with a chosen
+-- list @cs@ of structural classes (terminal object, products, closed structure, ...): an arrow of
+-- @'FREE' cs p@ is a formal composite of generators ('Emb') and structure morphisms ('St'). 'fold'
+-- interprets such an arrow in any category supporting the same structures, making this the basis
+-- for deeply embedded categorical DSLs.
 module Proarrow.Category.Instance.Free where
 
 import Data.Char (toLower)
@@ -49,7 +54,7 @@ emb p = Emb p Id
 
 -- | Witnesses that every structure class in @cs@ holds for 'FREE cs p' itself. Needed whenever
 -- an instance for 'FREE cs p' has to discharge a superclass obligation stated generically over
--- @k@ (e.g. 'HasTerminalObject'\'s own @'Ob' ('TerminalObject' :: k)@) by cashing in @c \`Elem\`
+-- @k@ (e.g. 'Proarrow.Limit.Terminal.HasTerminalObject'\'s own @'Ob' ('Proarrow.Limit.Terminal.TerminalObject' :: k)@) by cashing in @c \`Elem\`
 -- cs@'s reflexive implication (@'All' cs k => c k@) at @k = FREE cs p@ — see 'Elem'.
 class (All cs (FREE cs p)) => Ok cs (p :: CAT j)
 

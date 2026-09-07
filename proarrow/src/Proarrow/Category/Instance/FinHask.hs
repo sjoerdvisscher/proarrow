@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The category of __finite Haskell types__: objects are types with 'Universe'\/'Finite'
+-- instances (wrapped in 'FH'), and a morphism is a function stored extensionally as a finite
+-- lookup table ('Data.Map.Map'), so morphisms can be enumerated, shown and compared. A finite,
+-- fully inspectable stand-in for "Proarrow.Category.Instance.Hask".
 module Proarrow.Category.Instance.FinHask where
 
 import Data.Coerce qualified as P

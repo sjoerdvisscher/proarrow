@@ -1,3 +1,5 @@
+-- | @'HaskValue' c@ is the profunctor that ignores its indices and simply holds a Haskell value of type
+-- @c@; it is a 'Promonad' and a monoidal profunctor whenever @c@ is a 'Prelude.Monoid'.
 module Proarrow.Profunctor.Instance.HaskValue where
 
 import Data.Kind (Type)

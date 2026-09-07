@@ -1,3 +1,5 @@
+-- | The continuation promonad: @'Cont' r a b@ is a continuation transformer @(b '~>' r) -> (a '~>' r)@.
+-- It is strong for the tensor but only premonoidal, as the order of effects matters.
 module Proarrow.Promonad.Cont where
 
 import Data.Kind (Type)
@@ -24,7 +26,7 @@ instance Strong Tensor (Cont (r :: Type)) where
 
 -- Not costrong
 
--- | Only premonoidal not monoidal?
+-- | Only premonoidal not monoidal.
 instance MonoidalProfunctor (Cont (r :: Type)) where
   one = Cont id
   Cont f ** Cont g = Cont \k (x1, y1) -> f (\x2 -> g (\y2 -> k (x2, y2)) y1) x1

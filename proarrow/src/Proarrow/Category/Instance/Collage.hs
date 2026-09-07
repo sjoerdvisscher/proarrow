@@ -1,3 +1,8 @@
+-- | The __collage__ (or cograph) of a profunctor @p@: a category on the disjoint union of @p@'s
+-- two base categories ('L'- and 'R'-tagged objects, via the kind @'COLLAGE' p@), whose
+-- cross-arrows @'L' a '~>' 'R' b@ are exactly the elements @p a b@ (the 'L2R' constructor).
+-- The injections 'InjL'\/'InjR' present a profunctor as a single category sitting over the
+-- walking arrow 'Proarrow.Category.Instance.Bool.BOOL'.
 module Proarrow.Category.Instance.Collage where
 
 import Data.Kind (Constraint)

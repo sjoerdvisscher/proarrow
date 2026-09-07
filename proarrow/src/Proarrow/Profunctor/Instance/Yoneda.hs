@@ -1,5 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The Yoneda construction: @'Yoneda' p@ is the cofree profunctor on an arbitrary type of kind
+-- @j +-> k@ (the 'HasCofree' instance for 'Profunctor'), and 'Yo' is the Yoneda embedding. By the Yoneda
+-- lemma @Yoneda p@ is equivalent to @p@ when @p@ is already a profunctor ('yoneda'\/'mkYoneda').
 module Proarrow.Profunctor.Instance.Yoneda where
 
 import Data.Function (($))

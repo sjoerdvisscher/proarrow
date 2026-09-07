@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | 'Costar' embeds a functor @f@ as a profunctor with the functor on the source side:
+-- @Costar f a b = f a ~> b@. It is the corepresentable profunctor of @f@, dual to
+-- 'Proarrow.Profunctor.Instance.Star.Star'.
 module Proarrow.Profunctor.Instance.Costar where
 
 import Control.Monad qualified as P

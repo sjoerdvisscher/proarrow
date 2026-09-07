@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Pullbacks: 'HasPullbacks' with 'pullback' in continuation-passing style -- the pullback object's
+-- type depends on the given arrows, so it is hidden behind an existential -- and 'factorPullback' for
+-- the universal property, defaulting to product-then-equalizer where those exist.
 module Proarrow.Limit.Pullback where
 
 import Prelude (Bool, const, ($), (==))

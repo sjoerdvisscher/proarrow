@@ -2,6 +2,9 @@
 {-# LANGUAGE RequiredTypeArguments #-}
 {-# OPTIONS_GHC -Wno-unused-foralls #-}
 
+-- | Compact closed categories: star-autonomous categories whose dual distributes over the tensor
+-- ('distribDual', 'dualUnit'), so that every object has a duality unit and counit ('dualityUnit',
+-- 'dualityCounit') and every morphism @x ** u ~> y ** u@ has a trace ('traceCC').
 module Proarrow.Category.Monoidal.CompactClosed where
 
 import Prelude (($))

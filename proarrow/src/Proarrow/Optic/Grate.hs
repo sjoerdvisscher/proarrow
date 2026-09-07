@@ -1,5 +1,13 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The __grate__: the closed-category optic whose residual sits under an exponential,
+--
+-- > Grate s t a b = exists m. (s ~> (m ~~> a), (m ~~> b) ~> t)
+--
+-- witnessed by @'Rep'@\/@'Corep'@ @('Exp' m)@ ('GrateRes' \/ 'zipWithP'). It subtypes only to
+-- 'Proarrow.Optic.Setter.Setter', and every 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' is one.
+-- Build with 'grate' (whose residual is the \"logarithm\" @s ~~> a@), eliminate to the zipping
+-- function with 'withGrate', via the 'Grating' carrier.
 module Proarrow.Optic.Grate where
 
 import Prelude (($))

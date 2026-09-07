@@ -1,3 +1,7 @@
+-- | The coproduct (disjoint union) of two categories: the kind @'COPRODUCT' j k@ tags objects with
+-- 'L' or 'R', and @p ':++:' q@ is the corresponding coproduct of profunctors, with no arrows between
+-- the two sides. (Co)equalizers, pullbacks\/pushouts, (co)representability and dagger structure all
+-- lift componentwise.
 module Proarrow.Category.Instance.Coproduct where
 
 import Data.Kind (Constraint)

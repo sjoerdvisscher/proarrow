@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Profunctor-weighted limits: @'HasLimits' j k@ says @k@ has limits of @i '+->' k@-diagrams weighted
+-- by @j@, given by the 'Limit' profunctor with 'limit' and 'limitUniv'. The 'Unweighted' (terminal
+-- profunctor) weight recovers ordinary conical limits, e.g. terminal objects, binary products and
+-- powers as special shapes.
 module Proarrow.Limit where
 
 import Data.Function (($))

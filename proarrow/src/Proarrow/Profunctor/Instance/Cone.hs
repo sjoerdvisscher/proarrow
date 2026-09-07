@@ -1,3 +1,5 @@
+-- | A 'Cone' is a list of arrows sharing a single source (the apex), as a profunctor from objects to lists
+-- of objects; a 'Cosink' (a.k.a. a source) is a cone with the apex hidden existentially.
 module Proarrow.Profunctor.Instance.Cone where
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))

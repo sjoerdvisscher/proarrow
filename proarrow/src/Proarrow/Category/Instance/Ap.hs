@@ -1,3 +1,7 @@
+-- | For an 'Control.Applicative.Applicative' functor @f@, the category @'AP' f k@ has the objects
+-- of @k@ (wrapped in 'A') and hom-sets taken through @f@: a morphism is an @f (a '~>' b)@.
+-- Terminal\/initial objects, binary (co)products and (symmetric) monoidal structure all lift
+-- pointwise from @k@ through 'Control.Applicative.liftA2'.
 module Proarrow.Category.Instance.Ap where
 
 import Control.Applicative (Applicative (..), liftA3)

@@ -1,3 +1,5 @@
+-- | The terminal profunctor, with exactly one value between any two objects: the terminal object of the
+-- category of profunctors @j +-> k@.
 module Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (.., TerminalProfunctor)) where
 
 import Proarrow.Category.Enriched.Dagger (Dagger, DaggerProfunctor (..))

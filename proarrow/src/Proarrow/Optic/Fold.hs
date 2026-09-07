@@ -1,5 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The __fold__: the weakest read-side optic, reducing the foci to any 'Monoid' object of the
+-- category ('FoldRes' \/ 'foldMapP'). It sits at the read-only top of the subtyping lattice --
+-- everything that can view, preview or traverse is a fold -- so it has no builder of its own
+-- (reach it by 'Proarrow.Optic.convert' from a stronger optic). Its canonical eliminator is
+-- 'foldMapOf', via the 'Forget' carrier, with 'unfold' as the 'Proarrow.Optic.re'-mirror that
+-- builds from a 'Comonoid' seed.
 module Proarrow.Optic.Fold where
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp)

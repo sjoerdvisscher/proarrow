@@ -1,3 +1,8 @@
+-- | The thin category of booleans: objects 'FLS' and 'TRU' with one non-identity arrow
+-- @'FLS' '~>' 'TRU'@ -- the poset @False <= True@, a.k.a. the walking arrow. Conjunction is the
+-- categorical product (and tensor) and disjunction the coproduct, making @BOOL@ a miniature model
+-- of much of the structure in this library: distributive closed monoidal, star-autonomous,
+-- (co)equalizers, pullbacks\/pushouts, and a parameterized NNO.
 module Proarrow.Category.Instance.Bool where
 
 import Prelude (type (~))

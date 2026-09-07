@@ -1,6 +1,7 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
--- from Data.Fold.M of the Folds package
+-- | The left-fold profunctor (after @Data.Fold.M@ from the @folds@ package): a @'Fold' a b@ is a monoid
+-- @m@ together with arrows @a ~> m@ and @m ~> b@.
 module Proarrow.Profunctor.Instance.Fold where
 
 import Data.Kind (Type)

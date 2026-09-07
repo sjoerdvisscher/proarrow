@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Functors between categories of arbitrary kinds: 'Functor' @f@ sends @a '~>' b@ to @f a '~>' f b@.
+-- Haskell 'P.Functor's embed via the 'Prelude' wrapper. Only functors into 'Data.Kind.Type' can be
+-- written directly as type constructors; functors into other kinds are instead encoded as representable
+-- profunctors (see "Proarrow.Profunctor.Representable" and 'FunctorForRep').
 module Proarrow.Functor where
 
 import Data.Functor.Compose (Compose (..))

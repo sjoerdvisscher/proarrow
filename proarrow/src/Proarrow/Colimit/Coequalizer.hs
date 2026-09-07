@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Coequalizers: 'HasCoequalizers' with 'coequalize' in continuation-passing style -- the apex type
+-- depends on the given arrows, so it is hidden behind an existential -- and 'factorCoequalizer' for the
+-- universal property.
 module Proarrow.Colimit.Coequalizer where
 
 import Proarrow.Category.Enriched.Thin (Thin)

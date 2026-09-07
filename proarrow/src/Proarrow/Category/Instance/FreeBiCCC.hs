@@ -201,7 +201,7 @@ instance forall k (p :: k +-> k). (BiCCC k) => Closed (FBC p) where
   apply = Apply
 
 -- | Interpret a 'Term' as the morphism of @k@ it denotes, given an interpretation of the
--- generators, provided @k@ is itself a BiCCC. This is the one place a 'Term''s meaning is
+-- generators, provided @k@ is itself a BiCCC. This is the one place the meaning of a 'Term' is
 -- pinned down; everything else (including equality) is defined in terms of it.
 interp
   :: forall {k} (p :: k +-> k) src tgt

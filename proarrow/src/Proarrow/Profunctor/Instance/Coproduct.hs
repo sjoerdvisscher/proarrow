@@ -1,3 +1,4 @@
+-- | The pointwise coproduct of two profunctors: a @(p ':+:' q) a b@ is either a @p a b@ or a @q a b@.
 module Proarrow.Profunctor.Instance.Coproduct where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))

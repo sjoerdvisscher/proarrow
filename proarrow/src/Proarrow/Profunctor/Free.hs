@@ -2,6 +2,9 @@
 {-# LANGUAGE FunctionalDependencies #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Free constructions: 'HasFree' captures the object constraints @ob@ whose forgetful functor has a left
+-- adjoint, with @Free ob@ the free object, 'lift' the unit and 'foldMap' the universal property of the
+-- adjunction (packaged as a 'Corepresentable' heteromorphism profunctor).
 module Proarrow.Profunctor.Free where
 
 import Data.Foldable1 (Foldable1 (foldMap1))

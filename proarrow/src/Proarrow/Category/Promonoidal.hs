@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Promonoidal categories, where the tensor is a profunctor rather than a functor: a 'Protensor'
+-- @'LIST' k '+->' k@ composes and decomposes lists of objects, 'Promonoid' is a monoid for it, and
+-- 'Day' is the convolution tensor a pair of protensors induces on profunctors.
 module Proarrow.Category.Promonoidal where
 
 import Data.Kind (Constraint)

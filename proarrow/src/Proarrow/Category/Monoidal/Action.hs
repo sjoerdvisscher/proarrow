@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Actions of a monoidal category on another category: a 'MonoidalAction' is a representable
+-- profunctor @t :: (m, k) '+->' k@ acting as @'Act' t a x@, with 'unitor' and 'multiplicator'
+-- coherences. Main instances are the tensor acting on its own category, the cartesian product
+-- ('ProdAction') and the coproduct ('CoprodAction').
 module Proarrow.Category.Monoidal.Action where
 
 import Data.Kind (Constraint)

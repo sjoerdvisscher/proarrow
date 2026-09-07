@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Hypergraph categories: compact closed categories where every object carries a 'Frobenius'
+-- structure (a compatible 'Proarrow.Monoid.Monoid' and 'Proarrow.Monoid.Comonoid'), giving n-to-m
+-- 'spider's, 'cup's and 'cap's -- the setting for string diagrams with arbitrary fan-in\/fan-out
+-- such as "Proarrow.Category.Instance.ZX".
 module Proarrow.Category.Monoidal.Hypergraph where
 
 import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat)

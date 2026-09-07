@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Profunctor strength for a monoidal action: @'Strong' t p@ lets @p@ absorb the action of @t@
+-- via 'act', with 'MonStrong' the self-action (tensor) case; 'Costrong' is the dual, and a
+-- 'TracedMonoidal' category is one whose hom-profunctor is costrong for its own tensor.
 module Proarrow.Category.Monoidal.Strength where
 
 import Data.Kind (Constraint)

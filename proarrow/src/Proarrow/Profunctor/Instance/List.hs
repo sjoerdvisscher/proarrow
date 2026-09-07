@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The category @'LIST' k@ of lists of objects of @k@, whose arrows are componentwise lists of arrows;
+-- @'List' p@ lifts a profunctor @p@ componentwise to lists. Lists of objects are the arity-indexing used by
+-- promonoidal categories ("Proarrow.Category.Promonoidal") and by cones and cocones.
 module Proarrow.Profunctor.Instance.List where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))

@@ -1,6 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __getter__ and its mirror the __review__: the one-leg optics @s '~>' a@ ('GetterRes' \/
+-- 'getP') and @b '~>' t@ (its 'Flip'). A getter is an affine fold that always succeeds; a review
+-- is what remains of a prism's build leg. Build them from a single morphism with 'to' \/ 'unto',
+-- and eliminate with 'view' \/ '(^.)' and 'review' \/ '(#)', via the @'Rep'@\/@'Corep'@
+-- 'Constant' carriers.
 module Proarrow.Optic.Getter where
 
 import Data.Kind (Type)

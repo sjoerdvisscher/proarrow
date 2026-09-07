@@ -1,12 +1,14 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __terminal category__: the unit kind @()@ with its single object @'()@ and only the
+-- identity arrow 'Unit'.
 module Proarrow.Category.Instance.Unit where
 
 import Prelude (type (~))
 
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
-import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))
+import Proarrow.Category.Enriched.Thin (ThinProfunctor (..))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
 
 type Unit :: CAT ()
 data Unit a b where

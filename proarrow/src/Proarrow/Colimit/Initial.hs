@@ -1,5 +1,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Initial objects: 'HasInitialObject' with the unique arrow 'initiate', instances for the base kinds,
+-- and 'HasZeroObject' for categories where the initial and terminal objects coincide.
 module Proarrow.Colimit.Initial where
 
 import Data.Kind (Type)

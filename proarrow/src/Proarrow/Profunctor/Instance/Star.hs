@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | 'Star' embeds a functor @f@ as a profunctor with the functor on the target side:
+-- @Star f a b = a ~> f b@. It is the representable profunctor of @f@; for a Haskell monad @m@,
+-- @Star (Prelude m)@ is its Kleisli promonad.
 module Proarrow.Profunctor.Instance.Star where
 
 import Data.Functor.Compose (Compose (..))

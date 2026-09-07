@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Adjunctions as heteromorphisms: an 'Adjunction' is a profunctor that is both 'Representable' (by the
+-- right adjoint) and 'Corepresentable' (by the left adjoint), giving 'unitRep'\/'counitRep' and
+-- 'leftAdjunct'\/'rightAdjunct'. Also the profunctor-level notion 'Proadjunction', and the interaction
+-- of adjoints with (co)limits.
 module Proarrow.Adjunction where
 
 import Data.Kind (Constraint)

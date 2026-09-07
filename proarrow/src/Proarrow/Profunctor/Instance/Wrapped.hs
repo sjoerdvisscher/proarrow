@@ -1,3 +1,5 @@
+-- | The 'Wrapped' newtype makes the values @p c m@ of a monoidal profunctor into 'Monoid's, for a comonoid
+-- @c@ and a monoid @m@.
 module Proarrow.Profunctor.Instance.Wrapped where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))

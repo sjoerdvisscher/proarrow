@@ -1,3 +1,6 @@
+-- | The writer promonad: @'Writer' w a b@ is a map @a '~>' w '**' b@, 'Representable' by @w '**' -@.
+-- A 'Monoid' @w@ makes it a 'Promonad' (the writer monad), and in a compact closed category it is also
+-- 'Corepresentable' (the cowriter comonad). 'WriterT' is the corresponding transformer, with 'tell'.
 module Proarrow.Promonad.Writer where
 
 import Prelude (($))

@@ -1,3 +1,7 @@
+-- | __Full subcategories__: the kind @'SUBCAT' ob@ restricts a category to the objects satisfying
+-- the predicate @ob@, with 'Sub' wrapping the underlying arrows unchanged. This is how object
+-- constraints beyond a kind's own 'Ob' are imposed (e.g. the category of representable profunctors
+-- in "Proarrow.Category.Instance.Rep").
 module Proarrow.Category.Instance.Sub where
 
 import Data.Kind (Constraint, Type)

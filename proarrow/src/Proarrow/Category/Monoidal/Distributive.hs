@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Distributivity of a tensor over coproducts: a 'Distributive' category has 'distL'\/'distR' and
+-- absorption by the initial object, and a 'DistributiveProfunctor' is monoidal for both tensor and
+-- coproduct. Also home to 'Traversable' and 'Cotraversable' profunctors, which distribute any
+-- 'StrongDistributiveProfunctor' -- the engine behind 'Proarrow.Optic.Traversal.Traversal'.
 module Proarrow.Category.Monoidal.Distributive where
 
 import Data.Bifunctor (bimap)

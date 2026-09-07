@@ -1,3 +1,6 @@
+-- | Profunctor composition ':.:', the coend @exists b. (p a b, q b c)@ with the coend hidden in the
+-- existential of the constructor. This is the horizontal composition of profunctors; 'Promonad's are the
+-- monoids with respect to it.
 module Proarrow.Profunctor.Instance.Composition where
 
 import Proarrow.Category.Instance.Prof (Prof (..))

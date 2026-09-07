@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Promonads as effects: a 'Promonad' ("Proarrow.Core") that is 'Representable' is an ordinary 'Monad'
+-- on objects ('return', 'bind'); a 'Promonad' that is 'Corepresentable' is a 'Comonad' ('extract',
+-- 'extend'). Also 'Procomonad's and relative (co)monads ('RelativeMonad', 'RelativeComonad'). Concrete
+-- promonads live in @Proarrow.Promonad.*@.
 module Proarrow.Promonad
   ( Promonad (..)
   , Procomonad (..)

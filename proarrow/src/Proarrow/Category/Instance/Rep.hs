@@ -1,8 +1,13 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Categories of __representable profunctors__: @'REPK' j k@ is the full subcategory of the
+-- profunctor category on the 'Representable' profunctors, and @'COREPK' j k@ its counterpart of
+-- (opposed) corepresentable ones. A representable profunctor is a functor in profunctor clothing,
+-- so these play the role of functor categories between arbitrary kinds.
 module Proarrow.Category.Instance.Rep where
 
 import Data.Kind (Constraint)
+import Prelude qualified as P
 
 import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
@@ -28,5 +33,9 @@ instance (forall a. (Ob a) => HasArrowRep p q a) => HasAllArrows (p :: j +-> k) 
 instance (Thin k) => ThinProfunctor (Sub Prof :: CAT (REPK j k)) where
   type HasArrow (Sub Prof :: CAT (REPK j k)) (REP p) (REP q) = HasAllArrows p q
   arr @(REP p) @(REP q) = Sub (Prof \ @_ @b p -> tabulate (arr . index p) \\ repObj @p @b \\ repObj @q @b \\ p)
-  withArr = withArr -- TODO, impossible?
-  -- withArr @p @q (Sub (Prof n)) r = withArr @((~>) :: CAT k) (index (n repUniv)) r
+
+  -- Recovering @HasAllArrows p q@ from a natural transformation would require building the
+  -- quantified @forall a. Ob a => HasArrowRep p q a@ dictionary out of per-@a@ 'withArr' calls
+  -- (e.g. @withArr (index (n repUniv))@, which only proves it for one @a@) -- value-level
+  -- entailment GHC cannot express (cf. GHC issue #16502). 'arr' works; 'withArr' cannot.
+  withArr _ _ = P.error "withArr @(Sub Prof): cannot construct the quantified HasAllArrows dictionary (GHC #16502)"

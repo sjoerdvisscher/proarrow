@@ -1,5 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The __affine fold__: a fold that sees at most one focus, @s '~>' (a '||' 'TerminalObject')@
+-- ('AffineFoldRes' \/ 'previewP'). Every 'Proarrow.Optic.Getter.Getter' and
+-- 'Proarrow.Optic.AffineTraversal.AffineTraversal' is one, and it subtypes to
+-- 'Proarrow.Optic.Fold.Fold'. Like all read-only flavors it has no builder of its own
+-- ('Proarrow.Optic.convert' a stronger optic); its canonical eliminator is 'preview' \/ '(^?)',
+-- via the 'PreviewP' carrier.
 module Proarrow.Optic.AffineFold where
 
 import Data.Kind (Type)

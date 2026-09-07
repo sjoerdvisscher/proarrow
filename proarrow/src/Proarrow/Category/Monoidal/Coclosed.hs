@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Coclosed monoidal categories, dual to "Proarrow.Category.Monoidal.Closed": 'Coclosed' provides
+-- the coexponential @a '<~~' b@, left adjoint to tensoring, with 'coeval' and its universal property
+-- 'coevalUniv'; 'CoCCC' is the cocartesian coclosed case.
 module Proarrow.Category.Monoidal.Coclosed where
 
 import Proarrow.Category.Instance.Unit (Unit (..))

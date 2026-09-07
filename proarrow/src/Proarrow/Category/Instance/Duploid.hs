@@ -1,5 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The __duploid__ of an adjunction (Munch-Maccagnoni): objects are the positive ('P') and
+-- negative ('N') objects of the adjunction's two categories, and a hom @x '~>' y@ is an element
+-- @adj ('Pos' x) ('Neg' y)@ of the adjunction profunctor. Composition is biased by the polarity of
+-- the middle object ('(•)' through the positive side, '(◦)' through the negative side) and is
+-- __not associative in general__ -- the 'Promonad' instance is a deliberate abuse.
 module Proarrow.Category.Instance.Duploid where
 
 import Data.Kind (Constraint)

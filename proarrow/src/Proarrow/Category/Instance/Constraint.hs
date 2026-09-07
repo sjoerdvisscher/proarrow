@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The thin category @CONSTRAINT@ of type class constraints, with entailment @(':-')@ as arrows:
+-- @a ':-' b@ holds when @a@ implies @b@. Constraint conjunction is both the categorical product and
+-- the tensor of a closed symmetric monoidal structure, with @()@ as unit and terminal object.
 module Proarrow.Category.Instance.Constraint (CONSTRAINT (..), (:-) (..), (:=>) (..), reifyExp, eqIsSuperOrd, maybeLiftsSemigroup) where
 
 import Data.Kind (Constraint)

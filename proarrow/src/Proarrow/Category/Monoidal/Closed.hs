@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE InstanceSigs #-}
 
+-- | Closed monoidal categories: 'Closed' provides the internal hom @a '~~>' b@, right adjoint to
+-- tensoring, with 'curry', 'apply' and functoriality @('^^^')@. Also defines cartesian closed
+-- ('CCC') and bicartesian closed ('BiCCC') categories.
 module Proarrow.Category.Monoidal.Closed where
 
 import Data.Kind (Type)

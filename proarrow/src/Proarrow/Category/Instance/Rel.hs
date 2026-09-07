@@ -1,6 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
 -- Collected from https://www.clowderproject.com/tag/01D0.html
+
+-- | __Relations__ as profunctors: a 'Relation' is a thin profunctor between discrete categories,
+-- and this module collects the standard vocabulary of properties -- 'Functional', 'Total',
+-- 'Injective', 'Surjective', 'Reflexive', 'Transitive', 'Symmetric', up to 'Preorder' and
+-- 'Equivalence' -- together with the 'Converse' relation.
 module Proarrow.Category.Instance.Rel where
 
 import Proarrow.Adjunction (Proadjunction (..))

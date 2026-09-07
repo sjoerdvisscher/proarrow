@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The 'Adj' newtype marks a profunctor as the heteromorphism profunctor of an adjunction: because left
+-- adjoints preserve colimits and right adjoints preserve limits, @Adj p@ is a distributive monoidal
+-- profunctor. Also proves that every adjunction between Hask endofunctors is equivalent to the
+-- curry\/uncurry adjunction ('haskAdjIsCurryAdj').
 module Proarrow.Profunctor.Instance.Adj where
 
 import Data.Kind (Type)

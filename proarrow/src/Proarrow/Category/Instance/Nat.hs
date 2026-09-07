@@ -1,5 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Functor categories: 'Nat' is the type of natural transformations between functors @j -> k@,
+-- and the kind @j -> 'Data.Kind.Type'@ carries the category of 'Functor's with 'Nat' as its
+-- morphisms and pointwise (co)limits. On @'Data.Kind.Type' -> 'Data.Kind.Type'@, functor
+-- composition additionally gives a (closed) monoidal structure -- the home of monads-as-monoids.
 module Proarrow.Category.Instance.Nat where
 
 import Data.Bifunctor qualified as P

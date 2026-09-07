@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Corepresentable profunctors, dual to "Proarrow.Profunctor.Representable": profunctors of the shape
+-- /hom preceded by a functor/, identifying @p a b@ with @p %% a ~> b@ (functorial action '%%'). 'Corep'
+-- packages any 'Proarrow.Functor.FunctorForRep' as its corepresentable profunctor.
 module Proarrow.Profunctor.Corepresentable where
 
 import Data.Kind (Constraint)

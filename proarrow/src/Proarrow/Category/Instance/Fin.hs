@@ -1,3 +1,6 @@
+-- | The finite ordinal @n@ as a thin category: the kind @'FIN' n@ has objects @'FZ', 'FS' 'FZ',
+-- ...@ (@n@ of them), with an arrow @a '~>' b@ exactly when @a <= b@ ('LTE') -- the linear order
+-- on @n@ elements. Small enough that (co)equalizers can be computed by explicit case analysis.
 module Proarrow.Category.Instance.Fin where
 
 import Data.Kind (Constraint, Type)
@@ -211,7 +214,7 @@ instance HasCoequalizers (FIN n) where
   factorCoequalizer (ZLT q) (ZLT h) = SLT (factorCoequalizer q h)
   factorCoequalizer (SLT q) (SLT h) = SLT (factorCoequalizer q h)
 
--- | Pullbacks in a thin category are just meets; computed directly (rather than via 'thinPullback',
+-- | Pullbacks in a thin category are just meets; computed directly (rather than via 'Proarrow.Limit.Pullback.thinPullback',
 -- which would need @HasProducts (FIN n)@ -- unavailable for an abstract @n@, since 'HasBinaryProducts'
 -- and 'HasTerminalObject' are only resolvable for a syntactically concrete @n@).
 instance HasPullbacks (FIN n) where

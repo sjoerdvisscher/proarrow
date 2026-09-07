@@ -1,5 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The __affine traversal__: the 0-or-1 focus optic that can also reconstruct, the meet of
+-- 'Proarrow.Optic.Lens.Lens' and 'Proarrow.Optic.Prism.Prism' in the subtyping lattice. Its two
+-- legs are 'affineMatch' @:: s ~> (t || a)@ and 'affineSet' @:: (s && b) ~> t@ ('AffineTravRes').
+-- Its witnesses only ever arise by composing lens and prism witnesses, so it is built with
+-- 'Proarrow.Optic.Prism.affineTraversal' (a 'Proarrow.Optic.Lens.Lens' followed by a
+-- 'Proarrow.Optic.Prism.Prism') and eliminated with 'matching', via the 'MatchP' carrier.
 module Proarrow.Optic.AffineTraversal where
 
 import Prelude (($))

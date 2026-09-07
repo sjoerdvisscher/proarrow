@@ -1,5 +1,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Terminal objects: 'HasTerminalObject' with the unique arrow 'terminate', instances for the base
+-- kinds, and global elements @'El' a = 'TerminalObject' '~>' a@.
 module Proarrow.Limit.Terminal where
 
 import Data.Kind (Type)

@@ -1,5 +1,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The category of __profunctors__ @j '+->' k@ themselves: 'Prof' wraps a natural transformation
+-- @p ':~>' q@, making the profunctor kind a category with profunctors as objects. This is one
+-- hom-category of the bicategory of profunctors; the full bicategorical structure lives in the
+-- @proarrow-equipment@ package.
 module Proarrow.Category.Instance.Prof where
 
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, (:~>), type (+->))

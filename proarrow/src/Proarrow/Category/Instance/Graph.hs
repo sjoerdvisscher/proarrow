@@ -1,3 +1,7 @@
+-- | The __graph__ of a thin profunctor @p@: objects are pairs @'GR' aj ak@ for which @p@ has an
+-- element (@HasArrow p aj ak@), and an arrow is a pair of arrows between the components -- a
+-- commuting square, automatic by thinness. Specializing @p@ gives the arrow category ('ARROW'),
+-- the category of elements ('ELEMENTS') and comma categories ('COMMA').
 module Proarrow.Category.Instance.Graph where
 
 import Prelude (type (~))

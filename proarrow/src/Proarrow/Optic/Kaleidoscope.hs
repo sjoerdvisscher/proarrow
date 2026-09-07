@@ -9,14 +9,14 @@
 --
 -- The witnesses here ('Two', 'Pow' @n@) present @s@ as a fixed tensor /power/ of the focus
 -- (@s ~> a ** ... ** a@), which is a genuine decomposition -- so this kaleidoscope is really a
--- __fixed-arity 'Proarrow.Optic.Traversal.Traversal'__ (@'KaleidoRes' '<:' 'TravRes'@, so it
+-- __fixed-arity 'Proarrow.Optic.Traversal.Traversal'__ (@'KaleidoRes' <: 'TravRes'@, so it
 -- folds and sets like any traversal). Its /distinctive/ power is that 'kaleidoP' distributes an
--- arbitrary 'MonoidalProfunctor', including the non-'StrongDistributiveProfunctor' ones (e.g.
+-- arbitrary 'MonoidalProfunctor', including the non-'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' ones (e.g.
 -- @Costar f@) a traversal can't touch -- that is where the aggregation lives.
 --
 -- Crucially the aggregation is stated over an abstract @'MonoidalProfunctor' r@, /not/ the
 -- Hask-specific @Costar f = f a -> b@: 'kaleidoscopeOf' works at any monoidal profunctor carrier
--- (the hom @('~>')@ gives 'Proarrow.Optic.Setter.over'; an applicative @'Star' f@ combines the
+-- (the hom @('~>')@ gives 'Proarrow.Optic.Setter.over'; an applicative @'Proarrow.Profunctor.Instance.Star.Star' f@ combines the
 -- foci through @f@).
 --
 -- Two witness families are provided: @'Two'@ (the ergonomic binary case, @s ~> a ** a@) and the
@@ -68,7 +68,7 @@ import Proarrow.Profunctor.Instance.Identity (Id (..))
 
 -- | The kaleidoscope flavor: distribute any 'MonoidalProfunctor' @r@ through the witness pair.
 -- 'Proarrow.Optic.Traversal.TravRes' is a superclass: every kaleidoscope witness is a traversal
--- witness (instantiate @r@ at a 'StrongDistributiveProfunctor', a special 'MonoidalProfunctor'),
+-- witness (instantiate @r@ at a 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', a special 'MonoidalProfunctor'),
 -- so a kaleidoscope folds, sets, and traverses. The extra power is distributing the /non/-SDP
 -- monoidal profunctors as well.
 type KaleidoRes :: forall {k}. FLAVOR k k
@@ -131,7 +131,7 @@ kaleidoscope
 kaleidoscope sl rt = ex2prof (ExProstrong (Two sl :.: ExIso id id :.: CoTwo rt))
 
 -- | Distribute any 'MonoidalProfunctor' through a kaleidoscope (or any stronger optic). At the
--- hom @('~>')@ this is 'Proarrow.Optic.Setter.over'; at an applicative @'Star' f@ the foci are
+-- hom @('~>')@ this is 'Proarrow.Optic.Setter.over'; at an applicative @'Proarrow.Profunctor.Instance.Star.Star' f@ the foci are
 -- combined through @f@.
 kaleidoscopeOf
   :: forall {k} w (s :: k) (t :: k) a b r

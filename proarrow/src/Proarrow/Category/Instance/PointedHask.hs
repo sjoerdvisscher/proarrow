@@ -1,3 +1,7 @@
+-- | The category of __pointed types__: objects are Haskell types with an added point (wrapped in
+-- 'P'), and a morphism is a point-preserving function, represented as @a -> Maybe b@ ('Pt'). The
+-- binary product is 'These' (each component present or the point) with @Void@ as terminal object,
+-- and the coproduct identifies the two points (a wedge sum).
 module Proarrow.Category.Instance.PointedHask where
 
 import Control.Monad ((>=>))

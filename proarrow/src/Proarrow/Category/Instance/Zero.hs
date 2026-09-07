@@ -1,5 +1,7 @@
 {-# OPTIONS_GHC -Wno-missing-methods #-}
 
+-- | The __initial category__: the empty kind 'VOID' with no objects (its 'Ob' constraint is
+-- 'Bottom', which nothing satisfies) and no arrows.
 module Proarrow.Category.Instance.Zero where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))

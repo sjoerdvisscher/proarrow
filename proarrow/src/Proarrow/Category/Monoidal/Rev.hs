@@ -1,3 +1,5 @@
+-- | The reversed monoidal category: 'REV' wraps a kind so that @'R' a '**' 'R' b = 'R' (b ** a)@,
+-- swapping the tensor's arguments while keeping the same objects and morphisms.
 module Proarrow.Category.Monoidal.Rev where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))

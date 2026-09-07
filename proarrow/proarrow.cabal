@@ -1,7 +1,18 @@
 cabal-version:      2.4
 name:               proarrow
-version:            0
+version:            0.1
 synopsis:           Category theory with a central role for profunctors
+description:
+    A library for doing category theory in Haskell with profunctors, rather
+    than functors, as the central abstraction. Every Haskell kind carries at
+    most one category structure (chosen via @CategoryOf@), newtype wrappers on
+    kinds give variant categories, and functors are encoded as representable
+    profunctors. On top of this the library provides monoidal structure,
+    (co)limits, adjunctions, Kan extensions, enriched categories, promonads,
+    and a full profunctor-optics hierarchy.
+    .
+    Start reading at "Proarrow.Core". Rendered documentation is available at
+    <https://sjoerdvisscher.github.io/proarrow/>.
 homepage:           https://github.com/sjoerdvisscher/proarrow
 bug-reports:        https://github.com/sjoerdvisscher/proarrow/issues
 license:            BSD-3-Clause
@@ -14,6 +25,8 @@ tested-with:        GHC ==9.10.3 || ==9.12.2
 extra-doc-files:
     CHANGELOG.md
     README.md
+
+extra-source-files:
     lattice.dot
     lattice.svg
     mkdocs.sh

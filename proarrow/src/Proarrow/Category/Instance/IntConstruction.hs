@@ -1,3 +1,7 @@
+-- | The __Int construction__ (Joyal-Street-Verity) on a traced monoidal category @k@: objects are
+-- formal differences @'I' plus minus@ of @k@-objects, and morphisms are @k@-morphisms between the
+-- appropriately tensored halves, composed by tracing out the middle. The result is compact closed
+-- (the free such over @k@) with duals given by swapping the two halves.
 module Proarrow.Category.Instance.IntConstruction where
 
 import Prelude (($), type (~))

@@ -48,3 +48,49 @@ an identity representable profunctor!
 
 To make working with representable profunctors instead of functors easier,
 the category theory should work with profunctors where possible.
+
+## Example: defining your own category
+
+A category is picked out by its *kind*, so a new category starts with a fresh kind, here
+one with a single object. Its arrows hold a natural number each, and composition adds them:
+a monoid, viewed as a one-object category.
+
+```haskell
+{-# LANGUAGE TypeData #-}
+import Prelude hiding (id, (.))
+import Numeric.Natural (Natural)
+
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault)
+
+type data COUNTER = Counter
+
+type Count :: CAT COUNTER
+data Count a b where
+  Count :: Natural -> Count Counter Counter
+
+deriving instance Show (Count a b)
+
+instance CategoryOf COUNTER where
+  type (~>) = Count
+  type Ob a = a ~ Counter
+
+instance Promonad Count where
+  id = Count 0
+  Count m . Count n = Count (m + n)
+
+instance Profunctor Count where
+  dimap = dimapDefault
+  r \\ Count{} = r
+```
+
+```haskell
+>>> Count 2 . id . Count 3
+Count 5
+```
+
+The `Ob` family is where the object constraints from above come in (here every type of kind
+`COUNTER` is an object, i.e. `Counter`), and the `\\` method is how those constraints are
+observed from an arrow. And now the generic kind-machinery applies: `OPPOSITE COUNTER` is the
+opposite category, `(COUNTER, COUNTER)` the product category, `COUNTER +-> COUNTER` are
+profunctors on counters, and so on. See `Proarrow.Core` (titled *Start here!*) for the core classes,
+and the `Proarrow.Category.Instance.*` modules for many more worked examples of categories.

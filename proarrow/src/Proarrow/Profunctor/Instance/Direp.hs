@@ -1,3 +1,5 @@
+-- | @'Direp' f g@ is the profunctor of arrows @f \@ a ~> g \@ b@ between the images of two functors
+-- (given as 'Proarrow.Functor.FunctorForRep's).
 module Proarrow.Profunctor.Instance.Direp where
 
 import Prelude (($))

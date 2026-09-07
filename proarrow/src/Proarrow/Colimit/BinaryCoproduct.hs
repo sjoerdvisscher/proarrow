@@ -2,6 +2,10 @@
 {-# LANGUAGE IncoherentInstances #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Binary coproducts: 'HasBinaryCoproducts' provides @a '||' b@ with injections 'lft'\/'rgt' and
+-- copairing @('|||')@, and 'HasCoproducts' adds the initial object. Also biproducts ('HasBiproducts')
+-- and the 'COPROD' kind wrapper, which makes @('||')@ the tensor of a monoidal structure on the same
+-- objects.
 module Proarrow.Colimit.BinaryCoproduct where
 
 import Data.Kind (Type)

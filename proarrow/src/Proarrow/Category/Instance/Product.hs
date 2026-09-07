@@ -1,5 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __product of two categories__: the tuple kind @(j, k)@ is the category whose arrows are
+-- pairs of arrows, @p ':**:' q@ being the corresponding product of profunctors. The projections
+-- 'Fst'\/'Snd' and diagonal 'Diag' are provided as representable profunctors.
 module Proarrow.Category.Instance.Product where
 
 import Prelude (type (~))

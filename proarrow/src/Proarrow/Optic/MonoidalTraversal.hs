@@ -205,7 +205,7 @@ instance (HasCoproducts k, Ob (a :: k), Ob b) => MonoidalProfunctor (Coprod (ExO
 -- instance uses the tensor-strength witness 'TensorW' (not a product lens), this needs no
 -- 'Proarrow.Limit.BinaryProduct.Cartesian' (@tensor = product@), only 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' (a discard @a '~>' 'Unit' for the residual) -- which is
 -- exactly what the coproduct-prism side (@'Strong' 'CoprodAction' ('ExOptic' 'MonTravRes')@) already
--- demanded, so no constraint is added beyond relaxing 'Cartesian' to 'CopyDiscard' -- enabling e.g.
+-- demanded, so no constraint is added beyond relaxing 'Proarrow.Limit.BinaryProduct.Cartesian' to 'CopyDiscard' -- enabling e.g.
 -- the biproduct categories @Mat@ and @FinRel@ (but not @LINEAR@, which cannot discard). A 'Traversal'
 -- is recovered for free wherever one is needed, since @'MonTravRes'@ is a 'SubFlavor' of 'TravRes'.
 fromPTraversal
@@ -214,9 +214,9 @@ fromPTraversal
   => PTraversal s t a b -> MonoidalTraversal s t a b
 fromPTraversal = convert
 
--- | Like 'traverseOf', but for a 'MonoidalTraversal' -- distributes any 'StrongDistributiveProfunctor'
+-- | Like 'Proarrow.Optic.Traversal.traverseOf', but for a 'MonoidalTraversal' -- distributes any 'StrongDistributiveProfunctor'
 -- with /no/ product-strength requirement on the carrier. Every non-lens traversal (prism,
--- 'Traversable' functor, ...) is a monoidal traversal, so this accepts carriers like @'Writer' w@
+-- 'Proarrow.Category.Monoidal.Distributive.Traversable' functor, ...) is a monoidal traversal, so this accepts carriers like @'Proarrow.Promonad.Writer.Writer' w@
 -- that are tensor-strong but not product-strong.
 monTraverseOf
   :: forall {k} w (s :: k) (t :: k) a b p

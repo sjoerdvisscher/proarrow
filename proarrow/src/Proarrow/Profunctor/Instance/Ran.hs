@@ -1,6 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The right Kan extension of a profunctor @p@ along @j@, written @j '|>' p@: the universal @g@ with
+-- @g ':.:' j ~> p@. (Note: 'Ran' and 'Proarrow.Profunctor.Instance.Rift.Rift' are swapped compared to the @profunctors@ package.)
 module Proarrow.Profunctor.Instance.Ran where
 
 import Prelude (type (~))
@@ -11,8 +13,8 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, rmap, (//), type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep)
 import Proarrow.Limit (HasLimits (..))
-import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), corepUniv, withObCorep)
+import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (CorepStar, Rep (..), Representable (..), repUniv, withObRep)
 import Proarrow.Promonad (Procomonad (..), RelativeMonad (..))

@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Binary products: 'HasBinaryProducts' provides @a '&&' b@ with projections 'fst'\/'snd' and pairing
+-- @('&&&')@, and 'HasProducts' adds the terminal object. Also 'Cartesian' (the monoidal tensor /is/ the
+-- product) and the 'PROD' kind wrapper, which makes @('&&')@ the tensor of a monoidal structure on the
+-- same objects.
 module Proarrow.Limit.BinaryProduct where
 
 import Data.Kind (Type)

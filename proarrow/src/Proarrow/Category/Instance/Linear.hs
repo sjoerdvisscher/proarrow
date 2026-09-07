@@ -6,6 +6,11 @@
 {- HLINT ignore "Use bimap" -}
 {- HLINT ignore "Use tuple-section" -}
 
+-- | The category of Haskell types and __linear functions__: the kind 'LINEAR' wraps 'Data.Kind.Type'
+-- in 'L', and a morphism is a @a %1 -> b@ function. Symmetric monoidal closed with
+-- @'L' a '**' 'L' b = 'L' (a, b)@; the categorical product is 'With' and only comonoid objects
+-- (such as @'L' ('Ur' a)@) can be copied or discarded, so it is deliberately not
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard'.
 module Proarrow.Category.Instance.Linear where
 
 import Data.IORef (newIORef, readIORef, writeIORef)

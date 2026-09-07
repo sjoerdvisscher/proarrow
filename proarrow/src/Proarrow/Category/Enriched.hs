@@ -1,5 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Categories and profunctors enriched in a monoidal category @v@, encoded via their underlying
+-- ordinary category\/profunctor: 'EnrichedProfunctor' equips a regular profunctor with hom-objects
+-- @'ProObj' v p a b@ in @v@ from which the enriched structure is recovered, and a category is
+-- 'Enriched' when its hom-profunctor is. Instances include the self-enrichment of a
+-- 'Proarrow.Category.Monoidal.Closed.Closed' category.
 module Proarrow.Category.Enriched where
 
 import Data.Kind (Constraint, Type)

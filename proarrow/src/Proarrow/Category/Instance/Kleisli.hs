@@ -1,6 +1,11 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The __Kleisli category__ of a 'Promonad' @p@: objects are those of the base category (wrapped
+-- in 'KL') and a morphism @'KL' a '~>' 'KL' b@ is an element @p a b@, composed with @p@'s own
+-- composition. Terminal\/initial objects, (co)products, monoidal and
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' structure lift from the base category when
+-- @p@ cooperates (e.g. is a 'Proarrow.Category.Monoidal.MonoidalProfunctor').
 module Proarrow.Category.Instance.Kleisli
   ( KLEISLI (..)
   , Kleisli (..)

@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Internal categories: @ik \`InternalIn\` k@ is a category internal to @k@, given by an object of
+-- objects @'C0' ik@, an object of arrows @'C1' ik@, and source\/target\/identity\/composition
+-- structure maps. 'Finite' categories are the ones internal to
+-- 'Proarrow.Category.Instance.FinSet.FINSET'.
 module Proarrow.Category.Internal where
 
 import Prelude (($))

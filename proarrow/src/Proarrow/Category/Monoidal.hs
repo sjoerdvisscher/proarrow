@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Monoidal categories, as kinds with a tensor: 'Monoidal' provides 'Unit', the tensor @('**')@,
+-- and the unitor and associator isomorphisms; 'SymMonoidal' adds the symmetry 'swap'. A
+-- 'MonoidalProfunctor' is a lax monoidal profunctor with 'one' and a value-level @('**')@, and a
+-- category is 'Monoidal' precisely when its hom-profunctor is.
 module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)

@@ -1,5 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | Equalizers: 'HasEqualizers' with 'equalize' in continuation-passing style -- the equalizer object's
+-- type depends on the given arrows, so it is hidden behind an existential -- and 'factorEqualizer' for
+-- the universal property.
 module Proarrow.Limit.Equalizer where
 
 import Proarrow.Category.Enriched.Thin (Thin)

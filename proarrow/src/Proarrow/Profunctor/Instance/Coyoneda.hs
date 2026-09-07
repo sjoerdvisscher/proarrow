@@ -1,5 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | The coyoneda construction: @'Coyoneda' p@ pairs a value of @p c d@ with reindexing arrows, making it
+-- the free profunctor on an arbitrary type of kind @j +-> k@ (the 'HasFree' instance for 'Profunctor'). By
+-- the coyoneda lemma it is equivalent to @p@ when @p@ is already a profunctor ('coyoneda'\/'unCoyoneda').
 module Proarrow.Profunctor.Instance.Coyoneda where
 
 import Proarrow.Category.Instance.Prof (Prof (..))

@@ -1,3 +1,5 @@
+-- | The empty profunctor, with no values at all: the initial object of the category of profunctors
+-- @j +-> k@.
 module Proarrow.Profunctor.Instance.Initial where
 
 import Prelude (Eq, Show)

@@ -2,6 +2,10 @@
 {-# LANGUAGE RequiredTypeArguments #-}
 {-# OPTIONS_GHC -Wno-unused-foralls #-}
 
+-- | Star-autonomous categories: symmetric closed categories with a dualizing functor 'Dual', where
+-- morphisms @a ** b ~> Dual c@ correspond to @a ~> Dual (b ** c)@ ('linDist'). This gives
+-- double-negation elimination ('doubleNeg') and an internal hom @'ExpSA' a b = 'Dual' (a ** Dual b)@
+-- -- the categorical semantics of multiplicative linear logic.
 module Proarrow.Category.Monoidal.StarAutonomous where
 
 import Prelude qualified as P

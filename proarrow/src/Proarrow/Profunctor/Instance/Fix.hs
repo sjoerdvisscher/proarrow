@@ -1,3 +1,5 @@
+-- | The fixed point of a profunctor: @'Fix' p@ is @p ':.:' 'Fix' p@ rolled up, with 'hylo' as the
+-- accompanying hylomorphism combinator.
 module Proarrow.Profunctor.Instance.Fix where
 
 import Data.Functor.Const (Const (..))

@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The category of __matrices__ over a numeric type @a@: objects are natural numbers (dimensions,
+-- @'M' n@ of kind @'MatK' a@) and a morphism is an @n@-by-@m@ matrix, composed by matrix
+-- multiplication. A dagger (conjugate-transpose) category with biproducts, whose Kronecker-product
+-- tensor makes it compact closed -- the linear-algebra playground of the library.
 module Proarrow.Category.Instance.Mat where
 
 import Data.Complex (Complex, conjugate)

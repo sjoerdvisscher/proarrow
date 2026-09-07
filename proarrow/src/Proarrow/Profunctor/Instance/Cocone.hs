@@ -1,3 +1,5 @@
+-- | A 'Cocone' is a list of arrows sharing a single target (the coapex), as a profunctor from lists of
+-- objects to objects; a 'Sink' is a cocone with the coapex hidden existentially.
 module Proarrow.Profunctor.Instance.Cocone where
 
 import Proarrow.Category.Monoidal (MonoidalProfunctor (..))

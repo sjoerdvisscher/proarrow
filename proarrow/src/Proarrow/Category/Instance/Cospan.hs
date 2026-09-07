@@ -1,3 +1,7 @@
+-- | The category of __cospans__ in @k@: objects are those of @k@ (wrapped in 'CS'), and a morphism
+-- @a '~>' b@ is a cospan @a -> x <- b@, composed by pushout. With the coproduct of @k@ as tensor
+-- every object is a Frobenius monoid, giving a 'Proarrow.Category.Monoidal.Hypergraph.Hypergraph',
+-- compact closed, dagger category -- the archetypal setting for undirected wiring diagrams.
 module Proarrow.Category.Instance.Cospan where
 
 import Proarrow.Category.Enriched.Dagger (DaggerProfunctor (..))

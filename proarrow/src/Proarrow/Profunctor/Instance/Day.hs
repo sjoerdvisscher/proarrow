@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Day convolution of profunctors: @'Day' p q@ convolves @p@ and @q@ along the tensors of the source and
+-- target categories, with unit 'DayUnit' and internal hom 'DayExp'. Monoidal profunctors are closed under
+-- it, and it preserves 'Procomonad's.
 module Proarrow.Profunctor.Instance.Day where
 
 import Proarrow.Category (Supplies)

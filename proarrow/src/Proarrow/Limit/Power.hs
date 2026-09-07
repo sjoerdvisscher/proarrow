@@ -1,6 +1,8 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Powers (cotensors) of a category enriched in @v@: 'Powered' provides @a '^' n@, characterized by the
+-- isomorphism between @a '~>' b '^' n@ and @n '~>' 'HomObj' v a b@ ('power'\/'unpower').
 module Proarrow.Limit.Power where
 
 import Data.Kind (Type)

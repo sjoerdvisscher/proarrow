@@ -1,5 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 
+-- | The skeleton of the category of __finite sets and relations__: objects are natural numbers
+-- (@'FR' n@) and a morphism is a boolean matrix, stored as a vector of 'Bitstring's. A dagger
+-- category with biproducts, where the (non-cartesian) monoidal tensor still admits
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' structure.
 module Proarrow.Category.Instance.FinRel where
 
 import Data.Fin (Fin (..))

@@ -1,3 +1,6 @@
+-- | The state promonad and its transformer: @'StateT' s p@ sandwiches @p@ between 'Reader' and 'Writer',
+-- so @'State' s a b@ amounts to a map @s '**' a '~>' s '**' b@. It is only premonoidal, not monoidal:
+-- the order in which two stateful effects run matters.
 module Proarrow.Promonad.State where
 
 import Prelude (($))

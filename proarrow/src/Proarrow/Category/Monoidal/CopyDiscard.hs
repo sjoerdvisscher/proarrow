@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Monoidal categories in which every object can be copied and discarded coherently: 'CopyDiscard'
+-- supplies @'copy' :: a ~> a ** a@ and @'discard' :: a ~> 'Unit'@, giving the projections
+-- 'fst'\/'snd' without requiring @tensor = product@ -- e.g. the biproduct categories
+-- "Proarrow.Category.Instance.Mat" and "Proarrow.Category.Instance.FinRel".
 module Proarrow.Category.Monoidal.CopyDiscard where
 
 import Data.Kind (Type)

@@ -1,6 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Representable profunctors: profunctors of the shape /functor followed by hom/, identifying @p a b@
+-- with @a ~> p % b@. Since a functor between different kinds cannot be written directly as a Haskell data
+-- type, representable profunctors (with their functorial action '%') are how this library encodes such
+-- functors; 'Rep' packages any 'Proarrow.Functor.FunctorForRep' as its representable profunctor.
 module Proarrow.Profunctor.Representable where
 
 import Data.Kind (Constraint)

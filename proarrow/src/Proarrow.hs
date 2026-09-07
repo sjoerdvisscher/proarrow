@@ -1,3 +1,7 @@
+-- | The user-facing prelude: one import re-exporting the library's main surface -- categories, functors,
+-- profunctors, promonads, objects, monoids, universal properties and the optics vocabulary
+-- ("Proarrow.Optics"). For the core abstractions themselves ('CategoryOf', 'Promonad', 'Profunctor'),
+-- start reading at "Proarrow.Core".
 module Proarrow
   ( module Export
   , Promonad (..)

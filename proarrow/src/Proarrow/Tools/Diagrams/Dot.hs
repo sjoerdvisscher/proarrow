@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | String diagrams rendered to Graphviz: 'Dot' is a monoidal category of diagram fragments
+-- ('node', 'line', the adjunction cup\/cap 'unitAdj'\/'counitAdj', ...) indexed by their typed input and
+-- output wires, and 'run' emits the composed diagram as dot source.
 module Proarrow.Tools.Diagrams.Dot where
 
 import Data.Bifunctor (first)

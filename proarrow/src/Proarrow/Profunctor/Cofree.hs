@@ -1,6 +1,9 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
+-- | Cofree constructions, dual to "Proarrow.Profunctor.Free": 'HasCofree' captures the object constraints
+-- @ob@ whose forgetful functor has a right adjoint, with @Cofree ob@ the cofree object, 'lower' the counit
+-- and 'unfoldMap' the universal property.
 module Proarrow.Profunctor.Cofree where
 
 import Data.Kind (Constraint)

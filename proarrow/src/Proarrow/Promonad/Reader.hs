@@ -1,3 +1,7 @@
+-- | The reader promonad over a monoidal category: @'Reader' ('OP' r) a b@ is a map @r '**' a '~>' b@.
+-- It is 'Corepresentable' by @r '**' -@ (the coreader comonad) and, in a symmetric closed category,
+-- 'Representable' by @r '~~>' -@ (the reader monad); a 'Comonoid' @r@ makes it a 'Promonad'. 'ReaderT'
+-- is the corresponding transformer.
 module Proarrow.Promonad.Reader where
 
 import Prelude (($))
