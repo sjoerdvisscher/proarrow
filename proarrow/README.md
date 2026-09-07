@@ -92,5 +92,6 @@ The `Ob` family is where the object constraints from above come in (here every t
 `COUNTER` is an object, i.e. `Counter`), and the `\\` method is how those constraints are
 observed from an arrow. And now the generic kind-machinery applies: `OPPOSITE COUNTER` is the
 opposite category, `(COUNTER, COUNTER)` the product category, `COUNTER +-> COUNTER` are
-profunctors on counters, and so on. See `Proarrow.Core` (titled *Start here!*) for the core classes,
-and the `Proarrow.Category.Instance.*` modules for many more worked examples of categories.
+profunctors on counters, and so on. The `Proarrow` module exports the curated core vocabulary; 
+`Proarrow.Core` explains the design in depth, and the `Proarrow.Category.Instance.*` modules
+contain many more worked examples of categories.

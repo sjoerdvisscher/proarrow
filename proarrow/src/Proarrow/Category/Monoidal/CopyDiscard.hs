@@ -9,7 +9,6 @@ module Proarrow.Category.Monoidal.CopyDiscard where
 
 import Data.Kind (Type)
 
-import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT, Sub (..), SubMonoidal)
 import Proarrow.Category.Monoidal
@@ -22,7 +21,7 @@ import Proarrow.Category.Monoidal
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), listCase)
 import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), obj)
 import Proarrow.Limit.BinaryProduct (HasProducts, PROD (..))
-import Proarrow.Monoid (Comonoid (..))
+import Proarrow.Monoid (Comonoid (..), Supplies)
 
 class (Monoidal k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a

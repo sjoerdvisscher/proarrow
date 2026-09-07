@@ -6,7 +6,6 @@
 -- it, and it preserves 'Procomonad's.
 module Proarrow.Profunctor.Instance.Day where
 
-import Proarrow.Category (Supplies)
 import Proarrow.Category.Instance.Nat (Nat (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Monoidal
@@ -35,7 +34,7 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (Comonoid (..), Monoid (..), Supplies)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))

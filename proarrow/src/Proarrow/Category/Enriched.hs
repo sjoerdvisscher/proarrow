@@ -21,7 +21,7 @@ import Proarrow.Category.Monoidal.Closed (uncurry)
 import Proarrow.Category.Monoidal.Closed qualified as E
 import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor ((\\)), Promonad (..), type (+->))
 import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
-import Proarrow.Profunctor qualified as P
+import Proarrow.Core qualified as P
 
 -- | Working with enriched categories and profunctors in Haskell is hard.
 -- Instead we encode them using the underlying regular category/profunctor,

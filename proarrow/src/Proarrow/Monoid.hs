@@ -102,6 +102,12 @@ comultAct
   :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> Act t a (Act t a n)
 comultAct = multiplicator @t @a @a @n . actHom @t (comult @a) (obj @n)
 
+-- | @k \`Supplies\` c@ says that every object of the category @k@ satisfies the constraint @c@ --
+-- e.g. @k \`Supplies\` 'Comonoid'@ for a category in which every object can be copied and discarded.
+class (forall a. (Ob a) => c a) => k `Supplies` (c :: k -> Constraint)
+
+instance (forall a. (Ob a) => c a) => k `Supplies` (c :: k -> Constraint)
+
 type data MONOIDK (m :: k) = M
 data Mon a b where
   Mon :: Unit ~> m -> Mon (M :: MONOIDK m) M

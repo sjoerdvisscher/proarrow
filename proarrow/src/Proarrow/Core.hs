@@ -1,7 +1,15 @@
 {- HLINT ignore "Redundant lambda" -}
 
--- |
--- Description: < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < < Start here!
+-- | The foundational module, defining the kind-indexed category machinery everything else builds
+-- on. A kind @k@ carries at most one category structure, chosen by the 'CategoryOf' class: its
+-- morphism type @('~>')@ and its object constraint 'Ob' (not every type of the kind need be an
+-- object). A category's identity and composition live in 'Promonad', and 'Profunctor' -- with the
+-- profunctor kind @j '+->' k@ -- is this library's central generalization of functors. 'Ob'
+-- constraints are typically not threaded through signatures but recovered from morphisms with
+-- '(\\)' and '(//)', since an arrow is proof that its endpoints are objects.
+--
+-- Import "Proarrow" for the curated everyday vocabulary; this module is where that design is
+-- defined, and the place to start when building your own categories.
 module Proarrow.Core
   ( -- * Type Infrastructure
 
