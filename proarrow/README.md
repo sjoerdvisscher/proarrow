@@ -95,3 +95,8 @@ opposite category, `(COUNTER, COUNTER)` the product category, `COUNTER +-> COUNT
 profunctors on counters, and so on. The `Proarrow` module exports the curated core vocabulary; 
 `Proarrow.Core` explains the design in depth, and the `Proarrow.Category.Instance.*` modules
 contain many more worked examples of categories.
+
+To property-test the laws of your own category, depend on the public sublibrary
+`proarrow:testing`: a `Testable` instance for your kind plus the law checks from
+`Proarrow.Testing.Laws` (`propCategory`, `propMonoidal`, ...) give it a test suite —
+proarrow's own tests are built from exactly these pieces.

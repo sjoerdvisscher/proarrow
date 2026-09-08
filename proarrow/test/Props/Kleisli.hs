@@ -17,9 +17,9 @@ import Proarrow.Profunctor.Instance.Costar (Costar, unCostar, pattern Costar)
 import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Promonad.Cont (Cont (..))
 
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
-import Testable
+import Proarrow.Testing
   ( SomeProfunctorElt (..)
   , TestOb'
   , Testable (..)

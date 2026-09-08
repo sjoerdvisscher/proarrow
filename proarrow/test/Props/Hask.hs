@@ -10,8 +10,8 @@ import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Prelude hiding (elem)
 
-import Props
-import Testable
+import Proarrow.Testing.Laws
+import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
   , TestableProfunctor

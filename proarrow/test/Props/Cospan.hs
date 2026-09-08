@@ -14,9 +14,9 @@ import Proarrow.Category.Instance.Cospan (COSPAN (..), Cospan (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), findIso, unFinSet)
 import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 
-import Props
+import Proarrow.Testing.Laws
 import Props.FinSet ()
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
   , Testable (..)

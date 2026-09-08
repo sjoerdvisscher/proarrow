@@ -18,10 +18,10 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.FinHask (FINHASK (..), Fin (..), FinHask (..))
 import Proarrow.Core (CategoryOf (..), UN)
 
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
 import Test.Falsify.Generator (minimalValue)
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
   , TestableProfunctor

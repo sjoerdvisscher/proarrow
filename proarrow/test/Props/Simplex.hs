@@ -16,9 +16,9 @@ import Proarrow.Category.Instance.Simplex (Forget, IsNat (..), Nat (..), Pick, S
 import Proarrow.Core (Ob)
 
 import Proarrow.Profunctor.Representable (Rep)
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , ShowP (..)
   , Testable (..)

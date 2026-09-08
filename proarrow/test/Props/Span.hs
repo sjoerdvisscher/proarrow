@@ -14,9 +14,9 @@ import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
 import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 
 import Data.List (sort)
-import Props
+import Proarrow.Testing.Laws
 import Props.FinSet ()
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
   , Testable (..)

@@ -17,8 +17,8 @@ import Proarrow.Functor (Presheaf)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
-import Props (propBinaryProducts_, propCategory, propProfunctor, propTerminalObject)
-import Testable
+import Proarrow.Testing.Laws (propBinaryProducts_, propCategory, propProfunctor, propTerminalObject)
+import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
   , Testable (..)

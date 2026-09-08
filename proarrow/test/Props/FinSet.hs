@@ -14,8 +14,8 @@ import Prelude qualified as P
 import Proarrow.Category.Instance.FinSet (FINSET (..), FinSet (..))
 import Proarrow.Core (CategoryOf (..))
 
-import Props
-import Testable
+import Proarrow.Testing.Laws
+import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
   , TestableProfunctor

@@ -1,7 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE RequiredTypeArguments #-}
 
-module Testable where
+-- | Generic property-testing infrastructure for categories: 'Testable' says how to generate and
+-- enumerate the objects of a kind, 'TestableProfunctor' and 'TestableType' how to generate values
+-- (using @falsify@ generators), and 'TestingEqShow' provides semantic equality and display for
+-- values without useful structural 'Eq'\/'Show' (functions, opaque morphisms). Instances for your
+-- own category plus the law checks in "Proarrow.Testing.Laws" give it a test suite.
+module Proarrow.Testing where
 
 import Data.Kind (Constraint, Type)
 import Data.List.NonEmpty (NonEmpty (..))

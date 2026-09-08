@@ -25,8 +25,8 @@ import Prelude
 import Proarrow.Category.Instance.Cost (COST (..), GTE (..), IsCost (..), SCost (..))
 import Proarrow.Core (Ob)
 
-import Props
-import Testable
+import Proarrow.Testing.Laws
+import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
   , TestableProfunctor

@@ -12,9 +12,9 @@ import Prelude hiding (fst, id, snd, (.))
 import Proarrow.Category.Instance.FreeBiCCC (FBC (..), KnownFBCOb (fbcCase), Lower, Term (..), interp)
 import Proarrow.Core (CAT, CategoryOf (..))
 
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , MkSomeList (..)
   , Some (..)

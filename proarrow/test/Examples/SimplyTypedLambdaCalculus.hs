@@ -24,8 +24,8 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   )
 import Proarrow.Category.Monoidal.Closed (Closed (..))
-import Props (propCategory, propProfunctor, propTerminalObject)
-import Testable
+import Proarrow.Testing.Laws (propCategory, propProfunctor, propTerminalObject)
+import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
   , SomeProfunctorElt (..)

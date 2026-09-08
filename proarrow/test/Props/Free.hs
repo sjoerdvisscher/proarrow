@@ -25,9 +25,9 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..), TermF)
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Representable (Rep (..))
 
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , MkSomeList (..)
   , Some (..)

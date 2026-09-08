@@ -16,9 +16,9 @@ import Proarrow.Category.Instance.Mat (App, Mat (..), MatK (..))
 import Proarrow.Core (CAT, type (+->))
 import Proarrow.Profunctor.Representable (Rep)
 
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
   , TestableProfunctor

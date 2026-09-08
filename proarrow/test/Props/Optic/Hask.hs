@@ -61,7 +61,7 @@ import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Promonad.Writer (Writer)
 
 import Props.Hask ()
-import Testable (GenTotal (..), TestableType (..), pattern GenNonEmpty)
+import Proarrow.Testing (GenTotal (..), TestableType (..), pattern GenNonEmpty)
 
 -- * The subtyping lattice
 

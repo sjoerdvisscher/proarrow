@@ -2,7 +2,11 @@
 
 {- HLINT ignore "Redundant id" -}
 
-module Props where
+-- | Reusable law-checking properties, parameterized over any 'Testable' kind: 'propCategory',
+-- 'propMonoidal', 'propBinaryProducts', 'propClosed', 'propProfunctor', 'propMonoid', and friends.
+-- Wiring a new category into a test suite is a 'Testable' instance plus calls to these -- see
+-- proarrow's own test suite for many examples.
+module Proarrow.Testing.Laws where
 
 import Control.Monad (unless)
 import Test.Tasty (TestTree, testGroup)
@@ -31,7 +35,7 @@ import Proarrow.Optic.Getter (review, view)
 import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Representable (Rep)
-import Testable
+import Proarrow.Testing
   ( Some (..)
   , SomeProfunctorElt (..)
   , TestObIsOb

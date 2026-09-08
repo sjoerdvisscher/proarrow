@@ -1,4 +1,4 @@
-cabal-version:      2.4
+cabal-version:      3.0
 name:               proarrow
 version:            0.1
 synopsis:           Category theory with a central role for profunctors
@@ -12,8 +12,9 @@ description:
     and a full profunctor-optics hierarchy.
     .
     Import "Proarrow" to get started; "Proarrow.Core" explains the design of the
-    core abstractions in depth. Rendered documentation is available at
-    <https://sjoerdvisscher.github.io/proarrow/>.
+    core abstractions in depth. The public sublibrary @proarrow:testing@ provides
+    generic law-checking properties for testing your own categories. Rendered
+    documentation is available at <https://sjoerdvisscher.github.io/proarrow/>.
 homepage:           https://github.com/sjoerdvisscher/proarrow
 bug-reports:        https://github.com/sjoerdvisscher/proarrow/issues
 license:            BSD-3-Clause
@@ -202,6 +203,19 @@ library
         , universe-base >= 1.1.4 && <1.2
     hs-source-dirs:   src
 
+library testing
+    import: extensions
+    visibility: public
+    hs-source-dirs: testing
+    exposed-modules:
+        Proarrow.Testing
+        Proarrow.Testing.Laws
+    build-depends: proarrow
+    build-depends:
+        , base >=4.20 && <5
+        , falsify >=0.3 && <0.4
+        , tasty >=1.4 && <1.6
+
 test-suite test
     import: extensions
     type: exitcode-stdio-1.0
@@ -210,7 +224,6 @@ test-suite test
     other-modules:
         Examples.UntypedLambdaCalculus
         Examples.SimplyTypedLambdaCalculus
-        Props
         Props.Bool
         Props.Cospan
         Props.Cost
@@ -230,9 +243,8 @@ test-suite test
         Props.Simplex
         Props.Span
         Props.ZX
-        Testable
         TestFree
-    build-depends: proarrow
+    build-depends: proarrow, proarrow:testing
     build-depends:
         , base >=4.20 && <5
         , containers >=0.6 && <0.8

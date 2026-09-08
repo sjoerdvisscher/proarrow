@@ -30,8 +30,8 @@ import Proarrow.Tools.Diagrams.Dot
   , (!)
   )
 
-import Props
-import Testable
+import Proarrow.Testing.Laws
+import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
   , Testable (..)

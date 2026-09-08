@@ -11,8 +11,8 @@ import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), NonTrivialProf
 import Proarrow.Core (Ob, obj)
 
 import Proarrow.Category.Instance.Product ((:**:) (..))
-import Props
-import Testable
+import Proarrow.Testing.Laws
+import Proarrow.Testing
   ( GenTotal (..)
   , SomeProfunctorElt (..)
   , Testable (..)

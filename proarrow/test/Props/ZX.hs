@@ -11,8 +11,8 @@ import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.ZX (ZX (..), enumAll, isZero, nat)
-import Props
-import Testable
+import Proarrow.Testing.Laws
+import Proarrow.Testing
   ( Testable (..)
   , TestableProfunctor
   , TestableType (..)

@@ -11,10 +11,10 @@ import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.FinRel (Bitstring, FINREL (..), FinRel (..))
 
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
 import Props.Mat ()
-import Testable
+import Proarrow.Testing
   ( Testable (..)
   , TestableProfunctor
   , TestableType (..)

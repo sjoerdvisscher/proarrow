@@ -11,9 +11,9 @@ import Prelude
 import Proarrow.Category.Instance.PointedHask (POINTED (..), Pointed (..), These (..))
 import Proarrow.Core (CategoryOf (..), UN)
 
-import Props
+import Proarrow.Testing.Laws
 import Props.Hask ()
-import Testable
+import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
   , TestableProfunctor
