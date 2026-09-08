@@ -11,7 +11,6 @@ import Proarrow.Category.Instance.Bool (BOOL (..), Booleans (..), NonTrivialProf
 import Proarrow.Core (Ob, obj)
 
 import Proarrow.Category.Instance.Product ((:**:) (..))
-import Proarrow.Testing.Laws
 import Proarrow.Testing
   ( GenTotal (..)
   , SomeProfunctorElt (..)
@@ -23,6 +22,7 @@ import Proarrow.Testing
   , oneElem
   , someElemNamed
   )
+import Proarrow.Testing.Laws
 
 test :: TestTree
 test =
@@ -39,6 +39,7 @@ test =
     , propCoequalizers_ @BOOL
     , propPullbacks_ @BOOL
     , propPushouts_ @BOOL
+    , testCommutativeMonoid_ @TRU
     , testProperty "FF,FT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, FLS))
     , testProperty "FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(FLS, TRU))
     , testProperty "FF,FT,TT profunctor" $ propProfunctor @(NonTrivialProfunctor '(TRU, TRU))

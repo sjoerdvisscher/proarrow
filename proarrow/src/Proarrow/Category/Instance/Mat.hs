@@ -37,7 +37,7 @@ import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Equalizer (HasEqualizers (..), pullbackDefault)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Rep (..))
@@ -332,6 +332,7 @@ instance (P.Num a, IsNat n) => Comonoid (M n :: MatK a) where
   counit = arr' counit
   comult = arr' comult
 instance (P.Num a, IsNat n) => Frobenius (M n :: MatK a)
+instance (P.Num a, IsNat n) => CommutativeMonoid (M n :: MatK a)
 instance (P.Num a) => Hypergraph (MatK a)
 instance (P.Num a) => CopyDiscard (MatK a)
 

@@ -34,7 +34,7 @@ import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), dimapDefault, obj, type (+->))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CommutativeMonoid, Comonoid (..), Monoid (..))
 
 newtype Bitstring (n :: Nat) = BS Int
   deriving (Eq, Ord)
@@ -223,6 +223,7 @@ instance (KnownNat n) => Comonoid (n :: Nat) where
   comult = withPlusIsNat @n @n $ ZX $ Map.fromList [((combine i i, i), 1) | i <- enumAll @n]
 
 instance (KnownNat a) => Frobenius (a :: Nat)
+instance (KnownNat a) => CommutativeMonoid (a :: Nat)
 instance Hypergraph Nat
 instance CopyDiscard Nat
 

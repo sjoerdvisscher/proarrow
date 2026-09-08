@@ -942,6 +942,37 @@ testComonoid_
   => TestTree
 testComonoid_ = testComonoid @m (\ @a @b r -> M.withOb2 @k @a @b r)
 
+-- | Check that a 'Monoid.CommutativeMonoid' really is commutative: the monoid laws (via
+-- 'propMonoid') plus @mappend . swap = mappend@. Since 'Monoid.CommutativeMonoid' is a law-only
+-- marker class, this property is the only thing standing behind its instances.
+propCommutativeMonoid
+  :: forall {k} m
+   . (Testable k, M.SymMonoidal k, Monoid.CommutativeMonoid (m :: k), TestOb m, TestOb (M.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> Property ()
+propCommutativeMonoid withTestOb2 = do
+  propMonoid @m (\ @x @y r -> withTestOb2 @x @y r)
+  withTestOb2 @m @m $
+    testEq
+      "commutativity"
+      "mappend . swap"
+      (Monoid.mappend @m . M.swap @k @m @m)
+      "mappend"
+      (Monoid.mappend @m)
+
+testCommutativeMonoid
+  :: forall {k} m
+   . (Testable k, M.SymMonoidal k, Monoid.CommutativeMonoid (m :: k), TestOb m, TestOb (M.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> TestTree
+testCommutativeMonoid f = testProperty ("CommutativeMonoid " ++ showOb @k @m) (propCommutativeMonoid @m \ @a @b -> f @a @b)
+
+testCommutativeMonoid_
+  :: forall {k} m
+   . (Testable k, M.SymMonoidal k, Monoid.CommutativeMonoid (m :: k), TestOb m, TestOb (M.Unit @k), TestObIsOb k)
+  => TestTree
+testCommutativeMonoid_ = testCommutativeMonoid @m (\ @a @b r -> M.withOb2 @k @a @b r)
+
 testFrobenius
   :: forall {k} m
    . (Testable k, Monoid.Monoid (m :: k), Monoid.Comonoid m, TestOb m, TestOb (M.Unit @k))

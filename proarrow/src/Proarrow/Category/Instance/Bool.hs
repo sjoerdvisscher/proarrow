@@ -33,7 +33,7 @@ import Proarrow.Limit.BinaryProduct
 import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Prelude qualified as P
@@ -240,6 +240,7 @@ instance HasParamNNO BOOL where
 instance Monoid TRU where
   mempty = Tru
   mappend = Tru
+instance CommutativeMonoid TRU
 
 instance (Ob a) => Comonoid (a :: BOOL) where
   counit = case obj @a of
@@ -252,7 +253,7 @@ instance (Ob a) => Comonoid (a :: BOOL) where
 instance CopyDiscard BOOL
 
 -- | The four non-trivial profunctors @BOOL '+->' BOOL@, indexed by a pair of 'BOOL's selecting
--- whether the @FLS@\/@FLS@ and @TRU@\/@TRU@ heteromorphisms are present; @FLS@\/@TRU@ always is.
+-- whether the @FLS->FLS@ and @TRU->TRU@ heteromorphisms are present; @FLS->TRU@ always is.
 type NonTrivialProfunctor :: (BOOL, BOOL) -> BOOL +-> BOOL
 data NonTrivialProfunctor ft a b where
   FF :: NonTrivialProfunctor '(TRU, tt) FLS FLS
@@ -262,7 +263,6 @@ data NonTrivialProfunctor ft a b where
 deriving instance P.Eq (NonTrivialProfunctor ft a b)
 deriving instance P.Show (NonTrivialProfunctor ft a b)
 
--- | There are 4 non-trivial profunctors BOOL +-> BOOL, all with FLS->TRU, and optionally FLS->FLS and TRU->TRU.
 instance Profunctor (NonTrivialProfunctor ft) where
   dimap Fls Fls FF = FF
   dimap Fls F2T FF = FT

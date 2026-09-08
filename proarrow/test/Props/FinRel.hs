@@ -5,11 +5,13 @@ module Props.FinRel where
 
 import Data.Type.Equality (TestEquality (..), type (:~:) (..))
 import Data.Type.Nat (Nat (..), Nat0, Nat1, Nat2, Nat3, SNatI, snat, snatToNat)
-import Test.Falsify.Generator (elem)
+import Test.Falsify.Generator (Function (..), elem)
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.FinRel (Bitstring, FINREL (..), FinRel (..))
+import Proarrow.Core (type (~>))
+import Proarrow.Profunctor.Instance.Identity (Id (..))
 
 import Proarrow.Testing
   ( Testable (..)
@@ -40,10 +42,12 @@ test =
     , propStarAutonomous_ @FINREL
     , propCompactClosed_ @FINREL
     , propHypergraph_ @FINREL
-    , testMonoid_ @(FR Nat0)
-    , testMonoid_ @(FR Nat1)
-    , testMonoid_ @(FR Nat2)
-    , testMonoid_ @(FR Nat3)
+    , testCommutativeMonoid_ @(FR Nat0)
+    , testCommutativeMonoid_ @(FR Nat1)
+    , testCommutativeMonoid_ @(FR Nat2)
+    , testCommutativeMonoid_ @(FR Nat3)
+    , -- morphism addition on a homset: a commutative monoid that is not Frobenius
+      testCommutativeMonoid @(Id (FR Nat2) (FR Nat2)) (\r -> r)
     , testComonoid_ @(FR Nat0)
     , testComonoid_ @(FR Nat1)
     , testComonoid_ @(FR Nat2)
@@ -61,6 +65,18 @@ instance (TestOb a, TestOb b) => TestingEqShow (FinRel a b) where
   eqP (FinRel l) (FinRel r) = pure $ l == r
   showP (FinRel m) = show m
 instance TestableProfunctor FinRel
+
+-- | A hom @a '~>' b@ wrapped as the identity profunctor 'Id' is a value of kind 'Type'; in a
+-- biproduct category it is a commutative monoid under morphism addition. It is testable whenever
+-- the underlying hom is.
+instance (TestableType (a ~> b)) => TestableType (Id a b) where
+  gen = invmap Id unId gen
+
+instance (TestingEqShow (a ~> b)) => TestingEqShow (Id a b) where
+  eqP (Id l) (Id r) = eqP l r
+  showP (Id f) = showP f
+instance Function (Id a b) where
+  function = error "Function (Id a b): unused"
 
 instance (SNatI n) => TestingEqShow (Bitstring n)
 instance (SNatI n) => TestableType (Bitstring n) where

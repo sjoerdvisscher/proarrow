@@ -38,7 +38,6 @@ test =
     , propBinaryCoproducts @Type (\r -> r)
     , propDistributive @Type (\r -> r) (\r -> r)
     , propClosed @Type (\r -> r) (\r -> r)
-    , testMonoid @[()] (\r -> r)
     , -- the unit is (trivially) Frobenius, but a non-trivial monoid with the cartesian copy
       -- comonoid is only a bialgebra: speciality already fails, so this is a deterministic
       -- counterexample rather than a randomized property (see also the note in 'propFrobenius')

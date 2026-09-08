@@ -31,7 +31,7 @@ import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), 
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
 newtype Bitstring (n :: Nat) = BS Natural
@@ -223,6 +223,7 @@ instance (SNatI a) => Comonoid (FR a) where
   comult = arr comult
 
 instance (SNatI a) => Frobenius (FR a)
+instance (SNatI a) => CommutativeMonoid (FR a)
 instance Hypergraph FINREL
 instance CopyDiscard FINREL
 
