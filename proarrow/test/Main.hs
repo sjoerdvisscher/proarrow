@@ -5,7 +5,7 @@ module Main where
 import Test.Tasty (defaultMain, testGroup)
 import Prelude
 
--- import Examples.SimplyTypedLambdaCalculus qualified as STLC
+import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.UntypedLambdaCalculus qualified as ULC
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
@@ -19,9 +19,9 @@ import Props.FreeBiCCC qualified as FreeBiCCC
 import Props.Hask qualified as Hask
 import Props.Kleisli qualified as Kleisli
 import Props.Mat qualified as Mat
+import Props.Optic.FinRel qualified as OpticFinRel
 import Props.Optic.Hask qualified as Optic
 import Props.Optic.Linear qualified as OpticLinear
-import Props.Optic.FinRel qualified as OpticFinRel
 import Props.PointedHask qualified as PointedHask
 import Props.Simplex qualified as Simplex
 import Props.Span qualified as Span
@@ -56,7 +56,7 @@ main =
           ]
       , testGroup
           "Examples"
-          [ ULC.test
-          -- , STLC.test
+          [ STLC.test
+          , ULC.test
           ]
       ]

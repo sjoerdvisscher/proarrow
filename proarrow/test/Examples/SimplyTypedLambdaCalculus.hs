@@ -2,11 +2,12 @@
 
 module Examples.SimplyTypedLambdaCalculus where
 
-import Data.Kind (Type)
+import Control.Applicative (Alternative (..))
+import Data.Kind (Constraint, Type)
 import Data.Type.Equality ((:~:) (..))
 import Prelude hiding (curry, fst, id, snd, (.))
 
-import Test.Falsify.Generator (Gen, frequency)
+import Test.Falsify.Generator (Function)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
 
@@ -14,6 +15,7 @@ import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..),
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
+import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Limit.BinaryProduct
   ( HasBinaryProducts (..)
   , associatorProd
@@ -23,21 +25,32 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProd
   , rightUnitorProdInv
   )
-import Proarrow.Category.Monoidal.Closed (Closed (..))
-import Proarrow.Testing.Laws (propCategory, propProfunctor, propTerminalObject)
 import Proarrow.Testing
   ( GenTotal (..)
+  , MkSomeList (..)
   , Some (..)
   , SomeProfunctorElt (..)
   , Testable (..)
   , TestableProfunctor (..)
   , TestableType (..)
-  , TestingEqShow
-  , genWithNamed
+  , TestingEqShow (..)
+  , eqHask
+  , genNamed
+  , genObSuchThat
+  , genSomeDef
+  , isGenNonEmpty
   , oneElem
-  , someP
-  , pattern GenNonEmpty
+  , oneOfTotal
   )
+import Proarrow.Testing.Laws
+  ( propBinaryProducts
+  , propCategory
+  , propClosed
+  , propMonoidal
+  , propProfunctor
+  , propTerminalObject
+  )
+import Props.Hask ()
 
 type data TY = K | TY :=> TY
 
@@ -243,7 +256,7 @@ lam :: (Ob g, Ob a) => (SingCon g -> Tm (g :> a) b) -> Tm g (a :=> b)
 lam f = Lam (f sing)
 
 type family EvalTy (a :: TY) :: Type where
-  EvalTy K = Int
+  EvalTy K = Bool
   EvalTy (a :=> b) = EvalTy a -> EvalTy b
 
 type family EvalCon (g :: CON) :: Type where
@@ -270,12 +283,233 @@ nat1 = Lam (Lam (App (Vs Vz) Vz))
 succ :: (Ob a) => Tm E (Nat a :=> Nat a)
 succ = Lam (Lam (Lam (App (Vs Vz) (App (App (Vs (Vs Vz)) (Vs Vz)) Vz))))
 
--- class d >= g where
---   var :: (Ob g) => SingCon g -> Tm (S a d) b
--- instance g >= g where
---   var _ = Vz
--- instance (d >= g, Ob d) => S a d >= g where
---   var _ = Vs (var @d @g sing)
+-- * Testing
+
+--
+-- The generators follow the Props.FreeBiCCC recipe: total, type-directed generation via
+-- 'GenTotal' ('empty' for uninhabited branches, so nothing is ever discarded), structural
+-- recursion wherever a branch shrinks the goal, and a small fixed palette of intermediate
+-- objects for the one branch that doesn't ('App'/composition), bounded by fuel. Equality is
+-- semantic -- terms and substitutions are compared through 'eval'/'evalSub' -- so the smart
+-- normalizing constructors don't have to be confluent for the laws to pass.
+
+-- ** Structural equality and display, needing only 'Ob'
+
+eqTy :: forall (x :: TY) (y :: TY). (Ob x, Ob y) => Maybe (x :~: y)
+eqTy = case (ty @x, ty @y) of
+  (SK, SK) -> Just Refl
+  (SF @a @b, SF @a' @b') -> case (eqTy @a @a', eqTy @b @b') of
+    (Just Refl, Just Refl) -> Just Refl
+    _ -> Nothing
+  _ -> Nothing
+
+showTy :: forall (a :: TY). (Ob a) => String
+showTy = case ty @a of
+  SK -> "K"
+  SF @a' @b' -> "(" ++ showTy @a' ++ " => " ++ showTy @b' ++ ")"
+
+eqCon :: forall (g :: CON) (h :: CON). (Ob g, Ob h) => Maybe (g :~: h)
+eqCon = case (sing @g, sing @h) of
+  (SE, SE) -> Just Refl
+  (SC @g' @a, SC @h' @b) -> case (eqTy @a @b, eqCon @g' @h') of
+    (Just Refl, Just Refl) -> Just Refl
+    _ -> Nothing
+  _ -> Nothing
+
+showCon :: forall (g :: CON). (Ob g) => String
+showCon = case sing @g of
+  SE -> "E"
+  SC @g' @a -> "(" ++ showCon @g' ++ " :> " ++ showTy @a ++ ")"
+
+-- ** Semantic interpretation of substitutions (terms already have 'eval')
+
+evalSub :: Sub g h -> EvalCon g -> EvalCon h
+evalSub Empty () = ()
+evalSub Wk (g, _) = g
+evalSub (Cons s t) g = (evalSub s g, eval t g \\ t)
+evalSub (Comp f g) x = evalSub f (evalSub g x)
+
+-- ** Generateability of interpreted values
+
+--
+-- 'eqHask' compares interpreted terms by sampling arguments, which needs falsify 'Function'
+-- instances at every arrow's /left/ argument. These families thread that requirement through
+-- 'TestOb', exactly like @FBCTestOb@ in Props.FreeBiCCC. The palettes below only ever put 'K'
+-- on the left of an arrow (and only 'K' entries in contexts), so the vacuous
+-- @Function (a -> b)@ instance is never exercised.
+
+type family TyTestOb (a :: TY) :: Constraint where
+  TyTestOb K = ()
+  TyTestOb (a :=> b) = (Function (EvalTy a), TyTestOb a, TyTestOb b)
+
+type family ConTestOb (g :: CON) :: Constraint where
+  ConTestOb E = ()
+  ConTestOb (g :> a) = (ConTestOb g, TyTestOb a, Function (EvalTy a))
+
+withEvalTy :: forall (a :: TY) r. (Ob a, TyTestOb a) => ((TestableType (EvalTy a), TestingEqShow (EvalTy a)) => r) -> r
+withEvalTy r = case ty @a of
+  SK -> r
+  SF @x @y -> withEvalTy @x (withEvalTy @y r)
+
+withEvalCon
+  :: forall (g :: CON) r. (Ob g, ConTestOb g) => ((TestableType (EvalCon g), TestingEqShow (EvalCon g)) => r) -> r
+withEvalCon r = case sing @g of
+  SE -> r
+  SC @g' @a -> withEvalCon @g' (withEvalTy @a r)
+
+-- ** 'TestOb' is closed under the categorical structure
+
+withTestObProdCON :: forall (a :: CON) b r. (TestOb a, TestOb b) => ((TestOb (a && b)) => r) -> r
+withTestObProdCON r = case sing @b of
+  SE -> r
+  SC @b' -> withTestObProdCON @a @b' r
+
+-- | @'TestOb' ('Exp' d a)@ for an entry type @a@ of a testable context.
+withTestObExpArg
+  :: forall (d :: CON) a r. (TestOb d, Ob a, TyTestOb a, Function (EvalTy a)) => ((TestOb (Exp d a)) => r) -> r
+withTestObExpArg r = case sing @d of
+  SE -> r
+  SC @d' -> withTestObExpArg @d' @a r
+
+withTestObExpCON :: forall (g :: CON) d r. (TestOb g, TestOb d) => ((TestOb (g ~~> d)) => r) -> r
+withTestObExpCON r = case sing @g of
+  SE -> r
+  SC @g' @a -> withTestObExpArg @d @a (withTestObExpCON @g' @(Exp d a) r)
+
+-- ** Object palettes
+
+type TyPalette = '[K, K :=> K, K :=> (K :=> K)]
+
+tyPalette :: [Some TY]
+tyPalette = mkSomeList @TY @TyPalette
+
+type ConPalette = '[E, E :> K, (E :> K) :> K]
+
+conPalette :: [Some CON]
+conPalette = mkSomeList @CON @ConPalette
+
+-- ** Total type-directed generators
+
+-- | Generate a term of type @a@ in context @g@. The variable branch recurses structurally on
+-- the context and the lambda branch on the type, so both terminate on their own; only 'App'
+-- needs an intermediate type (drawn from 'tyPalette') and is bounded by fuel. Uninhabited
+-- goals (e.g. @Tm E K@) come out 'empty' instead of looping or discarding.
+genTm :: forall (g :: CON) (a :: TY). (Ob g, Ob a) => Int -> GenTotal (Tm g a)
+genTm fuel = oneOfTotal [varB, lamB, appB]
+  where
+    varB = case sing @g of
+      SE -> empty
+      SC @g' @b ->
+        oneOfTotal
+          [ case eqTy @b @a of Just Refl -> pure Vz; Nothing -> empty
+          , Vs <$> genTm @g' @a fuel
+          ]
+    lamB = case ty @a of
+      SK -> empty
+      SF @a1 @a2 -> Lam <$> genTm @(g :> a1) @a2 fuel
+    appB
+      | fuel <= 0 = empty
+      | otherwise =
+          oneOfTotal
+            [ App <$> genTm @g @(c :=> a) (fuel - 1) <*> genTm @g @c (fuel - 1)
+            | Some @c <- tyPalette
+            ]
+
+-- | Generate a substitution, type-directed on both contexts: identity and weakening when the
+-- shapes allow it, 'terminate' into the empty context, 'cons' peeling the target context (which
+-- terminates structurally), and fuel-bounded composition through 'conPalette'.
+genSub :: forall (g :: CON) (h :: CON). (Ob g, Ob h) => Int -> GenTotal (Sub g h)
+genSub fuel = oneOfTotal [idB, termB, wkB, consB, compB]
+  where
+    idB = case eqCon @g @h of Just Refl -> pure id; Nothing -> empty
+    termB = case sing @h of SE -> pure terminate; SC -> empty
+    wkB = case sing @g of
+      SE -> empty
+      SC @g' -> (. Wk) <$> genSub @g' @h fuel
+    consB = case sing @h of
+      SE -> empty
+      SC @h' @a -> cons <$> genSub @g @h' fuel <*> genTm @g @a fuel
+    compB
+      | fuel <= 0 = empty
+      | otherwise =
+          oneOfTotal
+            [ (.) <$> genSub @m @h (fuel - 1) <*> genSub @g @m (fuel - 1)
+            | Some @m <- conPalette
+            ]
+
+-- ** Testable instances
+
+instance Testable TY where
+  type TestOb a = (IsTy a, TyTestOb a)
+  showOb @a = showTy @a
+  eqOb = eqTy
+  genSome = genSomeDef @TyPalette
+
+deriving instance Show (Ty a b)
+deriving instance Eq (Ty a b)
+instance (Ob a, Ob b) => TestingEqShow (Ty a b)
+instance (Ob a, Ob b) => TestableType (Ty a b) where
+  gen = case eqTy @a @b of
+    Just Refl -> oneElem (ty @a)
+    Nothing -> GenEmpty (error "gen @Ty")
+instance TestableProfunctor Ty
+
+instance Testable CON where
+  type TestOb g = (ConOb g, ConTestOb g)
+  showOb @g = showCon @g
+  eqOb = eqCon
+  genSome = genSomeDef @ConPalette
+
+deriving instance Show (Sub a b)
+
+-- | Structural equality, used by the normalizing smart constructors ('cons', 'pComp') -- the
+-- test suite compares substitutions semantically instead, see 'TestingEqShow'.
+instance Eq (Sub a b) where
+  Empty == Empty = True
+  Wk == Wk = True
+  Cons a b == Cons c d = a == c && b == d
+  Comp @l a b == Comp @r c d =
+    a // c // case eqCon @l @r of
+      Just Refl -> a == c && b == d
+      Nothing -> False
+  _ == _ = False
+
+instance (Ob a, ConTestOb a, Ob b, ConTestOb b) => TestingEqShow (Sub a b) where
+  eqP l r = withEvalCon @a (withEvalCon @b (eqHask (evalSub l) (evalSub r)))
+  showP = show
+instance (Ob a, ConTestOb a, Ob b, ConTestOb b) => TestableType (Sub a b) where
+  gen = genSub @a @b 3
+instance TestableProfunctor Sub where
+  genProfunctorElt nm = do
+    Some @g <- genObSuchThat @CON \(Some @g') -> any (\(Some @h') -> isGenNonEmpty @(Sub g' h')) conPalette
+    Some @h <- genObSuchThat @CON \(Some @h') -> isGenNonEmpty @(Sub g h')
+    s <- genNamed @(Sub g h) nm
+    pure (SomeP s)
+
+deriving instance Show (Tm g a)
+
+-- | Structural equality, only used by @Eq Sub@ above.
+instance Eq (Tm g a) where
+  Vz == Vz = True
+  Lam l == Lam r = l == r
+  App @al fl xl == App @ar fr xr =
+    xl // xr // case eqTy @al @ar of
+      Just Refl -> xl == xr && fl == fr
+      Nothing -> False
+  Vs tl == Vs tr = tl == tr
+  _ == _ = False
+
+instance (Ob g, ConTestOb g, Ob a, TyTestOb a) => TestingEqShow (Tm g a) where
+  eqP l r = withEvalCon @g (withEvalTy @a (eqHask (eval l) (eval r)))
+  showP = show
+instance (Ob g, ConTestOb g, Ob a, TyTestOb a) => TestableType (Tm g a) where
+  gen = genTm @g @a 3
+instance TestableProfunctor Tm where
+  genProfunctorElt nm = do
+    Some @g <- genObSuchThat @CON \(Some @g') -> any (\(Some @a') -> isGenNonEmpty @(Tm g' a')) tyPalette
+    Some @a <- genObSuchThat @TY \(Some @a') -> isGenNonEmpty @(Tm g a')
+    t <- genNamed @(Tm g a) nm
+    pure (SomeP t)
 
 test :: TestTree
 test =
@@ -283,135 +517,8 @@ test =
     "Simply typed lambda calculus"
     [ propCategory @CON
     , propTerminalObject @CON
+    , propBinaryProducts @CON (\ @a @b r -> withTestObProdCON @a @b r)
+    , propMonoidal @CON (\ @a @b r -> withTestObProdCON @a @b r)
+    , propClosed @CON (\ @a @b r -> withTestObProdCON @a @b r) (\ @a @b r -> withTestObExpCON @a @b r)
     , testProperty "Tm profunctor" $ propProfunctor @Tm
-    ]
-
-instance Testable TY where
-  genSome =
-    frequency
-      [ (2, pure (Some @K))
-      ,
-        ( 1
-        , do
-            Some @a <- genSome
-            Some @b <- genSome
-            pure (Some @(a :=> b))
-        )
-      ]
-  showOb @a = case ty @a of
-    SK -> "K"
-    SF @a' @b' -> "(" ++ showOb @TY @a' ++ " => " ++ showOb @TY @b' ++ ")"
-  eqOb @x @y = case (ty @x, ty @y) of
-    (SK, SK) -> Just Refl
-    (SF @a @b, SF @a' @b') -> case (eqOb @TY @a @a', eqOb @TY @b @b') of
-      (Just Refl, Just Refl) -> Just Refl
-      _ -> Nothing
-    _ -> Nothing
-
-deriving instance Show (Ty a b)
-deriving instance Eq (Ty a b)
-instance (Ob a, Ob b) => TestingEqShow (Ty a b)
-instance (Ob a, Ob b) => TestableType (Ty a b) where
-  gen = case eqOb @TY @a @b of
-    Just Refl -> oneElem (ty @a)
-    Nothing -> GenEmpty $ error "gen @Ty"
-instance TestableProfunctor Ty
-
-instance Testable CON where
-  genSome =
-    frequency
-      [ (2, pure (Some @E))
-      ,
-        ( 1
-        , do
-            Some @t <- genSome
-            Some @c <- genSome
-            pure (Some @(c :> t))
-        )
-      ]
-  showOb @a = case sing @a of
-    SE -> "E"
-    SC @g @b -> "(" ++ showOb @CON @g ++ " :> " ++ showOb @TY @b ++ ")"
-  eqOb @a @b = case (sing @a, sing @b) of
-    (SE, SE) -> Just Refl
-    (SC @g @a', SC @g' @b') -> case (eqOb @TY @a' @b', eqOb @CON @g @g') of
-      (Just Refl, Just Refl) -> Just Refl
-      _ -> Nothing
-    _ -> Nothing
-
-deriving instance Show (Sub a b)
-instance Eq (Sub a b) where
-  Empty == Empty = True
-  Wk == Wk = True
-  Cons a b == Cons c d = a == c && b == d
-  Comp @l a b == Comp @r c d =
-    a // c // case eqOb @CON @l @r of
-      Just Refl -> a == c && b == d
-      Nothing -> False
-  _ == _ = False
-instance (Ob a, Ob b) => TestingEqShow (Sub a b)
-instance (Ob a, Ob b) => TestableType (Sub a b) where
-  gen = GenNonEmpty $ do
-    -- Some @c <- genSome
-    frequency $
-      concat @[] $
-        [ [(5, pure Empty) | SE <- [sing @a], SE <- [sing @b]]
-        , [(5, pure Wk) | SC @a' <- [sing @a], Just Refl <- [eqOb @CON @a' @b]]
-        , [(1, liftA2 cons s t) | SC <- [sing @b], GenNonEmpty s <- [gen], GenNonEmpty t <- [gen]]
-        -- , [(2, liftA2 (.) l r) | GenNonEmpty l <- [gen], GenNonEmpty r <- [gen @(Sub a a)]]
-        -- , [(2, liftA2 (.) l r) | GenNonEmpty l <- [gen], GenNonEmpty r <- [gen @(Sub a b)]]
-        -- , [(1, liftA2 (.) l r) | GenNonEmpty l <- [gen], GenNonEmpty r <- [gen @(Sub a c)]]
-        ]
-
-instance TestableProfunctor Sub
-
-deriving instance Show (Tm g a)
-instance Eq (Tm g a) where
-  Vz == Vz = True
-  Lam l == Lam r = l == r
-  App @al fl xl == App @ar fr xr =
-    xl // xr // case eqOb @TY @al @ar of
-      Just Refl -> xl == xr && fl == fr
-      Nothing -> False
-  Vs tl == Vs tr = tl == tr
-  _ == _ = False
-
-instance (Ob a, Ob g) => TestingEqShow (Tm g a)
-instance (Ob a, Ob g) => TestableType (Tm g a) where
-  gen = GenNonEmpty $ do
-    Some @c <- genSome
-    frequency $
-      concat @[] $
-        [ [(4, pure Vz) | SC @_ @a' <- [sing @g], Just Refl <- [eqOb @TY @a' @a]]
-        , [(1, Vs <$> t) | SC <- [sing @g], GenNonEmpty t <- [gen]]
-        , [(1, Lam <$> t) | SF <- [ty @a], GenNonEmpty t <- [gen]]
-        , [(1, liftA2 App l r) | GenNonEmpty l <- [gen @(Tm g (c :=> a))], GenNonEmpty r <- [gen]]
-        ]
-
-instance TestableProfunctor Tm where
-  genProfunctorElt nm = genWithNamed nm (Just . show) genTm
-
-genTm :: Gen (SomeProfunctorElt Tm)
-genTm =
-  frequency
-    [ (2, do Some @a <- genSome; Some @g <- genSome; pure $ someP (Vz @a @g))
-    , (1, do SomeP t <- genTm; Some @b <- genSome; pure $ SomeP (Vs @b t))
-    ,
-      ( 1
-      , do
-          SomeP @g t <- genTm
-          case sing @g of
-            SE -> do Some @b <- genSome; pure $ SomeP (Lam (Vs @b t))
-            SC -> pure $ SomeP (Lam t)
-      )
-      -- ,
-      --   ( 1
-      --   , let go :: Gen (SomeProfunctorElt Tm) = do
-      --           SomeP @g' l <- genTm
-      --           SomeP @g @a r <- genTm
-      --           case eqOb @CON @(g :> a) @g' of
-      --             Just Refl -> pure $ SomeP (App (Lam l) r)
-      --             Nothing -> go
-      --     in go
-      --   )
     ]
