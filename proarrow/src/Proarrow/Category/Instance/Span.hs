@@ -46,6 +46,9 @@ instance (HasPullbacks k) => Profunctor (Span :: CAT (SPAN k)) where
 instance (HasPullbacks k) => Promonad (Span :: CAT (SPAN k)) where
   id = Span id id
   Span f g . Span h i = pullback i f \l r -> Span (h . l) (g . r)
+
+-- | The category of spans in @k@: an arrow @'SP' a '~>' 'SP' b@ is a pair of arrows @x '~>' a@
+-- and @x '~>' b@ out of a common object, and composition glues along a pullback.
 instance (HasPullbacks k) => CategoryOf (SPAN k) where
   type (~>) = Span
   type Ob a = WrappedOb SP a

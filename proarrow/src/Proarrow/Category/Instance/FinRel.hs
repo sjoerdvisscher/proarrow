@@ -121,6 +121,9 @@ instance Profunctor FinRel where
 instance Promonad FinRel where
   id = FinRel (P.fmap bit universe)
   FinRel l . FinRel r = FinRel (P.fmap (P.foldr (B..|.) 0 . pick l) r)
+
+-- | The skeleton of the category of finite sets and relations: objects are natural numbers and
+-- an arrow @'FR' n '~>' 'FR' m@ is an @n@ by @m@ boolean matrix.
 instance CategoryOf FINREL where
   type (~>) = FinRel
   type Ob a = (Is FR a, SNatI (UN FR a))

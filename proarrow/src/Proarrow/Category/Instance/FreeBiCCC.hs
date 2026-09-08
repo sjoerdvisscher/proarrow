@@ -95,6 +95,9 @@ instance forall k (p :: k +-> k). (BiCCC k) => Profunctor (Term :: CAT (FBC p)) 
 instance forall k (p :: k +-> k). (BiCCC k) => Promonad (Term :: CAT (FBC p)) where
   id = Id
   (.) = Compose
+
+-- | The bicartesian closed category freely generated over the objects of @k@ and the generators
+-- @p@: arrows are 'Term's, interpreted back into @k@ by 'interp'.
 instance forall k (p :: k +-> k). (BiCCC k) => CategoryOf (FBC p) where
   type (~>) = Term
   type Ob (a :: FBC (p :: k +-> k)) = (Ob (Lower a :: k), KnownFBCOb a)

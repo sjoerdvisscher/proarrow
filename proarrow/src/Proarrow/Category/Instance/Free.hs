@@ -119,6 +119,8 @@ retract
    . (All cs k, Representable f) => (a :: FREE cs InitialProfunctor) ~> b -> Lower f a ~> Lower f b
 retract = fold @cs @f (\case {})
 
+-- | The category freely generated from the heteromorphisms of @p@, together with formal
+-- structure arrows for each of the classes in @cs@.
 instance CategoryOf (FREE cs p) where
   type (~>) = Free
   type Ob a = IsFreeOb a

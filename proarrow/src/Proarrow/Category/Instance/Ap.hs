@@ -32,6 +32,9 @@ instance (Applicative f, Profunctor p) => Profunctor (Ap (p :: j +-> k) :: AP f 
 instance (Applicative f, Promonad p) => Promonad (Ap (p :: k +-> k) :: AP f k +-> AP f k) where
   id = Ap (pure id)
   Ap f . Ap g = Ap (liftA2 (.) f g)
+
+-- | The category with the objects of @k@ and the arrows of @k@ wrapped in the applicative
+-- functor @f@; composition combines the effects with 'liftA2'.
 instance (Applicative f, CategoryOf k) => CategoryOf (AP f k) where
   type (~>) = Ap (~>)
   type Ob a = WrappedOb A a

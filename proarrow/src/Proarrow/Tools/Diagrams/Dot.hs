@@ -110,6 +110,8 @@ instance Profunctor SymRefl where
 instance Promonad SymRefl where
   id = SymRefl
   SymRefl . SymRefl = SymRefl
+
+-- | The discrete category on type-level 'Symbol's, labelling the wires of a string diagram.
 instance CategoryOf Symbol where
   type (~>) = SymRefl
   type Ob s = KnownSymbol s
@@ -156,6 +158,10 @@ instance Promonad Dot where
            , nodeOpts = rn ++ ln
            }
        )
+
+-- | The category string diagrams are built in: an object @'D' ws@ is the list of wire labels
+-- along a boundary, and an arrow accumulates the Graphviz data connecting its input wires to its
+-- output wires.
 instance CategoryOf DOT where
   type (~>) = Dot
   type Ob a = (Is D a, IsList (UN D a))

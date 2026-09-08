@@ -48,6 +48,9 @@ instance (HasPushouts k) => Profunctor (Cospan :: CAT (COSPAN k)) where
 instance (HasPushouts k) => Promonad (Cospan :: CAT (COSPAN k)) where
   id = Cospan id id
   Cospan f g . Cospan h i = pushout i f \l r -> Cospan (l . h) (r . g)
+
+-- | The category of cospans in @k@: an arrow @'CS' a '~>' 'CS' b@ is a pair of arrows
+-- @a '~>' x@ and @b '~>' x@ into a common object, and composition glues along a pushout.
 instance (HasPushouts k) => CategoryOf (COSPAN k) where
   type (~>) = Cospan
   type Ob a = WrappedOb CS a

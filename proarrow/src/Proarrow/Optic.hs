@@ -36,6 +36,11 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (Optic_ :: CAT (OPTIC j k c)
 instance (CategoryOf j, CategoryOf k) => Promonad (Optic_ :: CAT (OPTIC j k c)) where
   id = Optic id
   Optic n . Optic m = Optic (n . m)
+
+-- | Optics form a category: an object @'OPT' s t@ pairs the object @s@ an optic reads from
+-- (contravariant) with the object @t@ it writes back (covariant), an arrow
+-- @'OPT' a b '~>' 'OPT' s t@ is a @c@-flavored optic with focus @a@\/@b@ inside @s@\/@t@, and
+-- composition is optic composition.
 instance (CategoryOf j, CategoryOf k) => CategoryOf (OPTIC j k c) where
   type (~>) = Optic_
   type Ob opt = (opt ~ OPT (OptL opt) (OptR opt), Ob (OptL opt), Ob (OptR opt))

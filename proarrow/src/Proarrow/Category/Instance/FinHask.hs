@@ -102,6 +102,9 @@ instance Profunctor FinHask where
 instance Promonad FinHask where
   id = arr id
   FinHask l . FinHask r = FinHask (P.fmap (l M.!) r)
+
+-- | The category of finite Haskell types, with morphisms stored extensionally as finite lookup
+-- tables.
 instance CategoryOf FINHASK where
   type (~>) = FinHask
   type Ob a = (Is FH a, Finite (UN FH a), P.Ord (UN FH a), P.Show (UN FH a))

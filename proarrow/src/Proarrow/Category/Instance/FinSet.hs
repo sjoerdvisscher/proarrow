@@ -76,6 +76,9 @@ instance Profunctor FinSet where
 instance Promonad FinSet where
   id = FinSet universe
   FinSet l . FinSet r = FinSet (P.fmap (l !) r)
+
+-- | The skeleton of the category of finite sets: objects are natural numbers and an arrow
+-- @'FS' n '~>' 'FS' m@ is a function given by its table.
 instance CategoryOf FINSET where
   type (~>) = FinSet
   type Ob a = (Is FS a, SNatI (UN FS a))

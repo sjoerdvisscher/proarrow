@@ -47,6 +47,7 @@ instance (CategoryOf k) => Promonad (Endo :: CAT (ENDO k)) where
   id = Endo Path.idN
   Endo f . Endo g = Endo (f . g)
 
+-- | The category of endoprofunctors on @k@ and natural transformations between them.
 instance (CategoryOf k) => CategoryOf (ENDO k) where
   type (~>) = Endo
   type Ob (a :: ENDO k) = (Is E a, Profunctor (UN E a))

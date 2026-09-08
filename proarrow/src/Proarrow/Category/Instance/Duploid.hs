@@ -4,7 +4,7 @@
 -- negative ('N') objects of the adjunction's two categories, and a hom @x '~>' y@ is an element
 -- @adj ('Pos' x) ('Neg' y)@ of the adjunction profunctor. Composition is biased by the polarity of
 -- the middle object ('(•)' through the positive side, '(◦)' through the negative side) and is
--- __not associative in general__ -- the 'Promonad' instance is a deliberate abuse.
+-- __not associative in general__, the 'Promonad' instance is a deliberate abuse.
 module Proarrow.Category.Instance.Duploid where
 
 import Data.Kind (Constraint)
@@ -77,6 +77,8 @@ instance (Adjunction adj) => Promonad (Duploid :: CAT (DUPLOID adj)) where
     SP -> g • f
     SN -> g ◦ f
 
+-- | The duploid of an adjunction, with polarized objects. Deliberately unlawful: composition is
+-- polarity-biased and not associative (see the warning on the 'Promonad' instance above).
 instance (Adjunction adj) => CategoryOf (DUPLOID adj) where
   type (~>) = Duploid
   type Ob x = IsPN x
