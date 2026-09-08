@@ -7,6 +7,7 @@ module Proarrow.Colimit.Initial where
 import Data.Kind (Type)
 import Data.Void (Void, absurd)
 import Prelude (Show, type (~))
+import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -61,7 +62,8 @@ instance (HasInitialObject `Elem` cs) => HasStructure cs p HasInitialObject wher
   data Struct HasInitialObject a b where
     Initial :: (Ob b) => Struct HasInitialObject InitF b
   foldStructure @f _ (Initial @b) = withLowerOb @b @f initiate
-deriving instance Show (Struct HasInitialObject a b)
+instance Show (Struct HasInitialObject a b) where
+  showsPrec _ Initial = P.showString "initiate"
 instance (Ok cs p, HasInitialObject `Elem` cs) => HasInitialObject (FREE cs p) where
   type InitialObject = InitF
   initiate = St Initial Id

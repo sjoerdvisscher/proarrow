@@ -14,8 +14,6 @@ import Proarrow.Category.Instance.Span (SPAN (..), Span (..))
 import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 
 import Data.List (sort)
-import Proarrow.Testing.Laws
-import Props.FinSet ()
 import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
@@ -26,6 +24,8 @@ import Proarrow.Testing
   , mapSome
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Props.FinSet ()
 
 test :: TestTree
 test =
@@ -37,6 +37,7 @@ test =
     , propClosed_ @(SPAN FINSET)
     , propStarAutonomous_ @(SPAN FINSET)
     , propCompactClosed_ @(SPAN FINSET)
+    , propHypergraph_ @(SPAN FINSET)
     , testMonoid_ @(SP (FS Nat0))
     , testMonoid_ @(SP (FS Nat1))
     , testMonoid_ @(SP (FS Nat2))

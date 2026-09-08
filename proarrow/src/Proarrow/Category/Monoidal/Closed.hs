@@ -152,7 +152,9 @@ instance (Closed `Elem` cs, Monoidal `Elem` cs) => HasStructure cs p Closed wher
     Curry :: forall a b c. (Ob a, Ob b) => (a **! b) ~> c -> Struct Closed a (b --> c)
   foldStructure @f _ (Apply @a @b) = withLowerOb @a @f (withLowerOb @b @f (apply @_ @(Lower f a) @(Lower f b)))
   foldStructure @f go (Curry @a @b f) = withLowerOb @a @f (withLowerOb @b @f (curry @_ @(Lower f a) @(Lower f b) (go f)))
-deriving instance (WithShow a) => P.Show (Struct Closed a b)
+instance (WithShow a) => P.Show (Struct Closed a b) where
+  showsPrec _ Apply = P.showString "apply"
+  showsPrec d (Curry f) = P.showParen (d P.> 10) $ P.showString "curry " . P.showsPrec 11 f
 
 -- Requires 'Monoidal (FREE cs p)' directly (as its superclass) rather than the usual 'Ok cs p',
 -- for the same reason as the 'MonoidalProfunctor'\/'Monoidal' pair in

@@ -11,9 +11,6 @@ import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.FinRel (Bitstring, FINREL (..), FinRel (..))
 
-import Proarrow.Testing.Laws
-import Props.Hask ()
-import Props.Mat ()
 import Proarrow.Testing
   ( Testable (..)
   , TestableProfunctor
@@ -23,6 +20,9 @@ import Proarrow.Testing
   , invmap
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
+import Props.Mat ()
 
 test :: TestTree
 test =
@@ -39,6 +39,7 @@ test =
     , propClosed_ @FINREL
     , propStarAutonomous_ @FINREL
     , propCompactClosed_ @FINREL
+    , propHypergraph_ @FINREL
     , testMonoid_ @(FR Nat0)
     , testMonoid_ @(FR Nat1)
     , testMonoid_ @(FR Nat2)

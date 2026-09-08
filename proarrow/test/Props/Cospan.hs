@@ -14,8 +14,6 @@ import Proarrow.Category.Instance.Cospan (COSPAN (..), Cospan (..))
 import Proarrow.Category.Instance.FinSet (FINSET (..), findIso, unFinSet)
 import Proarrow.Core (CAT, CategoryOf (..), UN, (//), (\\))
 
-import Proarrow.Testing.Laws
-import Props.FinSet ()
 import Proarrow.Testing
   ( GenTotal (..)
   , Some (..)
@@ -26,6 +24,8 @@ import Proarrow.Testing
   , mapSome
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Props.FinSet ()
 
 test :: TestTree
 test =
@@ -37,6 +37,7 @@ test =
     , propClosed_ @(COSPAN FINSET)
     , propStarAutonomous_ @(COSPAN FINSET)
     , propCompactClosed_ @(COSPAN FINSET)
+    , propHypergraph_ @(COSPAN FINSET)
     , testMonoid_ @(CS (FS Nat0))
     , testMonoid_ @(CS (FS Nat1))
     , testMonoid_ @(CS (FS Nat2))

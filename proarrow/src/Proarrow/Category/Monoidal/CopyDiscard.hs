@@ -25,10 +25,10 @@ import Proarrow.Monoid (Comonoid (..), Supplies)
 
 class (Monoidal k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a
-  default copy :: (k `Supplies` Comonoid) => (Ob (a :: k)) => a ~> a ** a
+  default copy :: (Supplies Comonoid k) => (Ob (a :: k)) => a ~> a ** a
   copy = comult
   discard :: (Ob (a :: k)) => a ~> Unit
-  default discard :: (k `Supplies` Comonoid) => (Ob (a :: k)) => a ~> Unit
+  default discard :: (Supplies Comonoid k) => (Ob (a :: k)) => a ~> Unit
   discard = counit
 
 copyS :: (CopyDiscard k, Ob (a :: k)) => '[a] ~> '[a, a]

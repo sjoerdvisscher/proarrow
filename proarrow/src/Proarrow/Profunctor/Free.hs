@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Free constructions: 'HasFree' captures the object constraints @ob@ whose forgetful functor has a left
@@ -14,6 +13,7 @@ import Data.Maybe (Maybe (..))
 import Prelude (($))
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Free (FREE (..), IsFreeOb (..), liftFree, retractFree)
 import Proarrow.Category.Instance.IntConstruction (INT (..), IntConstruction (..), toInt)
 import Proarrow.Category.Instance.Nat (Nat (..), first)
 import Proarrow.Category.Instance.Prof (Prof (..))
@@ -27,6 +27,7 @@ import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), (==))
 import Proarrow.Core
   ( CAT
   , CategoryOf (..)
+  , Hom
   , Kind
   , OB
   , Profunctor (..)
@@ -41,9 +42,12 @@ import Proarrow.Core
   , (:~>)
   )
 import Proarrow.Functor (Functor (..))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts)
+import Proarrow.Limit.Terminal (HasTerminalObject)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
+import Proarrow.Profunctor.Instance.Identity (Id)
 import Proarrow.Profunctor.Instance.List (LIST (..), List (..))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (Rep (..))
@@ -159,27 +163,74 @@ instance HasFree Promonad where
   lift = Prof \p -> p `Comp` Unit (tgt p)
   foldMap (Prof n) = Prof (foldFreePromonad n)
 
-class
-  (forall k. (b k) => c (f k)) =>
-  HasFreeK (b :: Kind -> Constraint) (c :: Kind -> Constraint) (f :: Kind -> Kind)
-    | b c -> f
-  where
-  type Lift b c f (a :: k) :: f k
-  type Retract b c f (a :: f k) :: k
-  liftK :: (b k) => (x :: k) ~> y -> Lift b c f x ~> Lift b c f y
-  retractK :: (c k) => (x :: f k) ~> y -> Retract b c f x ~> Retract b c f y
+-- | The free @c@-structured kind over a @b@-structured kind @k@. A standalone family (rather than
+-- an associated type of 'HasFreeK') because the kinds of 'Lift' and 'Retract' mention it.
+type family FreeK (b :: Kind -> Constraint) (c :: Kind -> Constraint) (k :: Kind) :: Kind
 
-instance HasFreeK CategoryOf Monoidal LIST where
-  type Lift CategoryOf Monoidal LIST a = L '[a]
-  type Retract CategoryOf Monoidal LIST (a :: LIST k) = Fold (UN L a)
+-- | 'Proarrow.Object.Ob''-style helper: the quantified superclass of 'HasFreeK' needs to state
+-- @c ('FreeK' b c k)@, and a type family application cannot head a quantified constraint directly.
+class (c (FreeK b c k)) => FreeK' (b :: Kind -> Constraint) (c :: Kind -> Constraint) (k :: Kind)
+
+instance (c (FreeK b c k)) => FreeK' b c k
+
+-- | @'FreeK' b c@ builds the free @c@-structured kind over any @b@-structured kind: 'liftK'
+-- embeds the arrows of @k@, and when @k@ itself is already @c@-structured 'retractK' interprets
+-- back into @k@.
+-- | The embedding of an object of @k@ into the free @c@-structured kind.
+type family Lift (b :: Kind -> Constraint) (c :: Kind -> Constraint) (a :: k) :: FreeK b c k
+
+-- | Interpret an object of the free @c@-structured kind back into @k@.
+type family Retract (b :: Kind -> Constraint) (c :: Kind -> Constraint) (k :: Kind) (a :: FreeK b c k) :: k
+
+class
+  (forall k. (b k) => FreeK' b c k) =>
+  HasFreeK (b :: Kind -> Constraint) (c :: Kind -> Constraint)
+  where
+  liftK :: (b k) => (x :: k) ~> y -> Lift b c x ~> Lift b c y
+  retractK
+    :: forall k (x :: FreeK b c k) (y :: FreeK b c k)
+     . (c k)
+    => x ~> y -> Retract b c k x ~> Retract b c k y
+
+type instance FreeK CategoryOf Monoidal k = LIST k
+
+type instance Lift CategoryOf Monoidal a = L '[a]
+type instance Retract CategoryOf Monoidal k (a :: LIST k) = Fold (UN L a)
+
+instance HasFreeK CategoryOf Monoidal where
   liftK f = Cons f Nil
   retractK Nil = one
   retractK (Cons f Nil) = f
   retractK (Cons f fs@Cons{}) = f ** retractK @CategoryOf @Monoidal fs
 
-instance HasFreeK TracedMonoidal CompactClosed INT where
-  type Lift TracedMonoidal CompactClosed INT (a :: k) = I a Unit
-  type Retract TracedMonoidal CompactClosed INT (I a b :: INT k) = a ** Dual b
+-- | The free category with a terminal object over @k@, built with
+-- "Proarrow.Category.Instance.Free".
+type instance FreeK CategoryOf HasTerminalObject k = FREE '[HasTerminalObject] (Hom k)
+
+type instance Lift CategoryOf HasTerminalObject (a :: k) = EMB a
+type instance Retract CategoryOf HasTerminalObject k (a :: FREE '[HasTerminalObject] (Hom k)) = Lower (Id :: CAT k) a
+
+instance HasFreeK CategoryOf HasTerminalObject where
+  liftK = liftFree
+  retractK = retractFree @'[HasTerminalObject]
+
+-- | The free category with binary products over @k@, built with
+-- "Proarrow.Category.Instance.Free".
+type instance FreeK CategoryOf HasBinaryProducts k = FREE '[HasBinaryProducts] (Hom k)
+
+type instance Lift CategoryOf HasBinaryProducts (a :: k) = EMB a
+type instance Retract CategoryOf HasBinaryProducts k (a :: FREE '[HasBinaryProducts] (Hom k)) = Lower (Id :: CAT k) a
+
+instance HasFreeK CategoryOf HasBinaryProducts where
+  liftK = liftFree
+  retractK = retractFree @'[HasBinaryProducts]
+
+type instance FreeK TracedMonoidal CompactClosed k = INT k
+
+type instance Lift TracedMonoidal CompactClosed (a :: k) = I a Unit
+type instance Retract TracedMonoidal CompactClosed k (I a b :: INT k) = a ** Dual b
+
+instance HasFreeK TracedMonoidal CompactClosed where
   liftK = toInt
   retractK (Int @ap @am @bp @bm f) =
     dualObj @am //

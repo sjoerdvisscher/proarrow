@@ -10,7 +10,7 @@ module Proarrow.Category.Monoidal.CompactClosed where
 import Prelude (($))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), WithShow)
+import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal
@@ -123,7 +123,9 @@ instance
   foldStructure @f _ (DistribDual @a @b) =
     withLowerOb @a @f (withLowerOb @b @f (distribDual @_ @(Lower f a) @(Lower f b)))
   foldStructure _ DualUnit = dualUnit
-deriving instance (WithShow a) => P.Show (Struct CompactClosed a b)
+instance P.Show (Struct CompactClosed a b) where
+  showsPrec _ DistribDual = P.showString "distribDual"
+  showsPrec _ DualUnit = P.showString "dualUnit"
 
 instance
   ( StarAutonomous (FREE cs p)

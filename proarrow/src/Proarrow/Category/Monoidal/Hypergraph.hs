@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | Hypergraph categories: compact closed categories where every object carries a 'Frobenius'
 -- structure (a compatible 'Proarrow.Monoid.Monoid' and 'Proarrow.Monoid.Comonoid'), giving n-to-m
@@ -9,6 +10,7 @@ module Proarrow.Category.Monoidal.Hypergraph where
 import Data.Type.Nat (Nat (..), SNat (..), SNatI, snat)
 import Prelude (($))
 
+import Proarrow.Category.Instance.Free (FREE)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), (==))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, singleton, swap2)
@@ -54,6 +56,8 @@ fanOutS =
 -- Then there's a unique way to go from n-fold @a@ to m-fold @a@.
 class (Monoid a, Comonoid a) => Frobenius a
 
+instance (forall (a :: k). (Ob a) => Frobenius a) => Supplies Frobenius k
+
 spider :: forall n m a. (Frobenius a, SNatI n, SNatI m) => NFold n a ~> NFold m a
 spider = fanOut @m @a . fanIn @n @a
 
@@ -74,7 +78,7 @@ capS @a = Str (cap @a)
 
 -- | A hypergraph category has a special frobenius algebra for every object, and the
 -- frobenius algebra of any tensor product X ⊗ Y is induced in the canonical way from those of X and Y.
-class (k `Supplies` Frobenius, CompactClosed k) => Hypergraph k
+class (Supplies Frobenius k, CompactClosed k) => Hypergraph k
 
 -- | A hypergraph category is self-dual compact closed.
 dualHG :: forall {k} (a :: k) b. (Hypergraph k) => a ~> b -> b ~> a
@@ -117,3 +121,13 @@ curryHG = linDistHG @a @b @c
 
 applyHG :: forall {k} (b :: k) c. (Hypergraph k, Ob b, Ob c) => ExpHG b c ** b ~> c
 applyHG = linDistInvHG @_ @b (obj @b ** obj @c)
+
+-- | In the free category the supply generators (see @'Supplies' 'Monoid'@\/@'Supplies' 'Comonoid'@
+-- in "Proarrow.Monoid") are compatible by fiat, so monoid + comonoid is already 'Frobenius' -- and
+-- with both supplies in @cs@, @'Supplies' 'Frobenius'@ and 'Hypergraph' fall out derived, with no
+-- structure of their own. Superclasses are taken directly as the context to keep dictionary
+-- construction acyclic (going through 'Proarrow.Category.Instance.Free.Ok' here builds a dictionary that references itself
+-- through the quantified 'Supplies' constraint, looping at runtime).
+instance (Monoid a, Comonoid (a :: FREE cs p)) => Frobenius (a :: FREE cs p)
+
+instance (Supplies Frobenius (FREE cs p), CompactClosed (FREE cs p)) => Hypergraph (FREE cs p)

@@ -8,9 +8,11 @@ import Data.Void (Void)
 import Test.Falsify.Generator (Function, choose, elem, function)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
-import Prelude hiding (elem)
+import Prelude hiding (elem, (.))
 
-import Proarrow.Testing.Laws
+import Control.Monad (unless)
+import Proarrow.Core (Promonad (..))
+import Proarrow.Monoid qualified as Monoid
 import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
@@ -22,6 +24,8 @@ import Proarrow.Testing
   , optGen
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Test.Tasty.Falsify (testFailed, testProperty)
 
 test :: TestTree
 test =
@@ -35,6 +39,14 @@ test =
     , propDistributive @Type (\r -> r) (\r -> r)
     , propClosed @Type (\r -> r) (\r -> r)
     , testMonoid @[()] (\r -> r)
+    , -- the unit is (trivially) Frobenius, but a non-trivial monoid with the cartesian copy
+      -- comonoid is only a bialgebra: speciality already fails, so this is a deterministic
+      -- counterexample rather than a randomized property (see also the note in 'propFrobenius')
+      testFrobenius @() (\r -> r)
+    , testProperty "list monoid is not Frobenius: copy-comonoid breaks speciality" $
+        unless
+          ((Monoid.mappend . Monoid.comult @[()]) [()] /= [()])
+          (testFailed "speciality unexpectedly held for [()]")
     ]
 
 instance Testable Type where

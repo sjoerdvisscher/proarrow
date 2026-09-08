@@ -18,6 +18,7 @@ import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
 import Proarrow.Category.Monoidal.CompactClosed qualified as CC
 import Proarrow.Category.Monoidal.Distributive qualified as Distributive
+import Proarrow.Category.Monoidal.Hypergraph qualified as Hypergraph
 import Proarrow.Category.Monoidal.StarAutonomous qualified as SA
 import Proarrow.Colimit.BinaryCoproduct qualified as BinaryCoproduct
 import Proarrow.Colimit.Coequalizer qualified as Coequalizer
@@ -752,6 +753,68 @@ propCompactClosed_ =
 testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
 testProfunctor = testProperty "Profunctor" (propProfunctor @p)
 
+-- | Check whether the object @m@ -- given as a 'Monoid.Monoid' and a 'Monoid.Comonoid' -- is a
+-- special 'Hypergraph.Frobenius' algebra: the monoid laws (via 'propMonoid'), the comonoid laws
+-- (via 'propMonoid' in the opposite category, like 'testComonoid'), speciality
+-- (@mappend . comult = id@) and the Frobenius condition. It only asks for the two structures, not a
+-- 'Hypergraph.Frobenius' instance, so it doubles as a check of whether a monoid-comonoid pair
+-- happens to satisfy the laws.
+propFrobenius
+  :: forall {k} m
+   . (Testable k, Monoid.Monoid (m :: k), Monoid.Comonoid m, TestOb m, TestOb (M.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> Property ()
+propFrobenius withTestOb2 = do
+  propMonoid @m (\ @x @y r -> withTestOb2 @x @y r)
+  propMonoid @(OP m) (\ @(OP x) @(OP y) r -> withTestOb2 @x @y r)
+  withTestOb2 @m @m $
+    withTestOb2 @(m M.** m) @m $ do
+      let mu = Monoid.mappend @m
+          delta = Monoid.comult @m
+      testEq
+        "speciality"
+        "mappend . comult"
+        (mu . delta)
+        "id"
+        (obj @m)
+      testEq
+        "Frobenius condition (left)"
+        "(mappend ** id) . associatorInv . (id ** comult)"
+        ((mu M.** obj @m) . M.associatorInv @k @m @m @m . (obj @m M.** delta))
+        "comult . mappend"
+        (delta . mu)
+      testEq
+        "Frobenius condition (right)"
+        "(id ** mappend) . associator . (comult ** id)"
+        ((obj @m M.** mu) . M.associator @k @m @m @m . (delta M.** obj @m))
+        "comult . mappend"
+        (delta . mu)
+
+-- | Check 'propFrobenius' at randomly sampled objects: the law content of a
+-- 'Hypergraph.Frobenius' supply, which together with 'propCompactClosed' covers
+-- 'Hypergraph.Hypergraph'. The first witness materializes the supply per object (usually
+-- @\\r -> r@ at a concrete kind); passing it at the value level sidesteps GHC's refusal to
+-- chain quantified constraints (@TestOb => Ob@ into @Ob => Frobenius@).
+propHypergraph
+  :: forall k
+   . (Testable k, M.Monoidal k, TestOb (M.Unit @k))
+  => (forall (a :: k) r. (TestOb a) => ((Ob a, Hypergraph.Frobenius a) => r) -> r)
+  -> (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> TestTree
+propHypergraph withFrob withTestOb2 = testProperty "Hypergraph (Frobenius supply)" $ do
+  Some @a <- genOb @k
+  withFrob @a (propFrobenius @a (\ @x @y r -> withTestOb2 @x @y r))
+
+-- | 'propHypergraph' with default witnesses, for kinds where 'TestOb' implies 'Ob' both ways.
+-- The supply is required as @forall a. TestOb a => Frobenius a@ -- with 'TestOb' itself as the
+-- premise -- so that each witness is a single quantified-constraint hop (GHC will not chain
+-- @TestOb => Ob@ into @Ob => Frobenius@).
+propHypergraph_
+  :: forall k
+   . (Testable k, M.Monoidal k, TestOb (M.Unit @k), TestObIsOb k, forall (a :: k). (TestOb a) => Hypergraph.Frobenius a)
+  => TestTree
+propHypergraph_ = propHypergraph @k (\r -> r) (\ @a @b r -> M.withOb2 @k @a @b r)
+
 propProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => Property ()
 propProfunctor = propProfunctorWith @p (genProfunctorElt "p") (\r -> r)
 
@@ -878,3 +941,16 @@ testComonoid_
    . (Testable k, Monoid.Comonoid (m :: k), TestOb m, TestOb (M.Unit @k), TestObIsOb k)
   => TestTree
 testComonoid_ = testComonoid @m (\ @a @b r -> M.withOb2 @k @a @b r)
+
+testFrobenius
+  :: forall {k} m
+   . (Testable k, Monoid.Monoid (m :: k), Monoid.Comonoid m, TestOb m, TestOb (M.Unit @k))
+  => (forall (a :: k) b r. (TestOb a, TestOb b) => ((TestOb (a M.** b)) => r) -> r)
+  -> TestTree
+testFrobenius f = testProperty ("Frobenius " ++ showOb @k @m) (propFrobenius @m \ @a @b -> f @a @b)
+
+testFrobenius_
+  :: forall {k} m
+   . (Testable k, Monoid.Monoid (m :: k), Monoid.Comonoid m, TestOb m, TestOb (M.Unit @k), TestObIsOb k)
+  => TestTree
+testFrobenius_ = testFrobenius @m (\ @a @b r -> M.withOb2 @k @a @b r)

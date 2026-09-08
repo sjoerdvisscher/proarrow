@@ -105,7 +105,11 @@ instance
     withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c @f (linDist @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
   foldStructure @f go (LinDistInv @a @b @c g) =
     withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c @f (linDistInv @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
-deriving instance (WithShow a) => P.Show (Struct StarAutonomous a b)
+instance (WithShow a) => P.Show (Struct StarAutonomous a b) where
+  showsPrec d (Dual f) = P.showParen (d P.> 10) P.$ P.showString "dual " . P.showsPrec 11 f
+  showsPrec d (DualInv f) = P.showParen (d P.> 10) P.$ P.showString "dualInv " . P.showsPrec 11 f
+  showsPrec d (LinDist f) = P.showParen (d P.> 10) P.$ P.showString "linDist " . P.showsPrec 11 f
+  showsPrec d (LinDistInv f) = P.showParen (d P.> 10) P.$ P.showString "linDistInv " . P.showsPrec 11 f
 
 instance
   ( Monoidal (FREE cs p)

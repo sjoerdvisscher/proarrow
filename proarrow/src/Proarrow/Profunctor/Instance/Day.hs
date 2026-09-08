@@ -111,11 +111,11 @@ instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
   mempty = Prof \(DayUnit f g) -> dimap f g one
   mappend = Prof \(Day f p q g) -> dimap f g (p ** q)
 
-instance (Monoidal j, CopyDiscard k, j `Supplies` Monoid, Profunctor p) => Comonoid (p :: j +-> k) where
+instance (Monoidal j, CopyDiscard k, Supplies Monoid j, Profunctor p) => Comonoid (p :: j +-> k) where
   counit = Prof \p -> p // DayUnit discard mempty
   comult = Prof \p -> p // Day copy p p mappend
 
-instance (CopyDiscard k, Monoidal j, j `Supplies` Monoid) => CopyDiscard (j +-> k)
+instance (CopyDiscard k, Monoidal j, Supplies Monoid j) => CopyDiscard (j +-> k)
 
 instance (Monoidal j, Monoidal k) => Distributive (j +-> k) where
   distL = Prof \(Day l a bc r) -> case bc of

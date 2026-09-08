@@ -4,13 +4,16 @@
 module Props.Free where
 
 import Control.Applicative (Alternative (..))
+import Control.Monad (unless)
 import Data.Type.Equality ((:~:) (..))
 import Data.Type.Nat (Nat2)
 import Test.Tasty (TestTree, testGroup)
-import Prelude hiding (curry, fst, id, snd, (.))
+import Test.Tasty.Falsify (testFailed, testProperty)
+import Prelude hiding (Monoid, curry, fst, id, snd, (.))
+import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinRel (FINREL (..))
-import Proarrow.Category.Instance.Free (FREE (..), Free (..), IsFreeOb (..), retract)
+import Proarrow.Category.Instance.Free (FREE (..), Free (..), IsFreeOb (..), retract, widen)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (Monoidal, SymMonoidal, UnitF, withOb2, type (**!))
 import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, withObExp, type (-->))
@@ -22,11 +25,10 @@ import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), obj, type (+->))
 import Proarrow.Functor (FunctorForRep (..), type (@))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), type (*!))
 import Proarrow.Limit.Terminal (HasTerminalObject (..), TermF)
+import Proarrow.Monoid (Comonoid, Monoid, Supplies)
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
 import Proarrow.Profunctor.Representable (Rep (..))
 
-import Proarrow.Testing.Laws
-import Props.Hask ()
 import Proarrow.Testing
   ( GenTotal (..)
   , MkSomeList (..)
@@ -38,6 +40,8 @@ import Proarrow.Testing
   , genSomeDef
   , oneOfTotal
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
 
 type FREECS =
   '[ HasInitialObject
@@ -49,6 +53,8 @@ type FREECS =
    , Closed
    , StarAutonomous
    , CompactClosed
+   , Supplies Monoid
+   , Supplies Comonoid
    ]
 type FREEKIND = FREE FREECS (InitialProfunctor :: CAT ())
 
@@ -88,7 +94,23 @@ test =
       propCompactClosed @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
+    , propHypergraph @FREEKIND (\ @_ r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , testProperty "retract . widen = retract" P.$ do
+        let l = retract @NARROWCS @(Rep Interp) narrowTerm
+            r = retract @FREECS @(Rep Interp) (widen @FREECS narrowTerm)
+        unless (l P.== r) (testFailed (P.show l P.++ " /= " P.++ P.show r))
     ]
+
+-- * Widening
+
+type NARROWCS = '[HasInitialObject, HasTerminalObject, HasBinaryProducts]
+
+-- | A term using all three structures of the narrow list, for the widening test above.
+narrowTerm
+  :: Free
+       ((InitF *! TermF) :: FREE NARROWCS (InitialProfunctor :: CAT ()))
+       ((TermF *! InitF) *! TermF)
+narrowTerm = (terminate &&& (initiate @_ @InitF . fst @_ @InitF @TermF)) &&& snd @_ @InitF @TermF
 
 -- | A singleton witnessing the shape of an object expression, so 'genTerm' can pattern-match
 -- on source and target shapes directly instead of needing a type class per shape.

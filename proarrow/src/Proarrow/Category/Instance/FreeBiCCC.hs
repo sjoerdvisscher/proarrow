@@ -3,7 +3,11 @@
 -- | The free bicartesian closed category on a generating profunctor @p@.
 --
 -- Unlike "Proarrow.Category.Instance.Free" (which is generic over an arbitrary /list/ of
--- structures), this is hardcoded to exactly the BiCCC signature, to simplify the implementation.
+-- structures), this is hardcoded to exactly the BiCCC signature. The point of the dedicated
+-- encoding is simplicity: a closed object grammar with the lowering built into 'Ob', every
+-- structural morphism in one 'Term' GADT, and the type equality @tensor = product@ stated
+-- directly (its 'Proarrow.Category.Monoidal.Monoidal' instance sets @a ** b = a && b@) -- which is
+-- what makes it a comfortable foundation for tools like "Proarrow.Tools.CCC".
 module Proarrow.Category.Instance.FreeBiCCC
   ( FBC (..)
   , Term (..)

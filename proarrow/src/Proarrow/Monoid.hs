@@ -9,8 +9,18 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Free (Elem, FREE, HasStructure (..), IsFreeOb (..))
+import Proarrow.Category.Instance.Free qualified as F
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), Tensor, (**))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , SymMonoidal (..)
+  , Tensor
+  , UnitF
+  , (**)
+  , type (**!)
+  )
 import Proarrow.Category.Monoidal.Action (Act, CoprodAction, MonoidalAction (..), actHom)
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
@@ -26,7 +36,7 @@ import Proarrow.Colimit.BinaryCoproduct
   , codiag
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..), HasZeroObject (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -108,11 +118,18 @@ comultAct
   :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> Act t a (Act t a n)
 comultAct = multiplicator @t @a @a @n . actHom @t (comult @a) (obj @n)
 
--- | @k \`Supplies\` c@ says that every object of the category @k@ satisfies the constraint @c@ --
--- e.g. @k \`Supplies\` 'Comonoid'@ for a category in which every object can be copied and discarded.
-class (forall a. (Ob a) => c a) => k `Supplies` (c :: k -> Constraint)
+-- | @'Supplies' c k@ says that every object of the category @k@ satisfies the constraint @c@ --
+-- e.g. @'Supplies' 'Comonoid' k@ for a category in which every object can be copied and discarded.
+-- The constraint comes first (at a higher-rank kind) so that a partial application like
+-- @'Supplies' 'Comonoid'@ has kind @Kind -> Constraint@ and can appear in a free category's
+-- structure list ("Proarrow.Category.Instance.Free"). Instances are necessarily per-@c@ (an
+-- instance variable cannot have a higher-rank kind); each follows the shape of the 'Comonoid' one.
+type Supplies :: (forall j. j -> Constraint) -> Kind -> Constraint
+class (forall (a :: k). (Ob a) => c a) => Supplies c k
 
-instance (forall a. (Ob a) => c a) => k `Supplies` (c :: k -> Constraint)
+instance (forall (a :: k). (Ob a) => Comonoid a) => Supplies Comonoid k
+
+instance (forall (a :: k). (Ob a) => Monoid a) => Supplies Monoid k
 
 type data MONOIDK (m :: k) = M
 data Mon a b where
@@ -209,3 +226,44 @@ instance (Cartesian k, Ob r) => Strong Tensor (Rep (Constant r) :: k +-> k) wher
 
 instance (Cartesian k, HasCoproducts k, Monoid r) => Strong CoprodAction (Rep (Constant r) :: k +-> k) where
   act @(COPR a) (Rep @y p) = withObCoprod @k @a @y (Rep (mempty @r . terminate @k @a ||| p))
+
+-- | The free-category structure for @'Supplies' 'Monoid'@: every object gets formal 'mappend'
+-- ('Join') and 'mempty' ('Sprout') generators, interpreted by 'foldStructure' through the
+-- target's own supply.
+instance (Supplies Monoid `Elem` cs, Monoidal `Elem` cs) => HasStructure cs p (Supplies Monoid) where
+  data Struct (Supplies Monoid) i o where
+    Join :: (Ob a) => Struct (Supplies Monoid) (a **! a) a
+    Sprout :: (Ob a) => Struct (Supplies Monoid) UnitF a
+  foldStructure @f _ (Join @a) = withLowerOb @a @f (mappend @(Lower f a))
+  foldStructure @f _ (Sprout @a) = withLowerOb @a @f (mempty @(Lower f a))
+
+instance P.Show (Struct (Supplies Monoid) a b) where
+  showsPrec _ Join = P.showString "mappend"
+  showsPrec _ Sprout = P.showString "mempty"
+
+-- | The free-category structure for @'Supplies' 'Comonoid'@, dually: formal 'comult' ('Fork') and
+-- 'counit' ('Prune') generators for every object.
+instance (Supplies Comonoid `Elem` cs, Monoidal `Elem` cs) => HasStructure cs p (Supplies Comonoid) where
+  data Struct (Supplies Comonoid) i o where
+    Fork :: (Ob a) => Struct (Supplies Comonoid) a (a **! a)
+    Prune :: (Ob a) => Struct (Supplies Comonoid) a UnitF
+  foldStructure @f _ (Fork @a) = withLowerOb @a @f (comult @(Lower f a))
+  foldStructure @f _ (Prune @a) = withLowerOb @a @f (counit @(Lower f a))
+
+instance P.Show (Struct (Supplies Comonoid) a b) where
+  showsPrec _ Fork = P.showString "comult"
+  showsPrec _ Prune = P.showString "counit"
+
+instance
+  (Supplies Monoid `Elem` cs, Monoidal `Elem` cs, Monoidal (FREE cs p), Ob (a :: FREE cs p))
+  => Monoid (a :: FREE cs p)
+  where
+  mempty = F.St Sprout F.Id
+  mappend = F.St Join F.Id
+
+instance
+  (Supplies Comonoid `Elem` cs, Monoidal `Elem` cs, Monoidal (FREE cs p), Ob (a :: FREE cs p))
+  => Comonoid (a :: FREE cs p)
+  where
+  counit = F.St Prune F.Id
+  comult = F.St Fork F.Id

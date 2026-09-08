@@ -16,8 +16,6 @@ import Proarrow.Category.Instance.Mat (App, Mat (..), MatK (..))
 import Proarrow.Core (CAT, type (+->))
 import Proarrow.Profunctor.Representable (Rep)
 
-import Proarrow.Testing.Laws
-import Props.Hask ()
 import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
@@ -29,6 +27,8 @@ import Proarrow.Testing
   , oneElem
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
 
 test :: TestTree
 test =
@@ -39,6 +39,7 @@ test =
     , propInitialObject @(MatK Int)
     , propBinaryProducts_ @(MatK Int)
     , propBinaryCoproducts_ @(MatK Int)
+    , propHypergraph_ @(MatK Int)
     , propMonoidal_ @(MatK Int)
     , propSymMonoidal_ @(MatK Int)
     , propDistributive_ @(MatK Int)

@@ -8,6 +8,7 @@ module Proarrow.Category.Monoidal where
 
 import Data.Kind (Constraint)
 import Prelude (Show, ($), type (~))
+import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free
   ( Elem
@@ -310,7 +311,15 @@ instance (Monoidal `Elem` cs) => HasStructure cs p Monoidal where
   foldStructure @f _ (RightUnitorInv @a) = withLowerOb @a @f rightUnitorInv
   foldStructure @f _ (Associator @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associator @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
   foldStructure @f _ (AssociatorInv @a @b @c') = withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c' @f (associatorInv @_ @(Lower f a) @(Lower f b) @(Lower f c'))))
-deriving instance (WithShow a) => Show (Struct Monoidal a b)
+instance (WithShow a) => Show (Struct Monoidal a b) where
+  showsPrec _ Par0 = P.showString "one"
+  showsPrec d (Par f g) = P.showParen (d P.> 8) $ P.showsPrec 9 f . P.showString " ** " . P.showsPrec 9 g
+  showsPrec _ LeftUnitor = P.showString "leftUnitor"
+  showsPrec _ LeftUnitorInv = P.showString "leftUnitorInv"
+  showsPrec _ RightUnitor = P.showString "rightUnitor"
+  showsPrec _ RightUnitorInv = P.showString "rightUnitorInv"
+  showsPrec _ Associator = P.showString "associator"
+  showsPrec _ AssociatorInv = P.showString "associatorInv"
 
 -- 'MonoidalProfunctor'/'Monoidal' are mutual superclasses of each other (via 'Monoidal'\'s own
 -- 'MonoidalProfunctor ((~>) :: CAT k)' superclass), so each instance below directly requires the
@@ -338,7 +347,8 @@ instance (SymMonoidal `Elem` cs) => HasStructure cs p SymMonoidal where
   data Struct SymMonoidal i o where
     Swap :: (Ob a, Ob b) => Struct SymMonoidal (a **! b) (b **! a)
   foldStructure @f _ (Swap @a @b) = withLowerOb @a @f (withLowerOb @b @f (swap @_ @(Lower f a) @(Lower f b)))
-deriving instance (WithShow a) => Show (Struct SymMonoidal a b)
+instance Show (Struct SymMonoidal a b) where
+  showsPrec _ Swap = P.showString "swap"
 
 -- Requires 'Monoidal (FREE cs p)' directly rather than the usual 'Ok cs p', for the same reason
 -- as 'Closed (FREE cs p)' below: going through 'Ok cs p' bundles 'All cs (FREE cs p)', which

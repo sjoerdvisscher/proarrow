@@ -11,7 +11,6 @@ import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.ZX (ZX (..), enumAll, isZero, nat)
-import Proarrow.Testing.Laws
 import Proarrow.Testing
   ( Testable (..)
   , TestableProfunctor
@@ -20,6 +19,7 @@ import Proarrow.Testing
   , genSomeDef
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
 
 test :: TestTree
 test =
@@ -29,6 +29,7 @@ test =
     , propTerminalObject @Nat
     , propInitialObject @Nat
     , propMonoidal_ @Nat
+    , propHypergraph_ @Nat
     , propSymMonoidal_ @Nat
     , propClosed_ @Nat
     , testMonoid_ @0
