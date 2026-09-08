@@ -146,6 +146,8 @@ type Beside :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 data Beside p1 p2 s x where
   Beside :: (s ~> (s1 ** s2)) -> p1 s1 x -> p2 s2 x -> Beside p1 p2 s x
 
+-- | The covariant half of the 'Beside' witness pair: recomposes the two parts' targets,
+-- @(t1 '**' t2) '~>' t@.
 type CoBeside :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 data CoBeside q1 q2 x t where
   CoBeside :: q1 x t1 -> q2 x t2 -> ((t1 ** t2) ~> t) -> CoBeside q1 q2 x t
@@ -178,6 +180,8 @@ type BesideSum :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 data BesideSum p1 p2 s x where
   BesideSum :: (s ~> (s1 || s2)) -> p1 s1 x -> p2 s2 x -> BesideSum p1 p2 s x
 
+-- | The covariant half of the 'BesideSum' witness pair: recomposes the branches' targets,
+-- @(t1 '||' t2) '~>' t@.
 type CoBesideSum :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 data CoBesideSum q1 q2 x t where
   CoBesideSum :: q1 x t1 -> q2 x t2 -> ((t1 || t2) ~> t) -> CoBesideSum q1 q2 x t
@@ -224,6 +228,7 @@ type UnitW :: forall {k}. k +-> k
 data UnitW s x where
   UnitW :: (Ob x) => (s ~> Unit) -> UnitW s x
 
+-- | The covariant half of the 'UnitW' witness pair: rebuilds the target from 'Unit'.
 type CoUnitW :: forall {k}. k +-> k
 data CoUnitW x t where
   CoUnitW :: (Ob x) => (Unit ~> t) -> CoUnitW x t
@@ -253,6 +258,7 @@ type ZeroW :: forall {k}. k +-> k
 data ZeroW s x where
   ZeroW :: (Ob x) => (s ~> InitialObject) -> ZeroW s x
 
+-- | The covariant half of the 'ZeroW' witness pair: rebuilds the target from 'InitialObject'.
 type CoZeroW :: forall {k}. k +-> k
 data CoZeroW x t where
   CoZeroW :: (Ob x) => (InitialObject ~> t) -> CoZeroW x t

@@ -97,9 +97,12 @@ instance (Corepresentable p) => Representable (Op p) where
   repMap (Op f) = Op (corepMap @p f)
   repUniv = Op corepUniv
 
+-- | The corepresenting functor of @p@ repackaged with the opposite variance: a value is an arrow
+-- @a '~>' p '%%' b@, making @'CorepStar' p@ 'Representable'.
 type CorepStar :: (k +-> j) -> (j +-> k)
 data CorepStar p a b where
   CorepStar :: (Ob b) => {unCorepStar :: a ~> p %% b} -> CorepStar p a b
+
 instance (Corepresentable p) => Profunctor (CorepStar p) where
   dimap = dimapRep
   r \\ CorepStar f = r \\ f
@@ -112,9 +115,12 @@ instance (Corepresentable p) => Representable (CorepStar p) where
 mapCorepStar :: (Corepresentable p, Corepresentable q) => p ~> q -> CorepStar q ~> CorepStar p
 mapCorepStar (Prof n) = Prof \(CorepStar @a f) -> CorepStar (coindex (n (corepUniv @_ @a)) . f)
 
+-- | The representing functor of @p@ repackaged with the opposite variance: a value is an arrow
+-- @p '%' a '~>' b@, making @'RepCostar' p@ 'Corepresentable'.
 type RepCostar :: (k +-> j) -> (j +-> k)
 data RepCostar p a b where
   RepCostar :: (Ob a) => {unRepCostar :: p % a ~> b} -> RepCostar p a b
+
 instance (Representable p) => Profunctor (RepCostar p) where
   dimap = dimapCorep
   r \\ RepCostar f = r \\ f

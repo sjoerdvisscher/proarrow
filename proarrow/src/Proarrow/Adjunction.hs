@@ -200,9 +200,13 @@ instance (Proadjunction p q) => Procomonad (p :.: q) where
 --    <=>
 -- (~>) :~> c :.: Limit j r
 
+-- | The heteromorphisms witnessing the @'Colimit' j@ ⊣ @'Limit' j@ adjunction: a natural
+-- transformation @j ':~>' c ':.:' r@, read as an arrow from the corepresentable @c@ to the
+-- representable @r@.
 type LimitAdj :: (a +-> b) -> REPK a k +-> COREPK b k
 data LimitAdj j c r where
   LimitAdj :: (Corepresentable c, Representable r) => (j :~> c :.: r) -> LimitAdj j (COREP c) (REP r)
+
 instance (Profunctor j) => Profunctor (LimitAdj j) where
   dimap (Sub (Op (Prof l))) (Sub (Prof r)) (LimitAdj n) = LimitAdj (\j -> case n j of c :.: d -> l c :.: r d)
   r \\ LimitAdj f = r \\ f

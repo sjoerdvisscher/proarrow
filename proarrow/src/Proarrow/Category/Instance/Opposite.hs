@@ -11,6 +11,8 @@ import Proarrow.Functor (Functor (..))
 
 newtype OPPOSITE k = OP k
 
+-- | Flips the two arguments of a profunctor, giving a profunctor between the 'OPPOSITE'
+-- categories; at @p = ('~>')@ this is the hom of the opposite category.
 type Op :: j +-> k -> OPPOSITE k +-> OPPOSITE j
 data Op p a b where
   Op :: {unOp :: p b a} -> Op p (OP a) (OP b)
@@ -39,9 +41,12 @@ instance (ThinProfunctor p) => ThinProfunctor (Op p) where
   arr = Op arr
   withArr (Op f) r = withArr f r
 
+-- | Inverse to 'Op': unwraps a profunctor between 'OPPOSITE' categories to one between the
+-- underlying kinds.
 type UnOp :: OPPOSITE k +-> OPPOSITE j -> j +-> k
 data UnOp p a b where
   UnOp :: {unUnOp :: p (OP b) (OP a)} -> UnOp p a b
+
 instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (UnOp p :: j +-> k) where
   dimap l r = UnOp . dimap (Op r) (Op l) . unUnOp
   r \\ UnOp f = r \\ f

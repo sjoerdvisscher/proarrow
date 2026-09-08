@@ -38,6 +38,9 @@ import Proarrow.Profunctor.Representable (Representable (..))
 import Proarrow.Promonad (Procomonad (..))
 import Proarrow.Promonad.Writer (Writer (..), WriterT (..))
 
+-- | The reader promonad for an environment @r@: an arrow from @a@ to @b@ is a map
+-- @r '**' a '~>' b@ consuming the environment. The index is 'OP'-wrapped, as it acts
+-- contravariantly.
 data Reader r a b where
   Reader :: forall a b r. (Ob a) => r ** a ~> b -> Reader (OP r) a b
 

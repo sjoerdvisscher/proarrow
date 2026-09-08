@@ -9,6 +9,8 @@ import Proarrow.Monoid (Comonoid (..), Monoid (..))
 
 type data REV k = R k
 
+-- | Wraps a profunctor between the 'REV'-wrapped kinds: the same values, but the monoidal
+-- structure on 'REV' tensors in reverse order.
 type Rev :: j +-> k -> REV j +-> REV k
 data Rev p a b where
   Rev :: p a b -> Rev p (R a) (R b)

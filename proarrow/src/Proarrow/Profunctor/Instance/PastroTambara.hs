@@ -24,6 +24,8 @@ import Proarrow.Profunctor.Instance.Rift (Rift (..), runRift, type (<|))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
+-- | The free 'Prostrong' profunctor for the flavor @w@: the profunctor @r@ sandwiched between an
+-- existential @w@-witness pair.
 type Pastro :: FLAVOR j k -> j +-> k -> j +-> k
 data Pastro w r a b where
   Pastro
@@ -58,6 +60,8 @@ fromExOptic
    . (CompactFlavor w, CategoryOf j, CategoryOf k) => ExOptic w a b :~> (Pastro w (Yo a (OP b)) :: j +-> k)
 fromExOptic ex = compress ex \f g -> Pastro (f :.: Yo (tgt f) (src g) :.: g)
 
+-- | The cofree 'Prostrong' profunctor for the flavor @w@: strength against every @w@-witness pair
+-- at once.
 type Tambara :: FLAVOR j k -> j +-> k -> j +-> k
 data Tambara w r a b where
   Tambara

@@ -11,6 +11,7 @@ import Proarrow.Category.Monoidal.Strength (strongId)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Profunctor.Instance.Composition ((:.:) ((:.:)))
 
+-- | The profunctor that ignores its indices and holds a plain Haskell value of type @c@.
 type HaskValue :: Type -> j +-> k
 data HaskValue c a b where
   HaskValue :: (Ob a, Ob b) => c -> HaskValue c a b

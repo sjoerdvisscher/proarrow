@@ -8,6 +8,8 @@ import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Object (pattern Obj, type Obj)
 
+-- | The profunctor with exactly one value between any two objects: the terminal object of the
+-- category of profunctors @j +-> k@.
 type TerminalProfunctor :: j +-> k
 data TerminalProfunctor a b where
   TerminalProfunctor' :: Obj a -> Obj b -> TerminalProfunctor (a :: j) (b :: k)

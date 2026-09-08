@@ -19,9 +19,12 @@ import Proarrow.Profunctor.Representable (Representable (..), repUniv)
 class (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
 instance (ThinProfunctor p, Discrete j, Discrete k) => Relation (p :: j +-> k)
 
+-- | The converse relation: @'Converse' p a b@ relates @a@ to @b@ exactly when @p@ relates @b@
+-- to @a@.
 type Converse :: (j +-> k) -> (k +-> j)
 data Converse p a b where
   Converse :: p b a -> Converse p a b
+
 instance (Relation p) => Profunctor (Converse p) where
   dimap f g (Converse p) = withEq f (withEq g (Converse p))
   r \\ Converse p = r \\ p

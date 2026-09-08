@@ -12,6 +12,9 @@ import Proarrow.Profunctor.Free (HasFree (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 
+-- | The free profunctor on @p@ (the 'HasFree' instance for 'Profunctor'): a @p c d@ together with
+-- reindexing arrows on both sides. Equivalent to @p@ when @p@ is already a profunctor
+-- ('coyoneda'\/'unCoyoneda').
 type Coyoneda :: (j +-> k) -> j +-> k
 data Coyoneda p a b where
   Coyoneda :: (a ~> c) -> (d ~> b) -> p c d -> Coyoneda p a b

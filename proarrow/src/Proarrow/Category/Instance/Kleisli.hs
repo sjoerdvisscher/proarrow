@@ -45,6 +45,7 @@ import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), re
 
 newtype KLEISLI (p :: CAT k) = KL k
 
+-- | The arrows of the promonad @p@, wrapped as a category on the 'KLEISLI'-wrapped kind.
 type Kleisli :: CAT (KLEISLI p)
 data Kleisli (a :: KLEISLI p) b where
   Kleisli :: {unKleisli :: p a b} -> Kleisli (KL a :: KLEISLI p) (KL b)
@@ -127,16 +128,21 @@ instance (T.ThinProfunctor p, Promonad p) => T.ThinProfunctor (Kleisli :: CAT (K
   arr = Kleisli T.arr
   withArr (Kleisli p) r = T.withArr p r
 
+-- | The free half of the Kleisli adjunction ('Proadjunction' below), embedding @k@ into the
+-- Kleisli category of @p@.
 type KleisliFree :: forall (p :: k +-> k) -> k +-> KLEISLI p
 data KleisliFree p a b where
   KleisliFree :: p a b -> KleisliFree p (KL a) b
+
 instance (Promonad p) => Profunctor (KleisliFree p) where
   dimap (Kleisli l) r (KleisliFree p) = KleisliFree (rmap r p . l)
   r \\ KleisliFree p = r \\ p
 
+-- | The forgetful half of the Kleisli adjunction, mapping Kleisli objects back to @k@.
 type KleisliForget :: forall (p :: k +-> k) -> KLEISLI p +-> k
 data KleisliForget p a b where
   KleisliForget :: p a b -> KleisliForget p a (KL b)
+
 instance (Promonad p) => Profunctor (KleisliForget p) where
   dimap l (Kleisli r) (KleisliForget p) = KleisliForget (r . lmap l p)
   r \\ KleisliForget p = r \\ p

@@ -15,6 +15,8 @@ import Proarrow.Profunctor.Representable (Representable (..))
 type SUBCAT :: forall {k}. OB k -> Type
 type data SUBCAT (ob :: OB k) = SUB k
 
+-- | Wraps an arrow whose endpoints satisfy the predicate @ob@: the arrows of the full
+-- subcategory 'SUBCAT'.
 type Sub :: CAT k -> CAT (SUBCAT (ob :: OB k))
 data Sub p a b where
   Sub :: (ob a, ob b) => {unSub :: p a b} -> Sub p (SUB a :: SUBCAT ob) (SUB b)

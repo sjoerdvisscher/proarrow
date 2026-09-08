@@ -129,6 +129,8 @@ instance (HasBinaryCoproducts k) => HasBinaryCoproducts (PROD k) where
 
 newtype COPROD k = COPR k
 
+-- | Lifts a profunctor to the 'COPROD'-wrapped kinds, where the monoidal structure is the
+-- coproduct.
 type Coprod :: j +-> k -> COPROD j +-> COPROD k
 data Coprod p a b where
   Coprod :: {unCoprod :: p a b} -> Coprod p (COPR a) (COPR b)
@@ -234,6 +236,8 @@ associatorCoprodInv = withObCoprod @k @a @b (lft @k @(a || b) @c) . lft @k @a @b
 instance (HasCoproducts k) => SymMonoidal (COPROD k) where
   swap @(COPR a) @(COPR b) = Coprod (swapCoprod @a @b)
 
+-- | Inverse to 'Coprod': strips the 'COPR' wrappers from a profunctor between 'COPROD'-wrapped
+-- kinds.
 type Uncoprod :: (COPROD j +-> COPROD k) -> j +-> k
 data Uncoprod p a b where
   Uncoprod :: p (COPR a) (COPR b) -> Uncoprod p a b

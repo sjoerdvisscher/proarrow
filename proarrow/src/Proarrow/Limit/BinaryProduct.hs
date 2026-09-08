@@ -134,6 +134,8 @@ swapProd = snd @k @a @b &&& fst @k @a @b
 
 newtype PROD k = PR k
 
+-- | Lifts a profunctor to the 'PROD'-wrapped kinds, where the monoidal structure is the
+-- categorical product.
 type Prod :: j +-> k -> PROD j +-> PROD k
 data Prod p (a :: PROD k) b where
   Prod :: {unProd :: p a b} -> Prod p (PR a) (PR b)

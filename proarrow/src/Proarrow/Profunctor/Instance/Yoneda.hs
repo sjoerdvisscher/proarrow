@@ -16,6 +16,9 @@ import Proarrow.Profunctor.Cofree (HasCofree (..))
 import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 
+-- | The cofree profunctor on @p@ (the 'HasCofree' instance for 'Profunctor'): natural
+-- transformations out of the Yoneda embedding 'Yo'. Equivalent to @p@ when @p@ is already a
+-- profunctor ('yoneda'\/'mkYoneda').
 type Yoneda :: (j +-> k) -> j +-> k
 data Yoneda p a b where
   Yoneda :: (Ob a, Ob b) => {unYoneda :: Yo a (OP b) :~> p} -> Yoneda p a b

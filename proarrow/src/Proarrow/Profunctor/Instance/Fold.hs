@@ -22,6 +22,8 @@ import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Promonad (Procomonad (..))
 
+-- | A left fold from @a@ to @b@: an internal monoid @m@ with a step arrow @a '~>' m@ and an
+-- extractor @m '~>' b@.
 data Fold a b where
   Fold :: (Ob m) => (m ~> b) -> (a ~> m) -> (m ** m ~> m) -> (Unit ~> m) -> Fold a b
 

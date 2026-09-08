@@ -13,8 +13,10 @@ import Proarrow.Category.Monoidal.Strength (Strong (..))
 import Proarrow.Colimit.BinaryCoproduct (Coprod (..), HasBinaryCoproducts (..), HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..))
 
+-- | An arrow from @a@ to @b@ is a mapping of continuations @(b '~>' r) -> (a '~>' r)@.
 data Cont r a b where
   Cont :: (Ob a, Ob b) => {runCont :: (b ~> r) -> (a ~> r)} -> Cont r a b
+
 instance (CategoryOf k) => Profunctor (Cont (r :: k)) where
   dimap l r (Cont f) = Cont ((. l) . f . (. r)) \\ l \\ r
   r \\ Cont{} = r

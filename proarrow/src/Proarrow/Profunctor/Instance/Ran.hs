@@ -23,6 +23,8 @@ import Proarrow.Promonad (Procomonad (..), RelativeMonad (..))
 
 type j |> p = Ran (OP j) p
 
+-- | The right Kan extension of @p@ along @j@, written @j |> p@: the universal @g@ with
+-- @g ':.:' j ~> p@ ('ranUniv' and 'runRanProf').
 type Ran :: OPPOSITE (i +-> j) -> i +-> k -> j +-> k
 data Ran j p a b where
   Ran :: (Ob a, Ob b) => {unRan :: forall x. j b x -> p a x} -> Ran (OP j) p a b

@@ -20,6 +20,8 @@ import Proarrow.Profunctor.Representable (Representable (..))
 
 type data LIST k = L [k]
 
+-- | Lifts @p@ componentwise to lists: an arrow between equal-length lists of objects is a list of
+-- @p@-arrows.
 type List :: (j +-> k) -> LIST j +-> LIST k
 data List p as bs where
   Nil :: List p (L '[]) (L '[])

@@ -67,9 +67,13 @@ instance (Functor f, HasCoproducts j, HasCoproducts k) => MonoidalProfunctor (Co
   Coprod (Star @a f) ** Coprod (Star @b g) = withObCoprod @_ @a @b (Coprod (Star (map (lft @_ @a @b) . f ||| map (rgt @_ @a @b) . g)))
 
 -- Hmm, another wrapper required...
+
+-- | Wraps the domain of @p@ in 'COPROD', letting 'Star' of an 'Alternative' functor be monoidal
+-- over coproducts.
 type CoprodDom :: j +-> k -> COPROD j +-> k
 data CoprodDom p a b where
   Co :: {unCo :: p a b} -> CoprodDom p a (COPR b)
+
 instance (Profunctor p) => Profunctor (CoprodDom p) where
   dimap l (Coprod r) (Co p) = Co (dimap l r p)
   r \\ Co p = r \\ p

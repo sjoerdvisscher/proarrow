@@ -22,6 +22,8 @@ import Proarrow.Promonad (Procomonad (..), RelativeComonad (..))
 
 type p <| j = Rift (OP j) p
 
+-- | The right Kan lift of @p@ along @j@, written @p <| j@: the universal @g@ with
+-- @j ':.:' g ~> p@ ('riftUniv' and 'runRiftProf').
 type Rift :: OPPOSITE (k +-> i) -> j +-> i -> j +-> k
 data Rift j p a b where
   Rift :: (Ob a, Ob b) => {unRift :: forall x. j x a -> p x b} -> Rift (OP j) p a b

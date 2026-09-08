@@ -201,6 +201,8 @@ instance (CategoryOf k) => Comonoid (CatAsComonoid k) where
               \g -> k (g . f)
       )
 
+-- | The coKleisli category of a comonoid @w@ in the functor category: an arrow from @a@ to @b@
+-- is a map @w a -> b@.
 data ComonoidAsCat (w :: Type -> Type) a b where
   ComonoidAsCat :: (w a -> b) -> ComonoidAsCat w a b
 

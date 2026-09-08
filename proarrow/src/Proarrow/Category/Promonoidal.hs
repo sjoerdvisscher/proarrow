@@ -41,9 +41,12 @@ class (Protensor p) => Promonoid p m where
 class (Protensor t, Profunctor p) => PromonoidalProfunctor t p where
   parN :: t :.: List p :~> p :.: t
 
+-- | The 'Protensor' of a monoidal category @k@: an arrow @'[a] '~>' bs@ of the strictified
+-- category, representably sending a list of objects to its fold.
 type Tensor :: PROTENSOR k
 data Tensor a bs where
   Tensor :: (Ob bs) => {unTensor :: '[a] ~> UN L bs} -> Tensor a bs
+
 instance (Monoidal k) => Profunctor (Tensor :: PROTENSOR k) where
   dimap = dimapRep
   r \\ Tensor (Str.Str f) = r \\ f
@@ -75,11 +78,14 @@ instance (Monoidal k) => Protensor (Tensor :: PROTENSOR k) where
 instance (MonoidalProfunctor p) => PromonoidalProfunctor Tensor p where
   parN (Tensor (Str.Str f) :.: l) = let fl = foldList l in lmap f fl :.: Tensor (Str.Str (tgt fl)) \\ fl \\ l
 
+-- | A list of profunctors applied pointwise: @'PList' ps@ relates the lists @as@ and @bs@ by a
+-- value of each @p@ in @ps@ at the corresponding positions.
 type PList :: LIST (j +-> k) -> LIST j +-> LIST k
 data PList ps as bs where
   PNil :: PList (L '[]) (L '[]) (L '[])
   PCons
     :: (Ob as, Ob bs, Ob p, Ob ps) => p a b -> PList (L ps) (L as) (L bs) -> PList (L (p ': ps)) (L (a ': as)) (L (b ': bs))
+
 instance (CategoryOf j, CategoryOf k, Ob ps) => Profunctor (PList ps :: LIST j +-> LIST k) where
   dimap Nil Nil PNil = PNil
   dimap (Cons l ls) (Cons r rs) (PCons f fs) =

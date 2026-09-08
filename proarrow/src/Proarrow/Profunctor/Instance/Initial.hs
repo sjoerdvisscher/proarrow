@@ -9,6 +9,8 @@ import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Category.Instance.Zero (Bottom (..))
 import Proarrow.Core (CategoryOf, Profunctor (..), type (+->))
 
+-- | The profunctor with no values at all: the initial object of the category of profunctors
+-- @j +-> k@.
 type InitialProfunctor :: j +-> k
 data InitialProfunctor a b
   deriving (Show, Eq)

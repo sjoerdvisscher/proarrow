@@ -14,6 +14,8 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 
+-- | The fixed point of a profunctor: @'Fix' p@ is @p ':.:' 'Fix' p@ rolled up ('In'\/'out'); fold it
+-- with 'cata', unfold it with 'ana', or both at once with 'hylo'.
 type Fix :: k +-> k -> k +-> k
 data Fix p a b where
   In :: {out :: ~((p :.: Fix p) a b)} -> Fix p a b

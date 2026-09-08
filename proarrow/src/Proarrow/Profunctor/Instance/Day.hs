@@ -40,6 +40,7 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Promonad (Procomonad (..))
 
+-- | The unit of 'Day' convolution: a pair of arrows through the monoidal units.
 data DayUnit a b where
   DayUnit :: a ~> Unit -> Unit ~> b -> DayUnit a b
 
@@ -131,6 +132,7 @@ duoidal
   => (p :.: p') `Day` (q :.: q') ~> (p `Day` q) :.: (p' `Day` q')
 duoidal = Prof \(Day f (p :.: p') (q :.: q') g) -> let b = tgt p ** tgt q in Day f p q b :.: Day b p' q' g
 
+-- | The internal hom of 'Day' convolution, making the category of profunctors 'Closed'.
 data DayExp p q a b where
   DayExp
     :: forall p q a b. (Ob a, Ob b) => (forall c d e f. e ~> a ** c -> b ** d ~> f -> p c d -> q e f) -> DayExp p q a b

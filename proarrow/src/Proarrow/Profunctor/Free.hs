@@ -85,6 +85,8 @@ instance HasFree (P.Monoid `On` P.Semigroup) where
   lift = Sub Just
   foldMap (Sub f) = Sub (P.foldMap f)
 
+-- | The free 'Applicative' on a functor @f@ (the 'HasFree' instance for 'Applicative'): formal 'pure',
+-- effect and 'liftA2' nodes, retracted into any applicative by 'retractAp'.
 type Ap :: (k -> Type) -> k -> Type
 data Ap f a where
   Pure :: Unit ~> a -> Ap f a
@@ -124,6 +126,8 @@ instance (Monoidal k) => HasFree (Applicative :: OB (k -> Type)) where
   lift = Nat Eff
   foldMap f@Nat{} = Nat retractAp . map f
 
+-- | The free 'Promonad' on a profunctor @p@: a chain of @p@s ending in a hom arrow, folded into any
+-- promonad by 'foldFreePromonad'.
 data FreePromonad p a b where
   Unit :: (a ~> b) -> FreePromonad p a b
   Comp :: p a b -> FreePromonad p b c -> FreePromonad p a c

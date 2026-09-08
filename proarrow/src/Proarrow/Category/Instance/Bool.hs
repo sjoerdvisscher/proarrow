@@ -251,6 +251,8 @@ instance (Ob a) => Comonoid (a :: BOOL) where
 
 instance CopyDiscard BOOL
 
+-- | The four non-trivial profunctors @BOOL '+->' BOOL@, indexed by a pair of 'BOOL's selecting
+-- whether the @FLS@\/@FLS@ and @TRU@\/@TRU@ heteromorphisms are present; @FLS@\/@TRU@ always is.
 type NonTrivialProfunctor :: (BOOL, BOOL) -> BOOL +-> BOOL
 data NonTrivialProfunctor ft a b where
   FF :: NonTrivialProfunctor '(TRU, tt) FLS FLS

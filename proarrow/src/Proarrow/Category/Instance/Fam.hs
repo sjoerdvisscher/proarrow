@@ -80,9 +80,12 @@ instance (CategoryOf k) => FunctorForRep (Embed :: k +-> FAM k) where
   type Embed @ a = DEP () (Rep (Constant a))
   fmap f = f // Fam @(Rep (Constant '())) \(Rep a) -> Rep (f . a) :.: Rep Unit
 
+-- | The presheaf on @k@ underlying a family @dx@: @'AsPresheaf' dx a '()@ holds a value
+-- @dx a b@ with the index @b@ hidden.
 type AsPresheaf :: x +-> k -> Presheaf k
 data AsPresheaf dx a u where
   AsPresheaf :: dx a b -> AsPresheaf dx a '()
+
 instance (CategoryOf k, Profunctor dx) => Profunctor (AsPresheaf dx :: Presheaf k) where
   dimap l Unit (AsPresheaf dx) = AsPresheaf (lmap l dx)
   r \\ AsPresheaf dx = r \\ dx

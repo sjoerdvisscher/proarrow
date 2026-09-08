@@ -86,9 +86,12 @@ instance (Representable d) => FunctorForRep (EndLimit (d :: (OPPOSITE k, k) +-> 
   type EndLimit d @ '() = End d
   fmap Unit = id
 
+-- | The hom-functor of @k@ as a weight: the limit of a diagram @('OPPOSITE' k, k) '+->' ()@
+-- weighted by 'Hom' is its end.
 type Hom :: (OPPOSITE k, k) +-> ()
 data Hom a b where
   Hom :: a ~> b -> Hom '() '(OP a, b)
+
 instance (CategoryOf k) => Profunctor (Hom :: (OPPOSITE k, k) +-> ()) where
   dimap Unit (Op l :**: r) (Hom f) = Hom (r . f . l) \\ l \\ r
   r \\ Hom f = r \\ f

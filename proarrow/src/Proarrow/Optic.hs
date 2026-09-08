@@ -121,6 +121,11 @@ type Prostrong :: forall {j} {k}. FLAVOR j k -> (j +-> k) -> Constraint
 class (Profunctor p, CategoryOf j, CategoryOf k) => Prostrong w (p :: j +-> k) where
   proact :: (w f g, Profunctor f, Profunctor g) => f :.: p :.: g :~> p
 
+-- | The existential encoding of an optic: either a bare iso ('ExIso', the two legs) or a
+-- @w@-witness pair sandwiching a smaller optic ('ExProstrong'). This is the free @w@-strong
+-- profunctor (see the 'Prostrong' instance below), which is what mediates between the encodings:
+-- 'ex2prof'\/'prof2ex' convert to and from 'Optic', 'convert' reinterprets through it, and
+-- 'compress' flattens it back to a single witness pair.
 type ExOptic :: FLAVOR j k -> k -> j -> k -> j -> Type
 data ExOptic w a b s t where
   ExIso
@@ -210,6 +215,9 @@ convert
   => Optic c s t a b -> Optic (Prostrong w) s t a b
 convert (Optic l) = ex2prof (l @(ExOptic w a b) (ExIso id id))
 
+-- | The reversing carrier implementing 're': it stores a continuation @p b a -> p t s@, so
+-- running an optic at @'Re' p _ _@ builds the optic turned around. Its 'Prostrong' instance
+-- absorbs the witness pair mirrored, via 'Flip'.
 data Re p s t a b where
   Re :: (Ob a, Ob b) => {unRe :: p b a -> p t s} -> Re p s t a b
 

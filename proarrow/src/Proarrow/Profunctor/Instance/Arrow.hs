@@ -32,6 +32,7 @@ import Proarrow.Profunctor.Representable (Representable (..))
 swap :: (b, a) -> (a, b)
 swap ~(x, y) = (y, x)
 
+-- | A "Control.Arrow" 'Arrow' wrapped as a 'Promonad' on 'Type'.
 type Arr :: CAT Type -> CAT Type
 newtype Arr arr a b = Arr {unArr :: arr a b}
 

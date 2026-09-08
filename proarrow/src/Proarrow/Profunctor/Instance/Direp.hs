@@ -8,6 +8,7 @@ import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Functor (FunctorForRep (..), withMappedOb)
 
+-- | An arrow @f \@ a '~>' g \@ b@ between the images of the functors @f@ and @g@, as a profunctor.
 type Direp :: (j +-> k) -> (i +-> k) -> i +-> j
 data Direp f g a b where
   Direp :: (Ob a, Ob b) => (f @ a) ~> (g @ b) -> Direp f g a b

@@ -77,6 +77,8 @@ type TensorW :: forall {k}. k -> k +-> k
 data TensorW a s x where
   TensorW :: (Ob a, Ob x) => (s ~> (a ** x)) -> TensorW a s x
 
+-- | The covariant half of the 'TensorW' witness pair: rebuilds the target around the carried
+-- residual, @(a '**' x) '~>' t@.
 type CoTensorW :: forall {k}. k -> k +-> k
 data CoTensorW a x t where
   CoTensorW :: (Ob a, Ob x) => ((a ** x) ~> t) -> CoTensorW a x t

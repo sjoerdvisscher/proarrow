@@ -34,6 +34,8 @@ import Proarrow.Profunctor.Instance.Star (Star, pattern Star)
 import Proarrow.Profunctor.Representable (Representable (..), dimapRep)
 import Proarrow.Promonad (Procomonad (..))
 
+-- | The writer promonad over @w@: an arrow from @a@ to @b@ is a map @a '~>' w '**' b@, emitting
+-- output alongside the result.
 data Writer w a b where
   Writer :: (Ob b) => a ~> w ** b -> Writer w a b
 

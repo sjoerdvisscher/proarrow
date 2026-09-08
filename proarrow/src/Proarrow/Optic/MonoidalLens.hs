@@ -54,6 +54,7 @@ type LensW :: forall {k}. k -> k +-> k
 data LensW m s a where
   LensW :: (Comonoid m, Ob a) => (s ~> (m ** a)) -> LensW m s a
 
+-- | The covariant half of the 'LensW' witness pair: the set leg, @(m '**' b) '~>' t@.
 type CoLensW :: forall {k}. k -> k +-> k
 data CoLensW m b t where
   CoLensW :: (Comonoid m, Ob b) => ((m ** b) ~> t) -> CoLensW m b t

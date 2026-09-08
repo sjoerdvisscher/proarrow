@@ -7,6 +7,8 @@ import Proarrow.Category.Enriched.Thin (Thin, ThinProfunctor (..))
 import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..))
 import Proarrow.Functor (FunctorForRep (..))
 
+-- | The identity profunctor: the hom arrows of the category wrapped as a data type. It is the unit
+-- of profunctor composition and the identity 'Promonad'.
 type Id :: CAT k
 newtype Id a b = Id {unId :: a ~> b}
 
