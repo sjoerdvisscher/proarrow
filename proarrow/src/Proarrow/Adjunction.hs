@@ -47,9 +47,12 @@ class (Representable p, Corepresentable p) => Adjunction p
 
 instance (Representable p, Corepresentable p) => Adjunction p
 
+-- | One direction of the adjunction isomorphism: transpose an arrow out of the left adjoint,
+-- @p '%%' a '~>' b@, to an arrow into the right adjoint, @a '~>' p '%' b@.
 leftAdjunct :: forall p a b. (Adjunction p, Ob a) => (p %% a ~> b) -> a ~> p % b
 leftAdjunct = index . cotabulate @p
 
+-- | The other direction of the adjunction isomorphism, inverse to 'leftAdjunct'.
 rightAdjunct :: forall p a b. (Adjunction p, Ob b) => a ~> p % b -> (p %% a ~> b)
 rightAdjunct = coindex . tabulate @p
 

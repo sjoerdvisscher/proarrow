@@ -37,19 +37,27 @@ instance (CategoryOf k) => Procomonad (Id :: CAT k) where
   proextract (Id f) = f
   produplicate (Id f) = Id (src f) :.: Id f
 
+-- | A representable promonad is a monad on objects: it acts as the functor @m '%' -@, with
+-- 'return' and 'bind'.
 type Monad m = (Promonad m, Representable m)
 
+-- | The unit of the monad @m@.
 return :: forall m a. (Monad m, Ob a) => a ~> m % a
 return = index @m id
 
+-- | Kleisli extension: run a Kleisli arrow under @m@.
 bind :: forall m b a. (Monad m, Ob b) => a ~> m % b -> m % a ~> m % b
 bind f = index (tabulate @m @b f . (repUniv \\ f))
 
+-- | Dually, a corepresentable promonad is a comonad on objects, acting as @w '%%' -@, with
+-- 'extract' and 'extend'.
 type Comonad w = (Promonad w, Corepresentable w)
 
+-- | The counit of the comonad @w@.
 extract :: forall w a. (Comonad w, Ob a) => w %% a ~> a
 extract = coindex @w id
 
+-- | CoKleisli extension: run a coKleisli arrow under @w@.
 extend :: forall w a b. (Comonad w, Ob a) => w %% a ~> b -> w %% a ~> w %% b
 extend f = coindex ((corepUniv \\ f) . cotabulate @w @a f)
 

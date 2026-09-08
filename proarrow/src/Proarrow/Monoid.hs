@@ -34,6 +34,8 @@ import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
+-- | A monoid object in a monoidal category: a unit and an (associative, unital) multiplication
+-- for the object @m@. At @k = Type@ (with tensor @(,)@) this is the ordinary 'P.Monoid'.
 type Monoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob m) => Monoid (m :: k) where
   mempty :: Unit ~> m
@@ -48,6 +50,8 @@ memptyS = Str mempty
 mappendS :: (Monoid m) => '[m, m] ~> '[m]
 mappendS = Str mappend
 
+-- | A law-only marker class for monoids whose multiplication commutes:
+-- @'mappend' . 'Proarrow.Category.Monoidal.swap' = 'mappend'@.
 class (Monoid m) => CommutativeMonoid (m :: k)
 
 instance (P.Monoid m) => Monoid (m :: Type) where
@@ -72,6 +76,8 @@ mappendAct
   :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Monoid a, Ob n) => Act t a (Act t a n) ~> Act t a n
 mappendAct = actHom @t (mappend @a) (obj @n) . multiplicatorInv @t @a @a @n
 
+-- | A comonoid object: an object that can be discarded ('counit') and copied ('comult'). In a
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category every object is a comonoid.
 type Comonoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob c) => Comonoid (c :: k) where
   counit :: c ~> Unit

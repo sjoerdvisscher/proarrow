@@ -17,16 +17,25 @@ import Proarrow.Core (CategoryOf (..), Profunctor, Promonad (..), rmap, (\\), ty
 import Proarrow.Object (Ob', obj)
 
 infixr 0 .~>
+
+-- | Natural transformations between functors: an arrow @f a '~>' g a@ for every object @a@.
 type f .~> g = forall a. (Ob a) => f a ~> g a
 
+-- | Functors between kind-indexed categories: 'map' sends arrows of the source category to
+-- arrows of the target category. Only functors landing in a kind of shape @... -> Type@ can be
+-- written as type constructors like this; the rest are encoded as representable profunctors
+-- instead ('FunctorForRep', "Proarrow.Profunctor.Representable").
 type Functor :: forall {k1} {k2}. (k1 -> k2) -> Constraint
 class (CategoryOf k1, CategoryOf k2, forall a. (Ob a) => Ob' (f a)) => Functor (f :: k1 -> k2) where
   map :: a ~> b -> f a ~> f b
 
--- Can't make an instance Functor (f :: Type -> Type) because that would overlap with instances of kind k -> Type
+-- | Makes a @base@-style 'P.Functor' (kind @Type -> Type@) a 'Functor', to use with @deriving via@
+-- (see the instances below). A direct @instance Functor (f :: Type -> Type)@ would overlap with
+-- the 'Functor' instances at every other kind @k -> Type@, hence the wrapper.
 newtype Prelude (f :: Type -> Type) a = Prelude {unPrelude :: f a}
   deriving (P.Functor, P.Foldable, P.Traversable, P.Eq, P.Show)
   deriving newtype (P.Applicative)
+
 instance (P.Functor f) => Functor (Prelude f) where
   map f = Prelude . P.fmap f . unPrelude
 

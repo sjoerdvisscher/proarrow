@@ -18,7 +18,10 @@ import Data.Kind (Type)
 
 import Proarrow.Core (CategoryOf (..), Obj, Profunctor, obj, src, tgt, (\\))
 
+-- | 'Ob' as a proper class, for the positions where the type family 'Ob' itself cannot appear,
+-- such as the head of a quantified constraint.
 class (Ob a, CategoryOf k) => Ob' (a :: k)
+
 instance (Ob a, CategoryOf k) => Ob' (a :: k)
 type VacuusOb k = forall a. Ob' (a :: k)
 
@@ -36,6 +39,8 @@ pattern Obj <- (objDicts -> (ObjDict, ObjDict))
 
 {-# COMPLETE Obj #-}
 
+-- | Matching a profunctor value @p a b@ against 'Objs' brings @('Ob' a, 'Ob' b)@ into scope --
+-- the pattern form of '(\\)', handy in function equations.
 pattern Objs :: (Profunctor p) => (Ob a, Ob b) => p a b
 pattern Objs <- (objDicts -> (ObjDict, ObjDict))
 

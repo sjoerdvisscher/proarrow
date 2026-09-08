@@ -69,9 +69,12 @@ type Key (f :: Copresheaf k) = f %% '()
 tabulatedCopresheaf :: (RepresentableCopresheaf f, Ob a) => PIso (Key f ~> a) (Key f ~> a') (f '() a) (f '() a')
 tabulatedCopresheaf = cotabulated
 
+-- | Dual to 'Proarrow.Profunctor.Representable.Rep': the corepresentable profunctor of @f@, a
+-- value @'Corep' f a b@ being an arrow @f \@ a '~>' b@.
 type Corep :: (j +-> k) -> (k +-> j)
 data Corep f a b where
   Corep :: forall a f b. (Ob a) => {unCorep :: f @ a ~> b} -> Corep f a b
+
 instance (FunctorForRep f) => Profunctor (Corep f) where
   dimap = dimapCorep
   r \\ Corep f = r \\ f
