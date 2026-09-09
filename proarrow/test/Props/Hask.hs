@@ -8,8 +8,11 @@ import Data.List (intercalate)
 import Data.Void (Void)
 import Proarrow.Category.Instance.Opposite (OPPOSITE)
 import Proarrow.Category.Monoidal.Closed (ExpRep)
+import Proarrow.Functor (Prelude (..))
+import Proarrow.Profunctor.Instance.Costar (Costar, unCostar, pattern Costar)
+import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (Rep)
-import Test.Falsify.Generator (Function, choose, function, list)
+import Test.Falsify.Generator (Function, choose, function, functionMap, list)
 import Test.Falsify.Range (between)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
@@ -20,11 +23,13 @@ import Proarrow.Core (Promonad (..), type (+->))
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Testing
   ( GenTotal (..)
+  , TestOb'
   , Testable (..)
   , TestableProfunctor
   , TestableType (..)
   , TestingEqShow (..)
   , genSomeDef
+  , invmap
   , oneElem
   , optGen
   , pattern GenNonEmpty
@@ -43,17 +48,14 @@ test =
     , propBinaryCoproducts @Type (\r -> r)
     , propDistributive @Type (\r -> r) (\r -> r)
     , propClosed @Type (\r -> r) (\r -> r)
-    , -- the unit is (trivially) Frobenius, but a non-trivial monoid with the cartesian copy
-      -- comonoid is only a bialgebra: speciality already fails, so this is a deterministic
-      -- counterexample rather than a randomized property (see also the note in 'propFrobenius')
-      testFrobenius @() (\r -> r)
+    , testFrobenius @() (\r -> r)
     , testProperty "list monoid is not Frobenius: copy-comonoid breaks speciality" $
         unless
           ((Monoid.mappend . Monoid.comult @[()]) [()] /= [()])
           (testFailed "speciality unexpectedly held for [()]")
-    , -- a 'FunctorForRep' (here the exponential @(a, b) |-> a -> b@) is tested as the profunctor
-      -- 'Rep' of it: the profunctor laws on @Rep f@ are the functoriality of @f@
-      testProfunctor @(Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))
+    , testProfunctor @(Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))
+    , testRepresentable @(Star (Prelude Maybe) :: Type +-> Type) (\r -> r)
+    , testCorepresentable @(Costar (Prelude Maybe) :: Type +-> Type) (\r -> r)
     ]
 
 instance Testable Type where
@@ -119,3 +121,25 @@ instance Function (a -> b) where
   function = error "Should not be used"
 
 instance TestableProfunctor (Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))
+
+instance (TestableType (f a)) => TestableType (Prelude f a) where
+  gen = invmap Prelude unPrelude gen
+instance (TestingEqShow (f a)) => TestingEqShow (Prelude f a) where
+  eqP (Prelude l) (Prelude r) = eqP l r
+  showP (Prelude f) = showP f
+instance (Function (f a)) => Function (Prelude f a) where
+  function = fmap (functionMap unPrelude Prelude) . function
+
+instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestableType (Star (Prelude f) a b) where
+  gen = invmap Star unStar gen
+instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestingEqShow (Star (Prelude f) a b) where
+  eqP (Star l) (Star r) = eqP l r
+  showP (Star f) = showP f
+instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Star (Prelude f))
+
+instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestableType (Costar (Prelude f) a b) where
+  gen = invmap Costar unCostar gen
+instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestingEqShow (Costar (Prelude f) a b) where
+  eqP (Costar l) (Costar r) = eqP l r
+  showP (Costar f) = showP f
+instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Costar (Prelude f))

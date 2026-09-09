@@ -10,14 +10,21 @@ import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (elem, repeat)
 
 import Proarrow.Category.Instance.FinRel (Bitstring, FINREL (..), FinRel (..))
-import Proarrow.Core (type (~>))
+import Proarrow.Category.Instance.Opposite (OPPOSITE (OP))
+import Proarrow.Core ((\\), type (+->), type (~>))
+import Proarrow.Profunctor.Corepresentable (coindex, cotabulate, withObCorep, type (%%))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Promonad.Reader (Reader)
 
 import Proarrow.Testing
-  ( Testable (..)
-  , TestableProfunctor
+  ( Some (..)
+  , SomeProfunctorElt (..)
+  , Testable (..)
+  , TestableProfunctor (..)
   , TestableType (..)
   , TestingEqShow (..)
+  , genNamed
+  , genOb
   , genSomeDef
   , invmap
   , pattern GenNonEmpty
@@ -41,6 +48,8 @@ test =
     , propClosed_ @FINREL
     , propStarAutonomous_ @FINREL
     , propCompactClosed_ @FINREL
+    , -- the tensor-hom (currying) adjunction @(FR Nat2 '**' -) ⊣ (FR Nat2 '~~>' -)@
+      testAdjunction_ @(Reader (OP (FR Nat2)) :: FINREL +-> FINREL)
     , propHypergraph_ @FINREL
     , propCopyDiscard_ @FINREL
     , testCommutativeMonoid_ @(FR Nat0)
@@ -66,6 +75,18 @@ instance (TestOb a, TestOb b) => TestingEqShow (FinRel a b) where
   eqP (FinRel l) (FinRel r) = pure $ l == r
   showP (FinRel m) = show m
 instance TestableProfunctor FinRel
+
+instance (SNatI r, TestOb a, TestOb b) => TestingEqShow (Reader (OP (FR r)) a b) where
+  eqP l r = eqP (coindex l) (coindex r) \\ coindex l
+  showP m = showP (coindex m) \\ coindex m
+
+instance (SNatI r) => TestableProfunctor (Reader (OP (FR r)) :: FINREL +-> FINREL) where
+  genProfunctorElt nm = do
+    Some @a <- genOb
+    Some @b <- genOb
+    withObCorep @(Reader (OP (FR r))) @a do
+      m <- genNamed @(Reader (OP (FR r)) %% a ~> b) nm
+      pure (SomeP (cotabulate @(Reader (OP (FR r))) @a @b m))
 
 -- | A hom @a '~>' b@ wrapped as the identity profunctor 'Id' is a value of kind 'Type'; in a
 -- biproduct category it is a commutative monoid under morphism addition. It is testable whenever

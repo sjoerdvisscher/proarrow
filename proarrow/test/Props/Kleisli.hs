@@ -3,25 +3,22 @@
 module Props.Kleisli where
 
 import Data.Kind (Type)
-import Data.Typeable (Typeable, type (:~:) (..))
+import Data.Typeable (type (:~:) (..))
 import Data.Void (Void)
 import GHC.Generics (Generic)
-import Test.Falsify.Generator (Function (..), functionMap)
+import Test.Falsify.Generator (Function (..))
 import Test.Tasty (TestTree, testGroup)
 import Prelude hiding (id, (.))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
 import Proarrow.Core (CAT, CategoryOf (..), Promonad (..), UN, type (+->))
 import Proarrow.Functor (Prelude (..))
-import Proarrow.Profunctor.Instance.Costar (Costar, unCostar, pattern Costar)
-import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
+import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
+import Proarrow.Profunctor.Instance.Star (Star)
 import Proarrow.Promonad.Cont (Cont (..))
 
-import Proarrow.Testing.Laws
-import Props.Hask ()
 import Proarrow.Testing
   ( SomeProfunctorElt (..)
-  , TestOb'
   , Testable (..)
   , TestableProfunctor (..)
   , TestableType (..)
@@ -30,6 +27,8 @@ import Proarrow.Testing
   , genSomeDef
   , invmap
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
 
 test :: TestTree
 test =
@@ -80,14 +79,6 @@ instance (TestableProfunctor p, TestableTypeP p, Promonad p) => Testable (KLEISL
   eqOb @(KL a) @(KL b) = (\Refl -> Refl) <$> eqOb @Type @a @b
   genSome = genSomeDef @'[KL Bool, KL (), KL (Maybe Bool)]
 
-instance (TestableType (f a)) => TestableType (Prelude f a) where
-  gen = invmap Prelude unPrelude gen
-instance (TestingEqShow (f a)) => TestingEqShow (Prelude f a) where
-  eqP (Prelude l) (Prelude r) = eqP l r
-  showP (Prelude f) = showP f
-instance (Function (f a)) => Function (Prelude f a) where
-  function = fmap (functionMap unPrelude Prelude) . function
-
 newtype Pair a = Pair {unPair :: (a, a)}
   deriving (Eq, Show, Functor, Generic)
   deriving anyclass (Function)
@@ -96,20 +87,6 @@ instance (TestableType a) => TestableType (Pair a) where
 instance (TestingEqShow a) => TestingEqShow (Pair a) where
   eqP (Pair (l1, l2)) (Pair (r1, r2)) = liftA2 (&&) (eqP l1 r1) (eqP l2 r2)
   showP (Pair (x, y)) = "Pair " ++ showP x ++ " " ++ showP y
-
-instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestableType (Star (Prelude f) a b) where
-  gen = invmap Star unStar gen
-instance (Functor f, Typeable f, Typeable b, TestOb a, TestOb (f b)) => TestingEqShow (Star (Prelude f) a b) where
-  eqP (Star l) (Star r) = eqP l r
-  showP (Star f) = showP f
-instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Star (Prelude f))
-
-instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestableType (Costar (Prelude f) a b) where
-  gen = invmap Costar unCostar gen
-instance (Functor f, Typeable f, Typeable a, TestOb (f a), TestOb b) => TestingEqShow (Costar (Prelude f) a b) where
-  eqP (Costar l) (Costar r) = eqP l r
-  showP (Costar f) = showP f
-instance (Functor f, Typeable f, forall b. (TestOb b) => TestOb' (f b)) => TestableProfunctor (Costar (Prelude f))
 
 instance Promonad (Costar (Prelude Pair)) where
   id = Costar \(Prelude (Pair (x, _))) -> x

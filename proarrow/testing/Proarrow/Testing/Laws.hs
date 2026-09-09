@@ -19,6 +19,7 @@ import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (Property, genWith, testFailed, testProperty)
 import Prelude hiding (elem, fst, id, snd, (.), (>>))
 
+import Proarrow.Adjunction (Adjunction)
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Closed qualified as Exponential
@@ -41,9 +42,17 @@ import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (Optic)
 import Proarrow.Optic.Getter (review, view)
-import Proarrow.Profunctor.Corepresentable (Corep)
+import Proarrow.Profunctor.Corepresentable
+  ( Corep
+  , Corepresentable
+  , coindex
+  , corepMap
+  , cotabulate
+  , withObCorep
+  , type (%%)
+  )
 import Proarrow.Profunctor.Instance.Constant (Constant)
-import Proarrow.Profunctor.Representable (Rep)
+import Proarrow.Profunctor.Representable (Rep, Representable, index, repMap, tabulate, withObRep, type (%))
 import Proarrow.Testing
   ( Some (..)
   , SomeProfunctorElt (..)
@@ -924,6 +933,120 @@ propNaturalTransformation n = do
   f <- genNamed @(c ~> a) "f"
   g <- genNamed @(b ~> d) "g"
   testEq "naturality" "n (dimap f g p)" (n (dimap f g p)) "dimap f g (n p)" (dimap f g (n p))
+
+-- | Check the 'Representable' laws of @p@: 'index' and 'tabulate' are mutually inverse (@p a b@ is
+-- naturally isomorphic to @a '~>' p '%' b@), and that iso is natural --
+-- @'index' ('dimap' f g p) = 'repMap' g '.' 'index' p '.' f@ -- which is what pins 'repMap' down as
+-- the functorial action of the representing functor @p '%' -@. The witness lifts 'TestOb' along
+-- @p '%' -@. Unlike the hom-level 'propAdjunction', this generates @p a b@ elements, so it needs @p@
+-- to be an element-generatable 'TestableProfunctor'.
+propRepresentable
+  :: forall {j} {k} (p :: j +-> k)
+   . (Representable p, TestableProfunctor p)
+  => (forall (b :: j) r. (TestOb b) => ((TestOb (p % b)) => r) -> r)
+  -> Property ()
+propRepresentable withTestObRep = do
+  SomeP @a @b p <- genProfunctorElt @p "p"
+  testEq "tabulate . index" "tabulate (index p)" (tabulate @p (index p)) "p" p
+  withTestObRep @b @(Property ()) do
+    f <- genNamed @(a ~> p % b) "f"
+    testEq "index . tabulate" "index (tabulate f)" (index @p (tabulate @p @b @a f)) "f" f
+  Some @c <- genObSuchThat @k \(Some @c) -> isGenNonEmpty @(c ~> a)
+  Some @d <- genObSuchThat @j \(Some @d) -> isGenNonEmpty @(b ~> d)
+  fc <- genNamed @(c ~> a) "f"
+  gd <- genNamed @(b ~> d) "g"
+  withTestObRep @d @(Property ()) do
+    testEq
+      "index naturality"
+      "index (dimap f g p)"
+      (index @p (dimap fc gd p))
+      "repMap g . index p . f"
+      (repMap @p gd . index @p p . fc)
+
+testRepresentable
+  :: forall {j} {k} (p :: j +-> k)
+   . (Representable p, TestableProfunctor p)
+  => (forall (b :: j) r. (TestOb b) => ((TestOb (p % b)) => r) -> r)
+  -> TestTree
+testRepresentable withTestObRep = testProperty "Representable" (propRepresentable @p (\ @b r -> withTestObRep @b r))
+
+testRepresentable_
+  :: forall {j} {k} (p :: j +-> k)
+   . (Representable p, TestableProfunctor p, TestObIsOb k)
+  => TestTree
+testRepresentable_ = testRepresentable @p (\ @b r -> withObRep @p @b r)
+
+-- | Check the 'Corepresentable' laws of @p@, dual to 'propRepresentable': 'coindex' and 'cotabulate'
+-- are mutually inverse (@p a b@ is naturally isomorphic to @p '%%' a '~>' b@), and that iso is
+-- natural -- @'coindex' ('dimap' f g p) = g '.' 'coindex' p '.' 'corepMap' f@, pinning down 'corepMap'
+-- as the functorial action of the corepresenting functor @p '%%' -@. The witness lifts 'TestOb' along
+-- @p '%%' -@.
+propCorepresentable
+  :: forall {j} {k} (p :: j +-> k)
+   . (Corepresentable p, TestableProfunctor p)
+  => (forall (a :: k) r. (TestOb a) => ((TestOb (p %% a)) => r) -> r)
+  -> Property ()
+propCorepresentable withTestObCorep = do
+  SomeP @a @b p <- genProfunctorElt @p "p"
+  testEq "cotabulate . coindex" "cotabulate (coindex p)" (cotabulate @p (coindex p)) "p" p
+  withTestObCorep @a @(Property ()) do
+    f <- genNamed @(p %% a ~> b) "f"
+    testEq "coindex . cotabulate" "coindex (cotabulate f)" (coindex @p (cotabulate @p @a @b f)) "f" f
+  Some @c <- genObSuchThat @k \(Some @c) -> isGenNonEmpty @(c ~> a)
+  Some @d <- genObSuchThat @j \(Some @d) -> isGenNonEmpty @(b ~> d)
+  fc <- genNamed @(c ~> a) "f"
+  gd <- genNamed @(b ~> d) "g"
+  withTestObCorep @c @(Property ()) do
+    testEq
+      "coindex naturality"
+      "coindex (dimap f g p)"
+      (coindex @p (dimap fc gd p))
+      "g . coindex p . corepMap f"
+      (gd . coindex @p p . corepMap @p fc)
+
+testCorepresentable
+  :: forall {j} {k} (p :: j +-> k)
+   . (Corepresentable p, TestableProfunctor p)
+  => (forall (a :: k) r. (TestOb a) => ((TestOb (p %% a)) => r) -> r)
+  -> TestTree
+testCorepresentable withTestObCorep = testProperty "Corepresentable" (propCorepresentable @p (\ @a r -> withTestObCorep @a r))
+
+testCorepresentable_
+  :: forall {j} {k} (p :: j +-> k)
+   . (Corepresentable p, TestableProfunctor p, TestObIsOb j)
+  => TestTree
+testCorepresentable_ = testCorepresentable @p (\ @a r -> withObCorep @p @a r)
+
+-- | Check the adjunction laws of an 'Adjunction' @p@. An adjunction here is exactly a profunctor that
+-- is both 'Representable' and 'Corepresentable' -- its left adjoint is @L = p '%%' -@ and its right
+-- adjoint @R = p '%' -@ -- and it carries no laws of its own beyond theirs ('leftAdjunct'\/'rightAdjunct'
+-- are just @'index' '.' 'cotabulate'@ and @'coindex' '.' 'tabulate'@). So this simply delegates to
+-- 'propCorepresentable' (for @L@) and 'propRepresentable' (for @R@); the two witnesses lift 'TestOb'
+-- along @L@ and @R@ respectively.
+propAdjunction
+  :: forall {j} {k} (p :: j +-> k)
+   . (Adjunction p, TestableProfunctor p)
+  => (forall (a :: k) r. (TestOb a) => ((TestOb (p %% a)) => r) -> r)
+  -> (forall (b :: j) r. (TestOb b) => ((TestOb (p % b)) => r) -> r)
+  -> Property ()
+propAdjunction withTestObL withTestObR = do
+  propCorepresentable @p (\ @a r -> withTestObL @a r)
+  propRepresentable @p (\ @b r -> withTestObR @b r)
+
+testAdjunction
+  :: forall {j} {k} (p :: j +-> k)
+   . (Adjunction p, TestableProfunctor p)
+  => (forall (a :: k) r. (TestOb a) => ((TestOb (p %% a)) => r) -> r)
+  -> (forall (b :: j) r. (TestOb b) => ((TestOb (p % b)) => r) -> r)
+  -> TestTree
+testAdjunction withTestObL withTestObR =
+  testProperty "Adjunction" (propAdjunction @p (\ @a r -> withTestObL @a r) (\ @b r -> withTestObR @b r))
+
+testAdjunction_
+  :: forall {j} {k} (p :: j +-> k)
+   . (Adjunction p, TestableProfunctor p, TestObIsOb j, TestObIsOb k)
+  => TestTree
+testAdjunction_ = testAdjunction @p (\ @a r -> withObCorep @p @a r) (\ @b r -> withObRep @p @b r)
 
 propIso :: forall {k} (a :: k) b. (Testable k, TestOb a, TestOb b) => a ~> b -> b ~> a -> Property ()
 propIso f g = do
