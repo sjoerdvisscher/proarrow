@@ -34,7 +34,7 @@ import Proarrow.Core
   , type (+->)
   )
 import Proarrow.Functor (Functor (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..), Supplies)
+import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..), Supplies)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
@@ -111,11 +111,12 @@ instance (Profunctor p, MonoidalProfunctor p) => Monoid p where
   mempty = Prof \(DayUnit f g) -> dimap f g one
   mappend = Prof \(Day f p q g) -> dimap f g (p ** q)
 
-instance (Monoidal j, CopyDiscard k, Supplies Monoid j, Profunctor p) => Comonoid (p :: j +-> k) where
+instance (SymMonoidal j, CopyDiscard k, Supplies CommutativeMonoid j, Profunctor p) => Comonoid (p :: j +-> k) where
   counit = Prof \p -> p // DayUnit discard mempty
   comult = Prof \p -> p // Day copy p p mappend
+instance (SymMonoidal j, CopyDiscard k, Supplies CommutativeMonoid j, Profunctor p) => CocommutativeComonoid (p :: j +-> k)
 
-instance (CopyDiscard k, Monoidal j, Supplies Monoid j) => CopyDiscard (j +-> k)
+instance (SymMonoidal j, CopyDiscard k, Supplies CommutativeMonoid j) => CopyDiscard (j +-> k)
 
 instance (Monoidal j, Monoidal k) => Distributive (j +-> k) where
   distL = Prof \(Day l a bc r) -> case bc of

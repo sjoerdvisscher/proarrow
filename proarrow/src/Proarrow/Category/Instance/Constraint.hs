@@ -17,7 +17,7 @@ import Proarrow.Core (CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, d
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..))
 import Proarrow.Limit.BinaryProduct qualified as P
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 
 newtype CONSTRAINT = CNSTRNT Constraint
 
@@ -80,6 +80,7 @@ instance Monoid (CNSTRNT ()) where
 instance Comonoid (CNSTRNT a) where
   counit = Entails \r -> r
   comult = Entails \r -> r
+instance CocommutativeComonoid (CNSTRNT a)
 instance CopyDiscard CONSTRAINT
 
 class b :=> c where

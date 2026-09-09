@@ -46,7 +46,7 @@ import Proarrow.Limit.BinaryProduct
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 
 newtype Fin (n :: Nat) = Fin {unFin :: P.Int}
@@ -170,6 +170,7 @@ instance Distributive FINHASK where
 instance (Ob (FH a)) => Comonoid (FH a) where
   counit = terminate
   comult = diag
+instance (Ob (FH a)) => CocommutativeComonoid (FH a)
 
 instance CopyDiscard FINHASK
 

@@ -139,7 +139,7 @@ genWithNamed nm f = genWith (fmap named . f)
 
 -- | 'True' if a type's generator is non-empty. A pure check on 'TestableType's 'gen' — it
 -- doesn't sample anything, so it's safe (and cheap) to call as many times as convenient, e.g.
--- once in a 'genSomeSuchThat' predicate and again via the real 'gen'\/'genNamed' call that
+-- once in a 'genSuchThat' predicate and again via the real 'gen'\/'genNamed' call that
 -- actually produces a value.
 isGenNonEmpty :: forall a. (TestableType a) => Bool
 isGenNonEmpty = case gen @a of

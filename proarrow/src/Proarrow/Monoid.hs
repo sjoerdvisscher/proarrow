@@ -61,12 +61,13 @@ mappendS :: (Monoid m) => '[m, m] ~> '[m]
 mappendS = Str mappend
 
 -- | A law-only marker class for monoids whose multiplication commutes:
--- @'mappend' . 'Proarrow.Category.Monoidal.swap' = 'mappend'@.
-class (Monoid m) => CommutativeMonoid (m :: k)
+-- @'mappend' . 'swap' = 'mappend'@.
+class (Monoid m, SymMonoidal k) => CommutativeMonoid (m :: k)
 
 instance (P.Monoid m) => Monoid (m :: Type) where
   mempty () = P.mempty
   mappend = P.uncurry (P.<>)
+instance CommutativeMonoid ()
 
 newtype GenElt x m = GenElt (x ~> m)
 
@@ -86,12 +87,15 @@ mappendAct
   :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Monoid a, Ob n) => Act t a (Act t a n) ~> Act t a n
 mappendAct = actHom @t (mappend @a) (obj @n) . multiplicatorInv @t @a @a @n
 
--- | A comonoid object: an object that can be discarded ('counit') and copied ('comult'). In a
--- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category every object is a comonoid.
+-- | A comonoid object: an object that can be discarded ('counit') and copied ('comult').
 type Comonoid :: forall {k}. k -> Constraint
 class (Monoidal k, Ob c) => Comonoid (c :: k) where
   counit :: c ~> Unit
   comult :: c ~> c ** c
+
+-- | A law-only marker for comonoids whose comultiplication cocommutes: @'swap' . 'comult' = 'comult'@.
+-- Dual to 'CommutativeMonoid'.
+class (Comonoid c, SymMonoidal k) => CocommutativeComonoid (c :: k)
 
 counitS :: (Comonoid c) => '[c] ~> '[]
 counitS = Str counit
@@ -102,14 +106,17 @@ comultS = Str comult
 instance Comonoid (a :: Type) where
   counit _ = ()
   comult a = (a, a)
+instance CocommutativeComonoid (a :: Type)
 
 instance Comonoid '() where
   counit = id
   comult = id
+instance CocommutativeComonoid '()
 
 instance (HasProducts k, Ob a) => Comonoid (PR (a :: k)) where
   counit = Prod terminate
   comult = Prod diag
+instance (HasProducts k, Ob a) => CocommutativeComonoid (PR (a :: k))
 
 counitAct :: forall {m} {c} t (a :: m) (n :: c). (MonoidalAction t, Comonoid a, Ob n) => Act t a n ~> n
 counitAct = unitor @t . actHom @t (counit @a) (obj @n)
@@ -129,7 +136,11 @@ class (forall (a :: k). (Ob a) => c a) => Supplies c k
 
 instance (forall (a :: k). (Ob a) => Comonoid a) => Supplies Comonoid k
 
+instance (forall (a :: k). (Ob a) => CocommutativeComonoid a) => Supplies CocommutativeComonoid k
+
 instance (forall (a :: k). (Ob a) => Monoid a) => Supplies Monoid k
+
+instance (forall (a :: k). (Ob a) => CommutativeMonoid a) => Supplies CommutativeMonoid k
 
 type data MONOIDK (m :: k) = M
 data Mon a b where
@@ -200,10 +211,12 @@ instance (CommutativeMonoid m) => Closed (MONOIDK m) where
 instance (Comonoid c) => Monoid (OP c) where
   mempty = Op counit
   mappend = Op comult
+instance (CocommutativeComonoid c) => CommutativeMonoid (OP c)
 
 instance (Monoid c) => Comonoid (OP c) where
   counit = Op mempty
   comult = Op mappend
+instance (CommutativeMonoid c) => CocommutativeComonoid (OP c)
 
 instance (HasZeroObject k, HasBiproducts k, Ob (a :: k), Ob b) => P.Semigroup (Id a b) where
   Id f <> Id g = Id (sum f g)
@@ -261,9 +274,16 @@ instance
   mempty = F.St Sprout F.Id
   mappend = F.St Join F.Id
 
+-- | The free supply is commutative only up to interpretation ('FREE' has no equations); the marker
+-- holds because every @'Proarrow.Category.Instance.Free.fold'@ of these arrows into a target lands in that target's commutative
+-- monoid.
+instance (Monoid (a :: FREE cs p), SymMonoidal (FREE cs p)) => CommutativeMonoid (a :: FREE cs p)
+
 instance
   (Supplies Comonoid `Elem` cs, Monoidal `Elem` cs, Monoidal (FREE cs p), Ob (a :: FREE cs p))
   => Comonoid (a :: FREE cs p)
   where
   counit = F.St Prune F.Id
   comult = F.St Fork F.Id
+
+instance (Comonoid (a :: FREE cs p), SymMonoidal (FREE cs p)) => CocommutativeComonoid (a :: FREE cs p)

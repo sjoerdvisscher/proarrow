@@ -33,7 +33,7 @@ import Proarrow.Limit.BinaryProduct
 import Proarrow.Limit.Equalizer (HasEqualizers (..), thinEqualize)
 import Proarrow.Limit.Pullback (HasPullbacks (..), thinPullback)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (CommutativeMonoid, Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 import Prelude qualified as P
@@ -249,6 +249,7 @@ instance (Ob a) => Comonoid (a :: BOOL) where
   comult = case obj @a of
     Fls -> Fls
     Tru -> Tru
+instance (Ob a) => CocommutativeComonoid (a :: BOOL)
 
 instance CopyDiscard BOOL
 

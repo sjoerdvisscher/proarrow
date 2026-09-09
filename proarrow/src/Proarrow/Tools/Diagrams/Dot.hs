@@ -42,7 +42,7 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Category.Monoidal.Strength (Costrong (..))
 import Proarrow.Category.Monoidal.Strictified (IsList (..), SList (..), type (++))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Kind, Profunctor (..), Promonad (..), UN, dimapDefault)
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 
 type Port = String -- Basically a shown int, but may contain an additional direction (:n, :e, :s, :w)
 
@@ -209,6 +209,7 @@ instance (Ob as) => Monoid (D as) where
 instance (Ob as) => Comonoid (D as) where
   counit = node' (Vec (repeat ":n")) (Vec []) "shape=point; width=0.07"
   comult = withIsList2 @as @as $ node' (Vec (repeat ":n")) (Vec (cycle [":sw", ":se"])) "shape=point; width=0.07"
+instance (Ob as) => CocommutativeComonoid (D as)
 instance CopyDiscard DOT
 instance Costrong Tensor Dot where
   coact @(D as) @(D xs) @(D ys) (Dot f) = Dot \n ->

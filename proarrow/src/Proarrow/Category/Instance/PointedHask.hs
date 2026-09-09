@@ -24,7 +24,7 @@ import Proarrow.Functor (Functor (..))
 import Proarrow.Limit.BinaryProduct (FromProd (..), HasBinaryProducts (..), Prod (..))
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 
 type data POINTED = P Type
 
@@ -141,6 +141,7 @@ instance Monoid (P [a]) where
 instance Comonoid (P x) where
   counit = Pt (Just . counit)
   comult = Pt (Just . comult)
+instance CocommutativeComonoid (P x)
 instance CopyDiscard POINTED
 
 -- | Categories with a zero object can be seen as categories enriched in Pointed.

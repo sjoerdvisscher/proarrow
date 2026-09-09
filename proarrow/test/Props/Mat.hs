@@ -46,6 +46,7 @@ test =
     , propClosed_ @(MatK Int)
     , propStarAutonomous_ @(MatK Int)
     , propCompactClosed_ @(MatK Int)
+    , propCopyDiscard_ @(MatK Int)
     , testCommutativeMonoid_ @(M Nat0 :: MatK Int)
     , testCommutativeMonoid_ @(M Nat1 :: MatK Int)
     , testCommutativeMonoid_ @(M Nat2 :: MatK Int)

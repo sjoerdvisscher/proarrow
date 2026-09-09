@@ -26,7 +26,7 @@ import Proarrow.Limit.BinaryProduct
   )
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 
 newtype SPAN k = SP k
 
@@ -72,9 +72,11 @@ instance (HasPullbacks k, HasProducts k) => SymMonoidal (SPAN k) where
 instance (HasPullbacks k, HasProducts k, Ob a) => Monoid (SP (a :: k)) where
   mempty = coarr terminate
   mappend = coarr (id &&& id)
+instance (HasPullbacks k, HasProducts k, Ob a) => CommutativeMonoid (SP (a :: k))
 instance (HasPullbacks k, HasProducts k, Ob a) => Comonoid (SP (a :: k)) where
   counit = arr terminate
   comult = arr (id &&& id)
+instance (HasPullbacks k, HasProducts k, Ob a) => CocommutativeComonoid (SP (a :: k))
 instance (HasPullbacks k, HasProducts k, Ob a) => Frobenius (SP (a :: k))
 instance (HasPullbacks k, HasProducts k) => Hypergraph (SPAN k)
 instance (HasPullbacks k, HasProducts k) => CopyDiscard (SPAN k)

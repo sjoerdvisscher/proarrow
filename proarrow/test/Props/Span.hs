@@ -37,6 +37,7 @@ test =
     , propClosed_ @(SPAN FINSET)
     , propStarAutonomous_ @(SPAN FINSET)
     , propCompactClosed_ @(SPAN FINSET)
+    , propCopyDiscard_ @(SPAN FINSET)
     , propHypergraph_ @(SPAN FINSET)
     , testMonoid_ @(SP (FS Nat0))
     , testMonoid_ @(SP (FS Nat1))

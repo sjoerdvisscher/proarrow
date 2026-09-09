@@ -36,10 +36,10 @@ test =
     , testCommutativeMonoid_ @1
     , testCommutativeMonoid_ @2
     , testCommutativeMonoid_ @3
-    , testComonoid_ @0
-    , testComonoid_ @1
-    , testComonoid_ @2
-    , testComonoid_ @3
+    , testCocommutativeComonoid_ @0
+    , testCocommutativeComonoid_ @1
+    , testCocommutativeComonoid_ @2
+    , testCocommutativeComonoid_ @3
     ]
 
 instance Testable Nat where

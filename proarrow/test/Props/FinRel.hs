@@ -42,6 +42,7 @@ test =
     , propStarAutonomous_ @FINREL
     , propCompactClosed_ @FINREL
     , propHypergraph_ @FINREL
+    , propCopyDiscard_ @FINREL
     , testCommutativeMonoid_ @(FR Nat0)
     , testCommutativeMonoid_ @(FR Nat1)
     , testCommutativeMonoid_ @(FR Nat2)

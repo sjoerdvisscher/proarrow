@@ -56,7 +56,7 @@ import Proarrow.Limit.BinaryProduct
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 import Proarrow.Optic (iso)
 import Proarrow.Optic.Iso (Iso')
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -212,6 +212,8 @@ unExp f = case snat @n of
 instance (SNatI a) => Comonoid (FS a) where
   counit = terminate
   comult = diag
+
+instance (SNatI a) => CocommutativeComonoid (FS a)
 
 instance CopyDiscard FINSET
 

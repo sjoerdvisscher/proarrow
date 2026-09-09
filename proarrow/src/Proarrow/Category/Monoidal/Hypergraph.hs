@@ -15,7 +15,15 @@ import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), (==))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, singleton, swap2)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj)
-import Proarrow.Monoid (Comonoid (..), Monoid (..), Supplies, comultS, mappendS)
+import Proarrow.Monoid
+  ( CocommutativeComonoid
+  , CommutativeMonoid
+  , Comonoid (..)
+  , Monoid (..)
+  , Supplies
+  , comultS
+  , mappendS
+  )
 
 type family NFold (n :: Nat) (x :: k) :: k where
   NFold Z x = Unit
@@ -52,9 +60,13 @@ fanOutS =
     SZ -> Str counit
     SS @n' -> (obj1 @a ** fanOutS @n' @a) . comultS @a
 
--- | We have a special frobenius algebra for an object if it is a monoid and a comonoid in a nice compatible way.
--- Then there's a unique way to go from n-fold @a@ to m-fold @a@.
-class (Monoid a, Comonoid a) => Frobenius a
+-- | A __special commutative Frobenius algebra__: a commutative monoid and cocommutative comonoid
+-- satisfying speciality (@mappend . comult = id@) and the Frobenius law. This is exactly the
+-- structure a 'Hypergraph' category supplies at every object, and it is what makes the 'spider'
+-- from n-fold @a@ to m-fold @a@ the unique connected map (commutativity\/cocommutativity make
+-- 'fanIn'\/'fanOut' independent of wiring order). The bare notion of a Frobenius monoid needs
+-- neither (co)commutativity, but the library only ever uses the special commutative one.
+class (CommutativeMonoid a, CocommutativeComonoid a) => Frobenius a
 
 instance (forall (a :: k). (Ob a) => Frobenius a) => Supplies Frobenius k
 
@@ -128,6 +140,6 @@ applyHG = linDistInvHG @_ @b (obj @b ** obj @c)
 -- structure of their own. Superclasses are taken directly as the context to keep dictionary
 -- construction acyclic (going through 'Proarrow.Category.Instance.Free.Ok' here builds a dictionary that references itself
 -- through the quantified 'Supplies' constraint, looping at runtime).
-instance (Monoid a, Comonoid (a :: FREE cs p)) => Frobenius (a :: FREE cs p)
+instance (CommutativeMonoid a, CocommutativeComonoid (a :: FREE cs p)) => Frobenius (a :: FREE cs p)
 
 instance (Supplies Frobenius (FREE cs p), CompactClosed (FREE cs p)) => Hypergraph (FREE cs p)

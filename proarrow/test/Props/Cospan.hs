@@ -37,6 +37,7 @@ test =
     , propClosed_ @(COSPAN FINSET)
     , propStarAutonomous_ @(COSPAN FINSET)
     , propCompactClosed_ @(COSPAN FINSET)
+    , propCopyDiscard_ @(COSPAN FINSET)
     , propHypergraph_ @(COSPAN FINSET)
     , testMonoid_ @(CS (FS Nat0))
     , testMonoid_ @(CS (FS Nat1))

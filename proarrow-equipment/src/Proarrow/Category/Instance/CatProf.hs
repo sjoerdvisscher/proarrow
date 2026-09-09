@@ -50,7 +50,7 @@ import Proarrow.Limit.BinaryProduct
   , rightUnitorProdInv
   )
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corep)
 import Proarrow.Profunctor.Instance.Composition ((:.:))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -137,6 +137,7 @@ instance (Monoidal k) => Monoid (K [k]) where
 instance (Ob a) => Comonoid (a :: KIND) where
   counit = terminate
   comult = diag
+instance (Ob a) => CocommutativeComonoid (a :: KIND)
 instance CopyDiscard KIND
 
 type Curry :: (i, j) +-> k -> i +-> (OPPOSITE j, k)

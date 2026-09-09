@@ -1,10 +1,14 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | Monoidal categories in which every object can be copied and discarded coherently: 'CopyDiscard'
--- supplies @'copy' :: a ~> a ** a@ and @'discard' :: a ~> 'Unit'@, giving the projections
--- 'fst'\/'snd' without requiring @tensor = product@ -- e.g. the biproduct categories
--- "Proarrow.Category.Instance.Mat" and "Proarrow.Category.Instance.FinRel".
+-- | Monoidal categories in which every object can be copied and discarded coherently:
+-- 'CopyDiscard' supplies @'copy' :: a ~> a ** a@ and @'discard' :: a ~> 'Unit'@, giving the
+-- projections 'fst'\/'snd' without requiring @tensor = product@ -- e.g. the biproduct categories
+-- "Proarrow.Category.Instance.Mat" and "Proarrow.Category.Instance.FinRel". Concretely it is a
+-- __cocommutative comonoid supply__: @copy@\/@discard@ default to the
+-- @'Proarrow.Monoid.CocommutativeComonoid'@ comult\/counit of each object (and every instance's
+-- @copy@\/@discard@ are required to be one). Unlike 'Proarrow.Limit.BinaryProduct.Cartesian' they
+-- need not be /natural/, so morphisms may duplicate\/delete resources non-uniformly.
 module Proarrow.Category.Monoidal.CopyDiscard where
 
 import Data.Kind (Type)
@@ -21,14 +25,14 @@ import Proarrow.Category.Monoidal
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), listCase)
 import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), obj)
 import Proarrow.Limit.BinaryProduct (HasProducts, PROD (..))
-import Proarrow.Monoid (Comonoid (..), Supplies)
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Supplies)
 
-class (Monoidal k) => CopyDiscard k where
+class (SymMonoidal k) => CopyDiscard k where
   copy :: (Ob (a :: k)) => a ~> a ** a
-  default copy :: (Supplies Comonoid k) => (Ob (a :: k)) => a ~> a ** a
+  default copy :: (Supplies CocommutativeComonoid k) => (Ob (a :: k)) => a ~> a ** a
   copy = comult
   discard :: (Ob (a :: k)) => a ~> Unit
-  default discard :: (Supplies Comonoid k) => (Ob (a :: k)) => a ~> Unit
+  default discard :: (Supplies CocommutativeComonoid k) => (Ob (a :: k)) => a ~> Unit
   discard = counit
 
 copyS :: (CopyDiscard k, Ob (a :: k)) => '[a] ~> '[a, a]
@@ -48,7 +52,7 @@ instance (SubMonoidal ob, CopyDiscard k) => CopyDiscard (SUBCAT (ob :: OB k)) wh
   copy = Sub copy
   discard = Sub discard
 
-instance (SymMonoidal k, CopyDiscard k) => CopyDiscard [k] where
+instance (CopyDiscard k) => CopyDiscard [k] where
   copy @as0 =
     listCase @as0
       id

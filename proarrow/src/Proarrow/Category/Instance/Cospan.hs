@@ -28,7 +28,7 @@ import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, dimapDefault, tgt, type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.Pullback (HasPullbacks (..))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, CommutativeMonoid, Comonoid (..), Monoid (..))
 
 newtype COSPAN k = CS k
 
@@ -74,9 +74,11 @@ instance (HasPushouts k, HasCoproducts k) => SymMonoidal (COSPAN k) where
 instance (HasPushouts k, HasCoproducts k, Ob a) => Monoid (CS (a :: k)) where
   mempty = arr initiate
   mappend = arr (id ||| id)
+instance (HasPushouts k, HasCoproducts k, Ob a) => CommutativeMonoid (CS (a :: k))
 instance (HasPushouts k, HasCoproducts k, Ob a) => Comonoid (CS (a :: k)) where
   counit = coarr initiate
   comult = coarr (id ||| id)
+instance (HasPushouts k, HasCoproducts k, Ob a) => CocommutativeComonoid (CS (a :: k))
 instance (HasPushouts k, HasCoproducts k, Ob a) => Frobenius (CS (a :: k))
 instance (HasPushouts k, HasCoproducts k) => Hypergraph (COSPAN k)
 instance (HasPushouts k, HasCoproducts k) => CopyDiscard (COSPAN k)
