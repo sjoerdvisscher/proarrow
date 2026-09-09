@@ -4,14 +4,19 @@
 module Props.Hask where
 
 import Data.Kind (Type)
+import Data.List (intercalate)
 import Data.Void (Void)
-import Test.Falsify.Generator (Function, choose, elem, function)
+import Proarrow.Category.Instance.Opposite (OPPOSITE)
+import Proarrow.Category.Monoidal.Closed (ExpRep)
+import Proarrow.Profunctor.Representable (Rep)
+import Test.Falsify.Generator (Function, choose, function, list)
+import Test.Falsify.Range (between)
 import Test.Tasty (TestTree, testGroup)
 import Type.Reflection (Typeable, typeRep)
 import Prelude hiding (elem, (.))
 
 import Control.Monad (unless)
-import Proarrow.Core (Promonad (..))
+import Proarrow.Core (Promonad (..), type (+->))
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Testing
   ( GenTotal (..)
@@ -46,6 +51,9 @@ test =
         unless
           ((Monoid.mappend . Monoid.comult @[()]) [()] /= [()])
           (testFailed "speciality unexpectedly held for [()]")
+    , -- a 'FunctorForRep' (here the exponential @(a, b) |-> a -> b@) is tested as the profunctor
+      -- 'Rep' of it: the profunctor laws on @Rep f@ are the functoriality of @f@
+      testProfunctor @(Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))
     ]
 
 instance Testable Type where
@@ -98,10 +106,16 @@ instance (TestingEqShow a) => TestingEqShow (Maybe a) where
   showP Nothing = "Nothing"
   showP (Just a) = "Just " ++ showP a
 
-instance TestingEqShow [()]
-instance TestableType [()] where
-  gen = GenNonEmpty (elem [[], [()], [(), ()], [(), (), ()]])
+instance (TestingEqShow a) => TestingEqShow [a] where
+  eqP l r = if length l /= length r then pure False else foldr (liftA2 (&&)) (pure True) (zipWith eqP l r)
+  showP xs = "[" ++ intercalate ", " (map showP xs) ++ "]"
+instance (TestableType a) => TestableType [a] where
+  gen = case gen @a of
+    GenEmpty _ -> GenNonEmpty (pure [])
+    GenNonEmpty g -> GenNonEmpty (list (between (0, 4)) g)
 
 -- Hard to write and also unused instances.
 instance Function (a -> b) where
   function = error "Should not be used"
+
+instance TestableProfunctor (Rep (ExpRep :: (OPPOSITE Type, Type) +-> Type))

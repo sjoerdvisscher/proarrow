@@ -76,3 +76,10 @@ class (CategoryOf j, CategoryOf k) => FunctorForRep (f :: j +-> k) where
 
 withMappedOb :: forall {j} {k} (f :: j +-> k) (a :: j) r. (FunctorForRep f, Ob a) => ((Ob (f @ a)) => r) -> r
 withMappedOb r = r \\ fmap @f (obj @a)
+
+-- | Recover @'Ob' (f a)@ from a 'Functor' @f@ and @'Ob' a@ -- the @map@-based analog of
+-- 'withMappedOb'. The @'Proarrow.Object.Ob'' (f a)@ superclass of 'Functor' is a quantified
+-- constraint, and GHC will not extract its own @'Ob' (f a)@ superclass on demand, so it is observed
+-- from the mapped identity morphism instead.
+withObF :: forall {k1} {k2} (f :: k1 -> k2) a r. (Functor f, Ob a) => ((Ob (f a)) => r) -> r
+withObF r = r \\ map @f (obj @a)

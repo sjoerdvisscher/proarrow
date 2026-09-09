@@ -94,7 +94,7 @@ test =
       propCompactClosed @FREEKIND
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\r -> r)
-    , propHypergraph @FREEKIND (\ @_ r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , propHypergraph @FREEKIND (\r -> r) (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
     , testProperty "retract . widen = retract" P.$ do
         let l = retract @NARROWCS @(Rep Interp) narrowTerm
             r = retract @FREECS @(Rep Interp) (widen @FREECS narrowTerm)

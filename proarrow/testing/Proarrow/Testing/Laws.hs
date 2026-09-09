@@ -25,6 +25,7 @@ import Proarrow.Colimit.Coequalizer qualified as Coequalizer
 import Proarrow.Colimit.Initial qualified as Initial
 import Proarrow.Colimit.Pushout qualified as Pushout
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, obj, rmap, (:~>), type (+->))
+import Proarrow.Functor qualified as Functor
 import Proarrow.Limit.BinaryProduct qualified as BinaryProduct
 import Proarrow.Limit.Equalizer qualified as Equalizer
 import Proarrow.Limit.Pullback qualified as Pullback
@@ -39,6 +40,7 @@ import Proarrow.Profunctor.Representable (Rep)
 import Proarrow.Testing
   ( Some (..)
   , SomeProfunctorElt (..)
+  , TestOb'
   , TestObIsOb
   , Testable (..)
   , TestableProfunctor (..)
@@ -750,9 +752,6 @@ propCompactClosed_ =
     (\ @a @b r -> M.withOb2 @k @a @b r)
     (\ @a r -> r \\ SA.dualObj @a)
 
-testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
-testProfunctor = testProperty "Profunctor" (propProfunctor @p)
-
 -- | Check whether the object @m@ -- given as a 'Monoid.Monoid' and a 'Monoid.Comonoid' -- is a
 -- special 'Hypergraph.Frobenius' algebra: the monoid laws (via 'propMonoid'), the comonoid laws
 -- (via 'propMonoid' in the opposite category, like 'testComonoid'), speciality
@@ -815,6 +814,9 @@ propHypergraph_
   => TestTree
 propHypergraph_ = propHypergraph @k (\r -> r) (\ @a @b r -> M.withOb2 @k @a @b r)
 
+testProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => TestTree
+testProfunctor = testProperty "Profunctor" (propProfunctor @p)
+
 propProfunctor :: forall {j} {k} (p :: j +-> k). (TestableProfunctor p) => Property ()
 propProfunctor = propProfunctorWith @p (genProfunctorElt "p") (\r -> r)
 
@@ -845,6 +847,49 @@ propProfunctorWith genPro withEqShow = do
       (dimap (f . f') (g' . g) p)
       "dimap f' g' (dimap f g p)"
       (dimap f' g' (dimap f g p))
+
+-- | Check the functor laws of a 'Functor.Functor' @f@: @map id = id@ and @map (g . f) = map g . map
+-- f@. The witness lifts 'TestOb' along @f@ (usually @\\ \@a r -> r@ when @'TestOb' (f a)@ follows
+-- from @'TestOb' a@). Functors encoded as representable profunctors ('Functor.FunctorForRep') are
+-- instead tested via their @'Proarrow.Profunctor.Representable.Rep'@ with 'propProfunctor', since
+-- the profunctor laws on @Rep f@ are the functor laws on @f@.
+propFunctor
+  :: forall {k1} {k2} (f :: k1 -> k2)
+   . (Functor.Functor f, Testable k1, Testable k2)
+  => (forall (a :: k1) r. (TestOb a) => ((TestOb (f a)) => r) -> r)
+  -> Property ()
+propFunctor withTestObF = do
+  Some @a <- genOb @k1
+  Some @b <- genObSuchThat @k1 \(Some @b) -> isGenNonEmpty @(a ~> b)
+  Some @c <- genObSuchThat @k1 \(Some @c) -> isGenNonEmpty @(b ~> c)
+  f <- genNamed @(a ~> b) "f"
+  g <- genNamed @(b ~> c) "g"
+  withTestObF @a $
+    withTestObF @c $
+      -- 'Functor.withObF' recovers @Ob (f a)@\/@Ob (f c)@ from the functor (GHC will not extract
+      -- them from the quantified @Ob' (f a)@ superclass on its own)
+      Functor.withObF @f @a $
+        Functor.withObF @f @c $ do
+          testEq "identity" "map id" (Functor.map @f (obj @a)) "id" (obj @(f a))
+          testEq
+            "composition"
+            "map (g . f)"
+            (Functor.map @f (g . f))
+            "map g . map f"
+            (Functor.map @f g . Functor.map @f f)
+
+testFunctor
+  :: forall {k1} {k2} (f :: k1 -> k2)
+   . (Functor.Functor f, Testable k1, Testable k2)
+  => (forall (a :: k1) r. (TestOb a) => ((TestOb (f a)) => r) -> r)
+  -> TestTree
+testFunctor withTestObF = testProperty "Functor" (propFunctor @f (\ @a r -> withTestObF @a r))
+
+testFunctor_
+  :: forall {k1} {k2} (f :: k1 -> k2)
+   . (Functor.Functor f, Testable k1, Testable k2, forall (a :: k1). (TestOb a) => TestOb' (f a))
+  => TestTree
+testFunctor_ = testFunctor @f (\r -> r)
 
 propNaturalTransformation
   :: forall {j} {k} (p :: j +-> k) q. (TestableProfunctor p, TestableProfunctor q) => p :~> q -> Property ()

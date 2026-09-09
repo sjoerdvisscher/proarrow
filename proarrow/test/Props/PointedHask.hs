@@ -4,15 +4,13 @@
 module Props.PointedHask where
 
 import Data.Void (Void)
-import Test.Falsify.Generator (Function, oneof)
+import Test.Falsify.Generator (Function (..), oneof)
 import Test.Tasty (TestTree, testGroup)
 import Prelude
 
-import Proarrow.Category.Instance.PointedHask (POINTED (..), Pointed (..), These (..))
+import Proarrow.Category.Instance.PointedHask (FromPointed (..), POINTED (..), Pointed (..), These (..))
 import Proarrow.Core (CategoryOf (..), UN)
 
-import Proarrow.Testing.Laws
-import Props.Hask ()
 import Proarrow.Testing
   ( GenTotal (..)
   , Testable (..)
@@ -23,6 +21,8 @@ import Proarrow.Testing
   , invmap
   , pattern GenNonEmpty
   )
+import Proarrow.Testing.Laws
+import Props.Hask ()
 
 test :: TestTree
 test =
@@ -38,6 +38,7 @@ test =
     , testMonoid @(P Void) (\r -> r)
     , testMonoid @(P ()) (\r -> r)
     , testMonoid @(P [()]) (\r -> r)
+    , testFunctor @(FromPointed []) (\r -> r)
     ]
 
 instance (TestOb a, TestOb b) => TestableType (Pointed a b) where
@@ -70,3 +71,11 @@ instance (TestingEqShow a, TestingEqShow b) => TestingEqShow (These a b) where
   showP (That b) = "That " ++ showP b
   showP (These a b) = "These " ++ showP a ++ " " ++ showP b
 instance (Function a, Function b) => Function (These a b)
+
+instance (TestOb (a :: POINTED)) => TestableType (FromPointed [] a) where
+  gen = invmap FromPointed unFromPointed gen
+instance (TestOb (a :: POINTED)) => TestingEqShow (FromPointed [] a) where
+  eqP (FromPointed l) (FromPointed r) = eqP l r
+  showP (FromPointed xs) = "FromPointed " ++ showP xs
+instance Function (FromPointed [] a) where
+  function = error "Function (FromPointed [] a): unused"
