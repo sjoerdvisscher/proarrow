@@ -8,7 +8,7 @@
 -- and matches, sitting below 'Proarrow.Optic.Getter.Review',
 -- 'Proarrow.Optic.AffineTraversal.AffineTraversal' and
 -- 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal' in the lattice. Build with 'prism',
--- eliminate to the two legs with 'withPrism' via the 'Market' carrier;
+-- eliminate to the two legs with 'withPrism' via the generic 'ExOptic' carrier;
 -- 'toOpLens'\/'fromOpLens' witness the equivalence with the op-lens encoding, and this module also
 -- hosts 'affineTraversal', the lens-then-prism builder for affine traversals.
 module Proarrow.Optic.Prism where
@@ -19,19 +19,18 @@ import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), Ha
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
-  ( CompactFlavor
-  , ExOptic (..)
+  ( ExOptic
   , FLAVOR
   , Flip
   , OpConstraint
   , Optic
-  , Optic_ (..)
   , Prostrong (..)
   , SubFlavor (..)
   , convert
-  , ex2prof
+  , legs2prof
   , opOptic
   , unOpOptic
+  , withLegs
   , (%)
   )
 import Proarrow.Optic.AffineFold (AffineFoldRes)
@@ -59,8 +58,6 @@ instance (PrismRes f g, PrismRes f' g') => PrismRes (f :.: f') (g' :.: g) where
   matchingP @_ @a @_ @t (f :.: f'@Objs) (g' :.: g@Objs) =
     (lft @_ @t @a ||| (left @a (getP @g @f g) . matchingP @f' @g' f' g')) . matchingP @f @g f g
 
-instance CompactFlavor PrismRes
-
 instance SubFlavor PrismRes AffineTravRes where subFlavor r = r
 instance SubFlavor PrismRes MonTravRes where subFlavor r = r
 instance SubFlavor PrismRes (Flip GetterRes) where subFlavor r = r
@@ -81,7 +78,7 @@ prism
   :: forall {k} (s :: k) (t :: k) a b
    . (CopyDiscard k, HasCoproducts k, Ob a) => (b ~> t) -> (s ~> (t || a)) -> Prism s t a b
 prism bt sta =
-  ex2prof (ExProstrong @(Rep (Coproduct t)) @(Corep (Coproduct t)) (Rep sta :.: ExIso id id :.: Corep (id ||| bt))) \\ bt
+  legs2prof @PrismRes (Rep @a @(Coproduct t) sta) (Corep @b @(Coproduct t) (id ||| bt)) \\ bt
 
 -- | Build an 'AffineTraversal' by composing a 'Lens' with a 'Prism': focus a field with the lens,
 -- then match a case of that field with the prism. There is no from-legs builder for a bare affine
@@ -91,28 +88,14 @@ affineTraversal
   :: forall {k} (s :: k) t x y a b. (CategoryOf k) => Lens s t x y -> Prism x y a b -> AffineTraversal s t a b
 affineTraversal l p = convert (l % p)
 
--- | The eliminating carrier for prisms: a prism's two legs, as a profunctor in @s@\/@t@.
-type Market :: forall {k}. k -> k -> k +-> k
-data Market a b s t where
-  Market :: (Ob a, Ob b) => (b ~> t) -> (s ~> (t || a)) -> Market a b s t
-
-instance (HasBinaryCoproducts k, Ob (a :: k), Ob b) => Profunctor (Market a b :: k +-> k) where
-  dimap l r (Market bt sta) = Market (r . bt) (left @a r . sta . l) \\ l \\ r
-  r \\ Market bt sta = r \\ bt \\ sta
-
--- | Any flavor whose optics have prism legs has strength for the 'Market' carrier.
-instance (HasBinaryCoproducts k, Ob (a :: k), Ob b, SubFlavor w PrismRes) => Prostrong (w :: FLAVOR k k) (Market a b :: k +-> k) where
-  proact @f @g @_ @t (f@Objs :.: Market bt sta :.: g@Objs) =
-    subFlavor @w @PrismRes @f @g
-      (Market (getP @g @f g . bt) ((lft @_ @t @a ||| (left @a (getP @g @f g) . sta)) . matchingP @f @g f g))
-
 -- | Eliminate any optic that is at least an iso and at most a prism to its two legs, in either
--- encoding.
+-- encoding: run it at its witness pair ('ExOptic' 'PrismRes', via 'withLegs') and read the legs off
+-- with 'matchingP' and 'getP' on the flipped pair (a prism's build leg is a getter read backwards).
 withPrism
   :: forall {k} c (s :: k) (t :: k) a b r
-   . (HasBinaryCoproducts k, (Ob a, Ob b) => c (Market a b))
+   . (HasBinaryCoproducts k, (Ob a, Ob b) => c (ExOptic PrismRes a b))
   => Optic c s t a b -> ((b ~> t) -> (s ~> (t || a)) -> r) -> r
-withPrism (Optic l) k = case l @(Market a b) (Market id (rgt @k @b @a)) of Market bt sta -> k bt sta
+withPrism o k = withLegs @PrismRes o \ @p @q p q -> k (getP @q @p q) (matchingP @p @q p q)
 
 -- | A 'Prism' and its op-lens encoding ('Proarrow.Optic.Lens.Prism', a 'Proarrow.Optic.Lens.Lens'
 -- over the opposite category) carry the same data -- the two legs @(b '~>' t, s '~>' t '||' a)@ --

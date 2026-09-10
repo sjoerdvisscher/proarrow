@@ -5,7 +5,7 @@
 -- legs are 'affineMatch' @:: s ~> (t || a)@ and 'affineSet' @:: (s && b) ~> t@ ('AffineTravRes').
 -- Its witnesses only ever arise by composing lens and prism witnesses, so it is built with
 -- 'Proarrow.Optic.Prism.affineTraversal' (a 'Proarrow.Optic.Lens.Lens' followed by a
--- 'Proarrow.Optic.Prism.Prism') and eliminated with 'matching', via the 'MatchP' carrier.
+-- 'Proarrow.Optic.Prism.Prism') and eliminated with 'matching', via the generic 'Proarrow.Optic.ExOptic' carrier.
 module Proarrow.Optic.AffineTraversal where
 
 import Prelude (($))
@@ -16,7 +16,7 @@ import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), Ha
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), Product, TensorIsProduct, first, second)
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (CompactFlavor, FLAVOR, Optic, Optic_ (..), Prostrong (..), SubFlavor (..))
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), withLegs)
 import Proarrow.Optic.AffineFold (AffineFoldRes)
 import Proarrow.Optic.Fold (FoldRes)
 import Proarrow.Optic.Setter (SetterRes)
@@ -87,47 +87,16 @@ instance SubFlavor AffineTravRes SetterRes where subFlavor r = r
 instance SubFlavor AffineTravRes AffineFoldRes where subFlavor r = r
 instance SubFlavor AffineTravRes FoldRes where subFlavor r = r
 
-instance CompactFlavor AffineTravRes
-
 type AffineTraversal (s :: k) (t :: k) a b = Optic (Prostrong AffineTravRes) s t a b
 type AffineTraversal' s a = AffineTraversal s s a a
-
--- | The eliminating carrier for 'matching': an affine traversal's match leg @s '~>' (t '||' a)@,
--- as a profunctor in @s@\/@t@.
-type MatchP :: forall {k}. k -> k +-> k
-data MatchP (a :: k) (s :: k) (t :: k) where
-  MatchP :: (Ob t) => {unMatchP :: s ~> (t || a)} -> MatchP a s t
-
-instance (HasBinaryCoproducts k, Ob (a :: k)) => Profunctor (MatchP a :: k +-> k) where
-  dimap l r (MatchP m) = MatchP (left @a r . m . l) \\ l \\ r
-  r \\ MatchP m = r \\ m
-
--- | Any flavor whose optics can match has strength for the 'MatchP' carrier. Combining an outer
--- witness pair with the stored match leg is exactly the affine-traversal composition's match rule:
--- match the outer, and on the inner's failure reconstruct a @t@ via the outer's own 'affineSet'.
-instance
-  (Bicartesian k, Ob (a :: k), SubFlavor w AffineTravRes)
-  => Prostrong (w :: FLAVOR k k) (MatchP a :: k +-> k)
-  where
-  proact @f @g @s @t ((:.:) @n ((:.:) @m fw@Objs (MatchP mm)) gw@Objs) =
-    subFlavor @w @AffineTravRes @f @g
-      ( MatchP
-          ( ( (lft @_ @t @a . snd @_ @s @t)
-                ||| ( ((lft @_ @t @a . affineSet @f @g fw gw) ||| (rgt @_ @t @a . snd @_ @s @a))
-                        . distLP @_ @s @n @a
-                        . second @s mm
-                    )
-            )
-              . distLP @_ @s @t @m
-              . (id &&& affineMatch @f @g fw gw)
-          )
-      )
 
 -- | Match through any optic that can act as an affine traversal, in either encoding: returns the
 -- focus (@'rgt'@) when it matches, or a reconstructed @t@ (@'lft'@) when it does not. This is the
 -- 'AffineTraversal' eliminator, refining 'Proarrow.Optic.AffineFold.preview' (which forgets @t@).
+-- Runs the optic at its witness pair ('ExOptic' 'AffineTravRes', via 'withLegs') and applies
+-- 'affineMatch'.
 matching
   :: forall {k} c (s :: k) (t :: k) a b
-   . (Bicartesian k, c (MatchP a))
+   . (Bicartesian k, (Ob a, Ob b) => c (ExOptic AffineTravRes a b))
   => Optic c s t a b -> s ~> (t || a)
-matching (Optic l) = unMatchP (l @(MatchP a) (MatchP (rgt @k @b @a)))
+matching o = withLegs @AffineTravRes o \ @p @q p q -> affineMatch @p @q p q

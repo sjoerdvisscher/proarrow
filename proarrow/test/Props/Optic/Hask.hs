@@ -50,12 +50,11 @@ import Proarrow.Optic.MonoidalTraversal
   , toPTraversal
   , u1Optic
   )
-import Proarrow.Optic.Traversal (Traversal, traverseOf)
+import Proarrow.Optic.Traversal (TravRes, Traversal, traverseOf)
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable)
-import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Representable)
 import Proarrow.Promonad.Reader (Reader (..))
@@ -465,8 +464,9 @@ test =
     -- 'Proarrow.Category.Monoidal.Distributive.Cotraversable' functor).
     zipSnd :: Traversal (Bool, Bool) (Bool, Bool) Bool Bool
     zipSnd =
-      O.ex2prof
-        (O.ExProstrong @(CorepStar (Reader (OP Bool))) @(Reader (OP Bool)) (CorepStar id :.: O.ExIso id id :.: Reader id))
+      O.legs2prof @TravRes
+        (CorepStar id :: CorepStar (Reader (OP Bool)) (Bool, Bool) Bool)
+        (Reader id :: Reader (OP Bool) Bool (Bool, Bool))
     okIf b = if b then Just (not b) else Nothing
     aggBoth (x, y) = case (okIf x, okIf y) of (Just x', Just y') -> Just (x', y'); _ -> Nothing
     mapTriple (x, (y, (z, ()))) = (not x, (not y, (not z, ())))

@@ -32,13 +32,13 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (Comonoid)
 import Proarrow.Monoid qualified as Mon
 import Proarrow.Optic
-  ( ExOptic (..)
+  ( ExOptic
   , FLAVOR
   , Optic
-  , Optic_ (..)
   , Prostrong (..)
   , SubFlavor (..)
-  , ex2prof
+  , legs2prof
+  , withLegs
   )
 import Proarrow.Optic.AffineFold (AffineFoldRes (..))
 import Proarrow.Optic.Fold (FoldRes (..))
@@ -124,35 +124,13 @@ type MonoidalLens' s a = MonoidalLens s s a a
 monLens
   :: forall {k} (m :: k) (s :: k) t a b
    . (Comonoid m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalLens s t a b
-monLens h i = ex2prof (ExProstrong @(LensW m) @(CoLensW m) (LensW h :.: ExIso id id :.: CoLensW i))
-
--- | The eliminating carrier for monoidal lenses: the two legs with the residual @m@ existential.
-type MonShop :: forall {k}. k -> k -> k +-> k
-data MonShop a b s t where
-  MonShop :: (Ob a, Ob b, Ob m) => (s ~> m ** a) -> (m ** b ~> t) -> MonShop a b s t
-
-instance (Monoidal k, Ob (a :: k), Ob b) => Profunctor (MonShop a b :: k +-> k) where
-  dimap l r (MonShop @_ @_ @m h i) = MonShop @a @b @m (h . l) (r . i) \\ l \\ r
-  r \\ MonShop h i = r \\ h \\ i
-
--- | Any flavor whose optics have monoidal-lens legs has strength for the 'MonShop' carrier:
--- absorbing a witness pair combines its residual with the carrier's by tensoring.
-instance (Monoidal k, Ob (a :: k), Ob b, SubFlavor w MonLensRes) => Prostrong (w :: FLAVOR k k) (MonShop a b :: k +-> k) where
-  proact @f @g (f :.: MonShop @_ @_ @m h i :.: g) =
-    subFlavor @w @MonLensRes @f @g
-      ( withMonLensP f g \ @mf hf ir ->
-          withOb2 @k @mf @m
-            ( MonShop @a @b @(mf ** m)
-                (associatorInv @k @mf @m @a . (obj @mf ** h) . hf)
-                (ir . (obj @mf ** i) . associator @k @mf @m @b)
-            )
-      )
+monLens h i = legs2prof @MonLensRes (LensW @m h) (CoLensW @m i)
 
 -- | Eliminate any optic that is at least an iso and at most a monoidal lens to its two legs,
--- recovering the existential residual @m@.
+-- recovering the existential residual @m@: run it at its witness pair ('ExOptic' 'MonLensRes', via
+-- 'withLegs') and read the legs off with 'withMonLensP'.
 withMonLens
   :: forall {k} c (s :: k) (t :: k) a b r
-   . (Monoidal k, (Ob a, Ob b) => c (MonShop a b))
+   . (Monoidal k, (Ob a, Ob b) => c (ExOptic MonLensRes a b))
   => Optic c s t a b -> (forall m. (Ob m) => (s ~> m ** a) -> (m ** b ~> t) -> r) -> r
-withMonLens (Optic l) k = case l @(MonShop a b) (MonShop @a @b @Unit leftUnitorInv leftUnitor) of
-  MonShop @_ @_ @m h i -> k @m h i
+withMonLens o k = withLegs @MonLensRes o \ @p @q p q -> withMonLensP @p @q p q \ @m h i -> k @m h i

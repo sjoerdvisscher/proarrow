@@ -4,7 +4,7 @@
 -- category ('FoldRes' \/ 'foldMapP'). It sits at the read-only top of the subtyping lattice --
 -- everything that can view, preview or traverse is a fold -- so it has no builder of its own
 -- (reach it by 'Proarrow.Optic.convert' from a stronger optic). Its canonical eliminator is
--- 'foldMapOf', via the 'Forget' carrier, with 'unfold' as the 'Proarrow.Optic.re'-mirror that
+-- 'foldMapOf', via the generic 'Proarrow.Optic.ExOptic' carrier, with 'unfold' as the 'Proarrow.Optic.re'-mirror that
 -- builds from a 'Comonoid' seed.
 module Proarrow.Optic.Fold where
 
@@ -22,14 +22,13 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), typ
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
 import Proarrow.Monoid (Comonoid, Monoid (..))
 import Proarrow.Optic
-  ( CompactFlavor
+  ( ExOptic
   , FLAVOR
   , OpConstraint
   , Optic
-  , Optic_ (..)
   , Prostrong (..)
-  , SubFlavor (..)
   , opOptic
+  , withLegs
   )
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -65,36 +64,21 @@ instance (HasCoproducts k, Ob t) => FoldRes (Corep (Coproduct t) :: k +-> k) (Re
 instance (CopyDiscard k, HasCoproducts k, Ob t) => FoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   foldMapP @m (Rep p) am = (mempty @m . discard @k @t ||| am) . p
 
-instance CompactFlavor FoldRes
-
 type Fold (s :: k) (t :: j) a b = Optic (Prostrong FoldRes) s t a b
 
--- | The carrier profunctor for 'foldMapOf': a generalized @s -> m@ (the @Forget@ of the
--- @optics@ library).
-type Forget :: forall {j} {k}. k -> j +-> k
-data Forget (m :: k) (s :: k) (t :: j) where
-  Forget :: (Ob t) => {unForget :: s ~> m} -> Forget m s t
-
-instance (CategoryOf j, CategoryOf k, Ob (m :: k)) => Profunctor (Forget m :: j +-> k) where
-  dimap l r (Forget f) = Forget (f . l) \\ r
-  r \\ Forget f = r \\ f
-
--- | Any flavor whose optics can fold has strength for the 'Forget' carrier.
-instance (CategoryOf j, Monoid m, SubFlavor w FoldRes) => Prostrong (w :: FLAVOR j k) (Forget m :: j +-> k) where
-  proact @f @g (f :.: Forget h :.: g) = subFlavor @w @FoldRes @f @g (Forget (foldMapP @f @g f h)) \\ g
-
--- | Fold through any optic that can act as a fold, in either encoding.
+-- | Fold through any optic that can act as a fold, in either encoding: run it at its witness pair
+-- ('ExOptic' 'FoldRes', via 'withLegs') and apply 'foldMapP'.
 foldMapOf
   :: forall {j} {k} c m (s :: k) (t :: j) a b
-   . (CategoryOf j, CategoryOf k, Ob m, c (Forget m))
+   . (CategoryOf j, CategoryOf k, Ob m, Monoid m, (Ob a, Ob b) => c (ExOptic FoldRes a b))
   => Optic c s t a b -> (a ~> m) -> (s ~> m)
-foldMapOf (Optic l) am = unForget (l @(Forget m) (Forget am))
+foldMapOf o am = withLegs @FoldRes o \ @p @q p _ -> foldMapP @p @q p am
 
 -- | The genuine unfold: build @t@ from a 'Comonoid' seed @cm@ through the @b@-foci. It is
 -- 'foldMapOf' run in @'OPPOSITE' k@, where 'Monoid' becomes 'Comonoid' and consumption becomes
 -- construction. (Inhabitable once the flavor's 'Prostrong' transports through 'OP'.)
 unfold
   :: forall {k} c (cm :: k) (s :: k) t a b
-   . (Comonoid cm, Ob cm, forall p. (c p) => c (Op (UnOp p)), c (Forget (OP cm)))
+   . (Comonoid cm, Ob cm, forall p. (c p) => c (Op (UnOp p)), (Ob a, Ob b) => c (ExOptic FoldRes (OP b) (OP a)))
   => Optic (OpConstraint c) s t a b -> (cm ~> b) -> (cm ~> t)
 unfold o cb = unOp (foldMapOf @c (opOptic o) (Op cb))

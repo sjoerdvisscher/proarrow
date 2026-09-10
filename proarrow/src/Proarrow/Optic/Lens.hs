@@ -8,7 +8,7 @@
 -- the whole source @s@. A lens both views and sets, sitting below 'Proarrow.Optic.Getter.Getter'
 -- and 'Proarrow.Optic.AffineTraversal.AffineTraversal' in the lattice. Build with 'lens' (or from
 -- the van-Laarhoven form with 'lensVL'), eliminate to the two legs with 'withLens', via the
--- 'Shop' carrier.
+-- generic 'ExOptic' carrier.
 module Proarrow.Optic.Lens where
 
 import Data.Functor.Const (Const (..))
@@ -20,14 +20,14 @@ import Proarrow.Functor (Functor (map), Prelude (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), Product, first)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
-  ( CompactFlavor
-  , ExOptic (..)
+  ( ExOptic
   , FLAVOR
   , Optic
   , Optic_ (..)
   , Prostrong (..)
   , SubFlavor (..)
-  , ex2prof
+  , legs2prof
+  , withLegs
   )
 import Proarrow.Optic.AffineFold (AffineFoldRes)
 import Proarrow.Optic.AffineTraversal (AffineTravRes (..))
@@ -54,8 +54,6 @@ instance (LensRes f g, LensRes f' g') => LensRes (f :.: f') (g' :.: g) where
   putP @s @_ @b (f@Objs :.: f') (g'@Objs :.: g) =
     putP @f @g f g . (fst @_ @s @b &&& (putP @f' @g' f' g' . first @b (getP @f @g f)))
 
-instance CompactFlavor LensRes
-
 instance SubFlavor LensRes AffineTravRes where subFlavor r = r
 instance SubFlavor LensRes GetterRes where subFlavor r = r
 instance SubFlavor LensRes TravRes where subFlavor r = r
@@ -69,31 +67,16 @@ lens
   :: forall {k} (s :: k) (t :: k) a b
    . (HasBinaryProducts k, Ob b) => (s ~> a) -> ((s && b) ~> t) -> Lens s t a b
 lens sa sbt =
-  ex2prof (ExProstrong @(Rep (Product s)) @(Corep (Product s)) (Rep (id &&& sa) :.: ExIso id id :.: Corep sbt)) \\ sa
-
--- | The eliminating carrier for lenses: a lens's two legs, as a profunctor in @s@\/@t@.
-type Shop :: forall {k}. k -> k -> k +-> k
-data Shop a b s t where
-  Shop :: (Ob a, Ob b) => (s ~> a) -> ((s && b) ~> t) -> Shop a b s t
-
-instance (HasBinaryProducts k, Ob (a :: k), Ob b) => Profunctor (Shop a b :: k +-> k) where
-  dimap l r (Shop sa sbt) = Shop (sa . l) (r . sbt . first @b l) \\ l \\ r
-  r \\ Shop sa sbt = r \\ sa \\ sbt
-
--- | Any flavor whose optics have lens legs has strength for the 'Shop' carrier.
-instance (HasBinaryProducts k, Ob (a :: k), Ob b, SubFlavor w LensRes) => Prostrong (w :: FLAVOR k k) (Shop a b :: k +-> k) where
-  proact @f @g @s (f@Objs :.: Shop sa sbt :.: g@Objs) =
-    subFlavor @w @LensRes @f @g
-      (Shop (sa . getP @f @g f) (putP @f @g f g . (fst @_ @s @b &&& (sbt . first @b (getP @f @g f)))))
+  legs2prof @LensRes (Rep @a @(Product s) (id &&& sa)) (Corep @b @(Product s) sbt) \\ sa
 
 -- | Eliminate any optic that is at least an iso and at most a lens to its two legs, in either
--- encoding: 'Prostrong'-flavored optics via @'SubFlavor' w 'LensRes'@ (through the bridge
--- instance above), profunctor-class-flavored optics via their class instance for 'Shop'.
+-- encoding: run it at its witness pair ('ExOptic' 'LensRes', via 'withLegs') and read the legs off
+-- with 'getP' and 'putP'.
 withLens
   :: forall {k} c (s :: k) (t :: k) a b r
-   . (HasBinaryProducts k, (Ob a, Ob b) => c (Shop a b))
+   . (HasBinaryProducts k, (Ob a, Ob b) => c (ExOptic LensRes a b))
   => Optic c s t a b -> ((s ~> a) -> ((s && b) ~> t) -> r) -> r
-withLens (Optic l) k = case l @(Shop a b) (Shop id (snd @k @a @b)) of Shop sa sbt -> k sa sbt
+withLens o k = withLegs @LensRes o \ @p @q p q -> k (getP @p @q p) (putP @p @q p q)
 
 instance (P.Functor f) => Prostrong LensRes (Star (Prelude f)) where
   proact @p @q (p@Objs :.: Star f :.: q@Objs) = Star \a -> map (P.curry (putP p q) a) (f (getP @p @q p a))

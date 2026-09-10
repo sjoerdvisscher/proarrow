@@ -7,16 +7,24 @@
 -- witnessed by @'Rep'@\/@'Corep'@ @('Exp' m)@ ('GrateRes' \/ 'zipWithP'). It subtypes only to
 -- 'Proarrow.Optic.Setter.Setter', and every 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' is one.
 -- Build with 'grate' (whose residual is the \"logarithm\" @s ~~> a@), eliminate to the zipping
--- function with 'withGrate', via the 'Grating' carrier.
+-- function with 'withGrate', via the generic 'ExOptic' carrier.
 module Proarrow.Optic.Grate where
 
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), first, second, swap, type (**))
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
+import Proarrow.Core (CategoryOf (..), Promonad (..), obj, type (+->))
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (CompactFlavor, ExOptic (..), FLAVOR, Optic, Optic_ (..), Prostrong (..), SubFlavor (..), ex2prof)
+import Proarrow.Optic
+  ( ExOptic
+  , FLAVOR
+  , Optic
+  , Prostrong (..)
+  , SubFlavor (..)
+  , legs2prof
+  , withLegs
+  )
 import Proarrow.Optic.Setter (SetterRes)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -61,39 +69,18 @@ instance (CategoryOf k) => GrateRes (Id :: k +-> k) (Id :: k +-> k) where
 instance (GrateRes f g, GrateRes f' g') => GrateRes (f :.: f') (g' :.: g) where
   zipWithP (f :.: f') (g' :.: g) @x kk = zipWithP @f @g f g @x (zipWithP @f' @g' f' g' @x kk)
 
-instance CompactFlavor GrateRes
-
 instance SubFlavor GrateRes SetterRes where subFlavor r = r
 
 type Grate (s :: k) (t :: k) a b = Optic (Prostrong GrateRes) s t a b
 type Grate' s a = Grate s s a a
 
--- | The eliminating carrier for grates: the polymorphic zipping function, as a profunctor in
--- @s@\/@t@.
-type Grating :: forall {k}. k -> k -> k +-> k
-data Grating a b s t where
-  Grating
-    :: (Ob s, Ob t)
-    => (forall (x :: k). (Ob x) => ((x ~~> a) ~> b) -> (x ~~> s) ~> t) -> Grating (a :: k) b s t
-
-instance (Closed k, SymMonoidal k, Ob (a :: k), Ob b) => Profunctor (Grating a b :: k +-> k) where
-  dimap l r (Grating z) = (Grating \ @x kk -> r . z @x kk . (l ^^^ obj @x)) \\ l \\ r
-  r \\ Grating{} = r
-
--- | Any flavor whose optics can zip has strength for the 'Grating' carrier.
-instance
-  (Closed k, SymMonoidal k, Ob (a :: k), Ob b, SubFlavor w GrateRes)
-  => Prostrong (w :: FLAVOR k k) (Grating a b :: k +-> k)
-  where
-  proact @f @g (f@Objs :.: Grating z :.: g@Objs) =
-    subFlavor @w @GrateRes @f @g (Grating \ @x kk -> zipWithP @f @g f g @x (z @x kk))
-
--- | Eliminate any grate-flavored optic to its zipping function, in either encoding.
+-- | Eliminate any grate-flavored optic to its zipping function, in either encoding: run it at its
+-- witness pair ('ExOptic' 'GrateRes', via 'withLegs') and read the zipper off with 'zipWithP'.
 withGrate
   :: forall {k} c (s :: k) (t :: k) a b r
-   . (CategoryOf k, (Ob a, Ob b) => c (Grating a b))
+   . (Closed k, SymMonoidal k, (Ob a, Ob b) => c (ExOptic GrateRes a b))
   => Optic c s t a b -> ((forall (x :: k). (Ob x) => ((x ~~> a) ~> b) -> (x ~~> s) ~> t) -> r) -> r
-withGrate (Optic l) k = case l @(Grating a b) (Grating \kk -> kk) of Grating z -> k (\ @x kk -> z @x kk)
+withGrate o k = withLegs @GrateRes o \ @p @q p q -> k (\ @x kk -> zipWithP @p @q p q @x kk)
 
 -- | The canonical\/atomic grate constructor: the residual is the self-referential @s ~~> a@
 -- (the "logarithm" of the get side), whose own get-map @m ~> (s ~~> a)@ trivializes to 'id' once
@@ -105,5 +92,4 @@ grate
 grate f@Objs =
   withObExp @k @s @a $
     let sa = curry @k @s @(s ~~> a) (apply @k @s @a . swap @k @s @(s ~~> a))
-    in ex2prof
-         (ExProstrong @(Rep (Exp (s ~~> a))) @(Corep (Exp (s ~~> a))) (Rep sa :.: ExIso id id :.: Corep f))
+    in legs2prof @GrateRes (Rep @a @(Exp (s ~~> a)) sa) (Corep @b @(Exp (s ~~> a)) f)

@@ -5,7 +5,7 @@
 -- 'Proarrow.Optic.AffineTraversal.AffineTraversal' is one, and it subtypes to
 -- 'Proarrow.Optic.Fold.Fold'. Like all read-only flavors it has no builder of its own
 -- ('Proarrow.Optic.convert' a stronger optic); its canonical eliminator is 'preview' \/ '(^?)',
--- via the 'PreviewP' carrier.
+-- via the generic 'ExOptic' carrier.
 module Proarrow.Optic.AffineFold where
 
 import Data.Kind (Type)
@@ -17,7 +17,7 @@ import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), Ha
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Optic (CompactFlavor, FLAVOR, Optic, Optic_ (..), Prostrong (..), SubFlavor (..))
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), withLegs)
 import Proarrow.Optic.Fold (FoldRes)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -45,38 +45,20 @@ instance (HasCoproducts k, Ob t) => AffineFoldRes (Corep (Coproduct t) :: k +-> 
 instance (CopyDiscard k, HasCoproducts k, Ob t) => AffineFoldRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   previewP @_ @a (Rep p) = ((rgt @k @a @TerminalObject . terminate @k @t) ||| lft @k @a @TerminalObject) . p
 
-instance CompactFlavor AffineFoldRes
-
 instance SubFlavor AffineFoldRes FoldRes where subFlavor r = r
 
 type AffineFold (s :: k) (t :: j) a b = Optic (Prostrong AffineFoldRes) s t a b
 
--- | The carrier profunctor for 'preview': a generalized @s -> Maybe a@.
-type PreviewP :: forall {j} {k}. k -> j +-> k
-data PreviewP (a :: k) (s :: k) (t :: j) where
-  PreviewP :: (Ob t) => {unPreviewP :: s ~> (a || TerminalObject)} -> PreviewP a s t
-
-instance (Bicartesian k, CategoryOf j, Ob (a :: k)) => Profunctor (PreviewP a :: j +-> k) where
-  dimap l r (PreviewP f) = PreviewP (f . l) \\ r
-  r \\ PreviewP f = r \\ f
-
--- | Any flavor whose optics can preview has strength for the 'PreviewP' carrier.
-instance
-  (Bicartesian k, CategoryOf j, Ob (a :: k), SubFlavor w AffineFoldRes)
-  => Prostrong (w :: FLAVOR j k) (PreviewP a :: j +-> k)
-  where
-  proact @f @g (f :.: PreviewP h :.: g) =
-    subFlavor @w @AffineFoldRes @f @g (PreviewP ((h ||| rgt @k @a @TerminalObject) . previewP @f @g f)) \\ g
-
--- | Preview through any optic that can act as an affine fold, in either encoding.
+-- | Preview through any optic that can act as an affine fold, in either encoding: run it at its
+-- witness pair ('ExOptic' 'AffineFoldRes', via 'withLegs') and apply 'previewP'.
 preview
   :: forall {j} {k} c (s :: k) (t :: j) a b
-   . (Bicartesian k, CategoryOf j, c (PreviewP a))
+   . (Bicartesian k, CategoryOf j, (Ob a, Ob b) => c (ExOptic AffineFoldRes a b))
   => Optic c s t a b -> s ~> (a || TerminalObject)
-preview (Optic l) = unPreviewP (l @(PreviewP a) (PreviewP (lft @k @a @TerminalObject)))
+preview o = withLegs @AffineFoldRes o \ @p @q p _ -> previewP @p @q p
 
 infixl 8 ^?
 
 -- | Preview the focus of a concrete, @Type@-level optic (a getter that might not match).
-(^?) :: forall s (t :: Type) a b c. (c (PreviewP a)) => s -> Optic c s t a b -> Maybe a
+(^?) :: forall s (t :: Type) a b c. (c (ExOptic AffineFoldRes a b)) => s -> Optic c s t a b -> Maybe a
 s ^? l = either Just (const Nothing) (preview l s)

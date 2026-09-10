@@ -5,7 +5,7 @@
 -- \/ 'overP'). It sits at the write-only top of the subtyping lattice alongside
 -- 'Proarrow.Optic.Fold.Fold', so it has no builder of its own ('Proarrow.Optic.convert' a stronger
 -- optic); its canonical eliminator is 'over' -- with 'set', '(%~)' and '(.~)' as shorthands -- via
--- the hom carrier 'Id'.
+-- the generic 'ExOptic' carrier.
 --
 -- This module also hosts the tensor-action witness pair 'TensorW'\/'CoTensorW', shared by
 -- "Proarrow.Optic.MonoidalTraversal" and "Proarrow.Optic.Tracer".
@@ -23,7 +23,7 @@ import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, right)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, second)
-import Proarrow.Optic (CompactFlavor, FLAVOR, Optic, Optic_ (..), Prostrong (..), SubFlavor (..))
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), withLegs)
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -35,8 +35,6 @@ import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (.
 type SetterRes :: forall {k}. FLAVOR k k
 class (Profunctor p, Profunctor q) => SetterRes (p :: k +-> k) (q :: k +-> k) where
   overP :: p s a -> q b t -> (a ~> b) -> (s ~> t)
-
-instance CompactFlavor SetterRes
 
 -- | Every /representable/ residual is a setter: map the focus through the residual functor with
 -- 'repMap'. This needs only 'Representable' @t@ -- no 'Proarrow.Category.Monoidal.Distributive.Traversable' -- which is exactly why
@@ -99,33 +97,28 @@ instance (Monoidal k, Ob (a :: k)) => SetterRes (TensorW a :: k +-> k) (CoTensor
 type Setter (s :: k) (t :: k) a b = Optic (Prostrong SetterRes) s t a b
 type Setter' s a = Setter s s a a
 
--- | Any flavor whose optics can set has strength for the hom carrier 'Id'.
-instance (CategoryOf k, SubFlavor w SetterRes) => Prostrong (w :: FLAVOR k k) (Id :: k +-> k) where
-  proact @f @g (f :.: Id h :.: g) = subFlavor @w @SetterRes @f @g (Id (overP @f @g f g h))
-
--- | Map over any optic that can act as a setter, in either encoding: a 'Prostrong'-flavored optic
--- needs @'SubFlavor' w 'SetterRes'@ (discharged by the bridge instance above), a
--- profunctor-class-flavored optic needs its class to hold for 'Id'.
+-- | Map over any optic that can act as a setter, in either encoding: run it at its witness pair
+-- ('ExOptic' 'SetterRes', via 'withLegs') and apply 'overP'.
 over
   :: forall {k} c (s :: k) (t :: k) a b
-   . (c (Id :: k +-> k))
+   . (CategoryOf k, (Ob a, Ob b) => c (ExOptic SetterRes a b))
   => Optic c s t a b -> (a ~> b) -> (s ~> t)
-over (Optic l) f = unId (l (Id f))
+over o f = withLegs @SetterRes o \ @p @q p q -> overP @p @q p q f
 
 -- | Apply a function through a concrete, @Type@-level 'Setter'.
 infixl 8 %~
 
-(%~) :: (c (Id :: Type +-> Type)) => Optic c s t a b -> (a -> b) -> (s -> t)
+(%~) :: (c (ExOptic SetterRes a b)) => Optic c (s :: Type) t a b -> (a -> b) -> (s -> t)
 (%~) = over
 
 -- | Replace the focus\/foci of a concrete, @Type@-level 'Setter' with a constant value.
 infixl 8 .~
 
-(.~) :: (c (Id :: Type +-> Type)) => Optic c s t a b -> b -> (s -> t)
+(.~) :: (c (ExOptic SetterRes a b)) => Optic c (s :: Type) t a b -> b -> (s -> t)
 l .~ b = l %~ const b
 
 -- | Named version of '(.~)'.
-set :: (c (Id :: Type +-> Type)) => Optic c s t a b -> b -> (s -> t)
+set :: (c (ExOptic SetterRes a b)) => Optic c (s :: Type) t a b -> b -> (s -> t)
 set = (.~)
 
 -- | Monadically replace the focus\/foci of a 'Setter' in the Kleisli category of @m@ with a

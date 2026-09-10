@@ -9,7 +9,7 @@
 -- drawn out) is re-exported from "Proarrow.Optics".
 module Proarrow.Optic where
 
-import Data.Kind (Constraint, Type)
+import Data.Kind (Constraint)
 import GHC.TypeError (ErrorMessage (..), TypeError)
 import Prelude (type (~))
 import Prelude qualified as P
@@ -102,14 +102,19 @@ iso sa bt = Optic (\ @p pab -> withProfunctor @c @p (dimap sa bt pab)) \\ sa \\ 
 
 type FLAVOR j k = (k +-> k) -> (j +-> j) -> Constraint
 
--- | The two raw facts a flavor @w@ needs so its own witnesses can be recomposed: it's closed
--- under ':.:', and it's inhabited at 'Id'. Every concrete optic kind (Lens, Prism, Setter, ...)
--- provides both as plain instances; a meta-combinator like 'Proarrow.Optic.Prod.ProdRes' needs
--- to demand them directly from its parameters wherever it has to reconstruct a witness.
-type ClosedUnder :: forall {j} {k}. FLAVOR j k -> Constraint
-class (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => ClosedUnder w
+-- | A flavor: a class of witness pairs that is closed under composition and contains the identity
+-- pair -- the monoidal structure of the residuals, with @(Id, Id)@ as unit and
+-- @(f :.: g, g' :.: f')@ (note the reversal on the right) as tensor. Every optic kind is one: the
+-- composite of two @w@-optics is a @w@-optic exactly because the witness pairs compose, so a class
+-- of pairs that is not closed has no category of optics. Each concrete kind ('Proarrow.Optic.Lens.LensRes',
+-- 'Proarrow.Optic.Prism.PrismRes', ...) provides both instances, and the composition instance is
+-- where its real content lives: how the legs of a composite look. A meta-combinator like
+-- 'Proarrow.Optic.Prod.ProdRes' demands @Flavor@ of its parameters wherever it has to reconstruct
+-- a witness.
+type Flavor :: forall {j} {k}. FLAVOR j k -> Constraint
+class (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => Flavor w
 
-instance (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => ClosedUnder w
+instance (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => Flavor w
 
 -- | The carrier @p@ is @w@-strong: a Tambara module for the flavor @w@. 'proact' absorbs a
 -- @w@-witness pair @(f, g)@ sandwiching @p@ back into @p@, which is exactly what lets an optic
@@ -121,45 +126,64 @@ type Prostrong :: forall {j} {k}. FLAVOR j k -> (j +-> k) -> Constraint
 class (Profunctor p, CategoryOf j, CategoryOf k) => Prostrong w (p :: j +-> k) where
   proact :: (w f g, Profunctor f, Profunctor g) => f :.: p :.: g :~> p
 
--- | The existential encoding of an optic: either a bare iso ('ExIso', the two legs) or a
--- @w@-witness pair sandwiching a smaller optic ('ExProstrong'). This is the free @w@-strong
--- profunctor (see the 'Prostrong' instance below), which is what mediates between the encodings:
--- 'ex2prof'\/'prof2ex' convert to and from 'Optic', 'convert' reinterprets through it, and
--- 'compress' flattens it back to a single witness pair.
-type ExOptic :: FLAVOR j k -> k -> j -> k -> j -> Type
+-- | The existential encoding of an optic: a @w@-witness pair -- the two legs @p s a@ and @q b t@
+-- -- as a profunctor in @s@\/@t@. This is the free @w@-strong profunctor on the legs
+-- @'Proarrow.Profunctor.Instance.Yoneda.Yo' a (OP b)@ (its 'Prostrong' instance below absorbs a
+-- witness pair by composing it on, which is where 'Flavor' earns its keep), and it mediates
+-- between the encodings: 'ex2prof'\/'prof2ex' convert to and from 'Optic'. It is also the universal
+-- eliminating carrier: 'withLegs' runs any optic at it and hands back the witness pair, and every
+-- flavor-specific eliminator is that followed by the flavor's method; the per-flavor carriers of the
+-- lens literature (@Shop@, @Market@, @Exchange@, ...) are Yoneda-reduced normal forms of this one
+-- type, and @'Proarrow.Profunctor.Instance.Yoneda.Yo' a (OP b)@ itself is the @(Id, Id)@ case.
+--
+-- Composing witnesses picks a representative of the composite, so this encoding takes the coend's
+-- identifications for granted: it is correct exactly when the flavor's composition instances are
+-- the canonical ones (the Tambara module laws), which is Pastro-Street's hypothesis.
+type ExOptic :: forall {j} {k}. FLAVOR j k -> k -> j -> j +-> k
 data ExOptic w a b s t where
-  ExIso
-    :: forall {j} {k} {w :: FLAVOR j k} (s :: k) (t :: j) (a :: k) (b :: j)
-     . s ~> a -> b ~> t -> ExOptic w a b s t
-  ExProstrong
-    :: forall {j} {k} {w :: FLAVOR j k} (p :: k +-> k) (q :: j +-> j) s t a b
-     . (w p q, Profunctor p, Profunctor q)
-    => (p :.: ExOptic w a b :.: q) s t -> ExOptic w a b s t
+  ExOptic :: (w p q, Profunctor p, Profunctor q) => p s a -> q b t -> ExOptic w a b s t
 
 instance (CategoryOf j, CategoryOf k) => Profunctor (ExOptic w a b :: j +-> k) where
-  dimap l r (ExIso f g) = ExIso (lmap l f) (rmap r g)
-  dimap l r (ExProstrong @w' peq) = ExProstrong @w' (dimap l r peq)
-  r \\ ExIso f g = r \\ f \\ g
-  r \\ ExProstrong peq = r \\ peq
+  dimap l r (ExOptic p q) = ExOptic (lmap l p) (rmap r q)
+  r \\ ExOptic p q = r \\ p \\ q
 
 -- | The free @w@-strong profunctor is @v@-strong for every subflavor @v@ of @w@; this is what
--- lets 'convert' reinterpret optics of any encoding (composites included) at a chosen flavor.
-instance (CategoryOf j, CategoryOf k, SubFlavor v w) => Prostrong v (ExOptic w a b :: j +-> k) where
-  proact @f @g fpg = subFlavor @v @w @f @g (ExProstrong fpg)
+-- lets 'convert' and 'withLegs' accept optics of any encoding (composites included). It is the one
+-- bridge instance that replaces a per-carrier one for each flavor.
+instance (CategoryOf j, CategoryOf k, SubFlavor v w, Flavor w) => Prostrong v (ExOptic w a b :: j +-> k) where
+  proact @f @g (f :.: ExOptic p q :.: g) = subFlavor @v @w @f @g (ExOptic (f :.: p) (q :.: g))
+
+-- | Build a 'Prostrong'-flavored optic from a @w@-witness pair -- the two legs @p s a@ and @q b t@
+-- -- by wrapping them around the carrier with one 'proact'. Every optic constructor
+-- ('Proarrow.Optic.Lens.lens', 'Proarrow.Optic.Prism.prism', ...) is @legs2prof@ of its generating
+-- witness pair; 'ex2prof' is the same on the packaged 'ExOptic'.
+legs2prof
+  :: forall {j} {k} (w :: FLAVOR j k) p q (s :: k) (t :: j) a b
+   . (CategoryOf j, CategoryOf k, w p q, Profunctor p, Profunctor q)
+  => p s a -> q b t -> Optic (Prostrong w) s t a b
+legs2prof p q = Optic (\pab -> proact @w (p :.: pab :.: q)) \\ p \\ q
 
 ex2prof
   :: forall {j} {k} {w :: FLAVOR j k} (a :: k) (b :: j) (s :: k) (t :: j)
    . (CategoryOf j, CategoryOf k) => ExOptic w a b s t -> Optic (Prostrong w) s t a b
-ex2prof (ExIso l r) = Optic (dimap l r) \\ l \\ r
-ex2prof (ExProstrong (p@Objs :.: ExIso l@Objs r@Objs :.: q@Objs)) =
-  Optic (\pab -> proact @w (rmap l p :.: pab :.: lmap r q))
-ex2prof (ExProstrong (p :.: ex :.: q)) =
-  case ex2prof ex of Optic f -> Optic (\pab -> proact @w (p :.: f pab :.: q)) \\ p \\ q
+ex2prof (ExOptic p q) = legs2prof @w p q
 
+-- | Run an optic, in any encoding, at its own witness pair (the Pastro-Street move): a
+-- 'Prostrong'-flavored optic discharges @c ('ExOptic' w a b)@ through the bridge instance above
+-- (i.e. @'SubFlavor' v w@), a '(%)'-composite one conjunct at a time, and a profunctor-class-flavored
+-- one through the carrier's own instances of its class.
 prof2ex
-  :: forall {j} {k} {w :: FLAVOR j k} (a :: k) (b :: j) (s :: k) (t :: j)
-   . (CategoryOf j, CategoryOf k) => Optic (Prostrong w) s t a b -> ExOptic w a b s t
-prof2ex (Optic p2p) = p2p (ExIso id id)
+  :: forall {j} {k} w c (s :: k) (t :: j) a b
+   . (CategoryOf j, CategoryOf k, w (Id :: CAT k) (Id :: CAT j), (Ob a, Ob b) => c (ExOptic w a b))
+  => Optic c s t a b -> ExOptic w a b s t
+prof2ex (Optic l) = l @(ExOptic w a b) (ExOptic (Id id) (Id id))
+
+-- | 'prof2ex' in continuation-passing form: the generic eliminator.
+withLegs
+  :: forall {j} {k} w c (s :: k) (t :: j) a b r
+   . (CategoryOf j, CategoryOf k, w (Id :: CAT k) (Id :: CAT j), (Ob a, Ob b) => c (ExOptic w a b))
+  => Optic c s t a b -> (forall p q. (w p q, Profunctor p, Profunctor q) => p s a -> q b t -> r) -> r
+withLegs o k = case prof2ex @w o of ExOptic p q -> k p q
 
 -- | Flavor @w1@ is a subflavor of @w2@: every witness pair of @w1@ is also a witness pair of
 -- @w2@, so a @'Prostrong' w1@-flavored optic is also a @'Prostrong' w2@-flavored one -- optic
@@ -199,21 +223,26 @@ instance
   where
   subFlavor _ = P.error "unreachable"
 
--- | Convert an optic to a chosen weaker flavor, by pushing the free @w@-strong profunctor
--- @'ExOptic' w a b@ through it. This works for any input encoding: a 'Prostrong'-flavored optic
--- converts along the 'SubFlavor' lattice, a ':&&:'-composite converts when both conjuncts do,
--- and a profunctor-class-flavored optic converts when @'ExOptic' w a b@ has an instance of its
--- class (cf. 'Proarrow.Optic.Iso.fromPIso', 'Proarrow.Optic.Traversal.fromPTraversal').
+-- | Convert an optic to a chosen (closed) flavor @w@, by running it at its existential encoding
+-- @'ExOptic' w a b@ and wrapping the resulting witness pair back around the carrier: this works for
+-- any input encoding. A 'Prostrong'-flavored optic converts along the 'SubFlavor' lattice (via the
+-- bridge instance of 'ExOptic'), a ':&&:'-composite converts when both conjuncts do, and a
+-- profunctor-class-flavored optic converts when @'ExOptic' w a b@ has an instance of its class -- which
+-- it does for every class whose generating witnesses @w@ contains (cf. 'Proarrow.Optic.Iso.fromPIso',
+-- 'Proarrow.Optic.MonoidalTraversal.fromPTraversal', 'Proarrow.Optic.Tracer.fromPTracer').
 --
 -- Consumers accept any sufficiently strong optic directly, so this is rarely needed to /use/ an
 -- optic; but constructors and '%' return their exact type monomorphically, so it is the way to
 -- /store/ an optic at a weaker type, e.g. @convert ('Proarrow.Optic.Lens.lens' f g) ::
 -- 'Proarrow.Optic.Traversal.Traversal'' s a@.
+--
+-- The target flavor must contain the identity pair and, through the 'ExOptic' bridge, be
+-- 'Flavor' composition -- which every flavor that forms a category of optics is.
 convert
   :: forall {j} {k} c (w :: FLAVOR j k) (s :: k) (t :: j) a b
-   . (CategoryOf j, CategoryOf k, (Ob a, Ob b) => c (ExOptic w a b))
+   . (CategoryOf j, CategoryOf k, w (Id :: CAT k) (Id :: CAT j), (Ob a, Ob b) => c (ExOptic w a b))
   => Optic c s t a b -> Optic (Prostrong w) s t a b
-convert (Optic l) = ex2prof (l @(ExOptic w a b) (ExIso id id))
+convert o = withLegs @w o (legs2prof @w)
 
 -- | The reversing carrier implementing 're': it stores a continuation @p b a -> p t s@, so
 -- running an optic at @'Re' p _ _@ builds the optic turned around. Its 'Prostrong' instance
@@ -276,20 +305,3 @@ unOpOptic
   :: forall {k} c (s :: k) t a b
    . Optic c (OP t) (OP s) (OP b) (OP a) -> Optic (OpConstraint c) s t a b
 unOpOptic (Optic n) = Optic (unOp . n . Op)
-
-class CompactFlavor (w :: FLAVOR j k) where
-  compress
-    :: (CategoryOf j, CategoryOf k)
-    => ExOptic (w :: FLAVOR j k) a b s t -> (forall p q. (w p q, Profunctor p, Profunctor q) => p s a -> q b t -> r) -> r
-  default compress
-    :: (ClosedUnder w)
-    => (CategoryOf j, CategoryOf k)
-    => ExOptic w a b s t -> (forall p q. (w p q, Profunctor p, Profunctor q) => p s a -> q b t -> r) -> r
-  compress (ExIso l r) k = k (Id l) (Id r)
-  compress (ExProstrong (p :.: ExIso l r :.: q)) k = k (rmap l p) (lmap r q)
-  compress (ExProstrong (p :.: ex :.: q)) k = compress ex \p' q' -> k (p :.: p') (q' :.: q)
-
-withLegs
-  :: (CompactFlavor (w :: FLAVOR j k), CategoryOf j, CategoryOf k)
-  => (forall p q. (w p q, Profunctor p, Profunctor q) => p s a -> q b t -> r) -> Optic (Prostrong w) s t a b -> r
-withLegs k (prof2ex -> ex) = compress ex k

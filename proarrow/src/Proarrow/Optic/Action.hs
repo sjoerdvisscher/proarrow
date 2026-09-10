@@ -17,7 +17,7 @@ import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal, Tensor, obj2, swa
 import Proarrow.Category.Monoidal.Action (Act, ActionAt, MonoidalAction (..), SubAction, composeActs, decomposeActs)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (CompactFlavor, ExOptic (..), FLAVOR, Optic, Prostrong (..), ex2prof, withLegs)
+import Proarrow.Optic (FLAVOR, Optic, Prostrong (..), legs2prof, withLegs)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -41,16 +41,12 @@ instance (ActRes act f g, ActRes act f' g') => ActRes act (f :.: f') (g' :.: g) 
         withOb2 @_ @x @y $
           k @(x ** y) (composeActs @act @x @y @a f1 f2) (decomposeActs @act @x @y @b g2 g1)
 
-instance (MonoidalAction act) => CompactFlavor (ActRes act)
-
 type MonoidalOptic (s :: k) (t :: k) a b = Optic (Prostrong (ActRes Tensor)) s t a b
 
 mkMonoidal
   :: forall {k} (m :: k) (a :: k) (b :: k) s t
    . (Monoidal k, Ob m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalOptic s t a b
-mkMonoidal sma@Objs mbt@Objs =
-  ex2prof
-    (ExProstrong @(Rep (ActionAt Tensor m)) @(Corep (ActionAt Tensor m)) (Rep sma :.: ExIso id id :.: Corep mbt))
+mkMonoidal sma mbt = legs2prof @(ActRes Tensor) (Rep @a @(ActionAt Tensor m) sma) (Corep @b @(ActionAt Tensor m) mbt)
 
 _1 :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => MonoidalOptic (a ** c) (b ** c) a b
 _1 = mkMonoidal @c (swap @k @a @c) (swap @k @c @b)
@@ -84,19 +80,16 @@ mkAlgebraicLens
   :: forall m s t a b
    . (Monad m) => (s -> a) -> (m s -> b -> t) -> AlgebraicLens m s t a b
 mkAlgebraicLens v u =
-  ex2prof
-    ( ExProstrong
-        @(Rep (ActionAt (AlgAction m) (SUB (m s))))
-        @(Corep (ActionAt (AlgAction m) (SUB (m s))))
-        (Rep (\s -> (return s, v s)) :.: ExIso id id :.: Corep (P.uncurry u))
-    )
+  legs2prof @(ActRes (AlgAction m))
+    (Rep @a @(ActionAt (AlgAction m) (SUB (m s))) (\s -> (return s, v s)))
+    (Corep @b @(ActionAt (AlgAction m) (SUB (m s))) (P.uncurry u))
 
 -- | Classify a monadic computation of @s@'s through an 'AlgebraicLens', given a replacement
 -- focus @b@ -- generalizing "set" to combine every @s@ the computation might produce (via its
 -- residual's 'Algebra') rather than only ever seeing the last one.
 classifyOf :: forall m s t a b. (Monad m) => AlgebraicLens m s t a b -> m s -> b -> t
 classifyOf optic =
-  withLegs (\l r -> withActP @(AlgAction m) l r \f g ms b -> g (algebra (P.fmap (P.fst . f) ms), b)) optic
+  withLegs @(ActRes (AlgAction m)) optic \l r -> withActP @(AlgAction m) l r \f g ms b -> g (algebra (P.fmap (P.fst . f) ms), b)
 
 infixl 8 .?
 (.?) :: (Monad m) => AlgebraicLens m s t a b -> b -> m s -> t

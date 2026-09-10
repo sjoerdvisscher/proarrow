@@ -12,7 +12,7 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Core (CategoryOf (..), OB, Profunctor (..), Promonad (..), src, tgt, (//), (:~>), type (+->))
 import Proarrow.Functor (Functor (..))
-import Proarrow.Optic (ClosedUnder, CompactFlavor (..), ExOptic (..), FLAVOR, Prostrong (..))
+import Proarrow.Optic (ExOptic (..), FLAVOR, Flavor, Prostrong (..))
 import Proarrow.Profunctor.Cofree (HasCofree (..), cofreeComp)
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Free (HasFree (..), freeComp)
@@ -32,7 +32,7 @@ data Pastro w r a b where
     :: forall {k} {j} (p :: k +-> k) (q :: j +-> j) w r a b
      . (w p q, Profunctor p, Profunctor q) => (p :.: r :.: q) a b -> Pastro w r a b
 
-pastro :: forall {j} {k} (w :: FLAVOR j k) (p :: j +-> k). (Profunctor p, ClosedUnder w) => p :~> Pastro w p
+pastro :: forall {j} {k} (w :: FLAVOR j k) (p :: j +-> k). (Profunctor p, Flavor w) => p :~> Pastro w p
 pastro p = Pastro (Id id :.: p :.: Id id) \\ p
 
 unpastro :: forall {j} {k} (w :: FLAVOR j k) (p :: j +-> k). (Prostrong w p) => Pastro w p :~> p
@@ -41,24 +41,24 @@ unpastro (Pastro fpg) = proact @w fpg
 instance (CategoryOf j, CategoryOf k, Profunctor p) => Profunctor (Pastro t p :: j +-> k) where
   dimap l r (Pastro fpg) = Pastro (dimap l r fpg)
   r \\ Pastro fpg = r \\ fpg
-instance (ClosedUnder w, Profunctor p) => Prostrong w (Pastro w p :: j +-> k) where
+instance (Flavor w, Profunctor p) => Prostrong w (Pastro w p :: j +-> k) where
   proact (p :.: Pastro (p' :.: r :.: q') :.: q) = Pastro ((p :.: p') :.: r :.: (q' :.: q))
 
-instance (ClosedUnder w) => HasFree (Prostrong w :: OB (j +-> k)) where
+instance (Flavor w) => HasFree (Prostrong w :: OB (j +-> k)) where
   type Free (Prostrong w) p = Pastro w p
   lift = Prof pastro
   foldMap n = Prof unpastro . map n
 
 instance Functor (Pastro t) where
   map (Prof n) = Prof \(Pastro (f :.: p :.: g)) -> Pastro (f :.: n p :.: g)
-instance (ClosedUnder w) => Promonad (Star (Pastro w) :: (j +-> k) +-> (j +-> k)) where
+instance (Flavor w) => Promonad (Star (Pastro w) :: (j +-> k) +-> (j +-> k)) where
   id = Star (Prof pastro)
   Star n . Star m = Star (freeComp @(Prostrong w) n m)
 
 fromExOptic
   :: forall {j} {k} w (a :: k) (b :: j)
-   . (CompactFlavor w, CategoryOf j, CategoryOf k) => ExOptic w a b :~> (Pastro w (Yo a (OP b)) :: j +-> k)
-fromExOptic ex = compress ex \f g -> Pastro (f :.: Yo (tgt f) (src g) :.: g)
+   . (CategoryOf j, CategoryOf k) => ExOptic w a b :~> (Pastro w (Yo a (OP b)) :: j +-> k)
+fromExOptic (ExOptic f g) = Pastro (f :.: Yo (tgt f) (src g) :.: g)
 
 -- | The cofree 'Prostrong' profunctor for the flavor @w@: strength against every @w@-witness pair
 -- at once.
@@ -82,24 +82,24 @@ tambara :: forall {j} {k} w (p :: j +-> k). (Prostrong w p) => p :~> Tambara w p
 tambara r = mkTambara (\p q -> proact @w (p :.: r :.: q)) \\ r
 
 untambara
-  :: forall {j} {k} w (p :: j +-> k). (Profunctor p, ClosedUnder w) => Tambara w p :~> p
+  :: forall {j} {k} w (p :: j +-> k). (Profunctor p, Flavor w) => Tambara w p :~> p
 untambara = runTambara @w @Id @Id (Id id) (Id id)
 
 instance (Profunctor p) => Profunctor (Tambara w p :: j +-> k) where
   dimap l r (Tambara n) = Tambara (dimap l r n) \\ l \\ r
   r \\ Tambara{} = r
 
-instance (ClosedUnder w, Profunctor p) => Prostrong w (Tambara w p :: j +-> k) where
+instance (Flavor w, Profunctor p) => Prostrong w (Tambara w p :: j +-> k) where
   proact (p :.: n :.: q) = mkTambara (\p' q' -> runTambara (p' :.: p) (q :.: q') n) \\ p \\ q
 
-instance (ClosedUnder w) => HasCofree (Prostrong w :: OB (j +-> k)) where
+instance (Flavor w) => HasCofree (Prostrong w :: OB (j +-> k)) where
   type Cofree (Prostrong w) p = Tambara w p
   lower = Prof untambara
   unfoldMap n = map n . Prof tambara
 
 instance Functor (Tambara w :: (j +-> k) -> (j +-> k)) where
   map (Prof n) = Prof \t -> t // mkTambara \p q -> n (runTambara p q t)
-instance (ClosedUnder w) => Promonad (Costar (Tambara w) :: (j +-> k) +-> (j +-> k)) where
+instance (Flavor w) => Promonad (Costar (Tambara w) :: (j +-> k) +-> (j +-> k)) where
   id = Costar (Prof untambara)
   Costar n . Costar m = Costar (cofreeComp @(Prostrong w) n m)
 

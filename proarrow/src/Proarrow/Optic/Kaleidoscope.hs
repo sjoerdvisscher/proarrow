@@ -49,14 +49,12 @@ import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard, discard, fst, snd, (
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Optic
-  ( CompactFlavor
-  , ExOptic (..)
+  ( ExOptic
   , FLAVOR
   , Optic
   , Prostrong (..)
   , SubFlavor (..)
-  , convert
-  , ex2prof
+  , legs2prof
   , withLegs
   )
 import Proarrow.Optic.Fold (FoldRes (..))
@@ -112,8 +110,6 @@ instance (Monoidal k) => Proadjunction (Two :: k +-> k) CoTwo where
   unit @x = withOb2 @k @x @x (CoTwo id :.: Two id)
   counit (Two sl :.: CoTwo rt) = rt . sl
 
-instance CompactFlavor KaleidoRes
-
 instance SubFlavor KaleidoRes MonTravRes where subFlavor r = r
 instance SubFlavor KaleidoRes GrateRes where subFlavor r = r
 instance SubFlavor KaleidoRes TravRes where subFlavor r = r
@@ -128,7 +124,7 @@ kaleidoscope
   :: forall {k} (s :: k) (t :: k) a b
    . (CopyDiscard k, Ob a, Ob b)
   => (s ~> (a ** a)) -> ((b ** b) ~> t) -> Kaleidoscope s t a b
-kaleidoscope sl rt = ex2prof (ExProstrong (Two sl :.: ExIso id id :.: CoTwo rt))
+kaleidoscope sl rt = legs2prof @KaleidoRes (Two sl) (CoTwo rt)
 
 -- | Distribute any 'MonoidalProfunctor' through a kaleidoscope (or any stronger optic). At the
 -- hom @('~>')@ this is 'Proarrow.Optic.Setter.over'; at an applicative @'Proarrow.Profunctor.Instance.Star.Star' f@ the foci are
@@ -139,7 +135,7 @@ kaleidoscopeOf
   :: forall {k} c (s :: k) (t :: k) a b r
    . (Monoidal k, MonoidalProfunctor r, (Ob a, Ob b) => c (ExOptic KaleidoRes a b))
   => Optic c s t a b -> r a b -> r s t
-kaleidoscopeOf o rab = withLegs (\l r -> kaleidoP l r rab) (convert @c @KaleidoRes o)
+kaleidoscopeOf o rab = withLegs @KaleidoRes o \l r -> kaleidoP l r rab
 
 -- * @n@-ary aggregation via tensor powers
 
@@ -221,4 +217,4 @@ kaleidoscopeN
   :: forall {k} (n :: Nat) (s :: k) (t :: k) a b
    . (CopyDiscard k, KnownNat n, Ob a, Ob b)
   => (s ~> Tensor n a) -> (Tensor n b ~> t) -> Kaleidoscope s t a b
-kaleidoscopeN sl rt = ex2prof (ExProstrong (Pow @n sl :.: ExIso id id :.: CoPow @n rt))
+kaleidoscopeN sl rt = legs2prof @KaleidoRes (Pow @n sl) (CoPow @n rt)

@@ -39,14 +39,12 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), typ
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Product)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Optic
-  ( CompactFlavor (..)
-  , ExOptic (..)
+  ( ExOptic
   , FLAVOR
   , Optic
   , Prostrong (..)
   , SubFlavor (..)
-  , convert
-  , ex2prof
+  , legs2prof
   , withLegs
   )
 import Proarrow.Optic.Fold (FoldRes (..))
@@ -98,9 +96,6 @@ instance (TravRes f g, TravRes f' g') => TravRes (f :.: f') (g' :.: g) where
 instance (MonTravRes f g, MonTravRes f' g') => MonTravRes (f :.: f') (g' :.: g) where
   monTravP (f :.: f') (g' :.: g) = monTravP @f @g f g . monTravP @f' @g' f' g'
 
-instance CompactFlavor TravRes
-instance CompactFlavor MonTravRes
-
 instance SubFlavor TravRes SetterRes where subFlavor r = r
 instance SubFlavor TravRes FoldRes where subFlavor r = r
 instance SubFlavor MonTravRes TravRes where subFlavor r = r
@@ -115,15 +110,15 @@ type Traversal' s a = Traversal s s a a
 -- arbitrary profunctor carrier by handing it to 'travP', rather than relying on a per-carrier
 -- @'Prostrong' w p@ bridge (which could only ever cover specific carrier heads).
 --
--- The optic is accepted in any encoding: the constraint asks the optic's class to hold for the free
--- traversal profunctor @'ExOptic' 'TravRes' a b@, which a 'Prostrong'-flavored optic discharges via
+-- The optic is accepted in any encoding: the constraint asks the optic's class to hold for the
+-- generic carrier @'ExOptic' 'TravRes' a b@, which a 'Prostrong'-flavored optic discharges via
 -- @'SubFlavor' w 'TravRes'@, a '(%)'-composite one conjunct at a time, and a profunctor-class one
--- ('Proarrow.Optic.MonoidalTraversal.PTraversalFull') through the carrier's own instances.
+-- ('Proarrow.Optic.MonoidalTraversal.PTraversalFull') through the carrier's by-generator instances.
 traverseOf
   :: forall {k} c (s :: k) (t :: k) a b p
    . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, (Ob a, Ob b) => c (ExOptic TravRes a b))
   => Optic c s t a b -> p a b -> p s t
-traverseOf o pab = withLegs (\l r -> travP l r pab) (convert @c @TravRes o)
+traverseOf o pab = withLegs @TravRes o \l r -> travP l r pab
 
 -- | Build a traversal from a 'Traversable' (representable) functor @t@: it focuses every element
 -- the functor holds. This is the one weak-flavor builder that is genuinely primitive -- a
@@ -133,7 +128,7 @@ traverseOf o pab = withLegs (\l r -> travP l r pab) (convert @c @TravRes o)
 traversed
   :: forall {k} (t :: k +-> k) a b
    . (Bicartesian k, Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
-traversed = ex2prof (ExProstrong @t @(RepCostar t) (repUniv :.: ExIso id id :.: corepUniv))
+traversed = legs2prof @TravRes (repUniv @t) (corepUniv @(RepCostar t))
 
 -- * The free traversal profunctor
 

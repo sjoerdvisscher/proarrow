@@ -6,8 +6,8 @@
 -- classes and their leaf instances). A 'MonoidalTraversal' distributes any
 -- 'StrongDistributiveProfunctor' with no product-strength requirement; the profunctor-class
 -- encoding 'PTraversal' converts to and from it via 'toPTraversal'\/'fromPTraversal', the latter
--- through the free 'MonTravRes'-strong profunctor @'ExOptic' 'MonTravRes'@ (an SDP, via the
--- tensor-strength witness 'TensorW').
+-- through the generic carrier @'ExOptic' 'MonTravRes'@, made an SDP here by generators (the Day
+-- halves, the tensor-strength witness 'TensorW' and the coproduct prism).
 module Proarrow.Optic.MonoidalTraversal where
 
 import GHC.Generics qualified as G
@@ -29,14 +29,14 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), UN, type 
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Product)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
-  ( CompactFlavor (..)
-  , ExOptic (..)
+  ( ExOptic (..)
+  , FLAVOR
+  , Flavor
   , IsOptic (..)
   , Optic
   , Optic_ (..)
   , Prostrong (..)
   , convert
-  , ex2prof
   , withLegs
   , type (:&&:)
   )
@@ -69,115 +69,111 @@ instance (CopyDiscard k, Ob (a :: k)) => TravRes (TensorW a :: k +-> k) (CoTenso
 instance (CopyDiscard k, Ob (a :: k)) => MonTravRes (TensorW a :: k +-> k) (CoTensorW a) where
   monTravP (TensorW h) (CoTensorW i) r = dimap h i (act @Tensor @_ @a r)
 
-besideTensor
-  :: forall {k} (a :: k) b s1 t1 s2 t2
-   . (Monoidal k, Ob a, Ob b)
-  => ExOptic MonTravRes a b s1 t1 -> ExOptic MonTravRes a b s2 t2 -> ExOptic MonTravRes a b (s1 ** s2) (t1 ** t2)
-besideTensor l r =
-  compress l \p1@Objs q1@Objs ->
-    compress r \p2@Objs q2@Objs ->
-      withOb2 @k @s1 @s2 $
-        withOb2 @k @t1 @t2 $
-          ExProstrong (Beside id p1 p2 :.: ExIso id id :.: CoBeside q1 q2 id)
+-- * The generic carrier is a strong distributive profunctor, by generators
 
-besideSum
-  :: forall {k} (a :: k) b s1 t1 s2 t2
-   . (HasBinaryCoproducts k, Ob a, Ob b)
-  => ExOptic MonTravRes a b s1 t1 -> ExOptic MonTravRes a b s2 t2 -> ExOptic MonTravRes a b (s1 || s2) (t1 || t2)
-besideSum l r =
-  compress l \p1@Objs q1@Objs ->
-    compress r \p2@Objs q2@Objs ->
-      withObCoprod @k @s1 @s2 $
-        withObCoprod @k @t1 @t2 $
-          ExProstrong (BesideSum id p1 p2 :.: ExIso id id :.: CoBesideSum q1 q2 id)
+-- Every piece of 'StrongDistributiveProfunctor' structure on the generic carrier @'ExOptic' w a b@ is
+-- "compose one more generating witness pair onto the legs", so each instance below holds for
+-- /any/ closed flavor @w@ that contains the relevant generator: the Day halves 'UnitW'\/'Beside'
+-- for the tensor, 'ZeroW'\/'BesideSum' for the coproduct, 'TensorW' for tensor strength and the
+-- coproduct\/product prism and lens witnesses for the two action strengths. This is what lets a
+-- profunctor-class-flavored optic ('PTraversal', 'PTraversalFull') be eliminated through 'ExOptic'
+-- by the encoding-agnostic eliminators ('Proarrow.Optic.Setter.over', 'Proarrow.Optic.Fold.foldMapOf', ...),
+-- and what 'fromPTraversal' \/ 'traversal' instantiate at.
 
-instance (Monoidal k, Ob (a :: k), Ob b) => MonoidalProfunctor (ExOptic MonTravRes a b :: k +-> k) where
-  one = ExProstrong (UnitW id :.: ExIso id id :.: CoUnitW id)
-  l ** r = besideTensor l r
+exBeside
+  :: forall {k} (w :: FLAVOR k k) (a :: k) b s1 t1 s2 t2
+   . ( Monoidal k
+     , forall p1 p2 q1 q2
+        . (w p1 q1, w p2 q2, Profunctor p1, Profunctor p2, Profunctor q1, Profunctor q2)
+       => w (Beside p1 p2) (CoBeside q1 q2)
+     )
+  => ExOptic w a b s1 t1 -> ExOptic w a b s2 t2 -> ExOptic w a b (s1 ** s2) (t1 ** t2)
+exBeside (ExOptic p1@Objs q1@Objs) (ExOptic p2@Objs q2@Objs) =
+  withOb2 @k @s1 @s2 $
+    withOb2 @k @t1 @t2 $
+      ExOptic (Beside id p1 p2) (CoBeside q1 q2 id)
 
-instance (HasCoproducts k, Ob (a :: k), Ob b) => MonoidalProfunctor (Coprod (ExOptic MonTravRes a b :: k +-> k)) where
-  one = Coprod (ExProstrong (ZeroW id :.: ExIso id id :.: CoZeroW id))
-  Coprod l ** Coprod r = Coprod (besideSum l r)
+exBesideSum
+  :: forall {k} (w :: FLAVOR k k) (a :: k) b s1 t1 s2 t2
+   . ( HasBinaryCoproducts k
+     , forall p1 p2 q1 q2
+        . (w p1 q1, w p2 q2, Profunctor p1, Profunctor p2, Profunctor q1, Profunctor q2)
+       => w (BesideSum p1 p2) (CoBesideSum q1 q2)
+     )
+  => ExOptic w a b s1 t1 -> ExOptic w a b s2 t2 -> ExOptic w a b (s1 || s2) (t1 || t2)
+exBesideSum (ExOptic p1@Objs q1@Objs) (ExOptic p2@Objs q2@Objs) =
+  withObCoprod @k @s1 @s2 $
+    withObCoprod @k @t1 @t2 $
+      ExOptic (BesideSum id p1 p2) (CoBesideSum q1 q2 id)
 
-instance (CopyDiscard k, Ob (a :: k), Ob b) => Strong Tensor (ExOptic MonTravRes a b :: k +-> k) where
-  act @x @y @z e@Objs =
+instance
+  ( Monoidal k
+  , Ob (a :: k)
+  , Ob b
+  , w UnitW CoUnitW
+  , forall p1 p2 q1 q2
+     . (w p1 q1, w p2 q2, Profunctor p1, Profunctor p2, Profunctor q1, Profunctor q2)
+    => w (Beside p1 p2) (CoBeside q1 q2)
+  )
+  => MonoidalProfunctor (ExOptic w a b :: k +-> k)
+  where
+  one = ExOptic (UnitW id) (CoUnitW id)
+  (**) = exBeside
+
+instance
+  ( HasCoproducts k
+  , Ob (a :: k)
+  , Ob b
+  , w ZeroW CoZeroW
+  , forall p1 p2 q1 q2
+     . (w p1 q1, w p2 q2, Profunctor p1, Profunctor p2, Profunctor q1, Profunctor q2)
+    => w (BesideSum p1 p2) (CoBesideSum q1 q2)
+  )
+  => MonoidalProfunctor (Coprod (ExOptic w a b :: k +-> k))
+  where
+  one = Coprod (ExOptic (ZeroW id) (CoZeroW id))
+  Coprod l ** Coprod r = Coprod (exBesideSum l r)
+
+instance
+  (Monoidal k, Ob (a :: k), Ob b, Flavor w, forall (x :: k). (Ob x) => w (TensorW x) (CoTensorW x))
+  => Strong Tensor (ExOptic w a b :: k +-> k)
+  where
+  act @x @y @z (ExOptic p@Objs q@Objs) =
     withOb2 @k @x @y $
       withOb2 @k @x @z $
-        ExProstrong @(TensorW x) @(CoTensorW x) (TensorW id :.: e :.: CoTensorW id)
+        ExOptic ((TensorW id :: TensorW x (x ** y) y) :.: p) (q :.: (CoTensorW id :: CoTensorW x z (x ** z)))
 
-instance (HasCoproducts k, CopyDiscard k, Ob (a :: k), Ob b) => Strong CoprodAction (ExOptic MonTravRes a b :: k +-> k) where
-  act @cx @y @z e@Objs =
+instance
+  ( HasCoproducts k
+  , Ob (a :: k)
+  , Ob b
+  , Flavor w
+  , forall (t :: k). (Ob t) => w (Rep (Coproduct t)) (Corep (Coproduct t))
+  )
+  => Strong CoprodAction (ExOptic w a b :: k +-> k)
+  where
+  act @cx @y @z (ExOptic p@Objs q@Objs) =
     withObCoprod @k @(UN COPR cx) @y $
       withObCoprod @k @(UN COPR cx) @z $
-        ExProstrong @(Rep (Coproduct (UN COPR cx))) @(Corep (Coproduct (UN COPR cx))) (Rep id :.: e :.: Corep id)
+        ExOptic (Rep @y @(Coproduct (UN COPR cx)) id :.: p) (q :.: Corep @z @(Coproduct (UN COPR cx)) id)
 
--- The free __full-traversal__ profunctor @'ExOptic' 'TravRes'@: like @'ExOptic' 'MonTravRes'@ but
--- additionally carrying product strength (@'Strong' 'ProdAction'@) -- the one thing a
--- lens-as-traversal needs. Instantiating a profunctor-class traversal at this carrier recovers a
--- full 'Traversal' (see 'traversal' below), just as @'ExOptic' 'MonTravRes'@ recovers a
--- 'MonoidalTraversal'. Tensor and coproduct strength reuse the same 'TensorW' and coproduct-prism
--- witnesses as the monoidal-traversal carrier (both are already 'TravRes'); only 'ProdAction' is new,
--- witnessed by the product lens @'Rep' ('Product' _)@.
-instance (CopyDiscard k, Ob (a :: k), Ob b) => Strong Tensor (ExOptic TravRes a b :: k +-> k) where
-  act @x @y @z e@Objs =
-    withOb2 @k @x @y $
-      withOb2 @k @x @z $
-        ExProstrong @(TensorW x) @(CoTensorW x) (TensorW id :.: e :.: CoTensorW id)
-
-instance (HasCoproducts k, CopyDiscard k, Ob (a :: k), Ob b) => Strong CoprodAction (ExOptic TravRes a b :: k +-> k) where
-  act @cx @y @z e@Objs =
-    withObCoprod @k @(UN COPR cx) @y $
-      withObCoprod @k @(UN COPR cx) @z $
-        ExProstrong @(Rep (Coproduct (UN COPR cx))) @(Corep (Coproduct (UN COPR cx))) (Rep id :.: e :.: Corep id)
-
-instance (HasProducts k, Ob (a :: k), Ob b) => Strong ProdAction (ExOptic TravRes a b :: k +-> k) where
-  act @px @y @z e@Objs =
+instance
+  (HasProducts k, Ob (a :: k), Ob b, Flavor w, forall (s :: k). (Ob s) => w (Rep (Product s)) (Corep (Product s)))
+  => Strong ProdAction (ExOptic w a b :: k +-> k)
+  where
+  act @px @y @z (ExOptic p@Objs q@Objs) =
     withObProd @k @(UN PR px) @y $
       withObProd @k @(UN PR px) @z $
-        ExProstrong @(Rep (Product (UN PR px))) @(Corep (Product (UN PR px))) (Rep id :.: e :.: Corep id)
-
--- | 'TravRes' copy of 'besideTensor'. Kept as a separate concrete function (rather than
--- generalizing 'besideTensor' over the flavor) to avoid destabilizing the solver.
-besideTensorT
-  :: forall {k} (a :: k) b s1 t1 s2 t2
-   . (Monoidal k, Ob a, Ob b)
-  => ExOptic TravRes a b s1 t1 -> ExOptic TravRes a b s2 t2 -> ExOptic TravRes a b (s1 ** s2) (t1 ** t2)
-besideTensorT l r =
-  compress l \p1@Objs q1@Objs ->
-    compress r \p2@Objs q2@Objs ->
-      withOb2 @k @s1 @s2 $
-        withOb2 @k @t1 @t2 $
-          ExProstrong (Beside id p1 p2 :.: ExIso id id :.: CoBeside q1 q2 id)
-
--- | 'TravRes' copy of 'besideSum'.
-besideSumT
-  :: forall {k} (a :: k) b s1 t1 s2 t2
-   . (HasBinaryCoproducts k, Ob a, Ob b)
-  => ExOptic TravRes a b s1 t1 -> ExOptic TravRes a b s2 t2 -> ExOptic TravRes a b (s1 || s2) (t1 || t2)
-besideSumT l r =
-  compress l \p1@Objs q1@Objs ->
-    compress r \p2@Objs q2@Objs ->
-      withObCoprod @k @s1 @s2 $
-        withObCoprod @k @t1 @t2 $
-          ExProstrong (BesideSum id p1 p2 :.: ExIso id id :.: CoBesideSum q1 q2 id)
-
-instance (Monoidal k, Ob (a :: k), Ob b) => MonoidalProfunctor (ExOptic TravRes a b :: k +-> k) where
-  one = ExProstrong (UnitW id :.: ExIso id id :.: CoUnitW id)
-  l ** r = besideTensorT l r
-
-instance (HasCoproducts k, Ob (a :: k), Ob b) => MonoidalProfunctor (Coprod (ExOptic TravRes a b :: k +-> k)) where
-  one = Coprod (ExProstrong (ZeroW id :.: ExIso id id :.: CoZeroW id))
-  Coprod l ** Coprod r = Coprod (besideSumT l r)
+        ExOptic (Rep @y @(Product (UN PR px)) id :.: p) (q :.: Corep @z @(Product (UN PR px)) id)
 
 -- | The other half of the equivalence between the encodings: instantiate the
--- profunctor-class-flavored traversal at the free __monoidal-traversal__ profunctor
--- @'ExOptic' 'MonTravRes'@. Because that carrier's 'Proarrow.Category.Monoidal.Strength.MonStrong'
--- instance uses the tensor-strength witness 'TensorW' (not a product lens), this needs no
+-- profunctor-class-flavored traversal at the generic carrier @'ExOptic' 'MonTravRes' a b@, which is
+-- an SDP by the by-generator instances above. Because its tensor strength comes from the
+-- tensor-strength witness 'TensorW' (not a product lens), this needs no
 -- 'Proarrow.Limit.BinaryProduct.Cartesian' (@tensor = product@), only 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' (a discard @a '~>' 'Unit' for the residual) -- which is
--- exactly what the coproduct-prism side (@'Strong' 'CoprodAction' ('ExOptic' 'MonTravRes')@) already
--- demanded, so no constraint is added beyond relaxing 'Proarrow.Limit.BinaryProduct.Cartesian' to 'CopyDiscard' -- enabling e.g.
--- the biproduct categories @Mat@ and @FinRel@ (but not @LINEAR@, which cannot discard). A 'Traversal'
--- is recovered for free wherever one is needed, since @'MonTravRes'@ is a 'SubFlavor' of 'TravRes'.
+-- exactly what the coproduct-prism witness already demanded -- enabling e.g. the biproduct
+-- categories @Mat@ and @FinRel@ (but not @LINEAR@, which cannot discard). A 'Traversal' is
+-- recovered for free wherever one is needed, since @'MonTravRes'@ is a 'SubFlavor' of 'TravRes'.
 fromPTraversal
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k, CopyDiscard k, SymMonoidal k)
@@ -195,7 +191,7 @@ monTraverseOf
   :: forall {k} c (s :: k) (t :: k) a b p
    . (Distributive k, StrongDistributiveProfunctor p, (Ob a, Ob b) => c (ExOptic MonTravRes a b))
   => Optic c s t a b -> p a b -> p s t
-monTraverseOf o pab = withLegs (\l r -> monTravP l r pab) (convert @c @MonTravRes o)
+monTraverseOf o pab = withLegs @MonTravRes o \l r -> monTravP l r pab
 
 instance IsOptic StrongDistributiveProfunctor where withProfunctor r = r
 
@@ -212,7 +208,7 @@ toPTraversal
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k)
   => MonoidalTraversal s t a b -> PTraversal s t a b
-toPTraversal = withLegs \l@Objs r@Objs -> Optic (monTravP l r)
+toPTraversal o = withLegs @MonTravRes o \l@Objs r@Objs -> Optic (monTravP l r)
 
 -- | A full traversal in the profunctor-class encoding: distributes any profunctor carrying both
 -- distributive strength and __product__ strength -- exactly the constraint 'travP' demands. This is
@@ -221,14 +217,14 @@ toPTraversal = withLegs \l@Objs r@Objs -> Optic (monTravP l r)
 type PTraversalFull s t a b = Optic (StrongDistributiveProfunctor :&&: Strong ProdAction) s t a b
 
 -- | Build a 'Traversal' from its van-Laarhoven \/ profunctor-class form, by instantiating the
--- rank-2 function at the free full-traversal profunctor @'ExOptic' 'TravRes'@ (an
--- 'StrongDistributiveProfunctor' /and/ @'Strong' 'ProdAction'@, unlike @'ExOptic' 'MonTravRes'@).
--- The 'Traversal' analog of 'fromPTraversal'.
+-- rank-2 function at the generic carrier @'ExOptic' 'TravRes' a b@ (a 'StrongDistributiveProfunctor'
+-- /and/ @'Strong' 'ProdAction'@, unlike @'ExOptic' 'MonTravRes' a b@, since 'TravRes' contains the
+-- product-lens witness). The 'Traversal' analog of 'fromPTraversal'.
 traversal
   :: forall {k} (s :: k) t a b
    . (Distributive k, CopyDiscard k, SymMonoidal k, HasProducts k, Ob a, Ob b, Ob s, Ob t)
   => (forall r. (StrongDistributiveProfunctor r, Strong ProdAction r) => r a b -> r s t) -> Traversal s t a b
-traversal f = ex2prof (f (ExIso id id))
+traversal f = convert (Optic f :: PTraversalFull s t a b)
 
 -- | Eliminate a 'Traversal' to its profunctor-class form (the analog of 'toPTraversal'): run 'travP'
 -- at the caller's profunctor.
@@ -236,7 +232,7 @@ toPTraversalFull
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k)
   => Traversal s t a b -> PTraversalFull s t a b
-toPTraversalFull = withLegs \l@Objs r@Objs -> Optic (travP l r)
+toPTraversalFull o = withLegs @TravRes o \l@Objs r@Objs -> Optic (travP l r)
 
 v1Optic :: PTraversal (G.V1 a) (G.V1 a') a a'
 v1Optic = Optic \_ -> dimap (\case {}) (\case {}) nil

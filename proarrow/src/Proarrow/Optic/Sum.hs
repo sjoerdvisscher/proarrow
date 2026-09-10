@@ -9,14 +9,14 @@
 -- Unlike 'Proarrow.Optic.Prod.ProdRes', this doesn't let you combine two /different/ optics into one -- an
 -- @(p ':++:' q) (L a) (L b)@ can only ever hold a @p@, never a @q@. Instead it lets any single
 -- @w1@- or @w2@-flavored optic be /injected/ into a shared @'SumRes' w1 w2@ type, with the unused
--- side witnessed trivially by @'Id'@ (demanded via 'ClosedUnder').
+-- side witnessed trivially by @'Id'@ (demanded via 'Flavor').
 module Proarrow.Optic.Sum where
 
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
-import Proarrow.Optic (ClosedUnder, CompactFlavor, ExOptic (..), FLAVOR, Optic, Prostrong (..), ex2prof, withLegs)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), (\\), type (+->))
+import Proarrow.Optic (FLAVOR, Flavor, Optic, Prostrong (..), legs2prof, withLegs)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 
@@ -46,13 +46,13 @@ instance
   withSumL (InjL l1) (InjL r1) k = k l1 r1
   withSumR (InjR l2) (InjR r2) k = k l2 r2
 instance
-  (CategoryOf k1, CategoryOf k2, CategoryOf j1, CategoryOf j2, ClosedUnder w1, ClosedUnder w2)
+  (CategoryOf k1, CategoryOf k2, CategoryOf j1, CategoryOf j2, Flavor w1, Flavor w2)
   => SumRes w1 w2 (Id :: CAT (COPRODUCT k1 k2)) (Id :: CAT (COPRODUCT j1 j2))
   where
   withSumL (Id (InjL f)) (Id (InjL g)) k = k (Id f) (Id g)
   withSumR (Id (InjR f)) (Id (InjR g)) k = k (Id f) (Id g)
 instance
-  (SumRes w1 w2 f f', SumRes w1 w2 g g', ClosedUnder w1, ClosedUnder w2)
+  (SumRes w1 w2 f f', SumRes w1 w2 g g', Flavor w1, Flavor w2)
   => SumRes w1 w2 (f :.: g) (g' :.: f')
   where
   withSumL (f :.: g) (g' :.: f') k =
@@ -64,42 +64,45 @@ instance
       withSumR @w1 @w2 g g' \p2' q2' ->
         k (p2 :.: p2') (q2' :.: q2)
 
-instance
-  forall j1 k1 j2 k2 (w1 :: FLAVOR j1 k1) (w2 :: FLAVOR j2 k2)
-   . (CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2, ClosedUnder w1, ClosedUnder w2)
-  => CompactFlavor (SumRes w1 w2)
-
 injLOptic
   :: forall {j1} {k1} {j2} {k2} (w2 :: FLAVOR j2 k2) (w1 :: FLAVOR j1 k1) s t a b
-   . (CompactFlavor w1, w2 (Id :: CAT k2) (Id :: CAT j2), CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2)
+   . (Flavor w1, w2 (Id :: CAT k2) (Id :: CAT j2), CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2)
   => Optic (Prostrong w1) s t a b -> Optic (Prostrong (SumRes w1 w2)) (L s) (L t) (L a) (L b)
-injLOptic =
-  withLegs \ @p @q l r ->
-    ex2prof (ExProstrong @(p :++: (Id :: CAT k2)) @(q :++: (Id :: CAT j2)) (InjL l :.: ExIso id id :.: InjL r)) \\ l \\ r
+injLOptic o =
+  withLegs @w1 o \ @p @q l r ->
+    legs2prof @(SumRes w1 w2)
+      (InjL l :: (p :++: (Id :: CAT k2)) (L s) (L a))
+      (InjL r :: (q :++: (Id :: CAT j2)) (L b) (L t))
+      \\ l
+      \\ r
 
 injROptic
   :: forall {j1} {k1} {j2} {k2} (w1 :: FLAVOR j1 k1) (w2 :: FLAVOR j2 k2) s t a b
-   . (CompactFlavor w2, w1 (Id :: CAT k1) (Id :: CAT j1), CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2)
+   . (Flavor w2, w1 (Id :: CAT k1) (Id :: CAT j1), CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2)
   => Optic (Prostrong w2) s t a b -> Optic (Prostrong (SumRes w1 w2)) (R s) (R t) (R a) (R b)
-injROptic =
-  withLegs \ @p @q l r ->
-    ex2prof (ExProstrong @((Id :: CAT k1) :++: p) @((Id :: CAT j1) :++: q) (InjR l :.: ExIso id id :.: InjR r)) \\ l \\ r
+injROptic o =
+  withLegs @w2 o \ @p @q l r ->
+    legs2prof @(SumRes w1 w2)
+      (InjR l :: ((Id :: CAT k1) :++: p) (R s) (R a))
+      (InjR r :: ((Id :: CAT j1) :++: q) (R b) (R t))
+      \\ l
+      \\ r
 
 -- | The inverse of 'injLOptic': every 'SumRes' witness of an @(L s) (L t) (L a) (L b)@-shaped
 -- optic actually comes from an underlying @w1@-flavored optic on @s t a b@.
 withSumOpticL
   :: forall {j1} {k1} {j2} {k2} (w1 :: FLAVOR j1 k1) (w2 :: FLAVOR j2 k2) s t a b r
-   . (CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2, ClosedUnder w1, ClosedUnder w2, Ob a, Ob b)
+   . (CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2, Flavor w1, Flavor w2, Ob a, Ob b)
   => Optic (Prostrong (SumRes w1 w2)) (L s) (L t) (L a) (L b)
   -> (Optic (Prostrong w1) s t a b -> r)
   -> r
-withSumOpticL = withLegs \l r -> withSumL @w1 @w2 l r \p1 q1 k -> k (ex2prof (ExProstrong (p1 :.: ExIso id id :.: q1)))
+withSumOpticL o k = withLegs @(SumRes w1 w2) o \l r -> withSumL @w1 @w2 l r \p1 q1 -> k (legs2prof @w1 p1 q1)
 
 -- | The inverse of 'injROptic'.
 withSumOpticR
   :: forall {j1} {k1} {j2} {k2} (w1 :: FLAVOR j1 k1) (w2 :: FLAVOR j2 k2) s t a b r
-   . (CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2, ClosedUnder w1, ClosedUnder w2, Ob a, Ob b)
+   . (CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2, Flavor w1, Flavor w2, Ob a, Ob b)
   => Optic (Prostrong (SumRes w1 w2)) (R s) (R t) (R a) (R b)
   -> (Optic (Prostrong w2) s t a b -> r)
   -> r
-withSumOpticR = withLegs \l r -> withSumR @w1 @w2 l r \p2 q2 k -> k (ex2prof (ExProstrong (p2 :.: ExIso id id :.: q2)))
+withSumOpticR o k = withLegs @(SumRes w1 w2) o \l r -> withSumR @w1 @w2 l r \p2 q2 -> k (legs2prof @w2 p2 q2)

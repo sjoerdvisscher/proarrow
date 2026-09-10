@@ -13,8 +13,7 @@ module Proarrow.Optic.Iso where
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Core (CategoryOf (..), Promonad (..), type (+->))
 import Proarrow.Optic
-  ( CompactFlavor
-  , FLAVOR
+  ( FLAVOR
   , Flip
   , Optic
   , Optic_ (..)
@@ -41,8 +40,6 @@ import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
 class (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q, TracerRes p q) => IsoRes p q
 instance (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q, TracerRes p q) => IsoRes p q
-
-instance CompactFlavor IsoRes
 
 -- | The 'Prostrong'-flavored iso; for the profunctor-class-flavored encoding see 'Proarrow.Optic.PIso'.
 type Iso (s :: k) (t :: k) a b = Optic (Prostrong IsoRes) s t a b

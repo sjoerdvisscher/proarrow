@@ -23,9 +23,9 @@ import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
-  ( CompactFlavor
-  , ExOptic (..)
+  ( ExOptic (..)
   , FLAVOR
+  , Flavor
   , Flip
   , IsOptic (..)
   , Optic
@@ -33,7 +33,7 @@ import Proarrow.Optic
   , Prostrong (..)
   , SubFlavor (..)
   , convert
-  , ex2prof
+  , legs2prof
   , withLegs
   )
 import Proarrow.Optic.Action (ActRes (..))
@@ -103,8 +103,6 @@ tracerP
   => p s a -> q b t -> r a b -> r s t
 tracerP l r rab = withTracerP l r (\ @m i h -> coact @Tensor @r @m (dimap i h rab)) \\ l \\ r
 
-instance CompactFlavor TracerRes
-
 instance SubFlavor TracerRes SetterRes where subFlavor r = r
 
 -- | A reversed tracer is still a setter (run it with 'Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re').
@@ -125,7 +123,7 @@ tracer
   :: forall {k} (m :: k) (s :: k) t a b
    . (TracedMonoidal k, Ob m, Ob s, Ob t, Ob a, Ob b)
   => ((m ** s) ~> a) -> (b ~> (m ** t)) -> Tracer s t a b
-tracer l r = ex2prof (ExProstrong @(CoTensorW m) @(TensorW m) (CoTensorW l :.: ExIso id id :.: TensorW r))
+tracer l r = legs2prof @TracerRes (CoTensorW @m l) (TensorW @m r)
 
 -- | Distribute any 'Costrong' profunctor through a tracer (or any stronger optic). At the hom this
 -- is 'Proarrow.Optic.Setter.over', computing the feedback loop through the residual.
@@ -136,45 +134,28 @@ tracerOf
   :: forall {k} c (s :: k) (t :: k) a b r
    . (Monoidal k, Costrong Tensor r, (Ob a, Ob b) => c (ExOptic TracerRes a b))
   => Optic c s t a b -> r a b -> r s t
-tracerOf o rab = withLegs (\l r -> tracerP l r rab) (convert @c @TracerRes o)
+tracerOf o rab = withLegs @TracerRes o \l r -> tracerP l r rab
 
--- | The eliminating carrier for tracers: the two legs with the residual @m@ existential (the
--- 'Proarrow.Optic.MonoidalLens.MonShop' of tracers).
-type Tracing :: forall {k}. k -> k -> k +-> k
-data Tracing a b s t where
-  Tracing :: (Ob a, Ob b, Ob m, Ob s, Ob t) => ((m ** s) ~> a) -> (b ~> (m ** t)) -> Tracing a b s t
-
-instance (Monoidal k, Ob (a :: k), Ob b) => Profunctor (Tracing a b :: k +-> k) where
-  dimap l r (Tracing @_ @_ @m h i) = Tracing @a @b @m (h . (obj @m ** l)) ((obj @m ** r) . i) \\ l \\ r
-  r \\ Tracing{} = r
-
--- | Any flavor whose optics have tracer legs has strength for the 'Tracing' carrier: absorbing a
--- witness pair tensors its residual onto the carrier's.
-instance (Monoidal k, Ob (a :: k), Ob b, SubFlavor w TracerRes) => Prostrong (w :: FLAVOR k k) (Tracing a b :: k +-> k) where
-  proact @f @g @s @t (f@Objs :.: Tracing @_ @_ @m h i :.: g@Objs) =
-    subFlavor @w @TracerRes @f @g
-      ( withTracerP f g \ @mf hf ir ->
-          withOb2 @k @m @mf
-            ( Tracing @a @b @(m ** mf)
-                (h . (obj @m ** hf) . associator @k @m @mf @s)
-                (associatorInv @k @m @mf @t . (obj @m ** ir) . i)
-            )
-      )
-
--- | 'Tracing' is the free 'Costrong' profunctor on the legs, so profunctor-class tracers eliminate
--- through it too.
-instance (Monoidal k, Ob (a :: k), Ob b) => Costrong Tensor (Tracing a b :: k +-> k) where
-  coact @m @x @y (Tracing @_ @_ @m' h i) =
-    withOb2 @k @m' @m (Tracing @a @b @(m' ** m) (h . associator @k @m' @m @x) (associatorInv @k @m' @m @y . i))
+-- | The generic carrier absorbs the residual of a 'Costrong' action whenever the flavor contains the
+-- tracer generator: one more @'CoTensorW' m@\/@'TensorW' m@ layer, composed onto the witnesses.
+-- This is what lets profunctor-class-flavored tracers ('PTracer') eliminate through 'ExOptic' too.
+instance
+  (Monoidal k, Ob (a :: k), Ob b, Flavor w, forall (m :: k). (Ob m) => w (CoTensorW m) (TensorW m))
+  => Costrong Tensor (ExOptic w a b :: k +-> k)
+  where
+  coact @m @x @y (ExOptic p q) =
+    withOb2 @k @m @x $
+      withOb2 @k @m @y $
+        ExOptic (CoTensorW @m @x id :.: p) (q :.: TensorW @m @y id)
 
 -- | Eliminate any optic that is at least an iso and at most a tracer to its two legs, recovering
--- the existential residual @m@, in either encoding.
+-- the existential residual @m@, in either encoding: run it at its witness pair ('ExOptic' 'TracerRes',
+-- via 'withLegs') and read the legs off with 'withTracerP'.
 withTracer
   :: forall {k} c (s :: k) (t :: k) a b r
-   . (Monoidal k, (Ob a, Ob b) => c (Tracing a b))
+   . (Monoidal k, (Ob a, Ob b) => c (ExOptic TracerRes a b))
   => Optic c s t a b -> (forall (m :: k). (Ob m) => ((m ** s) ~> a) -> (b ~> (m ** t)) -> r) -> r
-withTracer (Optic l) k = case l @(Tracing a b) (Tracing @a @b @Unit leftUnitor leftUnitorInv) of
-  Tracing @_ @_ @m h i -> k @m h i
+withTracer o k = withLegs @TracerRes o \ @p @q p q -> withTracerP @p @q p q \ @m h i -> k @m h i
 
 -- | A tracer in the profunctor-class-flavored encoding (cf. 'Proarrow.Optic.PIso'). Equivalent to
 -- 'Tracer' via 'toPTracer' and 'fromPTracer'.
@@ -182,18 +163,11 @@ type PTracer s t a b = Optic (Costrong Tensor) s t a b
 
 instance IsOptic (Costrong Tensor) where withProfunctor r = r
 
--- | The free tracer profunctor @'ExOptic' 'TracerRes' a b@ is 'Costrong': absorbing the residual @m@
--- is one more 'CoTensorW'\/'TensorW' layer, mirroring @'Proarrow.Category.Monoidal.Strength.Strong' 'Tensor' ('ExOptic' 'Proarrow.Optic.Traversal.MonTravRes' a b)@.
-instance (TracedMonoidal k, Ob (a :: k), Ob b) => Costrong Tensor (ExOptic TracerRes a b :: k +-> k) where
-  coact @m @x @y e =
-    withOb2 @k @m @x $
-      withOb2 @k @m @y $
-        ExProstrong @(CoTensorW m) @(TensorW m) (CoTensorW id :.: e :.: TensorW id)
-
--- | Instantiate a profunctor-class tracer at the free tracer profunctor (the Pastro-Street move).
+-- | Instantiate a profunctor-class tracer at the generic carrier @'ExOptic' 'TracerRes' a b@, which is
+-- 'Costrong' by the instance above (the Pastro-Street move).
 fromPTracer :: forall {k} (s :: k) (t :: k) a b. (TracedMonoidal k) => PTracer s t a b -> Tracer s t a b
 fromPTracer = convert
 
 -- | Eliminate a 'Tracer' to its profunctor-class form: run 'tracerP' at the caller's profunctor.
 toPTracer :: forall {k} (s :: k) (t :: k) a b. (CategoryOf k) => Tracer s t a b -> PTracer s t a b
-toPTracer = withLegs \l@Objs r@Objs -> Optic (tracerP l r)
+toPTracer o = withLegs @TracerRes o \l@Objs r@Objs -> Optic (tracerP l r)
