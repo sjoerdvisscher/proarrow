@@ -7,17 +7,18 @@
 -- optic); its canonical eliminator is 'over' -- with 'set', '(%~)' and '(.~)' as shorthands -- via
 -- the generic 'ExOptic' carrier.
 --
--- This module also hosts the tensor-action witness pair 'TensorW'\/'CoTensorW', shared by
--- "Proarrow.Optic.MonoidalTraversal" and "Proarrow.Optic.Tracer".
+-- This module also hosts the 'SetterRes' instance of the tensor-action witness pair
+-- @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' a)@, shared by "Proarrow.Optic.MonoidalTraversal" and
+-- "Proarrow.Optic.Tracer".
 module Proarrow.Optic.Setter where
 
 import Data.Kind (Type)
 import Prelude (const)
 import Prelude qualified as P
 
-import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), type (**))
+import Proarrow.Category.Monoidal (Monoidal, MonoidalProfunctor (..), Tensor)
+import Proarrow.Category.Monoidal.Action (ActionAt)
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
 import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasCoproducts, right)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
@@ -63,36 +64,13 @@ instance (Corepresentable t) => SetterRes (CorepStar t) t where
 instance (Closed k, Ob (m :: k)) => SetterRes (Rep (Exp m) :: k +-> k) (Corep (Exp m)) where
   overP (Rep sm) (Corep mbt) f = mbt . (f ^^^ obj @m) . sm \\ f
 
--- | Witness pair for __tensor strength__: the focus @x@ sits inside @a '**' x@ with the residual
--- @a@ carried on the left. This is the tensor-action dual of the coproduct-action prism witness
--- @'Rep' ('Coproduct' t)@\/@'Corep' ('Coproduct' t)@ (whose 'monTravP' calls @'act' \@'CoprodAction'@):
--- here 'monTravP' calls @'act' \@'Tensor'@ -- exactly the strength any 'StrongDistributiveProfunctor'
--- already carries. Unlike the product-lens @'Rep' ('Product' a)@ that used to witness @'Strong'
--- 'Tensor'@ for the free traversal, this needs no @'Strong' 'ProdAction'@ and no @tensor = product@
--- ('Proarrow.Limit.BinaryProduct.Cartesian'): it is a genuine 'MonTravRes', so the free
--- monoidal-traversal profunctor @'ExOptic' 'MonTravRes'@ is 'Proarrow.Category.Monoidal.Strength.MonStrong'.
-type TensorW :: forall {k}. k -> k +-> k
-data TensorW a s x where
-  TensorW :: (Ob a, Ob x) => (s ~> (a ** x)) -> TensorW a s x
-
--- | The covariant half of the 'TensorW' witness pair: rebuilds the target around the carried
--- residual, @(a '**' x) '~>' t@.
-type CoTensorW :: forall {k}. k -> k +-> k
-data CoTensorW a x t where
-  CoTensorW :: (Ob a, Ob x) => ((a ** x) ~> t) -> CoTensorW a x t
-
-instance (Monoidal k, Ob (a :: k)) => Profunctor (TensorW a :: k +-> k) where
-  dimap l r (TensorW h) = TensorW ((obj @a ** r) . h . l) \\ r
-  r \\ TensorW h = r \\ h
-instance (Monoidal k, Ob (a :: k)) => Profunctor (CoTensorW a :: k +-> k) where
-  dimap l r (CoTensorW i) = CoTensorW (r . i . (obj @a ** l)) \\ l
-  r \\ CoTensorW i = r \\ i
-
-instance (Monoidal k, Ob (a :: k)) => Proadjunction (TensorW a :: k +-> k) (CoTensorW a) where
-  unit @c = withOb2 @k @a @c (CoTensorW id :.: TensorW id)
-  counit (TensorW h :.: CoTensorW i) = i . h
-instance (Monoidal k, Ob (a :: k)) => SetterRes (TensorW a :: k +-> k) (CoTensorW a) where
-  overP (TensorW h) (CoTensorW i) f = i . (obj @a ** f) . h
+-- | The tensor-action witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' a)@: the focus @x@
+-- sits inside @a ** x@ with the residual @a@ carried on the left (legs @s ~> a ** x@ and
+-- @a ** x ~> t@). It is a setter witness by mapping under the tensor, and the tensor-strength
+-- generator for the free traversal profunctor (see "Proarrow.Optic.MonoidalTraversal"); read the
+-- other way round it is the tracer witness (see "Proarrow.Optic.Tracer").
+instance (Monoidal k, Ob (a :: k)) => SetterRes (Rep (ActionAt Tensor a) :: k +-> k) (Corep (ActionAt Tensor a)) where
+  overP (Rep h) (Corep i) f = i . (obj @a ** f) . h
 
 type Setter (s :: k) (t :: k) a b = Optic (Prostrong SetterRes) s t a b
 type Setter' s a = Setter s s a a

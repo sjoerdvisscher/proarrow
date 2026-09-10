@@ -23,9 +23,8 @@
 -- recoverable from @s@ by projection.
 module Proarrow.Optic.MonoidalLens where
 
-import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
-import Proarrow.Category.Monoidal.Strength (Strong (..))
+import Proarrow.Category.Monoidal.Action (ActionAt)
 import Proarrow.Colimit.BinaryCoproduct (lft)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
@@ -41,45 +40,23 @@ import Proarrow.Optic
   , withLegs
   )
 import Proarrow.Optic.AffineFold (AffineFoldRes (..))
-import Proarrow.Optic.Fold (FoldRes (..))
+import Proarrow.Optic.Fold (FoldRes)
 import Proarrow.Optic.Getter (GetterRes (..))
-import Proarrow.Optic.Setter (SetterRes (..))
-import Proarrow.Optic.Traversal (MonTravRes (..), TravRes (..))
+import Proarrow.Optic.Setter (SetterRes)
+import Proarrow.Optic.Traversal (MonTravRes, TravRes)
+import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
+import Proarrow.Profunctor.Representable (Rep (..))
 
--- | Witness pair for a monoidal lens: the focus @a@ sits inside @m ** a@ with a __comonoidal__
--- residual @m@. Being a comonoid, @m@ can be discarded (for @get@\/fold) and carried (for @set@).
-type LensW :: forall {k}. k -> k +-> k
-data LensW m s a where
-  LensW :: (Comonoid m, Ob a) => (s ~> (m ** a)) -> LensW m s a
+-- | The tensor-action witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' m)@ views (and previews)
+-- when the residual @m@ is a 'Comonoid': discard it with the counit. (Its setter and traversal
+-- instances live in "Proarrow.Optic.Setter" and "Proarrow.Optic.Traversal".)
+instance (Comonoid (m :: k)) => AffineFoldRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
+  previewP @_ @a (Rep h) = lft @k @a @TerminalObject . leftUnitor . (Mon.counit @m ** obj @a) . h
 
--- | The covariant half of the 'LensW' witness pair: the set leg, @(m '**' b) '~>' t@.
-type CoLensW :: forall {k}. k -> k +-> k
-data CoLensW m b t where
-  CoLensW :: (Comonoid m, Ob b) => ((m ** b) ~> t) -> CoLensW m b t
-
-instance (Comonoid (m :: k)) => Profunctor (LensW m :: k +-> k) where
-  dimap l r (LensW h) = LensW ((obj @m ** r) . h . l) \\ r
-  r \\ LensW h = r \\ h
-instance (Comonoid (m :: k)) => Profunctor (CoLensW m :: k +-> k) where
-  dimap l r (CoLensW i) = CoLensW (r . i . (obj @m ** l)) \\ l
-  r \\ CoLensW i = r \\ i
-
-instance (Comonoid (m :: k)) => Proadjunction (LensW m :: k +-> k) (CoLensW m) where
-  unit @c = withOb2 @k @m @c (CoLensW id :.: LensW id)
-  counit (LensW h :.: CoLensW i) = i . h
-instance (Comonoid (m :: k)) => SetterRes (LensW m :: k +-> k) (CoLensW m) where
-  overP (LensW h) (CoLensW i) f = i . (obj @m ** f) . h
-instance (Comonoid (m :: k)) => FoldRes (LensW m :: k +-> k) (CoLensW m) where
-  foldMapP (LensW h) am = leftUnitor . (Mon.counit @m ** am) . h
-instance (Comonoid (m :: k)) => AffineFoldRes (LensW m :: k +-> k) (CoLensW m) where
-  previewP @_ @a (LensW h) = lft @k @a @TerminalObject . leftUnitor . (Mon.counit @m ** obj @a) . h
-instance (Comonoid (m :: k)) => GetterRes (LensW m :: k +-> k) (CoLensW m) where
-  getP @_ @a (LensW h) = leftUnitor . (Mon.counit @m ** obj @a) . h
-instance (Comonoid (m :: k)) => TravRes (LensW m :: k +-> k) (CoLensW m)
-instance (Comonoid (m :: k)) => MonTravRes (LensW m :: k +-> k) (CoLensW m) where
-  monTravP (LensW h) (CoLensW i) r = dimap h i (act @Tensor @_ @m r)
+instance (Comonoid (m :: k)) => GetterRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
+  getP @_ @a (Rep h) = leftUnitor . (Mon.counit @m ** obj @a) . h
 
 -- | The monoidal-lens flavor: a lens whose residual is a comonoid, so it is both a
 -- 'Proarrow.Optic.Getter.Getter' and a 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal'.
@@ -88,8 +65,8 @@ class (GetterRes p q, MonTravRes p q) => MonLensRes (p :: k +-> k) (q :: k +-> k
   -- | Recover a monoidal lens's two legs, with the (comonoidal) residual @m@ existential.
   withMonLensP :: (Monoidal k) => p s a -> q b t -> (forall (m :: k). (Ob m) => (s ~> m ** a) -> (m ** b ~> t) -> r) -> r
 
-instance (Comonoid (m :: k)) => MonLensRes (LensW m :: k +-> k) (CoLensW m) where
-  withMonLensP (LensW h) (CoLensW i) k = k @m h i
+instance (Comonoid (m :: k)) => MonLensRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
+  withMonLensP (Rep h) (Corep i) k = k @m h i
 
 instance (CategoryOf k) => MonLensRes (Id :: k +-> k) (Id :: k +-> k) where
   withMonLensP (Id sa) (Id bt) k = k @Unit (leftUnitorInv . sa) (bt . leftUnitor) \\ sa \\ bt
@@ -124,7 +101,7 @@ type MonoidalLens' s a = MonoidalLens s s a a
 monLens
   :: forall {k} (m :: k) (s :: k) t a b
    . (Comonoid m, Ob a, Ob b) => (s ~> m ** a) -> (m ** b ~> t) -> MonoidalLens s t a b
-monLens h i = legs2prof @MonLensRes (LensW @m h) (CoLensW @m i)
+monLens h i = legs2prof @MonLensRes (Rep @a @(ActionAt Tensor m) h) (Corep @b @(ActionAt Tensor m) i)
 
 -- | Eliminate any optic that is at least an iso and at most a monoidal lens to its two legs,
 -- recovering the existential residual @m@: run it at its witness pair ('ExOptic' 'MonLensRes', via

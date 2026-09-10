@@ -39,6 +39,7 @@ import Proarrow.Core
   )
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Object (tgt, pattern Obj, type Obj)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
@@ -110,6 +111,12 @@ instance (Promonad p, MonoidalProfunctor p) => Monoidal (KLEISLI (p :: k +-> k))
 
 instance (Promonad p, MonoidalProfunctor p, SymMonoidal k) => SymMonoidal (KLEISLI (p :: k +-> k)) where
   swap @(KL a) @(KL b) = arr (swap @k @a @b)
+instance (Promonad p, MonoidalProfunctor p, CopyDiscard k, Ob (a :: KLEISLI p)) => Comonoid (a :: KLEISLI (p :: k +-> k)) where
+  counit = discard
+  comult = copy
+instance
+  (Promonad p, MonoidalProfunctor p, CopyDiscard k, Ob (a :: KLEISLI p))
+  => CocommutativeComonoid (a :: KLEISLI (p :: k +-> k))
 instance (Promonad p, MonoidalProfunctor p, CopyDiscard k) => CopyDiscard (KLEISLI (p :: k +-> k)) where
   copy = arr copy
   discard = arr discard

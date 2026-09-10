@@ -40,7 +40,7 @@ import Proarrow.Limit.Pullback qualified as Pullback
 import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (Flip, ExOptic, Optic)
+import Proarrow.Optic (ExOptic, Flip, Optic)
 import Proarrow.Optic.Getter (GetterRes, review, view)
 import Proarrow.Profunctor.Corepresentable
   ( Corepresentable
@@ -65,6 +65,7 @@ import Proarrow.Testing
   , genObSuchThat
   , genSuchThat
   , isGenNonEmpty
+  , obFromTestOb
   )
 
 testEq :: (TestingEqShow a) => String -> String -> a -> String -> a -> Property ()
@@ -472,15 +473,16 @@ propCopyDiscard withCoco withTestOb2 = testProperty "CopyDiscard" $ do
   Some @a <- genOb @k
   withCoco @a (propCocommutativeComonoid @a (\ @x @y r -> withTestOb2 @x @y r))
 
+-- | The cocommutative comonoid on each object is supplied by 'CopyDiscard.CopyDiscard' itself (its
+-- @'Monoid.Supplies' 'Monoid.CocommutativeComonoid' k@ superclass), so only @'Ob' a@ has to be
+-- recovered from @'TestOb' a@ -- through 'obFromTestOb', because with that quantified superclass in
+-- scope GHC no longer finds the @TestOb a => Ob' a => Ob a@ route on its own.
 propCopyDiscard_
   :: forall k
-   . ( Testable k
-     , CopyDiscard.CopyDiscard k
-     , TestObIsOb k
-     , forall (a :: k). (TestOb a) => Monoid.CocommutativeComonoid a
-     )
+   . (Testable k, CopyDiscard.CopyDiscard k, TestObIsOb k)
   => TestTree
-propCopyDiscard_ = propCopyDiscard @k (\r -> r) (\ @a @b r -> M.withOb2 @k @a @b r)
+propCopyDiscard_ =
+  propCopyDiscard @k (\ @a r -> obFromTestOb @a r) (\ @a @b r -> obFromTestOb @a (obFromTestOb @b (M.withOb2 @k @a @b r)))
 
 propDistributive
   :: forall k

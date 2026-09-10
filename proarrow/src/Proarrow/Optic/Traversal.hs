@@ -13,8 +13,8 @@
 module Proarrow.Optic.Traversal where
 
 import Proarrow.Adjunction (Proadjunction (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..))
-import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
+import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction, ProdAction)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive
   ( Bicartesian
@@ -37,7 +37,8 @@ import Proarrow.Colimit.BinaryCoproduct
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Product)
-import Proarrow.Monoid (Monoid (..))
+import Proarrow.Monoid (Comonoid, Monoid (..))
+import Proarrow.Monoid qualified as Mon
 import Proarrow.Optic
   ( ExOptic
   , FLAVOR
@@ -85,6 +86,21 @@ instance (Bicartesian k, Cotraversable t, Corepresentable t) => MonTravRes (Core
 
 instance (HasBinaryProducts k, Ob (s :: k)) => TravRes (Rep (Product s)) (Corep (Product s)) where
   travP (Rep p) (Corep q) r = dimap p q (act @ProdAction @_ @(PR s) r)
+
+-- | The tensor-action witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' m)@ with a __comonoid__
+-- residual @m@ (legs @s ~> m ** a@, @m ** b ~> t@) is a (monoidal) traversal witness: it folds by
+-- discarding the residual with the comonoid's counit and distributes any 'StrongDistributiveProfunctor'
+-- through @'act' \@'Tensor'@ -- exactly the strength such a profunctor already carries, so no product
+-- strength or @tensor = product@ is needed. Asking 'Comonoid' of the residual only (rather than
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' of the whole category) is what makes this work
+-- in @LINEAR@ for the duplicable objects; it is also the monoidal-lens witness
+-- ("Proarrow.Optic.MonoidalLens").
+instance (Comonoid (m :: k)) => FoldRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
+  foldMapP (Rep h) am = leftUnitor . (Mon.counit @m ** am) . h
+
+instance (Comonoid (m :: k)) => TravRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m))
+instance (Comonoid (m :: k)) => MonTravRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
+  monTravP (Rep h) (Corep i) r = dimap h i (act @Tensor @_ @m r)
 instance (CopyDiscard k, HasCoproducts k, Ob t) => TravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t))
 instance (CopyDiscard k, HasCoproducts k, Ob t) => MonTravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   monTravP (Rep p) (Corep q) r = dimap p q (act @CoprodAction @_ @(COPR t) r)

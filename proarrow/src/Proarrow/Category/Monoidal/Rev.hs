@@ -5,7 +5,7 @@ module Proarrow.Category.Monoidal.Rev where
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), WrappedOb, type (+->))
-import Proarrow.Monoid (Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
 
 type data REV k = R k
 
@@ -54,6 +54,7 @@ instance (Monoid a) => Monoid (R a) where
 instance (Comonoid a) => Comonoid (R a) where
   counit = Rev counit
   comult = Rev comult
+instance (CocommutativeComonoid a) => CocommutativeComonoid (R a)
 
 instance (CopyDiscard k) => CopyDiscard (REV k) where
   copy = Rev copy

@@ -5,7 +5,7 @@
 --
 -- > Tracer s t a b = exists m. (m ** s ~> a, b ~> m ** t)
 --
--- witnessed by 'Proarrow.Optic.Setter.CoTensorW'\/'Proarrow.Optic.Setter.TensorW' ('TracerRes' \/
+-- witnessed by @'Corep'@\/@'Rep'@ @('ActionAt' 'Tensor' m)@ ('TracerRes' \/
 -- 'withTracerP') -- a setter witness pair read the other way round, equivalently an 'ActRes'
 -- @Tensor@ pair with the roles of the two witnesses swapped. Running it forwards closes a feedback loop through the
 -- residual, so it distributes any 'Costrong' profunctor ('tracerP') and is a
@@ -19,6 +19,7 @@ module Proarrow.Optic.Tracer where
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor, type (**))
+import Proarrow.Category.Monoidal.Action (ActionAt)
 import Proarrow.Category.Monoidal.Strength (Costrong (..), TracedMonoidal)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
 import Proarrow.Object (pattern Objs)
@@ -36,16 +37,11 @@ import Proarrow.Optic
   , legs2prof
   , withLegs
   )
-import Proarrow.Optic.Action (ActRes (..))
-import Proarrow.Optic.Setter (CoTensorW (..), SetterRes (..), TensorW (..))
+import Proarrow.Optic.Setter (SetterRes (..))
+import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
-
--- | The tensor-action witness pair is an 'ActRes' @Tensor@ pair: @'TensorW' m@ is @'Proarrow.Profunctor.Representable.Rep'
--- ('Proarrow.Category.Monoidal.Action.ActionAt' Tensor m)@ and @'CoTensorW' m@ its 'Proarrow.Profunctor.Corepresentable.Corep'
--- in all but name.
-instance (Monoidal k, Ob (m :: k)) => ActRes Tensor (TensorW m :: k +-> k) (CoTensorW m) where
-  withActP (TensorW h) (CoTensorW i) k = k @m h i
+import Proarrow.Profunctor.Representable (Rep (..))
 
 -- | The tracer flavor: a witness pair whose legs are @m ** s ~> a@ and @b ~> m ** t@ for an
 -- existential residual @m@ -- the residual functor is applied to the source and target rather
@@ -58,7 +54,7 @@ instance (Monoidal k, Ob (m :: k)) => ActRes Tensor (TensorW m :: k +-> k) (CoTe
 -- Every tracer witness pair is a setter pair ('SetterRes' superclass, so 'Proarrow.Optic.Setter.over',
 -- 'Proarrow.Optic.Setter.set', '(Proarrow.Optic.Setter.%~)' all work) and its flip is one too
 -- (@'SetterRes' q p@, so @'Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re'@ works without a trace);
--- 'TracedMonoidal' rides in the instance context of the 'CoTensorW'\/'TensorW' witness, not in the
+-- 'TracedMonoidal' rides in the instance context of the tensor-action witness, not in the
 -- method, so ordinary setters keep their honest constraints. 'Monoidal' sits on the method rather
 -- than the class so that the identity witness needs only 'CategoryOf' and 'Proarrow.Optic.Iso.IsoRes'
 -- can include this flavor.
@@ -87,13 +83,14 @@ instance
           \\ f
           \\ g
 
--- | The tracer witness: 'CoTensorW' on the left, 'TensorW' on the right. Its 'overP' is the trace
+-- | The tracer witness: the tensor-action pair read the other way round, @'Corep' ('ActionAt' 'Tensor' m)@
+-- on the left and @'Rep' ('ActionAt' 'Tensor' m)@ on the right. Its 'overP' is the trace
 -- of @m ** s ~> a ~> b ~> m ** t@ over @m@, so it needs the category to be 'TracedMonoidal'.
-instance (TracedMonoidal k, Ob (m :: k)) => SetterRes (CoTensorW m :: k +-> k) (TensorW m) where
-  overP (CoTensorW l) (TensorW r) f = coact @Tensor @_ @m (r . f . l)
+instance (TracedMonoidal k, Ob (m :: k)) => SetterRes (Corep (ActionAt Tensor m) :: k +-> k) (Rep (ActionAt Tensor m)) where
+  overP (Corep l) (Rep r) f = coact @Tensor @_ @m (r . f . l)
 
-instance (TracedMonoidal k, Ob (m :: k)) => TracerRes (CoTensorW m :: k +-> k) (TensorW m) where
-  withTracerP (CoTensorW l) (TensorW r) k = k @m l r
+instance (TracedMonoidal k, Ob (m :: k)) => TracerRes (Corep (ActionAt Tensor m) :: k +-> k) (Rep (ActionAt Tensor m)) where
+  withTracerP (Corep l) (Rep r) k = k @m l r
 
 -- | Distribute any 'Costrong' profunctor through a tracer witness pair: 'dimap' the legs on and
 -- 'coact' the residual away. At the hom this is 'overP'.
@@ -123,7 +120,7 @@ tracer
   :: forall {k} (m :: k) (s :: k) t a b
    . (TracedMonoidal k, Ob m, Ob s, Ob t, Ob a, Ob b)
   => ((m ** s) ~> a) -> (b ~> (m ** t)) -> Tracer s t a b
-tracer l r = legs2prof @TracerRes (CoTensorW @m l) (TensorW @m r)
+tracer l r = legs2prof @TracerRes (Corep @s @(ActionAt Tensor m) l) (Rep @t @(ActionAt Tensor m) r)
 
 -- | Distribute any 'Costrong' profunctor through a tracer (or any stronger optic). At the hom this
 -- is 'Proarrow.Optic.Setter.over', computing the feedback loop through the residual.
@@ -137,16 +134,21 @@ tracerOf
 tracerOf o rab = withLegs @TracerRes o \l r -> tracerP l r rab
 
 -- | The generic carrier absorbs the residual of a 'Costrong' action whenever the flavor contains the
--- tracer generator: one more @'CoTensorW' m@\/@'TensorW' m@ layer, composed onto the witnesses.
+-- tracer generator: one more tensor-action layer, composed onto the witnesses.
 -- This is what lets profunctor-class-flavored tracers ('PTracer') eliminate through 'ExOptic' too.
 instance
-  (Monoidal k, Ob (a :: k), Ob b, Flavor w, forall (m :: k). (Ob m) => w (CoTensorW m) (TensorW m))
+  ( Monoidal k
+  , Ob (a :: k)
+  , Ob b
+  , Flavor w
+  , forall (m :: k). (Ob m) => w (Corep (ActionAt Tensor m)) (Rep (ActionAt Tensor m))
+  )
   => Costrong Tensor (ExOptic w a b :: k +-> k)
   where
   coact @m @x @y (ExOptic p q) =
     withOb2 @k @m @x $
       withOb2 @k @m @y $
-        ExOptic (CoTensorW @m @x id :.: p) (q :.: TensorW @m @y id)
+        ExOptic (Corep @x @(ActionAt Tensor m) id :.: p) (q :.: Rep @y @(ActionAt Tensor m) id)
 
 -- | Eliminate any optic that is at least an iso and at most a tracer to its two legs, recovering
 -- the existential residual @m@, in either encoding: run it at its witness pair ('ExOptic' 'TracerRes',

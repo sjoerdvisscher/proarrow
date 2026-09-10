@@ -7,12 +7,12 @@
 -- 'StrongDistributiveProfunctor' with no product-strength requirement; the profunctor-class
 -- encoding 'PTraversal' converts to and from it via 'toPTraversal'\/'fromPTraversal', the latter
 -- through the generic carrier @'ExOptic' 'MonTravRes'@, made an SDP here by generators (the Day
--- halves, the tensor-strength witness 'TensorW' and the coproduct prism).
+-- halves, the tensor-action witness @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' _)@ and the coproduct prism).
 module Proarrow.Optic.MonoidalTraversal where
 
 import GHC.Generics qualified as G
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
-import Proarrow.Category.Monoidal.Action (CoprodAction, ProdAction)
+import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction, ProdAction)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive (Distributive, StrongDistributiveProfunctor)
 import Proarrow.Category.Monoidal.Strength (Strong (..), strongId)
@@ -40,8 +40,6 @@ import Proarrow.Optic
   , withLegs
   , type (:&&:)
   )
-import Proarrow.Optic.Fold (FoldRes (..))
-import Proarrow.Optic.Setter (CoTensorW (..), TensorW (..))
 import Proarrow.Optic.Traversal
   ( Beside (..)
   , BesideSum (..)
@@ -63,18 +61,12 @@ import Prelude (Either (..), const, either, uncurry, ($))
 type MonoidalTraversal (s :: k) (t :: k) a b = Optic (Prostrong MonTravRes) s t a b
 type MonoidalTraversal' s a = MonoidalTraversal s s a a
 
-instance (CopyDiscard k, Ob (a :: k)) => FoldRes (TensorW a :: k +-> k) (CoTensorW a) where
-  foldMapP (TensorW h) am = leftUnitor . (discard @k @a ** am) . h
-instance (CopyDiscard k, Ob (a :: k)) => TravRes (TensorW a :: k +-> k) (CoTensorW a)
-instance (CopyDiscard k, Ob (a :: k)) => MonTravRes (TensorW a :: k +-> k) (CoTensorW a) where
-  monTravP (TensorW h) (CoTensorW i) r = dimap h i (act @Tensor @_ @a r)
-
 -- * The generic carrier is a strong distributive profunctor, by generators
 
 -- Every piece of 'StrongDistributiveProfunctor' structure on the generic carrier @'ExOptic' w a b@ is
 -- "compose one more generating witness pair onto the legs", so each instance below holds for
 -- /any/ closed flavor @w@ that contains the relevant generator: the Day halves 'UnitW'\/'Beside'
--- for the tensor, 'ZeroW'\/'BesideSum' for the coproduct, 'TensorW' for tensor strength and the
+-- for the tensor, 'ZeroW'\/'BesideSum' for the coproduct, the tensor-action pair for tensor strength and the
 -- coproduct\/product prism and lens witnesses for the two action strengths. This is what lets a
 -- profunctor-class-flavored optic ('PTraversal', 'PTraversalFull') be eliminated through 'ExOptic'
 -- by the encoding-agnostic eliminators ('Proarrow.Optic.Setter.over', 'Proarrow.Optic.Fold.foldMapOf', ...),
@@ -135,13 +127,18 @@ instance
   Coprod l ** Coprod r = Coprod (exBesideSum l r)
 
 instance
-  (Monoidal k, Ob (a :: k), Ob b, Flavor w, forall (x :: k). (Ob x) => w (TensorW x) (CoTensorW x))
+  ( Monoidal k
+  , Ob (a :: k)
+  , Ob b
+  , Flavor w
+  , forall (x :: k). (Ob x) => w (Rep (ActionAt Tensor x)) (Corep (ActionAt Tensor x))
+  )
   => Strong Tensor (ExOptic w a b :: k +-> k)
   where
   act @x @y @z (ExOptic p@Objs q@Objs) =
     withOb2 @k @x @y $
       withOb2 @k @x @z $
-        ExOptic ((TensorW id :: TensorW x (x ** y) y) :.: p) (q :.: (CoTensorW id :: CoTensorW x z (x ** z)))
+        ExOptic (Rep @y @(ActionAt Tensor x) id :.: p) (q :.: Corep @z @(ActionAt Tensor x) id)
 
 instance
   ( HasCoproducts k
@@ -169,7 +166,7 @@ instance
 -- | The other half of the equivalence between the encodings: instantiate the
 -- profunctor-class-flavored traversal at the generic carrier @'ExOptic' 'MonTravRes' a b@, which is
 -- an SDP by the by-generator instances above. Because its tensor strength comes from the
--- tensor-strength witness 'TensorW' (not a product lens), this needs no
+-- tensor-action witness @'Rep' ('ActionAt' 'Tensor' _)@ (not a product lens), this needs no
 -- 'Proarrow.Limit.BinaryProduct.Cartesian' (@tensor = product@), only 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' (a discard @a '~>' 'Unit' for the residual) -- which is
 -- exactly what the coproduct-prism witness already demanded -- enabling e.g. the biproduct
 -- categories @Mat@ and @FinRel@ (but not @LINEAR@, which cannot discard). A 'Traversal' is
