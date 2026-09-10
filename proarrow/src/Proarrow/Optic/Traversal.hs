@@ -114,11 +114,16 @@ type Traversal' s a = Traversal s s a a
 -- Hask van-Laarhoven shape) -- through any optic that is at least a 'Traversal'. Works for an
 -- arbitrary profunctor carrier by handing it to 'travP', rather than relying on a per-carrier
 -- @'Prostrong' w p@ bridge (which could only ever cover specific carrier heads).
+--
+-- The optic is accepted in any encoding: the constraint asks the optic's class to hold for the free
+-- traversal profunctor @'ExOptic' 'TravRes' a b@, which a 'Prostrong'-flavored optic discharges via
+-- @'SubFlavor' w 'TravRes'@, a '(%)'-composite one conjunct at a time, and a profunctor-class one
+-- ('Proarrow.Optic.MonoidalTraversal.PTraversalFull') through the carrier's own instances.
 traverseOf
-  :: forall {k} w (s :: k) (t :: k) a b p
-   . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, SubFlavor w TravRes)
-  => Optic (Prostrong w) s t a b -> p a b -> p s t
-traverseOf o pab = withLegs (\l r -> travP l r pab) (convert @(Prostrong w) @TravRes o)
+  :: forall {k} c (s :: k) (t :: k) a b p
+   . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, (Ob a, Ob b) => c (ExOptic TravRes a b))
+  => Optic c s t a b -> p a b -> p s t
+traverseOf o pab = withLegs (\l r -> travP l r pab) (convert @c @TravRes o)
 
 -- | Build a traversal from a 'Traversable' (representable) functor @t@: it focuses every element
 -- the functor holds. This is the one weak-flavor builder that is genuinely primitive -- a

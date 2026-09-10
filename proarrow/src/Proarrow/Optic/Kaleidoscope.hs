@@ -133,11 +133,13 @@ kaleidoscope sl rt = ex2prof (ExProstrong (Two sl :.: ExIso id id :.: CoTwo rt))
 -- | Distribute any 'MonoidalProfunctor' through a kaleidoscope (or any stronger optic). At the
 -- hom @('~>')@ this is 'Proarrow.Optic.Setter.over'; at an applicative @'Proarrow.Profunctor.Instance.Star.Star' f@ the foci are
 -- combined through @f@.
+--
+-- Accepts any encoding (cf. 'Proarrow.Optic.Traversal.traverseOf'), including '(%)'-composites.
 kaleidoscopeOf
-  :: forall {k} w (s :: k) (t :: k) a b r
-   . (Monoidal k, MonoidalProfunctor r, SubFlavor w KaleidoRes)
-  => Optic (Prostrong w) s t a b -> r a b -> r s t
-kaleidoscopeOf o rab = withLegs (\l r -> kaleidoP l r rab) (convert @(Prostrong w) @KaleidoRes o)
+  :: forall {k} c (s :: k) (t :: k) a b r
+   . (Monoidal k, MonoidalProfunctor r, (Ob a, Ob b) => c (ExOptic KaleidoRes a b))
+  => Optic c s t a b -> r a b -> r s t
+kaleidoscopeOf o rab = withLegs (\l r -> kaleidoP l r rab) (convert @c @KaleidoRes o)
 
 -- * @n@-ary aggregation via tensor powers
 

@@ -2,9 +2,9 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The __iso__: the bottom of the subtyping lattice, usable as every other flavor. 'IsoRes' is
--- simply the conjunction of the four maximal flavors ('Proarrow.Optic.Lens.LensRes',
--- 'Proarrow.Optic.Prism.PrismRes', 'Proarrow.Optic.Kaleidoscope.KaleidoRes' and
--- 'Proarrow.Optic.MonoidalLens.MonLensRes'). Build with 'iso', eliminate to the two legs with
+-- simply the conjunction of the five maximal flavors ('Proarrow.Optic.Lens.LensRes',
+-- 'Proarrow.Optic.Prism.PrismRes', 'Proarrow.Optic.Kaleidoscope.KaleidoRes',
+-- 'Proarrow.Optic.MonoidalLens.MonLensRes' and 'Proarrow.Optic.Tracer.TracerRes'). Build with 'iso', eliminate to the two legs with
 -- 'withIso' via the 'Yo' carrier -- which also eliminates 'Proarrow.Optic.re'-versed isos, a
 -- conversion the 'SubFlavor' lattice itself cannot express; 'fromPIso'\/'toPIso' mediate with the
 -- profunctor-class-flavored 'PIso'.
@@ -34,12 +34,13 @@ import Proarrow.Optic.Lens (LensRes)
 import Proarrow.Optic.MonoidalLens (MonLensRes)
 import Proarrow.Optic.Prism (PrismRes)
 import Proarrow.Optic.Setter (SetterRes)
+import Proarrow.Optic.Tracer (TracerRes)
 import Proarrow.Optic.Traversal (TravRes)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
-class (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q) => IsoRes p q
-instance (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q) => IsoRes p q
+class (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q, TracerRes p q) => IsoRes p q
+instance (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q, TracerRes p q) => IsoRes p q
 
 instance CompactFlavor IsoRes
 
@@ -60,6 +61,7 @@ instance SubFlavor IsoRes FoldRes where subFlavor r = r
 instance SubFlavor IsoRes GrateRes where subFlavor r = r
 instance SubFlavor IsoRes KaleidoRes where subFlavor r = r
 instance SubFlavor IsoRes MonLensRes where subFlavor r = r
+instance SubFlavor IsoRes TracerRes where subFlavor r = r
 
 -- | Reversed isos still view\/preview\/fold: @'Proarrow.Optic.re' iso@ is a getter (and more).
 instance SubFlavor (Flip IsoRes) GetterRes where subFlavor r = r

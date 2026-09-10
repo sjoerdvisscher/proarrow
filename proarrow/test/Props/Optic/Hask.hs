@@ -37,6 +37,7 @@ import Proarrow.Optic.Lens (Lens, lens, withLens)
 import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterRes (..), over, set, (%~))
+import Proarrow.Optic.Tracer (Tracer, fromPTracer, toPTracer, tracer, tracerOf, withTracer)
 
 import Proarrow.Optic.MonoidalTraversal
   ( MonoidalTraversal
@@ -60,8 +61,8 @@ import Proarrow.Profunctor.Representable (CorepStar (..), RepCostar (..), Repres
 import Proarrow.Promonad.Reader (Reader (..))
 import Proarrow.Promonad.Writer (Writer)
 
-import Props.Hask ()
 import Proarrow.Testing (GenTotal (..), TestableType (..), pattern GenNonEmpty)
+import Props.Hask ()
 
 -- * The subtyping lattice
 
@@ -179,6 +180,17 @@ compositeToAffineTraversal l p = O.convert (l O.% p)
 grateToSetter :: (CategoryOf k) => Grate (s :: k) t a b -> Setter s t a b
 grateToSetter = O.convert
 
+tracerToSetter :: (CategoryOf k) => Tracer (s :: k) t a b -> Setter s t a b
+tracerToSetter = O.convert
+
+isoToTracer :: (CategoryOf k) => Iso (s :: k) t a b -> Tracer s t a b
+isoToTracer = O.convert
+
+-- | A tracer converts to a flipped setter (its witnesses are a setter's, read backwards); the
+-- converse has no instance, since a flipped setter need not have a trace.
+tracerToFlipSetter :: (CategoryOf k) => Tracer (s :: k) t a b -> O.Optic (O.Prostrong (O.Flip SetterRes)) s t a b
+tracerToFlipSetter = O.convert
+
 -- * The reversed (Flip) side of the lattice, reached via 're'
 
 reLensIsReview :: (CategoryOf k, Ob (a :: k), Ob b) => Lens s t a b -> Review b a t s
@@ -228,6 +240,16 @@ pairK = kaleidoscope id id
 -- | The arity-3 kaleidoscope (via the general 'kaleidoscopeN'), over a nested tensor triple.
 triK :: Kaleidoscope (Bool, (Bool, (Bool, ()))) (Bool, (Bool, (Bool, ()))) Bool Bool
 triK = kaleidoscopeN @(S (S (S Z))) id id
+
+-- | A tracer in Hask with a @Bool@ residual and identity legs, so @over feedback f s@ solves
+-- @(m, t) = f (m, s)@ for @m@ through the lazy fixpoint of @'Proarrow.Category.Monoidal.Strength.Costrong' (->)@.
+feedback :: Tracer Bool Bool (Bool, Bool) (Bool, Bool)
+feedback = tracer @Bool id id
+
+-- | Focus function for 'feedback': the new residual is @not s@ and the new target is the residual,
+-- so the loop computes @not@.
+loop :: (Bool, Bool) -> (Bool, Bool)
+loop (m, s) = (not s, m)
 
 -- | The same encoding-agnostic 'O.iso' at the profunctor-class-flavored traversal type.
 tIsoNot :: PTraversal Bool Bool Bool Bool
@@ -337,6 +359,26 @@ test =
     , propFnEq @(Bool, Bool) "grate as setter" (over pairGrate not) (bimap not not)
     , propFnEq @(Bool, Bool) "set on a grate" (set pairGrate True) (const (True, True))
     , propFnEq @Bool "iso as grate as setter" (over (isoToGrate notIso) not) not
+    , propFnEq @Bool "tracer feeds the residual back through the focus" (over feedback loop) not
+    , propFnEq @Bool "set on a tracer" (set feedback (True, False)) (const False)
+    , propFnEq @(Bool, Bool) "re-over a tracer runs it backwards, no trace needed" (over (O.re feedback) not) (second not)
+    , propFnEq @(Bool, Bool)
+        "re-over a tracer converted to a flipped setter"
+        (over (O.re (tracerToFlipSetter feedback)) not)
+        (second not)
+    , propFnEq @Bool "iso as tracer" (tracerOf notIso not) not
+    , propFnEq @Bool "iso as tracer as setter" (over (isoToTracer notIso) not) not
+    , propFnEq @Bool "PTracer round trip" (over (fromPTracer (toPTracer feedback)) loop) not
+    , propFnEq @(Bool, Bool)
+        "withTracer legs of a tracer compose to the identity"
+        (\b -> withTracer feedback (\h i -> h (i b)))
+        id
+    , propFnEq @(Bool, Bool)
+        "withTracer on an iso%tracer composite"
+        (\b -> withTracer (notIso O.% feedback) (\h i -> h (i b)))
+        id
+    , propFnEq @(Bool, Bool) "withTracer on a PTracer" (\b -> withTracer (toPTracer feedback) (\h i -> h (i b))) id
+    , propFnEq @(Bool, Bool) "composite lens%tracer over" (over (_1 O.% feedback) loop) (first not)
     , propFnEq @Bool "withIso on constraint-flavored iso" (withIso cNot const) not
     , propFnEq @Bool "withIso on re-versed iso" (withIso (O.re notIso) const) not
     , propFnEq @(Bool, Bool) "withLens on an iso" (withLens swapIso const) swap
@@ -382,6 +424,15 @@ test =
         (preview (_1 O.% _Just))
         (\(m, _) -> maybe (Right ()) Left m)
     , propFnEq @(Maybe Bool, Bool) "composite lens%prism over" (over (_1 O.% _Just) not) (first (fmap not))
+    , propFnEq @(Maybe Bool, Bool)
+        "traverseOf a lens%prism composite, no convert needed"
+        (unPrelude . unStar (traverseOf (_1 O.% _Just) (Star (Prelude . (\b -> [b, not b])))))
+        (\(m, c) -> [(m', c) | m' <- traverse (\b -> [b, not b]) m])
+    , propFnEq @Bool "tracerOf a PTracer directly" (tracerOf (toPTracer feedback) loop) not
+    , propFnEq @(Bool, Bool)
+        "kaleidoscopeOf a kaleidoscope%iso composite"
+        (kaleidoscopeOf (pairK O.% notIso) not)
+        (bimap not not)
     , propFnEq @(Maybe Bool, Bool) "composite lens%prism fold" (foldMapOf (_1 O.% _Just) (: [])) (maybeToList . fst)
     , propFnEq @Bool "composite iso%prism review" (review (notMaybeIso O.% _Just)) (Just . not)
     , propFnEq @Bool "withPrism on composite" (withPrism (notMaybeIso O.% _Just) const) (Just . not)

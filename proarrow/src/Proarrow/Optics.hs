@@ -1,7 +1,7 @@
 -- | The user-facing optics vocabulary, in one import.
 --
 -- * /Build/ optics with 'iso', 'lens', 'monLens', 'prism', 'affineTraversal', 'grate',
---   'kaleidoscope', 'traversed', 'traversal' (a 'Traversal' from its van-Laarhoven \/
+--   'kaleidoscope', 'tracer', 'traversed', 'traversal' (a 'Traversal' from its van-Laarhoven \/
 --   profunctor-class form), 'to' and 'unto'. These produce
 --   'Proarrow.Optic.Prostrong'-flavored optics ('Iso', 'Lens', 'Prism', 'Traversal', ...), which
 --   support subtyping: any optic can be used directly wherever a weaker flavor is needed (a 'Lens'
@@ -13,8 +13,8 @@
 -- * /Eliminate/ optics with exactly one canonical eliminator per flavor: 'view' (a 'Getter'),
 --   'review' (a 'Review'), 'preview' (an 'AffineFold'), 'matching' (an 'AffineTraversal'), 'over'
 --   (a 'Setter'), 'foldMapOf' (a
---   'Fold'), 'traverseOf' (a 'Traversal'), 'monTraverseOf' (a 'MonoidalTraversal') and
---   'kaleidoscopeOf' (a 'Kaleidoscope') /run/ the optic, while 'withIso', 'withLens',
+--   'Fold'), 'traverseOf' (a 'Traversal'), 'monTraverseOf' (a 'MonoidalTraversal'),
+--   'kaleidoscopeOf' (a 'Kaleidoscope') and 'tracerOf' (a 'Tracer') /run/ the optic, while 'withIso', 'withLens',
 --   'withMonLens', 'withPrism' and 'withGrate' /recover its two legs/. Operator shorthands
 --   ('(^.)', '(#)', '(^?)', 'set', '(%~)', '(.~)', 'unfold') abbreviate the common ones. All of
 --   these are encoding-agnostic.
@@ -27,20 +27,20 @@
 -- The full subtyping lattice ('Proarrow.Optic.SubFlavor' edges, weakest optics at the top):
 --
 -- >         Fold                           Setter
--- >        /    \                         /      \
--- >       /      \                       /       Grate
--- > AffineFold    \                     /         |
--- >   |    \       `---- Traversal ----'          |
--- >   |     \           /         \               |
--- >   |      \         /           \              |
--- > Getter  AffineTraversal     MonoidalTraversal |
--- >   |  \ /              \     /  /          |   |
--- >   |   X             .--\---'  /   Review  |   |
--- >   |  / \           /    \    /    /       |   |
--- >  Lens   MonoidalLens    Prism----'    Kaleidoscope
--- >    \         \           /               /
--- >     \         \         /               /
--- >      `---------`---+---'---------------'
+-- >        /    \                         /   \  \
+-- >       /      \                       /     \  `---.
+-- > AffineFold    \                     /       \      \
+-- >   |    \       `---- Traversal ----'       Grate  Tracer
+-- >   |     \           /         \               |       |
+-- >   |      \         /           \              |       |
+-- > Getter  AffineTraversal     MonoidalTraversal |       |
+-- >   |  \ /              \     /  /          |   |       |
+-- >   |   X             .--\---'  /   Review  |   |       |
+-- >   |  / \           /    \    /    /       |   |       |
+-- >  Lens   MonoidalLens    Prism----'    Kaleidoscope    |
+-- >    \         \           /               /            /
+-- >     \         \         /               /            /
+-- >      `---------`---+---'---------------'------------'
 -- >                   Iso
 module Proarrow.Optics
   ( -- * Optic kinds
@@ -73,6 +73,8 @@ module Proarrow.Optics
   , Grate'
   , Kaleidoscope
   , Kaleidoscope'
+  , Tracer
+  , Tracer'
 
     -- * Building optics
   , iso
@@ -82,6 +84,7 @@ module Proarrow.Optics
   , affineTraversal
   , grate
   , kaleidoscope
+  , tracer
   , traversed
   , traversal
   , to
@@ -91,7 +94,7 @@ module Proarrow.Optics
     -- * Eliminating optics
 
     -- | Exactly one eliminator per flavor: 'view', 'review', 'preview', 'over', 'foldMapOf',
-    -- 'traverseOf', 'monTraverseOf' and 'kaleidoscopeOf' /run/ the optic; 'withIso', 'withLens',
+    -- 'traverseOf', 'monTraverseOf', 'kaleidoscopeOf' and 'tracerOf' /run/ the optic; 'withIso', 'withLens',
     -- 'withMonLens', 'withPrism' and 'withGrate' /recover its two legs/.
   , view
   , review
@@ -102,6 +105,7 @@ module Proarrow.Optics
   , traverseOf
   , monTraverseOf
   , kaleidoscopeOf
+  , tracerOf
   , withIso
   , withLens
   , withMonLens
@@ -149,4 +153,5 @@ import Proarrow.Optic.MonoidalTraversal
   )
 import Proarrow.Optic.Prism (Prism, Prism', affineTraversal, prism, withPrism)
 import Proarrow.Optic.Setter (Setter, Setter', over, set, (%~), (.~))
+import Proarrow.Optic.Tracer (Tracer, Tracer', tracer, tracerOf)
 import Proarrow.Optic.Traversal (Traversal, Traversal', traverseOf, traversed)
