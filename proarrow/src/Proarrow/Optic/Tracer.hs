@@ -28,7 +28,6 @@ import Proarrow.Optic
   , FLAVOR
   , Flavor
   , Flip
-  , IsOptic (..)
   , Optic
   , Optic_ (..)
   , Prostrong (..)
@@ -38,10 +37,10 @@ import Proarrow.Optic
   , withLegs
   )
 import Proarrow.Optic.Setter (SetterRes (..))
-import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 
 -- | The tracer flavor: a witness pair whose legs are @m ** s ~> a@ and @b ~> m ** t@ for an
 -- existential residual @m@ -- the residual functor is applied to the source and target rather
@@ -129,7 +128,7 @@ tracer l r = legs2prof @TracerRes (Corep @s @(ActionAt Tensor m) l) (Rep @t @(Ac
 -- does a '(Proarrow.Optic.%)'-composite.
 tracerOf
   :: forall {k} c (s :: k) (t :: k) a b r
-   . (Monoidal k, Costrong Tensor r, (Ob a, Ob b) => c (ExOptic TracerRes a b))
+   . (Monoidal k, Costrong Tensor r, c (ExOptic TracerRes a b))
   => Optic c s t a b -> r a b -> r s t
 tracerOf o rab = withLegs @TracerRes o \l r -> tracerP l r rab
 
@@ -145,10 +144,10 @@ instance
   )
   => Costrong Tensor (ExOptic w a b :: k +-> k)
   where
-  coact @m @x @y (ExOptic p q) =
+  coact @m @x @y (ExOptic @p @q l r) =
     withOb2 @k @m @x $
       withOb2 @k @m @y $
-        ExOptic (Corep @x @(ActionAt Tensor m) id :.: p) (q :.: Rep @y @(ActionAt Tensor m) id)
+        ExOptic @(Corep (ActionAt Tensor m) :.: p) @(q :.: Rep (ActionAt Tensor m)) (corepUniv :.: l) (r :.: repUniv)
 
 -- | Eliminate any optic that is at least an iso and at most a tracer to its two legs, recovering
 -- the existential residual @m@, in either encoding: run it at its witness pair ('ExOptic' 'TracerRes',
@@ -162,8 +161,6 @@ withTracer o k = withLegs @TracerRes o \ @p @q p q -> withTracerP @p @q p q \ @m
 -- | A tracer in the profunctor-class-flavored encoding (cf. 'Proarrow.Optic.PIso'). Equivalent to
 -- 'Tracer' via 'toPTracer' and 'fromPTracer'.
 type PTracer s t a b = Optic (Costrong Tensor) s t a b
-
-instance IsOptic (Costrong Tensor) where withProfunctor r = r
 
 -- | Instantiate a profunctor-class tracer at the generic carrier @'ExOptic' 'TracerRes' a b@, which is
 -- 'Costrong' by the instance above (the Pastro-Street move).

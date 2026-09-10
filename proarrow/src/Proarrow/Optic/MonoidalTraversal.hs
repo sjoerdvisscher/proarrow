@@ -11,6 +11,7 @@
 module Proarrow.Optic.MonoidalTraversal where
 
 import GHC.Generics qualified as G
+import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction, ProdAction)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
@@ -32,7 +33,6 @@ import Proarrow.Optic
   ( ExOptic (..)
   , FLAVOR
   , Flavor
-  , IsOptic (..)
   , Optic
   , Optic_ (..)
   , Prostrong (..)
@@ -41,10 +41,10 @@ import Proarrow.Optic
   , type (:&&:)
   )
 import Proarrow.Optic.Traversal
-  ( Beside (..)
-  , BesideSum (..)
-  , CoBeside (..)
-  , CoBesideSum (..)
+  ( Beside
+  , BesideSum
+  , CoBeside
+  , CoBesideSum
   , CoUnitW (..)
   , CoZeroW (..)
   , MonTravRes (..)
@@ -53,9 +53,9 @@ import Proarrow.Optic.Traversal
   , UnitW (..)
   , ZeroW (..)
   )
-import Proarrow.Profunctor.Corepresentable (Corep (..))
+import Proarrow.Profunctor.Corepresentable (Corep, Corepresentable (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Profunctor.Representable (Rep, Representable (..))
 import Prelude (Either (..), const, either, uncurry, ($))
 
 type MonoidalTraversal (s :: k) (t :: k) a b = Optic (Prostrong MonTravRes) s t a b
@@ -80,10 +80,12 @@ exBeside
        => w (Beside p1 p2) (CoBeside q1 q2)
      )
   => ExOptic w a b s1 t1 -> ExOptic w a b s2 t2 -> ExOptic w a b (s1 ** s2) (t1 ** t2)
-exBeside (ExOptic p1@Objs q1@Objs) (ExOptic p2@Objs q2@Objs) =
+exBeside (ExOptic @p1 @q1 l1@Objs r1@Objs) (ExOptic @p2 @q2 l2@Objs r2@Objs) =
   withOb2 @k @s1 @s2 $
     withOb2 @k @t1 @t2 $
-      ExOptic (Beside id p1 p2) (CoBeside q1 q2 id)
+      ExOptic @(Beside p1 p2) @(CoBeside q1 q2)
+        (repUniv :.: (l1 :**: l2) :.: repUniv)
+        (corepUniv :.: (r1 :**: r2) :.: corepUniv)
 
 exBesideSum
   :: forall {k} (w :: FLAVOR k k) (a :: k) b s1 t1 s2 t2
@@ -93,10 +95,12 @@ exBesideSum
        => w (BesideSum p1 p2) (CoBesideSum q1 q2)
      )
   => ExOptic w a b s1 t1 -> ExOptic w a b s2 t2 -> ExOptic w a b (s1 || s2) (t1 || t2)
-exBesideSum (ExOptic p1@Objs q1@Objs) (ExOptic p2@Objs q2@Objs) =
+exBesideSum (ExOptic @p1 @q1 l1@Objs r1@Objs) (ExOptic @p2 @q2 l2@Objs r2@Objs) =
   withObCoprod @k @s1 @s2 $
     withObCoprod @k @t1 @t2 $
-      ExOptic (BesideSum id p1 p2) (CoBesideSum q1 q2 id)
+      ExOptic @(BesideSum p1 p2) @(CoBesideSum q1 q2)
+        (repUniv :.: (l1 :**: l2) :.: repUniv)
+        (corepUniv :.: (r1 :**: r2) :.: corepUniv)
 
 instance
   ( Monoidal k
@@ -135,10 +139,10 @@ instance
   )
   => Strong Tensor (ExOptic w a b :: k +-> k)
   where
-  act @x @y @z (ExOptic p@Objs q@Objs) =
+  act @x @y @z (ExOptic @p @q l@Objs r@Objs) =
     withOb2 @k @x @y $
       withOb2 @k @x @z $
-        ExOptic (Rep @y @(ActionAt Tensor x) id :.: p) (q :.: Corep @z @(ActionAt Tensor x) id)
+        ExOptic @(Rep (ActionAt Tensor x) :.: p) @(q :.: Corep (ActionAt Tensor x)) (repUniv :.: l) (r :.: corepUniv)
 
 instance
   ( HasCoproducts k
@@ -149,19 +153,19 @@ instance
   )
   => Strong CoprodAction (ExOptic w a b :: k +-> k)
   where
-  act @cx @y @z (ExOptic p@Objs q@Objs) =
+  act @cx @y @z (ExOptic @p @q l@Objs r@Objs) =
     withObCoprod @k @(UN COPR cx) @y $
       withObCoprod @k @(UN COPR cx) @z $
-        ExOptic (Rep @y @(Coproduct (UN COPR cx)) id :.: p) (q :.: Corep @z @(Coproduct (UN COPR cx)) id)
+        ExOptic @(Rep (Coproduct (UN COPR cx)) :.: p) @(q :.: Corep (Coproduct (UN COPR cx))) (repUniv :.: l) (r :.: corepUniv)
 
 instance
   (HasProducts k, Ob (a :: k), Ob b, Flavor w, forall (s :: k). (Ob s) => w (Rep (Product s)) (Corep (Product s)))
   => Strong ProdAction (ExOptic w a b :: k +-> k)
   where
-  act @px @y @z (ExOptic p@Objs q@Objs) =
+  act @px @y @z (ExOptic @p @q l@Objs r@Objs) =
     withObProd @k @(UN PR px) @y $
       withObProd @k @(UN PR px) @z $
-        ExOptic (Rep @y @(Product (UN PR px)) id :.: p) (q :.: Corep @z @(Product (UN PR px)) id)
+        ExOptic @(Rep (Product (UN PR px)) :.: p) @(q :.: Corep (Product (UN PR px))) (repUniv :.: l) (r :.: corepUniv)
 
 -- | The other half of the equivalence between the encodings: instantiate the
 -- profunctor-class-flavored traversal at the generic carrier @'ExOptic' 'MonTravRes' a b@, which is
@@ -189,8 +193,6 @@ monTraverseOf
    . (Distributive k, StrongDistributiveProfunctor p, (Ob a, Ob b) => c (ExOptic MonTravRes a b))
   => Optic c s t a b -> p a b -> p s t
 monTraverseOf o pab = withLegs @MonTravRes o \l r -> monTravP l r pab
-
-instance IsOptic StrongDistributiveProfunctor where withProfunctor r = r
 
 -- | A traversal in the profunctor-class-flavored encoding (cf. 'Proarrow.Optic.PIso'), used by
 -- the "GHC.Generics" combinators below. Equivalent to 'Traversal' via 'toPTraversal' and

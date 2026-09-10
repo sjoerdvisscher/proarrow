@@ -13,7 +13,8 @@
 module Proarrow.Optic.Traversal where
 
 import Proarrow.Adjunction (Proadjunction (..))
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Tensor)
+import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), MultRep, Tensor)
 import Proarrow.Category.Monoidal.Action (ActionAt, CoprodAction, ProdAction)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..))
 import Proarrow.Category.Monoidal.Distributive
@@ -31,6 +32,7 @@ import Proarrow.Colimit.BinaryCoproduct
   , Coproduct
   , HasBinaryCoproducts (..)
   , HasCoproducts
+  , PlusRep
   , nil
   , (++)
   )
@@ -148,98 +150,85 @@ traversed = legs2prof @TravRes (repUniv @t) (corepUniv @(RepCostar t))
 
 -- * The free traversal profunctor
 
--- | Witness pair for traversing two juxtaposed (tensored) parts in sequence, both parts
--- focusing the same type @x@.
+-- | Witness pair for traversing two juxtaposed (tensored) parts in sequence, both parts focusing
+-- the same type @x@:
 --
--- 'Beside' and 'CoBeside' are each one half of 'Proarrow.Profunctor.Instance.Day.Day' with the
--- two foci types identified -- a one-sided Day convolution, pointwise in the shared focus. The
--- identification is essential: a @('Proarrow.Profunctor.Instance.Day.Day' p1 p2,
--- 'Proarrow.Profunctor.Instance.Day.Day' q1 q2)@ witness pair admits no componentwise 'travP'
--- (that would require splitting a 'StrongDistributiveProfunctor' value at a tensor), which is
--- why 'Proarrow.Optic.Day.DayRes'-flavored optics focus /pairs/ @a1 ** a2@ while these
--- witnesses visit each half's foci in sequence.
+-- > Beside p1 p2 s x = exists s1 s2. (s ~> s1 ** s2, p1 s1 x, p2 s2 x)
+--
+-- spelled as a composite through the product category @(k, k)@: decompose the source with the
+-- tensor (@'Rep' 'MultRep'@, @s ~> s1 ** s2@), run the two witnesses side by side (':**:'), and
+-- identify their foci with the diagonal (@'Rep' 'Diag'@, @'(x1, x2) ~> '(x, x)@). Compare
+-- 'Proarrow.Profunctor.Instance.Day.Day', which is the same composite with @'Corep' 'MultRep'@ in
+-- place of the diagonal, so that the two foci are /tensored/ (@x1 ** x2@) instead of identified.
+-- The identification is essential: a @(Day p1 p2, Day q1 q2)@ witness pair admits no componentwise
+-- 'travP' (it would have to split a 'StrongDistributiveProfunctor' value at a tensor), which is why
+-- 'Proarrow.Optic.Day.DayRes'-flavored optics focus /pairs/ while this one visits both foci in
+-- sequence.
 type Beside :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
-data Beside p1 p2 s x where
-  Beside :: (s ~> (s1 ** s2)) -> p1 s1 x -> p2 s2 x -> Beside p1 p2 s x
+type Beside p1 p2 = Rep MultRep :.: (p1 :**: p2) :.: Rep Diag
 
--- | The covariant half of the 'Beside' witness pair: recomposes the two parts' targets,
--- @(t1 '**' t2) '~>' t@.
+-- | The covariant half of the 'Beside' witness pair: duplicate the focus with the diagonal
+-- (@'Corep' 'Diag'@), run the two witnesses side by side, recompose the targets with the tensor
+-- (@'Corep' 'MultRep'@, @t1 ** t2 ~> t@).
 type CoBeside :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
-data CoBeside q1 q2 x t where
-  CoBeside :: q1 x t1 -> q2 x t2 -> ((t1 ** t2) ~> t) -> CoBeside q1 q2 x t
-
-instance (Profunctor p1, Profunctor p2, Monoidal k) => Profunctor (Beside p1 p2 :: k +-> k) where
-  dimap l r (Beside d x y) = Beside (d . l) (rmap r x) (rmap r y) \\ l
-  r \\ Beside d x _ = r \\ d \\ x
-instance (Profunctor q1, Profunctor q2, Monoidal k) => Profunctor (CoBeside q1 q2 :: k +-> k) where
-  dimap l r (CoBeside u v c) = CoBeside (lmap l u) (lmap l v) (r . c) \\ r
-  r \\ CoBeside u _ c = r \\ u \\ c
+type CoBeside q1 q2 = Corep Diag :.: (q1 :**: q2) :.: Corep MultRep
 
 instance (SetterRes p1 q1, SetterRes p2 q2, Monoidal k) => SetterRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
-  overP (Beside d l1 l2) (CoBeside r1 r2 c) f = c . (overP @p1 @q1 l1 r1 f ** overP @p2 @q2 l2 r2 f) . d
+  overP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) f =
+    c . (overP @p1 @q1 (rmap f1 l1) (lmap g1 r1) f ** overP @p2 @q2 (rmap f2 l2) (lmap g2 r2) f) . d
 instance (FoldRes p1 q1, FoldRes p2 q2, Monoidal k) => FoldRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2 :: k +-> k) where
-  foldMapP (Beside d l1 l2) am = mappend . (foldMapP @p1 @q1 l1 am ** foldMapP @p2 @q2 l2 am) . d
+  foldMapP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) am =
+    mappend . (foldMapP @p1 @q1 (rmap f1 l1) am ** foldMapP @p2 @q2 (rmap f2 l2) am) . d
 instance (TravRes p1 q1, TravRes p2 q2, Monoidal k) => TravRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
-  travP (Beside d l1 l2) (CoBeside r1 r2 c) r = dimap d c (travP @p1 @q1 l1 r1 r ** travP @p2 @q2 l2 r2 r)
+  travP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
+    dimap d c (travP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ** travP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
 instance (MonTravRes p1 q1, MonTravRes p2 q2, Monoidal k) => MonTravRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
-  monTravP (Beside d l1 l2) (CoBeside r1 r2 c) r = dimap d c (monTravP @p1 @q1 l1 r1 r ** monTravP @p2 @q2 l2 r2 r)
-instance (Proadjunction p1 q1, Proadjunction p2 q2, Monoidal k) => Proadjunction (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
-  unit @a = case unit @p1 @q1 @a of
-    (:.:) @m1 u1 v1 -> case unit @p2 @q2 @a of
-      (:.:) @m2 u2 v2 -> withOb2 @k @m1 @m2 (CoBeside u1 u2 id :.: Beside id v1 v2) \\ v1 \\ v2
-  counit (Beside d l1 l2 :.: CoBeside r1 r2 c) = c . (counit (l1 :.: r1) ** counit (l2 :.: r2)) . d
+  monTravP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
+    dimap d c (monTravP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ** monTravP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
 
--- | Witness pair for traversing one of two alternative (coproduct) parts: the same one-sided
--- Day convolution as 'Beside'\/'CoBeside', but over the coproduct monoidal structure (cf.
--- 'Proarrow.Colimit.BinaryCoproduct.Coprod').
+-- | Witness pair for traversing one of two alternative (coproduct) parts: 'Beside' with the tensor
+-- replaced by the coproduct (@'Rep' 'PlusRep'@, @s ~> s1 || s2@, and @'Corep' 'PlusRep'@,
+-- @t1 || t2 ~> t@). Here identifying the foci and tensoring them agree -- @x1 || x2 ~> x@ /is/ a pair
+-- @(x1 ~> x, x2 ~> x)@ -- so this is literally Day convolution over the coproduct.
 type BesideSum :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
-data BesideSum p1 p2 s x where
-  BesideSum :: (s ~> (s1 || s2)) -> p1 s1 x -> p2 s2 x -> BesideSum p1 p2 s x
+type BesideSum p1 p2 = Rep PlusRep :.: (p1 :**: p2) :.: Rep Diag
 
--- | The covariant half of the 'BesideSum' witness pair: recomposes the branches' targets,
--- @(t1 '||' t2) '~>' t@.
+-- | The covariant half of the 'BesideSum' witness pair.
 type CoBesideSum :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
-data CoBesideSum q1 q2 x t where
-  CoBesideSum :: q1 x t1 -> q2 x t2 -> ((t1 || t2) ~> t) -> CoBesideSum q1 q2 x t
-
-instance (Profunctor p1, Profunctor p2, CategoryOf k) => Profunctor (BesideSum p1 p2 :: k +-> k) where
-  dimap l r (BesideSum d x y) = BesideSum (d . l) (rmap r x) (rmap r y) \\ l
-  r \\ BesideSum d x _ = r \\ d \\ x
-instance (Profunctor q1, Profunctor q2, CategoryOf k) => Profunctor (CoBesideSum q1 q2 :: k +-> k) where
-  dimap l r (CoBesideSum u v c) = CoBesideSum (lmap l u) (lmap l v) (r . c) \\ r
-  r \\ CoBesideSum u _ c = r \\ u \\ c
+type CoBesideSum q1 q2 = Corep Diag :.: (q1 :**: q2) :.: Corep PlusRep
 
 instance (SetterRes p1 q1, SetterRes p2 q2, HasBinaryCoproducts k) => SetterRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2) where
-  overP (BesideSum d l1 l2) (CoBesideSum r1 r2 c) f = c . (overP @p1 @q1 l1 r1 f +++ overP @p2 @q2 l2 r2 f) . d
+  overP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) f =
+    c . (overP @p1 @q1 (rmap f1 l1) (lmap g1 r1) f +++ overP @p2 @q2 (rmap f2 l2) (lmap g2 r2) f) . d
 instance
   (FoldRes p1 q1, FoldRes p2 q2, HasBinaryCoproducts k)
   => FoldRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2 :: k +-> k)
   where
-  foldMapP (BesideSum d l1 l2) am = (foldMapP @p1 @q1 l1 am ||| foldMapP @p2 @q2 l2 am) . d
+  foldMapP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) am =
+    (foldMapP @p1 @q1 (rmap f1 l1) am ||| foldMapP @p2 @q2 (rmap f2 l2) am) . d
 instance (TravRes p1 q1, TravRes p2 q2, HasBinaryCoproducts k) => TravRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2) where
-  travP (BesideSum d l1 l2) (CoBesideSum r1 r2 c) r = dimap d c (travP @p1 @q1 l1 r1 r ++ travP @p2 @q2 l2 r2 r)
+  travP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
+    dimap d c (travP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ++ travP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
 instance
   (MonTravRes p1 q1, MonTravRes p2 q2, HasBinaryCoproducts k)
   => MonTravRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2)
   where
-  monTravP (BesideSum d l1 l2) (CoBesideSum r1 r2 c) r = dimap d c (monTravP @p1 @q1 l1 r1 r ++ monTravP @p2 @q2 l2 r2 r)
-instance
-  (Proadjunction p1 q1, Proadjunction p2 q2, HasBinaryCoproducts k)
-  => Proadjunction (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2)
-  where
-  unit @a = case unit @p1 @q1 @a of
-    (:.:) @m1 u1 v1 -> case unit @p2 @q2 @a of
-      (:.:) @m2 u2 v2 -> withObCoprod @k @m1 @m2 (CoBesideSum u1 u2 id :.: BesideSum id v1 v2) \\ v1 \\ v2
-  counit (BesideSum d l1 l2 :.: CoBesideSum r1 r2 c) = c . (counit (l1 :.: r1) +++ counit (l2 :.: r2)) . d
+  monTravP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
+    dimap d c (monTravP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ++ monTravP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
 
 -- | Witness pair with no foci at all: decompose to 'Unit' and rebuild.
 --
 -- 'UnitW' and 'CoUnitW' are the two halves of 'Proarrow.Profunctor.Instance.Day.DayUnit', one
 -- per side of the witness pair, with a phantom focus: together with 'Beside'\/'CoBeside' being
--- the halves of 'Proarrow.Profunctor.Instance.Day.Day', the witness pairs here are exactly the
+-- 'Proarrow.Profunctor.Instance.Day.Day' with the foci identified, the witness pairs here are exactly the
 -- Day-monoidal structure on profunctors (@'Proarrow.Category.Monoidal.Monoidal' (j '+->' k)@),
 -- split at the focus. The split is forced: a whole 'Proarrow.Profunctor.Instance.Day.DayUnit'
 -- on the decomposition side would demand @Unit ~> a@ for an arbitrary focus @a@.
+--
+-- Unlike 'Beside', this cannot be spelled as a composite: the nullary analogue would pass through
+-- the unit category @()@ (@'Rep' 'Proarrow.Category.Monoidal.UnitRep' :.: TerminalProfunctor@), but
+-- @()@ can coincide with the ambient kind @k@, so its instances would overlap with the generic
+-- composition instances -- whereas @(k, k)@ never equals @k@.
 type UnitW :: forall {k}. k +-> k
 data UnitW s x where
   UnitW :: (Ob x) => (s ~> Unit) -> UnitW s x

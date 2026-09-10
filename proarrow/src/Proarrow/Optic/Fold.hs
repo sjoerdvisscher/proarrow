@@ -74,7 +74,7 @@ foldMapOf
   => Optic c s t a b -> (a ~> m) -> (s ~> m)
 foldMapOf o am = withLegs @FoldRes o \ @p @q p _ -> foldMapP @p @q p am
 
--- | The genuine unfold: build @t@ from a 'Comonoid' seed @cm@ through the @b@-foci. It is
+-- | Unfold @t@ from a 'Comonoid' seed @cm@ through the @b@-foci. It is
 -- 'foldMapOf' run in @'OPPOSITE' k@, where 'Monoid' becomes 'Comonoid' and consumption becomes
 -- construction. (Inhabitable once the flavor's 'Prostrong' transports through 'OP'.)
 unfold

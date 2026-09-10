@@ -75,6 +75,14 @@ swapCoprod' a b = rgt' (tgt b) a ||| lft' b (tgt a)
 swapCoprod :: forall {k} (a :: k) b. (HasBinaryCoproducts k, Ob a, Ob b) => a || b ~> b || a
 swapCoprod = swapCoprod' (obj @a) (obj @b)
 
+-- | The coproduct as a functor from the product category, @'(a, b) ↦ a || b@ -- the coproduct
+-- analogue of 'Proarrow.Category.Monoidal.MultRep'.
+data PlusRep :: (k, k) +-> k
+
+instance (HasBinaryCoproducts k) => FunctorForRep (PlusRep :: (k, k) +-> k) where
+  type PlusRep @ '(a, b) = a || b
+  fmap (f :**: g) = f +++ g
+
 data family Coproduct :: k -> k +-> k
 instance (HasBinaryCoproducts k, Ob a) => FunctorForRep (Coproduct a :: k +-> k) where
   type Coproduct a @ b = a || b
