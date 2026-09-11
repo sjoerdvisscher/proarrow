@@ -4,7 +4,7 @@
 --
 -- > Prism s t a b = (b ~> t, s ~> (t || a))
 --
--- witnessed by @'Rep'@\/@'Corep'@ @('Coproduct' t)@ ('PrismRes' \/ 'matchingP'). A prism reviews
+-- witnessed by @'Rep'@\/@'Corep'@ @('Coproduct' t)@ ('PrismFl' \/ 'matchingP'). A prism reviews
 -- and matches, sitting below 'Proarrow.Optic.Getter.Review',
 -- 'Proarrow.Optic.AffineTraversal.AffineTraversal' and
 -- 'Proarrow.Optic.MonoidalTraversal.MonoidalTraversal' in the lattice. Build with 'prism',
@@ -33,52 +33,52 @@ import Proarrow.Optic
   , withLegs
   , (%)
   )
-import Proarrow.Optic.AffineFold (AffineFoldRes)
-import Proarrow.Optic.AffineTraversal (AffineTravRes (..), AffineTraversal)
-import Proarrow.Optic.Fold (FoldRes)
-import Proarrow.Optic.Getter (GetterRes (..))
-import Proarrow.Optic.Lens (Lens, LensRes, lens, withLens)
-import Proarrow.Optic.Setter (SetterRes)
-import Proarrow.Optic.Traversal (MonTravRes, TravRes)
+import Proarrow.Optic.AffineFold (AffineFoldFl)
+import Proarrow.Optic.AffineTraversal (AffineTravFl (..), AffineTraversal)
+import Proarrow.Optic.Fold (FoldFl)
+import Proarrow.Optic.Getter (GetterFl (..))
+import Proarrow.Optic.Lens (Lens, LensFl, lens, withLens)
+import Proarrow.Optic.Setter (SetterFl)
+import Proarrow.Optic.Traversal (MonTravFl, TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
-type PrismRes :: forall {k}. FLAVOR k k
-class (AffineTravRes p q, GetterRes q p, MonTravRes p q) => PrismRes (p :: k +-> k) (q :: k +-> k) where
+type PrismFl :: forall {k}. FLAVOR k k
+class (AffineTravFl p q, GetterFl q p, MonTravFl p q) => PrismFl (p :: k +-> k) (q :: k +-> k) where
   -- | Like 'affineMatch', but with an honest constraint: prism witnesses only ever need binary
   -- coproducts, so prisms stay usable in categories without products.
   matchingP :: (HasBinaryCoproducts k) => p (s :: k) a -> q (b :: k) t -> s ~> (t || a)
-instance (CopyDiscard k, HasCoproducts k, Ob t) => PrismRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+instance (CopyDiscard k, HasCoproducts k, Ob t) => PrismFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   matchingP @_ @a @b (Rep p) (Corep q) = left @a (q . lft @k @t @b) . p
-instance (CategoryOf k) => PrismRes (Id :: k +-> k) Id where
+instance (CategoryOf k) => PrismFl (Id :: k +-> k) Id where
   matchingP @_ @a @_ @t (Id sa) bt = rgt @k @t @a . sa \\ sa \\ bt
-instance (PrismRes f g, PrismRes f' g') => PrismRes (f :.: f') (g' :.: g) where
+instance (PrismFl f g, PrismFl f' g') => PrismFl (f :.: f') (g' :.: g) where
   matchingP @_ @a @_ @t (f :.: f'@Objs) (g' :.: g@Objs) =
     (lft @_ @t @a ||| (left @a (getP @g @f g) . matchingP @f' @g' f' g')) . matchingP @f @g f g
 
-instance SubFlavor PrismRes AffineTravRes where subFlavor r = r
-instance SubFlavor PrismRes MonTravRes where subFlavor r = r
-instance SubFlavor PrismRes (Flip GetterRes) where subFlavor r = r
-instance SubFlavor PrismRes TravRes where subFlavor r = r
-instance SubFlavor PrismRes SetterRes where subFlavor r = r
-instance SubFlavor PrismRes AffineFoldRes where subFlavor r = r
-instance SubFlavor PrismRes FoldRes where subFlavor r = r
+instance SubFlavor PrismFl AffineTravFl where subFlavor r = r
+instance SubFlavor PrismFl MonTravFl where subFlavor r = r
+instance SubFlavor PrismFl (Flip GetterFl) where subFlavor r = r
+instance SubFlavor PrismFl TravFl where subFlavor r = r
+instance SubFlavor PrismFl SetterFl where subFlavor r = r
+instance SubFlavor PrismFl AffineFoldFl where subFlavor r = r
+instance SubFlavor PrismFl FoldFl where subFlavor r = r
 
 -- | A reversed prism views its build leg (@'getP'@ on the swapped pair): @'Proarrow.Optic.re' prism@ is a getter.
-instance SubFlavor (Flip PrismRes) GetterRes where subFlavor r = r
+instance SubFlavor (Flip PrismFl) GetterFl where subFlavor r = r
 
-instance SubFlavor (Flip PrismRes) AffineFoldRes where subFlavor r = r
-instance SubFlavor (Flip PrismRes) FoldRes where subFlavor r = r
+instance SubFlavor (Flip PrismFl) AffineFoldFl where subFlavor r = r
+instance SubFlavor (Flip PrismFl) FoldFl where subFlavor r = r
 
-type Prism (s :: k) t a b = Optic (Prostrong PrismRes) s t a b
+type Prism (s :: k) t a b = Optic (Prostrong PrismFl) s t a b
 type Prism' s a = Prism s s a a
 prism
   :: forall {k} (s :: k) (t :: k) a b
    . (CopyDiscard k, HasCoproducts k, Ob a) => (b ~> t) -> (s ~> (t || a)) -> Prism s t a b
 prism bt sta =
-  legs2prof @PrismRes (Rep @a @(Coproduct t) sta) (Corep @b @(Coproduct t) (id ||| bt)) \\ bt
+  legs2prof @PrismFl (Rep @a @(Coproduct t) sta) (Corep @b @(Coproduct t) (id ||| bt)) \\ bt
 
 -- | Build an 'AffineTraversal' by composing a 'Lens' with a 'Prism': focus a field with the lens,
 -- then match a case of that field with the prism. There is no from-legs builder for a bare affine
@@ -89,21 +89,21 @@ affineTraversal
 affineTraversal l p = convert (l % p)
 
 -- | Eliminate any optic that is at least an iso and at most a prism to its two legs, in either
--- encoding: run it at its witness pair ('ExOptic' 'PrismRes', via 'withLegs') and read the legs off
+-- encoding: run it at its witness pair ('ExOptic' 'PrismFl', via 'withLegs') and read the legs off
 -- with 'matchingP' and 'getP' on the flipped pair (a prism's build leg is a getter read backwards).
 withPrism
   :: forall {k} c (s :: k) (t :: k) a b r
-   . (HasBinaryCoproducts k, (Ob a, Ob b) => c (ExOptic PrismRes a b))
+   . (HasBinaryCoproducts k, (Ob a, Ob b) => c (ExOptic PrismFl a b))
   => Optic c s t a b -> ((b ~> t) -> (s ~> (t || a)) -> r) -> r
-withPrism o k = withLegs @PrismRes o \ @p @q p q -> k (getP @q @p q) (matchingP @p @q p q)
+withPrism o k = withLegs @PrismFl o \ @p @q p q -> k (getP @q @p q) (matchingP @p @q p q)
 
 -- | A 'Prism' and its op-lens encoding ('Proarrow.Optic.Lens.Prism', a 'Proarrow.Optic.Lens.Lens'
 -- over the opposite category) carry the same data -- the two legs @(b '~>' t, s '~>' t '||' a)@ --
--- so they are equivalent. 'toOpLens' eliminates a 'PrismRes' prism to its legs (via 'Market') and
+-- so they are equivalent. 'toOpLens' eliminates a 'PrismFl' prism to its legs (via 'Market') and
 -- rebuilds the op-lens; 'fromOpLens' eliminates the op-lens (via 'Proarrow.Optic.Lens.withLens' on
--- 'opOptic', i.e. as a lens over 'Proarrow.Category.Instance.Opposite.OPPOSITE') and rebuilds the 'PrismRes' prism.
+-- 'opOptic', i.e. as a lens over 'Proarrow.Category.Instance.Opposite.OPPOSITE') and rebuilds the 'PrismFl' prism.
 -- | The __op-lens__ encoding of a prism: a 'Proarrow.Optic.Lens.Lens' over the opposite category.
-type OpLens (s :: k) t a b = Optic (OpConstraint (Prostrong LensRes)) s t a b
+type OpLens (s :: k) t a b = Optic (OpConstraint (Prostrong LensFl)) s t a b
 
 toOpLens :: forall {k} (s :: k) t a b. (HasCoproducts k, Ob a, Ob b) => Prism s t a b -> OpLens s t a b
 toOpLens o = withPrism o (\bt sta -> unOpOptic (lens (Op bt) (Op sta)))

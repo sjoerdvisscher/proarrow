@@ -36,7 +36,7 @@ import Proarrow.Optic.Kaleidoscope (Kaleidoscope, Nat (..), kaleidoscope, kaleid
 import Proarrow.Optic.Lens (Lens, lens, withLens)
 import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
-import Proarrow.Optic.Setter (Setter, SetterRes (..), over, set, (%~))
+import Proarrow.Optic.Setter (Setter, SetterFl (..), over, set, (%~))
 import Proarrow.Optic.Tracer (Tracer, fromPTracer, toPTracer, tracer, tracerOf, withTracer)
 
 import Proarrow.Optic.MonoidalTraversal
@@ -50,7 +50,7 @@ import Proarrow.Optic.MonoidalTraversal
   , toPTraversal
   , u1Optic
   )
-import Proarrow.Optic.Traversal (TravRes, Traversal, traverseOf)
+import Proarrow.Optic.Traversal (TravFl, Traversal, traverseOf)
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Functor (Prelude (..))
@@ -187,7 +187,7 @@ isoToTracer = O.convert
 
 -- | A tracer converts to a flipped setter (its witnesses are a setter's, read backwards); the
 -- converse has no instance, since a flipped setter need not have a trace.
-tracerToFlipSetter :: (CategoryOf k) => Tracer (s :: k) t a b -> O.Optic (O.Prostrong (O.Flip SetterRes)) s t a b
+tracerToFlipSetter :: (CategoryOf k) => Tracer (s :: k) t a b -> O.Optic (O.Prostrong (O.Flip SetterFl)) s t a b
 tracerToFlipSetter = O.convert
 
 -- * The reversed (Flip) side of the lattice, reached via 're'
@@ -207,8 +207,8 @@ reReLens = O.convert . O.re . O.re
 -- * Honest constraints
 
 -- | Compile-time check: building and eliminating a lens needs only binary products, never
--- 'Proarrow.Category.Monoidal.Distributive.Bicartesian', even though 'AffineTravRes' sits above
--- 'Proarrow.Optic.Lens.LensRes' in the flavor hierarchy.
+-- 'Proarrow.Category.Monoidal.Distributive.Bicartesian', even though 'AffineTravFl' sits above
+-- 'Proarrow.Optic.Lens.LensFl' in the flavor hierarchy.
 lensLegs :: (HasBinaryProducts k) => Lens (s :: k) t a b -> (s ~> a, (s && b) ~> t)
 lensLegs l = withLens l (,)
 
@@ -396,7 +396,7 @@ test =
         (over (fromPTraversal (toPTraversal (O.convert _Just :: MonoidalTraversal (Maybe Bool) (Maybe Bool) Bool Bool))) not)
         (fmap not)
     , -- Step 4: monTraverseOf distributes an SDP carrier through a prism (a MonoidalTraversal) with
-      -- NO product-strength constraint on the carrier -- that's the point of the MonTravRes split.
+      -- NO product-strength constraint on the carrier -- that's the point of the MonTravFl split.
       propFnEq @(Maybe Bool)
         "monTraverseOf a prism (MonoidalTraversal) with a list effect"
         (\m -> unPrelude (unStar (monTraverseOf _Just (Star (Prelude . ((\b -> [b, not b]) :: Bool -> [Bool])))) m))
@@ -460,11 +460,11 @@ test =
     unSum (G.L1 (G.Par1 x)) = Left x
     unSum (G.R1 (G.Par1 y)) = Right y
     -- The former cotraversal, now a plain 'Traversal' via the kept
-    -- @TravRes (CorepStar t) t@ instance (@t = Reader (OP Bool)@, a corepresentable
+    -- @TravFl (CorepStar t) t@ instance (@t = Reader (OP Bool)@, a corepresentable
     -- 'Proarrow.Category.Monoidal.Distributive.Cotraversable' functor).
     zipSnd :: Traversal (Bool, Bool) (Bool, Bool) Bool Bool
     zipSnd =
-      O.legs2prof @TravRes
+      O.legs2prof @TravFl
         (CorepStar id :: CorepStar (Reader (OP Bool)) (Bool, Bool) Bool)
         (Reader id :: Reader (OP Bool) Bool (Bool, Bool))
     okIf b = if b then Just (not b) else Nothing

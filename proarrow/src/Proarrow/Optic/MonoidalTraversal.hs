@@ -2,11 +2,11 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- | The __monoidal traversal__ optic and its free-profunctor apparatus, split out of
--- "Proarrow.Optic.Traversal" (which keeps the mutually-recursive 'TravRes'\/'MonTravRes' flavor
+-- "Proarrow.Optic.Traversal" (which keeps the mutually-recursive 'TravFl'\/'MonTravFl' flavor
 -- classes and their leaf instances). A 'MonoidalTraversal' distributes any
 -- 'StrongDistributiveProfunctor' with no product-strength requirement; the profunctor-class
 -- encoding 'PTraversal' converts to and from it via 'toPTraversal'\/'fromPTraversal', the latter
--- through the generic carrier @'ExOptic' 'MonTravRes'@, made an SDP here by generators (the Day
+-- through the generic carrier @'ExOptic' 'MonTravFl'@, made an SDP here by generators (the Day
 -- halves, the tensor-action witness @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' _)@ and the coproduct prism).
 module Proarrow.Optic.MonoidalTraversal where
 
@@ -47,8 +47,8 @@ import Proarrow.Optic.Traversal
   , CoBesideSum
   , CoUnitW (..)
   , CoZeroW (..)
-  , MonTravRes (..)
-  , TravRes (..)
+  , MonTravFl (..)
+  , TravFl (..)
   , Traversal
   , UnitW (..)
   , ZeroW (..)
@@ -58,7 +58,7 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Representable (Rep, Representable (..))
 import Prelude (Either (..), const, either, uncurry, ($))
 
-type MonoidalTraversal (s :: k) (t :: k) a b = Optic (Prostrong MonTravRes) s t a b
+type MonoidalTraversal (s :: k) (t :: k) a b = Optic (Prostrong MonTravFl) s t a b
 type MonoidalTraversal' s a = MonoidalTraversal s s a a
 
 -- * The generic carrier is a strong distributive profunctor, by generators
@@ -168,13 +168,13 @@ instance
         ExOptic @(Rep (Product (UN PR px)) :.: p) @(q :.: Corep (Product (UN PR px))) (repUniv :.: l) (r :.: corepUniv)
 
 -- | The other half of the equivalence between the encodings: instantiate the
--- profunctor-class-flavored traversal at the generic carrier @'ExOptic' 'MonTravRes' a b@, which is
+-- profunctor-class-flavored traversal at the generic carrier @'ExOptic' 'MonTravFl' a b@, which is
 -- an SDP by the by-generator instances above. Because its tensor strength comes from the
 -- tensor-action witness @'Rep' ('ActionAt' 'Tensor' _)@ (not a product lens), this needs no
 -- 'Proarrow.Limit.BinaryProduct.Cartesian' (@tensor = product@), only 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' (a discard @a '~>' 'Unit' for the residual) -- which is
 -- exactly what the coproduct-prism witness already demanded -- enabling e.g. the biproduct
 -- categories @Mat@ and @FinRel@ (but not @LINEAR@, which cannot discard). A 'Traversal' is
--- recovered for free wherever one is needed, since @'MonTravRes'@ is a 'SubFlavor' of 'TravRes'.
+-- recovered for free wherever one is needed, since @'MonTravFl'@ is a 'SubFlavor' of 'TravFl'.
 fromPTraversal
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k, CopyDiscard k, SymMonoidal k)
@@ -190,9 +190,9 @@ fromPTraversal = convert
 -- as does a '(%)'-composite.
 monTraverseOf
   :: forall {k} c (s :: k) (t :: k) a b p
-   . (Distributive k, StrongDistributiveProfunctor p, (Ob a, Ob b) => c (ExOptic MonTravRes a b))
+   . (Distributive k, StrongDistributiveProfunctor p, (Ob a, Ob b) => c (ExOptic MonTravFl a b))
   => Optic c s t a b -> p a b -> p s t
-monTraverseOf o pab = withLegs @MonTravRes o \l r -> monTravP l r pab
+monTraverseOf o pab = withLegs @MonTravFl o \l r -> monTravP l r pab
 
 -- | A traversal in the profunctor-class-flavored encoding (cf. 'Proarrow.Optic.PIso'), used by
 -- the "GHC.Generics" combinators below. Equivalent to 'Traversal' via 'toPTraversal' and
@@ -207,7 +207,7 @@ toPTraversal
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k)
   => MonoidalTraversal s t a b -> PTraversal s t a b
-toPTraversal o = withLegs @MonTravRes o \l@Objs r@Objs -> Optic (monTravP l r)
+toPTraversal o = withLegs @MonTravFl o \l@Objs r@Objs -> Optic (monTravP l r)
 
 -- | A full traversal in the profunctor-class encoding: distributes any profunctor carrying both
 -- distributive strength and __product__ strength -- exactly the constraint 'travP' demands. This is
@@ -216,8 +216,8 @@ toPTraversal o = withLegs @MonTravRes o \l@Objs r@Objs -> Optic (monTravP l r)
 type PTraversalFull s t a b = Optic (StrongDistributiveProfunctor :&&: Strong ProdAction) s t a b
 
 -- | Build a 'Traversal' from its van-Laarhoven \/ profunctor-class form, by instantiating the
--- rank-2 function at the generic carrier @'ExOptic' 'TravRes' a b@ (a 'StrongDistributiveProfunctor'
--- /and/ @'Strong' 'ProdAction'@, unlike @'ExOptic' 'MonTravRes' a b@, since 'TravRes' contains the
+-- rank-2 function at the generic carrier @'ExOptic' 'TravFl' a b@ (a 'StrongDistributiveProfunctor'
+-- /and/ @'Strong' 'ProdAction'@, unlike @'ExOptic' 'MonTravFl' a b@, since 'TravFl' contains the
 -- product-lens witness). The 'Traversal' analog of 'fromPTraversal'.
 traversal
   :: forall {k} (s :: k) t a b
@@ -231,7 +231,7 @@ toPTraversalFull
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k)
   => Traversal s t a b -> PTraversalFull s t a b
-toPTraversalFull o = withLegs @TravRes o \l@Objs r@Objs -> Optic (travP l r)
+toPTraversalFull o = withLegs @TravFl o \l@Objs r@Objs -> Optic (travP l r)
 
 v1Optic :: PTraversal (G.V1 a) (G.V1 a') a a'
 v1Optic = Optic \_ -> dimap (\case {}) (\case {}) nil

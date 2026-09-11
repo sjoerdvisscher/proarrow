@@ -1,10 +1,10 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
--- | The __iso__: the bottom of the subtyping lattice, usable as every other flavor. 'IsoRes' is
--- simply the conjunction of the five maximal flavors ('Proarrow.Optic.Lens.LensRes',
--- 'Proarrow.Optic.Prism.PrismRes', 'Proarrow.Optic.Kaleidoscope.KaleidoRes',
--- 'Proarrow.Optic.MonoidalLens.MonLensRes' and 'Proarrow.Optic.Tracer.TracerRes'). Build with 'iso', eliminate to the two legs with
+-- | The __iso__: the bottom of the subtyping lattice, usable as every other flavor. 'IsoFl' is
+-- simply the conjunction of the five maximal flavors ('Proarrow.Optic.Lens.LensFl',
+-- 'Proarrow.Optic.Prism.PrismFl', 'Proarrow.Optic.Kaleidoscope.KaleidoFl',
+-- 'Proarrow.Optic.MonoidalLens.MonLensFl' and 'Proarrow.Optic.Tracer.TracerFl'). Build with 'iso', eliminate to the two legs with
 -- 'withIso' via the 'Yo' carrier -- which also eliminates 'Proarrow.Optic.re'-versed isos, a
 -- conversion the 'SubFlavor' lattice itself cannot express; 'fromPIso'\/'toPIso' mediate with the
 -- profunctor-class-flavored 'PIso'.
@@ -23,58 +23,58 @@ import Proarrow.Optic
   , convert
   , iso
   )
-import Proarrow.Optic.AffineFold (AffineFoldRes)
-import Proarrow.Optic.AffineTraversal (AffineTravRes)
-import Proarrow.Optic.Fold (FoldRes)
-import Proarrow.Optic.Getter (GetterRes, getP)
-import Proarrow.Optic.Grate (GrateRes)
-import Proarrow.Optic.Kaleidoscope (KaleidoRes)
-import Proarrow.Optic.Lens (LensRes)
-import Proarrow.Optic.MonoidalLens (MonLensRes)
-import Proarrow.Optic.Prism (PrismRes)
-import Proarrow.Optic.Setter (SetterRes)
-import Proarrow.Optic.Tracer (TracerRes)
-import Proarrow.Optic.Traversal (TravRes)
+import Proarrow.Optic.AffineFold (AffineFoldFl)
+import Proarrow.Optic.AffineTraversal (AffineTravFl)
+import Proarrow.Optic.Fold (FoldFl)
+import Proarrow.Optic.Getter (GetterFl, getP)
+import Proarrow.Optic.Grate (GrateFl)
+import Proarrow.Optic.Kaleidoscope (KaleidoFl)
+import Proarrow.Optic.Lens (LensFl)
+import Proarrow.Optic.MonoidalLens (MonLensFl)
+import Proarrow.Optic.Prism (PrismFl)
+import Proarrow.Optic.Setter (SetterFl)
+import Proarrow.Optic.Tracer (TracerFl)
+import Proarrow.Optic.Traversal (TravFl)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
-class (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q, TracerRes p q) => IsoRes p q
-instance (LensRes p q, PrismRes p q, KaleidoRes p q, MonLensRes p q, TracerRes p q) => IsoRes p q
+class (LensFl p q, PrismFl p q, KaleidoFl p q, MonLensFl p q, TracerFl p q) => IsoFl p q
+instance (LensFl p q, PrismFl p q, KaleidoFl p q, MonLensFl p q, TracerFl p q) => IsoFl p q
 
 -- | The 'Prostrong'-flavored iso; for the profunctor-class-flavored encoding see 'Proarrow.Optic.PIso'.
-type Iso (s :: k) (t :: k) a b = Optic (Prostrong IsoRes) s t a b
+type Iso (s :: k) (t :: k) a b = Optic (Prostrong IsoFl) s t a b
 
 type Iso' s a = Iso s s a a
 
-instance SubFlavor IsoRes LensRes where subFlavor r = r
-instance SubFlavor IsoRes PrismRes where subFlavor r = r
-instance SubFlavor IsoRes AffineTravRes where subFlavor r = r
-instance SubFlavor IsoRes GetterRes where subFlavor r = r
-instance SubFlavor IsoRes (Flip GetterRes) where subFlavor r = r
-instance SubFlavor IsoRes TravRes where subFlavor r = r
-instance SubFlavor IsoRes SetterRes where subFlavor r = r
-instance SubFlavor IsoRes AffineFoldRes where subFlavor r = r
-instance SubFlavor IsoRes FoldRes where subFlavor r = r
-instance SubFlavor IsoRes GrateRes where subFlavor r = r
-instance SubFlavor IsoRes KaleidoRes where subFlavor r = r
-instance SubFlavor IsoRes MonLensRes where subFlavor r = r
-instance SubFlavor IsoRes TracerRes where subFlavor r = r
+instance SubFlavor IsoFl LensFl where subFlavor r = r
+instance SubFlavor IsoFl PrismFl where subFlavor r = r
+instance SubFlavor IsoFl AffineTravFl where subFlavor r = r
+instance SubFlavor IsoFl GetterFl where subFlavor r = r
+instance SubFlavor IsoFl (Flip GetterFl) where subFlavor r = r
+instance SubFlavor IsoFl TravFl where subFlavor r = r
+instance SubFlavor IsoFl SetterFl where subFlavor r = r
+instance SubFlavor IsoFl AffineFoldFl where subFlavor r = r
+instance SubFlavor IsoFl FoldFl where subFlavor r = r
+instance SubFlavor IsoFl GrateFl where subFlavor r = r
+instance SubFlavor IsoFl KaleidoFl where subFlavor r = r
+instance SubFlavor IsoFl MonLensFl where subFlavor r = r
+instance SubFlavor IsoFl TracerFl where subFlavor r = r
 
 -- | Reversed isos still view\/preview\/fold: @'Proarrow.Optic.re' iso@ is a getter (and more).
-instance SubFlavor (Flip IsoRes) GetterRes where subFlavor r = r
+instance SubFlavor (Flip IsoFl) GetterFl where subFlavor r = r
 
-instance SubFlavor (Flip IsoRes) AffineFoldRes where subFlavor r = r
-instance SubFlavor (Flip IsoRes) FoldRes where subFlavor r = r
+instance SubFlavor (Flip IsoFl) AffineFoldFl where subFlavor r = r
+instance SubFlavor (Flip IsoFl) FoldFl where subFlavor r = r
 
 -- | Any flavor whose optics are isos has strength for the 'Yo' profunctor.
-instance (CategoryOf k, SubFlavor w IsoRes) => Prostrong (w :: FLAVOR k k) (Yo a (OP b) :: k +-> k) where
+instance (CategoryOf k, SubFlavor w IsoFl) => Prostrong (w :: FLAVOR k k) (Yo a (OP b) :: k +-> k) where
   proact @f @g (f :.: Yo sa bt :.: g) =
-    subFlavor @w @IsoRes @f @g (Yo (sa . getP @f @g f) (getP @g @f g . bt))
+    subFlavor @w @IsoFl @f @g (Yo (sa . getP @f @g f) (getP @g @f g . bt))
 
 -- | 'Proarrow.Optic.re'-versed isos are still isos: the same carrier eliminates them by reading
 -- the witness pair backwards. This is a conversion the 'SubFlavor' lattice cannot express (the
--- entailment @IsoRes q p => IsoRes p q@ doesn't hold), but the carrier can compute it.
-instance {-# OVERLAPPING #-} (CategoryOf k) => Prostrong (Flip IsoRes) (Yo (a :: k) (OP b) :: k +-> k) where
+-- entailment @IsoFl q p => IsoFl p q@ doesn't hold), but the carrier can compute it.
+instance {-# OVERLAPPING #-} (CategoryOf k) => Prostrong (Flip IsoFl) (Yo (a :: k) (OP b) :: k +-> k) where
   proact @f @g (f :.: Yo sa bt :.: g) = Yo (sa . getP @f @g f) (getP @g @f g . bt)
 
 -- | Eliminate any iso-flavored optic to its two legs, in either encoding -- including the
@@ -86,7 +86,7 @@ withIso
 withIso (Optic l) k = case l @(Yo a (OP b)) (Yo id id) of Yo sa bt -> k sa bt
 
 -- | The two iso encodings are equivalent: this direction instantiates the
--- profunctor-class-flavored iso at the free 'IsoRes'-strong profunctor @ExOptic 'IsoRes' a b@,
+-- profunctor-class-flavored iso at the free 'IsoFl'-strong profunctor @ExOptic 'IsoFl' a b@,
 -- which needs nothing beyond its 'Proarrow.Core.Profunctor' instance.
 fromPIso :: forall {k} (s :: k) (t :: k) a b. (CategoryOf k) => PIso s t a b -> Iso s t a b
 fromPIso = convert

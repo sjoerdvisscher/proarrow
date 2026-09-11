@@ -2,7 +2,7 @@
 
 -- | The __affine traversal__: the 0-or-1 focus optic that can also reconstruct, the meet of
 -- 'Proarrow.Optic.Lens.Lens' and 'Proarrow.Optic.Prism.Prism' in the subtyping lattice. Its two
--- legs are 'affineMatch' @:: s ~> (t || a)@ and 'affineSet' @:: (s && b) ~> t@ ('AffineTravRes').
+-- legs are 'affineMatch' @:: s ~> (t || a)@ and 'affineSet' @:: (s && b) ~> t@ ('AffineTravFl').
 -- Its witnesses only ever arise by composing lens and prism witnesses, so it is built with
 -- 'Proarrow.Optic.Prism.affineTraversal' (a 'Proarrow.Optic.Lens.Lens' followed by a
 -- 'Proarrow.Optic.Prism.Prism') and eliminated with 'matching', via the generic 'Proarrow.Optic.ExOptic' carrier.
@@ -17,10 +17,10 @@ import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), typ
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), Product, TensorIsProduct, first, second)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), withLegs)
-import Proarrow.Optic.AffineFold (AffineFoldRes)
-import Proarrow.Optic.Fold (FoldRes)
-import Proarrow.Optic.Setter (SetterRes)
-import Proarrow.Optic.Traversal (TravRes)
+import Proarrow.Optic.AffineFold (AffineFoldFl)
+import Proarrow.Optic.Fold (FoldFl)
+import Proarrow.Optic.Setter (SetterFl)
+import Proarrow.Optic.Traversal (TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -43,23 +43,23 @@ distRP
   => ((a || b) && c) ~> (a && c || b && c)
 distRP = distR @k @a @b @c
 
-type AffineTravRes :: forall {k}. FLAVOR k k
-class (TravRes p q, AffineFoldRes p q) => AffineTravRes (p :: k +-> k) (q :: k +-> k) where
+type AffineTravFl :: forall {k}. FLAVOR k k
+class (TravFl p q, AffineFoldFl p q) => AffineTravFl (p :: k +-> k) (q :: k +-> k) where
   affineMatch :: (Bicartesian k) => p (s :: k) a -> q b t -> s ~> (t || a)
   affineSet :: (Bicartesian k) => p (s :: k) a -> q b t -> (s && b) ~> t
-instance (HasBinaryProducts k, Ob (s :: k)) => AffineTravRes (Rep (Product s)) (Corep (Product s)) where
+instance (HasBinaryProducts k, Ob (s :: k)) => AffineTravFl (Rep (Product s)) (Corep (Product s)) where
   -- a lens always matches
   affineMatch @_ @a @_ @t (Rep p) q = rgt @k @t @a . snd @k @s @a . p \\ p \\ q
   affineSet @_ @a @b (Rep p) (Corep q) = q . first @b (fst @k @s @a . p)
-instance (CopyDiscard k, HasCoproducts k, Ob t) => AffineTravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+instance (CopyDiscard k, HasCoproducts k, Ob t) => AffineTravFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   affineMatch @_ @a @b (Rep p) (Corep q) = left @a (q . lft @k @t @b) . p
 
   -- a prism's set never needs the original value, it just reviews
   affineSet @s @_ @b (Rep p) (Corep q) = q . rgt @k @t @b . snd @k @s @b \\ p
-instance (CategoryOf k) => AffineTravRes (Id :: k +-> k) (Id :: k +-> k) where
+instance (CategoryOf k) => AffineTravFl (Id :: k +-> k) (Id :: k +-> k) where
   affineMatch @_ @a @_ @t (Id sa) bt = rgt @k @t @a . sa \\ sa \\ bt
   affineSet @s @_ @b sa (Id bt) = bt . snd @k @s @b \\ sa \\ bt
-instance (AffineTravRes f g, AffineTravRes f' g') => AffineTravRes (f :.: f') (g' :.: g) where
+instance (AffineTravFl f g, AffineTravFl f' g') => AffineTravFl (f :.: f') (g' :.: g) where
   -- match the outer; on failure of the inner, reconstruct via the outer's own setter, reusing s
   affineMatch @s @a @_ @t ((:.:) @m f@Objs f'@Objs) ((:.:) @n g'@Objs g@Objs) =
     ( (lft @_ @t @a . snd @_ @s @t)
@@ -82,21 +82,21 @@ instance (AffineTravRes f g, AffineTravRes f' g') => AffineTravRes (f :.: f') (g
           . second @s (distRP @_ @t @m @b)
           . (fst @_ @s @b &&& first @b (affineMatch @f @g f g))
 
-instance SubFlavor AffineTravRes TravRes where subFlavor r = r
-instance SubFlavor AffineTravRes SetterRes where subFlavor r = r
-instance SubFlavor AffineTravRes AffineFoldRes where subFlavor r = r
-instance SubFlavor AffineTravRes FoldRes where subFlavor r = r
+instance SubFlavor AffineTravFl TravFl where subFlavor r = r
+instance SubFlavor AffineTravFl SetterFl where subFlavor r = r
+instance SubFlavor AffineTravFl AffineFoldFl where subFlavor r = r
+instance SubFlavor AffineTravFl FoldFl where subFlavor r = r
 
-type AffineTraversal (s :: k) (t :: k) a b = Optic (Prostrong AffineTravRes) s t a b
+type AffineTraversal (s :: k) (t :: k) a b = Optic (Prostrong AffineTravFl) s t a b
 type AffineTraversal' s a = AffineTraversal s s a a
 
 -- | Match through any optic that can act as an affine traversal, in either encoding: returns the
 -- focus (@'rgt'@) when it matches, or a reconstructed @t@ (@'lft'@) when it does not. This is the
 -- 'AffineTraversal' eliminator, refining 'Proarrow.Optic.AffineFold.preview' (which forgets @t@).
--- Runs the optic at its witness pair ('ExOptic' 'AffineTravRes', via 'withLegs') and applies
+-- Runs the optic at its witness pair ('ExOptic' 'AffineTravFl', via 'withLegs') and applies
 -- 'affineMatch'.
 matching
   :: forall {k} c (s :: k) (t :: k) a b
-   . (Bicartesian k, (Ob a, Ob b) => c (ExOptic AffineTravRes a b))
+   . (Bicartesian k, (Ob a, Ob b) => c (ExOptic AffineTravFl a b))
   => Optic c s t a b -> s ~> (t || a)
-matching o = withLegs @AffineTravRes o \ @p @q p q -> affineMatch @p @q p q
+matching o = withLegs @AffineTravFl o \ @p @q p q -> affineMatch @p @q p q

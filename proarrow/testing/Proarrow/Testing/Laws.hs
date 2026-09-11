@@ -41,7 +41,7 @@ import Proarrow.Limit.Terminal qualified as Terminal
 import Proarrow.Monoid qualified as Monoid
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (ExOptic, Flip, Optic)
-import Proarrow.Optic.Getter (GetterRes, review, view)
+import Proarrow.Optic.Getter (GetterFl, review, view)
 import Proarrow.Profunctor.Corepresentable
   ( Corepresentable
   , coindex
@@ -1055,7 +1055,7 @@ propIso f g = do
 
 propIso'
   :: forall {k} c (a :: k) b
-   . (Testable k, TestOb a, TestOb b, (Ob b) => c (ExOptic GetterRes b b), (Ob b) => c (ExOptic (Flip GetterRes) b b))
+   . (Testable k, TestOb a, TestOb b, (Ob b) => c (ExOptic GetterFl b b), (Ob b) => c (ExOptic (Flip GetterFl) b b))
   => Optic c a a b b -> Property ()
 propIso' o = propIso (view o) (review o)
 

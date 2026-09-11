@@ -27,7 +27,7 @@ import Proarrow.Category.Monoidal.Rev (REV (..))
 import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, rmap, (//), (:~>), (\\), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Optic (ExOptic (..))
-import Proarrow.Optic.Action (ActRes (..))
+import Proarrow.Optic.Action (ActFl (..))
 import Proarrow.Path
   ( Fold
   , IsPath
@@ -385,7 +385,7 @@ instance (MonoidalAction act, Ob a) => FunctorForRep (Action act a :: m +-> k) w
 type ActionOptic act a b s t =
   EqpOptic (Rep (Action act a)) (Corep (Action act b)) (Rep (Action act s)) (Corep (Action act t))
 
-fromOptic :: (MonoidalAction act, Ob a, Ob b, Ob s, Ob t) => ExOptic (ActRes act) a b s t -> ActionOptic act a b s t
+fromOptic :: (MonoidalAction act, Ob a, Ob b, Ob s, Ob t) => ExOptic (ActFl act) a b s t -> ActionOptic act a b s t
 fromOptic @act @a @b @s @t (ExOptic (l :: p s a) (r :: q b t)) = mkOptic \ @x k ->
   withActP @act @p @q l r \ @z f g ->
     withOb2 @_ @x @z $
@@ -397,7 +397,7 @@ toOptic
   :: forall h x (s :: x +-> h) (t :: h +-> x) (a :: x +-> h) (b :: h +-> x)
    . (CategoryOf h, CategoryOf x, Representable s, Corepresentable t, Representable a, Corepresentable b)
   => EqpOptic a b s t
-  -> ExOptic (ActRes (Rep Precomp)) a (CorepStar b) s (CorepStar t)
+  -> ExOptic (ActFl (Rep Precomp)) a (CorepStar b) s (CorepStar t)
 toOptic (Sq pl) =
   ExOptic
     (Rep @a @(ActionAt (Rep Precomp) (R (E (b :.: CorepStar t)))) (P.Prof get))

@@ -3,7 +3,7 @@
 
 -- | The __traversal__: the many-focus optic, distributing any
 -- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' with product strength
--- through the foci. This module keeps the mutually-recursive 'TravRes'\/'MonTravRes' flavor
+-- through the foci. This module keeps the mutually-recursive 'TravFl'\/'MonTravFl' flavor
 -- classes and their leaf witnesses ('Traversable' and 'Cotraversable' functors, the product lens,
 -- the coproduct prism, 'Beside'\/'BesideSum' juxtaposition and the unit\/zero witnesses); the
 -- free-profunctor apparatus lives in "Proarrow.Optic.MonoidalTraversal". A traversal subtypes to
@@ -50,43 +50,43 @@ import Proarrow.Optic
   , legs2prof
   , withLegs
   )
-import Proarrow.Optic.Fold (FoldRes (..))
-import Proarrow.Optic.Setter (SetterRes (..))
+import Proarrow.Optic.Fold (FoldFl (..))
+import Proarrow.Optic.Setter (SetterFl (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..), coindex)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), RepCostar (..), Representable (..))
 
-type TravRes :: forall {k}. FLAVOR k k
-class (SetterRes p q, FoldRes p q) => TravRes (p :: k +-> k) (q :: k +-> k) where
+type TravFl :: forall {k}. FLAVOR k k
+class (SetterFl p q, FoldFl p q) => TravFl (p :: k +-> k) (q :: k +-> k) where
   -- | Distribute a traversal-strength profunctor. Only the product-lens witness genuinely needs
   -- @'Strong' 'ProdAction'@ (to carry the residual through the categorical product); every other
   -- witness distributes a plain 'StrongDistributiveProfunctor' and inherits 'travP' from 'monTravP'.
   travP :: (StrongDistributiveProfunctor r, Strong ProdAction r) => p s a -> q b t -> r a b -> r s t
-  default travP :: (MonTravRes p q, StrongDistributiveProfunctor r) => p s a -> q b t -> r a b -> r s t
+  default travP :: (MonTravFl p q, StrongDistributiveProfunctor r) => p s a -> q b t -> r a b -> r s t
   travP = monTravP
 
 -- | A __monoidal traversal__ sits between 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' and
 -- 'Traversal': it distributes any 'StrongDistributiveProfunctor' without the product-strength a
 -- lens-as-traversal needs. Every traversal witness except the product lens is a monoidal traversal.
-type MonTravRes :: forall {k}. FLAVOR k k
-class (TravRes p q) => MonTravRes (p :: k +-> k) (q :: k +-> k) where
+type MonTravFl :: forall {k}. FLAVOR k k
+class (TravFl p q) => MonTravFl (p :: k +-> k) (q :: k +-> k) where
   monTravP :: (StrongDistributiveProfunctor r) => p s a -> q b t -> r a b -> r s t
 
-instance (Bicartesian k, Traversable t, Representable t) => TravRes (t :: k +-> k) (RepCostar t)
-instance (Bicartesian k, Traversable t, Representable t) => MonTravRes (t :: k +-> k) (RepCostar t) where
+instance (Bicartesian k, Traversable t, Representable t) => TravFl (t :: k +-> k) (RepCostar t)
+instance (Bicartesian k, Traversable t, Representable t) => MonTravFl (t :: k +-> k) (RepCostar t) where
   monTravP l (RepCostar r) = dimap (index l) r . repTraverse @t
 
 -- | The former cotraversal witness: a corepresentable 'Cotraversable' functor builds @s@ from a
 -- shape of @a@'s. Its 'travP' distributes an SDP exactly as the old @cotravP@ did -- for these
 -- (representable) witnesses a cotraversal /is/ a traversal, which is why there is no separate
 -- @Cotraversal@ optic.
-instance (Bicartesian k, Cotraversable t, Corepresentable t) => TravRes (CorepStar t) (t :: k +-> k)
+instance (Bicartesian k, Cotraversable t, Corepresentable t) => TravFl (CorepStar t) (t :: k +-> k)
 
-instance (Bicartesian k, Cotraversable t, Corepresentable t) => MonTravRes (CorepStar t) (t :: k +-> k) where
+instance (Bicartesian k, Cotraversable t, Corepresentable t) => MonTravFl (CorepStar t) (t :: k +-> k) where
   monTravP (CorepStar l) co = dimap l (coindex co) . corepTraverse @t
 
-instance (HasBinaryProducts k, Ob (s :: k)) => TravRes (Rep (Product s)) (Corep (Product s)) where
+instance (HasBinaryProducts k, Ob (s :: k)) => TravFl (Rep (Product s)) (Corep (Product s)) where
   travP (Rep p) (Corep q) r = dimap p q (act @ProdAction @_ @(PR s) r)
 
 -- | The tensor-action witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' m)@ with a __comonoid__
@@ -97,30 +97,30 @@ instance (HasBinaryProducts k, Ob (s :: k)) => TravRes (Rep (Product s)) (Corep 
 -- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' of the whole category) is what makes this work
 -- in @LINEAR@ for the duplicable objects; it is also the monoidal-lens witness
 -- ("Proarrow.Optic.MonoidalLens").
-instance (Comonoid (m :: k)) => FoldRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
+instance (Comonoid (m :: k)) => FoldFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
   foldMapP (Rep h) am = leftUnitor . (Mon.counit @m ** am) . h
 
-instance (Comonoid (m :: k)) => TravRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m))
-instance (Comonoid (m :: k)) => MonTravRes (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
+instance (Comonoid (m :: k)) => TravFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m))
+instance (Comonoid (m :: k)) => MonTravFl (Rep (ActionAt Tensor m) :: k +-> k) (Corep (ActionAt Tensor m)) where
   monTravP (Rep h) (Corep i) r = dimap h i (act @Tensor @_ @m r)
-instance (CopyDiscard k, HasCoproducts k, Ob t) => TravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t))
-instance (CopyDiscard k, HasCoproducts k, Ob t) => MonTravRes (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
+instance (CopyDiscard k, HasCoproducts k, Ob t) => TravFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t))
+instance (CopyDiscard k, HasCoproducts k, Ob t) => MonTravFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   monTravP (Rep p) (Corep q) r = dimap p q (act @CoprodAction @_ @(COPR t) r)
-instance (CategoryOf k) => TravRes (Id :: k +-> k) (Id :: k +-> k)
-instance (CategoryOf k) => MonTravRes (Id :: k +-> k) (Id :: k +-> k) where
+instance (CategoryOf k) => TravFl (Id :: k +-> k) (Id :: k +-> k)
+instance (CategoryOf k) => MonTravFl (Id :: k +-> k) (Id :: k +-> k) where
   monTravP (Id l) (Id r) = dimap l r
-instance (TravRes f g, TravRes f' g') => TravRes (f :.: f') (g' :.: g) where
+instance (TravFl f g, TravFl f' g') => TravFl (f :.: f') (g' :.: g) where
   travP (f :.: f') (g' :.: g) = travP @f @g f g . travP @f' @g' f' g'
-instance (MonTravRes f g, MonTravRes f' g') => MonTravRes (f :.: f') (g' :.: g) where
+instance (MonTravFl f g, MonTravFl f' g') => MonTravFl (f :.: f') (g' :.: g) where
   monTravP (f :.: f') (g' :.: g) = monTravP @f @g f g . monTravP @f' @g' f' g'
 
-instance SubFlavor TravRes SetterRes where subFlavor r = r
-instance SubFlavor TravRes FoldRes where subFlavor r = r
-instance SubFlavor MonTravRes TravRes where subFlavor r = r
-instance SubFlavor MonTravRes SetterRes where subFlavor r = r
-instance SubFlavor MonTravRes FoldRes where subFlavor r = r
+instance SubFlavor TravFl SetterFl where subFlavor r = r
+instance SubFlavor TravFl FoldFl where subFlavor r = r
+instance SubFlavor MonTravFl TravFl where subFlavor r = r
+instance SubFlavor MonTravFl SetterFl where subFlavor r = r
+instance SubFlavor MonTravFl FoldFl where subFlavor r = r
 
-type Traversal (s :: k) (t :: k) a b = Optic (Prostrong TravRes) s t a b
+type Traversal (s :: k) (t :: k) a b = Optic (Prostrong TravFl) s t a b
 type Traversal' s a = Traversal s s a a
 
 -- | Traverse: distribute any 'StrongDistributiveProfunctor' -- not merely a @Star f@ (the
@@ -129,24 +129,24 @@ type Traversal' s a = Traversal s s a a
 -- @'Prostrong' w p@ bridge (which could only ever cover specific carrier heads).
 --
 -- The optic is accepted in any encoding: the constraint asks the optic's class to hold for the
--- generic carrier @'ExOptic' 'TravRes' a b@, which a 'Prostrong'-flavored optic discharges via
--- @'SubFlavor' w 'TravRes'@, a '(%)'-composite one conjunct at a time, and a profunctor-class one
+-- generic carrier @'ExOptic' 'TravFl' a b@, which a 'Prostrong'-flavored optic discharges via
+-- @'SubFlavor' w 'TravFl'@, a '(%)'-composite one conjunct at a time, and a profunctor-class one
 -- ('Proarrow.Optic.MonoidalTraversal.PTraversalFull') through the carrier's by-generator instances.
 traverseOf
   :: forall {k} c (s :: k) (t :: k) a b p
-   . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, (Ob a, Ob b) => c (ExOptic TravRes a b))
+   . (Distributive k, StrongDistributiveProfunctor p, Strong ProdAction p, (Ob a, Ob b) => c (ExOptic TravFl a b))
   => Optic c s t a b -> p a b -> p s t
-traverseOf o pab = withLegs @TravRes o \l r -> travP l r pab
+traverseOf o pab = withLegs @TravFl o \l r -> travP l r pab
 
 -- | Build a traversal from a 'Traversable' (representable) functor @t@: it focuses every element
 -- the functor holds. This is the one weak-flavor builder that is genuinely primitive -- a
 -- 'Traversable's traversal is not reachable by 'convert' from any single stronger optic. The
--- witness is @t@ itself paired with @'RepCostar' t@ (see 'TravRes' above); the two legs are the
+-- witness is @t@ itself paired with @'RepCostar' t@ (see 'TravFl' above); the two legs are the
 -- representable universal @'repUniv'@ and the identity 'RepCostar'.
 traversed
   :: forall {k} (t :: k +-> k) a b
    . (Bicartesian k, Traversable t, Representable t, Ob a, Ob b) => Traversal (t % a) (t % b) a b
-traversed = legs2prof @TravRes (repUniv @t) (corepUniv @(RepCostar t))
+traversed = legs2prof @TravFl (repUniv @t) (corepUniv @(RepCostar t))
 
 -- * The free traversal profunctor
 
@@ -162,7 +162,7 @@ traversed = legs2prof @TravRes (repUniv @t) (corepUniv @(RepCostar t))
 -- place of the diagonal, so that the two foci are /tensored/ (@x1 ** x2@) instead of identified.
 -- The identification is essential: a @(Day p1 p2, Day q1 q2)@ witness pair admits no componentwise
 -- 'travP' (it would have to split a 'StrongDistributiveProfunctor' value at a tensor), which is why
--- 'Proarrow.Optic.Day.DayRes'-flavored optics focus /pairs/ while this one visits both foci in
+-- 'Proarrow.Optic.Day.DayFl'-flavored optics focus /pairs/ while this one visits both foci in
 -- sequence.
 type Beside :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 type Beside p1 p2 = Rep MultRep :.: (p1 :**: p2) :.: Rep Diag
@@ -173,16 +173,16 @@ type Beside p1 p2 = Rep MultRep :.: (p1 :**: p2) :.: Rep Diag
 type CoBeside :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 type CoBeside q1 q2 = Corep Diag :.: (q1 :**: q2) :.: Corep MultRep
 
-instance (SetterRes p1 q1, SetterRes p2 q2, Monoidal k) => SetterRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
+instance (SetterFl p1 q1, SetterFl p2 q2, Monoidal k) => SetterFl (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
   overP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) f =
     c . (overP @p1 @q1 (rmap f1 l1) (lmap g1 r1) f ** overP @p2 @q2 (rmap f2 l2) (lmap g2 r2) f) . d
-instance (FoldRes p1 q1, FoldRes p2 q2, Monoidal k) => FoldRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2 :: k +-> k) where
+instance (FoldFl p1 q1, FoldFl p2 q2, Monoidal k) => FoldFl (Beside p1 p2 :: k +-> k) (CoBeside q1 q2 :: k +-> k) where
   foldMapP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) am =
     mappend . (foldMapP @p1 @q1 (rmap f1 l1) am ** foldMapP @p2 @q2 (rmap f2 l2) am) . d
-instance (TravRes p1 q1, TravRes p2 q2, Monoidal k) => TravRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
+instance (TravFl p1 q1, TravFl p2 q2, Monoidal k) => TravFl (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
   travP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
     dimap d c (travP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ** travP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
-instance (MonTravRes p1 q1, MonTravRes p2 q2, Monoidal k) => MonTravRes (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
+instance (MonTravFl p1 q1, MonTravFl p2 q2, Monoidal k) => MonTravFl (Beside p1 p2 :: k +-> k) (CoBeside q1 q2) where
   monTravP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
     dimap d c (monTravP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ** monTravP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
 
@@ -197,21 +197,21 @@ type BesideSum p1 p2 = Rep PlusRep :.: (p1 :**: p2) :.: Rep Diag
 type CoBesideSum :: forall {k}. (k +-> k) -> (k +-> k) -> k +-> k
 type CoBesideSum q1 q2 = Corep Diag :.: (q1 :**: q2) :.: Corep PlusRep
 
-instance (SetterRes p1 q1, SetterRes p2 q2, HasBinaryCoproducts k) => SetterRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2) where
+instance (SetterFl p1 q1, SetterFl p2 q2, HasBinaryCoproducts k) => SetterFl (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2) where
   overP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) f =
     c . (overP @p1 @q1 (rmap f1 l1) (lmap g1 r1) f +++ overP @p2 @q2 (rmap f2 l2) (lmap g2 r2) f) . d
 instance
-  (FoldRes p1 q1, FoldRes p2 q2, HasBinaryCoproducts k)
-  => FoldRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2 :: k +-> k)
+  (FoldFl p1 q1, FoldFl p2 q2, HasBinaryCoproducts k)
+  => FoldFl (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2 :: k +-> k)
   where
   foldMapP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) am =
     (foldMapP @p1 @q1 (rmap f1 l1) am ||| foldMapP @p2 @q2 (rmap f2 l2) am) . d
-instance (TravRes p1 q1, TravRes p2 q2, HasBinaryCoproducts k) => TravRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2) where
+instance (TravFl p1 q1, TravFl p2 q2, HasBinaryCoproducts k) => TravFl (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2) where
   travP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
     dimap d c (travP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ++ travP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
 instance
-  (MonTravRes p1 q1, MonTravRes p2 q2, HasBinaryCoproducts k)
-  => MonTravRes (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2)
+  (MonTravFl p1 q1, MonTravFl p2 q2, HasBinaryCoproducts k)
+  => MonTravFl (BesideSum p1 p2 :: k +-> k) (CoBesideSum q1 q2)
   where
   monTravP (Rep d :.: (l1 :**: l2) :.: Rep (f1 :**: f2)) (Corep (g1 :**: g2) :.: (r1 :**: r2) :.: Corep c) r =
     dimap d c (monTravP @p1 @q1 (rmap f1 l1) (lmap g1 r1) r ++ monTravP @p2 @q2 (rmap f2 l2) (lmap g2 r2) r)
@@ -245,12 +245,12 @@ instance (Monoidal k) => Profunctor (CoUnitW :: k +-> k) where
   dimap l r (CoUnitW i) = CoUnitW (r . i) \\ l
   r \\ CoUnitW i = r \\ i
 
-instance (Monoidal k) => SetterRes (UnitW :: k +-> k) CoUnitW where
+instance (Monoidal k) => SetterFl (UnitW :: k +-> k) CoUnitW where
   overP (UnitW h) (CoUnitW i) _ = i . h
-instance (Monoidal k) => FoldRes (UnitW :: k +-> k) (CoUnitW :: k +-> k) where
+instance (Monoidal k) => FoldFl (UnitW :: k +-> k) (CoUnitW :: k +-> k) where
   foldMapP (UnitW h) _ = mempty . h
-instance (Monoidal k) => TravRes (UnitW :: k +-> k) CoUnitW
-instance (Monoidal k) => MonTravRes (UnitW :: k +-> k) CoUnitW where
+instance (Monoidal k) => TravFl (UnitW :: k +-> k) CoUnitW
+instance (Monoidal k) => MonTravFl (UnitW :: k +-> k) CoUnitW where
   monTravP (UnitW h) (CoUnitW i) _ = dimap h i one
 instance (Monoidal k) => Proadjunction (UnitW :: k +-> k) CoUnitW where
   unit = CoUnitW id :.: UnitW id
@@ -275,12 +275,12 @@ instance (HasInitialObject k) => Profunctor (CoZeroW :: k +-> k) where
   dimap l r (CoZeroW i) = CoZeroW (r . i) \\ l
   r \\ CoZeroW i = r \\ i
 
-instance (HasInitialObject k) => SetterRes (ZeroW :: k +-> k) CoZeroW where
+instance (HasInitialObject k) => SetterFl (ZeroW :: k +-> k) CoZeroW where
   overP (ZeroW h) (CoZeroW i) _ = i . h
-instance (HasInitialObject k) => FoldRes (ZeroW :: k +-> k) (CoZeroW :: k +-> k) where
+instance (HasInitialObject k) => FoldFl (ZeroW :: k +-> k) (CoZeroW :: k +-> k) where
   foldMapP (ZeroW h) _ = initiate . h
-instance (HasInitialObject k) => TravRes (ZeroW :: k +-> k) CoZeroW
-instance (HasInitialObject k) => MonTravRes (ZeroW :: k +-> k) CoZeroW where
+instance (HasInitialObject k) => TravFl (ZeroW :: k +-> k) CoZeroW
+instance (HasInitialObject k) => MonTravFl (ZeroW :: k +-> k) CoZeroW where
   monTravP (ZeroW h) (CoZeroW i) _ = dimap h i nil
 instance (HasInitialObject k) => Proadjunction (ZeroW :: k +-> k) CoZeroW where
   unit = CoZeroW id :.: ZeroW id

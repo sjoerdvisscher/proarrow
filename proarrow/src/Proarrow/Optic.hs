@@ -233,8 +233,8 @@ class (w p q) => Flip w q p
 instance (w p q) => Flip w q p
 
 -- | Subflavoring is preserved by 'Flip': the mirror of every edge of the subtyping lattice also
--- holds, so e.g. @'re'@ of a lens can be used as a review ('SubFlavor' ('Flip' 'Proarrow.Optic.Lens.LensRes')
--- ('Flip' 'Proarrow.Optic.Getter.GetterRes')). Incoherent because it overlaps with the reflexive
+-- holds, so e.g. @'re'@ of a lens can be used as a review ('SubFlavor' ('Flip' 'Proarrow.Optic.Lens.LensFl')
+-- ('Flip' 'Proarrow.Optic.Getter.GetterFl')). Incoherent because it overlaps with the reflexive
 -- instance on the diagonal, where both compute the same trivial entailment.
 instance {-# INCOHERENT #-} (SubFlavor w1 w2) => SubFlavor (Flip w1) (Flip w2) where
   subFlavor @p @q r = subFlavor @w1 @w2 @q @p r
