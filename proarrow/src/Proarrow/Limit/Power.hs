@@ -13,7 +13,8 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (leftUnitorInvWith)
+import Proarrow.Category.Monoidal (SymMonoidal (..), leftUnitorInvWith)
+import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..))
 import Proarrow.Limit.Terminal (HasTerminalObject, TerminalObject, terminate)
@@ -36,6 +37,12 @@ mapBase f =
 
 mapPower :: forall {k} {v} (a :: k) (n :: v) m. (Powered v k, Ob a) => (n ~> m) -> a ^ m ~> a ^ n
 mapPower f = withObPower @v @k @a @m (power @v @k @(a ^ m) @a @n (unpower @v @k @a id . f)) \\ f
+
+selfPowered :: forall {v} (a :: v) b n. (Closed v, SymMonoidal v, Ob a, Ob b) => n ~> (a ~~> b) -> a ~> (n ~~> b)
+selfPowered f = curry @_ @a @n @b (uncurry @a f . swap @_ @a @n) \\ f
+
+selfUnpowered :: forall {v} (a :: v) b n. (Closed v, SymMonoidal v, Ob n, Ob b) => a ~> (n ~~> b) -> n ~> (a ~~> b)
+selfUnpowered f = curry @_ @n @a @b (uncurry @n f . swap @_ @n @a) \\ f
 
 instance Powered Type Type where
   type a ^ n = n -> a

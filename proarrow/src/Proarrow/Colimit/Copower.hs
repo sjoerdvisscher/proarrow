@@ -13,7 +13,8 @@ import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Category.Monoidal (rightUnitorInvWith)
+import Proarrow.Category.Monoidal (SymMonoidal, rightUnitorInvWith, type (**))
+import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
 import Proarrow.Core (CategoryOf (..), Ob, Profunctor (dimap, (\\)), Promonad (..), obj, (//), type (+->))
 import Proarrow.Limit.Power (Powered (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
@@ -35,6 +36,12 @@ mapCobase f =
 
 mapCopower :: forall {k} {v} (a :: k) (n :: v) m. (Copowered v k, Ob a) => (n ~> m) -> n *. a ~> m *. a
 mapCopower f = withObCopower @v @k @a @m (copower @v @k @a @(m *. a) @n (uncopower @v @k @a id . f)) \\ f
+
+selfCopowered :: forall {v} (a :: v) b n. (Closed v, SymMonoidal v, Ob a, Ob b) => n ~> (a ~~> b) -> n ** a ~> b
+selfCopowered = uncurry @a
+
+selfUncopowered :: forall {v} (a :: v) b n. (Closed v, SymMonoidal v, Ob a, Ob n) => n ** a ~> b -> n ~> (a ~~> b)
+selfUncopowered = curry @_ @n @a @b
 
 instance Copowered Type Type where
   type n *. a = (n, a)

@@ -17,11 +17,10 @@ import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Sub (SUBCAT (..), Sub (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), leftUnitorInvWith, rightUnitorInvWith)
-import Proarrow.Category.Monoidal.Closed (uncurry)
 import Proarrow.Category.Monoidal.Closed qualified as E
 import Proarrow.Core (Any, CAT, CategoryOf (..), Hom, Kind, Profunctor ((\\)), Promonad (..), type (+->))
-import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 import Proarrow.Core qualified as P
+import Proarrow.Monoid (MONOIDK (..), Mon (..), Monoid (..))
 
 -- | Working with enriched categories and profunctors in Haskell is hard.
 -- Instead we encode them using the underlying regular category/profunctor,
@@ -72,16 +71,16 @@ instance (Profunctor p) => EnrichedProfunctor Type p where
   withProObj r = r
   underlying p () = p
   enriched f = f ()
-  rmap = uncurry P.rmap
-  lmap = uncurry P.lmap
+  rmap = E.uncurry P.rmap
+  lmap = E.uncurry P.lmap
 
 instance (DaggerProfunctor p) => EnrichedProfunctor (Type, Type) p where
   type ProObj (Type, Type) p a b = '(p a b, p b a)
   withProObj r = r
   underlying p = (\() -> p) :**: (\() -> dagger p)
   enriched (f :**: _) = f ()
-  rmap = uncurry P.rmap :**: uncurry P.lmap
-  lmap = uncurry P.lmap :**: uncurry P.rmap
+  rmap = E.uncurry P.rmap :**: E.uncurry P.lmap
+  lmap = E.uncurry P.lmap :**: E.uncurry P.rmap
 
 instance (ThinProfunctor p, Thin j, Thin k) => EnrichedProfunctor CONSTRAINT (p :: j +-> k) where
   type ProObj CONSTRAINT p a b = CNSTRNT (HasArrow p a b)

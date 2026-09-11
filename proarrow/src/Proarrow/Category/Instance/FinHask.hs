@@ -22,6 +22,7 @@ import GHC.TypeNats (KnownNat, Nat, natVal, withKnownNat, withSomeSNat)
 import Prelude (Bool (..), ($))
 import Prelude qualified as P
 
+import Proarrow.Category.Enriched (EnrichedProfunctor (..), HomSelf, compSelf, enrichedSelf, underlyingSelf)
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
@@ -29,6 +30,7 @@ import Proarrow.Category.Monoidal.Distributive (Distributive (..), distLProd, di
 import Proarrow.Category.Topos (ElementaryTopos, HasEpiMonoFactorization (..), HasSubobjectClassifier (..))
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..))
 import Proarrow.Colimit.Coequalizer (HasCoequalizers (..), pushoutDefault)
+import Proarrow.Colimit.Copower (Copowered (..), selfCopowered, selfUncopowered)
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Colimit.Pushout (HasPushouts (..))
 import Proarrow.Core (CAT, CategoryOf (..), Is, Profunctor (..), Promonad (..), UN, dimapDefault)
@@ -44,6 +46,7 @@ import Proarrow.Limit.BinaryProduct
   , swapProd
   )
 import Proarrow.Limit.Equalizer (HasEqualizers (..))
+import Proarrow.Limit.Power (Powered (..), selfPowered, selfUnpowered)
 import Proarrow.Limit.Pullback (HasPullbacks (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..), Monoid (..))
@@ -160,6 +163,26 @@ instance Closed FINHASK where
   withObExp r = r
   curry f@FinHask{} = arr \a -> arr \b -> f ! (a, b)
   apply = arr \(m, x) -> m ! x
+
+instance EnrichedProfunctor FINHASK FinHask where
+  type ProObj FINHASK FinHask a b = HomSelf a b
+  withProObj r = r
+  underlying = underlyingSelf
+  enriched = enrichedSelf
+  rmap = compSelf
+  lmap = compSelf . swap
+
+instance Powered FINHASK FINHASK where
+  type a ^ n = n ~~> a
+  withObPower @a @n r = withObExp @_ @a @n r
+  power = selfPowered
+  unpower = selfUnpowered
+
+instance Copowered FINHASK FINHASK where
+  type n *. a = n ** a
+  withObCopower @a @n r = withOb2 @_ @a @n r
+  copower = selfCopowered
+  uncopower = selfUncopowered
 
 instance Distributive FINHASK where
   distL @a @b @c = distLProd @a @b @c
