@@ -7,6 +7,7 @@ import Prelude
 
 import Examples.SimplyTypedLambdaCalculus qualified as STLC
 import Examples.UntypedLambdaCalculus qualified as ULC
+import Examples.Vitrea qualified as Vitrea
 import Props.Bool qualified as Bool
 import Props.Cospan qualified as Cospan
 import Props.Cost qualified as Cost
@@ -58,5 +59,6 @@ main =
           "Examples"
           [ STLC.test
           , ULC.test
+          , Vitrea.test
           ]
       ]

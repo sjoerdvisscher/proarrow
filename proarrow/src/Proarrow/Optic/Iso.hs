@@ -3,7 +3,7 @@
 
 -- | The __iso__: the bottom of the subtyping lattice, usable as every other flavor. 'IsoFl' is
 -- simply the conjunction of the five maximal flavors ('Proarrow.Optic.Lens.LensFl',
--- 'Proarrow.Optic.Prism.PrismFl', 'Proarrow.Optic.Kaleidoscope.KaleidoFl',
+-- 'Proarrow.Optic.Prism.PrismFl', 'Proarrow.Optic.PowerGrate.PowerGrateFl',
 -- 'Proarrow.Optic.MonoidalLens.MonLensFl' and 'Proarrow.Optic.Tracer.TracerFl'). Build with 'iso', eliminate to the two legs with
 -- 'withIso' via the 'Yo' carrier -- which also eliminates 'Proarrow.Optic.re'-versed isos, a
 -- conversion the 'SubFlavor' lattice itself cannot express; 'fromPIso'\/'toPIso' mediate with the
@@ -28,9 +28,9 @@ import Proarrow.Optic.AffineTraversal (AffineTravFl)
 import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Optic.Getter (GetterFl, getP)
 import Proarrow.Optic.Grate (GrateFl)
-import Proarrow.Optic.Kaleidoscope (KaleidoFl)
 import Proarrow.Optic.Lens (LensFl)
 import Proarrow.Optic.MonoidalLens (MonLensFl)
+import Proarrow.Optic.PowerGrate (PowerGrateFl)
 import Proarrow.Optic.Prism (PrismFl)
 import Proarrow.Optic.Setter (SetterFl)
 import Proarrow.Optic.Tracer (TracerFl)
@@ -38,8 +38,8 @@ import Proarrow.Optic.Traversal (TravFl)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Yoneda (Yo (..))
 
-class (LensFl p q, PrismFl p q, KaleidoFl p q, MonLensFl p q, TracerFl p q) => IsoFl p q
-instance (LensFl p q, PrismFl p q, KaleidoFl p q, MonLensFl p q, TracerFl p q) => IsoFl p q
+class (LensFl p q, PrismFl p q, PowerGrateFl p q, MonLensFl p q, TracerFl p q) => IsoFl p q
+instance (LensFl p q, PrismFl p q, PowerGrateFl p q, MonLensFl p q, TracerFl p q) => IsoFl p q
 
 -- | The 'Prostrong'-flavored iso; for the profunctor-class-flavored encoding see 'Proarrow.Optic.PIso'.
 type Iso (s :: k) (t :: k) a b = Optic (Prostrong IsoFl) s t a b
@@ -56,7 +56,7 @@ instance SubFlavor IsoFl SetterFl where subFlavor r = r
 instance SubFlavor IsoFl AffineFoldFl where subFlavor r = r
 instance SubFlavor IsoFl FoldFl where subFlavor r = r
 instance SubFlavor IsoFl GrateFl where subFlavor r = r
-instance SubFlavor IsoFl KaleidoFl where subFlavor r = r
+instance SubFlavor IsoFl PowerGrateFl where subFlavor r = r
 instance SubFlavor IsoFl MonLensFl where subFlavor r = r
 instance SubFlavor IsoFl TracerFl where subFlavor r = r
 

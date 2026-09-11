@@ -24,7 +24,7 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Coproduct ((:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), repUniv)
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), repUniv)
 import Prelude (($))
 
 class (MonoidalProfunctor p, MonoidalProfunctor (Coprod p)) => DistributiveProfunctor p
@@ -169,3 +169,7 @@ instance (HasBinaryCoproducts k, Cotraversable p, Cotraversable q) => Cotraversa
 instance (Cotraversable p, Cotraversable q) => Cotraversable (p :+: q) where
   cotraverse (r :.: InjL p) = case cotraverse (r :.: p) of p' :.: r' -> InjL p' :.: r'
   cotraverse (r :.: InjR q) = case cotraverse (r :.: q) of q' :.: r' -> InjR q' :.: r'
+
+-- | Note this breaks for possibly infinite tranversals like Star [].
+instance (Traversable t, Representable t) => Cotraversable (RepCostar t) where
+  cotraverse (p :.: RepCostar t) = p // case traverse @t (repUniv :.: p) of p' :.: t' -> corepUniv :.: rmap (t . index t') p'

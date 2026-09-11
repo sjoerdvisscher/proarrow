@@ -18,11 +18,12 @@ import Proarrow.Category.Monoidal
   , SymMonoidal (..)
   , Tensor
   , UnitF
+  , swapInner
   , (**)
   , type (**!)
   )
-import Proarrow.Category.Monoidal.Action (Act, CoprodAction, MonoidalAction (..), actHom)
-import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.Action (Act, ActionAt, CoprodAction, MonoidalAction (..), actHom)
+import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed (..))
 import Proarrow.Category.Monoidal.StarAutonomous (StarAutonomous (..))
 import Proarrow.Category.Monoidal.Strength (Strong (..))
@@ -36,7 +37,18 @@ import Proarrow.Colimit.BinaryCoproduct
   , codiag
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..), HasZeroObject (..))
-import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), arr, dimapDefault, obj, type (+->))
+import Proarrow.Core
+  ( CAT
+  , CategoryOf (..)
+  , Kind
+  , Profunctor (..)
+  , Promonad (..)
+  , arr
+  , dimapDefault
+  , obj
+  , (//)
+  , type (+->)
+  )
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -239,6 +251,82 @@ instance (Cartesian k, Ob r) => Strong Tensor (Rep (Constant r) :: k +-> k) wher
 
 instance (Cartesian k, HasCoproducts k, Monoid r) => Strong CoprodAction (Rep (Constant r) :: k +-> k) where
   act @(COPR a) (Rep @y p) = withObCoprod @k @a @y (Rep (mempty @r . terminate @k @a ||| p))
+
+-- | Tensoring with a monoid, @m ** -@, is an applicative functor: the monoid's unit is @pure@ and
+-- its multiplication is @<*>@. Rendered on the representable profunctor @'Rep' ('ActionAt' 'Tensor' m)@
+-- (legs @a ~> m ** b@) this is a 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor',
+-- the Writer applicative of the literature. (The 'Constant' instances above are the degenerate
+-- case @b = Unit@.)
+instance (SymMonoidal k, Monoid (m :: k)) => MonoidalProfunctor (Rep (ActionAt Tensor m) :: k +-> k) where
+  one = Rep (memptyAct @Tensor @m @Unit)
+  Rep @x2 l ** Rep @y2 r =
+    l // r // withOb2 @k @x2 @y2 (Rep ((mappend @m ** obj @(x2 ** y2)) . swapInner @m @x2 @m @y2 . (l ** r)))
+
+instance
+  (Monoidal k, HasCoproducts k, Ob (m :: k))
+  => MonoidalProfunctor (Coprod (Rep (ActionAt Tensor m)) :: COPROD k +-> COPROD k)
+  where
+  one = withOb2 @k @m @InitialObject (Coprod (Rep initiate))
+  Coprod (Rep @x2 l) ** Coprod (Rep @y2 r) =
+    withObCoprod @k @x2 @y2 (Coprod (Rep ((obj @m ** lft @k @x2 @y2) . l ||| (obj @m ** rgt @k @x2 @y2) . r)))
+instance (SymMonoidal k, Ob (m :: k)) => Strong Tensor (Rep (ActionAt Tensor m) :: k +-> k) where
+  act @a (Rep @y p) =
+    p //
+      withOb2 @k @a @y (Rep (associator @k @m @a @y . (swap @k @a @m ** obj @y) . associatorInv @k @a @m @y . (obj @a ** p)))
+instance (Monoidal k, HasCoproducts k, Monoid (m :: k)) => Strong CoprodAction (Rep (ActionAt Tensor m) :: k +-> k) where
+  act @(COPR a) (Rep @y p) =
+    p // withObCoprod @k @a @y (Rep ((obj @m ** lft @k @a @y) . memptyAct @Tensor @m @a ||| (obj @m ** rgt @k @a @y) . p))
+
+-- | The exponential by a comonoid, @m ~~> -@, is an applicative functor (the reader applicative):
+-- @pure@ discards the argument with the counit and @<*>@ duplicates it with the comultiplication.
+-- Rendered on @'Rep' ('Exp' m)@ (legs @a ~> (m ~~> b)@) this is a
+-- 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor', which is what makes a
+-- 'Proarrow.Optic.Grate.Grate' a 'Proarrow.Optic.Kaleidoscope.Kaleidoscope'.
+instance (Closed k, SymMonoidal k, Comonoid (m :: k)) => MonoidalProfunctor (Rep (Exp m) :: k +-> k) where
+  one = Rep (curry @k @Unit @m (leftUnitor @k @Unit . (obj @Unit ** counit @m)))
+  Rep @x2 @_ @x1 l ** Rep @y2 @_ @y1 r =
+    l //
+      r //
+        withOb2 @k @x1 @y1
+          ( withOb2 @k @x2 @y2
+              ( withObExp @k @m @x2
+                  ( withObExp @k @m @y2
+                      ( Rep
+                          ( curry @k @(x1 ** y1) @m
+                              ( (apply @k @m @x2 ** apply @k @m @y2)
+                                  . swapInner @(m ~~> x2) @(m ~~> y2) @m @m
+                                  . ((l ** r) ** comult @m)
+                              )
+                          )
+                      )
+                  )
+              )
+          )
+
+instance (Closed k, HasCoproducts k, Ob (m :: k)) => MonoidalProfunctor (Coprod (Rep (Exp m)) :: COPROD k +-> COPROD k) where
+  one = withObExp @k @m @InitialObject (Coprod (Rep initiate))
+  Coprod (Rep @x2 l) ** Coprod (Rep @y2 r) =
+    withObCoprod @k @x2 @y2 (Coprod (Rep ((lft @k @x2 @y2 ^^^ obj @m) . l ||| (rgt @k @x2 @y2 ^^^ obj @m) . r)))
+instance (Closed k, SymMonoidal k, Ob (m :: k)) => Strong Tensor (Rep (Exp m) :: k +-> k) where
+  act @a (Rep @y @_ @x p) =
+    p //
+      withOb2 @k @a @x
+        ( withOb2 @k @a @y
+            ( withObExp @k @m @y
+                (Rep (curry @k @(a ** x) @m ((obj @a ** apply @k @m @y) . associator @k @a @(m ~~> y) @m . ((obj @a ** p) ** obj @m))))
+            )
+        )
+instance (Closed k, HasCoproducts k, Comonoid (m :: k)) => Strong CoprodAction (Rep (Exp m) :: k +-> k) where
+  act @(COPR a) (Rep @y p) =
+    p //
+      withObCoprod @k @a @y
+        ( withObExp @k @m @a
+            ( withObExp @k @m @y
+                ( Rep
+                    ((lft @k @a @y ^^^ obj @m) . curry @k @a @m (rightUnitor @k @a . (obj @a ** counit @m)) ||| (rgt @k @a @y ^^^ obj @m) . p)
+                )
+            )
+        )
 
 -- | The free-category structure for @'Supplies' 'Monoid'@: every object gets formal 'mappend'
 -- ('Join') and 'mempty' ('Sprout') generators, interpreted by 'foldStructure' through the

@@ -32,9 +32,9 @@ import Proarrow.Optic.Fold (Fold, foldMapOf, unfold)
 import Proarrow.Optic.Getter (Getter, Review, review, view, (#), (^.))
 import Proarrow.Optic.Grate (Grate, grate, withGrate)
 import Proarrow.Optic.Iso (Iso, fromPIso, toPIso, withIso)
-import Proarrow.Optic.Kaleidoscope (Kaleidoscope, Nat (..), kaleidoscope, kaleidoscopeN, kaleidoscopeOf)
 import Proarrow.Optic.Lens (Lens, lens, withLens)
 import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
+import Proarrow.Optic.PowerGrate (Nat (..), PowerGrate, powerGrate, powerGrateOf, zipWithOf)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterFl (..), over, set, (%~))
 import Proarrow.Optic.Tracer (Tracer, fromPTracer, toPTracer, tracer, tracerOf, withTracer)
@@ -94,7 +94,7 @@ isoToReview = O.convert
 isoToGrate :: (CategoryOf k) => Iso (s :: k) t a b -> Grate s t a b
 isoToGrate = O.convert
 
-isoToKaleidoscope :: (Monoidal k) => Iso (s :: k) t a b -> Kaleidoscope s t a b
+isoToKaleidoscope :: (Monoidal k) => Iso (s :: k) t a b -> PowerGrate s t a b
 isoToKaleidoscope = O.convert
 
 -- | The classic zipping grate on pairs.
@@ -232,13 +232,13 @@ _2mon = monLens @Bool id id
 notIso :: Iso Bool Bool Bool Bool
 notIso = O.iso not not
 
--- | The binary (pair) kaleidoscope, focusing both components of a tensor.
-pairK :: Kaleidoscope (Bool, Bool) (Bool, Bool) Bool Bool
-pairK = kaleidoscope id id
+-- | The binary (pair) power grate, focusing both components of a tensor.
+pairK :: PowerGrate (Bool, Bool) (Bool, Bool) Bool Bool
+pairK = powerGrate @(S (S Z)) (\(a, b) -> (a, (b, ()))) (\(a, (b, ())) -> (a, b))
 
--- | The arity-3 kaleidoscope (via the general 'kaleidoscopeN'), over a nested tensor triple.
-triK :: Kaleidoscope (Bool, (Bool, (Bool, ()))) (Bool, (Bool, (Bool, ()))) Bool Bool
-triK = kaleidoscopeN @(S (S (S Z))) id id
+-- | The arity-3 power grate, over a nested tensor triple.
+triK :: PowerGrate (Bool, (Bool, (Bool, ()))) (Bool, (Bool, (Bool, ()))) Bool Bool
+triK = powerGrate @(S (S (S Z))) id id
 
 -- | A tracer in Hask with a @Bool@ residual and identity legs, so @over feedback f s@ solves
 -- @(m, t) = f (m, s)@ for @m@ through the lazy fixpoint of @'Proarrow.Category.Monoidal.Strength.Costrong' (->)@.
@@ -314,15 +314,15 @@ test =
     , propFnEq @Bool "iso as getter" (view notIso) not
     , propFnEq @Bool "iso as review" (review notIso) not
     , propFnEq @Bool "iso as setter" (over notIso not) not
-    , propFnEq @Bool "iso as kaleidoscope" (kaleidoscopeOf notIso not) not
+    , propFnEq @Bool "iso as kaleidoscope" (powerGrateOf notIso not) not
     , propFnEq @Bool "iso as monoidal lens (view)" (view (O.convert notIso :: MonoidalLens Bool Bool Bool Bool)) not
     , propFnEq @Bool "iso as monoidal lens (over)" (over (O.convert notIso :: MonoidalLens Bool Bool Bool Bool) not) not
     , propFnEq @(Bool, Bool) "lens as traversal as setter" (over (lensToTraversal _1) not) (first not)
     , propFnEq @(Maybe Bool) "prism as traversal as fold" (foldMapOf (prismToTraversal _Just) (: [])) maybeToList
-    , propFnEq @(Bool, Bool) "kaleidoscope as setter (hom carrier)" (kaleidoscopeOf pairK not) (bimap not not)
+    , propFnEq @(Bool, Bool) "kaleidoscope as setter (hom carrier)" (powerGrateOf pairK not) (bimap not not)
     , propFnEq @(Bool, Bool)
         "kaleidoscope aggregates through an applicative"
-        (\ss -> unPrelude (unStar (kaleidoscopeOf pairK (Star (Prelude . okIf))) ss))
+        (\ss -> unPrelude (unStar (powerGrateOf pairK (Star (Prelude . okIf))) ss))
         aggBoth
     , propFnEq @(Bool, Bool)
         "kaleidoscope as fold (it is a fixed-arity traversal)"
@@ -337,10 +337,10 @@ test =
         "corep-cotraversable witness as traversal (traverseOf)"
         (unPrelude . unStar (traverseOf zipSnd (Star (Prelude . Just . not))))
         (Just . second not)
-    , propFnEq @(Bool, (Bool, (Bool, ()))) "n-ary (3) kaleidoscope as setter" (kaleidoscopeOf triK not) mapTriple
+    , propFnEq @(Bool, (Bool, (Bool, ()))) "n-ary (3) kaleidoscope as setter" (powerGrateOf triK not) mapTriple
     , propFnEq @(Bool, (Bool, (Bool, ())))
         "n-ary (3) kaleidoscope aggregates through an applicative"
-        (\ss -> unPrelude (unStar (kaleidoscopeOf triK (Star (Prelude . okIf))) ss))
+        (\ss -> unPrelude (unStar (powerGrateOf triK (Star (Prelude . okIf))) ss))
         aggTriple
     , propFnEq @(Bool, Bool) "re lens as review" (review (O.re _1)) fst
     , propFnEq @Bool "re prism as getter" (view (O.re _Just)) Just
@@ -387,6 +387,14 @@ test =
         (withPrism (isoToPrism notMaybeIso) (\_ sta -> sta))
         (Right . fmap not)
     , propFnEq @Bool "withGrate zipping" (\b -> withGrate (isoToGrate notIso) (\z -> z (\g -> g ()) (\() -> b))) id
+    , propFnEq @((Bool, Bool), (Bool, Bool))
+        "zipWithOf a grate zips pairwise"
+        (zipWithOf pairGrate (uncurry (&&)))
+        (\((a, b), (c, d)) -> (a && c, b && d))
+    , propFnEq @((Bool, Bool), (Bool, Bool))
+        "zipWithOf a power grate agrees with the grate"
+        (zipWithOf pairK (uncurry (||)))
+        (zipWithOf pairGrate (uncurry (||)))
     , propFnEq @Bool "withLens on a PIso" (withLens cNot const) not
     , propFnEq @(Maybe Bool) "preview on a PIso" (^? cMaybeNot) (Just . fmap not)
     , propFnEq @Bool "PIso round trip" (view (fromPIso (toPIso notIso))) not
@@ -429,8 +437,8 @@ test =
         (\(m, c) -> [(m', c) | m' <- traverse (\b -> [b, not b]) m])
     , propFnEq @Bool "tracerOf a PTracer directly" (tracerOf (toPTracer feedback) loop) not
     , propFnEq @(Bool, Bool)
-        "kaleidoscopeOf a kaleidoscope%iso composite"
-        (kaleidoscopeOf (pairK O.% notIso) not)
+        "powerGrateOf a kaleidoscope%iso composite"
+        (powerGrateOf (pairK O.% notIso) not)
         (bimap not not)
     , propFnEq @(Maybe Bool, Bool) "composite lens%prism fold" (foldMapOf (_1 O.% _Just) (: [])) (maybeToList . fst)
     , propFnEq @Bool "composite iso%prism review" (review (notMaybeIso O.% _Just)) (Just . not)

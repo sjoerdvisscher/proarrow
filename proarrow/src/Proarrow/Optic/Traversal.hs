@@ -66,7 +66,7 @@ class (SetterFl p q, FoldFl p q) => TravFl (p :: k +-> k) (q :: k +-> k) where
   default travP :: (MonTravFl p q, StrongDistributiveProfunctor r) => p s a -> q b t -> r a b -> r s t
   travP = monTravP
 
--- | A __monoidal traversal__ sits between 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' and
+-- | A __monoidal traversal__ sits between 'Proarrow.Optic.PowerGrate.PowerGrate' and
 -- 'Traversal': it distributes any 'StrongDistributiveProfunctor' without the product-strength a
 -- lens-as-traversal needs. Every traversal witness except the product lens is a monoidal traversal.
 type MonTravFl :: forall {k}. FLAVOR k k

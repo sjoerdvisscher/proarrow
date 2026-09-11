@@ -4,17 +4,21 @@
 --
 -- > Grate s t a b = exists m. (s ~> (m ~~> a), (m ~~> b) ~> t)
 --
--- witnessed by @'Rep'@\/@'Corep'@ @('Exp' m)@ ('GrateFl' \/ 'zipWithP'). It subtypes only to
--- 'Proarrow.Optic.Setter.Setter', and every 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' is one.
--- Build with 'grate' (whose residual is the \"logarithm\" @s ~~> a@), eliminate to the zipping
--- function with 'withGrate', via the generic 'ExOptic' carrier.
+-- witnessed by @'Rep'@\/@'Corep'@ @('Exp' m)@ ('GrateFl' \/ 'zipWithP') for a /comonoid/ @m@. The
+-- exponential by a comonoid is the reader applicative, so every grate is a
+-- 'Proarrow.Optic.Kaleidoscope.Kaleidoscope' (hence a 'Proarrow.Optic.Kaleidoscope.Cotraversal' and a
+-- 'Proarrow.Optic.Setter.Setter'), and every 'Proarrow.Optic.PowerGrate.PowerGrate' is a
+-- grate. Build with 'grate' (whose residual is the \"logarithm\" @s ~~> a@), eliminate to the
+-- zipping function with 'withGrate', via the generic 'ExOptic' carrier.
 module Proarrow.Optic.Grate where
 
 import Prelude (($))
 
 import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal (..), first, second, swap, type (**))
 import Proarrow.Category.Monoidal.Closed (Closed (..), Exp)
+import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Promonad (..), obj, type (+->))
+import Proarrow.Monoid (Comonoid)
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( ExOptic
@@ -25,6 +29,7 @@ import Proarrow.Optic
   , legs2prof
   , withLegs
   )
+import Proarrow.Optic.Kaleidoscope (CotravFl, KaleidoFl)
 import Proarrow.Optic.Setter (SetterFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -36,9 +41,10 @@ import Proarrow.Profunctor.Representable (Rep (..))
 -- this needs no 'Proarrow.Category.Monoidal.Distributive.StrongDistributiveProfunctor' machinery
 -- at all -- 'zipWithP' is built directly out of 'Closed'\/'SymMonoidal' algebra
 -- (curry\/apply\/swap), since we're manipulating morphisms directly rather than lifting an
--- arbitrary effect through a witness functor.
+-- arbitrary effect through a witness functor. 'Proarrow.Optic.Kaleidoscope.KaleidoFl' is a
+-- superclass: the residual is a comonoid, so @m ~~> -@ is an applicative functor.
 type GrateFl :: forall {k}. FLAVOR k k
-class (SetterFl p q) => GrateFl (p :: k +-> k) (q :: k +-> k) where
+class (KaleidoFl p q) => GrateFl (p :: k +-> k) (q :: k +-> k) where
   zipWithP
     :: forall s a b t
      . (Closed k, SymMonoidal k) => p s a -> q b t -> (forall (x :: k). (Ob x) => ((x ~~> a) ~> b) -> (x ~~> s) ~> t)
@@ -62,13 +68,15 @@ flipExp =
               )
           )
 
-instance (Closed k, SymMonoidal k, Ob m) => GrateFl (Rep (Exp m) :: k +-> k) (Corep (Exp m) :: k +-> k) where
+instance (Closed k, SymMonoidal k, HasCoproducts k, Comonoid m) => GrateFl (Rep (Exp m) :: k +-> k) (Corep (Exp m) :: k +-> k) where
   zipWithP @_ @a (Rep sm) (Corep mbt) @x kk = mbt . (kk ^^^ obj @m) . flipExp @x @m @a . (sm ^^^ obj @x)
 instance (CategoryOf k) => GrateFl (Id :: k +-> k) (Id :: k +-> k) where
   zipWithP (Id l) (Id r) @x kk = r . kk . (l ^^^ obj @x)
 instance (GrateFl f g, GrateFl f' g') => GrateFl (f :.: f') (g' :.: g) where
   zipWithP (f :.: f') (g' :.: g) @x kk = zipWithP @f @g f g @x (zipWithP @f' @g' f' g' @x kk)
 
+instance SubFlavor GrateFl KaleidoFl where subFlavor r = r
+instance SubFlavor GrateFl CotravFl where subFlavor r = r
 instance SubFlavor GrateFl SetterFl where subFlavor r = r
 
 type Grate (s :: k) (t :: k) a b = Optic (Prostrong GrateFl) s t a b
@@ -84,10 +92,11 @@ withGrate o k = withLegs @GrateFl o \ @p @q p q -> k (\ @x kk -> zipWithP @p @q 
 
 -- | The canonical\/atomic grate constructor: the residual is the self-referential @s ~~> a@
 -- (the "logarithm" of the get side), whose own get-map @m ~> (s ~~> a)@ trivializes to 'id' once
--- @m@ is fixed to be exactly @s ~~> a@.
+-- @m@ is fixed to be exactly @s ~~> a@. That residual must be a comonoid; in a
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' category every object is.
 grate
   :: forall {k} (s :: k) (t :: k) a b
-   . (Closed k, SymMonoidal k, Ob s, Ob a, Ob b)
+   . (Closed k, SymMonoidal k, HasCoproducts k, Comonoid (s ~~> a), Ob s, Ob a, Ob b)
   => (((s ~~> a) ~~> b) ~> t) -> Grate s t a b
 grate f@Objs =
   withObExp @k @s @a $
