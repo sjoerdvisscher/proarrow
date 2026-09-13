@@ -15,7 +15,8 @@ module Proarrow.Optic.Sum where
 import Prelude (type (~))
 
 import Proarrow.Category.Instance.Coproduct (COPRODUCT (..), (:++:) (..))
-import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), (\\), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), type (+->))
+import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (FLAVOR, Flavor, Optic, Prostrong (..), legs2prof, withLegs)
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -69,24 +70,19 @@ injLOptic
    . (Flavor w1, w2 (Id :: CAT k2) (Id :: CAT j2), CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2)
   => Optic (Prostrong w1) s t a b -> Optic (Prostrong (SumFl w1 w2)) (L s) (L t) (L a) (L b)
 injLOptic o =
-  withLegs @w1 o \ @p @q l r ->
+  withLegs @w1 o \ @p @q l@Objs r@Objs ->
     legs2prof @(SumFl w1 w2)
       (InjL l :: (p :++: (Id :: CAT k2)) (L s) (L a))
       (InjL r :: (q :++: (Id :: CAT j2)) (L b) (L t))
-      \\ l
-      \\ r
-
 injROptic
   :: forall {j1} {k1} {j2} {k2} (w1 :: FLAVOR j1 k1) (w2 :: FLAVOR j2 k2) s t a b
    . (Flavor w2, w1 (Id :: CAT k1) (Id :: CAT j1), CategoryOf j1, CategoryOf k1, CategoryOf j2, CategoryOf k2)
   => Optic (Prostrong w2) s t a b -> Optic (Prostrong (SumFl w1 w2)) (R s) (R t) (R a) (R b)
 injROptic o =
-  withLegs @w2 o \ @p @q l r ->
+  withLegs @w2 o \ @p @q l@Objs r@Objs ->
     legs2prof @(SumFl w1 w2)
       (InjR l :: ((Id :: CAT k1) :++: p) (R s) (R a))
       (InjR r :: ((Id :: CAT j1) :++: q) (R b) (R t))
-      \\ l
-      \\ r
 
 -- | The inverse of 'injLOptic': every 'SumFl' witness of an @(L s) (L t) (L a) (L b)@-shaped
 -- optic actually comes from an underlying @w1@-flavored optic on @s t a b@.

@@ -29,6 +29,7 @@ import Proarrow.Optic
   , legs2prof
   , withLegs
   )
+import Proarrow.Optic.Glass (GlassFl)
 import Proarrow.Optic.Kaleidoscope (CotravFl, KaleidoFl)
 import Proarrow.Optic.Setter (SetterFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -44,7 +45,7 @@ import Proarrow.Profunctor.Representable (Rep (..))
 -- arbitrary effect through a witness functor. 'Proarrow.Optic.Kaleidoscope.KaleidoFl' is a
 -- superclass: the residual is a comonoid, so @m ~~> -@ is an applicative functor.
 type GrateFl :: forall {k}. FLAVOR k k
-class (KaleidoFl p q) => GrateFl (p :: k +-> k) (q :: k +-> k) where
+class (KaleidoFl p q, GlassFl p q) => GrateFl (p :: k +-> k) (q :: k +-> k) where
   zipWithP
     :: forall s a b t
      . (Closed k, SymMonoidal k) => p s a -> q b t -> (forall (x :: k). (Ob x) => ((x ~~> a) ~> b) -> (x ~~> s) ~> t)
@@ -75,6 +76,7 @@ instance (CategoryOf k) => GrateFl (Id :: k +-> k) (Id :: k +-> k) where
 instance (GrateFl f g, GrateFl f' g') => GrateFl (f :.: f') (g' :.: g) where
   zipWithP (f :.: f') (g' :.: g) @x kk = zipWithP @f @g f g @x (zipWithP @f' @g' f' g' @x kk)
 
+instance SubFlavor GrateFl GlassFl where subFlavor r = r
 instance SubFlavor GrateFl KaleidoFl where subFlavor r = r
 instance SubFlavor GrateFl CotravFl where subFlavor r = r
 instance SubFlavor GrateFl SetterFl where subFlavor r = r

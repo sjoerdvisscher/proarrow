@@ -25,15 +25,17 @@ import Proarrow.Category.Monoidal.Strength (Strong)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts, type (||))
 import Proarrow.Core (CategoryOf (..), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, type (&&))
+import Proarrow.Monoid (ComonoidOn (..))
 import Proarrow.Optic qualified as O
 import Proarrow.Optic.AffineFold (AffineFold, preview, (^?))
-import Proarrow.Optic.AffineTraversal (AffineTraversal)
+import Proarrow.Optic.AffineTraversal (AffineTraversal, matching)
 import Proarrow.Optic.Fold (Fold, foldMapOf, unfold)
 import Proarrow.Optic.Getter (Getter, Review, review, view, (#), (^.))
+import Proarrow.Optic.Glass (Glass, glass, withGlass)
 import Proarrow.Optic.Grate (Grate, grate, withGrate)
 import Proarrow.Optic.Iso (Iso, fromPIso, toPIso, withIso)
 import Proarrow.Optic.Lens (Lens, lens, withLens)
-import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens)
+import Proarrow.Optic.MonoidalLens (MonoidalLens, monLens, withMonLens)
 import Proarrow.Optic.PowerGrate (Nat (..), PowerGrate, powerGrate, powerGrateOf, zipWithOf)
 import Proarrow.Optic.Prism (Prism, fromOpLens, prism, toOpLens, withPrism)
 import Proarrow.Optic.Setter (Setter, SetterFl (..), over, set, (%~))
@@ -100,6 +102,12 @@ isoToKaleidoscope = O.convert
 -- | The classic zipping grate on pairs.
 pairGrate :: Grate (Bool, Bool) (Bool, Bool) Bool Bool
 pairGrate = grate (\k -> (k fst, k snd))
+
+-- | A glass on pairs: it both reads the source (keeps the second component) and, like a grate,
+-- feeds the consumer a selector on the whole source. @glass f@ where @f (s, k)@ has @s@ and a
+-- consumer @k :: ((s -> a) -> b)@.
+pairGlass :: Glass (Bool, Bool) (Bool, Bool) Bool Bool
+pairGlass = glass (\((_, y), c) -> (c fst, y))
 
 lensToAffineTraversal :: (CategoryOf k) => Lens (s :: k) t a b -> AffineTraversal s t a b
 lensToAffineTraversal = O.convert
@@ -317,6 +325,30 @@ test =
     , propFnEq @Bool "iso as kaleidoscope" (powerGrateOf notIso not) not
     , propFnEq @Bool "iso as monoidal lens (view)" (view (O.convert notIso :: MonoidalLens Bool Bool Bool Bool)) not
     , propFnEq @Bool "iso as monoidal lens (over)" (over (O.convert notIso :: MonoidalLens Bool Bool Bool Bool) not) not
+    , propFnEq @(Bool, Bool)
+        "withMonLens recovers the legs and the comonoid of the residual"
+        ( \s -> withMonLens _2mon \co h i ->
+            let (m, a) = h s in (counitOn co m, i (fst (comultOn co m), not a), i (snd (comultOn co m), a))
+        )
+        (\(x, y) -> ((), (x, not y), (x, y)))
+    , propFnEq @(Bool, Bool)
+        "withMonLens of a composite tensors the residual comonoids"
+        ( \s -> withMonLens (_2mon O.% (O.convert notIso :: MonoidalLens Bool Bool Bool Bool)) \co h i ->
+            let (m, a) = h s in (counitOn co m, a, i (fst (comultOn co m), a), i (snd (comultOn co m), not a))
+        )
+        (\(x, y) -> ((), not y, (x, y), (x, not y)))
+    , propFnEq @(Bool, Bool)
+        "a monoidal lens is an affine traversal (matching)"
+        (matching (O.convert _2mon :: AffineTraversal (Bool, Bool) (Bool, Bool) Bool Bool))
+        (\(_, y) -> Right y)
+    , propFnEq @(Bool, Bool)
+        "a monoidal lens is an affine traversal (over)"
+        (over (O.convert _2mon :: AffineTraversal (Bool, Bool) (Bool, Bool) Bool Bool) not)
+        (second not)
+    , propFnEq @((Bool, Bool), Bool)
+        "a monoidal lens is a glass (legs recovered)"
+        (\(s, fl) -> withGlass (O.convert _2mon :: Glass (Bool, Bool) (Bool, Bool) Bool Bool) \g -> g (s, \sel -> sel s == fl))
+        (\((x, y), fl) -> (x, y == fl))
     , propFnEq @(Bool, Bool) "lens as traversal as setter" (over (lensToTraversal _1) not) (first not)
     , propFnEq @(Maybe Bool) "prism as traversal as fold" (foldMapOf (prismToTraversal _Just) (: [])) maybeToList
     , propFnEq @(Bool, Bool) "kaleidoscope as setter (hom carrier)" (powerGrateOf pairK not) (bimap not not)
@@ -356,6 +388,29 @@ test =
         (Just . not)
     , propFnEq @Bool "over on a PTraversal" (over tIsoNot not) not
     , propFnEq @(Bool, Bool) "grate as setter" (over pairGrate not) (bimap not not)
+    , propFnEq @(Bool, Bool) "glass as setter maps the focus" (over pairGlass not) (first not)
+    , propFnEq @(Bool, Bool)
+        "a lens is a glass (as setter)"
+        (over (O.convert _1 :: Glass (Bool, Bool) (Bool, Bool) Bool Bool) not)
+        (first not)
+    , propFnEq @(Bool, Bool)
+        "a grate is a glass (as setter)"
+        (over (O.convert pairGrate :: Glass (Bool, Bool) (Bool, Bool) Bool Bool) not)
+        (bimap not not)
+    , propFnEq @((Bool, Bool), Bool)
+        "a grate is a glass (legs recovered)"
+        ( \(s, fl) -> withGlass (O.convert pairGrate :: Glass (Bool, Bool) (Bool, Bool) Bool Bool) \g -> g (s, \sel -> sel s == fl)
+        )
+        (\((x, y), fl) -> (x == fl, y == fl))
+    , propFnEq @((Bool, Bool), Bool)
+        "a power grate is a glass (legs recovered)"
+        (\(s, fl) -> withGlass (O.convert pairK :: Glass (Bool, Bool) (Bool, Bool) Bool Bool) \g -> g (s, \sel -> sel s == fl))
+        (\((x, y), fl) -> (x == fl, y == fl))
+    , propFnEq @((Bool, (Bool, (Bool, ()))), Bool)
+        "an arity-3 power grate is a glass (legs recovered)"
+        ( \(s, fl) -> withGlass (O.convert triK :: Glass (Bool, (Bool, (Bool, ()))) (Bool, (Bool, (Bool, ()))) Bool Bool) \g -> g (s, \sel -> sel s == fl)
+        )
+        (\((x, (y, (z, ()))), fl) -> (x == fl, (y == fl, (z == fl, ()))))
     , propFnEq @(Bool, Bool) "set on a grate" (set pairGrate True) (const (True, True))
     , propFnEq @Bool "iso as grate as setter" (over (isoToGrate notIso) not) not
     , propFnEq @Bool "tracer feeds the residual back through the focus" (over feedback loop) not

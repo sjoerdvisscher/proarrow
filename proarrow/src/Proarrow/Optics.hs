@@ -1,6 +1,6 @@
 -- | The user-facing optics vocabulary, in one import.
 --
--- * /Build/ optics with 'iso', 'lens', 'monLens', 'prism', 'affineTraversal', 'grate',
+-- * /Build/ optics with 'iso', 'lens', 'monLens', 'prism', 'affineTraversal', 'grate', 'glass',
 --   'powerGrate', 'cotraversal', 'kaleidoscope', 'algebraicLens', 'classifyingLens', 'tracer',
 --   'traversed', 'traversal' (a 'Traversal' from its van-Laarhoven \/
 --   profunctor-class form), 'to' and 'unto'. These produce
@@ -18,7 +18,7 @@
 --   'powerGrateOf' (a 'PowerGrate'), 'cotraverseOf' (a 'Cotraversal'), 'kaleidoscopeOf' and
 --   'zipWithOf' (a 'Kaleidoscope'), 'classifyOf' (an 'AlgebraicLens') and 'tracerOf' (a 'Tracer')
 --   /run/ the optic, while 'withIso', 'withLens',
---   'withMonLens', 'withPrism' and 'withGrate' /recover its two legs/. Operator shorthands
+--   'withMonLens', 'withPrism', 'withGrate' and 'withGlass' /recover its two legs/. Operator shorthands
 --   ('(^.)', '(#)', '(^?)', 'set', '(%~)', '(.~)', 'unfold') abbreviate the common ones. All of
 --   these are encoding-agnostic.
 -- * The library's structural isos (e.g. 'Proarrow.Category.Monoidal.associator') live in a
@@ -27,27 +27,11 @@
 --   between the encodings, van Laarhoven interop, writing flavor-generic code — import
 --   "Proarrow.Optic" and its submodules directly.
 --
--- The full subtyping lattice ('Proarrow.Optic.SubFlavor' edges, weakest optics at the top):
+-- The full subtyping lattice ('Proarrow.Optic.SubFlavor' edges, weakest optics at the top).
+-- Dotted nodes are one-sided flavors, whose methods never mention the second witness; dashed
+-- nodes are indexed by a monad and so have no edge to 'Iso':
 --
--- >         Fold                           Setter
--- >        /    \                         /   \  `-------------.
--- >       /      \                       /     \               |
--- > AffineFold    `----- Traversal -----'    Cotraversal       |
--- >   |    \             /       \                 |           |
--- >   |     \           /         \          Kaleidoscope      |
--- >   |      \         /           \               |    \      |
--- > Getter  AffineTraversal     MonoidalTraversal  |     \  Tracer
--- >   |  \ /              \     /  /          |    |      |    |
--- >   |   X             .--\---'  /   Review  |  Grate    |    |
--- >   |  / \           /    \    /    /       |    |      |    |
--- >  Lens   MonoidalLens    Prism----'      PowerGrate    |    |
--- >   |        |   \          /               /           |    |
--- >   |        |    \        /               /            |    |
--- >   `--------|-----`---v--'---------------'-------------+----'
--- >            |        Iso                               |
--- >      AlgebraicLens                                    |
--- >            |                                          |
--- >      ClassifyingLens ---------------------------------'
+-- <<lattice.svg The optics subtyping lattice>>
 module Proarrow.Optics
   ( -- * Optic kinds
     Optic
@@ -77,6 +61,8 @@ module Proarrow.Optics
   , Fold
   , Grate
   , Grate'
+  , Glass
+  , Glass'
   , PowerGrate
   , PowerGrate'
   , Cotraversal
@@ -95,6 +81,7 @@ module Proarrow.Optics
   , prism
   , affineTraversal
   , grate
+  , glass
   , powerGrate
   , cotraversal
   , kaleidoscope
@@ -132,6 +119,7 @@ module Proarrow.Optics
   , withMonLens
   , withPrism
   , withGrate
+  , withGlass
 
     -- * Operators and shorthands
   , (^.)
@@ -166,6 +154,7 @@ import Proarrow.Optic.AffineFold (AffineFold, preview, (^?))
 import Proarrow.Optic.AffineTraversal (AffineTraversal, AffineTraversal', matching)
 import Proarrow.Optic.Fold (Fold, foldMapOf, unfold)
 import Proarrow.Optic.Getter (Getter, Review, review, to, unto, view, (#), (^.))
+import Proarrow.Optic.Glass (Glass, Glass', glass, withGlass)
 import Proarrow.Optic.Grate (Grate, Grate', grate, withGrate)
 import Proarrow.Optic.Iso (Iso, Iso', withIso)
 import Proarrow.Optic.Kaleidoscope

@@ -71,7 +71,7 @@ instance
    . (TracerFl f g, TracerFl f' g')
   => TracerFl (f :.: f') (g' :.: g)
   where
-  withTracerP ((f :: f s x) :.: f') (g' :.: (g :: g y t)) kk =
+  withTracerP ((f@Objs :: f s x) :.: f') (g' :.: (g@Objs :: g y t)) kk =
     withTracerP f g \ @(mo :: k) ho io ->
       withTracerP f' g' \ @(mi :: k) hi ii ->
         withOb2 @k @mi @mo
@@ -79,8 +79,6 @@ instance
               (hi . (obj @mi ** ho) . associator @k @mi @mo @s)
               (associatorInv @k @mi @mo @t . (obj @mi ** io) . ii)
           )
-          \\ f
-          \\ g
 
 -- | The tracer witness: the tensor-action pair read the other way round, @'Corep' ('ActionAt' 'Tensor' m)@
 -- on the left and @'Rep' ('ActionAt' 'Tensor' m)@ on the right. Its 'overP' is the trace

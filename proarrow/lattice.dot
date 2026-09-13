@@ -11,15 +11,16 @@ digraph optics {
   { rank=same; Fold; Setter; }
 
   Fold -> AffineFold; Fold -> Traversal;
-  Setter -> Traversal; Setter -> Cotraversal; Setter -> Tracer;
+  Setter -> Traversal; Setter -> Cotraversal; Setter -> Tracer; Setter -> Glass;
 
   AffineFold -> Getter; AffineFold -> AffineTraversal;
   Traversal -> AffineTraversal; Traversal -> MonoidalTraversal;
   Cotraversal -> Kaleidoscope;
   Kaleidoscope -> Grate;
 
+  Glass -> Lens; Glass -> Grate; Glass -> MonoidalLens;
   Getter -> Lens; Getter -> MonoidalLens;
-  AffineTraversal -> Lens; AffineTraversal -> Prism;
+  AffineTraversal -> Lens; AffineTraversal -> Prism; AffineTraversal -> MonoidalLens;
   MonoidalTraversal -> MonoidalLens; MonoidalTraversal -> Prism; MonoidalTraversal -> PowerGrate;
   Review -> Prism;
   Grate -> PowerGrate;

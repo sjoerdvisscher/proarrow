@@ -33,6 +33,7 @@ import Proarrow.Optic.AffineFold (AffineFoldFl)
 import Proarrow.Optic.AffineTraversal (AffineTravFl (..))
 import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Optic.Getter (GetterFl (..))
+import Proarrow.Optic.Glass (GlassFl)
 import Proarrow.Optic.Setter (SetterFl)
 import Proarrow.Optic.Traversal (TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
@@ -42,7 +43,7 @@ import Proarrow.Profunctor.Instance.Star (Star, unStar, pattern Star)
 import Proarrow.Profunctor.Representable (Rep (..))
 
 type LensFl :: forall {k}. FLAVOR k k
-class (AffineTravFl p q, GetterFl p q) => LensFl (p :: k +-> k) (q :: k +-> k) where
+class (AffineTravFl p q, GetterFl p q, GlassFl p q) => LensFl (p :: k +-> k) (q :: k +-> k) where
   -- | Like 'affineSet', but with an honest constraint: lens witnesses only ever need binary
   -- products, so lenses stay usable in categories without coproducts.
   putP :: (HasBinaryProducts k) => p (s :: k) a -> q b t -> (s && b) ~> t
@@ -55,6 +56,7 @@ instance (LensFl f g, LensFl f' g') => LensFl (f :.: f') (g' :.: g) where
     putP @f @g f g . (fst @_ @s @b &&& (putP @f' @g' f' g' . first @b (getP @f @g f)))
 
 instance SubFlavor LensFl AffineTravFl where subFlavor r = r
+instance SubFlavor LensFl GlassFl where subFlavor r = r
 instance SubFlavor LensFl GetterFl where subFlavor r = r
 instance SubFlavor LensFl TravFl where subFlavor r = r
 instance SubFlavor LensFl SetterFl where subFlavor r = r

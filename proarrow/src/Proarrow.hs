@@ -50,6 +50,7 @@ module Proarrow
   , Monoid (..)
   , CommutativeMonoid
   , Comonoid (..)
+  , ComonoidOn (..)
 
     -- * Universal properties and adjunctions
   , InitUniversal (..)
@@ -81,7 +82,7 @@ import Proarrow.Core
   , type (:~>)
   )
 import Proarrow.Functor (Functor (..), FunctorForRep (..), Prelude (..), type (.~>))
-import Proarrow.Monoid (CommutativeMonoid, Comonoid (..), Monoid (..))
+import Proarrow.Monoid (CommutativeMonoid, Comonoid (..), ComonoidOn (..), Monoid (..))
 import Proarrow.Object (Ob', pattern Objs)
 import Proarrow.Optics
 import Proarrow.Profunctor.Corepresentable (Corep (..), Corepresentable (..))

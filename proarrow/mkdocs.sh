@@ -2,10 +2,12 @@
 : "${HADDOCK:=haddock}"
 : "${ARG_COMPILER:=}"
 
-# lattice.dot is the Graphviz source of the optics subtyping lattice; the ASCII diagram in
-# Proarrow.Optics is drawn after its rendering:  dot -Tsvg lattice.dot -o lattice.svg
+# The optics lattice diagram (Proarrow.Optics) is generated from lattice.dot:
+#   dot -Tsvg lattice.dot -o lattice.svg
 rm -rf docs
 mkdir docs
+# copy the optics lattice image next to the module HTML so Haddock's <<lattice.svg>> resolves
+cp lattice.svg docs/
 
 # Both libraries render into one doc tree (Hackage has a single documentation set per package).
 # This is hand-rolled rather than `cabal haddock-project` because that documents the whole

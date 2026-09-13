@@ -38,7 +38,7 @@ import Proarrow.Adjunction (Proadjunction (..))
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, swapInner, type (**))
 import Proarrow.Category.Monoidal qualified as M
 import Proarrow.Category.Monoidal.Action (CoprodAction)
-import Proarrow.Category.Monoidal.Closed (Closed (..))
+import Proarrow.Category.Monoidal.Closed (CCC, Closed (..), mkExponential)
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard (..), fst, snd, (&&&))
 import Proarrow.Category.Monoidal.Distributive (Traversable (..))
 import Proarrow.Category.Monoidal.Strength (Strong (..))
@@ -46,8 +46,11 @@ import Proarrow.Colimit.BinaryCoproduct (COPROD (..), Coprod (..), HasBinaryCopr
 import Proarrow.Colimit.Initial (HasInitialObject (..))
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), (\\), type (+->))
 import Proarrow.Functor (Functor)
-import Proarrow.Limit.BinaryProduct (Cartesian)
+import Proarrow.Limit.BinaryProduct (Cartesian, TensorIsProduct, diag)
+import Proarrow.Limit.BinaryProduct qualified as P
+import Proarrow.Limit.Terminal (terminate)
 import Proarrow.Monoid (Monoid (..))
+import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( ExOptic
   , FLAVOR
@@ -58,6 +61,7 @@ import Proarrow.Optic
   , withLegs
   )
 import Proarrow.Optic.Fold (FoldFl (..))
+import Proarrow.Optic.Glass (GlassFl (..))
 import Proarrow.Optic.Grate (GrateFl (..))
 import Proarrow.Optic.Kaleidoscope (CotravFl, KaleidoFl (..), Kaleidoscopic (..), kaleidoscopeOf)
 import Proarrow.Optic.Setter (SetterFl (..))
@@ -66,6 +70,7 @@ import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Costar (Costar)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..))
+import Prelude (type (~))
 
 -- | The power-grate flavor: distribute any 'MonoidalProfunctor' @r@ through the witness
 -- pair. 'Proarrow.Optic.Traversal.TravFl' is a superclass: every power-grate witness is a
@@ -94,6 +99,7 @@ instance SubFlavor PowerGrateFl MonTravFl where subFlavor r = r
 instance SubFlavor PowerGrateFl KaleidoFl where subFlavor r = r
 instance SubFlavor PowerGrateFl CotravFl where subFlavor r = r
 instance SubFlavor PowerGrateFl GrateFl where subFlavor r = r
+instance SubFlavor PowerGrateFl GlassFl where subFlavor r = r
 instance SubFlavor PowerGrateFl TravFl where subFlavor r = r
 instance SubFlavor PowerGrateFl FoldFl where subFlavor r = r
 instance SubFlavor PowerGrateFl SetterFl where subFlavor r = r
@@ -123,54 +129,99 @@ type family Tensor n a where
   Tensor Z a = Unit
   Tensor (S n) a = a ** Tensor n a
 
+-- | Case analysis on a type-level 'Nat': the single method from which every tensor-power
+-- operation below is defined by recursion on @n@.
+type KnownNat :: Nat -> Constraint
+class KnownNat (n :: Nat) where
+  natCase :: ((n ~ Z) => r) -> (forall m. (n ~ S m, KnownNat m) => r) -> r
+
+instance KnownNat Z where
+  natCase z _ = z
+instance (KnownNat n) => KnownNat (S n) where
+  natCase _ s = s
+
 -- | Distribute a 'MonoidalProfunctor' over the @n@-fold tensor power, by combining @n@ copies of
 -- the carrier value with 'one' (at 'Z') and '**' (at 'S') -- the profunctor-general heart of the
 -- @n@-ary power grate.
-type KnownNat :: Nat -> Constraint
-class KnownNat (n :: Nat) where
-  powDist :: (MonoidalProfunctor r) => r a b -> r (Tensor n a) (Tensor n b)
+powDist :: forall n r a b. (KnownNat n, MonoidalProfunctor r) => r a b -> r (Tensor n a) (Tensor n b)
+powDist rab = natCase @n one (\ @m -> rab ** powDist @m rab)
 
-  -- | Collapse the @n@-fold tensor power of a monoid via 'mappend'\/'mempty'.
-  powFold :: (Monoid m) => Tensor n m ~> m
+-- | Collapse the @n@-fold tensor power of a monoid via 'mappend'\/'mempty'.
+powFold :: forall n m. (KnownNat n, Monoid m) => Tensor n m ~> m
+powFold = natCase @n mempty (\ @p -> mappend . ((id :: m ~> m) ** powFold @p @m))
 
-  -- | Distribute the internal hom over the tensor power: split @x ~~> aⁿ@ into @(x ~~> a)ⁿ@ using
-  -- 'CopyDiscard' projections -- this is what makes an @n@-ary power grate a
-  -- 'Proarrow.Optic.Grate.Grate'.
-  splitPow :: forall k (x :: k) a. (Closed k, CopyDiscard k, Ob x, Ob a) => (x ~~> Tensor n a) ~> Tensor n (x ~~> a)
+-- | @Tensor n a@ is an object whenever @a@ is.
+withObTensor :: forall n k (a :: k) r. (KnownNat n, Monoidal k, Ob a) => ((Ob (Tensor n a)) => r) -> r
+withObTensor r = natCase @n r (\ @m -> withObTensor @m @k @a (withOb2 @k @a @(Tensor m a) r))
 
-  -- | @Tensor n a@ is an object whenever @a@ is.
-  withObTensor :: forall k (a :: k) r. (Monoidal k, Ob a) => ((Ob (Tensor n a)) => r) -> r
+-- | Distribute the internal hom over the tensor power: split @x ~~> aⁿ@ into @(x ~~> a)ⁿ@ using
+-- 'CopyDiscard' projections -- this is what makes an @n@-ary power grate a
+-- 'Proarrow.Optic.Grate.Grate'.
+splitPow
+  :: forall n k (x :: k) a. (KnownNat n, Closed k, CopyDiscard k, Ob x, Ob a) => (x ~~> Tensor n a) ~> Tensor n (x ~~> a)
+splitPow =
+  natCase @n
+    (withObExp @k @x @Unit (discard @k @(x ~~> Unit)))
+    ( \ @m ->
+        withObTensor @m @k @a
+          ((fst @a @(Tensor m a) ^^^ obj @x) &&& (splitPow @m @k @x @a . (snd @a @(Tensor m a) ^^^ obj @x)))
+    )
 
-  -- | Zip two tensor powers into the tensor power of the tensor: the @<*>@ of the reader
-  -- applicative @Tensor n@.
-  powZip :: forall k (a :: k) c. (SymMonoidal k, Ob a, Ob c) => (Tensor n a ** Tensor n c) ~> Tensor n (a ** c)
+-- | Zip two tensor powers into the tensor power of the tensor: the @<*>@ of the reader
+-- applicative @Tensor n@.
+powZip
+  :: forall n k (a :: k) c. (KnownNat n, SymMonoidal k, Ob a, Ob c) => (Tensor n a ** Tensor n c) ~> Tensor n (a ** c)
+powZip =
+  natCase @n
+    (leftUnitor @k @Unit)
+    ( \ @m ->
+        withObTensor @m @k @a
+          (withObTensor @m @k @c (((obj @a ** obj @c) ** powZip @m @k @a @c) . swapInner @a @(Tensor m a) @c @(Tensor m c)))
+    )
 
-  -- | @n@ copies of an object, via 'copy' and 'discard': the @pure@ of the reader applicative.
-  powCopy :: forall k (a :: k). (CopyDiscard k, Ob a) => a ~> Tensor n a
+-- | @n@ copies of an object, via 'copy' and 'discard': the @pure@ of the reader applicative.
+powCopy :: forall n k (a :: k). (KnownNat n, CopyDiscard k, Ob a) => a ~> Tensor n a
+powCopy = natCase @n (discard @k @a) (\ @m -> (obj @a ** powCopy @m @k @a) . copy @k @a)
 
-  -- | The tensor power of the unit is (isomorphic to) the unit.
-  powUnit :: forall k. (Monoidal k) => Unit ~> Tensor n (Unit :: k)
+-- | The tensor power of the unit is (isomorphic to) the unit.
+powUnit :: forall n k. (KnownNat n, Monoidal k) => Unit ~> Tensor n (Unit :: k)
+powUnit = natCase @n id (\ @m -> (obj @(Unit :: k) ** powUnit @m @k) . leftUnitorInv @k @Unit)
 
-instance KnownNat Z where
-  powDist _ = one
-  powFold = mempty
-  splitPow @k @x = withObExp @k @x @Unit (discard @k @(x ~~> Unit))
-  withObTensor r = r
-  powZip @k = leftUnitor @k @Unit
-  powCopy @k @a = discard @k @a
-  powUnit = id
-instance (KnownNat n) => KnownNat (S n) where
-  powDist rab = rab ** powDist @n rab
-  powFold @m = mappend . ((id :: m ~> m) ** powFold @n @m)
-  splitPow @k @x @a =
-    withObTensor @n @k @a
-      ((fst @a @(Tensor n a) ^^^ obj @x) &&& (splitPow @n @k @x @a . (snd @a @(Tensor n a) ^^^ obj @x)))
-  withObTensor @k @a r = withObTensor @n @k @a (withOb2 @k @a @(Tensor n a) r)
-  powZip @k @a @c =
-    withObTensor @n @k @a
-      (withObTensor @n @k @c (((obj @a ** obj @c) ** powZip @n @k @a @c) . swapInner @a @(Tensor n a) @c @(Tensor n c)))
-  powCopy @k @a = (obj @a ** powCopy @n @k @a) . copy @k @a
-  powUnit @k = (obj @(Unit :: k) ** powUnit @n @k) . leftUnitorInv @k @Unit
+-- | Like 'powCopy', but the copies come from the /cartesian/ structure ('CCC') rather than a
+-- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' comonoid. Using 'CCC' rather than
+-- @CopyDiscard@ keeps the latter's quantified @CocommutativeComonoid@ constraint out of scope, so
+-- this and 'splitPowC' can be applied at exponential objects without looping the solver -- which
+-- is what lets a power grate be a 'Proarrow.Optic.Glass.Glass' ('glassP' below).
+powCopyC :: forall n k (a :: k). (KnownNat n, CCC k, Ob a) => a ~> Tensor n a
+powCopyC = natCase @n (terminate @k @a) (\ @m -> (obj @a ** powCopyC @m @k @a) . diag @a)
+
+-- | Like 'splitPow', but with cartesian projections; see 'powCopyC'.
+splitPowC :: forall n k (x :: k) a. (KnownNat n, CCC k, Ob x, Ob a) => (x ~~> Tensor n a) ~> Tensor n (x ~~> a)
+splitPowC =
+  natCase @n
+    (withObExp @k @x @Unit (terminate @k @(x ~~> Unit)))
+    (\ @m -> withObTensor @m @k @a (withObExp @k @x @a (withObTensor @m @k @(x ~~> a) (splitPowCStep @m @k @x @a))))
+
+-- | The @S@ step of 'splitPowC'. The cartesian projections produce @('&&')@ while 'Tensor' is
+-- built from @('**')@; 'Cartesian' identifies the two through a quantified 'TensorIsProduct', but
+-- GHC will not rewrite under the 'Tensor' family with only the quantified constraint in scope. So,
+-- as for 'Proarrow.Limit.BinaryProduct.unparRepCartesian', the two instances needed are taken as
+-- plain givens here and discharged at the call site, where they are just instances of the quantified one.
+splitPowCStep
+  :: forall n k (x :: k) a
+   . ( CCC k
+     , KnownNat n
+     , Ob x
+     , Ob a
+     , Ob (Tensor n a)
+     , Ob (x ~~> a)
+     , Ob (Tensor n (x ~~> a))
+     , TensorIsProduct a (Tensor n a)
+     , TensorIsProduct (x ~~> a) (Tensor n (x ~~> a))
+     )
+  => (x ~~> (a ** Tensor n a)) ~> ((x ~~> a) ** Tensor n (x ~~> a))
+splitPowCStep =
+  (P.fst @k @a @(Tensor n a) ^^^ obj @x) P.&&& (splitPowC @n @k @x @a . (P.snd @k @a @(Tensor n a) ^^^ obj @x))
 
 -- | The arity-@n@ aggregation witness: @s@ presents @n@ foci via the tensor power.
 type Pow :: forall {k}. Nat -> k +-> k
@@ -196,6 +247,25 @@ instance (Monoidal k, KnownNat n) => FoldFl (Pow n :: k +-> k) (CoPow n :: k +->
 instance (Monoidal k, KnownNat n) => TravFl (Pow n :: k +-> k) (CoPow n :: k +-> k)
 instance (Monoidal k, KnownNat n) => MonTravFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   monTravP (Pow sl) (CoPow rt) rab = dimap sl rt (powDist @n rab)
+
+-- | A power grate is a glass: ignore the source, and for each of the @n@ positions feed the
+-- consumer the selector "project this focus". The selectors come from 'splitPowC' of @sl@, the
+-- consumer is copied @n@ times with 'powCopyC', 'powZip' pairs them, and 'powDist' applies each.
+instance (Monoidal k, HasCoproducts k, KnownNat n) => GlassFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
+  glassP @s @a @b (Pow sl@Objs) (CoPow rt@Objs) =
+    withObExp @k @s @a
+      ( withObExp @k @(s ~~> a) @b
+          ( withOb2 @k @s @((s ~~> a) ~~> b)
+              ( rt
+                  . powDist @n (apply @k @(s ~~> a) @b)
+                  . powZip @n @k @((s ~~> a) ~~> b) @(s ~~> a)
+                  . ( (powCopyC @n @k @((s ~~> a) ~~> b) . P.snd @k @s @((s ~~> a) ~~> b))
+                        P.&&& (splitPowC @n @k @s @a . mkExponential sl . terminate @k @(s ** ((s ~~> a) ~~> b)))
+                    )
+              )
+          )
+      )
+
 instance (CopyDiscard k, HasCoproducts k, KnownNat n) => GrateFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where
   zipWithP (Pow @_ @_ @a sl) (CoPow rt) @x kk = rt . powDist @n kk . splitPow @n @_ @x @a . (sl ^^^ obj @x)
 instance (CopyDiscard k, HasCoproducts k, KnownNat n) => PowerGrateFl (Pow n :: k +-> k) (CoPow n :: k +-> k) where

@@ -51,6 +51,7 @@ import Proarrow.Core
   )
 import Proarrow.Limit.BinaryProduct (Cartesian, HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, (&&&))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
+import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -114,6 +115,28 @@ counitS = Str counit
 
 comultS :: (Comonoid c) => '[c] ~> '[c, c]
 comultS = Str comult
+
+-- | A comonoid structure on @c@ carried as a value. @Unit@ and @('**')@ are type families and so
+-- cannot head a 'Comonoid' instance, yet the unit is a comonoid and, in a symmetric monoidal
+-- category, so is a tensor of comonoids: 'unitComonoid' and 'tensorComonoid' say so at the value
+-- level, which is what lets 'Proarrow.Optic.MonoidalLens.withMonLens' hand back the comonoid of a
+-- composite residual (cf. 'Proarrow.Optic.Action.withAlgP', which passes algebras the same way).
+type ComonoidOn :: forall {k}. k -> Type
+data ComonoidOn (c :: k) = ComonoidOn {counitOn :: c ~> Unit, comultOn :: c ~> c ** c}
+
+-- | The comonoid structure of a 'Comonoid' instance, as a value.
+comonoidOn :: forall {k} (c :: k). (Comonoid c) => ComonoidOn c
+comonoidOn = ComonoidOn counit comult
+
+-- | The unit is a comonoid, via the unitor.
+unitComonoid :: forall {k}. (Monoidal k) => ComonoidOn (Unit :: k)
+unitComonoid = ComonoidOn id (leftUnitorInv @k @Unit)
+
+-- | In a symmetric monoidal category the tensor of two comonoids is a comonoid: counit both
+-- halves, or comultiply both halves and swap the inner pair.
+tensorComonoid :: forall {k} (a :: k) b. (SymMonoidal k) => ComonoidOn a -> ComonoidOn b -> ComonoidOn (a ** b)
+tensorComonoid (ComonoidOn ca@Objs ma) (ComonoidOn cb@Objs mb) =
+  ComonoidOn (leftUnitor @k @Unit . (ca ** cb)) (swapInner @a @a @b @b . (ma ** mb))
 
 instance Comonoid (a :: Type) where
   counit _ = ()

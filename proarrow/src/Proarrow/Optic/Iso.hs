@@ -27,6 +27,7 @@ import Proarrow.Optic.AffineFold (AffineFoldFl)
 import Proarrow.Optic.AffineTraversal (AffineTravFl)
 import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Optic.Getter (GetterFl, getP)
+import Proarrow.Optic.Glass (GlassFl)
 import Proarrow.Optic.Grate (GrateFl)
 import Proarrow.Optic.Lens (LensFl)
 import Proarrow.Optic.MonoidalLens (MonLensFl)
@@ -56,6 +57,7 @@ instance SubFlavor IsoFl SetterFl where subFlavor r = r
 instance SubFlavor IsoFl AffineFoldFl where subFlavor r = r
 instance SubFlavor IsoFl FoldFl where subFlavor r = r
 instance SubFlavor IsoFl GrateFl where subFlavor r = r
+instance SubFlavor IsoFl GlassFl where subFlavor r = r
 instance SubFlavor IsoFl PowerGrateFl where subFlavor r = r
 instance SubFlavor IsoFl MonLensFl where subFlavor r = r
 instance SubFlavor IsoFl TracerFl where subFlavor r = r
