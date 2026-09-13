@@ -39,7 +39,7 @@ import Proarrow.Profunctor.Instance.Coproduct (coproduct, (:+:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Instance.Product ((:*:) (..))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
-import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
+import Proarrow.Profunctor.Representable (CorepStar (..), Rep (..), Representable (..))
 
 infixl 4 ||
 infixl 4 |||
@@ -98,6 +98,26 @@ class
 instance
   (HasCoproducts k, Monoidal k, (Unit :: k) ~ InitialObject, forall (a :: k) (b :: k). TensorIsCoproduct a b)
   => Cocartesian k
+
+-- | Every functor between cocartesian categories is lax monoidal, @f a || f b ~> f (a || b)@ by the
+-- injections and @InitialObject ~> f InitialObject@ by initiality. On the 'CorepStar' of its
+-- corepresentable profunctor this is 'Proarrow.Category.Monoidal.LaxMonoidal'.
+instance (Corepresentable p, Cocartesian j, Cocartesian k) => MonoidalProfunctor (CorepStar (p :: j +-> k)) where
+  one = withObCorep @p @Unit (CorepStar initiate)
+  CorepStar @a f ** CorepStar @b g = withOb2 @k @a @b (CorepStar (parCorepCocartesian @p @a @b f g))
+
+parCorepCocartesian
+  :: forall {j} {k} p (a :: k) b a' b'
+   . ( Corepresentable (p :: j +-> k)
+     , Cocartesian j
+     , Cocartesian k
+     , TensorIsCoproduct a b
+     , TensorIsCoproduct a' b'
+     , Ob a
+     , Ob b
+     )
+  => (a' ~> p %% a) -> (b' ~> p %% b) -> (a' ** b') ~> p %% (a ** b)
+parCorepCocartesian f g = corepMap @p (lft @k @a @b) . f ||| corepMap @p (rgt @k @a @b) . g
 
 instance HasBinaryCoproducts Type where
   type a || b = P.Either a b
@@ -194,7 +214,7 @@ instance (HasInitialObject k) => HasInitialObject (COPROD k) where
   initiate = Coprod initiate
 
 instance (HasBinaryCoproducts k) => HasBinaryCoproducts (COPROD k) where
-  type COPR a || COPR b = COPR (a || b)
+  type a || b = COPR (UN COPR a || UN COPR b)
   withObCoprod @(COPR a) @(COPR b) r = withObCoprod @k @a @b r
   lft @(COPR a) @(COPR b) = Coprod (lft @k @a @b)
   rgt @(COPR a) @(COPR b) = Coprod (rgt @k @a @b)

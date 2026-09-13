@@ -1,21 +1,34 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE IncoherentInstances #-}
 
 -- | Optics for an arbitrary 'Proarrow.Category.Monoidal.Action.MonoidalAction': the 'ActFl' flavor,
 -- whose witness pair is a matched pair of arrows into\/out of the action at some residual; its
 -- specialisation to the tensor's self-action gives 'MonoidalOptic'. Also home to the __algebraic
 -- lens__ ('AlgLensFl'), the tensor-action pair with an 'Algebra'-for-a-monad residual, and its
--- list-monad case, the __classifying lens__ ('ClassifyFl'), which is moreover an applicative optic.
+-- list-monad case, the __classifying lens__ ('ClassifyFl'), which is moreover a kaleidoscope.
 module Proarrow.Optic.Action where
 
-import Data.Kind (Type)
-import Prelude (Monad (..), ($))
+import Data.Kind (Constraint)
+import Prelude (($))
 import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), SymMonoidal, Tensor, obj2, swap, type (**))
+import Proarrow.Category.Monoidal
+  ( Monoidal (..)
+  , MonoidalProfunctor (..)
+  , OplaxMonoidalRep
+  , SymMonoidal
+  , Tensor
+  , obj2
+  , swap
+  , unpar0Rep
+  , unparRep
+  , type (**)
+  )
 import Proarrow.Category.Monoidal.Action (Act, ActionAt, MonoidalAction (..), composeActs, decomposeActs)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
-import Proarrow.Functor (Prelude (..))
+import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
+import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (\\), type (+->))
+import Proarrow.Functor (Functor)
+import Proarrow.Monoid (Comonoid, Monoid)
+import Proarrow.Monoid qualified as Mon
 import Proarrow.Object (pattern Objs)
 import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), legs2prof, withLegs)
 import Proarrow.Optic.AffineFold (AffineFoldFl)
@@ -27,9 +40,10 @@ import Proarrow.Optic.Setter (SetterFl)
 import Proarrow.Optic.Traversal (MonTravFl, TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
-import Proarrow.Profunctor.Instance.Costar (Costar, pattern Costar)
 import Proarrow.Profunctor.Instance.Identity (Id (..))
-import Proarrow.Profunctor.Representable (Rep (..))
+import Proarrow.Profunctor.Instance.Star (Star)
+import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representable (..))
+import Proarrow.Promonad (Monad, bind, return)
 
 -- | Any 'MonoidalAction' gives rise to a flavor: the witness pair is a matched pair of arrows
 -- into\/out of the action for some shared, existentially hidden index @x@. 'Proarrow.Optic.Lens.LensFl'\/'Proarrow.Optic.Prism.PrismFl'
@@ -62,44 +76,62 @@ _1 = mkMonoidal @c (swap @k @a @c) (swap @k @c @b)
 _2 :: forall {k} (a :: k) b c. (SymMonoidal k, Ob a, Ob b, Ob c) => MonoidalOptic (c ** a) (c ** b) a b
 _2 = mkMonoidal @c (obj2 @c @a) (obj2 @c @b)
 
--- | An Eilenberg-Moore algebra for the (Haskell) monad @m@: a way to collapse an @m@-computation
--- of @a@'s down to a single @a@, coherently with 'Monad'\'s own unit\/multiplication. Products of
--- algebras are algebras, and @m a@ is always an algebra for itself (via @join@) -- exactly the
--- closure properties an optic flavor needs of its residuals.
-class (Monad m) => Algebra m a where
-  algebra :: m a -> a
+-- | An Eilenberg-Moore algebra for the monad @m@ -- a representable 'Promonad' on @k@, acting as
+-- the functor @m '%' -@ ("Proarrow.Promonad"): a structure map @m % a ~> a@, coherent with the
+-- monad's unit and multiplication. The free algebras @m % s@ are the ones an algebraic lens is
+-- built from ('algebraicLens').
+--
+-- There are deliberately no instances for the unit or for products of algebras, and there cannot be:
+-- @Unit@ and @('**')@ are type families, which may not head an instance. That is why 'withAlgP'
+-- passes the structure map as a /value/ -- the composition instance pairs two algebras with
+-- 'unparRep' and the identity witness supplies the unit one with 'unpar0Rep', neither needing an
+-- 'Algebra' instance. A witness pair whose residual is the unit is the identity optic up to the
+-- unitors, so nothing is lost.
+type Algebra :: forall {k}. (k +-> k) -> k -> Constraint
+class (Monad m, Ob a) => Algebra (m :: k +-> k) (a :: k) where
+  algebra :: m % a ~> a
 
-instance (Monad m) => Algebra m (m a) where
-  algebra = (>>= P.id)
-instance (Monad m) => Algebra m () where
-  algebra _ = ()
-instance (Monad m, Algebra m a, Algebra m b) => Algebra m (a, b) where
-  algebra mab = (algebra (P.fmap P.fst mab), algebra (P.fmap P.snd mab))
+-- | The free algebras of a monad @m@, wrapped as the representable promonad @'Star' m@.
+instance (Monad (Star m), Ob (m a), Ob a) => Algebra (Star m) (m a) where
+  algebra = bind @(Star m) id
 
 -- | The algebraic-lens flavor (Riley, /Categories of Optics/; Clarke et al.): the tensor-action
 -- witness pair @'Rep'@\/@'Corep'@ @('ActionAt' 'Tensor' x)@ of "Proarrow.Optic.MonoidalLens" --
--- legs @s -> (x, a)@ and @(x, b) -> t@ -- with the residual @x@ required to be an 'Algebra' for the
--- monad @m@. The algebra is what lets @put@ see a whole @m@-computation of sources rather than one:
--- 'classifyOf' collapses @m s@ to a single residual through it. Every algebraic lens is a
--- 'Proarrow.Optic.MonoidalLens.MonoidalLens' (the 'MonLensFl' superclass; in @Type@ every residual
--- is a comonoid), so it views, sets, folds and traverses as a lens does. 'Proarrow.Optic.Iso.IsoFl'
--- has no edge to it, since this flavor is @Type@-only and indexed by @m@.
-type AlgLensFl :: (Type -> Type) -> FLAVOR Type Type
-class (Monad m, MonLensFl p q) => AlgLensFl m (p :: Type +-> Type) (q :: Type +-> Type) where
-  -- | Recover the two legs, with the residual @x@ existential and known to be an @m@-algebra.
-  withAlgP :: p s a -> q b t -> (forall x. (Algebra m x) => (s -> (x, a)) -> ((x, b) -> t) -> r) -> r
+-- legs @s ~> x ** a@ and @x ** b ~> t@ -- with the residual @x@ an 'Algebra' for @m@. The flavor
+-- itself asks only that the functor @m '%'@ be oplax monoidal, enough to pair and discard residuals;
+-- the monad structure arrives with each 'Algebra' witness, not with the flavor.
+-- The algebra is what lets @put@ see a whole @m@-computation of sources rather than one:
+-- 'classifyOf' collapses @m % s@ to a single residual through it. Every algebraic lens is a
+-- 'Proarrow.Optic.MonoidalLens.MonoidalLens' (the 'MonLensFl' superclass: the residual is a
+-- comonoid), so it views, sets, folds and traverses as a lens does. 'withAlgP' hands the algebra
+-- over as a value, so composites pair algebras without an instance for the product.
+type AlgLensFl :: forall {k}. (k +-> k) -> FLAVOR k k
+class (OplaxMonoidalRep m, MonLensFl p q) => AlgLensFl (m :: k +-> k) (p :: k +-> k) (q :: k +-> k) where
+  -- | Recover the two legs and the algebra of the (existential) residual @x@.
+  withAlgP
+    :: p s a -> q b t -> (forall (x :: k). (Ob x) => (m % x ~> x) -> (s ~> x ** a) -> (x ** b ~> t) -> r) -> r
 
-instance (Algebra m x) => AlgLensFl m (Rep (ActionAt Tensor x)) (Corep (ActionAt Tensor x)) where
-  withAlgP (Rep h) (Corep i) k = k @x h i
-instance (Monad m) => AlgLensFl m Id Id where
-  withAlgP (Id l) (Id r) k = k @() (\s -> ((), l s)) (\((), b) -> r b)
-instance (AlgLensFl m f g, AlgLensFl m f' g') => AlgLensFl m (f :.: f') (g' :.: g) where
-  withAlgP (f :.: f') (g' :.: g) k =
-    withAlgP @m f g \ @xo ho io ->
-      withAlgP @m f' g' \ @xi hi ii ->
-        k @(xo, xi)
-          (\s -> let (xo', a') = ho s; (xi', a) = hi a' in ((xo', xi'), a))
-          (\((xo', xi'), b) -> io (xo', ii (xi', b)))
+instance
+  (OplaxMonoidalRep m, Algebra m x, Comonoid (x :: k))
+  => AlgLensFl m (Rep (ActionAt Tensor x) :: k +-> k) (Corep (ActionAt Tensor x))
+  where
+  withAlgP (Rep h) (Corep i) k = k @x (algebra @m @x) h i
+instance (OplaxMonoidalRep (m :: k +-> k)) => AlgLensFl m (Id :: k +-> k) (Id :: k +-> k) where
+  withAlgP (Id l) (Id r) k = k @Unit (unpar0Rep @m) (leftUnitorInv . l) (r . leftUnitor) \\ l \\ r
+instance
+  forall k (m :: k +-> k) (f :: k +-> k) (f' :: k +-> k) (g :: k +-> k) (g' :: k +-> k)
+   . (AlgLensFl m f g, AlgLensFl m f' g')
+  => AlgLensFl m (f :.: f') (g' :.: g)
+  where
+  withAlgP @_ @afoc @bfoc (f :.: f'@Objs) (g'@Objs :.: g) kk =
+    withAlgP @m f g \ @(xo :: k) algo ho io ->
+      withAlgP @m f' g' \ @(xi :: k) algi hi ii ->
+        withOb2 @k @xo @xi
+          ( kk @(xo ** xi)
+              ((algo ** algi) . unparRep @m @xo @xi)
+              (associatorInv @k @xo @xi @afoc . (obj @xo ** hi) . ho)
+              (io . (obj @xo ** ii) . associator @k @xo @xi @bfoc)
+          )
 
 instance SubFlavor (AlgLensFl m) MonLensFl where subFlavor r = r
 instance SubFlavor (AlgLensFl m) GetterFl where subFlavor r = r
@@ -110,74 +142,97 @@ instance SubFlavor (AlgLensFl m) AffineFoldFl where subFlavor r = r
 instance SubFlavor (AlgLensFl m) FoldFl where subFlavor r = r
 
 -- | An algebraic lens: like a 'Proarrow.Optic.Lens.Lens', but @put@ is allowed to combine
--- information monadically -- @get :: s -> a@, @put :: m s -> b -> t@ -- rather than only ever
+-- information monadically -- @get :: s ~> a@, @put :: m % s ** b ~> t@ -- rather than only ever
 -- seeing the /last/ @s@.
-type AlgebraicLens m (s :: Type) (t :: Type) a b = Optic (Prostrong (AlgLensFl m)) s t a b
+type AlgebraicLens m (s :: k) (t :: k) a b = Optic (Prostrong (AlgLensFl m)) s t a b
 
--- | Build an algebraic lens from @get@ and a monadic @put@; the residual is @m s@ itself.
-mkAlgebraicLens
-  :: forall m s t a b
-   . (Monad m) => (s -> a) -> (m s -> b -> t) -> AlgebraicLens m s t a b
-mkAlgebraicLens v u =
+-- | Build an algebraic lens from @get@ and a monadic @put@; the residual is the free algebra
+-- @m % s@ itself (which must be a comonoid, as must @s@ to be kept alongside its focus).
+algebraicLens
+  :: forall {k} m (s :: k) (t :: k) a b
+   . (Algebra m (m % s), Comonoid (m % s), Comonoid s, OplaxMonoidalRep m, Ob a, Ob b)
+  => (s ~> a) -> (m % s ** b ~> t) -> AlgebraicLens m s t a b
+algebraicLens v u =
   legs2prof @(AlgLensFl m)
-    (Rep @a @(ActionAt Tensor (m s)) (\s -> (return s, v s)))
-    (Corep @b @(ActionAt Tensor (m s)) (P.uncurry u))
+    (Rep @a @(ActionAt Tensor (m % s)) ((return @m @s ** v) . Mon.comult @s))
+    (Corep @b @(ActionAt Tensor (m % s)) u)
 
 -- | Classify a monadic computation of @s@'s through an 'AlgebraicLens' (or any stronger optic,
 -- in any encoding), given a replacement focus @b@ -- generalizing "set" to combine every @s@ the
 -- computation might produce (via its residual's 'Algebra') rather than only ever seeing the last one.
+-- The focus @a@ is discarded under the monad, hence must be a comonoid.
 classifyOf
-  :: forall m c s t a b
-   . (Monad m, c (ExOptic (AlgLensFl m) a b))
-  => Optic c s t a b -> m s -> b -> t
-classifyOf optic ms b =
-  withLegs @(AlgLensFl m) optic \l r -> withAlgP @m l r \f g -> g (algebra (P.fmap (P.fst . f) ms), b)
+  :: forall {k} m c (s :: k) (t :: k) a b
+   . (OplaxMonoidalRep m, Comonoid a, (Ob a, Ob b) => c (ExOptic (AlgLensFl m) a b))
+  => Optic c s t a b -> (m % s ** b) ~> t
+classifyOf optic =
+  withLegs @(AlgLensFl m) optic \l r ->
+    withAlgP @m l r \ @x alg h i ->
+      (i . ((alg . repMap @m (rightUnitor @k @x . (obj @x ** Mon.counit @a) . h)) ** obj @b)) \\ r
 
 infixl 8 .?
-(.?) :: forall m c s t a b. (Monad m, c (ExOptic (AlgLensFl m) a b)) => Optic c s t a b -> b -> m s -> t
-(.?) l b ms = classifyOf @m l ms b
 
--- | The __classifying lens__ (Clarke et al., Example 3.11): the algebraic lens for the list monad.
--- Its residual is a list algebra, i.e. a monoid, and tensoring with a monoid is an applicative
+-- | 'classifyOf' for a Haskell monad, curried: @optic .? b $ fs@.
+(.?)
+  :: forall f c s t a b
+   . (P.Monad f, Functor f, c (ExOptic (AlgLensFl (Star f)) a b))
+  => Optic c s t a b -> b -> f s -> t
+(.?) l b fs = classifyOf @(Star f) l (fs, b)
+
+-- | The __classifying lens__ (Clarke et al., Example 3.11): the algebraic lens for the list monad,
+-- here for any monad @l@ whose algebras are monoids. Tensoring with a monoid is an applicative
 -- functor (the writer applicative) -- so a classifying lens is also a kaleidoscope
 -- ('Proarrow.Optic.Kaleidoscope.KaleidoFl'), the meet of the two flavors. This is what lets it compose
 -- with a kaleidoscope to a kaleidoscope again (Clarke et al., Remark 3.28): a lens composed
 -- with a kaleidoscope is not a kaleidoscope, since a product functor is not applicative, but a
--- product /by a monoid/ is. The two structures on the residual are assumed to agree, as they do
--- for the list @m s@ itself ('P.++' and @join@) that 'classifyingLens' uses.
-type ClassifyFl :: FLAVOR Type Type
-class (AlgLensFl [] p q, KaleidoFl p q) => ClassifyFl (p :: Type +-> Type) (q :: Type +-> Type)
+-- product /by a monoid/ is. The algebra and the monoid on the residual are assumed to agree, as
+-- they do for the free algebra @l % s@ of the list monad (@join@ and @++@) that 'classifyingLens' uses.
+type ClassifyFl :: forall {k}. (k +-> k) -> FLAVOR k k
+class (AlgLensFl l p q, KaleidoFl p q) => ClassifyFl (l :: k +-> k) (p :: k +-> k) (q :: k +-> k)
 
-instance (Algebra [] x, P.Monoid x) => ClassifyFl (Rep (ActionAt Tensor x)) (Corep (ActionAt Tensor x))
-instance ClassifyFl Id Id
-instance (ClassifyFl f g, ClassifyFl f' g') => ClassifyFl (f :.: f') (g' :.: g)
+instance
+  (OplaxMonoidalRep l, Algebra l x, Monoid x, Comonoid x, SymMonoidal k, HasCoproducts k)
+  => ClassifyFl l (Rep (ActionAt Tensor x) :: k +-> k) (Corep (ActionAt Tensor x))
+instance (OplaxMonoidalRep (l :: k +-> k)) => ClassifyFl l (Id :: k +-> k) (Id :: k +-> k)
+instance (ClassifyFl l f g, ClassifyFl l f' g') => ClassifyFl l (f :.: f') (g' :.: g)
 
-instance SubFlavor ClassifyFl (AlgLensFl []) where subFlavor r = r
-instance SubFlavor ClassifyFl KaleidoFl where subFlavor r = r
-instance SubFlavor ClassifyFl CotravFl where subFlavor r = r
-instance SubFlavor ClassifyFl MonLensFl where subFlavor r = r
-instance SubFlavor ClassifyFl GetterFl where subFlavor r = r
-instance SubFlavor ClassifyFl MonTravFl where subFlavor r = r
-instance SubFlavor ClassifyFl TravFl where subFlavor r = r
-instance SubFlavor ClassifyFl SetterFl where subFlavor r = r
-instance SubFlavor ClassifyFl AffineFoldFl where subFlavor r = r
-instance SubFlavor ClassifyFl FoldFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) (AlgLensFl l) where subFlavor r = r
+instance SubFlavor (ClassifyFl l) KaleidoFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) CotravFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) MonLensFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) GetterFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) MonTravFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) TravFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) SetterFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) AffineFoldFl where subFlavor r = r
+instance SubFlavor (ClassifyFl l) FoldFl where subFlavor r = r
 
-type ClassifyingLens (s :: Type) (t :: Type) a b = Optic (Prostrong ClassifyFl) s t a b
+type ClassifyingLens l (s :: k) (t :: k) a b = Optic (Prostrong (ClassifyFl l)) s t a b
 
--- | Build a classifying lens from @get@ and a @classify :: [s] -> b -> t@; the residual is @[s]@.
-classifyingLens :: forall s t a b. (s -> a) -> ([s] -> b -> t) -> ClassifyingLens s t a b
+-- | Build a classifying lens from @get@ and a @classify :: l % s ** b ~> t@; the residual is the
+-- free algebra @l % s@, e.g. the list of sources.
+classifyingLens
+  :: forall {k} l (s :: k) (t :: k) a b
+   . ( Algebra l (l % s)
+     , Monoid (l % s)
+     , Comonoid (l % s)
+     , Comonoid s
+     , OplaxMonoidalRep l
+     , SymMonoidal k
+     , HasCoproducts k
+     , Ob a
+     , Ob b
+     )
+  => (s ~> a) -> (l % s ** b ~> t) -> ClassifyingLens l s t a b
 classifyingLens v u =
-  legs2prof @ClassifyFl
-    (Rep @a @(ActionAt Tensor [s]) (\s -> ([s], v s)))
-    (Corep @b @(ActionAt Tensor [s]) (P.uncurry u))
+  legs2prof @(ClassifyFl l)
+    (Rep @a @(ActionAt Tensor (l % s)) ((return @l @s ** v) . Mon.comult @s))
+    (Corep @b @(ActionAt Tensor (l % s)) u)
 
--- | The carrier of the literature's algebraic-lens eliminator: @'Costar' m@, i.e. @m a -> b@.
+-- | The carrier of the literature's algebraic-lens eliminator: @'RepCostar' m@, i.e. @m % a ~> b@.
 -- Absorbing an algebraic-lens witness pair collapses the residuals of the incoming computation
--- through their algebra and hands the foci on as one @m@-computation. Together with the
--- 'Proarrow.Optic.PowerGrate.PowerGrateFl' instance for the same carrier, this is what lets an
--- algebraic lens composed with a kaleidoscope classify an /aggregate/: run the composite at
--- @'Costar' (\`Prelude\` m)@.
-instance (Monad m) => Prostrong (AlgLensFl m) (Costar (Prelude m)) where
-  proact (f :.: Costar g :.: g') =
-    withAlgP @m f g' \l r -> Costar (\(Prelude ms) -> r (algebra (P.fmap (P.fst . l) ms), g (Prelude (P.fmap (P.snd . l) ms))))
+-- through their algebra and hands the foci on as one @m@-computation.
+instance (OplaxMonoidalRep (m :: k +-> k)) => Prostrong (AlgLensFl m) (RepCostar m :: k +-> k) where
+  proact (f :.: RepCostar @afoc g :.: g') =
+    withAlgP @m f g' \ @x alg h i ->
+      RepCostar (i . (alg ** g) . unparRep @m @x @afoc . repMap @m h) \\ g \\ f

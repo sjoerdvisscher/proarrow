@@ -67,33 +67,55 @@ instance (MonoidalProfunctor p, MonoidalProfunctor q) => MonoidalProfunctor (p :
   one = one :.: one
   (p :.: q) ** (r :.: s) = (p ** r) :.: (q ** s)
 
-par0Rep :: (Representable p, MonoidalProfunctor p) => Unit ~> p % Unit
+-- | A representable profunctor that is a 'MonoidalProfunctor': its functor @p '%'@ is /lax/
+-- monoidal, splitting as 'par0Rep' and 'parRep'.
+type LaxMonoidal p = (MonoidalProfunctor p, Representable p)
+
+par0Rep :: (LaxMonoidal p) => Unit ~> p % Unit
 par0Rep @p = index @p one
 
-parRep :: (Representable p, MonoidalProfunctor p, Ob x, Ob y) => (p % x) ** (p % y) ~> p % (x ** y)
+parRep :: (LaxMonoidal p, Ob x, Ob y) => (p % x) ** (p % y) ~> p % (x ** y)
 parRep @p @x @y = index @p (repUniv @p @x ** repUniv @p @y)
 
-unpar0Corep :: (Corepresentable p, MonoidalProfunctor p) => p %% Unit ~> Unit
+-- | A corepresentable profunctor that is a 'MonoidalProfunctor': its functor @p '%%'@ is /oplax/
+-- monoidal, splitting as 'unpar0Corep' and 'unparCorep'.
+type OplaxMonoidal p = (MonoidalProfunctor p, Corepresentable p)
+
+unpar0Corep :: (OplaxMonoidal p) => p %% Unit ~> Unit
 unpar0Corep @p = coindex @p one
 
-unparCorep :: (Corepresentable p, MonoidalProfunctor p, Ob x, Ob y) => p %% (x ** y) ~> (p %% x) ** (p %% y)
+unparCorep :: (OplaxMonoidal p, Ob x, Ob y) => p %% (x ** y) ~> (p %% x) ** (p %% y)
 unparCorep @p @x @y = coindex @p (corepUniv @p @x ** corepUniv @p @y)
 
-type StrongMonoidalRep p = (Representable p, MonoidalProfunctor p, MonoidalProfunctor (RepCostar p))
+-- | A __representable__ profunctor whose functor @p '%'@ is /oplax/ monoidal. Stating the oplax
+-- structure of a representable functor means naming that same functor in its other variance, which
+-- is what 'RepCostar' is for, so the postfix here says which presentation @p@ is in, not which
+-- structure it carries. Weaker than 'StrongMonoidalRep', which additionally asks @p@ itself to be
+-- 'LaxMonoidal'.
+type OplaxMonoidalRep p = (Representable p, OplaxMonoidal (RepCostar p))
 
-unpar0Rep :: (StrongMonoidalRep p) => p % Unit ~> Unit
+unpar0Rep :: (OplaxMonoidalRep p) => p % Unit ~> Unit
 unpar0Rep @p = unpar0Corep @(RepCostar p)
 
-unparRep :: (StrongMonoidalRep p, Ob x, Ob y) => p % (x ** y) ~> (p % x) ** (p % y)
+unparRep :: (OplaxMonoidalRep p, Ob x, Ob y) => p % (x ** y) ~> (p % x) ** (p % y)
 unparRep @p @x @y = unparCorep @(RepCostar p) @x @y
 
-type StrongMonoidalCorep p = (Corepresentable p, MonoidalProfunctor p, MonoidalProfunctor (CorepStar p))
+-- | A __corepresentable__ profunctor whose functor @p '%%'@ is /lax/ monoidal, dually through
+-- 'CorepStar'.
+type LaxMonoidalCorep p = (Corepresentable p, LaxMonoidal (CorepStar p))
 
-par0Corep :: (StrongMonoidalCorep p) => Unit ~> p %% Unit
+par0Corep :: (LaxMonoidalCorep p) => Unit ~> p %% Unit
 par0Corep @p = par0Rep @(CorepStar p)
 
-parCorep :: (StrongMonoidalCorep p, Ob x, Ob y) => (p %% x) ** (p %% y) ~> p %% (x ** y)
+parCorep :: (LaxMonoidalCorep p, Ob x, Ob y) => (p %% x) ** (p %% y) ~> p %% (x ** y)
 parCorep @p @x @y = parRep @(CorepStar p) @x @y
+
+-- | A representable profunctor whose functor is /strong/ monoidal: lax as it stands, and oplax in
+-- its other variance.
+type StrongMonoidalRep p = (LaxMonoidal p, OplaxMonoidalRep p)
+
+-- | A corepresentable profunctor whose functor is /strong/ monoidal, dually.
+type StrongMonoidalCorep p = (OplaxMonoidal p, LaxMonoidalCorep p)
 
 type Monoidal :: Kind -> Constraint
 class (CategoryOf k, MonoidalProfunctor ((~>) :: CAT k), Ob (Unit :: k)) => Monoidal k where

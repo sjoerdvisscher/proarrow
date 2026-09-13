@@ -13,10 +13,12 @@ import Data.List (minimumBy)
 import Data.Maybe (fromMaybe)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Falsify (testProperty)
-import Prelude
+import Prelude hiding (Applicative (..), Functor (..), id, map, (.))
 
 import Proarrow.Category.Instance.Kleisli (KLEISLI (..), Kleisli (..), arr)
-import Proarrow.Functor (Prelude (..))
+import Proarrow.Category.Monoidal.Applicative (Applicative (..))
+import Proarrow.Core (Promonad (..))
+import Proarrow.Functor (Functor (..))
 import Proarrow.Optic (convert)
 import Proarrow.Optic.Action (ClassifyingLens, classifyingLens, (.?))
 import Proarrow.Optic.Kaleidoscope (Kaleidoscope', cotraverseOf, kaleidoscopeOf)
@@ -129,8 +131,8 @@ data Flower = Flower
 
 -- | Classify a new set of measurements by the species of its nearest neighbour in a list of flowers:
 -- an algebraic lens for the list monad, whose @put@ sees the whole list rather than one flower.
-measure :: ClassifyingLens Flower Flower Measurements Measurements
-measure = classifyingLens measurements learn
+measure :: ClassifyingLens (Star []) Flower Flower Measurements Measurements
+measure = classifyingLens measurements (uncurry learn)
   where
     distance :: Measurements -> Measurements -> Float
     distance (Measurements a b c d) (Measurements x y z w) = sqrt (sum (map (** 2) ([a - x, b - y, c - z, d - w] :: [Float])))
@@ -146,13 +148,13 @@ aggregate =
 
 -- | Distribute a list aggregator through the kaleidoscope, at the carrier @Costar []@.
 aggregateWith :: ([Float] -> Float) -> [Measurements] -> Measurements
-aggregateWith f ms = unCostar (powerGrateOf aggregate (Costar (f . unPrelude))) (Prelude ms)
+aggregateWith = unCostar . powerGrateOf aggregate . Costar
 
 -- | Classify the /aggregate/ of a list of flowers: the classifying lens composed with the kaleidoscope
 -- is a kaleidoscope again (a product by a monoid is applicative), run at the aggregating
 -- carrier @Costar []@ (vitrea's @iris & measure . aggregate >- mean@).
 classifyAggregate :: ([Float] -> Float) -> [Flower] -> Flower
-classifyAggregate f fs = unCostar (kaleidoscopeOf measureAggregate (Costar (f . unPrelude))) (Prelude fs)
+classifyAggregate = unCostar . kaleidoscopeOf measureAggregate . Costar
 
 -- | The same composite, stored at its named flavor: Román's kaleidoscope.
 measureAggregate :: Kaleidoscope' Flower Float
@@ -194,40 +196,42 @@ iris =
 newtype Clock a = Clock {runClock :: Int -> (a, Int)}
 
 instance Functor Clock where
-  fmap f (Clock g) = Clock (\t -> let (a, t') = g t in (f a, t'))
+  map f (Clock g) = Clock (\t -> let (a, t') = g t in (f a, t'))
 instance Applicative Clock where
-  pure a = Clock (a,)
-  Clock f <*> Clock g = Clock (\t -> let (h, t') = f t; (a, t'') = g t' in (h a, t''))
-instance Monad Clock where
-  Clock g >>= k = Clock (\t -> let (a, t') = g t in runClock (k a) t')
+  pure a () = Clock (a (),)
+  liftA2 h (Clock f, Clock g) = Clock (\t -> let (a, t') = f t; (b, t'') = g t' in (h (a, b), t''))
+instance Promonad (Star Clock) where
+  id = Star \a -> Clock (a,)
+  Star f . Star g = Star \a -> Clock (\t -> let (b, t') = runClock (g a) t in let (c, t'') = runClock (f b) t' in (c, t''))
 
 tick :: Clock Int
 tick = Clock (\t -> (t, t + 1))
 
 -- | Run a Kleisli arrow of @m@ on a plain value.
-runK :: forall m a b. Kleisli (KL a :: KLEISLI (Star (Prelude m))) (KL b) -> a -> m b
-runK k = unPrelude . unStar (unKleisli k)
+runK :: forall m a b. Kleisli (KL a :: KLEISLI (Star m)) (KL b) -> a -> m b
+runK k = unStar (unKleisli k)
 
 -- | A lens in the Kleisli category of 'Clock': viewing is pure, updating also stamps the time.
-stamp :: Lens (KL (Timestamped a) :: KLEISLI (Star (Prelude Clock))) (KL (Timestamped b)) (KL a) (KL b)
-stamp = lens (arr contents') (Kleisli (Star (\(x, b) -> Prelude (do t <- tick; pure x{contents' = b, modified' = t}))))
+stamp :: Lens (KL (Timestamped a) :: KLEISLI (Star Clock)) (KL (Timestamped b)) (KL a) (KL b)
+stamp = lens (arr contents') (Kleisli (Star (\(x, b) -> map (\t -> x{contents' = b, modified' = t}) tick)))
 
 -- | A writer-like monad, for a lens that logs its updates.
 newtype Log a = Log {runLog :: ([String], a)}
 
 instance Functor Log where
-  fmap f (Log (w, a)) = Log (w, f a)
+  map f (Log (w, a)) = Log (w, f a)
 instance Applicative Log where
-  pure a = Log ([], a)
-  Log (w, f) <*> Log (w', a) = Log (w ++ w', f a)
-instance Monad Log where
-  Log (w, a) >>= k = let Log (w', b) = k a in Log (w ++ w', b)
+  pure a () = Log ([], a ())
+  liftA2 f (Log (w, a), Log (w', b)) = Log (w ++ w', f (a, b))
+instance Promonad (Star Log) where
+  id = Star (Log . ([],))
+  Star f . Star g = Star \a -> let Log (w, b) = g a in let Log (w', c) = f b in Log (w ++ w', c)
 
 newtype Box a = Box {openBox :: a} deriving (Show, Eq)
 
-box :: (Show b) => Lens (KL (Box a) :: KLEISLI (Star (Prelude Log))) (KL (Box b)) (KL a) (KL b)
+box :: (Show b) => Lens (KL (Box a) :: KLEISLI (Star Log)) (KL (Box b)) (KL a) (KL b)
 box =
-  lens (arr openBox) (Kleisli (Star (\(_, b) -> Prelude (Log (["[box]: contents changed to " ++ show b ++ "."], Box b)))))
+  lens (arr openBox) (Kleisli (Star (\(_, b) -> Log (["[box]: contents changed to " ++ show b ++ "."], Box b))))
 
 -- * Example 4: traversals
 
@@ -235,7 +239,7 @@ each :: Traversal [a] [b] a b
 each = traversed @(Star [])
 
 uppercase :: String -> String
-uppercase = fmap toUpper
+uppercase = map toUpper
 
 places :: [String]
 places =

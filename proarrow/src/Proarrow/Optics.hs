@@ -1,7 +1,8 @@
 -- | The user-facing optics vocabulary, in one import.
 --
 -- * /Build/ optics with 'iso', 'lens', 'monLens', 'prism', 'affineTraversal', 'grate',
---   'powerGrate', 'cotraversal', 'kaleidoscope', 'tracer', 'traversed', 'traversal' (a 'Traversal' from its van-Laarhoven \/
+--   'powerGrate', 'cotraversal', 'kaleidoscope', 'algebraicLens', 'classifyingLens', 'tracer',
+--   'traversed', 'traversal' (a 'Traversal' from its van-Laarhoven \/
 --   profunctor-class form), 'to' and 'unto'. These produce
 --   'Proarrow.Optic.Prostrong'-flavored optics ('Iso', 'Lens', 'Prism', 'Traversal', ...), which
 --   support subtyping: any optic can be used directly wherever a weaker flavor is needed (a 'Lens'
@@ -14,7 +15,9 @@
 --   'review' (a 'Review'), 'preview' (an 'AffineFold'), 'matching' (an 'AffineTraversal'), 'over'
 --   (a 'Setter'), 'foldMapOf' (a
 --   'Fold'), 'traverseOf' (a 'Traversal'), 'monTraverseOf' (a 'MonoidalTraversal'),
---   'powerGrateOf' (a 'PowerGrate'), 'cotraverseOf' (a 'Cotraversal'), 'kaleidoscopeOf' and 'zipWithOf' (a 'Kaleidoscope') and 'tracerOf' (a 'Tracer') /run/ the optic, while 'withIso', 'withLens',
+--   'powerGrateOf' (a 'PowerGrate'), 'cotraverseOf' (a 'Cotraversal'), 'kaleidoscopeOf' and
+--   'zipWithOf' (a 'Kaleidoscope'), 'classifyOf' (an 'AlgebraicLens') and 'tracerOf' (a 'Tracer')
+--   /run/ the optic, while 'withIso', 'withLens',
 --   'withMonLens', 'withPrism' and 'withGrate' /recover its two legs/. Operator shorthands
 --   ('(^.)', '(#)', '(^?)', 'set', '(%~)', '(.~)', 'unfold') abbreviate the common ones. All of
 --   these are encoding-agnostic.
@@ -27,21 +30,24 @@
 -- The full subtyping lattice ('Proarrow.Optic.SubFlavor' edges, weakest optics at the top):
 --
 -- >         Fold                           Setter
--- >        /    \                         /   \  \
--- >       /      \                       /     \  `----------.
--- > AffineFold    \                     /    Cotraversal     |
--- >   |    \       `---- Traversal ----'           |         |
--- >   |     \           /         \          Kaleidoscope    |
--- >   |      \         /           \               |         |
--- > Getter  AffineTraversal     MonoidalTraversal  |         |
--- >   |  \ /              \     /  /          |    |         |
--- >   |   X             .--\---'  /   Review  |  Grate     Tracer
--- >   |  / \           /    \    /    /       |    |         |
--- >  Lens   MonoidalLens    Prism----'      PowerGrate       |
--- >    \         \           /               /              /
--- >     \         \         /               /              /
--- >      `---------`---+---'---------------'--------------'
--- >                   Iso
+-- >        /    \                         /   \  `-------------.
+-- >       /      \                       /     \               |
+-- > AffineFold    `----- Traversal -----'    Cotraversal       |
+-- >   |    \             /       \                 |           |
+-- >   |     \           /         \          Kaleidoscope      |
+-- >   |      \         /           \               |    \      |
+-- > Getter  AffineTraversal     MonoidalTraversal  |     \  Tracer
+-- >   |  \ /              \     /  /          |    |      |    |
+-- >   |   X             .--\---'  /   Review  |  Grate    |    |
+-- >   |  / \           /    \    /    /       |    |      |    |
+-- >  Lens   MonoidalLens    Prism----'      PowerGrate    |    |
+-- >   |        |   \          /               /           |    |
+-- >   |        |    \        /               /            |    |
+-- >   `--------|-----`---v--'---------------'-------------+----'
+-- >            |        Iso                               |
+-- >      AlgebraicLens                                    |
+-- >            |                                          |
+-- >      ClassifyingLens ---------------------------------'
 module Proarrow.Optics
   ( -- * Optic kinds
     Optic
@@ -77,6 +83,8 @@ module Proarrow.Optics
   , Cotraversal'
   , Kaleidoscope
   , Kaleidoscope'
+  , AlgebraicLens
+  , ClassifyingLens
   , Tracer
   , Tracer'
 
@@ -90,6 +98,8 @@ module Proarrow.Optics
   , powerGrate
   , cotraversal
   , kaleidoscope
+  , algebraicLens
+  , classifyingLens
   , tracer
   , traversed
   , traversal
@@ -100,7 +110,8 @@ module Proarrow.Optics
     -- * Eliminating optics
 
     -- | Exactly one eliminator per flavor: 'view', 'review', 'preview', 'over', 'foldMapOf',
-    -- 'traverseOf', 'monTraverseOf', 'powerGrateOf', 'cotraverseOf', 'kaleidoscopeOf', 'zipWithOf' and 'tracerOf' /run/ the optic; 'withIso', 'withLens',
+    -- 'traverseOf', 'monTraverseOf', 'powerGrateOf', 'cotraverseOf', 'kaleidoscopeOf', 'zipWithOf',
+    -- 'classifyOf' and 'tracerOf' /run/ the optic; 'withIso', 'withLens',
     -- 'withMonLens', 'withPrism' and 'withGrate' /recover its two legs/.
   , view
   , review
@@ -114,6 +125,7 @@ module Proarrow.Optics
   , cotraverseOf
   , kaleidoscopeOf
   , zipWithOf
+  , classifyOf
   , tracerOf
   , withIso
   , withLens
@@ -125,6 +137,7 @@ module Proarrow.Optics
   , (^.)
   , (#)
   , (^?)
+  , (.?)
   , set
   , (%~)
   , (.~)
@@ -133,12 +146,22 @@ module Proarrow.Optics
     -- * Composing and converting optics
   , (%)
   , convert
+  , Algebra (..)
   , toPTraversal
   , toPTraversalFull
   , fromPTraversal
   ) where
 
 import Proarrow.Optic (Optic, Optic', convert, iso, re, (%))
+import Proarrow.Optic.Action
+  ( Algebra (..)
+  , AlgebraicLens
+  , ClassifyingLens
+  , algebraicLens
+  , classifyOf
+  , classifyingLens
+  , (.?)
+  )
 import Proarrow.Optic.AffineFold (AffineFold, preview, (^?))
 import Proarrow.Optic.AffineTraversal (AffineTraversal, AffineTraversal', matching)
 import Proarrow.Optic.Fold (Fold, foldMapOf, unfold)

@@ -1,15 +1,31 @@
 digraph optics {
   rankdir=TB; node [shape=box, style=rounded, fontname="Helvetica"]; edge [dir=none];
+  // Edges run weakest-to-strongest, mirroring the SubFlavor superclass structure.
+  // Dotted nodes are one-sided: their methods never mention the second witness, so its category
+  // may differ from the first's. Dashed nodes are indexed by a monad, so Iso has no edge to them.
+  node [style="rounded,dotted"]; Fold; AffineFold; Getter; Review;
+  node [style="rounded,dashed"];
+  AlgebraicLens [label="AlgebraicLens m"];
+  ClassifyingLens [label="ClassifyingLens l"];
+  node [style=rounded];
   { rank=same; Fold; Setter; }
-  { rank=same; Getter; AffineTraversal; MonoidalTraversal; Review; }
-  { rank=same; Lens; MonoidalLens; Prism; Kaleidoscope; }
-  Fold -> AffineFold;  Fold -> Traversal;  Setter -> Traversal; Setter -> Grate;
+
+  Fold -> AffineFold; Fold -> Traversal;
+  Setter -> Traversal; Setter -> Cotraversal; Setter -> Tracer;
+
   AffineFold -> Getter; AffineFold -> AffineTraversal;
   Traversal -> AffineTraversal; Traversal -> MonoidalTraversal;
+  Cotraversal -> Kaleidoscope;
+  Kaleidoscope -> Grate;
+
   Getter -> Lens; Getter -> MonoidalLens;
   AffineTraversal -> Lens; AffineTraversal -> Prism;
-  MonoidalTraversal -> MonoidalLens; MonoidalTraversal -> Prism; MonoidalTraversal -> Kaleidoscope;
+  MonoidalTraversal -> MonoidalLens; MonoidalTraversal -> Prism; MonoidalTraversal -> PowerGrate;
   Review -> Prism;
-  Grate -> Kaleidoscope;
-  Lens -> Iso; MonoidalLens -> Iso; Prism -> Iso; Kaleidoscope -> Iso;
+  Grate -> PowerGrate;
+
+  MonoidalLens -> AlgebraicLens;
+  AlgebraicLens -> ClassifyingLens; Kaleidoscope -> ClassifyingLens;
+
+  Lens -> Iso; MonoidalLens -> Iso; Prism -> Iso; PowerGrate -> Iso; Tracer -> Iso;
 }

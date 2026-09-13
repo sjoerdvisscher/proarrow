@@ -19,13 +19,13 @@
 --   /representable/ @p@, which is exactly the kaleidoscope of Clarke et al. (/Profunctor optics: a
 --   categorical update/): the optic for the action of applicative functors,
 --   @∫^{F applicative} C(S, F A) × C(F B, T)@, eliminated by @Traversable@ carriers through
---   @sequenceA@. In @Type@ this admits the unbounded shapes: @'Costar' ('Prelude' t)@ for a
---   @Traversable t@, the @Aggregating@ module of the literature. Those are not 'Cotraversable': a
+--   @sequenceA@. In @Type@ this admits the unbounded shapes: @'Costar' t@ for a @Traversable t@,
+--   the @Aggregating@ module of the literature. Those are not 'Cotraversable': a
 --   list can only pass a strong distributive profunctor through by /knowing it is an applicative/
 --   -- a generic structural recursion diverges on strict witnesses such as 'Rep'.
 --
 -- Every 'Cotraversable' carrier is 'Kaleidoscopic' ('cotravAct'), so @'KaleidoFl' <: 'CotravFl'@: the
--- applicative optic is the stronger flavor. Both sit below 'Proarrow.Optic.Setter.SetterFl' only --
+-- kaleidoscope is the stronger flavor. Both sit below 'Proarrow.Optic.Setter.SetterFl' only --
 -- one can @over@ through an applicative, but not fold out of one. 'Proarrow.Optic.PowerGrate.PowerGrateFl'
 -- (tensor powers, the reader applicative) is a subflavor of 'KaleidoFl', and so is the tensor-action pair
 -- for a /monoid/ residual (the writer applicative) -- which is how an algebraic lens for the list
@@ -77,7 +77,8 @@ import Proarrow.Profunctor.Representable (Rep (..), RepCostar (..), Representabl
 -- 'StrongDistributiveProfunctor' @p@ -- i.e. every applicative functor @p % -@ -- acts on by
 -- application. Where a traversal's carriers are the applicatives themselves, a kaleidoscope's
 -- carriers are the things applicatives can be sequenced through: every 'Cotraversable' profunctor
--- ('cotravAct'), and in @Type@ also @'Costar' ('Prelude' t)@ for any @Traversable t@.
+-- ('cotravAct'), and in @Type@ also @'Costar' t@ for any @Traversable t@: @'Costar' []@ directly,
+-- and @'Costar' ('Prelude' t)@ for a @t@ that has no 'Proarrow.Functor.Functor' instance of its own.
 type Kaleidoscopic :: forall {k}. (k +-> k) -> Constraint
 class (Profunctor r) => Kaleidoscopic (r :: k +-> k) where
   kaleidoAct :: forall p a b. (Representable p, StrongDistributiveProfunctor (p :: k +-> k)) => r a b -> r (p % a) (p % b)
@@ -117,6 +118,11 @@ instance (Representable p, StrongDistributiveProfunctor (p :: Type +-> Type)) =>
 -- aggregate. This carrier is /not/ 'Cotraversable', see the module header.
 instance (P.Traversable t) => Kaleidoscopic (Costar (Prelude t)) where
   kaleidoAct @p @a (Costar g) = Costar (\(Prelude tpa) -> repMap @p (g . Prelude) (unwrapRep (P.traverse (WrapRep @p @a) tpa)))
+
+-- | The same for @[]@, which is a 'Proarrow.Functor.Functor' in its own right, so the literature's
+-- aggregating carrier can be written as a plain @[a] -> b@.
+instance Kaleidoscopic (Costar []) where
+  kaleidoAct @p @a (Costar g) = Costar (\tpa -> repMap @p g (unwrapRep (P.traverse (WrapRep @p @a) tpa)))
 
 -- * The cotraversal
 
@@ -201,7 +207,7 @@ cotraverseOf
 cotraverseOf o rab = withLegs @CotravFl o \l r -> cotravP l r rab
 
 -- | Act on a 'Kaleidoscopic' carrier through a kaleidoscope (or any stronger optic, in any
--- encoding, '(%)'-composites included). At @'Costar' ('Prelude' [])@ this is the literature's
+-- encoding, '(%)'-composites included). At @'Costar' []@ this is the literature's
 -- aggregation operator @>-@: from @[a] -> b@ to @[s] -> t@.
 kaleidoscopeOf
   :: forall {k} c (s :: k) (t :: k) a b r
@@ -217,4 +223,6 @@ instance (Traversable t, Representable t) => Prostrong CotravFl (RepCostar t) wh
 instance (Traversable t, Representable t) => Prostrong KaleidoFl (RepCostar t) where
   proact (f :.: c :.: g) = kaleidoP f g c
 instance (P.Traversable t) => Prostrong KaleidoFl (Costar (Prelude t)) where
+  proact (f :.: c :.: g) = kaleidoP f g c
+instance Prostrong KaleidoFl (Costar []) where
   proact (f :.: c :.: g) = kaleidoP f g c

@@ -5,6 +5,7 @@
 -- @Star (Prelude m)@ is its Kleisli promonad.
 module Proarrow.Profunctor.Instance.Star where
 
+import Control.Monad qualified as P
 import Data.Functor.Compose (Compose (..))
 import Data.Kind (Type)
 import Prelude qualified as P
@@ -112,6 +113,12 @@ instance Traversable (Star []) where
           (\case [] -> P.Left (); (x : xs) -> P.Right (x, xs))
           (P.const [] ||| P.uncurry (:))
           (one ++ (p ** go))
+
+-- | The list monad without the 'Prelude' wrapper, so that a Kleisli arrow of @[]@ reads as the
+-- plain @a -> [b]@.
+instance Promonad (Star []) where
+  id = Star P.return
+  Star l . Star r = Star (l P.<=< r)
 
 starTraverse
   :: forall t f a b

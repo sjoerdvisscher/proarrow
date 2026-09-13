@@ -31,7 +31,7 @@ import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
 import Proarrow.Object (Obj, obj)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Product (prod, (:*:) (..))
-import Proarrow.Profunctor.Representable (Representable (..), withObRep)
+import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), withObRep)
 
 infixl 5 &&
 infixl 5 &&&
@@ -75,6 +75,26 @@ class (a ** b ~ a && b) => TensorIsProduct a b
 instance (a ** b ~ a && b) => TensorIsProduct a b
 class (HasProducts k, SymMonoidal k, Semicartesian k, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
 instance (HasProducts k, SymMonoidal k, Semicartesian k, forall (a :: k) (b :: k). TensorIsProduct a b) => Cartesian k
+
+-- | Every functor between cartesian categories is oplax monoidal, @f (a && b) ~> f a && f b@ by the
+-- projections and @f Unit ~> Unit@ by terminality. On the 'RepCostar' of its representable profunctor
+-- this is 'Proarrow.Category.Monoidal.OplaxMonoidal'.
+instance (Representable p, Cartesian j, Cartesian k) => MonoidalProfunctor (RepCostar (p :: j +-> k)) where
+  one = withObRep @p @Unit (RepCostar terminate)
+  RepCostar @a f ** RepCostar @b g = withOb2 @j @a @b (RepCostar (unparRepCartesian @p @a @b f g))
+
+unparRepCartesian
+  :: forall {j} {k} p (a :: j) b a' b'
+   . ( Representable (p :: j +-> k)
+     , Cartesian k
+     , Cartesian j
+     , TensorIsProduct a b
+     , TensorIsProduct a' b'
+     , Ob a
+     , Ob b
+     )
+  => (p % a ~> a') -> (p % b ~> b') -> p % (a ** b) ~> (a' ** b')
+unparRepCartesian f g = f . repMap @p (fst @j @a @b) &&& g . repMap @p (snd @j @a @b)
 
 instance HasBinaryProducts Type where
   type a && b = (a, b)
