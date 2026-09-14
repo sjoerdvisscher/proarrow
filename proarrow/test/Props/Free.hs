@@ -18,6 +18,7 @@ import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (Monoidal, SymMonoidal, UnitF, withOb2, type (**!))
 import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, withObExp, type (-->))
 import Proarrow.Category.Monoidal.CompactClosed (CompactClosed)
+import Proarrow.Category.Monoidal.Distributive (Distributive)
 import Proarrow.Category.Monoidal.StarAutonomous (DualF, StarAutonomous)
 import Proarrow.Colimit.BinaryCoproduct (HasBinaryCoproducts (..), type (+))
 import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
@@ -51,6 +52,7 @@ type FREECS =
    , Monoidal
    , SymMonoidal
    , Closed
+   , Distributive
    , StarAutonomous
    , CompactClosed
    , Supplies Monoid
@@ -84,6 +86,9 @@ test =
         (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
         (\ @a @b r -> withObExp @FINREL @(LowerT a) @(LowerT b) r)
     , propSymMonoidal @FREEKIND (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+    , propDistributive @FREEKIND
+        (\ @a @b r -> withOb2 @FINREL @(LowerT a) @(LowerT b) r)
+        (\ @a @b r -> withObCoprod @FINREL @(LowerT a) @(LowerT b) r)
     , -- 'propStarAutonomous' isn't wired in here: its naturality checks need e.g. an arbitrary
       -- @a ** b ~> Dual c@ for independently-drawn a,b,c, but in a *free* category that hom-set is
       -- genuinely empty for most palette triples (no unitor/associator-driven bridge connects a

@@ -11,8 +11,9 @@ import Data.Bifunctor (bimap)
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
+import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..), Lower, withLowerOb)
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), first, second, type (**!))
 import Proarrow.Category.Monoidal.Action (CoprodAction)
 import Proarrow.Category.Monoidal.Cartesian (BiCCC, Cartesian)
 import Proarrow.Category.Monoidal.Closed (Closed (..), uncurry)
@@ -25,9 +26,10 @@ import Proarrow.Colimit.BinaryCoproduct
   , HasCoproducts
   , codiag
   , (++)
+  , type (+)
   )
-import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
+import Proarrow.Colimit.Initial (HasInitialObject (..), InitF)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), lmap, (//), (:~>), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag, swapProd)
 import Proarrow.Monoid (Monoid (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..), coindex, corepUniv)
@@ -49,6 +51,38 @@ class (Monoidal k, HasCoproducts k) => Distributive k where
   absorbR :: (Ob (a :: k)) => (InitialObject ** a) ~> InitialObject
 
 type Bicartesian k = (Cartesian k, Distributive k)
+
+-- | The free-category structure for 'Distributive': formal distributors and absorbers,
+-- interpreted by 'foldStructure' through the target's own. Together with the coproduct and
+-- monoidal structures this is what lets a free category over a bare quiver be distributive
+-- without asking anything of the quiver's category.
+instance
+  ('[Distributive, Monoidal, HasBinaryCoproducts, HasInitialObject] `Elems` cs)
+  => HasStructure cs (p :: CAT k) Distributive
+  where
+  data Struct Distributive i o where
+    DistL :: (Ob a, Ob b, Ob c) => Struct Distributive (a **! (b + c)) ((a **! b) + (a **! c))
+    DistR :: (Ob a, Ob b, Ob c) => Struct Distributive ((a + b) **! c) ((a **! c) + (b **! c))
+    AbsorbL :: (Ob a) => Struct Distributive (a **! InitF) InitF
+    AbsorbR :: (Ob a) => Struct Distributive (InitF **! a) InitF
+  foldStructure @f _ (DistL @a @b @c) =
+    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (distL @_ @(Lower f a) @(Lower f b) @(Lower f c))))
+  foldStructure @f _ (DistR @a @b @c) =
+    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (distR @_ @(Lower f a) @(Lower f b) @(Lower f c))))
+  foldStructure @f _ (AbsorbL @a) = withLowerOb @f @a (absorbL @_ @(Lower f a))
+  foldStructure @f _ (AbsorbR @a) = withLowerOb @f @a (absorbR @_ @(Lower f a))
+
+instance P.Show (Struct Distributive a b) where
+  showsPrec _ DistL = P.showString "distL"
+  showsPrec _ DistR = P.showString "distR"
+  showsPrec _ AbsorbL = P.showString "absorbL"
+  showsPrec _ AbsorbR = P.showString "absorbR"
+
+instance ('[Distributive, Monoidal, HasBinaryCoproducts, HasInitialObject] `Elems` cs) => Distributive (FREE cs (p :: CAT k)) where
+  distL = St DistL Nil
+  distR = St DistR Nil
+  absorbL = St AbsorbL Nil
+  absorbR = St AbsorbR Nil
 
 distLInv
   :: forall {k} a b c. (Distributive k, Ob (a :: k), Ob b, Ob c) => (a ** b || a ** c) ~> (a ** (b || c))
