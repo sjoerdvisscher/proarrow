@@ -8,14 +8,16 @@
 module Proarrow.Category.Monoidal.Cartesian where
 
 import Prelude (type (~))
+import Prelude qualified as P
 
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal)
+import Proarrow.Category.Instance.Free (Elems, FREE, Free (..), HasStructure (..), Lower, withLowerOb)
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, UnitF, type (**!))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.CopyDiscard (CopyDiscard)
 import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
-import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag)
-import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian)
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), HasProducts, PROD (..), Prod (..), diag, type (*!))
+import Proarrow.Limit.Terminal (HasTerminalObject (..), Semicartesian, TermF)
 import Proarrow.Monoid (CocommutativeComonoid, Comonoid (..))
 import Proarrow.Profunctor.Representable (RepCostar (..), Representable (..), withObRep)
 
@@ -92,3 +94,55 @@ ap
   -> p a x
   -> p a y
 ap pf px = dimap diag (apply @j @x @y) (pf ** px) \\ px
+
+-- | The free-category structure for 'Cartesian'. The free category cannot satisfy the /type
+-- equality/ @tensor = product@ ('TensorIsProduct' fails on it, see "Proarrow.Category.Instance.Free"),
+-- but it can carry the corresponding isomorphisms as formal arrows, interpreted to the identity in
+-- any cartesian target ('productToTensor' and friends). This is what lets a free category serve
+-- as syntax for cartesian (closed) categories without collapsing its object grammar.
+instance
+  ('[Cartesian, HasTerminalObject, HasBinaryProducts, Monoidal] `Elems` cs)
+  => HasStructure cs (p :: CAT k) Cartesian
+  where
+  data Struct Cartesian i o where
+    ProdToTensor :: (Ob a, Ob b) => Struct Cartesian (a *! b) (a **! b)
+    TensorToProd :: (Ob a, Ob b) => Struct Cartesian (a **! b) (a *! b)
+    TermToUnit :: Struct Cartesian TermF UnitF
+    UnitToTerm :: Struct Cartesian UnitF TermF
+  foldStructure @f _ (ProdToTensor @a @b) =
+    withLowerOb @f @a (withLowerOb @f @b (productToTensor @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (TensorToProd @a @b) =
+    withLowerOb @f @a (withLowerOb @f @b (tensorToProduct @(Lower f a) @(Lower f b)))
+  foldStructure _ TermToUnit = id
+  foldStructure _ UnitToTerm = id
+
+instance P.Show (Struct Cartesian a b) where
+  showsPrec _ ProdToTensor = P.showString "prodToTensor"
+  showsPrec _ TensorToProd = P.showString "tensorToProd"
+  showsPrec _ TermToUnit = P.showString "termToUnit"
+  showsPrec _ UnitToTerm = P.showString "unitToTerm"
+
+-- | The formal @tensor = product@ isomorphisms of a free category with 'Cartesian' in its list.
+prodToTensor
+  :: forall {k} {cs} {p :: CAT k} (a :: FREE cs p) b
+   . ('[Cartesian, HasTerminalObject, HasBinaryProducts, Monoidal] `Elems` cs, Ob a, Ob b)
+  => (a *! b) ~> (a **! b)
+prodToTensor = St ProdToTensor Nil
+
+tensorToProd
+  :: forall {k} {cs} {p :: CAT k} (a :: FREE cs p) b
+   . ('[Cartesian, HasTerminalObject, HasBinaryProducts, Monoidal] `Elems` cs, Ob a, Ob b)
+  => (a **! b) ~> (a *! b)
+tensorToProd = St TensorToProd Nil
+
+termToUnit
+  :: forall {k} {cs} {p :: CAT k}
+   . ('[Cartesian, HasTerminalObject, HasBinaryProducts, Monoidal] `Elems` cs)
+  => (TermF :: FREE cs p) ~> UnitF
+termToUnit = St TermToUnit Nil
+
+unitToTerm
+  :: forall {k} {cs} {p :: CAT k}
+   . ('[Cartesian, HasTerminalObject, HasBinaryProducts, Monoidal] `Elems` cs)
+  => (UnitF :: FREE cs p) ~> TermF
+unitToTerm = St UnitToTerm Nil
