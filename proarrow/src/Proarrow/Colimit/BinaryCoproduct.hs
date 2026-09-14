@@ -13,13 +13,13 @@ import Prelude (Show, ($), type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free
-  ( Elem
+  ( Elem (..)
   , FREE (..)
-  , Free (St)
   , HasStructure (..)
   , IsFreeOb (..)
-  , Ok
+  , Lower
   , WithShow
+  , withLowerOb
   )
 import Proarrow.Category.Instance.Free qualified as F
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
@@ -28,7 +28,7 @@ import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), PROD (..), Prod (..), diag)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
@@ -275,16 +275,18 @@ instance (Profunctor p, CategoryOf j, CategoryOf k) => Profunctor (Uncoprod p ::
   r \\ Uncoprod f = r \\ f
 
 data family (+) (a :: k) (b :: k) :: k
-instance (Ob (a :: FREE cs p), Ob b, HasBinaryCoproducts `Elem` cs) => IsFreeOb (a + b) where
+instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, HasBinaryCoproducts `Elem` cs) => IsFreeOb (a + b) where
   type Lower f (a + b) = Lower f a || Lower f b
-  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withObCoprod @_ @(Lower f a) @(Lower f b) r))
-instance (HasBinaryCoproducts `Elem` cs) => HasStructure cs p HasBinaryCoproducts where
+  lowerOb @k' @f r =
+    fromAll @HasBinaryCoproducts @cs @k'
+      (withLowerOb @f @a (withLowerOb @f @b (withObCoprod @k' @(Lower f a) @(Lower f b) r)))
+instance (HasBinaryCoproducts `Elem` cs) => HasStructure cs (p :: CAT k) HasBinaryCoproducts where
   data Struct HasBinaryCoproducts i o where
     Lft :: (Ob a, Ob b) => Struct HasBinaryCoproducts a (a + b)
     Rgt :: (Ob a, Ob b) => Struct HasBinaryCoproducts b (a + b)
     Sum :: a ~> o -> b ~> o -> Struct HasBinaryCoproducts (a + b) o
-  foldStructure @f _ (Lft @a @b) = withLowerOb @a @f (withLowerOb @b @f (lft @_ @(Lower f a) @(Lower f b)))
-  foldStructure @f _ (Rgt @a @b) = withLowerOb @a @f (withLowerOb @b @f (rgt @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Lft @a @b) = withLowerOb @f @a (withLowerOb @f @b (lft @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Rgt @a @b) = withLowerOb @f @a (withLowerOb @f @b (rgt @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Sum g h) = go g ||| go h
 instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
   showsPrec _ Lft = P.showString "lft"
@@ -292,12 +294,12 @@ instance (WithShow a) => Show (Struct HasBinaryCoproducts a b) where
   showsPrec d (Sum f g) =
     P.showParen (d P.> 4) P.$
       P.showsPrec 5 f . P.showString " ||| " . P.showsPrec 5 g
-instance (Ok cs p, HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE cs p) where
+instance (HasBinaryCoproducts `Elem` cs) => HasBinaryCoproducts (FREE cs (p :: CAT k)) where
   type a || b = a + b
   withObCoprod r = r
-  lft = St Lft F.Id
-  rgt = St Rgt F.Id
-  f ||| g = St (Sum f g) F.Id \\ f \\ g
+  lft = F.St Lft F.Nil
+  rgt = F.St Rgt F.Nil
+  f ||| g = F.St (Sum f g) F.Nil \\ f \\ g
 
 class ((a && b) ~ (a || b)) => CheckBiproduct a b
 instance ((a && b) ~ (a || b)) => CheckBiproduct a b

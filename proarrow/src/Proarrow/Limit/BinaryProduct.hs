@@ -12,20 +12,21 @@ import Prelude (Show, type (~))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.Free
-  ( Elem
+  ( Elem (..)
   , FREE (..)
   , Free (..)
   , HasStructure (..)
   , IsFreeOb (..)
-  , Ok
+  , Lower
   , WithShow
+  , withLowerOb
   )
 import Proarrow.Category.Instance.Product (Diag, (:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..))
 import Proarrow.Colimit.Initial (HasInitialObject (..))
-import Proarrow.Core (CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Hom, Profunctor (..), Promonad (..), UN, WrappedOb, type (+->))
 import Proarrow.Functor (Functor (..), FunctorForRep (..))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Object (Obj, obj)
@@ -216,16 +217,17 @@ instance SymMonoidal Type where
   swap = swapProd
 
 data family (*!) (a :: k) (b :: k) :: k
-instance (Ob (a :: FREE cs p), Ob b, HasBinaryProducts `Elem` cs) => IsFreeOb (a *! b) where
+instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, HasBinaryProducts `Elem` cs) => IsFreeOb (a *! b) where
   type Lower f (a *! b) = Lower f a && Lower f b
-  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withObProd @_ @(Lower f a) @(Lower f b) r))
-instance (HasBinaryProducts `Elem` cs) => HasStructure cs p HasBinaryProducts where
+  lowerOb @k' @f r =
+    fromAll @HasBinaryProducts @cs @k' (withLowerOb @f @a (withLowerOb @f @b (withObProd @k' @(Lower f a) @(Lower f b) r)))
+instance (HasBinaryProducts `Elem` cs) => HasStructure cs (p :: CAT k) HasBinaryProducts where
   data Struct HasBinaryProducts i o where
     Fst :: (Ob a, Ob b) => Struct HasBinaryProducts (a *! b) a
     Snd :: (Ob a, Ob b) => Struct HasBinaryProducts (a *! b) b
     Prd :: i ~> a -> i ~> b -> Struct HasBinaryProducts i (a *! b)
-  foldStructure @f _ (Fst @a @b) = withLowerOb @a @f (withLowerOb @b @f (fst @_ @(Lower f a) @(Lower f b)))
-  foldStructure @f _ (Snd @a @b) = withLowerOb @a @f (withLowerOb @b @f (snd @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Fst @a @b) = withLowerOb @f @a (withLowerOb @f @b (fst @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f _ (Snd @a @b) = withLowerOb @f @a (withLowerOb @f @b (snd @_ @(Lower f a) @(Lower f b)))
   foldStructure go (Prd f g) = go f &&& go g
 instance (WithShow a) => Show (Struct HasBinaryProducts a b) where
   showsPrec _ Fst = P.showString "fst"
@@ -233,12 +235,12 @@ instance (WithShow a) => Show (Struct HasBinaryProducts a b) where
   showsPrec d (Prd f g) =
     P.showParen (d P.> 5) P.$
       P.showsPrec 6 f . P.showString " &&& " . P.showsPrec 6 g
-instance (Ok cs p, HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs p) where
+instance (HasBinaryProducts `Elem` cs) => HasBinaryProducts (FREE cs (p :: CAT k)) where
   type a && b = a *! b
   withObProd r = r
-  fst = St Fst Id
-  snd = St Snd Id
-  f &&& g = St (Prd f g) Id \\ f \\ g
+  fst = St Fst Nil
+  snd = St Snd Nil
+  f &&& g = St (Prd f g) Nil \\ f \\ g
 
 -- | The right adjoint to the diagonal functor.
 instance (HasBinaryProducts k) => Representable (Corep Diag :: (k, k) +-> k) where

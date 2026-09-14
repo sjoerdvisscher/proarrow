@@ -15,6 +15,11 @@
 -- the test suite decides it (by interpreting into a concrete category). Don't pattern-match
 -- expecting normal forms.
 --
+-- An object of @'FREE' cs p@ is a /shape/ ('IsFreeOb'): the free category asks nothing of @k@
+-- beyond being a category, as a free construction must. Every shape has a denotation
+-- @'Lower' f a@ along any functor @f@ out of @k@ into a category with the structures @cs@, and
+-- 'withLowerOb' recovers that denotation's 'Ob' when interpreting ('fold').
+--
 -- The same applies one level up: classes imposing structural /type equalities/ (like
 -- 'Proarrow.Category.Monoidal.Cartesian.Cartesian'\'s @tensor = product@) do not hold on the free category
 -- as currently encoded -- each class's carrier is fixed, e.g. @**@ is always the formal tensor --
@@ -48,40 +53,45 @@ type family All (cs :: [Kind -> Constraint]) (k :: Kind) :: Constraint where
   All '[] k = ()
   All (c ': cs) k = (c k, All cs k)
 
-class ((All cs k) => c k) => FromAll cs c k
-instance ((All cs k) => c k) => FromAll cs c k
-
+-- | Membership of a structure in the list, with the entailment @'All' cs k => c k@ as a method
+-- rather than a quantified superclass: as a given, the quantified form would shadow the ordinary
+-- instances for the free category itself and demand @All cs (FREE cs p)@.
 type Elem :: (Kind -> Constraint) -> [Kind -> Constraint] -> Constraint
-class (forall k. FromAll cs c k) => c `Elem` cs
-instance {-# OVERLAPPABLE #-} (c `Elem` cs) => c `Elem` (d ': cs)
-instance c `Elem` (c ': cs)
+class c `Elem` cs where
+  fromAll :: forall k r. (All cs k) => ((c k) => r) -> r
 
-newtype FREE (cs :: [Kind -> Constraint]) (p :: CAT j) = EMB j
+instance {-# OVERLAPPABLE #-} (c `Elem` cs) => c `Elem` (d ': cs) where
+  fromAll @k r = fromAll @c @cs @k r
+instance c `Elem` (c ': cs) where
+  fromAll r = r
 
--- | Arrows of the free category: a right-associated composition spine ending in 'Id', with a
+-- | Membership of several structures at once: @'[Monoidal, SymMonoidal] \`Elems\` cs@.
+type Elems :: [Kind -> Constraint] -> [Kind -> Constraint] -> Constraint
+type family ds `Elems` cs where
+  '[] `Elems` cs = ()
+  (d ': ds) `Elems` cs = (d `Elem` cs, ds `Elems` cs)
+
+-- | The objects of the free category over the quiver @p@ on @k@: the embedded objects of @k@
+-- ('EMB') plus one object former per structure in @cs@ (products, exponentials, ...), which live
+-- in their structures' modules.
+newtype FREE (cs :: [Kind -> Constraint]) (p :: CAT k) = EMB k
+
+-- | Arrows of the free category: a right-associated composition spine ending in 'Nil', with a
 -- generator ('Emb') or structure morphism ('St') precomposed onto the rest at each step -- which
 -- is what makes the category laws hold definitionally. The fields are linear (@%1@) so that DSL
 -- helpers built on 'Free' can offer HOAS-style binders whose bound variable must be used exactly
 -- once.
 type Free :: CAT (FREE cs p)
 data Free a b where
-  Id :: (Ob a) => Free a a
+  Nil :: (Ob a) => Free a a
   Emb :: (Ob a, Ob b) => p a b %1 -> Free (i :: FREE cs p) (EMB a) %1 -> Free i (EMB b)
   St
-    :: forall {j} {cs} {p :: CAT j} (c :: Kind -> Constraint) (a :: FREE cs p) b i
+    :: forall {k} {cs} {p :: CAT k} (c :: Kind -> Constraint) (a :: FREE cs p) b i
      . (HasStructure cs p c, Ob a, Ob b)
     => Struct c a b %1 -> Free i a %1 -> Free i b
 
 emb :: (Ob a, Ob b) => p a b %1 -> Free (EMB a :: FREE cs p) (EMB b)
-emb p = Emb p Id
-
--- | Witnesses that every structure class in @cs@ holds for 'FREE cs p' itself. Needed whenever
--- an instance for 'FREE cs p' has to discharge a superclass obligation stated generically over
--- @k@ (e.g. 'Proarrow.Limit.Terminal.HasTerminalObject'\'s own @'Ob' ('Proarrow.Limit.Terminal.TerminalObject' :: k)@) by cashing in @c \`Elem\`
--- cs@'s reflexive implication (@'All' cs k => c k@) at @k = FREE cs p@ — see 'Elem'.
-class (All cs (FREE cs p)) => Ok cs (p :: CAT j)
-
-instance (All cs (FREE cs p)) => Ok cs (p :: CAT j)
+emb p = Emb p Nil
 
 class (forall x y. Eq (p x y)) => Eq2 p
 instance (forall x y. Eq (p x y)) => Eq2 p
@@ -93,63 +103,87 @@ class (Show2 p) => WithShow (a :: FREE c (p :: CAT j))
 instance (Show2 p) => WithShow (a :: FREE c (p :: CAT j))
 
 instance (WithShow a) => Show (Free a b) where
-  showsPrec _ Id = P.showString "id"
+  showsPrec _ Nil = P.showString "id"
   showsPrec d (Emb p g) = showPostComp d p g
   showsPrec d (St s g) = showPostComp d s g
 
 showPostComp :: (Show p, WithShow a) => P.Int -> p -> Free a b -> P.ShowS
-showPostComp d p Id = P.showsPrec d p
+showPostComp d p Nil = P.showsPrec d p
 showPostComp d p g = P.showParen (d P.> 9) (P.showsPrec 10 p . P.showString " . " . P.showsPrec 10 g)
 
-type IsFreeOb :: forall {j} {cs :: [Kind -> Constraint]} {p :: CAT j}. FREE cs p -> Constraint
-class IsFreeOb (a :: FREE cs (p :: CAT j)) where
-  type Lower (f :: j +-> k) (a :: FREE cs p) :: k
-  withLowerOb :: forall {k} (f :: j +-> k) r. (Representable f, All cs k) => ((Ob (Lower f (a :: FREE cs p))) => r) -> r
+-- | The shape of an object of the free category, by object former -- this /is/ 'Ob' for the free
+-- category. It carries the shape's denotation 'Lower' along any functor out of @k@, and how to
+-- recover that denotation's 'Ob' from the leaves' ('lowerOb', normally used through
+-- 'withLowerOb' and 'withLowerIdOb').
+type IsFreeOb :: forall {k} {cs :: [Kind -> Constraint]} {p :: CAT k}. FREE cs p -> Constraint
+class IsFreeOb (a :: FREE cs (p :: CAT k)) where
+  -- | The denotation of the object along a functor @f@ out of @k@. (The class variable is
+  -- re-annotated here so that @k@ is in scope before @f@'s kind mentions it.)
+  type Lower (f :: k +-> k') (a :: FREE cs p) :: k'
+
+  lowerOb :: forall k' (f :: k +-> k') r. (Representable f, All cs k') => ((Ob (Lower f a)) => r) -> r
+
 instance (Ob a) => IsFreeOb (EMB a) where
   type Lower f (EMB a) = f % a
-  withLowerOb @f = withObRep @f @a
+  lowerOb @_ @f = withObRep @f @a
+
+-- | @'Ob' ('Lower' f a)@ from the shape of @a@, for interpreting along @f@.
+withLowerOb
+  :: forall {k} {k'} {cs} {p :: CAT k} (f :: k +-> k') a r
+   . (IsFreeOb (a :: FREE cs p), Representable f, All cs k')
+  => ((Ob (Lower f a)) => r) -> r
+withLowerOb = lowerOb @a @k' @f
+
+-- | 'withLowerOb' along the identity: the 'Ob' of a shape's denotation in @k@ itself, when @k@
+-- happens to carry the structures @cs@.
+withLowerIdOb
+  :: forall {k} {cs} {p :: CAT k} a r
+   . (IsFreeOb (a :: FREE cs p), CategoryOf k, All cs k)
+  => ((Ob (Lower (Id :: CAT k) a)) => r) -> r
+withLowerIdOb = withLowerOb @(Id :: CAT k) @a
 
 class ((Show2 p) => Show2 str) => CanShow (str :: CAT (FREE cs p))
 instance ((Show2 p) => Show2 str) => CanShow (str :: CAT (FREE cs p))
 
 class
   (CanShow (Struct c :: CAT (FREE cs p)), c `Elem` cs) =>
-  HasStructure cs (p :: CAT j) (c :: Kind -> Constraint)
+  HasStructure cs (p :: CAT k) (c :: Kind -> Constraint)
   where
   data Struct c :: CAT (FREE cs p)
   foldStructure
-    :: forall {k} (f :: j +-> k) (a :: FREE cs p) (b :: FREE cs p)
-     . (All cs k, Representable f)
+    :: forall {k'} (f :: k +-> k') (a :: FREE cs p) (b :: FREE cs p)
+     . (c k', All cs k', Representable f)
     => (forall (x :: FREE cs p) y. x ~> y -> Lower f x ~> Lower f y)
     -> Struct c a b
     -> Lower f a ~> Lower f b
 
--- | Interpret a free arrow in any category @k@ supporting the structures @cs@, given an
--- interpretation of the generators -- the universal property of the free category. The
--- interpreter is handed @('Ob' x, 'Ob' y)@ explicitly (the evidence bundled on 'Emb'), because a
--- bare quiver @p@ is not a 'Profunctor', so the 'Ob's cannot be recovered from the value.
+-- | Interpret a free arrow along a functor @f@ into any category @k'@ supporting the structures
+-- @cs@, given an interpretation of the generators between the images of their objects -- the
+-- universal property of the free category. The interpreter is handed @('Ob' x, 'Ob' y)@ explicitly
+-- (the evidence bundled on 'Emb'), because a bare quiver @p@ is not a 'Profunctor', so the 'Ob's
+-- cannot be recovered from the value.
 fold
-  :: forall {j} {k} {p :: CAT j} (cs :: [Kind -> Constraint]) (f :: j +-> k) (a :: FREE cs p) (b :: FREE cs p)
-   . (All cs k, Representable f)
+  :: forall {k} {k'} {p :: CAT k} (cs :: [Kind -> Constraint]) (f :: k +-> k') (a :: FREE cs p) (b :: FREE cs p)
+   . (All cs k', Representable f)
   => (forall x y. (Ob x, Ob y) => p x y -> (f % x) ~> (f % y))
   -> a ~> b
   -> Lower f a ~> Lower f b
 fold pn = go
   where
     go :: forall (x :: FREE cs p) y. x ~> y -> Lower f x ~> Lower f y
-    go Id = withLowerOb @x @f id
+    go Nil = withLowerOb @f @x id
     go (Emb p g) = pn p . go g
-    go (St s g) = foldStructure @_ @_ @_ @_ @f go s . go g
+    go (St @c s g) = fromAll @c @cs @k' (foldStructure @_ @_ @_ @_ @f go s) . go g
 
 retract
-  :: forall {j} {k} cs (f :: j +-> k) a b
-   . (All cs k, Representable f) => (a :: FREE cs InitialProfunctor) ~> b -> Lower f a ~> Lower f b
+  :: forall {k} {k'} cs (f :: k +-> k') a b
+   . (All cs k', Representable f) => (a :: FREE cs (InitialProfunctor :: CAT k)) ~> b -> Lower f a ~> Lower f b
 retract = fold @cs @f (\case {})
 
 -- | Taking the quiver to be the /hom of a category/ @k@ makes @'FREE' cs ('Proarrow.Core.Hom' k)@
 -- the free @cs@-structured category over @k@: 'liftFree' embeds the arrows of @k@ as generators,
 -- and when @k@ itself already has the structures, 'retractFree' interprets back into @k@ along the
--- identity profunctor. These back the free-kind instances of
+-- identity. These back the free-kind instances of
 -- 'Proarrow.Profunctor.Free.HasFreeK' (e.g. the free category with a terminal object, or with
 -- binary products, over @k@).
 liftFree :: forall {k} cs (x :: k) y. (CategoryOf k) => (x ~> y) -> (EMB x :: FREE cs (Hom k)) ~> EMB y
@@ -163,13 +197,13 @@ retractFree
 retractFree = fold @cs @(Id :: CAT k) (\g -> g)
 
 -- | The object-embedding functor @a |-> 'EMB' a@ of a widening (see 'widen'), as a representable
--- profunctor. The base kind must be 'Discrete', since arrows of @j@ other than identities have no
+-- profunctor. The base kind must be 'Discrete', since arrows of @k@ other than identities have no
 -- counterpart in the free category.
-data family Embed :: j +-> FREE ds (p :: CAT j)
+data family Embed :: k +-> FREE ds (p :: CAT k)
 
-instance (Discrete j) => FunctorForRep (Embed :: j +-> FREE ds (p :: CAT j)) where
+instance (Discrete k) => FunctorForRep (Embed :: k +-> FREE ds (p :: CAT k)) where
   type Embed @ a = EMB a
-  fmap (f :: x ~> y) = f // withEq f (Id :: Free (EMB x :: FREE ds p) (EMB x))
+  fmap (f :: x ~> y) = f // withEq f (Nil :: Free (EMB x :: FREE ds p) (EMB x))
 
 -- | Widen a free arrow into a free category over a larger structure list: 'fold' along 'Embed',
 -- so each structural object is rebuilt as itself in the larger category (e.g. the terminal object
@@ -177,27 +211,27 @@ instance (Discrete j) => FunctorForRep (Embed :: j +-> FREE ds (p :: CAT j)) whe
 -- @'All' cs ('FREE' ds p)@ constraint is exactly the evidence that every structure in @cs@ is
 -- also available in @ds@.
 widen
-  :: forall ds {j} {cs} {p :: CAT j} (a :: FREE cs p) b
-   . (All cs (FREE ds p), Discrete j)
+  :: forall ds {k} {cs} {p :: CAT k} (a :: FREE cs p) b
+   . (All cs (FREE ds p), Discrete k)
   => a ~> b
-  -> Lower (Rep (Embed :: j +-> FREE ds p)) a ~> Lower (Rep (Embed :: j +-> FREE ds p)) b
-widen = fold @cs @(Rep (Embed :: j +-> FREE ds p)) (\g -> emb g)
+  -> Lower (Rep (Embed :: k +-> FREE ds p)) a ~> Lower (Rep (Embed :: k +-> FREE ds p)) b
+widen = fold @cs @(Rep (Embed :: k +-> FREE ds p)) (\g -> emb g)
 
 -- | The category freely generated from the heteromorphisms of @p@, together with formal
--- structure arrows for each of the classes in @cs@.
+-- structure arrows for each of the classes in @cs@. An object is a shape ('IsFreeOb').
 instance CategoryOf (FREE cs p) where
   type (~>) = Free
   type Ob a = IsFreeOb a
 
 instance Promonad (Free :: CAT (FREE cs p)) where
-  id = Id
-  Id . g = g
-  f . Id = f
+  id = Nil
+  Nil . g = g
+  f . Nil = f
   Emb p f . g = Emb p (f . g)
   St s f . g = St s (f . g)
 
 instance Profunctor (Free :: CAT (FREE cs p)) where
   dimap = dimapDefault
-  r \\ Id = r
+  r \\ Nil = r
   r \\ Emb _ f = r \\ f
   r \\ St _ f = r \\ f

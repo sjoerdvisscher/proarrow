@@ -8,12 +8,20 @@ import Data.Kind (Type)
 import Prelude (Show, type (~))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok)
+import Proarrow.Category.Instance.Free
+  ( Elem (..)
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Lower
+  , withLowerOb
+  )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Profunctor.Instance.Terminal (TerminalProfunctor (..))
 import Proarrow.Profunctor.Representable (Representable (..))
 
@@ -55,13 +63,13 @@ instance ((Unit :: k) ~ TerminalObject, HasTerminalObject k, Monoidal k) => Semi
 data family TermF :: k
 instance (HasTerminalObject `Elem` cs) => IsFreeOb (TermF :: FREE cs p) where
   type Lower f TermF = TerminalObject
-  withLowerOb r = r
-instance (HasTerminalObject `Elem` cs) => HasStructure cs p HasTerminalObject where
+  lowerOb @k' @_ r = fromAll @HasTerminalObject @cs @k' r
+instance (HasTerminalObject `Elem` cs) => HasStructure cs (p :: CAT k) HasTerminalObject where
   data Struct HasTerminalObject a b where
     Terminate :: (Ob a) => Struct HasTerminalObject a TermF
-  foldStructure @f _ (Terminate @a) = withLowerOb @a @f terminate
+  foldStructure @f _ (Terminate @a) = withLowerOb @f @a terminate
 instance Show (Struct HasTerminalObject a b) where
   showsPrec _ Terminate = P.showString "terminate"
-instance (Ok cs p, HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs p) where
+instance (HasTerminalObject `Elem` cs) => HasTerminalObject (FREE cs (p :: CAT k)) where
   type TerminalObject = TermF
-  terminate = St Terminate Id
+  terminate = St Terminate Nil

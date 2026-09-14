@@ -138,7 +138,7 @@ applyHG = linDistInvHG @_ @b (obj @b ** obj @c)
 -- in "Proarrow.Monoid") are compatible by fiat, so monoid + comonoid is already 'Frobenius' -- and
 -- with both supplies in @cs@, @'Supplies' 'Frobenius'@ and 'Hypergraph' fall out derived, with no
 -- structure of their own. Superclasses are taken directly as the context to keep dictionary
--- construction acyclic (going through 'Proarrow.Category.Instance.Free.Ok' here builds a dictionary that references itself
+-- construction acyclic (bundling them into an 'Proarrow.Category.Instance.Free.All'-style constraint here builds a dictionary that references itself
 -- through the quantified 'Supplies' constraint, looping at runtime).
 instance (CommutativeMonoid a, CocommutativeComonoid (a :: FREE cs p)) => Frobenius (a :: FREE cs p)
 

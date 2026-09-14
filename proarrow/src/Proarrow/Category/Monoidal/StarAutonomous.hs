@@ -10,13 +10,23 @@ module Proarrow.Category.Monoidal.StarAutonomous where
 
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), WithShow)
+import Proarrow.Category.Instance.Free
+  ( Elem (..)
+  , Elems
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Lower
+  , WithShow
+  , withLowerOb
+  )
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), swap, type (**!))
 import Proarrow.Category.Monoidal.Closed (Closed (..))
 import Proarrow.Category.Monoidal.Strictified (Strictified (..))
-import Proarrow.Core (CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
+import Proarrow.Core (CAT, CategoryOf (..), Obj, Profunctor (..), Promonad (..), obj)
 import Proarrow.Optic (PIso, iso)
 
 class (SymMonoidal k, Closed k, Ob (Unit :: k)) => StarAutonomous k where
@@ -86,12 +96,12 @@ instance (StarAutonomous j, StarAutonomous k) => StarAutonomous (j, k) where
   linDistInv @'(a1, a2) @'(b1, b2) @'(c1, c2) (f :**: g) = linDistInv @j @a1 @b1 @c1 f :**: linDistInv @k @a2 @b2 @c2 g
 
 data family DualF (a :: k) :: k
-instance (Ob (a :: FREE cs p), StarAutonomous `Elem` cs) => IsFreeOb (DualF a) where
+instance (IsFreeOb (a :: FREE cs p), StarAutonomous `Elem` cs) => IsFreeOb (DualF a) where
   type Lower f (DualF a) = Dual (Lower f a)
-  withLowerOb @f r = withLowerOb @a @f (withObDual @_ @(Lower f a) r)
+  lowerOb @k' @f r = fromAll @StarAutonomous @cs @k' (withLowerOb @f @a (withObDual @k' @(Lower f a) r))
 instance
-  (Monoidal `Elem` cs, SymMonoidal `Elem` cs, Closed `Elem` cs, StarAutonomous `Elem` cs)
-  => HasStructure cs p StarAutonomous
+  ('[Monoidal, SymMonoidal, Closed, StarAutonomous] `Elems` cs)
+  => HasStructure cs (p :: CAT k) StarAutonomous
   where
   data Struct StarAutonomous a b where
     Dual :: a ~> b -> Struct StarAutonomous (DualF b) (DualF a)
@@ -100,11 +110,11 @@ instance
     LinDistInv :: (Ob a, Ob b, Ob c) => a ~> DualF (b **! c) -> Struct StarAutonomous (a **! b) (DualF c)
   foldStructure go (Dual f) = dual (go f)
   foldStructure @f go (DualInv @a @b g) =
-    withLowerOb @a @f (withLowerOb @b @f (dualInv @_ @(Lower f a) @(Lower f b) (go g)))
+    withLowerOb @f @a (withLowerOb @f @b (dualInv @_ @(Lower f a) @(Lower f b) (go g)))
   foldStructure @f go (LinDist @a @b @c g) =
-    withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c @f (linDist @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
+    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (linDist @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
   foldStructure @f go (LinDistInv @a @b @c g) =
-    withLowerOb @a @f (withLowerOb @b @f (withLowerOb @c @f (linDistInv @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
+    withLowerOb @f @a (withLowerOb @f @b (withLowerOb @f @c (linDistInv @_ @(Lower f a) @(Lower f b) @(Lower f c) (go g))))
 instance (WithShow a) => P.Show (Struct StarAutonomous a b) where
   showsPrec d (Dual f) = P.showParen (d P.> 10) P.$ P.showString "dual " . P.showsPrec 11 f
   showsPrec d (DualInv f) = P.showParen (d P.> 10) P.$ P.showString "dualInv " . P.showsPrec 11 f
@@ -112,19 +122,12 @@ instance (WithShow a) => P.Show (Struct StarAutonomous a b) where
   showsPrec d (LinDistInv f) = P.showParen (d P.> 10) P.$ P.showString "linDistInv " . P.showsPrec 11 f
 
 instance
-  ( Monoidal (FREE cs p)
-  , SymMonoidal (FREE cs p)
-  , Closed (FREE cs p)
-  , Monoidal `Elem` cs
-  , SymMonoidal `Elem` cs
-  , Closed `Elem` cs
-  , StarAutonomous `Elem` cs
-  )
-  => StarAutonomous (FREE cs p)
+  ('[Monoidal, SymMonoidal, Closed, StarAutonomous] `Elems` cs)
+  => StarAutonomous (FREE cs (p :: CAT k))
   where
   type Dual a = DualF a
   withObDual r = r
-  dual f = St (Dual f) Id \\ f
-  dualInv @a @b f = St (DualInv @a @b f) Id \\ f
-  linDist @a @b @c f = St (LinDist @a @b @c f) Id \\ f
-  linDistInv @a @b @c f = St (LinDistInv @a @b @c f) Id \\ f
+  dual f = St (Dual f) Nil \\ f
+  dualInv @a @b f = St (DualInv @a @b f) Nil \\ f
+  linDist @a @b @c f = St (LinDist @a @b @c f) Nil \\ f
+  linDistInv @a @b @c f = St (LinDistInv @a @b @c f) Nil \\ f

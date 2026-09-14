@@ -10,7 +10,7 @@ module Proarrow.Category.Monoidal.CompactClosed where
 import Prelude (($))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..))
+import Proarrow.Category.Instance.Free (Elems, FREE (..), Free (..), HasStructure (..), Lower, withLowerOb)
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
 import Proarrow.Category.Monoidal
@@ -36,7 +36,7 @@ import Proarrow.Category.Monoidal.StarAutonomous
   , dualityUnitSA
   )
 import Proarrow.Category.Monoidal.Strictified (Strictified (..), obj1, swap2, (==))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 
 class (StarAutonomous k, SymMonoidal k) => CompactClosed k where
   distribDual :: forall (a :: k) b. (Ob a, Ob b) => Dual (a ** b) ~> Dual a ** Dual b
@@ -114,29 +114,22 @@ instance (CompactClosed j, CompactClosed k) => CompactClosed (j, k) where
   dualUnit = dualUnit :**: dualUnit
 
 instance
-  (StarAutonomous `Elem` cs, SymMonoidal `Elem` cs, Closed `Elem` cs, Monoidal `Elem` cs, CompactClosed `Elem` cs)
-  => HasStructure cs p CompactClosed
+  ('[StarAutonomous, SymMonoidal, Closed, Monoidal, CompactClosed] `Elems` cs)
+  => HasStructure cs (p :: CAT k) CompactClosed
   where
   data Struct CompactClosed a b where
     DistribDual :: (Ob a, Ob b) => Struct CompactClosed (DualF (a **! b)) (DualF a **! DualF b)
     DualUnit :: Struct CompactClosed (DualF UnitF) UnitF
   foldStructure @f _ (DistribDual @a @b) =
-    withLowerOb @a @f (withLowerOb @b @f (distribDual @_ @(Lower f a) @(Lower f b)))
+    withLowerOb @f @a (withLowerOb @f @b (distribDual @_ @(Lower f a) @(Lower f b)))
   foldStructure _ DualUnit = dualUnit
 instance P.Show (Struct CompactClosed a b) where
   showsPrec _ DistribDual = P.showString "distribDual"
   showsPrec _ DualUnit = P.showString "dualUnit"
 
 instance
-  ( StarAutonomous (FREE cs p)
-  , SymMonoidal (FREE cs p)
-  , StarAutonomous `Elem` cs
-  , SymMonoidal `Elem` cs
-  , Closed `Elem` cs
-  , Monoidal `Elem` cs
-  , CompactClosed `Elem` cs
-  )
-  => CompactClosed (FREE cs p)
+  ('[StarAutonomous, SymMonoidal, Closed, Monoidal, CompactClosed] `Elems` cs)
+  => CompactClosed (FREE cs (p :: CAT k))
   where
-  distribDual @a @b = St (DistribDual @a @b) Id
-  dualUnit = St DualUnit Id
+  distribDual @a @b = St (DistribDual @a @b) Nil
+  dualUnit = St DualUnit Nil

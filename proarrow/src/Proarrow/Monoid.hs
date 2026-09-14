@@ -9,7 +9,7 @@ module Proarrow.Monoid where
 import Data.Kind (Constraint, Type)
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elem, FREE, HasStructure (..), IsFreeOb (..))
+import Proarrow.Category.Instance.Free (Elems, FREE, HasStructure (..), Lower, withLowerOb)
 import Proarrow.Category.Instance.Free qualified as F
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Monoidal
@@ -35,7 +35,7 @@ import Proarrow.Colimit.BinaryCoproduct
   , codiag
   )
 import Proarrow.Colimit.Initial (HasInitialObject (..), HasZeroObject (..))
-import Proarrow.Core (CategoryOf (..), Kind, Promonad (..), obj, (//), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Kind, Promonad (..), obj, (//), type (+->))
 import Proarrow.Object (pattern Objs)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Constant (Constant)
@@ -262,12 +262,12 @@ instance (Closed k, HasCoproducts k, Comonoid (m :: k)) => Strong CoprodAction (
 -- | The free-category structure for @'Supplies' 'Monoid'@: every object gets formal 'mappend'
 -- ('Join') and 'mempty' ('Sprout') generators, interpreted by 'foldStructure' through the
 -- target's own supply.
-instance (Supplies Monoid `Elem` cs, Monoidal `Elem` cs) => HasStructure cs p (Supplies Monoid) where
+instance ('[Supplies Monoid, Monoidal] `Elems` cs) => HasStructure cs (p :: CAT k) (Supplies Monoid) where
   data Struct (Supplies Monoid) i o where
     Join :: (Ob a) => Struct (Supplies Monoid) (a **! a) a
     Sprout :: (Ob a) => Struct (Supplies Monoid) UnitF a
-  foldStructure @f _ (Join @a) = withLowerOb @a @f (mappend @(Lower f a))
-  foldStructure @f _ (Sprout @a) = withLowerOb @a @f (mempty @(Lower f a))
+  foldStructure @f _ (Join @a) = withLowerOb @f @a (mappend @(Lower f a))
+  foldStructure @f _ (Sprout @a) = withLowerOb @f @a (mempty @(Lower f a))
 
 instance P.Show (Struct (Supplies Monoid) a b) where
   showsPrec _ Join = P.showString "mappend"
@@ -275,23 +275,23 @@ instance P.Show (Struct (Supplies Monoid) a b) where
 
 -- | The free-category structure for @'Supplies' 'Comonoid'@, dually: formal 'comult' ('Fork') and
 -- 'counit' ('Prune') generators for every object.
-instance (Supplies Comonoid `Elem` cs, Monoidal `Elem` cs) => HasStructure cs p (Supplies Comonoid) where
+instance ('[Supplies Comonoid, Monoidal] `Elems` cs) => HasStructure cs (p :: CAT k) (Supplies Comonoid) where
   data Struct (Supplies Comonoid) i o where
     Fork :: (Ob a) => Struct (Supplies Comonoid) a (a **! a)
     Prune :: (Ob a) => Struct (Supplies Comonoid) a UnitF
-  foldStructure @f _ (Fork @a) = withLowerOb @a @f (comult @(Lower f a))
-  foldStructure @f _ (Prune @a) = withLowerOb @a @f (counit @(Lower f a))
+  foldStructure @f _ (Fork @a) = withLowerOb @f @a (comult @(Lower f a))
+  foldStructure @f _ (Prune @a) = withLowerOb @f @a (counit @(Lower f a))
 
 instance P.Show (Struct (Supplies Comonoid) a b) where
   showsPrec _ Fork = P.showString "comult"
   showsPrec _ Prune = P.showString "counit"
 
 instance
-  (Supplies Monoid `Elem` cs, Monoidal `Elem` cs, Monoidal (FREE cs p), Ob (a :: FREE cs p))
+  ('[Supplies Monoid, Monoidal] `Elems` cs, Ob (a :: FREE cs (p :: CAT k)))
   => Monoid (a :: FREE cs p)
   where
-  mempty = F.St Sprout F.Id
-  mappend = F.St Join F.Id
+  mempty = F.St Sprout F.Nil
+  mappend = F.St Join F.Nil
 
 -- | The free supply is commutative only up to interpretation ('FREE' has no equations); the marker
 -- holds because every @'Proarrow.Category.Instance.Free.fold'@ of these arrows into a target lands in that target's commutative
@@ -299,10 +299,10 @@ instance
 instance (Monoid (a :: FREE cs p), SymMonoidal (FREE cs p)) => CommutativeMonoid (a :: FREE cs p)
 
 instance
-  (Supplies Comonoid `Elem` cs, Monoidal `Elem` cs, Monoidal (FREE cs p), Ob (a :: FREE cs p))
+  ('[Supplies Comonoid, Monoidal] `Elems` cs, Ob (a :: FREE cs (p :: CAT k)))
   => Comonoid (a :: FREE cs p)
   where
-  counit = F.St Prune F.Id
-  comult = F.St Fork F.Id
+  counit = F.St Prune F.Nil
+  comult = F.St Fork F.Nil
 
 instance (Comonoid (a :: FREE cs p), SymMonoidal (FREE cs p)) => CocommutativeComonoid (a :: FREE cs p)

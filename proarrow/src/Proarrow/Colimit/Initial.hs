@@ -9,12 +9,20 @@ import Data.Void (Void, absurd)
 import Prelude (Show, type (~))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), Ok)
+import Proarrow.Category.Instance.Free
+  ( Elem (..)
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Lower
+  , withLowerOb
+  )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Prof (Prof (..))
 import Proarrow.Category.Instance.Unit (Unit (..))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), type (+->))
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
 import Proarrow.Profunctor.Instance.Initial (InitialProfunctor)
@@ -57,16 +65,16 @@ instance (HasInitialObject k, HasTerminalObject k, (InitialObject :: k) ~ Termin
 data family InitF :: k
 instance (HasInitialObject `Elem` cs) => IsFreeOb (InitF :: FREE cs p) where
   type Lower f InitF = InitialObject
-  withLowerOb r = r
-instance (HasInitialObject `Elem` cs) => HasStructure cs p HasInitialObject where
+  lowerOb @k' @_ r = fromAll @HasInitialObject @cs @k' r
+instance (HasInitialObject `Elem` cs) => HasStructure cs (p :: CAT k) HasInitialObject where
   data Struct HasInitialObject a b where
     Initial :: (Ob b) => Struct HasInitialObject InitF b
-  foldStructure @f _ (Initial @b) = withLowerOb @b @f initiate
+  foldStructure @f _ (Initial @b) = withLowerOb @f @b initiate
 instance Show (Struct HasInitialObject a b) where
   showsPrec _ Initial = P.showString "initiate"
-instance (Ok cs p, HasInitialObject `Elem` cs) => HasInitialObject (FREE cs p) where
+instance (HasInitialObject `Elem` cs) => HasInitialObject (FREE cs (p :: CAT k)) where
   type InitialObject = InitF
-  initiate = St Initial Id
+  initiate = St Initial Nil
 
 instance (HasInitialObject k) => HasTerminalObject (OPPOSITE k) where
   type TerminalObject = OP InitialObject

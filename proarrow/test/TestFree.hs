@@ -52,13 +52,13 @@ instance FunctorForRep Interp where
 -- >>> testFold "123"
 -- ("123","124124")
 testFold :: P.String -> (P.String, P.String)
-testFold = fold @'[HasBinaryProducts] @(Rep Interp) interp (test2 Id)
+testFold = fold @'[HasBinaryProducts] @(Rep Interp) interp (test2 Nil)
   where
     interp :: Test x y -> Rep Interp % x ~> Rep Interp % y
     interp Show = P.show
     interp Read = P.read
     interp Succ = P.succ
-    interp Dup = (\s -> s P.++ s)
+    interp Dup = \s -> s P.++ s
 
 type SwapIn :: FC -> FC -> FC -> Constraint
 class SwapIn (ia :: FC) i a | ia i -> a where

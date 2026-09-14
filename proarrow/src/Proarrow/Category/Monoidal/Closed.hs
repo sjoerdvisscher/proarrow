@@ -1,5 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE InstanceSigs #-}
 
 -- | Closed monoidal categories: 'Closed' provides the internal hom @a '~~>' b@, right adjoint to
 -- tensoring, with 'curry', 'apply' and functoriality @('^^^')@. Also defines cartesian closed
@@ -10,13 +9,23 @@ import Data.Kind (Type)
 import Prelude (($))
 import Prelude qualified as P
 
-import Proarrow.Category.Instance.Free (Elem, FREE (..), Free (..), HasStructure (..), IsFreeOb (..), WithShow)
+import Proarrow.Category.Instance.Free
+  ( Elem (..)
+  , Elems
+  , FREE (..)
+  , Free (..)
+  , HasStructure (..)
+  , IsFreeOb (..)
+  , Lower
+  , WithShow
+  , withLowerOb
+  )
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..))
 import Proarrow.Category.Instance.Product ((:**:) (..))
 import Proarrow.Category.Instance.Unit qualified as U
-import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), Struct (Par), SymMonoidal (..), type (**!))
+import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal (..), type (**!))
 import Proarrow.Category.Monoidal.Strictified (Fold, Strictified (..), concatMany, obj1, singleton, splitMany, (==))
-import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
+import Proarrow.Core (CAT, CategoryOf (..), Profunctor (..), Promonad (..), obj, (//), type (+->))
 import Proarrow.Functor (FunctorForRep (..))
 import Proarrow.Limit.BinaryProduct ()
 import Proarrow.Profunctor.Corepresentable (Corepresentable (..))
@@ -128,50 +137,21 @@ swapClosed :: forall {k} (c :: k) a b. (Closed k, SymMonoidal k, Ob b, Ob c) => 
 swapClosed f = curry @k @b @a (uncurry @b @c f . swap @k @b @a) \\ f
 
 data family (-->) (a :: k) (b :: k) :: k
-instance (Ob (a :: FREE cs p), Ob b, Closed `Elem` cs, Monoidal `Elem` cs) => IsFreeOb (a --> b) where
+instance (IsFreeOb (a :: FREE cs p), IsFreeOb b, '[Closed, Monoidal] `Elems` cs) => IsFreeOb (a --> b) where
   type Lower f (a --> b) = Lower f a ~~> Lower f b
-  withLowerOb @f r = withLowerOb @a @f (withLowerOb @b @f (withObExp @_ @(Lower f a) @(Lower f b) r))
-instance (Closed `Elem` cs, Monoidal `Elem` cs) => HasStructure cs p Closed where
+  lowerOb @k' @f r = fromAll @Closed @cs @k' (withLowerOb @f @a (withLowerOb @f @b (withObExp @k' @(Lower f a) @(Lower f b) r)))
+instance ('[Closed, Monoidal] `Elems` cs) => HasStructure cs (p :: CAT k) Closed where
   data Struct Closed a b where
     Apply :: (Ob a, Ob b) => Struct Closed ((a --> b) **! a) b
     Curry :: forall a b c. (Ob a, Ob b) => (a **! b) ~> c -> Struct Closed a (b --> c)
-  foldStructure @f _ (Apply @a @b) = withLowerOb @a @f (withLowerOb @b @f (apply @_ @(Lower f a) @(Lower f b)))
-  foldStructure @f go (Curry @a @b f) = withLowerOb @a @f (withLowerOb @b @f (curry @_ @(Lower f a) @(Lower f b) (go f)))
+  foldStructure @f _ (Apply @a @b) = withLowerOb @f @a (withLowerOb @f @b (apply @_ @(Lower f a) @(Lower f b)))
+  foldStructure @f go (Curry @a @b f) = withLowerOb @f @a (withLowerOb @f @b (curry @_ @(Lower f a) @(Lower f b) (go f)))
 instance (WithShow a) => P.Show (Struct Closed a b) where
   showsPrec _ Apply = P.showString "apply"
   showsPrec d (Curry f) = P.showParen (d P.> 10) $ P.showString "curry " . P.showsPrec 11 f
 
--- Requires 'Monoidal (FREE cs p)' directly (as its superclass) rather than the usual 'Ok cs p',
--- for the same reason as the 'MonoidalProfunctor'\/'Monoidal' pair in
--- "Proarrow.Category.Monoidal": going through 'Ok cs p' here would make it bundle
--- 'All cs (FREE cs p)', which reflexively includes 'Closed (FREE cs p)' — this very instance —
--- whenever 'Closed' is in @cs@, and GHC can't tie that knot productively.
-instance (Monoidal (FREE cs p), Monoidal `Elem` cs, Closed `Elem` cs) => Closed (FREE cs p) where
+instance ('[Closed, Monoidal] `Elems` cs) => Closed (FREE cs (p :: CAT k)) where
   type a ~~> b = a --> b
   withObExp r = r
-  curry f = St (Curry f) Id \\ f
-  apply = St Apply Id
-
-  -- Explicit override, not the inherited default: the default formula (curry/apply/withObExp/
-  -- obj/(**), all called generically) still deadlocks for this instance, even after the fix
-  -- above that lets 'Monoidal'/'MonoidalProfunctor'/'Closed' stop needing the full 'Ok cs p'
-  -- for their own superclass obligations — reproduces with
-  -- `(id :: Free TermF TermF) ^^^ (id :: Free TermF TermF)`. The remaining culprit: the default
-  -- method is compiled generically against 'Closed k' and, when specialized to 'FREE cs p',
-  -- needs the *whole* 'Closed (FREE cs p)' dictionary (the one this very instance builds) to
-  -- project 'curry'\/'apply' back out of, rather than referring to them directly the way this
-  -- instance's own definitions do. Bypassing every method that isn't strictly needed — building
-  -- 'Id'\/'Par'\/'Apply'\/'Curry' directly instead of going through 'obj'\/'(**)'\/'curry'\/'apply',
-  -- and skipping 'withObExp' ('Ob (a ~~> b)' is already derivable from 'Ob a'\/'Ob b' via the
-  -- 'IsFreeOb (a --> b)' instance) — avoids the deadlock. Only '(//)'\/'(\\)' (from 'Profunctor')
-  -- remain, and those are fine: their FREE implementation pattern-matches on the GADT alone.
-  (^^^) :: forall (a :: FREE cs p) b x y. b ~> y -> x ~> a -> a ~~> b ~> x ~~> y
-  f ^^^ g =
-    f //
-      g //
-        let
-          ab = Id @(a ~~> b)
-          tensor = St (Par ab g) Id \\ ab \\ g
-          composed = f . St Apply Id . tensor
-        in
-          St (Curry composed) Id \\ composed
+  curry f = St (Curry f) Nil \\ f
+  apply = St Apply Nil

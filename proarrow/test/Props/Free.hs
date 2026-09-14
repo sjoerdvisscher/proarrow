@@ -13,7 +13,7 @@ import Prelude hiding (Monoid, curry, fst, id, snd, (.))
 import Prelude qualified as P
 
 import Proarrow.Category.Instance.FinRel (FINREL (..))
-import Proarrow.Category.Instance.Free (FREE (..), Free (..), IsFreeOb (..), retract, widen)
+import Proarrow.Category.Instance.Free (FREE (..), Free (..), Lower, retract, widen)
 import Proarrow.Category.Instance.Unit (Unit (..))
 import Proarrow.Category.Monoidal (Monoidal, SymMonoidal, UnitF, withOb2, type (**!))
 import Proarrow.Category.Monoidal.Closed (Closed, apply, curry, withObExp, type (-->))
