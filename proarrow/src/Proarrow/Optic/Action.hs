@@ -30,14 +30,9 @@ import Proarrow.Functor (Functor)
 import Proarrow.Monoid (Comonoid, Monoid)
 import Proarrow.Monoid qualified as Mon
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), legs2prof, withLegs)
-import Proarrow.Optic.AffineFold (AffineFoldFl)
-import Proarrow.Optic.Fold (FoldFl)
-import Proarrow.Optic.Getter (GetterFl)
-import Proarrow.Optic.Kaleidoscope (CotravFl, KaleidoFl)
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), legs2prof, withLegs)
+import Proarrow.Optic.Kaleidoscope (KaleidoFl)
 import Proarrow.Optic.MonoidalLens (MonLensFl)
-import Proarrow.Optic.Setter (SetterFl)
-import Proarrow.Optic.Traversal (MonTravFl, TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -133,14 +128,6 @@ instance
               (io . (obj @xo ** ii) . associator @k @xo @xi @bfoc)
           )
 
-instance SubFlavor (AlgLensFl m) MonLensFl where subFlavor r = r
-instance SubFlavor (AlgLensFl m) GetterFl where subFlavor r = r
-instance SubFlavor (AlgLensFl m) MonTravFl where subFlavor r = r
-instance SubFlavor (AlgLensFl m) TravFl where subFlavor r = r
-instance SubFlavor (AlgLensFl m) SetterFl where subFlavor r = r
-instance SubFlavor (AlgLensFl m) AffineFoldFl where subFlavor r = r
-instance SubFlavor (AlgLensFl m) FoldFl where subFlavor r = r
-
 -- | An algebraic lens: like a 'Proarrow.Optic.Lens.Lens', but @put@ is allowed to combine
 -- information monadically -- @get :: s ~> a@, @put :: m % s ** b ~> t@ -- rather than only ever
 -- seeing the /last/ @s@.
@@ -195,17 +182,6 @@ instance
   => ClassifyFl l (Rep (ActionAt Tensor x) :: k +-> k) (Corep (ActionAt Tensor x))
 instance (OplaxMonoidalRep (l :: k +-> k)) => ClassifyFl l (Id :: k +-> k) (Id :: k +-> k)
 instance (ClassifyFl l f g, ClassifyFl l f' g') => ClassifyFl l (f :.: f') (g' :.: g)
-
-instance SubFlavor (ClassifyFl l) (AlgLensFl l) where subFlavor r = r
-instance SubFlavor (ClassifyFl l) KaleidoFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) CotravFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) MonLensFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) GetterFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) MonTravFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) TravFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) SetterFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) AffineFoldFl where subFlavor r = r
-instance SubFlavor (ClassifyFl l) FoldFl where subFlavor r = r
 
 type ClassifyingLens l (s :: k) (t :: k) a b = Optic (Prostrong (ClassifyFl l)) s t a b
 

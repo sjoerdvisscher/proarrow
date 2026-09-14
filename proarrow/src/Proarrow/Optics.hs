@@ -6,7 +6,7 @@
 --   profunctor-class form), 'to' and 'unto'. These produce
 --   'Proarrow.Optic.Prostrong'-flavored optics ('Iso', 'Lens', 'Prism', 'Traversal', ...), which
 --   support subtyping: any optic can be used directly wherever a weaker flavor is needed (a 'Lens'
---   is a 'Getter', a 'Setter', a 'Fold', ...), checked by the 'Proarrow.Optic.SubFlavor' lattice.
+--   is a 'Getter', a 'Setter', a 'Fold', ...), checked by the flavor superclass lattice.
 --   'MonoidalTraversal' is built from its van-Laarhoven form with 'fromPTraversal'. Only the three
 --   read-\/write-only flavors ('Setter', 'Fold', 'AffineFold') have no builder of their own -- reach
 --   them by 'convert' from a stronger optic (or '%'-composition, as 'affineTraversal' does with a
@@ -27,7 +27,7 @@
 --   between the encodings, van Laarhoven interop, writing flavor-generic code — import
 --   "Proarrow.Optic" and its submodules directly.
 --
--- The full subtyping lattice ('Proarrow.Optic.SubFlavor' edges, weakest optics at the top).
+-- The full subtyping lattice (flavor superclass edges, weakest optics at the top).
 -- Dotted nodes are one-sided flavors, whose methods never mention the second witness; dashed
 -- nodes are indexed by a monad and so have no edge to 'Iso':
 --

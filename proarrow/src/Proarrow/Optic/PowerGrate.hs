@@ -56,7 +56,6 @@ import Proarrow.Optic
   , FLAVOR
   , Optic
   , Prostrong (..)
-  , SubFlavor (..)
   , legs2prof
   , withLegs
   )
@@ -94,15 +93,6 @@ instance (PowerGrateFl f g, PowerGrateFl f' g') => PowerGrateFl (f :.: f') (g' :
 -- at @Costar f@ -- an algebraic lens, say -- can be eliminated there directly.
 instance (Cartesian k, Functor (f :: k -> k)) => Prostrong PowerGrateFl (Costar f :: k +-> k) where
   proact (f :.: c :.: g) = powerGrateP f g c
-
-instance SubFlavor PowerGrateFl MonTravFl where subFlavor r = r
-instance SubFlavor PowerGrateFl KaleidoFl where subFlavor r = r
-instance SubFlavor PowerGrateFl CotravFl where subFlavor r = r
-instance SubFlavor PowerGrateFl GrateFl where subFlavor r = r
-instance SubFlavor PowerGrateFl GlassFl where subFlavor r = r
-instance SubFlavor PowerGrateFl TravFl where subFlavor r = r
-instance SubFlavor PowerGrateFl FoldFl where subFlavor r = r
-instance SubFlavor PowerGrateFl SetterFl where subFlavor r = r
 
 type PowerGrate (s :: k) (t :: k) a b = Optic (Prostrong PowerGrateFl) s t a b
 type PowerGrate' s a = PowerGrate s s a a

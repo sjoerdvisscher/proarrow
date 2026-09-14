@@ -16,10 +16,8 @@ import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), Ha
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts (..), Product, TensorIsProduct, first, second)
 import Proarrow.Object (pattern Objs)
-import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), withLegs)
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), withLegs)
 import Proarrow.Optic.AffineFold (AffineFoldFl)
-import Proarrow.Optic.Fold (FoldFl)
-import Proarrow.Optic.Setter (SetterFl)
 import Proarrow.Optic.Traversal (TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -81,11 +79,6 @@ instance (AffineTravFl f g, AffineTravFl f' g') => AffineTravFl (f :.: f') (g' :
           . distLP @_ @s @(t && b) @(m && b)
           . second @s (distRP @_ @t @m @b)
           . (fst @_ @s @b &&& first @b (affineMatch @f @g f g))
-
-instance SubFlavor AffineTravFl TravFl where subFlavor r = r
-instance SubFlavor AffineTravFl SetterFl where subFlavor r = r
-instance SubFlavor AffineTravFl AffineFoldFl where subFlavor r = r
-instance SubFlavor AffineTravFl FoldFl where subFlavor r = r
 
 type AffineTraversal (s :: k) (t :: k) a b = Optic (Prostrong AffineTravFl) s t a b
 type AffineTraversal' s a = AffineTraversal s s a a

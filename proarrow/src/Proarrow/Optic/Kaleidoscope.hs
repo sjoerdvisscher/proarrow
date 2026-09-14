@@ -63,7 +63,7 @@ import Proarrow.Colimit.BinaryCoproduct (HasCoproducts)
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (//), (\\), type (+->))
 import Proarrow.Functor (Prelude (..))
 import Proarrow.Monoid (Comonoid, Monoid)
-import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), legs2prof, withLegs)
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), legs2prof, withLegs)
 import Proarrow.Optic.Setter (SetterFl (..))
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -172,10 +172,6 @@ instance (CotravFl f g, CotravFl f' g') => CotravFl (f :.: f') (g' :.: g) where
   cotravP (f :.: f') (g' :.: g) = cotravP @f @g f g . cotravP @f' @g' f' g'
 instance (KaleidoFl f g, KaleidoFl f' g') => KaleidoFl (f :.: f') (g' :.: g) where
   kaleidoP (f :.: f') (g' :.: g) = kaleidoP @f @g f g . kaleidoP @f' @g' f' g'
-
-instance SubFlavor CotravFl SetterFl where subFlavor r = r
-instance SubFlavor KaleidoFl CotravFl where subFlavor r = r
-instance SubFlavor KaleidoFl SetterFl where subFlavor r = r
 
 type Cotraversal (s :: k) (t :: k) a b = Optic (Prostrong CotravFl) s t a b
 type Cotraversal' s a = Cotraversal s s a a

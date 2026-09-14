@@ -17,7 +17,7 @@ import Proarrow.Colimit.BinaryCoproduct (Coproduct, HasBinaryCoproducts (..), Ha
 import Proarrow.Core (CategoryOf (..), Profunctor (..), Promonad (..), (\\), type (+->))
 import Proarrow.Limit.BinaryProduct (HasBinaryProducts, Product, snd)
 import Proarrow.Limit.Terminal (HasTerminalObject (..))
-import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), SubFlavor (..), withLegs)
+import Proarrow.Optic (ExOptic, FLAVOR, Optic, Prostrong (..), withLegs)
 import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
@@ -44,8 +44,6 @@ instance (HasCoproducts k, Ob t) => AffineFoldFl (Corep (Coproduct t) :: k +-> k
   previewP @_ @a (Corep f) = lft @k @a @TerminalObject . f . rgt @k @t \\ f
 instance (CopyDiscard k, HasCoproducts k, Ob t) => AffineFoldFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   previewP @_ @a (Rep p) = ((rgt @k @a @TerminalObject . terminate @k @t) ||| lft @k @a @TerminalObject) . p
-
-instance SubFlavor AffineFoldFl FoldFl where subFlavor r = r
 
 type AffineFold (s :: k) (t :: j) a b = Optic (Prostrong AffineFoldFl) s t a b
 

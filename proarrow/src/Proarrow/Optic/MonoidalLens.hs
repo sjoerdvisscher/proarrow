@@ -20,13 +20,6 @@
 -- 'Proarrow.Optic.AffineTraversal.AffineTraversal' and a 'Proarrow.Optic.Glass.Glass', because
 -- their methods ask for a cartesian category, in which the tensor is the product and the residual
 -- can be projected out.
---
--- Crucially it asks 'Comonoid' of __the residual only__, not
--- 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' of the whole category: it works in every
--- @CopyDiscard@ category (there every object is a comonoid) /and/ in genuinely non-cartesian ones
--- like @LINEAR@ for the residuals that are comonoids (the duplicable @Ur@ objects). The ordinary
--- 'Proarrow.Optic.Lens.Lens' is the @tensor = product@ specialization, where the residual is
--- recoverable from @s@ by projection.
 module Proarrow.Optic.MonoidalLens where
 
 import Proarrow.Category.Monoidal (Monoidal (..), MonoidalProfunctor (..), SymMonoidal, Tensor)
@@ -44,17 +37,14 @@ import Proarrow.Optic
   , FLAVOR
   , Optic
   , Prostrong (..)
-  , SubFlavor (..)
   , legs2prof
   , withLegs
   )
 import Proarrow.Optic.AffineFold (AffineFoldFl (..))
 import Proarrow.Optic.AffineTraversal (AffineTravFl (..))
-import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Optic.Getter (GetterFl (..))
 import Proarrow.Optic.Glass (GlassFl (..), applySel)
-import Proarrow.Optic.Setter (SetterFl)
-import Proarrow.Optic.Traversal (MonTravFl, TravFl)
+import Proarrow.Optic.Traversal (MonTravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -122,14 +112,6 @@ instance
               (associatorInv @k @mo @mi @afoc . (obj @mo ** hi) . ho)
               (io . (obj @mo ** ii) . associator @k @mo @mi @bfoc)
           )
-instance SubFlavor MonLensFl GetterFl where subFlavor r = r
-instance SubFlavor MonLensFl AffineTravFl where subFlavor r = r
-instance SubFlavor MonLensFl GlassFl where subFlavor r = r
-instance SubFlavor MonLensFl MonTravFl where subFlavor r = r
-instance SubFlavor MonLensFl TravFl where subFlavor r = r
-instance SubFlavor MonLensFl SetterFl where subFlavor r = r
-instance SubFlavor MonLensFl AffineFoldFl where subFlavor r = r
-instance SubFlavor MonLensFl FoldFl where subFlavor r = r
 
 type MonoidalLens (s :: k) (t :: k) a b = Optic (Prostrong MonLensFl) s t a b
 type MonoidalLens' s a = MonoidalLens s s a a

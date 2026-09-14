@@ -25,17 +25,12 @@ import Proarrow.Optic
   , Optic
   , Optic_ (..)
   , Prostrong (..)
-  , SubFlavor (..)
   , legs2prof
   , withLegs
   )
-import Proarrow.Optic.AffineFold (AffineFoldFl)
 import Proarrow.Optic.AffineTraversal (AffineTravFl (..))
-import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Optic.Getter (GetterFl (..))
 import Proarrow.Optic.Glass (GlassFl)
-import Proarrow.Optic.Setter (SetterFl)
-import Proarrow.Optic.Traversal (TravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -54,14 +49,6 @@ instance (CategoryOf k) => LensFl (Id :: k +-> k) (Id :: k +-> k) where
 instance (LensFl f g, LensFl f' g') => LensFl (f :.: f') (g' :.: g) where
   putP @s @_ @b (f@Objs :.: f') (g'@Objs :.: g) =
     putP @f @g f g . (fst @_ @s @b &&& (putP @f' @g' f' g' . first @b (getP @f @g f)))
-
-instance SubFlavor LensFl AffineTravFl where subFlavor r = r
-instance SubFlavor LensFl GlassFl where subFlavor r = r
-instance SubFlavor LensFl GetterFl where subFlavor r = r
-instance SubFlavor LensFl TravFl where subFlavor r = r
-instance SubFlavor LensFl SetterFl where subFlavor r = r
-instance SubFlavor LensFl AffineFoldFl where subFlavor r = r
-instance SubFlavor LensFl FoldFl where subFlavor r = r
 
 type Lens (s :: k) (t :: k) a b = Optic (Prostrong LensFl) s t a b
 type Lens' s a = Lens s s a a

@@ -1,10 +1,11 @@
 -- | Checks that optic subtyping works: any optic can be used directly where a weaker flavor is
 -- needed (iso -> lens/prism -> affine traversal -> traversal -> setter, and the fold side),
--- because the consumers only ask for a @'SubFlavor' w need@ constraint, like the @Is k l@ class
--- of the @optics@ library.
+-- because the consumers only ask for @c ('ExOptic' need a b)@, which a 'Prostrong'-flavored optic
+-- discharges through the quantified constraint @forall p q. w p q => 'O.Sub' need p q@ -- the role of the
+-- @Is k l@ class of the @optics@ library, played by the flavor superclasses.
 --
 -- The conversion functions below are compile-time tests: each one only typechecks if the
--- corresponding 'SubFlavor' instance exists. The 'TestTree' then checks at runtime that a lens,
+-- corresponding superclass entailment holds. The 'TestTree' then checks at runtime that a lens,
 -- prism or iso handed directly to the getter\/setter\/fold\/review\/preview consumers still acts
 -- like the optic it came from.
 module Props.Optic.Hask where

@@ -18,12 +18,10 @@ import Proarrow.Optic
   , Flip
   , Optic
   , Prostrong (..)
-  , SubFlavor (..)
   , legs2prof
   , withLegs
   )
 import Proarrow.Optic.AffineFold (AffineFoldFl)
-import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -43,9 +41,6 @@ instance (GetterFl f g, GetterFl f' g') => GetterFl (f :.: f') (g' :.: g) where
   getP (f :.: f') = getP @f' @g' f' . getP @f @g f
 instance (HasCoproducts k, Ob t) => GetterFl (Corep (Coproduct t) :: k +-> k) (Rep (Coproduct t)) where
   getP (Corep f) = f . rgt @k @t
-
-instance SubFlavor GetterFl AffineFoldFl where subFlavor r = r
-instance SubFlavor GetterFl FoldFl where subFlavor r = r
 
 type Getter (s :: k) (t :: j) a b = Optic (Prostrong GetterFl) s t a b
 

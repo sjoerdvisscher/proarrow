@@ -46,7 +46,6 @@ import Proarrow.Optic
   , FLAVOR
   , Optic
   , Prostrong (..)
-  , SubFlavor (..)
   , legs2prof
   , withLegs
   )
@@ -114,12 +113,6 @@ instance (TravFl f g, TravFl f' g') => TravFl (f :.: f') (g' :.: g) where
 instance (MonTravFl f g, MonTravFl f' g') => MonTravFl (f :.: f') (g' :.: g) where
   monTravP (f :.: f') (g' :.: g) = monTravP @f @g f g . monTravP @f' @g' f' g'
 
-instance SubFlavor TravFl SetterFl where subFlavor r = r
-instance SubFlavor TravFl FoldFl where subFlavor r = r
-instance SubFlavor MonTravFl TravFl where subFlavor r = r
-instance SubFlavor MonTravFl SetterFl where subFlavor r = r
-instance SubFlavor MonTravFl FoldFl where subFlavor r = r
-
 type Traversal (s :: k) (t :: k) a b = Optic (Prostrong TravFl) s t a b
 type Traversal' s a = Traversal s s a a
 
@@ -130,7 +123,7 @@ type Traversal' s a = Traversal s s a a
 --
 -- The optic is accepted in any encoding: the constraint asks the optic's class to hold for the
 -- generic carrier @'ExOptic' 'TravFl' a b@, which a 'Prostrong'-flavored optic discharges via
--- @'SubFlavor' w 'TravFl'@, a '(%)'-composite one conjunct at a time, and a profunctor-class one
+-- @forall p q. w p q => 'Proarrow.Optic.Sub' 'TravFl' p q@, a '(%)'-composite one conjunct at a time, and a profunctor-class one
 -- ('Proarrow.Optic.MonoidalTraversal.PTraversalFull') through the carrier's by-generator instances.
 traverseOf
   :: forall {k} c (s :: k) (t :: k) a b p

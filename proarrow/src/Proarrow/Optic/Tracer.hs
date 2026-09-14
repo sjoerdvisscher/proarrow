@@ -27,11 +27,9 @@ import Proarrow.Optic
   ( ExOptic (..)
   , FLAVOR
   , Flavor
-  , Flip
   , Optic
   , Optic_ (..)
   , Prostrong (..)
-  , SubFlavor (..)
   , convert
   , legs2prof
   , withLegs
@@ -52,7 +50,10 @@ import Proarrow.Profunctor.Representable (Rep (..), Representable (..))
 --
 -- Every tracer witness pair is a setter pair ('SetterFl' superclass, so 'Proarrow.Optic.Setter.over',
 -- 'Proarrow.Optic.Setter.set', '(Proarrow.Optic.Setter.%~)' all work) and its flip is one too
--- (@'SetterFl' q p@, so @'Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re'@ works without a trace);
+-- (@'SetterFl' q p@, so @'Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re'@ works without a trace, and
+-- @'convert' t :: 'Optic' ('Prostrong' ('Flip' 'SetterFl')) s t a b@ -- the converse fails, since a
+-- flipped setter need not have a trace, e.g. a flipped lens witness, so tracers are the subflavor of
+-- flipped setters that can also run /forwards/);
 -- 'TracedMonoidal' rides in the instance context of the tensor-action witness, not in the
 -- method, so ordinary setters keep their honest constraints. 'Monoidal' sits on the method rather
 -- than the class so that the identity witness needs only 'CategoryOf' and 'Proarrow.Optic.Iso.IsoFl'
@@ -96,17 +97,6 @@ tracerP
    . (TracerFl p q, Costrong Tensor r)
   => p s a -> q b t -> r a b -> r s t
 tracerP l r rab = withTracerP l r (\ @m i h -> coact @Tensor @r @m (dimap i h rab)) \\ l \\ r
-
-instance SubFlavor TracerFl SetterFl where subFlavor r = r
-
--- | A reversed tracer is still a setter (run it with 'Proarrow.Optic.Setter.over' . 'Proarrow.Optic.re').
-instance SubFlavor (Flip TracerFl) SetterFl where subFlavor r = r
-
--- | A tracer is a reversed setter: its witnesses are a setter's read the other way round, so
--- @'convert' t :: 'Optic' ('Prostrong' ('Flip' 'SetterFl')) s t a b@. The converse fails -- a
--- flipped setter need not have a trace (e.g. a flipped lens witness) -- so tracers are the
--- subflavor of flipped setters that can also run /forwards/.
-instance SubFlavor TracerFl (Flip SetterFl) where subFlavor r = r
 
 type Tracer (s :: k) (t :: k) a b = Optic (Prostrong TracerFl) s t a b
 type Tracer' s a = Tracer s s a a

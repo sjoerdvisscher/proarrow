@@ -21,11 +21,9 @@ import Proarrow.Object (pattern Objs)
 import Proarrow.Optic
   ( ExOptic
   , FLAVOR
-  , Flip
   , OpConstraint
   , Optic
   , Prostrong (..)
-  , SubFlavor (..)
   , convert
   , legs2prof
   , opOptic
@@ -33,23 +31,23 @@ import Proarrow.Optic
   , withLegs
   , (%)
   )
-import Proarrow.Optic.AffineFold (AffineFoldFl)
 import Proarrow.Optic.AffineTraversal (AffineTravFl (..), AffineTraversal)
-import Proarrow.Optic.Fold (FoldFl)
 import Proarrow.Optic.Getter (GetterFl (..))
 import Proarrow.Optic.Lens (Lens, LensFl, lens, withLens)
-import Proarrow.Optic.Setter (SetterFl)
-import Proarrow.Optic.Traversal (MonTravFl, TravFl)
+import Proarrow.Optic.Traversal (MonTravFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
 import Proarrow.Profunctor.Representable (Rep (..))
 
+-- | The prism flavor. The @'GetterFl' q p@ superclass says a reversed prism views its build leg
+-- ('getP' on the swapped pair): @'Proarrow.Optic.re' prism@ is a getter.
 type PrismFl :: forall {k}. FLAVOR k k
 class (AffineTravFl p q, GetterFl q p, MonTravFl p q) => PrismFl (p :: k +-> k) (q :: k +-> k) where
   -- | Like 'affineMatch', but with an honest constraint: prism witnesses only ever need binary
   -- coproducts, so prisms stay usable in categories without products.
   matchingP :: (HasBinaryCoproducts k) => p (s :: k) a -> q (b :: k) t -> s ~> (t || a)
+
 instance (CopyDiscard k, HasCoproducts k, Ob t) => PrismFl (Rep (Coproduct t) :: k +-> k) (Corep (Coproduct t)) where
   matchingP @_ @a @b (Rep p) (Corep q) = left @a (q . lft @k @t @b) . p
 instance (CategoryOf k) => PrismFl (Id :: k +-> k) Id where
@@ -57,20 +55,6 @@ instance (CategoryOf k) => PrismFl (Id :: k +-> k) Id where
 instance (PrismFl f g, PrismFl f' g') => PrismFl (f :.: f') (g' :.: g) where
   matchingP @_ @a @_ @t (f :.: f'@Objs) (g' :.: g@Objs) =
     (lft @_ @t @a ||| (left @a (getP @g @f g) . matchingP @f' @g' f' g')) . matchingP @f @g f g
-
-instance SubFlavor PrismFl AffineTravFl where subFlavor r = r
-instance SubFlavor PrismFl MonTravFl where subFlavor r = r
-instance SubFlavor PrismFl (Flip GetterFl) where subFlavor r = r
-instance SubFlavor PrismFl TravFl where subFlavor r = r
-instance SubFlavor PrismFl SetterFl where subFlavor r = r
-instance SubFlavor PrismFl AffineFoldFl where subFlavor r = r
-instance SubFlavor PrismFl FoldFl where subFlavor r = r
-
--- | A reversed prism views its build leg (@'getP'@ on the swapped pair): @'Proarrow.Optic.re' prism@ is a getter.
-instance SubFlavor (Flip PrismFl) GetterFl where subFlavor r = r
-
-instance SubFlavor (Flip PrismFl) AffineFoldFl where subFlavor r = r
-instance SubFlavor (Flip PrismFl) FoldFl where subFlavor r = r
 
 type Prism (s :: k) t a b = Optic (Prostrong PrismFl) s t a b
 type Prism' s a = Prism s s a a

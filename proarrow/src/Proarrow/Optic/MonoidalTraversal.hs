@@ -174,7 +174,7 @@ instance
 -- 'Proarrow.Limit.BinaryProduct.Cartesian' (@tensor = product@), only 'Proarrow.Category.Monoidal.CopyDiscard.CopyDiscard' (a discard @a '~>' 'Unit' for the residual) -- which is
 -- exactly what the coproduct-prism witness already demanded -- enabling e.g. the biproduct
 -- categories @Mat@ and @FinRel@ (but not @LINEAR@, which cannot discard). A 'Traversal' is
--- recovered for free wherever one is needed, since @'MonTravFl'@ is a 'SubFlavor' of 'TravFl'.
+-- recovered for free wherever one is needed, since @'MonTravFl'@ is a subflavor of 'TravFl'.
 fromPTraversal
   :: forall {k} (s :: k) (t :: k) a b
    . (Distributive k, CopyDiscard k, SymMonoidal k)

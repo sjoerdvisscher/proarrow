@@ -30,7 +30,6 @@ import Proarrow.Optic
   , FLAVOR
   , Optic
   , Prostrong (..)
-  , SubFlavor (..)
   , legs2prof
   , withLegs
   )
@@ -119,8 +118,6 @@ instance
                         body = inner . (xpart &&& kipart)
                       in
                         glassP @f @g f g . (fst @k @s @((s ~~> a) ~~> b) &&& curry @k @(s && ((s ~~> a) ~~> b)) @(s ~~> x) body)
-
-instance SubFlavor GlassFl SetterFl where subFlavor r = r
 
 type Glass (s :: k) (t :: k) a b = Optic (Prostrong GlassFl) s t a b
 type Glass' s a = Glass s s a a

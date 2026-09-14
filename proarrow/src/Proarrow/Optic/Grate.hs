@@ -25,13 +25,11 @@ import Proarrow.Optic
   , FLAVOR
   , Optic
   , Prostrong (..)
-  , SubFlavor (..)
   , legs2prof
   , withLegs
   )
 import Proarrow.Optic.Glass (GlassFl)
-import Proarrow.Optic.Kaleidoscope (CotravFl, KaleidoFl)
-import Proarrow.Optic.Setter (SetterFl)
+import Proarrow.Optic.Kaleidoscope (KaleidoFl)
 import Proarrow.Profunctor.Corepresentable (Corep (..))
 import Proarrow.Profunctor.Instance.Composition ((:.:) (..))
 import Proarrow.Profunctor.Instance.Identity (Id (..))
@@ -75,11 +73,6 @@ instance (CategoryOf k) => GrateFl (Id :: k +-> k) (Id :: k +-> k) where
   zipWithP (Id l) (Id r) @x kk = r . kk . (l ^^^ obj @x)
 instance (GrateFl f g, GrateFl f' g') => GrateFl (f :.: f') (g' :.: g) where
   zipWithP (f :.: f') (g' :.: g) @x kk = zipWithP @f @g f g @x (zipWithP @f' @g' f' g' @x kk)
-
-instance SubFlavor GrateFl GlassFl where subFlavor r = r
-instance SubFlavor GrateFl KaleidoFl where subFlavor r = r
-instance SubFlavor GrateFl CotravFl where subFlavor r = r
-instance SubFlavor GrateFl SetterFl where subFlavor r = r
 
 type Grate (s :: k) (t :: k) a b = Optic (Prostrong GrateFl) s t a b
 type Grate' s a = Grate s s a a

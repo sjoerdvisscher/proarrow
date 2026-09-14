@@ -2,7 +2,7 @@
 
 -- | The encoding-agnostic core of the optics machinery: the 'Optic' type (a rank-2 profunctor
 -- transformation @forall p. c p => p a b -> p s t@), optic flavors as witness-pair constraints
--- ('FLAVOR') with subtyping via 'SubFlavor', carrier strength ('Prostrong'), and the existential
+-- ('FLAVOR') with subtyping via flavor superclasses, carrier strength ('Prostrong'), and the existential
 -- encoding 'ExOptic' with 'ex2prof'\/'prof2ex'\/'convert' mediating between the two. Also home to
 -- the flavor-generic combinators 'iso', 're' and '(%)'. The concrete optic kinds live in the
 -- @Proarrow.Optic.*@ submodules, and the user-facing vocabulary (with the full subtyping lattice
@@ -10,9 +10,7 @@
 module Proarrow.Optic where
 
 import Data.Kind (Constraint)
-import GHC.TypeError (ErrorMessage (..), TypeError)
 import Prelude (type (~))
-import Prelude qualified as P
 
 import Proarrow.Category.Instance.Opposite (OPPOSITE (..), Op (..), UnOp (..))
 import Proarrow.Core (CAT, CategoryOf (..), Kind, Profunctor (..), Promonad (..), dimapDefault, (:~>), type (+->))
@@ -88,9 +86,30 @@ type FLAVOR j k = (k +-> k) -> (j +-> j) -> Constraint
 -- pair -- the monoidal structure of the residuals, with @(Id, Id)@ as unit and
 -- @(f :.: g, g' :.: f')@ (note the reversal on the right) as tensor.
 type Flavor :: forall {j} {k}. FLAVOR j k -> Constraint
-class (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => Flavor w
+class (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => Flavor w where
+  composeFlavor :: forall f f' g g' r. (w f f', w g g') => ((w (f :.: g) (g' :.: f')) => r) -> r
 
-instance (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => Flavor w
+instance (forall f f' g g'. (w f f', w g g') => w (f :.: g) (g' :.: f'), w Id Id) => Flavor w where
+  composeFlavor r = r
+
+-- | @w p q@, as a class with a single instance instead of a bare constraint. The subtyping
+-- quantified constraint is spelled @forall p q. v p q => Sub w p q@ rather than
+-- @forall p q. v p q => w p q@ because GHC refuses to solve the head of a quantified constraint
+-- from a superclass of its premise unless that superclass is strictly smaller than the head (its
+-- safeguard against superclass loops in instance declarations), and @w p q@ is never smaller
+-- than itself; behind the 'Sub' instance @w p q@ is an ordinary wanted, solved from the
+-- superclasses of @v p q@ as usual. 'sub' hands @w p q@ back as an ordinary given (see 'Flavor').
+--
+-- Deliberately without @w p q@ as a superclass: with it, a quantified given @forall p q. w p q =>
+-- Sub IsoFl p q@ would reach @'Profunctor' p@ through the flavor superclasses, which makes GHC
+-- treat it as a potential match for every @Profunctor@ wanted in scope and reject the ordinary
+-- instances as overlapping.
+type Sub :: forall {j} {k}. FLAVOR j k -> FLAVOR j k
+class Sub w p q where
+  sub :: ((w p q) => r) -> r
+
+instance (w p q) => Sub w p q where
+  sub r = r
 
 -- | The carrier @p@ is @w@-strong: a Tambara module for the flavor @w@. 'proact' absorbs a
 -- @w@-witness pair @(f, g)@ sandwiching @p@ back into @p@, which is exactly what lets an optic
@@ -116,8 +135,8 @@ instance (CategoryOf j, CategoryOf k) => Profunctor (ExOptic w a b :: j +-> k) w
 -- | The free @w@-strong profunctor is @v@-strong for every subflavor @v@ of @w@; this is what
 -- lets 'convert' and 'withLegs' accept optics of any encoding (composites included). It is the one
 -- bridge instance that replaces a per-carrier one for each flavor.
-instance (CategoryOf j, CategoryOf k, SubFlavor v w, Flavor w) => Prostrong v (ExOptic w a b :: j +-> k) where
-  proact @f @g (f :.: ExOptic p q :.: g) = subFlavor @v @w @f @g (ExOptic (f :.: p) (q :.: g))
+instance (CategoryOf j, CategoryOf k, forall p q. (v p q) => Sub w p q, Flavor w) => Prostrong v (ExOptic w a b :: j +-> k) where
+  proact @f @g (f :.: ExOptic @p @q p q :.: g) = sub @w @f @g (composeFlavor @w @f @g @p @q (ExOptic (f :.: p) (q :.: g)))
 
 -- | Build a 'Prostrong'-flavored optic from a @w@-witness pair (the two legs @p s a@ and @q b t@)
 -- by wrapping them around the carrier with one 'proact'. Every optic constructor
@@ -136,7 +155,7 @@ ex2prof (ExOptic p q) = legs2prof @w p q
 
 -- | Run an optic, in any encoding, at its own witness pair (the Pastro-Street move): a
 -- 'Prostrong'-flavored optic discharges @c ('ExOptic' w a b)@ through the bridge instance above
--- (i.e. @'SubFlavor' v w@), a '(%)'-composite one conjunct at a time, and a profunctor-class-flavored
+-- (i.e. @forall p q. v p q => 'Sub' w p q@), a '(%)'-composite one conjunct at a time, and a profunctor-class-flavored
 -- one through the carrier's own instances of its class.
 prof2ex
   :: forall {j} {k} w c (s :: k) (t :: j) a b
@@ -151,48 +170,11 @@ withLegs
   => Optic c s t a b -> (forall p q. (w p q, Profunctor p, Profunctor q) => p s a -> q b t -> r) -> r
 withLegs o k = case prof2ex @w o of ExOptic p q -> k p q
 
--- | Flavor @w1@ is a subflavor of @w2@: every witness pair of @w1@ is also a witness pair of
--- @w2@, so a @'Prostrong' w1@-flavored optic is also a @'Prostrong' w2@-flavored one -- optic
--- subtyping, e.g. every lens is a getter. Optic consumers take a @SubFlavor w need@ constraint
--- (like the @Is k l@ class of the @optics@ library), so any optic of a stronger flavor can be
--- used directly where a weaker one is needed.
---
--- The instances say what the quantified constraint @forall p q. w1 p q => w2 p q@ says, but GHC
--- never expands the /given/ of a quantified constraint to its superclasses
--- (<https://gitlab.haskell.org/ghc/ghc/-/issues/16502>), which is exactly how the flavors are
--- related, so such a constraint is unsolvable for them and can't be used here. Inside an
--- instance the given is an ordinary one, so each instance of this class is just
--- @subFlavor r = r@, checked by regular superclass expansion.
---
--- The full lattice is drawn in "Proarrow.Optics".
-type SubFlavor :: forall {j} {k}. FLAVOR j k -> FLAVOR j k -> Constraint
-class SubFlavor w1 w2 where
-  subFlavor :: forall p q r. (w1 p q) => ((w2 p q) => r) -> r
-
--- | Subflavoring is reflexive.
-instance SubFlavor w w where subFlavor r = r
-
--- | Catch-all for invalid conversions, turning an unsolvable @SubFlavor@ constraint into a
--- domain-specific error message. Overlappable, so any real instance wins, and a still-abstract
--- @w@ stays deferred (the other instances are potential unifiers).
-instance
-  {-# OVERLAPPABLE #-}
-  ( TypeError
-      ( Text "A "
-          :<>: ShowType w1
-          :<>: Text "-flavored optic cannot be used as a "
-          :<>: ShowType w2
-          :<>: Text "-flavored optic."
-      )
-  )
-  => SubFlavor w1 w2
-  where
-  subFlavor _ = P.error "unreachable"
-
 -- | Convert an optic to a chosen flavor @w@, by running it at its existential encoding
 -- @'ExOptic' w a b@ and wrapping the resulting witness pair back around the carrier: this works for
--- any input encoding. A 'Prostrong'-flavored optic converts along the 'SubFlavor' lattice (via the
--- bridge instance of 'ExOptic'), a ':&&:'-composite converts when both conjuncts do, and a
+-- any input encoding. A 'Prostrong'-flavored optic converts along the subtyping lattice (via the
+-- bridge instance of 'ExOptic'; an invalid conversion fails with @Could not deduce (w p q)@ for the
+-- missing superclass), a ':&&:'-composite converts when both conjuncts do, and a
 -- profunctor-class-flavored optic converts when @'ExOptic' w a b@ has an instance of its class -- which
 -- it does for every class whose generating witnesses @w@ contains (cf. 'Proarrow.Optic.Iso.fromPIso',
 -- 'Proarrow.Optic.MonoidalTraversal.fromPTraversal', 'Proarrow.Optic.Tracer.fromPTracer').
@@ -232,17 +214,6 @@ re (Optic l) = Optic (unRe (l (Re id)))
 class (w p q) => Flip w q p
 instance (w p q) => Flip w q p
 
--- | Subflavoring is preserved by 'Flip': the mirror of every edge of the subtyping lattice also
--- holds, so e.g. @'re'@ of a lens can be used as a review ('SubFlavor' ('Flip' 'Proarrow.Optic.Lens.LensFl')
--- ('Flip' 'Proarrow.Optic.Getter.GetterFl')). Incoherent because it overlaps with the reflexive
--- instance on the diagonal, where both compute the same trivial entailment.
-instance {-# INCOHERENT #-} (SubFlavor w1 w2) => SubFlavor (Flip w1) (Flip w2) where
-  subFlavor @p @q r = subFlavor @w1 @w2 @q @p r
-
--- | 'Flip' is an involution, so @'re' . 're'@ returns to the original flavor.
-instance SubFlavor w (Flip (Flip w)) where subFlavor r = r
-
-instance SubFlavor (Flip (Flip w)) w where subFlavor r = r
 instance (CategoryOf j, CategoryOf k, Prostrong (Flip w) p) => Prostrong w (Re p s t :: k +-> j) where
   proact (f@Objs :.: Re n :.: g@Objs) = Re \p -> n (proact @(Flip w) @p (g :.: p :.: f))
 
